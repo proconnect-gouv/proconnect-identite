@@ -1,6 +1,10 @@
 import { generateToken } from "@sunknudsen/totp";
 
 describe("add 2fa authentication", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should add 2fa authentication on account user", function () {
     cy.visit("/connection-and-account");
 

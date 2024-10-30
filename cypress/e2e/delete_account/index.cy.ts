@@ -1,6 +1,10 @@
 //
 
 describe("delete account", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should delete account", function () {
     cy.visit("/connection-and-account");
 

@@ -1,6 +1,10 @@
 //
 
 describe("set info after account provisioning", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should show InclusionConnect welcome page on first visit", function () {
     // Visit the signup page
     cy.visit("/users/start-sign-in");

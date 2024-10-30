@@ -1,4 +1,8 @@
 describe("force recent connexion + 2FA on admin pages", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should be redirected after long connexion", function () {
     cy.visit("/");
 

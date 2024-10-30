@@ -4,6 +4,10 @@ describe("sign-in with a client not requiring any acr", () => {
     cy.setRequestedAcrs();
   });
 
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in an return the right acr value", function () {
     cy.get("button#custom-connection").click({ force: true });
 

@@ -1,4 +1,8 @@
 describe("sign-in with TOTP on untrusted browser", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in with password and TOTP", function () {
     cy.visit("http://localhost:4000");
     cy.get("button.proconnect-button").click();

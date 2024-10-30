@@ -1,6 +1,10 @@
 //
 
 describe("sign-in with legacy scope", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in", function () {
     cy.visit("http://localhost:4000");
     cy.setCustomParams({

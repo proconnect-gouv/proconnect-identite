@@ -1,8 +1,10 @@
 //
 
-//
-
 describe("join and moderation", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("will be moderated", function () {
     cy.visit("/");
 
