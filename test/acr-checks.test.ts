@@ -283,4 +283,23 @@ describe("certificationDirigeantRequested", () => {
 
     assert.equal(certificationDirigeantRequested(prompt), false);
   });
+
+  it("should return false if non self asserted acr are requested", () => {
+    const prompt = {
+      details: {
+        acr: {
+          essential: true,
+          values: [
+            "https://proconnect.gouv.fr/assurance/certification-dirigeant",
+            "https://proconnect.gouv.fr/assurance/consistency-checked",
+            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
+          ],
+        },
+      },
+      name: "login",
+      reasons: ["essential_acrs"],
+    };
+
+    assert.equal(certificationDirigeantRequested(prompt), false);
+  });
 });

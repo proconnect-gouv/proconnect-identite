@@ -19,9 +19,14 @@ import {
   VerifyEmail,
 } from "@gouvfr-lasuite/proconnect.email";
 import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
-import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
+import {
+  type FranceConnectUserInfoResponse,
+  type User,
+} from "@gouvfr-lasuite/proconnect.identite/types";
+import { to } from "await-to-js";
 import { isEmpty } from "lodash-es";
 import {
+  FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
   HOST,
   MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
   MAX_DURATION_BETWEEN_TWO_EMAIL_ADDRESS_VERIFICATION_IN_MINUTES,
@@ -41,7 +46,6 @@ import {
 } from "../config/errors";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
-
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import {
   create,
@@ -49,7 +53,9 @@ import {
   findById,
   findByMagicLinkToken,
   findByResetPasswordToken,
+  getFranceConnectUserInfo,
   update,
+  upsetFranceconnectUserinfo,
 } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
 import { isWebauthnConfiguredForUser } from "./webauthn";
@@ -581,10 +587,49 @@ export const updatePersonalInformations = async (
     job,
   }: Pick<User, "given_name" | "family_name" | "phone_number" | "job">,
 ): Promise<User> => {
-  return await update(userId, {
-    given_name,
-    family_name,
+  const isUserVerified = await getFranceConnectUserInfo(userId);
+  const names = isUserVerified ? {} : { given_name, family_name };
+
+  return update(userId, {
+    ...names,
     phone_number,
     job,
   });
 };
+
+export async function isUserVerifiedWithFranceconnect(user_id: number) {
+  const userFranceConnect = await getFranceConnectUserInfo(user_id);
+
+  if (isEmpty(userFranceConnect)) {
+    return false;
+  }
+
+  return !isExpired(
+    userFranceConnect.updated_at,
+    FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
+  );
+}
+
+export async function updateFranceConnectUserInfo(
+  userId: number,
+  userInfo: FranceConnectUserInfoResponse,
+) {
+  const { family_name, given_name } = userInfo;
+  const user = await update(userId, { family_name, given_name });
+  await upsetFranceconnectUserinfo({
+    ...userInfo,
+    user_id: userId,
+  });
+  return user;
+}
+
+export async function getUserVerificationLabel(userId: number) {
+  const [, franceconnectUserinfo] = await to(getFranceConnectUserInfo(userId));
+
+  if (franceconnectUserinfo) {
+    undefined;
+    return "FranceConnect";
+  }
+
+  return undefined;
+}

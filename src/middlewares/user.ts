@@ -2,7 +2,7 @@ import { getTrustedReferrerPath } from "@gouvfr-lasuite/proconnect.core/security
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
-import { HOST } from "../config/env";
+import { FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED, HOST } from "../config/env";
 import { UserNotFoundError } from "../config/errors";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
@@ -18,11 +18,15 @@ import {
   isWithinAuthenticatedSession,
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
+import { CertificationSessionSchema } from "../managers/session/certification";
 import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
-import { needsEmailVerificationRenewal } from "../managers/user";
+import {
+  isUserVerifiedWithFranceconnect,
+  needsEmailVerificationRenewal,
+} from "../managers/user";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
@@ -227,12 +231,36 @@ export const checkUserIsVerifiedMiddleware = (
     }
   });
 
-export const checkUserHasPersonalInformationsMiddleware = (
+export const checkUserNeedCertificationDirigeantMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
   checkUserIsVerifiedMiddleware(req, res, async (error) => {
+    try {
+      if (error) return next(error);
+      if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
+
+      const { certificationDirigeantRequested: isRequested } =
+        await CertificationSessionSchema.parseAsync(req.session);
+      if (!isRequested) return next();
+
+      const { id: user_id } = getUserFromAuthenticatedSession(req);
+      const isVerified = await isUserVerifiedWithFranceconnect(user_id);
+      if (isVerified) return next();
+
+      return res.redirect("/users/certification-dirigeant");
+    } catch (error) {
+      next(error);
+    }
+  });
+
+export const checkUserHasPersonalInformationsMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) =>
+  checkUserNeedCertificationDirigeantMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
 

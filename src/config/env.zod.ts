@@ -26,6 +26,38 @@ export const connectorEnvSchema = z.object({
     .default("https://staging.entreprise.api.gouv.fr"),
   ENTREPRISE_API_TRACKING_CONTEXT: z.string().default("ProConnect Identité"),
   ENTREPRISE_API_TRACKING_RECIPIENT: z.string().default("13002526500013"),
+  FRANCECONNECT_CALLBACK_URL: z.string().default("/login-callback"),
+  FRANCECONNECT_CLIENT_ID: z
+    .string()
+    .default(
+      "211286433e39cce01db448d80181bdfd005554b19cd51b3fe7943f6b3b86ab6e",
+    ),
+  FRANCECONNECT_CLIENT_SECRET: z
+    .string()
+    .default(
+      "2791a731e6a59f56b6b4dd0d08c9b1f593b5f3658b9fd731cb24248e2669af4b",
+    ),
+  FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("HS256"),
+  FRANCECONNECT_ISSUER: z
+    .string()
+    .url()
+    .default("https://fcp.integ01.dev-franceconnect.fr/api/v1"),
+  FRANCECONNECT_SCOPES: zCoerceArray(z.string()).default(
+    [
+      "birthplace",
+      "birthdate",
+      "family_name",
+      "gender",
+      "given_name",
+      "openid",
+      "preferred_username",
+    ].join(" "),
+  ),
+  FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(3 * 30 * 24 * 60), // 3 months in minutes
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   SENTRY_DSN: z.string().default(""),
   SMTP_URL: z.string().default("smtp://localhost:1025"),
@@ -39,6 +71,8 @@ export const featureTogglesEnvSchema = z.object({
     zodTrueFalseBoolean().default("False"),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE:
     zodTrueFalseBoolean().default("True"),
+  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED:
+    zodTrueFalseBoolean().default("False"),
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default("False"),
   FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default("False"),
   FEATURE_RATE_LIMIT: zodTrueFalseBoolean().default("False"),

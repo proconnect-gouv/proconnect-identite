@@ -18,9 +18,12 @@ export function updateUserFactory({ pg }: DatabaseContext) {
     );
 
     const { rows }: QueryResult<User> = await pg.query(
-      `UPDATE users SET ${paramsString} = ${valuesString} WHERE id = $${
-        values.length + 1
-      } RETURNING *`,
+      `
+      UPDATE users
+      SET ${paramsString} = ${valuesString}
+      WHERE id = $${values.length + 1}
+      RETURNING *
+      `,
       [...values, id],
     );
 

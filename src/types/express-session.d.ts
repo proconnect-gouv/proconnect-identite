@@ -1,3 +1,8 @@
+import type {
+  CertificationSession,
+  FranceConnectOidcSession,
+} from "../managers/session/certification";
+
 export interface UnauthenticatedSessionData {
   email?: string;
   loginHint?: string;
@@ -8,7 +13,6 @@ export interface UnauthenticatedSessionData {
   twoFactorsAuthRequested?: boolean;
   referrerPath?: string;
   authForProconnectFederation?: boolean;
-  certificationDirigeantRequested?: boolean;
 }
 
 export type AmrValue =
@@ -29,7 +33,10 @@ export interface AuthenticatedSessionData {
 }
 
 declare module "express-session" {
-  export interface SessionData extends UnauthenticatedSessionData {
+  export interface SessionData
+    extends UnauthenticatedSessionData,
+      FranceConnectOidcSession,
+      CertificationSession {
     user?: User;
     temporaryEncryptedTotpKey?: string;
     amr?: AmrValue[];

@@ -44,7 +44,7 @@
                                             name="_csrf"
                                             value="<%= csrfToken; %>"
                                     >
-                                    <button 
+                                    <button
                                         class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line"
                                         data-confirm="Cette action est irreversible."
                                         type="submit"
@@ -93,7 +93,7 @@
                                     </p>
                                     <p class="fr-mb-2w">Nombre d'utilisations : <%= usage_count; %>
                                     </p>
-                                    
+
                                     <form action="/delete-passkeys/<%= credential_id; %>" method="post">
                                         <input
                                                 type="hidden"
@@ -123,7 +123,7 @@
                     </div>
                 <% }); %>
             <% }; %>
-            
+
             <% if (isAuthenticatorConfigured || passkeys.length > 0){ %>
                 <p>Vous pouvez configurer plusieurs méthodes de double authentification si vous le souhaitez.</p>
                 <a
@@ -133,7 +133,7 @@
                     Ajouter une méthode de validation supplémentaire
                 </a>
             <% }; %>
-            
+
             <% if (!isAuthenticatorConfigured && passkeys.length === 0) { %>
                 <p>
                     Vous n'avez pas encore configuré la double authentification (2FA).
@@ -147,25 +147,25 @@
         <% if (locals.is2faCapable) { %>
             <form class="fr-mt-4w" id="2fa-form" method="post" action="/set-force-2fa">
                 <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-            
+
                 <fieldset class="fr-fieldset fr-mb-0" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
                     <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-hint-legend">
                         Où voulez-vous activer la double authentification ?
                     </legend>
-            
+
                     <div class="fr-fieldset__element">
                         <div class="fr-radio-group">
-                            <input type="radio" id="radio-enable" name="force2fa" value="enable" 
+                            <input type="radio" id="radio-enable" name="force2fa" value="enable"
                                 <%= locals.force2fa ? 'checked' : '' %>>
                             <label class="fr-label" for="radio-enable">
                                 Sur tous les sites
                             </label>
                         </div>
                     </div>
-            
+
                     <div class="fr-fieldset__element">
                         <div class="fr-radio-group">
-                            <input type="radio" id="radio-disable" name="force2fa" value="disable" 
+                            <input type="radio" id="radio-disable" name="force2fa" value="disable"
                                 <%= !locals.force2fa ? 'checked' : '' %>>
                             <label class="fr-label" for="radio-disable">
                                 Uniquement sur les sites qui l'exigent
@@ -173,13 +173,13 @@
                         </div>
                     </div>
                 </fieldset>
-            
+
                 <button class="fr-btn fr-btn--secondary fr-mb-6w" type="submit">
                     Valider
                 </button>
             </form>
         <% } %>
-        
+
         <section class="fr-mb-6w">
             <h3>Suppression de mon compte</h3>
             <p>
