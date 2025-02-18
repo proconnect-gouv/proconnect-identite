@@ -1,3 +1,4 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
@@ -15,7 +16,6 @@ import moment from "moment";
 import "moment-timezone";
 import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
 import {
-  NotFoundError,
   UserNotFoundError,
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,

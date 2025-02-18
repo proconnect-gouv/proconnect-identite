@@ -18,6 +18,7 @@ import {
   UpdatePersonalDataMail,
   VerifyEmail,
 } from "@gouvfr-lasuite/proconnect.email";
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import {
@@ -35,7 +36,6 @@ import {
   InvalidTokenError,
   LeakedPasswordError,
   NoNeedVerifyEmailAddressError,
-  NotFoundError,
   UserNotFoundError,
   WeakPasswordError,
 } from "../config/errors";

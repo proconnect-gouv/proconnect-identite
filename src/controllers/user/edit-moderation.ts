@@ -1,6 +1,6 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
-import { NotFoundError } from "../../config/errors";
 import { cancelModeration } from "../../managers/moderation";
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { idSchema } from "../../services/custom-zod-schemas";

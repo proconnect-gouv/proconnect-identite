@@ -1,7 +1,7 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import { markDomainAsVerifiedFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
 import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
-import { NotFoundError } from "../../config/errors";
 import {
   addDomain,
   findEmailDomainsByOrganizationId,
