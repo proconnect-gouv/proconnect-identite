@@ -1,12 +1,12 @@
 import { generateDicewarePassword } from "@gouvfr-lasuite/proconnect.core/security";
 import { OfficialContactEmailVerification } from "@gouvfr-lasuite/proconnect.email";
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { UserOrganizationLink } from "@gouvfr-lasuite/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { HOST } from "../../config/env";
 import {
   ApiAnnuaireError,
   InvalidTokenError,
-  NotFoundError,
   OfficialContactEmailVerificationNotNeededError,
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";

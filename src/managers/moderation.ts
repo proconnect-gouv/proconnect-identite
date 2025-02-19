@@ -1,8 +1,9 @@
 import { ModerationProcessed } from "@gouvfr-lasuite/proconnect.email";
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { HOST } from "../config/env";
-import { ForbiddenError, NotFoundError } from "../config/errors";
+import { ForbiddenError } from "../config/errors";
 import { sendMail } from "../connectors/mail";
 import {
   deleteModeration,

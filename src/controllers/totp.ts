@@ -1,6 +1,7 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
-import { InvalidTotpTokenError, NotFoundError } from "../config/errors";
+import { InvalidTotpTokenError } from "../config/errors";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,

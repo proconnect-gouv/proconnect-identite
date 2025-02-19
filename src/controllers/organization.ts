@@ -1,4 +1,5 @@
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
@@ -7,7 +8,6 @@ import {
   InseeConnectionError,
   InseeNotActiveError,
   InvalidSiretError,
-  NotFoundError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,

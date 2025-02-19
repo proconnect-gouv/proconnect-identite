@@ -19,3 +19,5 @@ export function findByIdFactory({ pg }: DatabaseContext) {
     return rows.shift();
   };
 }
+
+export type FindByIdHandler = ReturnType<typeof findByIdFactory>;

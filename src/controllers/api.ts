@@ -1,11 +1,8 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z, ZodError } from "zod";
-import {
-  InseeConnectionError,
-  InseeNotFoundError,
-  NotFoundError,
-} from "../config/errors";
+import { InseeConnectionError, InseeNotFoundError } from "../config/errors";
 import notificationMessages from "../config/notification-messages";
 import { getOrganizationInfo } from "../connectors/api-sirene";
 import { sendModerationProcessedEmail } from "../managers/moderation";

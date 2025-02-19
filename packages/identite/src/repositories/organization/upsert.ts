@@ -138,3 +138,5 @@ export function upsertFactory({ pg }: DatabaseContext) {
     return rows.shift()!;
   };
 }
+
+export type UpsertHandler = ReturnType<typeof upsertFactory>;
