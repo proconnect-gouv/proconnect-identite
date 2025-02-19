@@ -239,3 +239,7 @@ export function getOrganizationInfoFactory(dependencies: FactoryDependencies) {
     }
   };
 }
+
+export type GetOrganizationInfoHandler = ReturnType<
+  typeof getOrganizationInfoFactory
+>;

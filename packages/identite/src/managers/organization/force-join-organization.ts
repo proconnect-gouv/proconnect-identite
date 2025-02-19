@@ -72,3 +72,7 @@ export function forceJoinOrganizationFactory({
     });
   };
 }
+
+export type ForceJoinOrganizationHandler = ReturnType<
+  typeof forceJoinOrganizationFactory
+>;
