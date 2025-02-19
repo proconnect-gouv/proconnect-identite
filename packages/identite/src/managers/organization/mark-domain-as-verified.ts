@@ -1,5 +1,6 @@
 //
 
+import { NotFoundError } from "#src/errors";
 import type { GetUsersByOrganizationHandler } from "#src/repositories/organization";
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
@@ -9,7 +10,6 @@ import type {
 } from "@gouvfr-lasuite/proconnect.identite/repositories/email-domain";
 import type { FindByIdHandler } from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
 import type { EmailDomain } from "@gouvfr-lasuite/proconnect.identite/types";
-import { InseeNotFoundError } from "@gouvfr-lasuite/proconnect.insee/errors";
 import { isEmpty, some } from "lodash-es";
 
 //
@@ -40,7 +40,7 @@ export function markDomainAsVerifiedFactory({
   }) {
     const organization = await findOrganizationById(organization_id);
     if (isEmpty(organization)) {
-      throw new InseeNotFoundError();
+      throw new NotFoundError();
     }
     const emailDomains =
       await findEmailDomainsByOrganizationId(organization_id);
@@ -82,3 +82,7 @@ export function markDomainAsVerifiedFactory({
     );
   };
 }
+
+export type MarkDomainAsVerifiedHandler = ReturnType<
+  typeof markDomainAsVerifiedFactory
+>;
