@@ -20,8 +20,11 @@
   "sideEffects": false,
   "type": "module",
   "imports": {
-    "#src/*": "./src/*.ts",
-    "#test/*": "./test/*.ts"
+    "#src/*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    },
+    "#testing/*": "./testing/*.ts"
   },
   "exports": {
     "./*": {

@@ -9,6 +9,6 @@
     }
   },
   "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
-  "include": ["src", "test"],
+  "include": ["src", "testing"],
   "references": []
 }
