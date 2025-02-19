@@ -1,5 +1,11 @@
 # @gouvfr-lasuite/proconnect.crisp
 
+## 0.5.0
+
+### Minor Changes
+
+- [#992](https://github.com/numerique-gouv/proconnect-identite/pull/992) [`9f3ddf9`](https://github.com/numerique-gouv/proconnect-identite/commit/9f3ddf9e95f26598b19a17302b5cc5f8b710a6a5) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ♻️ Export des types du paquet
+
 ## 0.4.2
 
 ### Patch Changes
