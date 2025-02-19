@@ -1,9 +1,7 @@
 //
 
-import type { Route, Router } from "#src/router/index.js";
-import type { Config } from "#src/types.js";
-
-export type { Config } from "#src/types.js";
+import type { Route, Router } from "#src/router";
+import type { Config } from "#src/types";
 
 //
 
