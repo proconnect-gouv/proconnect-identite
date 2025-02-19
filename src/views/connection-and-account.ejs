@@ -36,7 +36,7 @@
                         <div class="fr-card__content">
                             <h3 class="fr-card__title blue-france">FreeOTP Authenticator</h3>
                             <div class="fr-card__desc">
-                                <p class="fr-mb-2w">Ajout : <%= totpKeyVerifiedAt; %>
+                                <p class="fr-mb-2w">Création : <%= totpKeyVerifiedAt; %>
                                 </p>
                                 <form action="/delete-authenticator-app-configuration" method="post">
                                     <input
@@ -79,9 +79,19 @@
                     <div class="fr-card fr-card--horizontal fr-mb-3w">
                         <div class="fr-card__body">
                             <div class="fr-card__content">
+                                <% if (shows_second_factor_only_label) { %>
+                                    <div class="fr-tile__start">
+                                        <p class="fr-badge fr-badge--info fr-badge--sm">Second facteur uniquement
+                                        </p>
+                                    </div>
+                                <% } %>
                                 <h3 class="fr-card__title blue-france"><%= display_name; %></h3>
                                 <div class="fr-card__desc">
-                                    <p class="fr-mb-2w">Ajout : <%= created_at; %>
+                                    <p class="fr-mb-1w">Création : <%= created_at; %>
+                                    </p>
+                                    <p class="fr-mb-1w">Dernière utilisation : <%= last_used_at; %>
+                                    </p>
+                                    <p class="fr-mb-2w">Nombre d'utilisations : <%= usage_count; %>
                                     </p>
                                     
                                     <form action="/delete-passkeys/<%= credential_id; %>" method="post">
@@ -92,7 +102,7 @@
                                         >
                                         <button
                                                 aria-label="Supprimer la clé d'accès <%= display_name; %>"
-                                                class="fr-btn fr-btn--secondary fr-btn--sm js-confirm"
+                                                class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line"
                                                 data-confirm="Cette action est irreversible."
                                                 type="submit"
                                         >
