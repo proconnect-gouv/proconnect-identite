@@ -1,5 +1,13 @@
 # @gouvfr-lasuite/proconnect.identite
 
+## 0.5.1
+
+### Patch Changes
+
+- [#990](https://github.com/numerique-gouv/proconnect-identite/pull/990) [`5ad2bd9`](https://github.com/numerique-gouv/proconnect-identite/commit/5ad2bd9031d9b01902401990ba79affb0082eb43) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 Correction d'un code d'erreur
+
+  - si l'organisation est introuvable, `markDomainAsVerifiedFactory` retourne une erreur `NotFoundError` au lieu de `InseeNotFoundError`
+
 ## 0.5.0
 
 ### Minor Changes
