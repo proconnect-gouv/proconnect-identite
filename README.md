@@ -6,7 +6,7 @@ Pour les professionnels n’ayant pas de fournisseur d’identité attitré dans
 la DINUM met à disposition un compte dans ProConnect Identité.
 Ainsi, toute personne affiliée à une organisation enregistrée à l'INSEE, c'est-à-dire ayant un SIRET, peut utiliser une identité fournie par la DINUM au sein de la fédération ProConnect.
 
-Pour vous intégrer la fédération ProConnect, merci de vous référer à [notre documentation en ligne](https://github.com/numerique-gouv/agentconnect-documentation).
+Pour vous intégrer la fédération ProConnect, merci de vous référer à [notre documentation en ligne](https://github.com/numerique-gouv/proconnect-documentation).
 
 ⚠️ ProConnect Identité n'est plus utilisable en dehors de [la fédération ProConnect](https://www.proconnect.gouv.fr/).
 
