@@ -154,7 +154,7 @@ describe("sign-in with a client requiring certification dirigeant and 2fa identi
   });
 });
 
-describe("qign-in with a the requiring certification dirigeant and consistency-checked", () => {
+describe("sign-in with a the requiring certification dirigeant and consistency-checked", () => {
   beforeEach(() => {
     cy.visit("http://localhost:4000");
     cy.setRequestedAcrs([
