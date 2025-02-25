@@ -1,0 +1,100 @@
+{
+  "data": {
+    "siret": "21060088800015",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": "MAIRIE",
+    "activite_principale": {
+      "code": "84.11Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Administration publique générale"
+    },
+    "tranche_effectif_salarie": {
+      "de": 5000,
+      "a": 9999,
+      "code": "52",
+      "date_reference": "2022",
+      "intitule": "5 000 à 9 999 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 415321200,
+    "unite_legale": {
+      "siren": "210600888",
+      "rna": null,
+      "siret_siege_social": "21060088800015",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "COMMUNE DE NICE",
+        "sigle": null
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "GE",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "7210",
+        "libelle": "Commune et commune nouvelle"
+      },
+      "activite_principale": {
+        "code": "84.11Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Administration publique générale"
+      },
+      "tranche_effectif_salarie": {
+        "de": 5000,
+        "a": 9999,
+        "code": "52",
+        "date_reference": "2022",
+        "intitule": "5 000 à 9 999 salariés"
+      },
+      "economie_sociale_et_solidaire": false,
+      "date_creation": -1834790400,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "5",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "DE L'HOTEL DE VILLE",
+      "code_postal": "06300",
+      "libelle_commune": "NICE",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "06088",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "COMMUNE DE NICE",
+        "l2": "",
+        "l3": "",
+        "l4": "5 RUE DE L'HOTEL DE VILLE",
+        "l5": "",
+        "l6": "06300 NICE",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/210600888"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1711753200,
+    "redirect_from_siret": null
+  }
+}

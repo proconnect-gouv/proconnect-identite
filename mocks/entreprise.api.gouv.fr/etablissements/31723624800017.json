@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "31723624800017",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "87.90B",
+      "nomenclature": "NAFRev2",
+      "libelle": "Hébergement social pour adultes et familles en difficultés et autre hébergement social"
+    },
+    "tranche_effectif_salarie": {
+      "de": 500,
+      "a": 999,
+      "code": "41",
+      "date_reference": "2022",
+      "intitule": "500 à 999 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": -2208989361,
+    "unite_legale": {
+      "siren": "317236248",
+      "rna": "W751033362",
+      "siret_siege_social": "31723624800017",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "EMMAUS SOLIDARITE",
+        "sigle": null
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "ETI",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": { "code": "9220", "libelle": "Association déclarée" },
+      "activite_principale": {
+        "code": "87.90B",
+        "nomenclature": "NAFRev2",
+        "libelle": "Hébergement social pour adultes et familles en difficultés et autre hébergement social"
+      },
+      "tranche_effectif_salarie": {
+        "de": 500,
+        "a": 999,
+        "code": "41",
+        "date_reference": "2022",
+        "intitule": "500 à 999 salariés"
+      },
+      "economie_sociale_et_solidaire": true,
+      "date_creation": 283993200,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "32",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "DES BOURDONNAIS",
+      "code_postal": "75001",
+      "libelle_commune": "PARIS",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "75101",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "EMMAUS SOLIDARITE",
+        "l2": "",
+        "l3": "",
+        "l4": "32 RUE DES BOURDONNAIS",
+        "l5": "",
+        "l6": "75001 PARIS",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/317236248"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1711753200,
+    "redirect_from_siret": null
+  }
+}
