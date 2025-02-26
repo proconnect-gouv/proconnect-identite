@@ -27,3 +27,5 @@ export function updateUserFactory({ pg }: DatabaseContext) {
     return rows.shift()!;
   };
 }
+
+export type UpdateUserHandler = ReturnType<typeof updateUserFactory>;

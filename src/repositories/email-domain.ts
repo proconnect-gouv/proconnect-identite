@@ -1,7 +1,6 @@
 import {
   addDomainFactory,
   findEmailDomainsByOrganizationIdFactory,
-  type AddDomainHandler,
 } from "@gouvfr-lasuite/proconnect.identite/repositories/email-domain";
 import { getDatabaseConnection } from "../connectors/postgres";
 
@@ -10,6 +9,6 @@ export const findEmailDomainsByOrganizationId =
     pg: getDatabaseConnection(),
   });
 
-export const addDomain: AddDomainHandler = addDomainFactory({
+export const addDomain = addDomainFactory({
   pg: getDatabaseConnection(),
 });

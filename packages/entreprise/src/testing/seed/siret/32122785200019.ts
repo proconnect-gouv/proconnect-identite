@@ -1,0 +1,97 @@
+import type { InseeSiretEstablishment } from "#src/types";
+
+export default {
+  siret: "32122785200019",
+  siege_social: false,
+  etat_administratif: "F",
+  date_fermeture: 1209592800,
+  enseigne: null,
+  activite_principale: {
+    code: "70.22Z",
+    nomenclature: "NAFRev2",
+    libelle: "Conseil pour les affaires et autres conseils de gestion",
+  },
+  tranche_effectif_salarie: {
+    de: null,
+    a: null,
+    code: null,
+    date_reference: null,
+    intitule: null,
+  },
+  diffusable_commercialement: true,
+  status_diffusion: "diffusible",
+  date_creation: 349830000,
+  unite_legale: {
+    siren: "321227852",
+    rna: null,
+    siret_siege_social: "32122785200118",
+    type: "personne_morale",
+    personne_morale_attributs: {
+      raison_sociale: "APPLE EUROPE INC.",
+      sigle: null,
+    },
+    personne_physique_attributs: {
+      pseudonyme: null,
+      prenom_usuel: null,
+      prenom_1: null,
+      prenom_2: null,
+      prenom_3: null,
+      prenom_4: null,
+      nom_usage: null,
+      nom_naissance: null,
+      sexe: null,
+    },
+    categorie_entreprise: "ETI",
+    status_diffusion: "diffusible",
+    diffusable_commercialement: true,
+    forme_juridique: {
+      code: "3120",
+      libelle: "Société commerciale étrangère immatriculée au RCS",
+    },
+    activite_principale: {
+      code: "82.99Z",
+      nomenclature: "NAFRev2",
+      libelle: "Autres activités de soutien aux entreprises n.c.a.",
+    },
+    tranche_effectif_salarie: {
+      de: 200,
+      a: 249,
+      code: "31",
+      date_reference: "2022",
+      intitule: "200 à 249 salariés",
+    },
+    economie_sociale_et_solidaire: false,
+    date_creation: 349830000,
+    etat_administratif: "A",
+  },
+  adresse: {
+    status_diffusion: "diffusible",
+    complement_adresse: null,
+    numero_voie: "100",
+    indice_repetition_voie: null,
+    type_voie: null,
+    libelle_voie: "WEST TEN WILMINGTON DELAWA",
+    // NOTE(douglasduteil): code_postal can be null in real life
+    // Yes, sadly, the openapi is lying to use here :sad:
+    code_postal: null as any,
+    libelle_commune: null,
+    libelle_commune_etranger: null,
+    distribution_speciale: null,
+    code_commune: null,
+    code_cedex: null,
+    libelle_cedex: null,
+    code_pays_etranger: "99404",
+    libelle_pays_etranger: "ETATS-UNIS",
+    acheminement_postal: {
+      l1: "APPLE EUROPE INC.",
+      l2: "",
+      l3: "",
+      l4: "100 WEST TEN WILMINGTON DELAWA",
+      l5: "",
+      // NOTE(douglasduteil): acheminement_postal.l6 can be null in real life
+      // Yes, sadly, the openapi is lying to use here :sad:
+      l6: null as any,
+      l7: "ETATS-UNIS",
+    },
+  },
+} as InseeSiretEstablishment;

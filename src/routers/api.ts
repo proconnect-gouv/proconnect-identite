@@ -3,6 +3,7 @@ import { Router, urlencoded } from "express";
 import expressBasicAuth from "express-basic-auth";
 import { HttpError } from "http-errors";
 import nocache from "nocache";
+import { inspect } from "node:util";
 import { API_AUTH_PASSWORD, API_AUTH_USERNAME } from "../config/env";
 import {
   getOrganizationInfoController,
@@ -86,7 +87,7 @@ export const apiRouter = () => {
       res: Response,
       _next: NextFunction,
     ) => {
-      logger.error(err);
+      logger.error(inspect(err, { depth: null }));
 
       const statusCode = err.statusCode || 500;
 

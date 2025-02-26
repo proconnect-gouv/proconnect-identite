@@ -11,8 +11,7 @@ test("default sample env with configured INSEE secrets", () => {
   const sample_env = {
     DATABASE_URL:
       "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro",
-    INSEE_CONSUMER_KEY: "fakesecret",
-    INSEE_CONSUMER_SECRET: "fakesecret",
+    ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
   };
 
   const env = envSchema.parse(sample_env);
@@ -45,6 +44,10 @@ test("default sample env with configured INSEE secrets", () => {
     DIRTY_DS_REDIRECTION_URL:
       "https://www.demarches-simplifiees.fr/agent_connect/logout_from_mcp",
     EMAIL_DELIVERABILITY_WHITELIST: [],
+    ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
+    ENTREPRISE_API_TRACKING_CONTEXT: "ProConnect Identité",
+    ENTREPRISE_API_TRACKING_RECIPIENT: "13002526500013",
+    ENTREPRISE_API_URL: "https://staging.entreprise.api.gouv.fr",
     FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: false,
     FEATURE_AUTHENTICATE_BROWSER: false,
     FEATURE_CHECK_EMAIL_DELIVERABILITY: false,
@@ -58,8 +61,6 @@ test("default sample env with configured INSEE secrets", () => {
     FEATURE_USE_SECURE_COOKIES: false,
     FEATURE_USE_SECURITY_RESPONSE_HEADERS: false,
     HTTP_CLIENT_TIMEOUT: 55000,
-    INSEE_CONSUMER_KEY: "fakesecret",
-    INSEE_CONSUMER_SECRET: "fakesecret",
     JWKS: defaultJWKS,
     LOG_LEVEL: "info",
     MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES: 60,

@@ -1,26 +1,31 @@
-// source : https://www.sirene.fr/sirene/public/variable/trancheEffectifsEtablissement
-
-import type { TrancheEffectifs } from "@gouvfr-lasuite/proconnect.insee/types";
+//
+import { z } from "zod";
 
 //
 
-export interface OrganizationInfo {
-  siret: string;
-  libelle: string;
-  nomComplet: string;
-  enseigne: string;
-  trancheEffectifs: TrancheEffectifs;
-  trancheEffectifsUniteLegale: TrancheEffectifs;
-  libelleTrancheEffectif: string;
-  etatAdministratif: string;
-  estActive: boolean;
-  statutDiffusion: string;
-  estDiffusible: boolean;
-  adresse: string;
-  codePostal: string;
-  codeOfficielGeographique: string;
-  activitePrincipale: string;
-  libelleActivitePrincipale: string;
-  categorieJuridique: string;
-  libelleCategorieJuridique: string;
-}
+export const OrganizationInfoSchema = z.object({
+  activitePrincipale: z.string(),
+  adresse: z.string(),
+  categorieJuridique: z.string(),
+  codeOfficielGeographique: z.string(),
+  codePostal: z.string().nullable(),
+  enseigne: z.string(),
+  estActive: z.boolean(),
+  estDiffusible: z.boolean(),
+  etatAdministratif: z.string(),
+  libelle: z.string(),
+  libelleActivitePrincipale: z.string(),
+  libelleCategorieJuridique: z.string(),
+  libelleTrancheEffectif: z.string(),
+  nomComplet: z.string(),
+  siret: z.string(),
+  statutDiffusion: z.enum([
+    "diffusible",
+    "partiellement_diffusible",
+    "non_diffusible",
+  ]),
+  trancheEffectifs: z.string().nullable(),
+  trancheEffectifsUniteLegale: z.string().nullable(),
+});
+
+export type OrganizationInfo = z.output<typeof OrganizationInfoSchema>;

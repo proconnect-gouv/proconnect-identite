@@ -8,15 +8,24 @@ export const connectorEnvSchema = z.object({
   CRISP_BASE_URL: z.string().url().default("https://api.crisp.chat"),
   CRISP_IDENTIFIER: z.string().default(""),
   CRISP_KEY: z.string().default(""),
+  CRISP_MODERATION_TAG: zCoerceArray(z.string()).default("identite,moderation"),
   CRISP_PLUGIN_URN: z.string().default(""),
   CRISP_RESOLVE_DELAY: z.coerce.number().int().nonnegative().default(1_000), // 1 second
   CRISP_USER_NICKNAME: z.string().default("ProConnect"),
   CRISP_WEBSITE_ID: z.string().default(""),
-  CRISP_MODERATION_TAG: zCoerceArray(z.string()).default("identite,moderation"),
   DATABASE_URL: z.string().url(),
   DEBOUNCE_API_KEY: z.string().default(""),
-  INSEE_CONSUMER_KEY: z.string(),
-  INSEE_CONSUMER_SECRET: z.string(),
+  ENTREPRISE_API_TOKEN: z
+    .string()
+    .default(
+      "eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiJlN2UzZmEwNS0xYzRiLTRkZjktYTJkNi00YTE3YjNiZGVhZDIiLCJqdGkiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzY29wZXMiOlsiYXNzb2NpYXRpb25zIiwib3Blbl9kYXRhIiwicHJvYnRwIiwiY290aXNhdGlvbnNfcHJvYnRwIiwiYXR0ZXN0YXRpb25zX2Zpc2NhbGVzIiwiYXR0ZXN0YXRpb25fZmlzY2FsZV9kZ2ZpcCIsImF0dGVzdGF0aW9uc19zb2NpYWxlcyIsImF0dGVzdGF0aW9uX3NvY2lhbGVfdXJzc2FmIiwiYmlsYW5zX2VudHJlcHJpc2VfYmRmIiwiYmlsYW5zX2JkZiIsImZudHBfY2FydGVfcHJvIiwiY2VydGlmaWNhdF9jbmV0cCIsImNlcnRpZmljYXRpb25fY25ldHAiLCJjZXJ0aWZpY2F0X29wcWliaSIsInF1YWxpYmF0IiwiY2VydGlmaWNhdF9yZ2VfYWRlbWUiLCJkb2N1bWVudHNfYXNzb2NpYXRpb24iLCJlbnRyZXByaXNlcyIsInVuaXRlc19sZWdhbGVzX2V0YWJsaXNzZW1lbnRzX2luc2VlIiwiZXRhYmxpc3NlbWVudHMiLCJleGVyY2ljZXMiLCJjaGlmZnJlX2FmZmFpcmVzX2RnZmlwIiwiZXh0cmFpdHNfcmNzIiwibGlhc3NlX2Zpc2NhbGUiLCJsaWFzc2VzX2Zpc2NhbGVzX2RnZmlwIiwiY2VydGlmaWNhdGlvbnNfcXVhbGlvcGlfZnJhbmNlX2NvbXBldGVuY2VzIiwiYXR0ZXN0YXRpb25fY290aXNhdGlvbnNfY29uZ2VzX3BheWVzX2Nob21hZ2VfaW50ZW1wZXJpZXNfY2lidHBfY25ldHAiLCJlb3JpX2RvdWFuZXMiLCJjb252ZW50aW9uc19jb2xsZWN0aXZlcyIsIm1hbmRhdGFpcmVzX3NvY2lhdXhfaW5mb2dyZWZmZSIsImFjdGVzX2lucGkiLCJleHRyYWl0X2NvdXJ0X2lucGkiLCJhc3NvY2lhdGlvbnNfZG9ubmVlc19wcm90ZWdlZXMiLCJhc3NvY2lhdGlvbnNfZGplcHZhIiwibXNhX2NvdGlzYXRpb25zIiwiY290aXNhdGlvbnNfbXNhIiwiY2VydGlmaWNhdGlvbl9vcHFpYmkiLCJlbnRyZXByaXNlc19hcnRpc2FuYWxlcyIsImVmZmVjdGlmc191cnNzYWYiLCJiZW5lZmljaWFpcmVzX2VmZmVjdGlmc19pbnBpIiwiY25hZl9xdW90aWVudF9mYW1pbGlhbCIsImNuYWZfYWxsb2NhdGFpcmVzIiwiY25hZl9lbmZhbnRzIiwiY25hZl9hZHJlc3NlIiwiY29tcGxlbWVudGFpcmVfc2FudGVfc29saWRhaXJlIiwiYWxsb2NhdGlvbl9hZHVsdGVfaGFuZGljYXBlIiwicmV2ZW51X3NvbGlkYXJpdGVfYWN0aXZlIiwicmV2ZW51X3NvbGlkYXJpdGVfYWN0aXZlX21ham9yYXRpb24iLCJhbGxvY2F0aW9uX3NvdXRpZW5fZmFtaWxpYWwiLCJwcmltZV9hY3Rpdml0ZSIsInByaW1lX2FjdGl2aXRlX21ham9yYXRpb24iLCJjbm91c19zdGF0dXRfYm91cnNpZXIiLCJjbm91c19lY2hlbG9uX2JvdXJzZSIsImNub3VzX2VtYWlsIiwiY25vdXNfcGVyaW9kZV92ZXJzZW1lbnQiLCJjbm91c19zdGF0dXRfYm91cnNlIiwiY25vdXNfdmlsbGVfZXR1ZGVzIiwiY25vdXNfaWRlbnRpdGUiLCJtZXNyaV9pZGVudGlmaWFudCIsIm1lc3JpX2lkZW50aXRlIiwibWVzcmlfaW5zY3JpcHRpb25fZXR1ZGlhbnQiLCJtZXNyaV9pbnNjcmlwdGlvbl9hdXRyZSIsIm1lc3JpX2FkbWlzc2lvbiIsIm1lc3JpX2V0YWJsaXNzZW1lbnRzIiwicG9sZV9lbXBsb2lfaWRlbnRpdGUiLCJwb2xlX2VtcGxvaV9hZHJlc3NlIiwicG9sZV9lbXBsb2lfY29udGFjdCIsInBvbGVfZW1wbG9pX2luc2NyaXB0aW9uIiwicG9sZV9lbXBsb2lfcGFpZW1lbnRzIiwibWVuX3N0YXR1dF9zY29sYXJpdGUiLCJtZW5fc3RhdHV0X2JvdXJzaWVyIiwibWVuX2VjaGVsb25fYm91cnNlIiwicG9sZV9lbXBsb2lfaWRlbnRpZmlhbnQiLCJtZW5fc3RhdHV0X2lkZW50aXRlIiwibWVzcmlfaW5zY3JpcHRpb24iLCJtZXNyaV9yZWdpbWUiXSwic3ViIjoic3RhZ2luZyIsImlhdCI6MTczMjcxNTc0MywidmVyc2lvbiI6IjEuMCIsImV4cCI6MjA0ODI0ODU0M30.bk3Cq2eGg18IJvdLAYlrbJWDcfSkEvUBzCSd9UEGETQ",
+    ),
+  ENTREPRISE_API_URL: z
+    .string()
+    .url()
+    .default("https://staging.entreprise.api.gouv.fr"),
+  ENTREPRISE_API_TRACKING_CONTEXT: z.string().default("ProConnect Identité"),
+  ENTREPRISE_API_TRACKING_RECIPIENT: z.string().default("13002526500013"),
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   SENTRY_DSN: z.string().default(""),
   SMTP_URL: z.string().default("smtp://localhost:1025"),

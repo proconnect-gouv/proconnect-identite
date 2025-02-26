@@ -9,7 +9,7 @@ import {
   createUserFactory,
   findByEmailFactory,
   updateUserFactory,
-} from "@gouvfr-lasuite/proconnect.identite/user";
+} from "@gouvfr-lasuite/proconnect.identite/repositories/user";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";

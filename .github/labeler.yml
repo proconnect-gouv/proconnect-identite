@@ -15,6 +15,7 @@
 ":test_tube: unit test":
   - changed-files:
       - any-glob-to-any-file: "test/**/*"
+      - any-glob-to-any-file: "testing/**/*"
       - any-glob-to-any-file: "**/*.test.ts"
 
 # Scopes
@@ -25,9 +26,18 @@
 "scope: crisp":
   - changed-files:
       - any-glob-to-any-file: "packages/crisp/**/*"
+"scope: debounce":
+  - changed-files:
+      - any-glob-to-any-file: "packages/debounce/**/*"
+"scope: devtools":
+  - changed-files:
+      - any-glob-to-any-file: "packages/devtools/**/*"
 "scope: email":
   - changed-files:
       - any-glob-to-any-file: "packages/email/**/*"
+"scope: entreprise":
+  - changed-files:
+      - any-glob-to-any-file: "packages/entreprise/**/*"
 "scope: identite":
   - changed-files:
       - any-glob-to-any-file: "packages/identite/**/*"

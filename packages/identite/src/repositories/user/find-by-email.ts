@@ -18,3 +18,5 @@ export function findByEmailFactory({ pg }: DatabaseContext) {
     return rows.shift();
   };
 }
+
+export type FindByEmailHandler = ReturnType<typeof findByEmailFactory>;
