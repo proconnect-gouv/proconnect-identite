@@ -25,7 +25,7 @@
     "build:db:migrate": "npm run --silent migrate -- up",
     "delete-database": "if [ \"$ENABLE_DATABASE_DELETION\" = \"True\" ]; then tsx scripts/run-sql-script.ts scripts/delete_all.sql; fi",
     "predev": "npm run build:workspaces",
-    "clean": "npx -y del-cli **/build **/dist **/tsconfig*.tsbuildinfo",
+    "clean": "npx -y del-cli build dist packages/*/dist packages/*/tsconfig*.tsbuildinfo",
     "dev": "NODE_ENV=development concurrently \"npm:watch:*(!node)\" \"npm:watch:node\"",
     "dev:with-mocks": "NODE_ENV=development concurrently \"npm:watch:*(!node)\" \"npm:watch:node:with-mocks\"",
     "e2e:setup": "tsx scripts/cypress-single-test-setup.ts",
