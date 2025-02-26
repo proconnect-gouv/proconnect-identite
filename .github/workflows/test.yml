@@ -6,10 +6,6 @@ on:
       - "**"
       - "!master"
 
-env:
-  INSEE_CONSUMER_KEY: ${{ secrets.INSEE_CONSUMER_KEY }}
-  INSEE_CONSUMER_SECRET: ${{ secrets.INSEE_CONSUMER_SECRET }}
-
 jobs:
   test:
     runs-on: ubuntu-22.04

@@ -1,41 +1,38 @@
 //
 
-import { getOrganizationInfoFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
 import {
   findBySirenFactory,
   findBySiretFactory,
-  getInseeAccessTokenFactory,
-} from "@gouvfr-lasuite/proconnect.insee/api";
+} from "@gouvfr-lasuite/proconnect.entreprise/api";
 import {
-  HTTP_CLIENT_TIMEOUT,
-  INSEE_CONSUMER_KEY,
-  INSEE_CONSUMER_SECRET,
+  createEntrepriseOpenApiClient,
+  type EntrepriseOpenApiClient,
+} from "@gouvfr-lasuite/proconnect.entreprise/client";
+import { getOrganizationInfoFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
+import {
+  ENTREPRISE_API_TOKEN,
+  ENTREPRISE_API_TRACKING_CONTEXT,
+  ENTREPRISE_API_TRACKING_RECIPIENT,
+  ENTREPRISE_API_URL,
 } from "../config/env";
 
 //
 
-export const getInseeAccessToken = getInseeAccessTokenFactory(
-  {
-    consumerKey: INSEE_CONSUMER_KEY,
-    consumerSecret: INSEE_CONSUMER_SECRET,
-  },
-  {
-    timeout: HTTP_CLIENT_TIMEOUT,
-  },
-);
+export const entrepriseOpenApiClient: EntrepriseOpenApiClient =
+  createEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
+    baseUrl: ENTREPRISE_API_URL,
+  });
 
-export const findBySiret = findBySiretFactory({
-  getInseeAccessToken,
-  config: {
-    timeout: HTTP_CLIENT_TIMEOUT,
-  },
+export const findBySiret = findBySiretFactory(entrepriseOpenApiClient, {
+  context: ENTREPRISE_API_TRACKING_CONTEXT,
+  object: "findEstablishmentBySiret",
+  recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
 });
 
-export const findBySiren = findBySirenFactory({
-  getInseeAccessToken,
-  config: {
-    timeout: HTTP_CLIENT_TIMEOUT,
-  },
+export const findBySiren = findBySirenFactory(entrepriseOpenApiClient, {
+  context: ENTREPRISE_API_TRACKING_CONTEXT,
+  object: "findEstablishmentBySiren",
+  recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
 });
 
 export const getOrganizationInfo = getOrganizationInfoFactory({

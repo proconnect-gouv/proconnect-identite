@@ -11,6 +11,8 @@ import {
   isOrganizationInfo,
 } from "../src/services/script-helpers";
 
+//
+
 // ex: for public insee subscription the script can be run like so:
 // npm run update-organization-info 2000
 const rateInMsFromArgs = toInteger(process.argv[2]);
@@ -52,9 +54,9 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 250;
       // 1. get an organization
       const { rows: results } = await connection.query(
         `
-SELECT id, siret, organization_info_fetched_at
-FROM organizations
-ORDER BY id LIMIT 1 OFFSET $1`,
+          SELECT id, siret, organization_info_fetched_at
+          FROM organizations
+          ORDER BY id LIMIT 1 OFFSET $1`,
         [i],
       );
       if (isEmpty(results)) {
@@ -72,7 +74,6 @@ ORDER BY id LIMIT 1 OFFSET $1`,
       let organizationInfo: any = {};
       try {
         organizationInfo = await getOrganizationInfo(siret);
-
         if (!isOrganizationInfo(organizationInfo)) {
           throw new Error("not found");
         }

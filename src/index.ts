@@ -9,6 +9,7 @@ import { Server } from "http";
 import HttpErrors from "http-errors";
 import { isNull, omitBy } from "lodash-es";
 import morgan from "morgan";
+import { inspect } from "node:util";
 import Provider, { type ClientMetadata, errors } from "oidc-provider";
 import path from "path";
 import { ZodError } from "zod";
@@ -291,7 +292,7 @@ let server: Server;
       res: Response,
       _next: NextFunction,
     ) => {
-      logger.error(err);
+      logger.error(inspect(err, { depth: null }));
 
       if (err instanceof HttpErrors.HttpError) {
         if (err.statusCode === 404) {

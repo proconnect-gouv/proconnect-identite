@@ -16,9 +16,10 @@
   "include": ["src"],
   "references": [
     { "path": "./packages/core/tsconfig.lib.json" },
+    { "path": "./packages/debounce/tsconfig.lib.json" },
     { "path": "./packages/email/tsconfig.lib.json" },
-    { "path": "./packages/identite/tsconfig.lib.json" },
-    { "path": "./packages/insee/tsconfig.lib.json" }
+    { "path": "./packages/entreprise/tsconfig.lib.json" },
+    { "path": "./packages/identite/tsconfig.lib.json" }
   ],
   "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json"
 }

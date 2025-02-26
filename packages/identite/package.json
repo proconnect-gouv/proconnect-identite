@@ -47,13 +47,14 @@
     "spec": "src/**/*.test.ts"
   },
   "dependencies": {
-    "sql-template-tag": "^5.2.1"
+    "sql-template-tag": "^5.2.1",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.2.15",
     "@gouvfr-lasuite/proconnect.core": "^0.4.0",
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
-    "@gouvfr-lasuite/proconnect.insee": "^0.3.2",
+    "@gouvfr-lasuite/proconnect.entreprise": "^0.0.0",
     "@sinonjs/fake-timers": "^14.0.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",

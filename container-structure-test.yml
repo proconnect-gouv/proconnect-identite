@@ -10,9 +10,7 @@ commandTests:
     expectedError: ["connect ECONNREFUSED 127.0.0.1:5432"]
 
 globalEnvVars:
-  - key: "INSEE_CONSUMER_KEY"
-    value: "INSEE_CONSUMER_KEY"
-  - key: "INSEE_CONSUMER_SECRET"
-    value: "INSEE_CONSUMER_SECRET"
+  - key: "ENTREPRISE_API_TOKEN"
+    value: "ENTREPRISE_API_TOKEN"
   - key: "DATABASE_URL"
     value: "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro"

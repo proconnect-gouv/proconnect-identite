@@ -1,7 +1,12 @@
 import { isEmailValid } from "@gouvfr-lasuite/proconnect.core/security";
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import { Welcome } from "@gouvfr-lasuite/proconnect.email";
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
+import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import {
+  InvalidSiretError,
+  NotFoundError,
+  OrganizationNotActiveError,
+} from "@gouvfr-lasuite/proconnect.identite/errors";
 import { forceJoinOrganizationFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
 import type {
   Organization,
@@ -10,6 +15,7 @@ import type {
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
+import { inspect } from "node:util";
 import {
   CRISP_WEBSITE_ID,
   FEATURE_BYPASS_MODERATION,
@@ -17,9 +23,6 @@ import {
   MAX_SUGGESTED_ORGANIZATIONS,
 } from "../../config/env";
 import {
-  InseeConnectionError,
-  InseeNotActiveError,
-  InvalidSiretError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -128,11 +131,11 @@ export const joinOrganization = async ({
   try {
     organizationInfo = await getOrganizationInfo(siret);
   } catch (error) {
-    if (error instanceof InseeConnectionError) {
+    if (error instanceof EntrepriseApiError) {
       throw error;
     }
 
-    throw new InvalidSiretError();
+    throw new InvalidSiretError("", { cause: error });
   }
   let organization = await upsert({
     siret,
@@ -141,7 +144,7 @@ export const joinOrganization = async ({
 
   // Ensure the organization is active
   if (!organization.cached_est_active) {
-    throw new InseeNotActiveError();
+    throw new OrganizationNotActiveError();
   }
 
   // Ensure user_id is valid
@@ -206,7 +209,7 @@ export const joinOrganization = async ({
         organization.cached_code_postal,
       );
     } catch (err) {
-      logger.error(err);
+      logger.error(inspect(err, { depth: null }));
       Sentry.captureException(err);
     }
 

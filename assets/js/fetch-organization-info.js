@@ -79,6 +79,9 @@ document.addEventListener(
                 organizationAlertElement.id,
               );
             }
+          } else if (xmlhttp.status === 400) {
+            organizationAlertElement.style.display = "block";
+            organizationAlertContentElement.innerHTML = "SIRET invalide.";
           } else if (xmlhttp.status === 404) {
             organizationAlertElement.style.display = "block";
             organizationAlertContentElement.innerHTML =

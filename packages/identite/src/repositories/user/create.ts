@@ -40,3 +40,5 @@ export function createUserFactory({ pg }: DatabaseContext) {
     return rows.shift()!;
   };
 }
+
+export type CreateUserHandler = ReturnType<typeof createUserFactory>;

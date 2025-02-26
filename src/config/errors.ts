@@ -7,14 +7,6 @@ export class InvalidEmailError extends Error {
   }
 }
 
-export class InvalidSiretError extends Error {}
-
-export class InseeConnectionError extends Error {}
-
-export class InseeNotFoundError extends Error {}
-
-export class InseeNotActiveError extends Error {}
-
 export class UserNotFoundError extends Error {}
 
 export class ForbiddenError extends Error {}
