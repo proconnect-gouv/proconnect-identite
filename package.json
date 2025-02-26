@@ -71,7 +71,7 @@
     "@gouvfr-lasuite/proconnect.identite": "workspace:*",
     "@sentry/node": "^7.120.0",
     "@simplewebauthn/browser": "^8.3.4",
-    "@simplewebauthn/server": "^8.3.5",
+    "@simplewebauthn/server": "^13.1.1",
     "@sunknudsen/totp": "^1.1.0",
     "await-to-js": "^3.0.0",
     "axios": "^1.7.7",
