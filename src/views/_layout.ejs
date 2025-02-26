@@ -2,20 +2,7 @@
 <html lang="fr">
 <%- include('partials/head.ejs'); %>
 <body>
-    <div class="fr-skiplinks">
-        <nav class="fr-container" role="navigation" aria-label="Accès rapide">
-            <ul class="fr-skiplinks__list">
-                <% if (locals.use_dashboard_layout) { %>
-                    <li>
-                        <a class="fr-link" href="#main">Contenu</a>
-                    </li>
-                <% } %>
-                <li>
-                    <a class="fr-link" href="#footer">Pied de page</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    <%- include('partials/skiplinks.ejs'); %>
     <div id="loader-bar"></div>
     <%- include('partials/header.ejs'); %>
     <% if (locals.use_dashboard_layout) { %>
@@ -23,7 +10,7 @@
             <%- body; %>
         </main>
     <% } else { %>
-        <main role="main" class="onboarding-container">
+        <main role="main" id="main" class="onboarding-container">
             <%- body; %>
             <div class="centered-container">
                 <img src="/dist/<%= locals.illustration ? locals.illustration : 'illu-account.svg' ;%>" alt="" />
