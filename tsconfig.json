@@ -10,10 +10,11 @@
     "module": "Preserve",
     "moduleResolution": "Bundler",
     "outDir": "./build",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["cypress"]
   },
   "exclude": ["packages/*", "build/*", "dist/*"],
-  "include": ["src"],
+  "include": ["cypress.config.ts", "cypress/e2e", "cypress/support", "src"],
   "references": [
     { "path": "./packages/core/tsconfig.lib.json" },
     { "path": "./packages/debounce/tsconfig.lib.json" },
