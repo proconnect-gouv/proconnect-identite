@@ -47,6 +47,6 @@ export const isEmailSafeToSendTransactional = async (
   } catch (error) {
     logger.error(error);
 
-    throw new Error("Error from Debounce API");
+    throw new Error("Error from Debounce API", { cause: error });
   }
 };
