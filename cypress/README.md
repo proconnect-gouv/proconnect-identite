@@ -1,41 +1,42 @@
 # Run cypress locally
 
-## Step by step with command lines
+## Usage
 
-### Setup env vars
+### `npm run e2e:setup <my_cypress_test_case>`
 
-You will need to set `BREVO_API_KEY`, `CYPRESS_MAILSLURP_API_KEY`, `DEBOUNCE_API_KEY`, and `ZAMMAD_TOKEN`.
+> [!CAUTION]  
+> That this will delete your database.
 
-Ask a teammate for them and put the values in your `.env`.
-
-Also in your `.env` put the following values :
-
-```dotenv
-FEATURE_SEND_MAIL=True
-```
-
-### Load test fixtures in the database
-
-Note that this will delete your database. Load the specific fixtures in the database:
+Load the specific fixtures in the database using
 
 ```bash
-ENABLE_DATABASE_DELETION=True npm run delete-database ; npx run-s "build:workspaces" "migrate up" "fixtures:load-ci cypress/e2e/join_and_moderation/fixtures.sql" "update-organization-info 2000"
+ENABLE_DATABASE_DELETION=True npm run e2e:setup redirect_after_session_expiration
 ```
 
-### Start ProConnect Identité with the test configuration
+> [!TIP]  
+> Running the script without argument (or with a wrong argument) will trigger a prompt to select the test case.
+>
+> ```bash
+> $ ENABLE_DATABASE_DELETION=True npm run e2e:setup
+> Could not resolve test case "undefined"
+> They are 26 test cases in the cypress/e2e folder :
+> 0) activate_totp        1) check_email_deliverability
+> [...]
+> ```
+>
+> This will allow you to quickly pick the test case you want to run.
 
-Then run the app with the specific env vars:
+The script will give you ask you if you want to start a dev server our gives you the command to run
+the app with the specific env vars.
 
-```bash
-npx dotenvx run -f cypress/e2e/join_and_moderation/env.conf -- npm run dev
-```
+See `scripts/cypress-single-test-setup.ts`
 
-## Run Cypress
+### `npm run e2e:run <my_cypress_test_case>`
 
 On your host, run the tests
 
 ```bash
-npx dotenvx run -- npx cypress run --headed --spec "cypress/e2e/join_and_moderation/index.cy.ts"
+npm run e2e:run redirect_after_session_expiration
 ```
 
 ## About test client used in e2e test
