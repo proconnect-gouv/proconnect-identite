@@ -14,6 +14,7 @@ import {
   ENTREPRISE_API_TRACKING_CONTEXT,
   ENTREPRISE_API_TRACKING_RECIPIENT,
   ENTREPRISE_API_URL,
+  HTTP_CLIENT_TIMEOUT,
 } from "../config/env";
 
 //
@@ -21,6 +22,7 @@ import {
 export const entrepriseOpenApiClient: EntrepriseOpenApiClient =
   createEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
     baseUrl: ENTREPRISE_API_URL,
+    signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
   });
 
 export const findBySiret = findBySiretFactory(entrepriseOpenApiClient, {
