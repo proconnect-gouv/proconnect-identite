@@ -6,8 +6,10 @@ import {
   InvalidSiretError,
   NotFoundError,
 } from "@gouvfr-lasuite/proconnect.identite/errors";
+import * as Sentry from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
+import { inspect } from "node:util";
 import { z, ZodError } from "zod";
 import notificationMessages from "../config/notification-messages";
 import { getOrganizationInfo } from "../connectors/api-sirene";
@@ -32,7 +34,8 @@ export const getPingApiSireneController = async (
 
     return res.json({});
   } catch (e) {
-    logger.error(e);
+    logger.error(inspect(e, { depth: null }));
+    Sentry.captureException(e);
     return res.status(502).json({ message: "Bad Gateway" });
   }
 };
