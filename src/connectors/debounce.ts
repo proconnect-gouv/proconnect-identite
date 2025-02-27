@@ -13,7 +13,7 @@ type EmailDebounceInfo = {
   didYouMean?: string;
 };
 
-const singleValidation = singleValidationFactory(DEBOUNCE_API_KEY, {
+export const singleValidation = singleValidationFactory(DEBOUNCE_API_KEY, {
   timeout: HTTP_CLIENT_TIMEOUT,
 });
 

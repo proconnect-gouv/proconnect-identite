@@ -22,20 +22,31 @@ import {
 export const entrepriseOpenApiClient: EntrepriseOpenApiClient =
   createEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
     baseUrl: ENTREPRISE_API_URL,
-    signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
   });
 
-export const findBySiret = findBySiretFactory(entrepriseOpenApiClient, {
-  context: ENTREPRISE_API_TRACKING_CONTEXT,
-  object: "findEstablishmentBySiret",
-  recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
-});
+export const findBySiret = findBySiretFactory(
+  entrepriseOpenApiClient,
+  {
+    context: ENTREPRISE_API_TRACKING_CONTEXT,
+    object: "findEstablishmentBySiret",
+    recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
+  },
+  () => ({
+    signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
+  }),
+);
 
-export const findBySiren = findBySirenFactory(entrepriseOpenApiClient, {
-  context: ENTREPRISE_API_TRACKING_CONTEXT,
-  object: "findEstablishmentBySiren",
-  recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
-});
+export const findBySiren = findBySirenFactory(
+  entrepriseOpenApiClient,
+  {
+    context: ENTREPRISE_API_TRACKING_CONTEXT,
+    object: "findEstablishmentBySiren",
+    recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
+  },
+  () => ({
+    signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
+  }),
+);
 
 export const getOrganizationInfo = getOrganizationInfoFactory({
   findBySiren,
