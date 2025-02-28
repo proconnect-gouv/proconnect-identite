@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import RedisStore from "connect-redis";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
@@ -50,23 +51,21 @@ const app = express();
 
 if (SENTRY_DSN) {
   Sentry.init({
+    attachStacktrace: true,
     debug: LOG_LEVEL === "debug",
     dsn: SENTRY_DSN,
     environment: DEPLOY_ENV,
     initialScope: { tags: { NODE_ENV, DEPLOY_ENV, HOST } },
     integrations: [
-      new Sentry.Integrations.Express({ app }),
-      new Sentry.Integrations.Http({ tracing: true }),
-      new Sentry.Integrations.Postgres(),
+      nodeProfilingIntegration(),
+      Sentry.expressIntegration(),
+      Sentry.httpIntegration(),
+      Sentry.postgresIntegration(),
     ],
     profilesSampleRate: 0.5,
     tracesSampleRate: 0.2,
   });
 }
-
-// The request handler must be the first middleware on the app
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
 
 if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
   app.use(
@@ -179,10 +178,8 @@ let server: Server;
       ) {
         logger.error(err);
         Sentry.withScope((scope) => {
-          scope.addEventProcessor((event) => {
-            return Sentry.addRequestDataToEvent(event, ctx.request);
-          });
-          Sentry.captureException(err);
+          scope.setSDKProcessingMetadata({ request: ctx.request });
+          scope.captureException(err);
         });
       }
 
@@ -279,12 +276,13 @@ let server: Server;
         illustration: "connection-lost.svg",
         oidcError: "invalid_request",
         interactionId: req.session?.interactionId,
+        sentryTrackingMetaTags: Sentry.getTraceMetaTags(),
       }),
     );
   });
 
   // The error handler must be before any other error middleware and after all controllers
-  app.use(Sentry.Handlers.errorHandler());
+  Sentry.setupExpressErrorHandler(app);
 
   app.use(
     (
