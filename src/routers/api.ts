@@ -87,7 +87,7 @@ export const apiRouter = () => {
       res: Response,
       _next: NextFunction,
     ) => {
-      logger.error(inspect(err, { depth: null }));
+      logger.error(inspect(err, { depth: 3 }));
 
       const statusCode = err.statusCode || 500;
 
