@@ -209,7 +209,7 @@ export const joinOrganization = async ({
         organization.cached_code_postal,
       );
     } catch (err) {
-      logger.error(inspect(err, { depth: null }));
+      logger.error(inspect(err, { depth: 3 }));
       Sentry.captureException(err);
     }
 

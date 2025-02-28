@@ -34,7 +34,7 @@ export const getPingApiSireneController = async (
 
     return res.json({});
   } catch (e) {
-    logger.error(inspect(e, { depth: null }));
+    logger.error(inspect(e, { depth: 3 }));
     Sentry.captureException(e);
     return res.status(502).json({ message: "Bad Gateway" });
   }

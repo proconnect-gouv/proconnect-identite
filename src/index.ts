@@ -292,7 +292,7 @@ let server: Server;
       res: Response,
       _next: NextFunction,
     ) => {
-      logger.error(inspect(err, { depth: null }));
+      logger.error(inspect(err, { depth: 3 }));
 
       if (err instanceof HttpErrors.HttpError) {
         if (err.statusCode === 404) {
