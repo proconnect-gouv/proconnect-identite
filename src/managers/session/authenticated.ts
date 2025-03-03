@@ -55,7 +55,6 @@ export const createAuthenticatedSession = async (
   // csrfToken should not be passed to the new session for security reasons
   const {
     authForProconnectFederation,
-    certificationDirigeantRequested,
     interactionId,
     mustReturnOneOrganizationInPayload,
     nonce,
@@ -85,8 +84,6 @@ export const createAuthenticatedSession = async (
         req.session.mustReturnOneOrganizationInPayload =
           mustReturnOneOrganizationInPayload;
         req.session.twoFactorsAuthRequested = twoFactorsAuthRequested;
-        req.session.certificationDirigeantRequested =
-          certificationDirigeantRequested;
         req.session.referrerPath = referrerPath;
         req.session.authForProconnectFederation = authForProconnectFederation;
         // new session reset amr

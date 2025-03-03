@@ -13,7 +13,7 @@ import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import { FranceConnectOidcSessionSchema } from "../../managers/session/certification";
+import { FranceConnectOidcSessionSchema } from "../../managers/session/franceconnect";
 import { updateFranceConnectUserInfo } from "../../managers/user";
 
 //
