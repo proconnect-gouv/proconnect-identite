@@ -19,6 +19,7 @@ declare global {
       seeInField: typeof seeInFieldCommand;
       setCustomParams(customParams: any): Chainable<void>;
       setRequestedAcrs(requestedAcrs?: string[]): Chainable<void>;
+      getDescribed: typeof getDescribedCommand;
     }
   }
 }
@@ -108,3 +109,14 @@ Cypress.Commands.add("setRequestedAcrs", (requestedAcrs) => {
 
   cy.setCustomParams(customParams);
 });
+
+function getDescribedCommand(text: string) {
+  return cy
+    .contains(text)
+    .closest("[id]")
+    .invoke("attr", "id")
+    .then((id) => {
+      return cy.get(`[aria-describedby="${id}"]`).as(`${text}`);
+    });
+}
+Cypress.Commands.add("getDescribed", getDescribedCommand);

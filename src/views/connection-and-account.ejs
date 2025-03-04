@@ -21,8 +21,8 @@
             </form>
         </section>
 
-        <section class="fr-mb-6w">
-            <h3>Double authentification</h3>
+        <section aria-describedby="two-factor-authentication" class="fr-mb-6w">
+            <h3 id="two-factor-authentication">Double authentification</h3>
             <% if (isAuthenticatorConfigured || passkeys.length > 0){ %>
                 <div class="fr-alert fr-alert--info fr-mb-3w">
                     <p>La double authentification (2FA) protège mieux vos informations personnelles et réduit les risques de piratage.</p>
@@ -30,8 +30,8 @@
             <% }; %>
 
             <% if (isAuthenticatorConfigured){ %>
-                <p><b>Code à usage unique</b></p>
-                <div class="fr-card fr-card--horizontal fr-mb-3w">
+                <p id="one-time-password"><b>Code à usage unique</b></p>
+                <div aria-describedby="one-time-password"  class="fr-card fr-card--horizontal fr-mb-3w">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
                             <h3 class="fr-card__title blue-france">FreeOTP Authenticator</h3>
