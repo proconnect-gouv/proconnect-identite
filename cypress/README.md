@@ -49,7 +49,7 @@ By default, the Docker Compose file is configured to launch enough test clients 
 To help support and the team better visualise the different ProConnect Identity paths, it is possible to film the paths via Cypress. The command to run is as follows:
 
 ```bash
-CYPRESS_RECORD=true npx dotenvx run -- npx cypress run --headed --spec "cypress/e2e/join_and_moderation/index.cy.ts"
+CYPRESS_RECORD=true CYPRESS_RECORD_FOR_HUMANS=true npx dotenvx run -- npx cypress run --headed --spec "cypress/e2e/join_and_moderation/index.cy.ts"
 ```
 
 The videos are listed on the following documentation page: https://documentation.beta.numerique.gouv.fr/doc/videos-des-differents-parcours-A3UJiqFLZn
