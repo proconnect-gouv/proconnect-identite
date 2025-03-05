@@ -9,18 +9,14 @@ import type {
 } from "#src/repositories/organization";
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import type { BaseUserOrganizationLink, Organization, User } from "#src/types";
-import * as chai from "chai";
-import chaiAsPromised from "chai-as-promised";
-import { mock } from "node:test";
+import assert from "node:assert/strict";
+import { mock, suite, test } from "node:test";
 import { markDomainAsVerifiedFactory } from "./mark-domain-as-verified.js";
 
 //
 
-chai.use(chaiAsPromised);
-const expect = chai.expect;
-
-describe(markDomainAsVerifiedFactory.name, () => {
-  it("should update organization members", async () => {
+suite("markDomainAsVerifiedFactory", () => {
+  test("should update organization members", async () => {
     const addDomain = mock.fn<AddDomainHandler>(() =>
       Promise.resolve({} as any),
     );
@@ -54,20 +50,20 @@ describe(markDomainAsVerifiedFactory.name, () => {
       organization_id: 42,
     });
 
-    expect(updateUserOrganizationLink.mock.callCount()).to.equal(1);
+    assert.equal(updateUserOrganizationLink.mock.callCount(), 1);
     {
       const [call] = updateUserOrganizationLink.mock.calls;
-      expect(call.arguments).to.deep.equal([
+      assert.deepEqual(call.arguments, [
         42,
         42,
         { verification_type: "domain" },
       ]);
     }
 
-    expect(addDomain.mock.callCount()).to.equal(1);
+    assert.equal(addDomain.mock.callCount(), 1);
     {
       const [call] = addDomain.mock.calls;
-      expect(call.arguments).to.deep.equal([
+      assert.deepEqual(call.arguments, [
         {
           domain: "darkangels.world",
           organization_id: 42,
@@ -77,7 +73,7 @@ describe(markDomainAsVerifiedFactory.name, () => {
     }
   });
 
-  it("❎ throws NotFoundError for unknown organization", async () => {
+  test("❎ throws NotFoundError for unknown organization", async () => {
     const markDomainAsVerified = markDomainAsVerifiedFactory({
       addDomain: () => Promise.reject(),
       findEmailDomainsByOrganizationId: () => Promise.reject(),
@@ -86,12 +82,13 @@ describe(markDomainAsVerifiedFactory.name, () => {
       updateUserOrganizationLink: () => Promise.reject(),
     });
 
-    await expect(
+    assert.rejects(
       markDomainAsVerified({
         domain: "darkangels.world",
         domain_verification_type: "verified",
         organization_id: 42,
       }),
-    ).rejectedWith(NotFoundError);
+      NotFoundError,
+    );
   });
 });

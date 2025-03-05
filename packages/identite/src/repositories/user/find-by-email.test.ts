@@ -1,19 +1,19 @@
 //
 
 import { emptyDatabase, migrate, pg } from "#testing";
-import { expect } from "chai";
-import { before, describe, it } from "mocha";
+import assert from "node:assert/strict";
+import { before, beforeEach, suite, test } from "node:test";
 import { findByEmailFactory } from "./find-by-email.js";
 
 //
 
 const findByEmail = findByEmailFactory({ pg: pg as any });
 
-describe(findByEmailFactory.name, () => {
+suite("findByEmailFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
-  it("should find a user by email", async () => {
+  test("should find a user by email", async () => {
     await pg.sql`
       INSERT INTO users
         (id, email, created_at, updated_at, given_name, family_name, phone_number, job)
@@ -25,12 +25,38 @@ describe(findByEmailFactory.name, () => {
 
     const user = await findByEmail("lion.eljonson@darkangels.world");
 
-    expect(user?.email).to.equal("lion.eljonson@darkangels.world");
+    assert.deepEqual(user, {
+      created_at: new Date("4444-04-04"),
+      current_challenge: null,
+      email: "lion.eljonson@darkangels.world",
+      email_verified: false,
+      email_verified_at: null,
+      encrypted_password: "",
+      encrypted_totp_key: null,
+      family_name: "el'jonson",
+      force_2fa: false,
+      given_name: "lion",
+      id: 1,
+      job: "primarque",
+      last_sign_in_at: null,
+      magic_link_sent_at: null,
+      magic_link_token: null,
+      needs_inclusionconnect_onboarding_help: false,
+      needs_inclusionconnect_welcome_page: false,
+      phone_number: "i",
+      reset_password_sent_at: null,
+      reset_password_token: null,
+      sign_in_count: 0,
+      totp_key_verified_at: null,
+      updated_at: new Date("4444-04-04"),
+      verify_email_sent_at: null,
+      verify_email_token: null,
+    });
   });
 
-  it("❎ fail to find the God-Emperor of Mankind", async () => {
+  test("❎ fail to find the God-Emperor of Mankind", async () => {
     const user = await findByEmail("the God-Emperor of Mankind");
 
-    expect(user).to.be.undefined;
+    assert.deepEqual(user, undefined);
   });
 });

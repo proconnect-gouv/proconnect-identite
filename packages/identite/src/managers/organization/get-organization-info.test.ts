@@ -4,14 +4,11 @@ import {
   JeanPierreEntrepreneur,
 } from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/siret";
 import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
-import * as chai from "chai";
-import chaiAsPromised from "chai-as-promised";
+import assert from "node:assert/strict";
+import { suite, test } from "node:test";
 import { getOrganizationInfoFactory } from "./get-organization-info.js";
 
-chai.use(chaiAsPromised);
-const assert = chai.assert;
-
-describe("getOrganizationInfo", () => {
+suite("getOrganizationInfo", () => {
   const diffusibleOrganizationInfo = {
     siret: "20007184300060",
     libelle: "Cc du vexin normand",
@@ -33,35 +30,35 @@ describe("getOrganizationInfo", () => {
     libelleCategorieJuridique: "Communauté de communes",
   };
 
-  it("should return valid payload for diffusible établissement", async () => {
+  test("should return valid payload for diffusible siret", async () => {
     const getOrganizationInfo = getOrganizationInfoFactory({
       findBySiren: () => Promise.reject(),
       findBySiret: () => Promise.resolve(CommunautéDeCommunes),
     });
-    await assert.eventually.deepEqual(
-      getOrganizationInfo("20007184300060"),
+    assert.deepEqual(
+      await getOrganizationInfo("20007184300060"),
       diffusibleOrganizationInfo,
     );
   });
 
-  it("should return valid payload for diffusible établissement", async () => {
+  test("should return valid payload for diffusible siren", async () => {
     const getOrganizationInfo = getOrganizationInfoFactory({
       findBySiren: () => Promise.resolve(CommunautéDeCommunes),
       findBySiret: () => Promise.reject(),
     });
-    await assert.eventually.deepEqual(
-      getOrganizationInfo("200071843"),
+    assert.deepEqual(
+      await getOrganizationInfo("200071843"),
       diffusibleOrganizationInfo,
     );
   });
 
-  it("should show partial data for partially non diffusible établissement", async () => {
+  test("should show partial data for partially non diffusible établissement", async () => {
     const getOrganizationInfo = getOrganizationInfoFactory({
       findBySiren: () => Promise.reject(),
       findBySiret: () => Promise.resolve(JeanPierreEntrepreneur),
     });
 
-    await assert.eventually.deepEqual(getOrganizationInfo("94957325700019"), {
+    assert.deepEqual(await getOrganizationInfo("94957325700019"), {
       siret: "94957325700019",
       libelle: "Nom inconnu",
       nomComplet: "Nom inconnu",
@@ -84,7 +81,7 @@ describe("getOrganizationInfo", () => {
     });
   });
 
-  it.skip("should throw for totally non diffusible établissement", async () => {
+  test.skip("should throw for totally non diffusible établissement", async () => {
     const getOrganizationInfo = getOrganizationInfoFactory({
       findBySiren: () => Promise.reject(),
       findBySiret: () =>
@@ -92,9 +89,6 @@ describe("getOrganizationInfo", () => {
           status_diffusion: "non_diffusible",
         } as InseeSiretEstablishment),
     });
-    await assert.isRejected(
-      getOrganizationInfo("53512638700013"),
-      NotFoundError,
-    );
+    await assert.rejects(getOrganizationInfo("53512638700013"), NotFoundError);
   });
 });

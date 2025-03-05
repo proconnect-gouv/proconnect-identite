@@ -1,19 +1,19 @@
 //
 
 import { emptyDatabase, migrate, pg } from "#testing";
-import { expect } from "chai";
-import { before, describe, it } from "mocha";
+import assert from "node:assert/strict";
+import { before, beforeEach, suite, test } from "node:test";
 import { getUsersByOrganizationFactory } from "./get-users-by-organization.js";
 
 //
 
 const getUsersByOrganization = getUsersByOrganizationFactory({ pg: pg as any });
 
-describe(getUsersByOrganizationFactory.name, () => {
+suite("getUsersByOrganizationFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
-  it("should find users by organization id", async () => {
+  test("should find users by organization id", async () => {
     await pg.sql`
       INSERT INTO organizations
         (cached_libelle, cached_nom_complet, id, siret, created_at, updated_at)
@@ -40,7 +40,7 @@ describe(getUsersByOrganizationFactory.name, () => {
 
     const user = await getUsersByOrganization(1);
 
-    expect(user).to.deep.equal([
+    assert.deepEqual(user, [
       {
         created_at: new Date("4444-04-04"),
         current_challenge: null,
@@ -77,9 +77,8 @@ describe(getUsersByOrganizationFactory.name, () => {
     ]);
   });
 
-  it("❎ fail to find users for unknown organization id", async () => {
+  test("❎ fail to find users for unknown organization id", async () => {
     const user = await getUsersByOrganization(42);
-
-    expect(user).to.deep.equal([]);
+    assert.deepEqual(user, []);
   });
 });
