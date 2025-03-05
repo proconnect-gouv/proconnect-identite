@@ -1,8 +1,8 @@
 //
 
 import { emptyDatabase, migrate, pg } from "#testing";
-import { expect } from "chai";
-import { before, describe, it } from "mocha";
+import assert from "node:assert/strict";
+import { before, beforeEach, suite, test } from "node:test";
 import { findEmailDomainsByOrganizationIdFactory } from "./find-email-domains-by-organization-id.js";
 
 //
@@ -10,11 +10,11 @@ import { findEmailDomainsByOrganizationIdFactory } from "./find-email-domains-by
 const findEmailDomainsByOrganizationId =
   findEmailDomainsByOrganizationIdFactory({ pg: pg as any });
 
-describe(findEmailDomainsByOrganizationIdFactory.name, () => {
+suite("findEmailDomainsByOrganizationIdFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
-  it("should find email domains by organization id", async () => {
+  test("should find email domains by organization id", async () => {
     await pg.sql`
       INSERT INTO organizations
         (id, siret, created_at, updated_at)
@@ -33,7 +33,7 @@ describe(findEmailDomainsByOrganizationIdFactory.name, () => {
 
     const emailDomains = await findEmailDomainsByOrganizationId(1);
 
-    expect(emailDomains).to.deep.equal([
+    assert.deepEqual(emailDomains, [
       {
         can_be_suggested: true,
         created_at: new Date("4444-04-04"),
@@ -47,9 +47,9 @@ describe(findEmailDomainsByOrganizationIdFactory.name, () => {
     ]);
   });
 
-  it("❎ fail to find the organization 42", async () => {
+  test("❎ fail to find the organization 42", async () => {
     const user = await findEmailDomainsByOrganizationId(42);
 
-    expect(user).to.be.deep.equal([]);
+    assert.deepEqual(user, []);
   });
 });

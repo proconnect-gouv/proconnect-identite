@@ -2,13 +2,14 @@
 
 import { createEntrepriseOpenApiClient } from "#src/client";
 import { coolTrackingParams } from "#src/testing";
+import assert from "node:assert/strict";
 import { mock, suite, test } from "node:test";
 import { findBySirenFactory } from "./find-by-siren.js";
 
 //
 
-suite(findBySirenFactory.name, () => {
-  test("should return an establishment from a siren", async (t) => {
+suite("findBySirenFactory", () => {
+  test("should return an establishment from a siren", async () => {
     const fetch = mock.fn(() => {
       return Promise.resolve(
         new Response(JSON.stringify({ data: { siret: "🦄" } })),
@@ -21,6 +22,6 @@ suite(findBySirenFactory.name, () => {
 
     const establishment = await findBySiren("791088917");
 
-    t.assert.equal(establishment.siret, "🦄");
+    assert.equal(establishment.siret, "🦄");
   });
 });

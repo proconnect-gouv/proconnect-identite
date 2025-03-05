@@ -1,8 +1,8 @@
 //
 
 import { emptyDatabase, migrate, pg } from "#testing";
-import { expect } from "chai";
-import { before, describe, it } from "mocha";
+import assert from "node:assert/strict";
+import { before, beforeEach, suite, test } from "node:test";
 import { updateUserOrganizationLinkFactory } from "./update-user-organization-link.js";
 
 //
@@ -11,11 +11,11 @@ const updateUserOrganizationLink = updateUserOrganizationLinkFactory({
   pg: pg as any,
 });
 
-describe(updateUserOrganizationLink.name, () => {
+suite("updateUserOrganizationLink", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
-  it("should update the user organization link", async () => {
+  test("should update the user organization link", async () => {
     await pg.sql`
       INSERT INTO organizations
         (cached_libelle, cached_nom_complet, id, siret, created_at, updated_at)
@@ -41,6 +41,6 @@ describe(updateUserOrganizationLink.name, () => {
     const user = await updateUserOrganizationLink(1, 1, {
       is_external: true,
     });
-    expect(user.is_external).to.equal(true);
+    assert.ok(user.is_external);
   });
 });

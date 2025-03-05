@@ -5,12 +5,12 @@ import {
   JeanMichelEntrepreneur,
   MaireClamart,
 } from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/siret";
-import { describe } from "mocha";
 import assert from "node:assert/strict";
+import { suite, test } from "node:test";
 import { fromSiret } from "./fromSiret.js";
 
-describe(fromSiret.name, () => {
-  it("AppleEuropeInc", () => {
+suite("fromSiret", () => {
+  test("AppleEuropeInc", () => {
     const organization = fromSiret(AppleEuropeInc);
     assert.deepEqual(organization, {
       activitePrincipale: "70.22Z",
@@ -36,7 +36,7 @@ describe(fromSiret.name, () => {
     });
   });
 
-  it("Commune de clamart - Mairie", () => {
+  test("Commune de clamart - Mairie", () => {
     const organization = fromSiret(MaireClamart);
     assert.deepEqual(organization, {
       activitePrincipale: "84.11Z",
@@ -60,7 +60,7 @@ describe(fromSiret.name, () => {
     });
   });
 
-  it("JeanMichelEntrepreneur", () => {
+  test("JeanMichelEntrepreneur", () => {
     const organization = fromSiret(JeanMichelEntrepreneur);
     assert.deepEqual(organization, {
       activitePrincipale: "70.2A",
