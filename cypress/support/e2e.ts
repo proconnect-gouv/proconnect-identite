@@ -3,9 +3,9 @@ import "cypress-maildev";
 
 import "./commands";
 
-const RECORD = Cypress.env("RECORD") === true;
+const RECORD_FOR_HUMANS = Cypress.env("RECORD_FOR_HUMANS") === true;
 
-if (RECORD) {
+if (RECORD_FOR_HUMANS) {
   ["visit", "click", "trigger", "type", "clear", "reload", "select"].forEach(
     (command) => {
       Cypress.Commands.overwrite(
@@ -18,7 +18,7 @@ if (RECORD) {
               () => {
                 resolve(origVal);
               },
-              RECORD ? 2000 : 0,
+              RECORD_FOR_HUMANS ? 2000 : 0,
             );
           });
         },
