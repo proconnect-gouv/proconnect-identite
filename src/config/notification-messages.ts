@@ -115,6 +115,10 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     type: "success",
     description: "Vos informations ont été mises à jour.",
   },
+  personal_information_update_via_franceconnect_success: {
+    type: "success",
+    description: "Nous avons bien récupéré vos données via FranceConnect.",
+  },
   official_contact_email_verification_not_needed: {
     type: "error",
     description:

@@ -89,6 +89,7 @@ export const postPersonalInformationsController = async (
     });
 
     updateUserInAuthenticatedSession(req, updatedUser);
+
     return res.render("personal-information", {
       pageTitle: "Informations personnelles",
       email: updatedUser.email,

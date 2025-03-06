@@ -72,7 +72,9 @@ export async function getFranceConnectOidcCallbackController(
     );
     updateUserInAuthenticatedSession(req, updatedUser);
 
-    return res.redirect("/personal-information");
+    return res.redirect(
+      "/personal-information?notification=personal_information_update_via_franceconnect_success",
+    );
   } catch (error) {
     next(error);
   }

@@ -26,6 +26,7 @@ describe("Connect FranceConnect account", () => {
     });
 
     cy.title().should("include", "Informations personnelles -");
+    cy.contains("Nous avons bien récupéré vos données via FranceConnect.");
 
     cy.seeInField("Prénom", "Angela Claire Louise");
     cy.seeInField("Nom", "DUBOIS");
