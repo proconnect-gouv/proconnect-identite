@@ -1,5 +1,11 @@
 # @gouvfr-lasuite/moncomptepro.core
 
+## 0.5.0
+
+### Minor Changes
+
+- [#1021](https://github.com/numerique-gouv/proconnect-identite/pull/1021) [`86ad73c`](https://github.com/numerique-gouv/proconnect-identite/commit/86ad73c9bb43f7171c0bda7b06fba14837449c1e) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ✨ Ajout du service oidc
+
 ## 0.4.0
 
 ### Minor Changes
