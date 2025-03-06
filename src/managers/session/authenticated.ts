@@ -54,12 +54,13 @@ export const createAuthenticatedSession = async (
   // email and needsInclusionconnectWelcomePage are not passed to the new session as it is not useful within logged session
   // csrfToken should not be passed to the new session for security reasons
   const {
+    authForProconnectFederation,
     interactionId,
     mustReturnOneOrganizationInPayload,
-    twoFactorsAuthRequested,
+    nonce,
     referrerPath,
-    authForProconnectFederation,
-    certificationDirigeantRequested,
+    state,
+    twoFactorsAuthRequested,
   } = req.session;
 
   // as selected org is not stored in session,
@@ -83,12 +84,12 @@ export const createAuthenticatedSession = async (
         req.session.mustReturnOneOrganizationInPayload =
           mustReturnOneOrganizationInPayload;
         req.session.twoFactorsAuthRequested = twoFactorsAuthRequested;
-        req.session.certificationDirigeantRequested =
-          certificationDirigeantRequested;
         req.session.referrerPath = referrerPath;
         req.session.authForProconnectFederation = authForProconnectFederation;
         // new session reset amr
         req.session.amr = [];
+        req.session.nonce = nonce;
+        req.session.state = state;
 
         req.session.amr = addAuthenticationMethodReference(
           req.session.amr,
@@ -140,7 +141,7 @@ export const getUserFromAuthenticatedSession = (req: Request) => {
     ip_address: req.ip,
     username: `${req.session.user.given_name} ${req.session.user.family_name}`,
   });
-  return req.session.user;
+  return req.session.user as User;
 };
 
 export const updateUserInAuthenticatedSession = (req: Request, user: User) => {

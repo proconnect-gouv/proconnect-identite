@@ -12,6 +12,10 @@ import { postSignInWithAuthenticatorAppController } from "../controllers/totp";
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
 import { postDeleteUserController } from "../controllers/user/delete";
 import { postCancelModerationAndRedirectControllerFactory } from "../controllers/user/edit-moderation";
+import {
+  getFranceConnectOidcCallbackController,
+  postFranceConnectController,
+} from "../controllers/user/franceconnect";
 import { issueSessionOrRedirectController } from "../controllers/user/issue-session-or-redirect";
 import {
   getMagicLinkSentController,
@@ -416,6 +420,21 @@ export const userRouter = () => {
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postDeleteUserController,
+  );
+
+  userRouter.post(
+    "/franceconnect",
+    rateLimiterMiddleware,
+    checkUserCanAccessAdminMiddleware,
+    csrfProtectionMiddleware,
+    postFranceConnectController,
+  );
+  userRouter.get(
+    "/franceconnect/callback",
+    rateLimiterMiddleware,
+    checkUserCanAccessAdminMiddleware,
+    csrfProtectionMiddleware,
+    getFranceConnectOidcCallbackController,
   );
 
   return userRouter;

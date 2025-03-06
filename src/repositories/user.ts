@@ -2,7 +2,9 @@ import {
   createUserFactory,
   findByEmailFactory,
   findByIdFactory,
+  getFranceConnectUserInfoFactory,
   updateUserFactory,
+  upsertFranceconnectUserinfoFactory,
 } from "@gouvfr-lasuite/proconnect.identite/repositories/user";
 import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
 import type { QueryResult } from "pg";
@@ -61,3 +63,11 @@ export const deleteUser = async (id: number) => {
 
   return rowCount > 0;
 };
+
+export const getFranceConnectUserInfo = getFranceConnectUserInfoFactory({
+  pg: getDatabaseConnection(),
+});
+
+export const upsetFranceconnectUserinfo = upsertFranceconnectUserinfoFactory({
+  pg: getDatabaseConnection(),
+});

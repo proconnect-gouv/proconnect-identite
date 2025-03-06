@@ -22,6 +22,7 @@ jobs:
         e2e_test:
           - activate_totp
           - check_email_deliverability
+          - connect_franceconnect_account
           - delete_account
           - delete_totp
           - join_and_moderation
