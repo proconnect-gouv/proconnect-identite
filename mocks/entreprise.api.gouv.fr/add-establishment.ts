@@ -1,6 +1,6 @@
 //
 
-import assert from "node:assert";
+import assert from "node:assert/strict";
 import { getOrganizationInfo } from "../../src/connectors/api-sirene";
 
 //

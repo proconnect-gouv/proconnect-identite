@@ -36,15 +36,9 @@
     "build": "tsc --build tsconfig.lib.json",
     "check": "npm run build -- --noEmit",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
     "dev": "npm run build -- --watch --preserveWatchOutput",
-    "test": "mocha"
-  },
-  "mocha": {
-    "reporter": "spec",
-    "require": [
-      "tsx"
-    ],
-    "spec": "src/**/*.test.ts"
+    "test": "tsx --test src/**/*.test.ts"
   },
   "dependencies": {
     "openid-client": "^6.1.7",
@@ -57,11 +51,8 @@
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@gouvfr-lasuite/proconnect.entreprise": "^0.0.0",
     "@sinonjs/fake-timers": "^14.0.0",
-    "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
     "await-to-js": "^3.0.0",
-    "chai": "^5.1.2",
-    "mocha": "^11.0.1",
     "node-pg-migrate": "^7.6.1",
     "pg": "^8.13.0",
     "tsx": "^4.19.2"

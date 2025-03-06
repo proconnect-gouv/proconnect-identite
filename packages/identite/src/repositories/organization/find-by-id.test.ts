@@ -1,19 +1,19 @@
 //
 
 import { emptyDatabase, migrate, pg } from "#testing";
-import { expect } from "chai";
-import { before, describe, it } from "mocha";
+import assert from "node:assert/strict";
+import { before, beforeEach, suite, test } from "node:test";
 import { findByIdFactory } from "./find-by-id.js";
 
 //
 
 const findById = findByIdFactory({ pg: pg as any });
 
-describe(findByIdFactory.name, () => {
+suite("findByIdFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
-  it("should find the Necron organization", async () => {
+  test("should find the Necron organization", async () => {
     await pg.sql`
       INSERT INTO organizations
         (cached_libelle, cached_nom_complet, id, siret, created_at, updated_at)
@@ -23,7 +23,7 @@ describe(findByIdFactory.name, () => {
     `;
     const organization = await findById(1);
 
-    expect(organization).to.deep.equal({
+    assert.deepEqual(organization, {
       cached_activite_principale: null,
       cached_adresse: null,
       cached_categorie_juridique: null,

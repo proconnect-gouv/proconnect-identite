@@ -1,7 +1,7 @@
 //
 
 import type { components } from "#openapi";
-import assert from "node:assert";
+import assert from "node:assert/strict";
 
 //
 
