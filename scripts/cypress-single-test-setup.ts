@@ -11,10 +11,12 @@ $.verbose = true;
 //
 
 let testCase = argv._[0];
+const mode = argv.dev ? "development" : "single";
+const interactive = !process.env.CI;
 
 const doesExist = await fs.exists(`cypress/e2e/${testCase}`);
 
-if (!testCase || !doesExist) {
+if (interactive && (!testCase || !doesExist)) {
   console.log(`Could not resolve test case "${testCase}"`);
   const availableTestCases = await readdir("cypress/e2e");
   console.log(
@@ -63,23 +65,7 @@ await $`npm run update-organization-info 0`;
 console.log();
 console.log("All set and ready !");
 
-let runDevServer = false;
-{
-  const rl = createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  runDevServer = await new Promise((resolve) => {
-    rl.question("Want me to run the dev server ? [N/y]: ", (input) => {
-      if (input === "") return resolve(false);
-      return resolve(input.trim().toLowerCase() === "y");
-    });
-  });
-  rl.close();
-}
-
-if (runDevServer) {
+if (mode === "development") {
   $`npx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev:with-mocks`;
 } else {
   console.log("Run the app with the specific env vars:");

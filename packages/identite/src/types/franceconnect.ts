@@ -8,7 +8,7 @@ import { z } from "zod";
  * @see https://docs.partenaires.franceconnect.gouv.fr/fs/fs-technique/fs-technique-scope-fc/#liste-des-claims
  */
 export const FranceConnectUserInfoResponseSchema = z.object({
-  birthdate: z.string(),
+  birthdate: z.coerce.date(),
   birthplace: z.string(),
   family_name: z.string(),
   gender: z.string(),

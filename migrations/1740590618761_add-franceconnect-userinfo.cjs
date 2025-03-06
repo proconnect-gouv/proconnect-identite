@@ -13,7 +13,7 @@ exports.up = async (pgm) => {
     CREATE TABLE franceconnect_userinfo (
       user_id INTEGER UNIQUE PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
 
-      birthdate          VARCHAR(255),
+      birthdate          TIMESTAMP WITH TIME ZONE,
       birthplace         VARCHAR(255),
       family_name        VARCHAR(255),
       gender             VARCHAR(255),

@@ -1,8 +1,8 @@
 //
 
 import { emptyDatabase, migrate, pg } from "#testing";
-import { expect } from "chai";
-import { before, describe, it } from "mocha";
+import assert from "node:assert/strict";
+import { before, beforeEach, describe, it, mock } from "node:test";
 import { upsertFranceconnectUserinfoFactory } from "./upsert-franceconnect-userinfo.js";
 
 //
@@ -14,6 +14,9 @@ const upsertFranceconnectUserinfo = upsertFranceconnectUserinfoFactory({
 describe("upsertFranceconnectUserinfo", () => {
   before(migrate);
   beforeEach(emptyDatabase);
+  before(() => {
+    mock.timers.enable({ apis: ["Date"], now: new Date("4444-04-04") });
+  });
 
   it("should insert a user franceconnect userinfo", async () => {
     await pg.sql`
@@ -25,14 +28,30 @@ describe("upsertFranceconnectUserinfo", () => {
     `;
 
     const user = await upsertFranceconnectUserinfo({
+      birthdate: new Date("8888-08-08"),
+      birthplace: "Caliban",
       created_at: new Date("4444-04-01"),
+      family_name: "El’Jonson",
+      gender: "male",
+      given_name: "Lion",
+      preferred_username: "Li",
+      sub: "abcdefghijklmnopqrstuvwxyz",
       updated_at: new Date("4444-04-02"),
       user_id: 1,
     });
 
-    expect(user.created_at).to.deep.equal(new Date("4444-04-01"));
-    expect(user.updated_at).to.not.deep.equal(new Date("4444-04-02"));
-    expect(user.user_id).to.deep.equal(1);
+    assert.deepEqual(user, {
+      birthdate: new Date("8888-08-08"),
+      birthplace: "Caliban",
+      created_at: new Date("4444-04-01"),
+      family_name: "El’Jonson",
+      gender: "male",
+      given_name: "Lion",
+      preferred_username: "Li",
+      sub: "abcdefghijklmnopqrstuvwxyz",
+      updated_at: new Date("4444-04-04"),
+      user_id: 1,
+    });
   });
 
   it("should update a user Verification link", async () => {
@@ -56,19 +75,26 @@ describe("upsertFranceconnectUserinfo", () => {
       preferred_username: "Li",
     });
 
-    expect(user.created_at).to.deep.equal(new Date("4444-04-01"));
-    expect(user.updated_at).to.not.deep.equal(new Date("4444-04-02"));
-    expect(user.user_id).to.deep.equal(1);
-    expect(user.preferred_username).to.deep.equal("Li");
+    assert.deepEqual(user, {
+      birthdate: null,
+      birthplace: null,
+      created_at: new Date("4444-04-01"),
+      family_name: null,
+      gender: null,
+      given_name: "Lion",
+      preferred_username: "Li",
+      sub: null,
+      updated_at: new Date("4444-04-04"),
+      user_id: 1,
+    });
   });
 
   it("❎ fail to update an unknown user", async () => {
-    await expect(
+    await assert.rejects(
       upsertFranceconnectUserinfo({
         user_id: 42,
       }),
-    ).to.rejectedWith(
-      `insert or update on table "franceconnect_userinfo" violates foreign key constraint "franceconnect_userinfo_user_id_fkey"`,
+      `error: insert or update on table "franceconnect_userinfo" violates foreign key constraint "franceconnect_userinfo_user_id_fkey"`,
     );
   });
 });
