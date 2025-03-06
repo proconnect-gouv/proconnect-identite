@@ -38,7 +38,7 @@
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
     "dev": "npm run build -- --watch --preserveWatchOutput",
-    "test": "tsx --test src/**/*.test.ts"
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {
     "sql-template-tag": "^5.2.1",
