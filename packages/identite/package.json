@@ -36,8 +36,8 @@
     "build": "tsc --build tsconfig.lib.json",
     "check": "npm run build -- --noEmit",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
-    "dev:test": "tsx --watch --test src/**/*.test.ts",
     "dev": "npm run build -- --watch --preserveWatchOutput",
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
     "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {

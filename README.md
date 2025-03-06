@@ -139,7 +139,7 @@ https://identite-sandbox.proconnect.gouv.fr/oauth/authorize?client_id=client_id&
 ProConnect Identité peut renvoyer une combinaison des valeurs suivantes :
 
 | valeur amr | description                                                                                                                                |
-|------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | pwd        | Authentification par mot de passe. En complément d’un mot de passe, l’utilisateur a authentifié son navigateur avec un otp envoyé par mail |
 | mail       | Authentification par lien de connexion « lien magique ».                                                                                   |
 | totp       | Authentification avec une application « authenticator » comme FreeOTP.                                                                     |
@@ -177,3 +177,14 @@ Les valeurs `acr` utilisées par ProConnect Identité sont les suivantes :
 Pour contribuer à ProConnect Identité, vous pouvez installer l’application localement.
 
 Les instructions se trouvent sur [la page de doc dédiée](./installation.md).
+
+## Packages
+
+| Package                                                               | Version                                                                                                                                                        | Downloads                                                                                 | Changelog                                       |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- | :---------------------------------------------- |
+| [@gouvfr-lasuite/proconnect.core](./packages/core#readme)             | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.core.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.core)             | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.core?label=↓)       | [Changelog](./packages/core/CHANGELOG.md)       |
+| [@gouvfr-lasuite/proconnect.crisp](./packages/crisp#readme)           | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.crisp.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.crisp)           | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.crisp?label=↓)      | [Changelog](./packages/crisp/CHANGELOG.md)      |
+| [@gouvfr-lasuite/proconnect.debounce](./packages/debounce#readme)     | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.debounce.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.debounce)     | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.debounce?label=↓)   | [Changelog](./packages/debounce/CHANGELOG.md)   |
+| [@gouvfr-lasuite/proconnect.email](./packages/email#readme)           | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.email.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.email)           | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.email?label=↓)      | [Changelog](./packages/email/CHANGELOG.md)      |
+| [@gouvfr-lasuite/proconnect.entreprise](./packages/entreprise#readme) | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.entreprise.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.entreprise) | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.entreprise?label=↓) | [Changelog](./packages/entreprise/CHANGELOG.md) |
+| [@gouvfr-lasuite/proconnect.identite](./packages/identite#readme)     | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.identite.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.identite)     | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.identite?label=↓)   | [Changelog](./packages/entreprise/CHANGELOG.md) |
