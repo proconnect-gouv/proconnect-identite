@@ -1,5 +1,11 @@
 # @gouvfr-lasuite/proconnect.identite
 
+## 0.5.2
+
+### Patch Changes
+
+- [#1021](https://github.com/numerique-gouv/proconnect-identite/pull/1021) [`86ad73c`](https://github.com/numerique-gouv/proconnect-identite/commit/86ad73c9bb43f7171c0bda7b06fba14837449c1e) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ❎ Les erreurs sont nommées
+
 ## 0.5.1
 
 ### Patch Changes
