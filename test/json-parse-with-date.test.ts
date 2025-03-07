@@ -1,4 +1,5 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { jsonParseWithDate } from "../src/services/json-parse-with-date";
 
 describe("jsonParseWithDate", () => {

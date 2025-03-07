@@ -9,7 +9,7 @@ import { updateUserFactory } from "./update.js";
 
 const updateUser = updateUserFactory({ pg: pg as any });
 
-suite(updateUserFactory.name, () => {
+suite("updateUserFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 

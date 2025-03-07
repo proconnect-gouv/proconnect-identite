@@ -31,7 +31,7 @@
     "build:openapi": "openapi-typescript https://entreprise.api.gouv.fr/open-api-without-deprecated-paths.yml -o openapi/index.d.ts",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
     "postbuild:openapi": "prettier --write openapi/index.d.ts",
-    "test": "tsx --test src/**/*.test.ts"
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {
     "openapi-fetch": "^0.13.4"

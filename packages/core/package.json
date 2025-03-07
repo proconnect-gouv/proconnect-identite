@@ -58,17 +58,11 @@
     "build": "pkgroll --tsconfig=tsconfig.lib.json",
     "check": "npm run build -- --noEmit",
     "dev": "npm run build -- --watch --preserveWatchOutput",
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
     "docs": "npx run-p tsdoc:*",
     "posttsdoc": "prettier --write ./src/**/*.md ./README.md",
-    "test": "mocha",
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts",
     "tsdoc:services/oidc": "npx tsdoc-markdown --dest=src/services/oidc/README.md --src=src/services/oidc/*"
-  },
-  "mocha": {
-    "reporter": "spec",
-    "require": [
-      "tsx"
-    ],
-    "spec": "src/**/*.test.ts"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -83,10 +77,7 @@
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
-    "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
-    "chai": "^5.1.2",
-    "mocha": "^11.0.1",
     "pkgroll": "^2.6.1",
     "tsx": "^4.19.2"
   },
