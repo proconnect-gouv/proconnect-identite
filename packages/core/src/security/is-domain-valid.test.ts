@@ -1,6 +1,7 @@
 //
 
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { isDomainValid } from "./is-domain-valid.js";
 
 //

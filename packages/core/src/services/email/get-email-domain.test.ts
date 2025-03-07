@@ -1,11 +1,12 @@
 //
 
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { getEmailDomain } from "./get-email-domain.js";
 
 //
 
-describe(getEmailDomain.name, () => {
+describe("getEmailDomain", () => {
   const data = [
     {
       email: "user@beta.gouv.fr",

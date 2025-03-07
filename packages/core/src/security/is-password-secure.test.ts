@@ -2,7 +2,8 @@
 
 // heavily inspired from https://github.com/nowsecure/owasp-password-strength-test/blob/1.3.0/test.js
 
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { isPasswordSecure } from "./is-password-secure.js";
 
 //
