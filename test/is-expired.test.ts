@@ -1,16 +1,10 @@
-import FakeTimers, { type InstalledClock } from "@sinonjs/fake-timers";
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { before, describe, it, mock } from "node:test";
 import { isExpired } from "../src/services/is-expired";
 
 describe("isExpired", () => {
-  let clock: InstalledClock;
-
-  beforeEach(() => {
-    clock = FakeTimers.install({ now: new Date(2022, 11, 20) });
-  });
-
-  afterEach(() => {
-    clock.uninstall();
+  before(() => {
+    mock.timers.enable({ apis: ["Date"], now: new Date(2022, 11, 20) });
   });
 
   const expirationDurationInMinutes = 24 * 60;

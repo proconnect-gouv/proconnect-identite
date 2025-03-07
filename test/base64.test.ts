@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { describe, it } from "node:test";
 import { decodeBase64URL, encodeBase64URL } from "../src/services/base64"; // Replace with the actual path of your module
 
 describe("Base64URL Encoding and Decoding", () => {
