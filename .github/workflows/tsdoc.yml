@@ -1,0 +1,29 @@
+name: 📖 tsdoc-markdown
+
+on:
+  push:
+    branches:
+      - "**"
+      - "!master"
+
+jobs:
+  docs:
+    name: 📖 Generate tsdocs
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          cache: "npm"
+          node-version-file: package.json
+      - run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+      - run: npm run docs --if-present --workspaces
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: .
+          default_author: github_actions
+          message: "🤖 Documentation auto-update"

@@ -5,6 +5,10 @@ import type { EssentialAcrPromptDetail } from "./prompt.js";
 
 //
 
+/**
+ * Check if a prompt contains essential acrs
+ * @param prompt the oidc-provider {@link PromptDetail}
+ */
 export function containsEssentialAcrs(
   prompt: PromptDetail,
 ): prompt is EssentialAcrPromptDetail {
