@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { containsEssentialAcrs } from "./contains-essential-acrs.js";
 
 describe("containsEssentialAcrs", () => {

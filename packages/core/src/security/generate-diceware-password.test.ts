@@ -1,7 +1,7 @@
 //
 
-import { assert } from "chai";
-import { describe, it } from "mocha";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { GenerarateDicewarePassword } from "./generate-diceware-password.js";
 
 //

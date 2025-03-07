@@ -1,7 +1,7 @@
 //
 
-import { assert } from "chai";
-import { describe, it } from "mocha";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { generatePinToken } from "./generate-pin-token.js";
 
 //
@@ -14,6 +14,6 @@ describe("generatePinToken", () => {
 
   it("should be 10 characters long", () => {
     const token = generatePinToken();
-    assert.lengthOf(token, 10);
+    assert.equal(token.length, 10);
   });
 });
