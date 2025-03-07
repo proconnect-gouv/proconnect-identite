@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
 import { getDidYouMeanSuggestion } from "./did-you-mean.js";
 
 describe("getDidYouMeanSuggestion", () => {

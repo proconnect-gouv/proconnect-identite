@@ -1,6 +1,6 @@
 {
   "name": "@gouvfr-lasuite/proconnect.core",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/core#readme",
   "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
   "repository": {
@@ -27,6 +27,11 @@
       "import": "./dist/services/email/index.js",
       "types": "./dist/services/email/index.d.ts"
     },
+    "./services/oidc": {
+      "require": "./dist/services/oidc/index.cjs",
+      "import": "./dist/services/oidc/index.js",
+      "types": "./dist/services/oidc/index.d.ts"
+    },
     "./services/suggestion": {
       "require": "./dist/services/suggestion/index.cjs",
       "import": "./dist/services/suggestion/index.js",
@@ -41,6 +46,9 @@
       "services/email": [
         "./dist/services/email/index.d.ts"
       ],
+      "services/oidc": [
+        "./dist/services/oidc/index.d.ts"
+      ],
       "services/suggestion": [
         "./dist/services/suggestion/index.d.ts"
       ]
@@ -50,7 +58,10 @@
     "build": "pkgroll --tsconfig=tsconfig.lib.json",
     "check": "npm run build -- --noEmit",
     "dev": "npm run build -- --watch --preserveWatchOutput",
-    "test": "mocha"
+    "docs": "npx run-p tsdoc:*",
+    "posttsdoc": "prettier --write ./src/**/*.md ./README.md",
+    "test": "mocha",
+    "tsdoc:services/oidc": "npx tsdoc-markdown --dest=src/services/oidc/README.md --src=src/services/oidc/*"
   },
   "mocha": {
     "reporter": "spec",
@@ -62,6 +73,7 @@
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/lodash-es": "^4.17.12",
+    "@types/oidc-provider": "^8.5.2",
     "@zootools/email-spell-checker": "^1.12.0",
     "bcryptjs": "^2.4.3",
     "is-disposable-email-domain": "^1.0.7",

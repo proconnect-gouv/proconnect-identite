@@ -1,6 +1,6 @@
 {
   "name": "@gouvfr-lasuite/proconnect.identite",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/identite#readme",
   "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
   "repository": {
@@ -36,9 +36,9 @@
     "build": "tsc --build tsconfig.lib.json",
     "check": "npm run build -- --noEmit",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
-    "dev:test": "tsx --watch --test src/**/*.test.ts",
     "dev": "npm run build -- --watch --preserveWatchOutput",
-    "test": "tsx --test src/**/*.test.ts"
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {
     "openid-client": "^6.1.7",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.2.15",
-    "@gouvfr-lasuite/proconnect.core": "^0.4.0",
+    "@gouvfr-lasuite/proconnect.core": "^0.5.0",
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@gouvfr-lasuite/proconnect.entreprise": "^0.0.0",
     "@sinonjs/fake-timers": "^14.0.0",
