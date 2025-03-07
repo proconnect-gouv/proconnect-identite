@@ -7,7 +7,6 @@ const doNotValidateMail =
 exports.shorthands = undefined;
 
 exports.up = async (pgm) => {
-  console.log("Start removing free email provider domains...");
   let i = 0;
 
   while (true) {
@@ -73,8 +72,6 @@ WHERE id = $1`,
 
     i++;
   }
-
-  console.log("Free email provider domains removed!");
 };
 
 exports.down = () => {};
