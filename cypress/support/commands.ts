@@ -16,6 +16,7 @@ declare global {
       fillTotpFields(totpSecret?: string): Chainable<void>;
       login(email: string): Chainable<void>;
       mfaLogin(email: string): Chainable<void>;
+      seeInField: typeof seeInFieldCommand;
       setCustomParams(customParams: any): Chainable<void>;
       setRequestedAcrs(requestedAcrs?: string[]): Chainable<void>;
       getDescribed: typeof getDescribedCommand;
@@ -70,6 +71,16 @@ Cypress.Commands.add("mfaLogin", (email) => {
     totpSecret: defaultTotpSecret,
   });
 });
+
+function seeInFieldCommand(field: string, value: string) {
+  return cy
+    .contains("label", field)
+    .invoke("attr", "for")
+    .then((id) => {
+      cy.get(`#${id}`).should("have.value", value);
+    });
+}
+Cypress.Commands.add("seeInField", seeInFieldCommand);
 
 Cypress.Commands.add("setCustomParams", (customParams) => {
   cy.get('[name="custom-params"]')

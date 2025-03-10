@@ -13,28 +13,38 @@
             <div class="fr-input-group">
                 <label class="fr-label" for="given_name">
                     Prénom<span aria-hidden="true"> *</span>
+                    <% if (verifiedBy) { %>
+                      <span class="fr-hint-text">
+                        Issue de votre vérification par <b><%= verifiedBy; %></b>
+                      </span>
+                    <% } %>
                 </label>
                 <input
                         class="fr-input" required type="text" name="given_name"
                         pattern="[^$\&+:;=?@#\|<>.^*\(\)%!\d_\[\]\{\}\\\/\x22`~]*"
                         title="un nom ne doit pas contenir de chiffres ou de caractères spéciaux"
                         id="given_name"
-                <% if (given_name) { %> value="<%= given_name; %>"
-                        <% } %>
+                <% if (given_name) { %> value="<%= given_name; %>" <% } %>
+                <% if (verifiedBy) { %> readonly="readonly" <% } %>
                 >
             </div>
 
             <div class="fr-input-group">
                 <label class="fr-label" for="family_name">
                     Nom<span aria-hidden="true"> *</span>
+                    <% if (verifiedBy) { %>
+                      <span class="fr-hint-text">
+                        Issue de votre vérification par <b><%= verifiedBy; %></b>
+                      </span>
+                    <% } %>
                 </label>
                 <input
                         class="fr-input" required type="text" name="family_name"
                         pattern="[^$\&+:;=?@#\|<>.^*\(\)%!\d_\[\]\{\}\\\/\x22`~]*"
                         title="un nom ne doit pas contenir de chiffres ou de caractères spéciaux"
                         id="family_name"
-                <% if (family_name) { %> value="<%= family_name; %>"
-                        <% } %>
+                <% if (family_name) { %> value="<%= family_name; %>" <% } %>
+                <% if (verifiedBy) { %> readonly="readonly" <% } %>
                 >
             </div>
 
@@ -72,6 +82,28 @@
             >
                 Mettre à jour
             </button>
+        </form>
+
+        <p class="fr-mt-4w">Si votre état civil a été modifié, vous pouvez mettre à jour vos informations en récupérant vos données via FranceConnect.</p>
+
+        <form action="/users/franceconnect" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+
+          <div class="fr-connect-group">
+            <button class="fr-connect">
+              <span class="fr-connect__login">S’identifier avec</span>
+              <span class="fr-connect__brand">FranceConnect</span>
+            </button>
+            <p>
+              <a
+                href="https://franceconnect.gouv.fr/"
+                target="_blank"
+                rel="noopener"
+                title="Qu’est-ce que FranceConnect ? - nouvelle fenêtre"
+                >Qu’est-ce que FranceConnect ?</a
+              >
+            </p>
+          </div>
         </form>
     </div>
 </div>

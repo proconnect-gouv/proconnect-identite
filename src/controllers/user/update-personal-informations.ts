@@ -4,7 +4,10 @@ import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import { updatePersonalInformations } from "../../managers/user";
+import {
+  getUserVerificationLabel,
+  updatePersonalInformations,
+} from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import {
   jobSchema,
@@ -20,12 +23,14 @@ export const getPersonalInformationsController = async (
 ) => {
   try {
     const {
-      given_name,
       family_name,
-      phone_number,
+      given_name,
+      id: userId,
       job,
       needs_inclusionconnect_onboarding_help,
+      phone_number,
     } = getUserFromAuthenticatedSession(req);
+    const verifiedBy = await getUserVerificationLabel(userId);
     return res.render("user/personal-information", {
       pageTitle: "Renseigner votre identité",
       given_name,
@@ -35,11 +40,13 @@ export const getPersonalInformationsController = async (
       needs_inclusionconnect_onboarding_help,
       notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
+      verifiedBy,
     });
   } catch (error) {
     next(error);
   }
 };
+
 export const getParamsForPostPersonalInformationsController = async (
   req: Request,
 ) => {

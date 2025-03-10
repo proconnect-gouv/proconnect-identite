@@ -9,10 +9,10 @@
   },
   "main": "src/index.js",
   "workspaces": [
-    "packages/devtools/typescript",
     "packages/core",
     "packages/crisp",
     "packages/debounce",
+    "packages/devtools/typescript",
     "packages/email",
     "packages/entreprise",
     "packages/identite"

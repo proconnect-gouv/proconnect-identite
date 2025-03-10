@@ -1,3 +1,5 @@
+import type { FranceConnectOidcSession } from "../managers/session/franceconnect";
+
 export interface UnauthenticatedSessionData {
   email?: string;
   loginHint?: string;
@@ -29,7 +31,9 @@ export interface AuthenticatedSessionData {
 }
 
 declare module "express-session" {
-  export interface SessionData extends UnauthenticatedSessionData {
+  export interface SessionData
+    extends UnauthenticatedSessionData,
+      FranceConnectOidcSession {
     user?: User;
     temporaryEncryptedTotpKey?: string;
     amr?: AmrValue[];

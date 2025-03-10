@@ -26,10 +26,15 @@ ENABLE_DATABASE_DELETION=True npm run e2e:setup redirect_after_session_expiratio
 >
 > This will allow you to quickly pick the test case you want to run.
 
-The script will give you ask you if you want to start a dev server our gives you the command to run
-the app with the specific env vars.
-
 See `scripts/cypress-single-test-setup.ts`
+
+#### `--dev` mode
+
+If you want to run the app in development mode, you can use the `--dev` flag.
+
+```bash
+ENABLE_DATABASE_DELETION=True npm run e2e:setup --dev redirect_after_session_expiration
+```
 
 ### `npm run e2e:run <my_cypress_test_case>`
 
