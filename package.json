@@ -74,7 +74,7 @@
     "@simplewebauthn/server": "^8.3.5",
     "@sunknudsen/totp": "^1.1.0",
     "await-to-js": "^3.0.0",
-    "axios": "^1.7.7",
+    "axios": "^1.8.2",
     "connect-redis": "^7.1.1",
     "console-log-level": "^1.4.1",
     "cookie-parser": "^1.4.7",
