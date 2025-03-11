@@ -101,8 +101,8 @@ export function getFranceConnectUserFactory(
 
     const { sub } = await z.object({ sub: z.string() }).parseAsync(claims);
     const userInfo = await fetchUserInfo(config, tokens.access_token, sub);
-
-    return FranceConnectUserInfoResponseSchema.passthrough().parseAsync(
+    console.log({ userInfo });
+    return FranceConnectUserInfoResponseSchema.parseAsync(
       userInfo,
     ) as Promise<FranceConnectUserInfoResponse>;
   };
