@@ -26,22 +26,20 @@ export const connectorEnvSchema = z.object({
     .default("https://staging.entreprise.api.gouv.fr"),
   ENTREPRISE_API_TRACKING_CONTEXT: z.string().default("ProConnect Identité"),
   ENTREPRISE_API_TRACKING_RECIPIENT: z.string().default("13002526500013"),
-  FRANCECONNECT_CALLBACK_URL: z.string().default("/login-callback"),
+  FRANCECONNECT_CALLBACK_URL: z
+    .string()
+    .default("/users/franceconnect/callback"),
   FRANCECONNECT_CLIENT_ID: z
     .string()
-    .default(
-      "211286433e39cce01db448d80181bdfd005554b19cd51b3fe7943f6b3b86ab6e",
-    ),
+    .default("🎭 Mocked FranceConnect Client ID"),
   FRANCECONNECT_CLIENT_SECRET: z
     .string()
-    .default(
-      "2791a731e6a59f56b6b4dd0d08c9b1f593b5f3658b9fd731cb24248e2669af4b",
-    ),
-  FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("HS256"),
+    .default("🎭 Mocked FranceConnect Client Secret"),
+  FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("ES256"),
   FRANCECONNECT_ISSUER: z
     .string()
     .url()
-    .default("https://fcp.integ01.dev-franceconnect.fr/api/v1"),
+    .default("http://localhost:8600/api/v2"),
   FRANCECONNECT_SCOPES: zCoerceArray(z.string()).default(
     [
       "birthplace",

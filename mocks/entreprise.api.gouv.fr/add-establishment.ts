@@ -2,6 +2,7 @@
 
 import assert from "node:assert/strict";
 import { getOrganizationInfo } from "../../src/connectors/api-sirene";
+import { cleanup } from "../serve";
 
 //
 
@@ -14,3 +15,5 @@ assert.equal(organizationInfo.siret, siret);
 // commit them to the repository. Here is a little warning to help you
 // to check the data you are using.
 assert.equal(organizationInfo.statutDiffusion, "diffusible");
+
+cleanup();
