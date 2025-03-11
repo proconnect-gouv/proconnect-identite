@@ -15,6 +15,7 @@ export const FranceConnectUserInfoResponseSchema = z.object({
   given_name: z.string(),
   preferred_username: z.string().optional(),
   sub: z.string(),
+  // NOTE(douglasduteil): the following ignore extra keys (aud, given_name_array)
 });
 
 export type FranceConnectUserInfoResponse = z.output<
