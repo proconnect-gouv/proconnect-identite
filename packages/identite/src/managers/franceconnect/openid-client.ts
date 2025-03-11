@@ -5,10 +5,11 @@ import {
   type FranceConnectUserInfoResponse,
 } from "#src/types";
 import {
+  allowInsecureRequests,
   authorizationCodeGrant,
   buildAuthorizationUrl,
-  ClientSecretPost,
-  Configuration,
+  ClientSecretBasic,
+  discovery,
   fetchUserInfo,
   randomNonce,
   randomState,
@@ -19,6 +20,7 @@ import { z } from "zod";
 //
 
 export type FranceConnectConfigurationParams = {
+  allowLocalhost?: boolean;
   clientId: string;
   clientSecret: string;
   metadata: Partial<ClientMetadata>;
@@ -28,24 +30,18 @@ export type FranceConnectConfigurationParams = {
 export function getFranceConnectConfigurationFactory(
   params: FranceConnectConfigurationParams,
 ) {
+  const { allowLocalhost, clientId, clientSecret, metadata, server } = params;
   return function getFranceConnectConfiguration() {
-    const { clientId, clientSecret, metadata, server } = params;
-    const serverUri = server.toString();
-    return new Configuration(
-      {
-        authorization_endpoint: `${serverUri}/authorize`,
-        issuer: server.origin,
-        jwks_uri: `${serverUri}/jwks`,
-        token_endpoint: `${serverUri}/token`,
-        userinfo_endpoint: `${serverUri}/userinfo`,
-        token_endpoint_auth_method: "client_secret_basic",
-      },
+    return discovery(
+      server,
       clientId,
       metadata,
-      ClientSecretPost(clientSecret),
+      ClientSecretBasic(clientSecret),
+      allowLocalhost ? { execute: [allowInsecureRequests] } : undefined,
     );
   };
 }
+
 export type GetFranceConnectConfigurationHandler = ReturnType<
   typeof getFranceConnectConfigurationFactory
 >;
@@ -66,10 +62,11 @@ export function getFranceConnectRedirectUrlFactory(
 ) {
   const { callbackUrl, scope } = parameters;
   return async function getFranceConnectUser(nonce: string, state: string) {
-    const config = getConfiguration();
+    const config = await getConfiguration();
     return buildAuthorizationUrl(
       config,
       new URLSearchParams({
+        acr_values: "eidas1",
         nonce,
         redirect_uri: callbackUrl,
         scope,
@@ -89,7 +86,7 @@ export function getFranceConnectUserFactory(
     expectedState: string;
   }) {
     const { code, currentUrl, expectedNonce, expectedState } = parameters;
-    const config = getConfiguration();
+    const config = await getConfiguration();
     const tokens = await authorizationCodeGrant(
       config,
       new URL(currentUrl),
@@ -99,14 +96,12 @@ export function getFranceConnectUserFactory(
       },
       { code },
     );
+
     const claims = tokens.claims();
 
-    const { sub } = await z
-      .object({
-        sub: z.string(),
-      })
-      .parseAsync(claims);
+    const { sub } = await z.object({ sub: z.string() }).parseAsync(claims);
     const userInfo = await fetchUserInfo(config, tokens.access_token, sub);
+
     return FranceConnectUserInfoResponseSchema.passthrough().parseAsync(
       userInfo,
     ) as Promise<FranceConnectUserInfoResponse>;

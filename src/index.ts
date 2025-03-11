@@ -18,7 +18,6 @@ import {
   DEPLOY_ENV,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
-  FRANCECONNECT_CALLBACK_URL,
   HOST,
   JWKS,
   LOG_LEVEL,
@@ -260,17 +259,7 @@ let server: Server;
     ejsLayoutMiddlewareFactory(app),
     interactionRouter(oidcProvider),
   );
-  app.use((req, _res, next) => {
-    if (req.path === FRANCECONNECT_CALLBACK_URL) {
-      // NOTE(douglasduteil): force redirect to /users/franceconnect/callback
-      // Useful as the franceconnect integration endpoint uses fixed callback urls
-      req.url = req.url.replace(
-        FRANCECONNECT_CALLBACK_URL,
-        "/users/franceconnect/callback",
-      );
-    }
-    next();
-  });
+
   app.use("/users", ejsLayoutMiddlewareFactory(app), userRouter());
   app.use("/api", apiRouter());
 

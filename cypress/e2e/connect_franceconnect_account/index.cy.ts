@@ -13,22 +13,14 @@ describe("Connect FranceConnect account", () => {
 
     cy.contains("S’identifier avec").click();
 
-    cy.origin("https://fcp.integ01.dev-franceconnect.fr", () => {
-      cy.contains("Démonstration eIDAS faible").click();
-    });
-    cy.origin("https://fip1-low.integ01.fcp.fournisseur-d-identite.fr", () => {
-      cy.contains("Mot de passe").click();
-      cy.focused().type("123");
-      cy.contains("Valider").click();
-    });
-    cy.origin("https://fcp.integ01.dev-franceconnect.fr", () => {
-      cy.contains("Continuer sur FSPublic").click();
+    cy.origin("http://localhost:8600", () => {
+      cy.contains("Je suis Jean De La Rose").click();
     });
 
     cy.title().should("include", "Informations personnelles -");
     cy.contains("Nous avons bien récupéré vos données via FranceConnect.");
 
-    cy.seeInField("Prénom", "Angela Claire Louise");
-    cy.seeInField("Nom", "DUBOIS");
+    cy.seeInField("Prénom", "Jean");
+    cy.seeInField("Nom", "Dupont");
   });
 });

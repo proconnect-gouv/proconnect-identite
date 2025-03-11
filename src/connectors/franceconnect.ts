@@ -6,6 +6,7 @@ import {
   getFranceConnectUserFactory,
 } from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
 import {
+  DEPLOY_ENV,
   FRANCECONNECT_CALLBACK_URL,
   FRANCECONNECT_CLIENT_ID,
   FRANCECONNECT_CLIENT_SECRET,
@@ -19,6 +20,7 @@ import {
 
 export const getFranceConnectConfiguration =
   getFranceConnectConfigurationFactory({
+    allowLocalhost: DEPLOY_ENV === "localhost",
     clientId: FRANCECONNECT_CLIENT_ID,
     clientSecret: FRANCECONNECT_CLIENT_SECRET,
     metadata: {

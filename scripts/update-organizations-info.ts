@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
+import { cleanup } from "../mocks/serve";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { upsert } from "../src/repositories/organization/setters";
@@ -10,7 +11,6 @@ import {
   humanReadableDuration,
   isOrganizationInfo,
 } from "../src/services/script-helpers";
-
 //
 
 // ex: for public insee subscription the script can be run like so:
@@ -129,5 +129,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 250;
     logger.error(`Unexpected error! The update was interrupted at index ${i}.`);
     logger.error(e);
     process.exit(1);
+  } finally {
+    cleanup();
   }
 })();

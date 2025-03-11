@@ -62,13 +62,11 @@ describe("env.zod", () => {
       FEATURE_USE_ANNUAIRE_EMAILS: false,
       FEATURE_USE_SECURE_COOKIES: false,
       FEATURE_USE_SECURITY_RESPONSE_HEADERS: false,
-      FRANCECONNECT_CALLBACK_URL: "/login-callback",
-      FRANCECONNECT_CLIENT_ID:
-        "211286433e39cce01db448d80181bdfd005554b19cd51b3fe7943f6b3b86ab6e",
-      FRANCECONNECT_CLIENT_SECRET:
-        "2791a731e6a59f56b6b4dd0d08c9b1f593b5f3658b9fd731cb24248e2669af4b",
-      FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: "HS256",
-      FRANCECONNECT_ISSUER: "https://fcp.integ01.dev-franceconnect.fr/api/v1",
+      FRANCECONNECT_CALLBACK_URL: "/users/franceconnect/callback",
+      FRANCECONNECT_CLIENT_ID: "🎭 Mocked FranceConnect Client ID",
+      FRANCECONNECT_CLIENT_SECRET: "🎭 Mocked FranceConnect Client Secret",
+      FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: "ES256",
+      FRANCECONNECT_ISSUER: "http://localhost:8600/api/v2",
       FRANCECONNECT_SCOPES: [
         "birthplace birthdate family_name gender given_name openid preferred_username",
       ],
