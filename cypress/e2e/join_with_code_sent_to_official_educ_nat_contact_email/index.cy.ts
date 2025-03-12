@@ -10,7 +10,7 @@ describe("join organizations", () => {
 
     // Check that the website is waiting for the user to verify their email
     cy.contains(
-      "nous avons envoyé un code secret à l’adresse email de votre établissement scolaire",
+      "nous avons envoyé un code à l’adresse email officielle de votre établissement scolaire",
     );
     cy.get(".email-badge-lowercase").contains("rogal.dorn@imperialfists.world");
 
