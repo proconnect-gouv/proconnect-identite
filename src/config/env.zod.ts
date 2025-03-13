@@ -64,6 +64,7 @@ export const connectorEnvSchema = z.object({
 export const featureTogglesEnvSchema = z.object({
   FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: zodTrueFalseBoolean().default("False"),
   FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default("False"),
+  FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default("False"),
   FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default("False"),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE:
     zodTrueFalseBoolean().default("False"),
@@ -72,7 +73,7 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED:
     zodTrueFalseBoolean().default("False"),
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default("False"),
-  FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default("False"),
+  FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default("False"),
   FEATURE_RATE_LIMIT: zodTrueFalseBoolean().default("False"),
   FEATURE_SEND_MAIL: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default("False"),

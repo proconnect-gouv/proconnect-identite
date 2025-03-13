@@ -1,7 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import moment from "moment/moment";
 import { ZodError } from "zod";
-import { DIRTY_DS_REDIRECTION_URL } from "../config/env";
+import {
+  DIRTY_DS_REDIRECTION_URL,
+  FEATURE_FRANCECONNECT_CONNECTION,
+} from "../config/env";
 import notificationMessages from "../config/notification-messages";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
@@ -50,14 +53,15 @@ export const getPersonalInformationsController = async (
     const verifiedBy = await getUserVerificationLabel(user.id);
 
     return res.render("personal-information", {
-      pageTitle: "Informations personnelles",
+      canUseFranceConnect: FEATURE_FRANCECONNECT_CONNECTION,
+      csrfToken: csrfToken(req),
       email: user.email,
-      given_name: user.given_name,
       family_name: user.family_name,
-      phone_number: user.phone_number,
+      given_name: user.given_name,
       job: user.job,
       notifications: await getNotificationsFromRequest(req),
-      csrfToken: csrfToken(req),
+      pageTitle: "Informations personnelles",
+      phone_number: user.phone_number,
       verifiedBy,
     });
   } catch (error) {
@@ -91,16 +95,17 @@ export const postPersonalInformationsController = async (
     updateUserInAuthenticatedSession(req, updatedUser);
 
     return res.render("personal-information", {
-      pageTitle: "Informations personnelles",
+      canUseFranceConnect: FEATURE_FRANCECONNECT_CONNECTION,
+      csrfToken: csrfToken(req),
       email: updatedUser.email,
-      given_name: updatedUser.given_name,
       family_name: updatedUser.family_name,
-      phone_number: updatedUser.phone_number,
+      given_name: updatedUser.given_name,
       job: updatedUser.job,
       notifications: [
         notificationMessages["personal_information_update_success"],
       ],
-      csrfToken: csrfToken(req),
+      pageTitle: "Informations personnelles",
+      phone_number: updatedUser.phone_number,
       verifiedBy,
     });
   } catch (error) {
