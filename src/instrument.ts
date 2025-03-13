@@ -23,5 +23,5 @@ Sentry.init({
     Sentry.postgresIntegration(),
   ],
   profilesSampleRate: 0.5,
-  tracesSampleRate: 1,
+  tracesSampleRate: 0.2,
 });
