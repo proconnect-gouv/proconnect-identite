@@ -12,6 +12,8 @@ let frontChannelServer: Server | undefined;
 try {
   frontChannelServer = FranceconnectFrontChannel.listen(8600);
 } catch (error) {
+  if (frontChannelServer && frontChannelServer.listening)
+    frontChannelServer.close();
   console.error("[🎭] Front channel server error");
   console.error(error);
 }
