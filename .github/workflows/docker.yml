@@ -30,17 +30,35 @@ jobs:
           flavor: |
             latest=${{ github.ref == 'refs/heads/master' }}
 
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Mount Cache
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: |
+            root-cache-npm
+          key: instance-mount-cache-${{ hashFiles('Dockerfile') }}
+      - name: Inject cache into docker
+        uses: reproducible-containers/buildkit-cache-dance@v3.1.0
+        with:
+          cache-map: |
+            {
+              "root-cache-npm": "/root/.npm"
+            }
+          skip-extraction: ${{ steps.cache.outputs.cache-hit }}
+
       - name: Build image
         uses: docker/build-push-action@v6
         with:
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max
           build-args: |
             SOURCE_COMMIT=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
 
   integration_test:
     name: 🚥 Integration test
