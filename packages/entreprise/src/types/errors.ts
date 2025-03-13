@@ -23,7 +23,12 @@ export class EntrepriseApiError extends Error {
     assert.ok(value instanceof EntrepriseApiError);
   }
 }
-export class EntrepriseApiConnectionError extends Error {}
+export class EntrepriseApiConnectionError extends Error {
+  constructor(...params: ConstructorParameters<typeof Error>) {
+    super(...params);
+    this.name = "EntrepriseApiConnectionError";
+  }
+}
 export class EntrepriseApiInvalidSiret extends Error {
   static assert(error: unknown): asserts error is EntrepriseApiInvalidSiret {
     EntrepriseApiError.assert(error);
