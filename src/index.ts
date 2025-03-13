@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/node";
-import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import RedisStore from "connect-redis";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
@@ -16,15 +15,12 @@ import path from "path";
 import { ZodError } from "zod";
 import {
   ACCESS_LOG_PATH,
-  DEPLOY_ENV,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
   HOST,
   JWKS,
-  LOG_LEVEL,
   NODE_ENV,
   PORT,
-  SENTRY_DSN,
   SESSION_COOKIE_SECRET,
   SESSION_MAX_AGE_IN_SECONDS,
 } from "./config/env";
@@ -49,24 +45,6 @@ import { usesAuthHeaders } from "./services/uses-auth-headers";
 
 const app = express();
 
-if (SENTRY_DSN) {
-  Sentry.init({
-    attachStacktrace: true,
-    debug: LOG_LEVEL === "debug",
-    dsn: SENTRY_DSN,
-    environment: DEPLOY_ENV,
-    initialScope: { tags: { NODE_ENV, DEPLOY_ENV, HOST } },
-    integrations: [
-      nodeProfilingIntegration(),
-      Sentry.expressIntegration(),
-      Sentry.httpIntegration(),
-      Sentry.postgresIntegration(),
-    ],
-    profilesSampleRate: 0.5,
-    tracesSampleRate: 0.2,
-  });
-}
-
 if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
   app.use(
     helmet({
@@ -75,7 +53,7 @@ if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
     }),
   );
 
-  app.use((req, res, next) => {
+  const cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const cspConfig = {
       directives: {
         defaultSrc: ["'self'"],
@@ -98,7 +76,8 @@ if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
     };
 
     helmet.contentSecurityPolicy(cspConfig)(req, res, next);
-  });
+  };
+  app.use(cspMiddleware);
 }
 
 // Disable etag globally to avoid triggering invalid csrf token error
@@ -141,7 +120,7 @@ const sessionMiddleware =
   });
 
 // Prevent creation of sessions for API calls on /oauth or /api routes
-app.use((req, res, next) => {
+app.use(function prevent_session_creation_middleware(req, res, next) {
   if (usesAuthHeaders(req)) {
     return next();
   }
@@ -153,9 +132,9 @@ app.use(trustedBrowserMiddleware);
 app.set("views", path.join(import.meta.dirname, "views"));
 app.set("view engine", "ejs");
 
-let server: Server;
+let server: Server | undefined;
 
-(async () => {
+try {
   const clients = await getClients();
 
   // the oidc provider expect provided client attributes to be not null if provided
@@ -345,7 +324,7 @@ let server: Server;
         use_dashboard_layout: false,
         illustration: "connection-lost.svg",
         oidcError: "server_error",
-        interactionId: req.session.interactionId,
+        interactionId: req.session?.interactionId,
       });
     },
   );
@@ -353,8 +332,8 @@ let server: Server;
   server = app.listen(PORT, () => {
     logger.info(`application is listening on port ${PORT}`);
   });
-})().catch((err) => {
+} catch (err) {
   if (server && server.listening) server.close();
   logger.error(err);
   process.exit(1);
-});
+}
