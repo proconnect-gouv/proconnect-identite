@@ -14,7 +14,7 @@ describe("join organizations", () => {
 
     // Check that the website is waiting for the user to verify their email
     cy.contains(
-      "nous avons envoyé un code secret à l’adresse email de votre mairie",
+      "nous avons envoyé un code à l’adresse email officielle de votre mairie",
     );
     cy.get(".email-badge-lowercase").contains(
       "alpharius.omegon@alphalegion.world",
