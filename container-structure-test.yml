@@ -6,7 +6,7 @@ commandTests:
     args:
       - start
     exitCode: 1
-    expectedOutput: ["tsx src/index.ts"]
+    expectedOutput: ["tsx --import ./src/instrument.ts src/index.ts"]
     expectedError: ["connect ECONNREFUSED 127.0.0.1:5432"]
 
 globalEnvVars:
