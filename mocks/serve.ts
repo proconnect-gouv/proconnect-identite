@@ -1,4 +1,5 @@
 import { setupServer } from "msw/node";
+import type { Server } from "node:http";
 import { entrepriseHandlers } from "./entreprise.api.gouv.fr";
 import {
   FranceconnectFrontChannel,
@@ -7,7 +8,13 @@ import {
 
 console.log("[🎭] Opening to mockery theater");
 
-const frontChannelServer = FranceconnectFrontChannel.listen(8600);
+let frontChannelServer: Server | undefined;
+try {
+  frontChannelServer = FranceconnectFrontChannel.listen(8600);
+} catch (error) {
+  console.error("[🎭] Front channel server error");
+  console.error(error);
+}
 
 const server = setupServer(...entrepriseHandlers, ...franceconnectHandlers);
 
@@ -25,5 +32,5 @@ server.listen();
 export function cleanup() {
   console.log("[🎭] Closing the theater");
   server.close();
-  frontChannelServer.close();
+  frontChannelServer?.close();
 }
