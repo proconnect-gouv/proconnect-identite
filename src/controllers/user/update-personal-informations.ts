@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
+import { FEATURE_FRANCECONNECT_CONNECTION } from "../../config/env";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -32,14 +33,15 @@ export const getPersonalInformationsController = async (
     } = getUserFromAuthenticatedSession(req);
     const verifiedBy = await getUserVerificationLabel(userId);
     return res.render("user/personal-information", {
-      pageTitle: "Renseigner votre identité",
-      given_name,
+      canUseFranceConnect: FEATURE_FRANCECONNECT_CONNECTION,
+      csrfToken: csrfToken(req),
       family_name,
-      phone_number,
+      given_name,
       job,
       needs_inclusionconnect_onboarding_help,
       notifications: await getNotificationsFromRequest(req),
-      csrfToken: csrfToken(req),
+      pageTitle: "Renseigner votre identité",
+      phone_number,
       verifiedBy,
     });
   } catch (error) {
