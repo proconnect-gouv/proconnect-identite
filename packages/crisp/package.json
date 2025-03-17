@@ -49,7 +49,7 @@
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@vitest/expect": "^2.1.8",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "tsx": "^4.19.2"
   },
   "publishConfig": {

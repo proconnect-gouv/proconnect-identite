@@ -80,7 +80,7 @@
     "console-log-level": "^1.4.1",
     "cookie-parser": "^1.4.7",
     "csrf-sync": "^4.0.3",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "express-basic-auth": "^1.2.1",
