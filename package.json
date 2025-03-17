@@ -113,7 +113,7 @@
     "@kitajs/html": "^4.2.7",
     "@kitajs/ts-html-plugin": "^4.1.1",
     "@panva/jose": "^1.9.3",
-    "@simplewebauthn/types": "^10.0.0",
+    "@simplewebauthn/types": "^12.0.0",
     "@simplewebauthn/typescript-types": "^8.3.4",
     "@types/console-log-level": "^1.4.5",
     "@types/cookie-parser": "^1.4.8",
