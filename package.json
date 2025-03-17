@@ -111,7 +111,7 @@
     "@gouvfr-lasuite/proconnect.devtools.typescript": "workspace:*",
     "@gouvfr/dsfr": "^1.13.0",
     "@kitajs/html": "^4.2.7",
-    "@kitajs/ts-html-plugin": "^4.1.0",
+    "@kitajs/ts-html-plugin": "^4.1.1",
     "@panva/jose": "^1.9.3",
     "@simplewebauthn/types": "^10.0.0",
     "@simplewebauthn/typescript-types": "^8.3.4",
