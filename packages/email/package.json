@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@kitajs/html": "^4.2.7",
-    "@kitajs/ts-html-plugin": "^4.1.0"
+    "@kitajs/ts-html-plugin": "^4.1.1"
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
