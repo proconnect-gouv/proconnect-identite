@@ -35,7 +35,7 @@ describe("add 2fa authentication", () => {
       .invoke("text")
       .then((text) => {
         const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
-        const totp = generateToken(humanReadableTotpKey, Date.now());
+        const totp = generateToken(humanReadableTotpKey);
         cy.get("[name=totpToken]").type(totp);
         cy.get(
           '[action="/authenticator-app-configuration"] [type="submit"]',

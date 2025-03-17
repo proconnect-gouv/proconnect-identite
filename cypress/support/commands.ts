@@ -32,7 +32,7 @@ const defaultTotpSecret = "din5ncvbluqpx7xfzqcybmibmtjocnsf";
 const defaultPassword = "password123";
 
 Cypress.Commands.add("fillTotpFields", (totpSecret = defaultTotpSecret) => {
-  const totp = generateToken(totpSecret, Date.now());
+  const totp = generateToken(totpSecret);
   cy.get("[name=totpToken]").type(totp);
   cy.get(
     '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
