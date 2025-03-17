@@ -39,7 +39,7 @@
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@storybook/csf": "^0.1.11",
-    "vite": "^5.4.12"
+    "vite": "^6.2.2"
   },
   "publishConfig": {
     "access": "public",
