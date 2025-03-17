@@ -51,7 +51,7 @@
     "@types/node": "^22.10.2",
     "chai": "^5.1.2",
     "mocha": "^11.0.1",
-    "pkgroll": "^2.6.1",
+    "pkgroll": "^2.11.2",
     "tsx": "^4.19.2"
   },
   "publishConfig": {
