@@ -98,7 +98,7 @@
     "oidc-provider": "^8.8.1",
     "pg": "^8.14.0",
     "qrcode": "^1.5.4",
-    "rate-limiter-flexible": "^2.4.2",
+    "rate-limiter-flexible": "^6.1.0",
     "tsx": "^4.19.3",
     "zod": "^3.23.8",
     "zod-validation-error": "^3.3.1"
