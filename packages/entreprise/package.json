@@ -39,7 +39,7 @@
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@types/node": "^22.13.10",
-    "msw": "^2.7.2",
+    "msw": "^2.7.3",
     "openapi-typescript": "^7.6.1"
   },
   "publishConfig": {
