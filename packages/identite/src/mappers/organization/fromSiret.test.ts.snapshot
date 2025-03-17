@@ -1,0 +1,68 @@
+exports[`fromSiret > AppleEuropeInc 1`] = `
+{
+  "activitePrincipale": "70.22Z",
+  "adresse": "100 west ten wilmington delawa, 99404, ETATS-UNIS",
+  "categorieJuridique": "3120",
+  "codeOfficielGeographique": "",
+  "codePostal": null,
+  "enseigne": "",
+  "estActive": false,
+  "estDiffusible": true,
+  "etatAdministratif": "A",
+  "libelle": "Apple europe inc.",
+  "libelleActivitePrincipale": "70.22Z - Conseil pour les affaires et autres conseils de gestion",
+  "libelleCategorieJuridique": "Société commerciale étrangère immatriculée au RCS",
+  "libelleTrancheEffectif": "",
+  "nomComplet": "Apple europe inc.",
+  "siret": "32122785200019",
+  "statutDiffusion": "diffusible",
+  "trancheEffectifs": null,
+  "trancheEffectifsUniteLegale": "31"
+}
+`;
+
+exports[`fromSiret > Commune de clamart - Mairie 1`] = `
+{
+  "activitePrincipale": "84.11Z",
+  "adresse": "1 place maurice gunsbourg, 92140 Clamart",
+  "categorieJuridique": "7210",
+  "codeOfficielGeographique": "92023",
+  "codePostal": "92140",
+  "enseigne": "MAIRIE",
+  "estActive": true,
+  "estDiffusible": true,
+  "etatAdministratif": "A",
+  "libelle": "Commune de clamart - Mairie",
+  "libelleActivitePrincipale": "84.11Z - Administration publique générale",
+  "libelleCategorieJuridique": "Commune et commune nouvelle",
+  "libelleTrancheEffectif": "1 000 à 1 999 salariés, en 2022",
+  "nomComplet": "Commune de clamart",
+  "siret": "21920023500014",
+  "statutDiffusion": "diffusible",
+  "trancheEffectifs": "42",
+  "trancheEffectifsUniteLegale": "42"
+}
+`;
+
+exports[`fromSiret > RogalDornEntrepreneur 1`] = `
+{
+  "activitePrincipale": "62.02A",
+  "adresse": "06155 Vallauris",
+  "categorieJuridique": "1000",
+  "codeOfficielGeographique": "06155",
+  "codePostal": "06155",
+  "enseigne": "",
+  "estActive": true,
+  "estDiffusible": false,
+  "etatAdministratif": "A",
+  "libelle": "Nom inconnu",
+  "libelleActivitePrincipale": "62.02A - Conseil en systèmes et logiciels informatiques",
+  "libelleCategorieJuridique": "Entrepreneur individuel",
+  "libelleTrancheEffectif": "",
+  "nomComplet": "Nom inconnu",
+  "siret": "94957325700019",
+  "statutDiffusion": "partiellement_diffusible",
+  "trancheEffectifs": null,
+  "trancheEffectifsUniteLegale": null
+}
+`;

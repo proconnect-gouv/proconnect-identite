@@ -38,7 +38,8 @@
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
-    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts",
+    "test:update-snapshots": "tsx --test --test-reporter=spec --test-update-snapshots src/**/*.test.ts"
   },
   "dependencies": {
     "openid-client": "^6.3.4",

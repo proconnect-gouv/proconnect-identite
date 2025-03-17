@@ -16,7 +16,7 @@ import { markDomainAsVerifiedFactory } from "./mark-domain-as-verified.js";
 //
 
 suite("markDomainAsVerifiedFactory", () => {
-  test("should update organization members", async () => {
+  test("should update organization members", async (t) => {
     const addDomain = mock.fn<AddDomainHandler>(() =>
       Promise.resolve({} as any),
     );
@@ -50,27 +50,13 @@ suite("markDomainAsVerifiedFactory", () => {
       organization_id: 42,
     });
 
-    assert.equal(updateUserOrganizationLink.mock.callCount(), 1);
-    {
-      const [call] = updateUserOrganizationLink.mock.calls;
-      assert.deepEqual(call.arguments, [
-        42,
-        42,
-        { verification_type: "domain" },
-      ]);
-    }
+    await t.test("should call updateUserOrganizationLink with", async (t) => {
+      t.assert.snapshot(updateUserOrganizationLink.mock.calls);
+    });
 
-    assert.equal(addDomain.mock.callCount(), 1);
-    {
-      const [call] = addDomain.mock.calls;
-      assert.deepEqual(call.arguments, [
-        {
-          domain: "darkangels.world",
-          organization_id: 42,
-          verification_type: "verified",
-        },
-      ]);
-    }
+    await t.test("should call addDomain with", async (t) => {
+      t.assert.snapshot(addDomain.mock.calls);
+    });
   });
 
   test("❎ throws NotFoundError for unknown organization", async () => {
