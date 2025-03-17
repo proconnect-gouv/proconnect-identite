@@ -54,7 +54,7 @@
     "@types/node": "^22.13.10",
     "await-to-js": "^3.0.0",
     "node-pg-migrate": "^7.9.1",
-    "pg": "^8.14.0",
+    "pg": "^8.14.1",
     "tsx": "^4.19.3"
   },
   "publishConfig": {
