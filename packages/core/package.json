@@ -65,7 +65,6 @@
     "tsdoc:services/oidc": "npx tsdoc-markdown --dest=src/services/oidc/README.md --src=src/services/oidc/*"
   },
   "dependencies": {
-    "@types/bcryptjs": "^3.0.0",
     "@types/lodash-es": "^4.17.12",
     "@types/oidc-provider": "^8.8.1",
     "@zootools/email-spell-checker": "^1.12.0",
