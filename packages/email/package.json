@@ -33,7 +33,7 @@
     "test": "tsc --noEmit"
   },
   "dependencies": {
-    "@kitajs/html": "^4.2.4",
+    "@kitajs/html": "^4.2.7",
     "@kitajs/ts-html-plugin": "^4.1.0"
   },
   "devDependencies": {
