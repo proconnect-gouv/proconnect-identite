@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/node";
-import RedisStore from "connect-redis";
+import { RedisStore } from "connect-redis";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import session from "express-session";
