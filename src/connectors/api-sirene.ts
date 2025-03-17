@@ -3,7 +3,7 @@
 import {
   findBySirenFactory,
   findBySiretFactory,
-} from "@gouvfr-lasuite/proconnect.entreprise/api";
+} from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
 import {
   createEntrepriseOpenApiClient,
   type EntrepriseOpenApiClient,

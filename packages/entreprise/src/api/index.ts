@@ -1,4 +1,8 @@
 //
 
-export * from "./find-by-siren.js";
-export * from "./find-by-siret.js";
+import type { FindBySirenHandler, FindBySiretHandler } from "./insee/index.js";
+
+export interface ApiInseeRepository {
+  findBySiren: FindBySirenHandler;
+  findBySiret: FindBySiretHandler;
+}
