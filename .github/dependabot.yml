@@ -9,6 +9,10 @@ updates:
       interval: "weekly"
   - package-ecosystem: "npm"
     directory: "/"
+    groups:
+      sentry:
+        patterns:
+          - "@sentry/*"
     labels:
       - dependencies
     schedule:
