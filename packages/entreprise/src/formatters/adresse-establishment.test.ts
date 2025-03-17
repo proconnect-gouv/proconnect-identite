@@ -4,19 +4,19 @@ import {
   AppleEuropeInc,
   CommunautéDeCommunes,
   ExpertiseRurale,
-  JeanMichelEntrepreneur,
-  JeanPierreEntrepreneur,
+  MarneusCalgarFEntrepreneur,
   MegevandSas,
   NintendoOfEuropeSe,
   OctoTechnology,
+  RogalDornEntrepreneur,
   StihleFreres,
-} from "#src/testing/seed/siret";
+} from "#src/testing/seed/insee/siret";
 import type { InseeAddressEstablishment } from "#src/types";
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
 import { formatAddress } from "./adresse-establishment.js";
 
-suite(formatAddress.name, () => {
+suite("formatAddress", () => {
   const cases: [InseeAddressEstablishment, string][] = [
     [
       AppleEuropeInc.adresse,
@@ -27,8 +27,8 @@ suite(formatAddress.name, () => {
       "3 rue maison de vatimesnil, 27150 Etrepagny",
     ],
     [ExpertiseRurale.adresse, "le haut jumel, 62990 Beaurainville"],
-    [JeanMichelEntrepreneur.adresse, "44049 Le croisic"],
-    [JeanPierreEntrepreneur.adresse, "06155 Vallauris"],
+    [MarneusCalgarFEntrepreneur.adresse, "44049 Le croisic"],
+    [RogalDornEntrepreneur.adresse, "06155 Vallauris"],
     [
       MegevandSas.adresse,
       "Za immeuble l'octogone, 226 rue du jura, 74160 Neydens",

@@ -28,7 +28,7 @@ const entrepriseOpenApiClient = createEntrepriseOpenApiClient(
 Get use case api factory functions from `@gouvfr-lasuite/proconnect.entreprise/api`
 
 ```ts
-import { findBySiretFactory } from "@gouvfr-lasuite/proconnect.entreprise/api";
+import { findBySiretFactory } from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
 
 export const findBySiret = findBySiretFactory(entrepriseOpenApiClient, {
   context: "ProConnect",

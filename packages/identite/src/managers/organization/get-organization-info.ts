@@ -6,7 +6,7 @@ import { type OrganizationInfo } from "#src/types";
 import {
   type FindBySirenHandler,
   type FindBySiretHandler,
-} from "@gouvfr-lasuite/proconnect.entreprise/api";
+} from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
 import {
   EntrepriseApiConnectionError,
   EntrepriseApiInvalidSiret,
