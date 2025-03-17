@@ -34,7 +34,7 @@
     "fixtures:load": "npm run --silent build:db:migrate && tsx scripts/run-sql-script.ts scripts/fixtures.sql && npm run update-organization-info 0",
     "fixtures:load-ci": "tsx scripts/run-sql-script.ts",
     "lint": "prettier --write '**/*.ts'",
-    "migrate": "dotenvx --quiet run -f .env.${NODE_ENV:-development}.local .env.local .env.${NODE_ENV:-development} .env -- node-pg-migrate",
+    "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate",
     "start": "tsx --import ./src/instrument.ts src/index.ts",
     "start:with-mocks": "tsx --import=./mocks/serve.ts --import ./src/instrument.ts src/index.ts",
     "test": "run-s test:*",
@@ -106,7 +106,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.10",
-    "@dotenvx/dotenvx": "^1.19.2",
+    "@dotenvx/dotenvx": "^1.39.0",
     "@fullhuman/postcss-purgecss": "^6.0.0",
     "@gouvfr-lasuite/proconnect.devtools.typescript": "workspace:*",
     "@gouvfr/dsfr": "^1.13.0",
