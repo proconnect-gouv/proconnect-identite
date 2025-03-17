@@ -144,7 +144,7 @@
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "tld-extract": "^2.1.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.8.2",
     "vite": "^6.2.2",
     "zx": "^8.3.2"
   },
