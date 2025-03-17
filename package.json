@@ -129,7 +129,7 @@
     "@types/nodemailer": "^6.4.16",
     "@types/oidc-provider": "^8.5.2",
     "@types/qrcode": "^1.5.5",
-    "axe-core": "^4.8.4",
+    "axe-core": "^4.10.3",
     "concurrently": "^9.0.1",
     "copy-and-watch": "^0.1.6",
     "csv": "^6.3.9",
