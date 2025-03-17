@@ -131,7 +131,7 @@
     "@types/qrcode": "^1.5.5",
     "axe-core": "^4.10.3",
     "concurrently": "^9.1.2",
-    "copy-and-watch": "^0.1.6",
+    "copy-and-watch": "^0.1.8",
     "csv": "^6.3.9",
     "cypress": "^14.2.0",
     "cypress-axe": "^1.6.0",
