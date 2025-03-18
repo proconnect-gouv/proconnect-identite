@@ -3,7 +3,6 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "resolveJsonModule": true,
     "types": ["node"]
   },
@@ -12,5 +11,5 @@
     { "path": "../core/tsconfig.lib.json" },
     { "path": "../entreprise/tsconfig.lib.json" }
   ],
-  "include": ["./testing/index.ts", "./src/**/*", "./src/**/*.json"]
+  "include": ["./src/**/*", "./src/**/*.json", "testing"]
 }

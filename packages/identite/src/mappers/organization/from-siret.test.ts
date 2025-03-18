@@ -6,7 +6,7 @@ import {
   RogalDornEntrepreneur,
 } from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/insee/siret";
 import { suite, test } from "node:test";
-import { fromSiret } from "./fromSiret.js";
+import { fromSiret } from "./from-siret.js";
 
 suite("fromSiret", () => {
   test("AppleEuropeInc", (t) => {

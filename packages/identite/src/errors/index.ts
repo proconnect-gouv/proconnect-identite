@@ -1,3 +1,10 @@
+export class InvalidCertificationError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "InvalidCertificationError";
+  }
+}
+
 export class InvalidSiretError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
     super(message, options);
