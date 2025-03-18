@@ -1,84 +1,37 @@
 import { NotFoundError } from "#src/errors";
 import {
   CommunautéDeCommunes,
-  JeanPierreEntrepreneur,
-} from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/siret";
+  RogalDornEntrepreneur,
+} from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/insee/siret";
 import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
 import { getOrganizationInfoFactory } from "./get-organization-info.js";
 
 suite("getOrganizationInfo", () => {
-  const diffusibleOrganizationInfo = {
-    siret: "20007184300060",
-    libelle: "Cc du vexin normand",
-    nomComplet: "Cc du vexin normand",
-    enseigne: "",
-    trancheEffectifs: "22",
-    trancheEffectifsUniteLegale: "22",
-    libelleTrancheEffectif: "100 à 199 salariés, en 2022",
-    etatAdministratif: "A",
-    estActive: true,
-    statutDiffusion: "diffusible",
-    estDiffusible: true,
-    adresse: "3 rue maison de vatimesnil, 27150 Etrepagny",
-    codePostal: "27150",
-    codeOfficielGeographique: "27226",
-    activitePrincipale: "84.11Z",
-    libelleActivitePrincipale: "84.11Z - Administration publique générale",
-    categorieJuridique: "7346",
-    libelleCategorieJuridique: "Communauté de communes",
-  };
-
-  test("should return valid payload for diffusible siret", async () => {
+  test("should return valid payload for diffusible siret", async (t) => {
     const getOrganizationInfo = getOrganizationInfoFactory({
       findBySiren: () => Promise.reject(),
       findBySiret: () => Promise.resolve(CommunautéDeCommunes),
     });
-    assert.deepEqual(
-      await getOrganizationInfo("20007184300060"),
-      diffusibleOrganizationInfo,
-    );
+    t.assert.snapshot(await getOrganizationInfo("20007184300060"));
   });
 
-  test("should return valid payload for diffusible siren", async () => {
+  test("should return valid payload for diffusible siren", async (t) => {
     const getOrganizationInfo = getOrganizationInfoFactory({
       findBySiren: () => Promise.resolve(CommunautéDeCommunes),
       findBySiret: () => Promise.reject(),
     });
-    assert.deepEqual(
-      await getOrganizationInfo("200071843"),
-      diffusibleOrganizationInfo,
-    );
+    t.assert.snapshot(await getOrganizationInfo("200071843"));
   });
 
-  test("should show partial data for partially non diffusible établissement", async () => {
+  test("should show partial data for partially non diffusible établissement", async (t) => {
     const getOrganizationInfo = getOrganizationInfoFactory({
       findBySiren: () => Promise.reject(),
-      findBySiret: () => Promise.resolve(JeanPierreEntrepreneur),
+      findBySiret: () => Promise.resolve(RogalDornEntrepreneur),
     });
 
-    assert.deepEqual(await getOrganizationInfo("94957325700019"), {
-      siret: "94957325700019",
-      libelle: "Nom inconnu",
-      nomComplet: "Nom inconnu",
-      enseigne: "",
-      trancheEffectifs: null,
-      trancheEffectifsUniteLegale: null,
-      libelleTrancheEffectif: "",
-      etatAdministratif: "A",
-      estActive: true,
-      statutDiffusion: "partiellement_diffusible",
-      estDiffusible: false,
-      adresse: "06155 Vallauris",
-      codePostal: "06155",
-      codeOfficielGeographique: "06155",
-      activitePrincipale: "62.02A",
-      libelleActivitePrincipale:
-        "62.02A - Conseil en systèmes et logiciels informatiques",
-      categorieJuridique: "1000",
-      libelleCategorieJuridique: "Entrepreneur individuel",
-    });
+    t.assert.snapshot(await getOrganizationInfo("94957325700019"));
   });
 
   test.skip("should throw for totally non diffusible établissement", async () => {
