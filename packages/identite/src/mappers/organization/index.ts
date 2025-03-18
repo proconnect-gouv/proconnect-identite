@@ -1,3 +1,3 @@
 //
 
-export * from "./fromSiret.js";
+export * from "./from-siret.js";

@@ -1,46 +1,44 @@
-import type { DatabaseContext, UserOrganizationLink } from "#src/types";
+import { hashToPostgresParams } from "#src/services";
+import type {
+  DatabaseContext,
+  InsertUserOrganizationLink,
+  UserOrganizationLink,
+} from "#src/types";
 import type { QueryResult } from "pg";
 
 export function linkUserToOrganizationFactory({ pg }: DatabaseContext) {
   return async function linkUserToOrganization({
+    is_executive = false,
+    is_external = false,
+    needs_official_contact_email_verification = false,
     organization_id,
     user_id,
-    is_external = false,
     verification_type,
-    needs_official_contact_email_verification = false,
-  }: {
-    organization_id: number;
-    user_id: number;
-    is_external?: boolean;
-    verification_type: UserOrganizationLink["verification_type"];
-    needs_official_contact_email_verification?: UserOrganizationLink["needs_official_contact_email_verification"];
-  }) {
+  }: InsertUserOrganizationLink) {
+    const { paramsString, valuesString, values } =
+      hashToPostgresParams<UserOrganizationLink>({
+        created_at: new Date(),
+        is_executive_verified_at: is_executive ? new Date() : undefined,
+        is_executive,
+        is_external,
+        needs_official_contact_email_verification,
+        organization_id,
+        updated_at: new Date(),
+        user_id,
+        verification_type,
+      });
+
     const { rows }: QueryResult<UserOrganizationLink> = await pg.query(
       `
-        INSERT INTO users_organizations
-          (user_id,
-          organization_id,
-          is_external,
-          verification_type,
-          needs_official_contact_email_verification,
-          updated_at,
-          created_at)
-        VALUES
-          ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING *
-      `,
-      [
-        user_id,
-        organization_id,
-        is_external,
-        verification_type,
-        needs_official_contact_email_verification,
-        new Date(),
-        new Date(),
-      ],
+      INSERT INTO users_organizations
+        ${paramsString}
+      VALUES
+        ${valuesString}
+      RETURNING *;`,
+      values,
     );
 
-    return rows.shift()! as UserOrganizationLink;
+    return rows.shift()!;
   };
 }
 
