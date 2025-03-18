@@ -1,5 +1,9 @@
 //
 
+import {
+  FranceConnectUserInfoResponseSchema,
+  type FranceConnectUserInfoResponse,
+} from "@gouvfr-lasuite/proconnect.identite/types";
 import express from "express";
 import { CompactSign, generateKeyPair } from "jose";
 import morgan from "morgan";
@@ -11,9 +15,22 @@ import wellKnown from "./well-known";
 //
 
 const SUB_VALUE = "🎭 FranceConnect Sub";
-const codeMap = new Map<string, { client_id: string; nonce: string }>();
+const codeMap = new Map<
+  string,
+  { client_id: string; nonce: string; state: string; redirect_uri: string }
+>();
 
 const TAGNAME = `[🎭]`;
+const DEFAULT_USERINFO: FranceConnectUserInfoResponse = {
+  birthdate: new Date("2001-01-01"),
+  birthplace: "Internet",
+  family_name: "Dupont",
+  gender: "male",
+  given_name: "Jean",
+  preferred_username: "Dulac",
+  sub: SUB_VALUE,
+};
+let userinfo: FranceConnectUserInfoResponse;
 
 morgan.token("prefix", () => TAGNAME);
 export const FranceconnectFrontChannel = express()
@@ -32,16 +49,41 @@ export const FranceconnectFrontChannel = express()
       .parse(req.query);
 
     const { client_id, redirect_uri, state, nonce } = query;
-    codeMap.set(codeValue, { client_id, nonce });
+    codeMap.set(codeValue, { client_id, nonce, redirect_uri, state });
 
-    return res.type("html").send(
-      SelectPage({
-        codeValue,
-        redirect_uri,
-        state,
-      }),
-    );
+    return res
+      .type("html")
+      .send(SelectPage({ codeValue, userinfo: DEFAULT_USERINFO }));
   })
+  .post(
+    "/interaction/:code/login",
+    express.urlencoded(),
+    async (req, res, next) => {
+      const { code } = req.params;
+      const info = await FranceConnectUserInfoResponseSchema.omit({
+        sub: true,
+      }).safeParseAsync(req.body);
+      if (info.error) {
+        return next(info.error);
+      }
+
+      const codeObj = codeMap.get(code);
+      userinfo = {
+        ...DEFAULT_USERINFO,
+        ...info.data,
+        sub: SUB_VALUE,
+      };
+      if (!codeObj) return next(new Error("Invalid authorization code"));
+
+      const { redirect_uri } = codeObj;
+      const redirectParams = new URLSearchParams({
+        code,
+        iss: "http://localhost:8600/api/v2",
+        state: codeObj.state,
+      });
+      return res.redirect(`${redirect_uri}?${redirectParams}`);
+    },
+  )
   .use((req, _res, next) => {
     console.warn(
       [
@@ -68,14 +110,7 @@ export const franceconnectHandlers = [
 
   http.get("http://localhost:8600/api/v2/userinfo", () => {
     // TODO(douglasduteil): find a way to get setted user from the front channel server
-    return HttpResponse.json({
-      sub: SUB_VALUE,
-      given_name: "Jean",
-      family_name: "Dupont",
-      birthdate: "1970-01-01",
-      birthplace: "Internet",
-      gender: "male",
-    });
+    return HttpResponse.json<FranceConnectUserInfoResponse>(userinfo);
   }),
 
   http.post("http://localhost:8600/api/v2/token", async ({ request }) => {
