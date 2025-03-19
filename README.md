@@ -1,4 +1,4 @@
-# 🔑 ProConnect - Identité
+# 🔑 ProConnect Identité
 
 ProConnect Identité est un fournisseur d'identité "OpenId Connect" géré par la DINUM.
 
