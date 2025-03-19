@@ -57,7 +57,7 @@ if (interactive && (!testCase || !doesExist)) {
 console.log("🚥 Setup test case", testCase);
 console.log();
 await $`npm run build:workspaces`;
-await $`npm run delete-database`;
+await $({ nothrow: true })`npm run delete-database`;
 await $`npm run migrate up`;
 await $`npm run fixtures:load-ci cypress/e2e/${testCase}/fixtures.sql`;
 await $`npm run update-organization-info 0`;
