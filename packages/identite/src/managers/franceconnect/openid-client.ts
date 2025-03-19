@@ -69,7 +69,6 @@ export function getFranceConnectRedirectUrlFactory(
         acr_values: "eidas1",
         nonce,
         redirect_uri: callbackUrl,
-        max_age: "0",
         scope,
         state,
       }),
