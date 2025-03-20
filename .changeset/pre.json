@@ -10,5 +10,7 @@
     "@gouvfr-lasuite/proconnect.entreprise": "0.0.0",
     "@gouvfr-lasuite/proconnect.identite": "0.5.2"
   },
-  "changesets": []
+  "changesets": [
+    "tiny-dots-arrive"
+  ]
 }
