@@ -39,7 +39,7 @@ jobs:
         uses: changesets/action@v1
         with:
           commit: "🔖 Version Packages"
-          publish: npx changeset publish
+          publish: pnpm publish -r
           title: "🔖 Version Packages"
           version: npm run version
         env:
