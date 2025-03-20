@@ -1,5 +1,11 @@
 # @gouvfr-lasuite/moncomptepro.core
 
+## 0.6.0-beta.0
+
+### Minor Changes
+
+- [#1105](https://github.com/numerique-gouv/proconnect-identite/pull/1105) [`18fd106`](https://github.com/numerique-gouv/proconnect-identite/commit/18fd106e187768eca3c2ee0fff5b3b91d5b6ac40) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 📦 Séparation de internal and external exported files
+
 ## 0.5.0
 
 ### Minor Changes
