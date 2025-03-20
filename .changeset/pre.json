@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@gouvfr-lasuite/proconnect.core": "0.5.0",
+    "@gouvfr-lasuite/proconnect.crisp": "0.5.0",
+    "@gouvfr-lasuite/proconnect.debounce": "0.4.3",
+    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@gouvfr-lasuite/proconnect.email": "0.1.2",
+    "@gouvfr-lasuite/proconnect.entreprise": "0.0.0",
+    "@gouvfr-lasuite/proconnect.identite": "0.5.2"
+  },
+  "changesets": []
+}
