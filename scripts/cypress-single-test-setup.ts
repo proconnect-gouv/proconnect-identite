@@ -66,13 +66,13 @@ console.log();
 console.log("All set and ready !");
 
 if (mode === "development") {
-  $`npx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev:with-mocks`;
+  $`npx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev`;
 } else {
   console.log("Run the app with the specific env vars:");
 
   console.log(`
   \t\`\`\`bash
-  \tnpx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev:with-mocks
+  \tnpx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev
   \t\`\`\`
   `);
 }

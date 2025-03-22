@@ -1,8 +1,8 @@
 //
 
-export default {
+export default (issuer: string) => ({
   acr_values_supported: ["eidas1"],
-  authorization_endpoint: "http://localhost:8600/api/v2/authorize",
+  authorization_endpoint: `${issuer}/authorize`,
   claims_parameter_supported: true,
   claims_supported: [
     "sub",
@@ -102,11 +102,11 @@ export default {
     "iss",
   ],
   code_challenge_methods_supported: ["S256"],
-  end_session_endpoint: "http://localhost:8600/api/v2/session/end",
+  end_session_endpoint: `${issuer}/session/end`,
   grant_types_supported: ["authorization_code"],
   id_token_signing_alg_values_supported: ["HS256", "ES256", "RS256"],
-  issuer: "http://localhost:8600/api/v2",
-  jwks_uri: "http://localhost:8600/api/v2/jwks",
+  issuer: `${issuer}`,
+  jwks_uri: `${issuer}/jwks`,
   authorization_response_iss_parameter_supported: true,
   response_modes_supported: ["form_post", "fragment", "query"],
   response_types_supported: ["code"],
@@ -211,18 +211,18 @@ export default {
     "private_key_jwt",
   ],
   token_endpoint_auth_signing_alg_values_supported: ["ES256", "RS256"],
-  token_endpoint: "http://localhost:8600/api/v2/token",
+  token_endpoint: `${issuer}/token`,
   request_object_signing_alg_values_supported: ["ES256", "RS256", "HS256"],
   request_parameter_supported: false,
   request_uri_parameter_supported: true,
   require_request_uri_registration: true,
-  userinfo_endpoint: "http://localhost:8600/api/v2/userinfo",
+  userinfo_endpoint: `${issuer}/userinfo`,
   userinfo_signing_alg_values_supported: ["HS256", "ES256", "RS256"],
-  revocation_endpoint: "http://localhost:8600/api/v2/token/revocation",
+  revocation_endpoint: `${issuer}/token/revocation`,
   revocation_endpoint_auth_methods_supported: [
     "client_secret_post",
     "private_key_jwt",
   ],
   revocation_endpoint_auth_signing_alg_values_supported: ["ES256", "RS256"],
   claim_types_supported: ["normal"],
-};
+});

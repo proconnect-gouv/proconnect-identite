@@ -1,3 +1,4 @@
+import { createTestingHandler } from "@gouvfr-lasuite/proconnect.testing/api";
 import * as Sentry from "@sentry/node";
 import { RedisStore } from "connect-redis";
 import type { NextFunction, Request, Response } from "express";
@@ -15,8 +16,10 @@ import path from "path";
 import { ZodError } from "zod";
 import {
   ACCESS_LOG_PATH,
+  DEPLOY_ENV,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
+  FRANCECONNECT_ISSUER,
   HOST,
   JWKS,
   NODE_ENV,
@@ -243,6 +246,14 @@ app.use((req, _res, next) => {
   next();
 });
 app.use("/oauth", oidcProvider.callback());
+
+if (DEPLOY_ENV === "localhost" || DEPLOY_ENV === "preview") {
+  app.use(
+    createTestingHandler("/___testing___", {
+      ISSUER: FRANCECONNECT_ISSUER,
+    }),
+  );
+}
 
 app.use(async (req, res, _next) => {
   res.setHeader("Content-Type", "text/html");

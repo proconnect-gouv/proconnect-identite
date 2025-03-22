@@ -67,7 +67,8 @@ describe("env.zod", () => {
       FRANCECONNECT_CLIENT_ID: "🎭 Mocked FranceConnect Client ID",
       FRANCECONNECT_CLIENT_SECRET: "🎭 Mocked FranceConnect Client Secret",
       FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: "ES256",
-      FRANCECONNECT_ISSUER: "http://localhost:8600/api/v2",
+      FRANCECONNECT_ISSUER:
+        "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
       FRANCECONNECT_SCOPES: [
         "birthplace birthdate family_name gender given_name openid preferred_username",
       ],
