@@ -68,7 +68,7 @@ jobs:
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets
-          start: npx dotenvx run -f cypress/e2e/${{ matrix.e2e_test }}/env.conf --overload -- npm run start:with-mocks
+          start: npx dotenvx run -f cypress/e2e/${{ matrix.e2e_test }}/env.conf --overload -- npm run start
           install: false
           spec: cypress/e2e/${{ matrix.e2e_test }}/index.cy.ts
         env:

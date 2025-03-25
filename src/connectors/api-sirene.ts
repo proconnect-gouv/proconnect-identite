@@ -9,7 +9,9 @@ import {
   type EntrepriseOpenApiClient,
 } from "@gouvfr-lasuite/proconnect.entreprise/client";
 import { getOrganizationInfoFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
+import { TestingEntrepriseApiRouter } from "@gouvfr-lasuite/proconnect.testing/api/routes/entreprise.api.gouv.fr";
 import {
+  DEPLOY_ENV,
   ENTREPRISE_API_TOKEN,
   ENTREPRISE_API_TRACKING_CONTEXT,
   ENTREPRISE_API_TRACKING_RECIPIENT,
@@ -22,6 +24,11 @@ import {
 export const entrepriseOpenApiClient: EntrepriseOpenApiClient =
   createEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
     baseUrl: ENTREPRISE_API_URL,
+    fetch:
+      DEPLOY_ENV === "localhost" || DEPLOY_ENV === "preview"
+        ? (input: Request) =>
+            Promise.resolve(TestingEntrepriseApiRouter.fetch(input))
+        : undefined,
   });
 
 export const findBySiret = findBySiretFactory(

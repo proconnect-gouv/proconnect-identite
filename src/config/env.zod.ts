@@ -39,7 +39,9 @@ export const connectorEnvSchema = z.object({
   FRANCECONNECT_ISSUER: z
     .string()
     .url()
-    .default("http://localhost:8600/api/v2"),
+    .default(
+      "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
+    ),
   FRANCECONNECT_SCOPES: zCoerceArray(z.string()).default(
     [
       "birthplace",

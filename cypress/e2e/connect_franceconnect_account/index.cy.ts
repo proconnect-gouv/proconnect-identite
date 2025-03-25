@@ -13,12 +13,10 @@ describe("Connect FranceConnect account", () => {
 
     cy.contains("S’identifier avec").click();
 
-    cy.origin("http://localhost:8600", () => {
-      cy.contains("Edit").click();
-      cy.contains("label", "family_name").click();
-      cy.focused().clear().type("De La Rose");
-      cy.contains("Je suis Jean De La Rose").click();
-    });
+    cy.contains("Edit").click();
+    cy.contains("label", "family_name").click();
+    cy.focused().clear().type("De La Rose");
+    cy.contains("Je suis Jean De La Rose").click();
 
     cy.title().should("include", "Informations personnelles -");
     cy.contains("Nous avons bien récupéré vos données via FranceConnect.");
