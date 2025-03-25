@@ -71,7 +71,7 @@
     "bcryptjs": "^3.0.2",
     "is-disposable-email-domain": "^1.0.7",
     "lodash-es": "^4.17.21",
-    "nanoid": "^5.1.4",
+    "nanoid": "^5.1.5",
     "tld-extract": "^2.1.0"
   },
   "devDependencies": {
