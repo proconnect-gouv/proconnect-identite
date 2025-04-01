@@ -9,8 +9,5 @@ commandTests:
     expectedOutput: ["tsx --import ./src/instrument.ts src/index.ts"]
     expectedError: ["connect ECONNREFUSED 127.0.0.1:5432"]
 
-globalEnvVars:
-  - key: "ENTREPRISE_API_TOKEN"
-    value: "ENTREPRISE_API_TOKEN"
-  - key: "DATABASE_URL"
-    value: "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro"
+containerRunOptions:
+  envFile: .env.test
