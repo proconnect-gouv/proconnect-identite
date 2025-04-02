@@ -76,7 +76,7 @@
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
-    "@types/node": "^22.13.14",
+    "@types/node": "^22.13.17",
     "pkgroll": "^2.11.2",
     "tsx": "^4.19.3"
   },
