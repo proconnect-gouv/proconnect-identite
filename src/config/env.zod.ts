@@ -4,7 +4,6 @@ import { defaultJWKS } from "./default-jwks";
 export const connectorEnvSchema = z.object({
   API_AUTH_PASSWORD: z.string().default("admin"),
   API_AUTH_USERNAME: z.string().default("admin"),
-  BREVO_API_KEY: z.string().optional(),
   CRISP_BASE_URL: z.string().url().default("https://api.crisp.chat"),
   CRISP_IDENTIFIER: z.string().default(""),
   CRISP_KEY: z.string().default(""),

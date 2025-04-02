@@ -7,7 +7,6 @@ on:
       - "!master"
 
 env:
-  BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
   CYPRESS_RECORD: true
   DATABASE_URL: postgres://moncomptepro:moncomptepro@localhost:5432/moncomptepro
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
