@@ -9,7 +9,6 @@
 
 .home-tile > img {
   grid-area: illu;
-  background: #f6f6f6;
 }
 
 .home-tile > p {
@@ -19,7 +18,8 @@
   padding: 2.5rem 2rem;
 }
 
-@media all and (min-width: 768px) and (max-width: 992px), all and (max-width: 576px) {
+@media all and (min-width: 768px) and (max-width: 992px),
+  all and (max-width: 576px) {
   .home-tile {
     grid-template-columns: 100%;
     grid-template-areas: "content";
