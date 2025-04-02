@@ -33,4 +33,4 @@ VALUES
    'openid email profile phone organization organizations',
    'http://localhost:4000/',
    'ProConnect test client. More info: https://github.com/numerique-gouv/proconnect-test-client.',
-   null, null, null, null);
+   'ES256', 'ES256', 'ES256', 'ES256');

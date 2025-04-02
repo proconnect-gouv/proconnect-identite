@@ -1,6 +1,7 @@
 // source https://github.com/panva/node-oidc-provider/blob/6fbcd71b08b8b8f381a97a82809de42c75904c6b/example/adapters/redis.js
 import { isEmpty } from "lodash-es";
 import { getNewRedisClient } from "../../connectors/redis";
+import { findByClientId } from "../oidc-client";
 
 const getClient = () =>
   getNewRedisClient({
@@ -45,6 +46,8 @@ class RedisAdapter {
     payload: { grantId: any; userCode: any; uid: any },
     expiresIn: number,
   ) {
+    console.log("upsert", id, payload, expiresIn);
+    console.trace();
     const key = this.key(id);
     const store = consumable.has(this.name)
       ? { payload: JSON.stringify(payload) }
@@ -85,6 +88,12 @@ class RedisAdapter {
   }
 
   async find(id: any) {
+    return (await this.findInRedis(id)) ?? (await this.findInPostgres(id));
+  }
+
+  private async findInRedis(id: any) {
+    console.log("findInRedis", id);
+    console.trace();
     const data = consumable.has(this.name)
       ? await getClient().hgetall(this.key(id))
       : await getClient().get(this.key(id));
@@ -92,6 +101,7 @@ class RedisAdapter {
     if (isEmpty(data)) {
       return undefined;
     }
+    console.log("findInRedis", data);
 
     if (typeof data === "string") {
       return JSON.parse(data);
@@ -102,6 +112,15 @@ class RedisAdapter {
       ...rest,
       ...JSON.parse(payload),
     };
+  }
+
+  private async findInPostgres(id: any) {
+    console.log("findInPostgres", id);
+    console.trace();
+    const data = await findByClientId(id);
+    if (isEmpty(data)) return undefined;
+
+    return data;
   }
 
   async findByUid(uid: any) {

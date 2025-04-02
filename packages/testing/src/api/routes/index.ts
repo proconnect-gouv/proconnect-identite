@@ -1,7 +1,11 @@
 //
 
-import { Hono } from "hono";
+import { Hono, type Env } from "hono";
 import { TestingEntrepriseApiRouter } from "./entreprise.api.gouv.fr/index.js";
+import {
+  TestingOidcProviderRouter,
+  type OidcProviderVariables,
+} from "./oidc-provider/index.js";
 import {
   TestingOidcFranceConnectRouter,
   type FranceConnectBindings,
@@ -10,6 +14,13 @@ import {
 //
 
 export type TestingBindings = FranceConnectBindings;
-export const router = new Hono<{ Bindings: TestingBindings }>()
+export type TestingVariables = OidcProviderVariables;
+export interface TestingContextVariableMap extends Env {
+  Bindings: TestingBindings;
+  Variables: TestingVariables;
+}
+
+export const router = new Hono<TestingContextVariableMap>()
   .route("/entreprise.api.gouv.fr", TestingEntrepriseApiRouter)
+  .route("/oidc-provider", TestingOidcProviderRouter)
   .route("/oidc.franceconnect.gouv.fr", TestingOidcFranceConnectRouter);
