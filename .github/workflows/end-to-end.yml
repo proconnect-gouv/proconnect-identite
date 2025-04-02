@@ -10,7 +10,6 @@ env:
   CYPRESS_RECORD: true
   DATABASE_URL: postgres://moncomptepro:moncomptepro@localhost:5432/moncomptepro
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
-  FEATURE_SEND_MAIL: "True"
   ZAMMAD_TOKEN: ${{ secrets.ZAMMAD_TOKEN }}
 jobs:
   test:

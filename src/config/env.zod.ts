@@ -76,7 +76,6 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default("False"),
   FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default("False"),
   FEATURE_RATE_LIMIT: zodTrueFalseBoolean().default("False"),
-  FEATURE_SEND_MAIL: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default("False"),

@@ -59,7 +59,6 @@ describe("env.zod", () => {
       FEATURE_FRANCECONNECT_CONNECTION: false,
       FEATURE_BYPASS_MODERATION: false,
       FEATURE_RATE_LIMIT: false,
-      FEATURE_SEND_MAIL: false,
       FEATURE_USE_ANNUAIRE_EMAILS: false,
       FEATURE_USE_SECURE_COOKIES: false,
       FEATURE_USE_SECURITY_RESPONSE_HEADERS: false,
