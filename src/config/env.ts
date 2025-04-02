@@ -1,22 +1,10 @@
 //
 
-import dotenv from "dotenv";
+import dotenvFlow from "dotenv-flow";
 import { fromZodError } from "zod-validation-error";
 import { envSchema } from "./env.zod";
 
-// Load variable from .env.<NODE_ENV>.local file,
-// Load variable from .env.local file,
-// Load variable from .env.<NODE_ENV> file,
-// Load variable from .env file
-// only used in local dev env and test
-dotenv.config({
-  path: [
-    `.env.${process.env["NODE_ENV"] ?? "development"}.local`,
-    ".env.local",
-    `.env.${process.env["NODE_ENV"] ?? "development"}`,
-    ".env",
-  ],
-});
+dotenvFlow.config();
 
 const parsedEnv = envSchema.safeParse(process.env, {
   path: ["process.env"],
@@ -34,7 +22,6 @@ export const {
   API_AUTH_PASSWORD,
   API_AUTH_USERNAME,
   APPLICATION_NAME,
-  BREVO_API_KEY,
   CRISP_BASE_URL,
   CRISP_IDENTIFIER,
   CRISP_KEY,
@@ -62,7 +49,6 @@ export const {
   FEATURE_DISPLAY_TEST_ENV_WARNING,
   FEATURE_FRANCECONNECT_CONNECTION,
   FEATURE_RATE_LIMIT,
-  FEATURE_SEND_MAIL,
   FEATURE_USE_ANNUAIRE_EMAILS,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,

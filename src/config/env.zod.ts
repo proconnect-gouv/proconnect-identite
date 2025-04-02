@@ -4,7 +4,6 @@ import { defaultJWKS } from "./default-jwks";
 export const connectorEnvSchema = z.object({
   API_AUTH_PASSWORD: z.string().default("admin"),
   API_AUTH_USERNAME: z.string().default("admin"),
-  BREVO_API_KEY: z.string().optional(),
   CRISP_BASE_URL: z.string().url().default("https://api.crisp.chat"),
   CRISP_IDENTIFIER: z.string().default(""),
   CRISP_KEY: z.string().default(""),
@@ -77,7 +76,6 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default("False"),
   FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default("False"),
   FEATURE_RATE_LIMIT: zodTrueFalseBoolean().default("False"),
-  FEATURE_SEND_MAIL: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default("False"),

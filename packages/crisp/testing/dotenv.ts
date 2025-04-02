@@ -1,14 +1,7 @@
 //
 
-import dotenv from "dotenv";
+import dotenvFlow from "dotenv-flow";
 
 //
 
-dotenv.config({
-  path: [
-    `.env.${process.env["NODE_ENV"] ?? "development"}.local`,
-    ".env.local",
-    `.env.${process.env["NODE_ENV"] ?? "development"}`,
-    ".env",
-  ],
-});
+dotenvFlow.config();
