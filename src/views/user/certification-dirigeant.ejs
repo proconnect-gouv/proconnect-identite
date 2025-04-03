@@ -6,11 +6,9 @@
     FranceConnect.
   </p>
 
+  <% if (requiresVerification) { %>
   <form action="/users/certification-dirigeant" method="post">
     <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
-
-
-    <% if (requiresVerification) { %>
     <div class="fr-connect-group">
       <button aria-label="S’identifier avec FranceConnect" class="fr-connect">
         <span class="fr-connect__login">S’identifier avec</span>
@@ -26,16 +24,16 @@
         >
       </p>
     </div>
-    <% } else { %>
-    <div class="fr-connect-group">
-      <a
-        href="/users/certification-dirigeant/representing"
-        class="fr-btn fr-btn--secondary"
-        >
-        Continuer
-      </a>
-    </div>
-    <% } %>
-
   </form>
+  <% } else { %>
+  <div class="fr-connect-group">
+    <a
+      href="/users/certification-dirigeant/representing"
+      class="fr-btn fr-btn--secondary"
+      >
+      Continuer
+    </a>
+  </div>
+  <% } %>
+
 </div>
