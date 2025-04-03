@@ -8,7 +8,7 @@ import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import assert from "node:assert";
 import {
-  EXECUTIVE_CERTIFICATION_MAX_AGE_IN_MINUTES,
+  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
   HOST,
 } from "../config/env";
@@ -457,7 +457,7 @@ export function checkUserWantToRepresentAnOrganization(
 
         const expiredCertification = isExpired(
           userOrganizationLink.is_executive_verified_at,
-          EXECUTIVE_CERTIFICATION_MAX_AGE_IN_MINUTES,
+          CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
         );
         const expiredVerification =
           Number(franceconnectUserInfo.updated_at) >

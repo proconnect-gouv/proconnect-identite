@@ -107,7 +107,7 @@ export const paramsEnvSchema = z.object({
   ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/certification-dirigeant"),
-  EXECUTIVE_CERTIFICATION_MAX_AGE_IN_MINUTES: z.coerce
+  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
