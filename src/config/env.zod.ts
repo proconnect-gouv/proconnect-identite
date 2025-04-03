@@ -35,12 +35,7 @@ export const connectorEnvSchema = z.object({
     .string()
     .default("🎭 Mocked FranceConnect Client Secret"),
   FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("ES256"),
-  FRANCECONNECT_ISSUER: z
-    .string()
-    .url()
-    .default(
-      "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
-    ),
+  FRANCECONNECT_ISSUER: z.string().url(),
   FRANCECONNECT_SCOPES: zCoerceArray(z.string()).default(
     [
       "birthplace",

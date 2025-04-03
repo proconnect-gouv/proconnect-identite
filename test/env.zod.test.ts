@@ -13,6 +13,8 @@ describe("env.zod", () => {
       DATABASE_URL:
         "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro",
       ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
+      FRANCECONNECT_ISSUER:
+        "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
     };
 
     const env = envSchema.parse(sample_env);
