@@ -14,7 +14,13 @@
     "types": ["cypress"]
   },
   "exclude": ["packages/*", "build/*", "dist/*"],
-  "include": ["cypress.config.ts", "cypress/e2e", "cypress/support", "src"],
+  "include": [
+    "cypress.config.ts",
+    "cypress/e2e",
+    "cypress/support",
+    "scripts",
+    "src"
+  ],
   "references": [
     { "path": "./packages/core/tsconfig.lib.json" },
     { "path": "./packages/debounce/tsconfig.lib.json" },

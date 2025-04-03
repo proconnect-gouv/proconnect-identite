@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
     "resolveJsonModule": true,
+    "rootDir": "./src",
     "types": ["node"]
   },
   "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
