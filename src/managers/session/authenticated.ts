@@ -1,9 +1,18 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import type { Request, Response } from "express";
 import { Session, type SessionData } from "express-session";
 import { isEmpty } from "lodash-es";
-import { RECENT_LOGIN_INTERVAL_IN_SECONDS } from "../../config/env";
+import { match } from "ts-pattern";
+import {
+  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
+  ACR_VALUE_FOR_IAL1_AAL1,
+  ACR_VALUE_FOR_IAL1_AAL2,
+  ACR_VALUE_FOR_IAL2_AAL1,
+  ACR_VALUE_FOR_IAL2_AAL2,
+  RECENT_LOGIN_INTERVAL_IN_SECONDS,
+} from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
 import { getUserOrganizationLink } from "../../repositories/organization/getters";
 import {
@@ -61,6 +70,7 @@ export const createAuthenticatedSession = async (
     referrerPath,
     state,
     twoFactorsAuthRequested,
+    certificationDirigeantRequested,
   } = req.session;
 
   // as selected org is not stored in session,
@@ -86,6 +96,8 @@ export const createAuthenticatedSession = async (
         req.session.twoFactorsAuthRequested = twoFactorsAuthRequested;
         req.session.referrerPath = referrerPath;
         req.session.authForProconnectFederation = authForProconnectFederation;
+        req.session.certificationDirigeantRequested =
+          certificationDirigeantRequested;
         // new session reset amr
         req.session.amr = [];
         req.session.nonce = nonce;
@@ -242,10 +254,13 @@ export const isIdentityConsistencyChecked = async (req: Request) => {
   const link = await getUserOrganizationLink(selectedOrganizationId, user.id);
 
   if (isEmpty(link)) {
-    throw new Error("link should be set");
+    throw new NotFoundError("link should be set");
   }
 
-  return [
+  const askForExecutiveCertification = Boolean(
+    req.session.certificationDirigeantRequested,
+  );
+  const hasValidVerificationType = [
     "code_sent_to_official_contact_email",
     "domain",
     "imported_from_inclusion_connect",
@@ -254,4 +269,53 @@ export const isIdentityConsistencyChecked = async (req: Request) => {
     "official_contact_email",
     "bypassed",
   ].includes(link?.verification_type ?? "");
+
+  return match({
+    isOrganizationExecutive: link.is_executive,
+    askForExecutiveCertification,
+    hasValidVerificationType,
+  })
+    .with(
+      {
+        askForExecutiveCertification: true,
+        isOrganizationExecutive: true,
+      },
+      { hasValidVerificationType: true },
+      () => true,
+    )
+    .otherwise(() => false);
 };
+
+export async function getCurrentAcr(req: Request) {
+  const { certificationDirigeantRequested } = req.session;
+  const isConsistencyChecked = await isIdentityConsistencyChecked(req);
+  const isWithinTwoFactorAuthentication =
+    await isWithinTwoFactorAuthenticatedSession(req);
+
+  return match({
+    certificationDirigeantRequested,
+    isConsistencyChecked,
+    isWithinTwoFactorAuthentication,
+  })
+    .with(
+      { isConsistencyChecked: true, certificationDirigeantRequested: true },
+      () => ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
+    )
+    .with(
+      { isConsistencyChecked: true, isWithinTwoFactorAuthentication: true },
+      () => ACR_VALUE_FOR_IAL2_AAL2,
+    )
+    .with(
+      { isConsistencyChecked: false, isWithinTwoFactorAuthentication: true },
+      () => ACR_VALUE_FOR_IAL1_AAL2,
+    )
+    .with(
+      { isConsistencyChecked: true, isWithinTwoFactorAuthentication: false },
+      () => ACR_VALUE_FOR_IAL2_AAL1,
+    )
+    .with(
+      { isConsistencyChecked: false, isWithinTwoFactorAuthentication: false },
+      () => ACR_VALUE_FOR_IAL1_AAL1,
+    )
+    .exhaustive();
+}

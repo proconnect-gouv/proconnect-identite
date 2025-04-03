@@ -1,6 +1,7 @@
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import {
+  InvalidCertificationError,
   InvalidSiretError,
   NotFoundError,
   OrganizationNotActiveError,
@@ -15,6 +16,7 @@ import {
   UserInOrganizationAlreadyError,
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
+import { isOrganizationExecutive } from "../managers/certification";
 import { getOrganizationFromModeration } from "../managers/moderation";
 import {
   doSuggestOrganizations,
@@ -28,6 +30,7 @@ import {
 } from "../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import {
   idSchema,
   optionalBooleanSchema,
@@ -106,22 +109,42 @@ export const postJoinOrganizationMiddleware = async (
     });
 
     const { confirmed, siret } = await schema.parseAsync(req.body);
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    if (req.session.certificationDirigeantRequested) {
+      const isExecutive = await isOrganizationExecutive(siret, user_id);
+      if (!isExecutive) throw new InvalidCertificationError();
+    }
 
     const userOrganizationLink = await joinOrganization({
       siret,
-      user_id: getUserFromAuthenticatedSession(req).id,
+      user_id,
       confirmed,
     });
 
+    if (req.session.certificationDirigeantRequested) {
+      await updateUserOrganizationLink(
+        userOrganizationLink.organization_id,
+        userOrganizationLink.user_id,
+        {
+          is_executive: true,
+          is_executive_verified_at: new Date(),
+        },
+      );
+    }
+
     if (req.session.mustReturnOneOrganizationInPayload) {
       await selectOrganization({
-        user_id: getUserFromAuthenticatedSession(req).id,
+        user_id,
         organization_id: userOrganizationLink.organization_id,
       });
     }
 
     next();
   } catch (error) {
+    if (error instanceof InvalidCertificationError) {
+      return res.redirect("/users/unable-to-certify-user-as-executive");
+    }
     if (
       error instanceof UnableToAutoJoinOrganizationError ||
       error instanceof UserAlreadyAskedToJoinOrganizationError
@@ -227,6 +250,27 @@ export const getUnableToAutoJoinOrganizationController = async (
     next(e);
   }
 };
+
+export function getUnableToCertifyUserAsExecutiveController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    return res.render("user/unable-to-certify-user-as-executive", {
+      illustration: "error.svg",
+      oidcError: "server_error",
+      interactionId: req.session.interactionId,
+      pageTitle: "Certification impossible",
+      use_dashboard_layout: false,
+    });
+  } catch (e) {
+    if (e instanceof NotFoundError) {
+      next(new HttpErrors.NotFound());
+    }
+    next(e);
+  }
+}
 
 export const postQuitUserOrganizationController = async (
   req: Request,

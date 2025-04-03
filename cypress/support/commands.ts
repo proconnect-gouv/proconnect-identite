@@ -20,6 +20,7 @@ declare global {
       setCustomParams(customParams: any): Chainable<void>;
       setRequestedAcrs(requestedAcrs?: string[]): Chainable<void>;
       getDescribed: typeof getDescribedCommand;
+      getByLabel: typeof getByLabelCommand;
     }
   }
 }
@@ -120,3 +121,8 @@ function getDescribedCommand(text: string) {
     });
 }
 Cypress.Commands.add("getDescribed", getDescribedCommand);
+
+function getByLabelCommand(text: string) {
+  return cy.get(`[aria-label="${text}"]`);
+}
+Cypress.Commands.add("getByLabel", getByLabelCommand);

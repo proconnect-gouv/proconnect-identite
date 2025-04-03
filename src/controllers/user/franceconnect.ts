@@ -9,12 +9,14 @@ import {
   getFranceConnectRedirectUrl,
   getFranceConnectUser,
 } from "../../connectors/franceconnect";
+import { getOrganizationsByUserId } from "../../managers/organization/main";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import { FranceConnectOidcSessionSchema } from "../../managers/session/franceconnect";
 import { updateFranceConnectUserInfo } from "../../managers/user";
+import { updateUserOrganizationLink } from "../../repositories/organization/setters";
 
 //
 
@@ -27,6 +29,8 @@ export async function postFranceConnectController(
     const { nonce, state } = createOidcChecks();
     req.session.nonce = nonce;
     req.session.state = state;
+    req.session.redirectTo =
+      "/personal-information?notification=personal_information_update_via_franceconnect_success";
 
     const url = await getFranceConnectRedirectUrl(nonce, state);
 
@@ -54,9 +58,8 @@ export async function getFranceConnectOidcCallbackController(
     }
     const { code } = await z.object({ code: z.string() }).parseAsync(req.query);
 
-    const { nonce, state } = await FranceConnectOidcSessionSchema.parseAsync(
-      req.session,
-    );
+    const { nonce, state, redirectTo } =
+      await FranceConnectOidcSessionSchema.parseAsync(req.session);
     const franceconnectUserInfo = await getFranceConnectUser({
       code,
       currentUrl: `${HOST}${FRANCECONNECT_CALLBACK_URL}${req.url.substring(req.path.length)}`,
@@ -64,17 +67,23 @@ export async function getFranceConnectOidcCallbackController(
       expectedState: state,
     });
 
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: userId } = getUserFromAuthenticatedSession(req);
 
     const updatedUser = await updateFranceConnectUserInfo(
-      user_id,
+      userId,
       franceconnectUserInfo,
     );
     updateUserInAuthenticatedSession(req, updatedUser);
 
-    return res.redirect(
-      "/personal-information?notification=personal_information_update_via_franceconnect_success",
-    );
+    const userOrganizations = await getOrganizationsByUserId(userId);
+    for (let { id } of userOrganizations) {
+      updateUserOrganizationLink(id, userId, {
+        is_executive: false,
+        is_executive_verified_at: null,
+      });
+    }
+
+    return res.redirect(redirectTo);
   } catch (error) {
     next(error);
   }

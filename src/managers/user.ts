@@ -597,8 +597,8 @@ export const updatePersonalInformations = async (
   });
 };
 
-export async function isUserVerifiedWithFranceconnect(user_id: number) {
-  const userFranceConnect = await getFranceConnectUserInfo(user_id);
+export async function isUserVerifiedWithFranceconnect(userId: number) {
+  const userFranceConnect = await getFranceConnectUserInfo(userId);
 
   if (isEmpty(userFranceConnect)) {
     return false;

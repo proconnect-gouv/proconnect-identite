@@ -1,5 +1,6 @@
 //
 
+import { findMandatairesSociauxBySirenFactory } from "@gouvfr-lasuite/proconnect.entreprise/api/infogreffe";
 import {
   findBySirenFactory,
   findBySiretFactory,
@@ -59,3 +60,16 @@ export const getOrganizationInfo = getOrganizationInfoFactory({
   findBySiren,
   findBySiret,
 });
+
+export const findMandatairesSociauxBySiren =
+  findMandatairesSociauxBySirenFactory(
+    entrepriseOpenApiClient,
+    {
+      context: ENTREPRISE_API_TRACKING_CONTEXT,
+      object: "findMandatairesSociauxBySiren",
+      recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
+    },
+    () => ({
+      signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
+    }),
+  );

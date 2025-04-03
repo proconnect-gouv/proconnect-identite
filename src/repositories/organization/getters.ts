@@ -1,6 +1,8 @@
-import { getUsersByOrganizationFactory } from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
+import {
+  findByUserIdFactory,
+  getUsersByOrganizationFactory,
+} from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
 import type {
-  BaseUserOrganizationLink,
   Organization,
   UserOrganizationLink,
 } from "@gouvfr-lasuite/proconnect.identite/types";
@@ -20,28 +22,13 @@ WHERE id = $1`,
 
   return rows.shift();
 };
-export const findByUserId = async (user_id: number) => {
-  const connection = getDatabaseConnection();
 
-  const { rows }: QueryResult<Organization & BaseUserOrganizationLink> =
-    await connection.query(
-      `
-SELECT
-    o.*,
-    uo.is_external,
-    uo.verification_type,
-    uo.has_been_greeted,
-    uo.needs_official_contact_email_verification,
-    uo.official_contact_email_verification_token,
-    uo.official_contact_email_verification_sent_at
-FROM organizations o
-INNER JOIN users_organizations uo ON uo.organization_id = o.id
-WHERE uo.user_id = $1
-ORDER BY uo.created_at`,
-      [user_id],
-    );
-
-  return rows;
+export const findByUserId = findByUserIdFactory({
+  pg: getDatabaseConnection(),
+});
+export const findWhereUserIsExecutive = async (userId: number) => {
+  const organizations = await findByUserId(userId);
+  return organizations.filter((organization) => organization.is_executive);
 };
 export const findPendingByUserId = async (user_id: number) => {
   const connection = getDatabaseConnection();
@@ -102,6 +89,8 @@ export const getUserOrganizationLink = async (
 SELECT
   user_id,
   organization_id,
+  is_executive_verified_at,
+  is_executive,
   is_external,
   created_at,
   updated_at,
