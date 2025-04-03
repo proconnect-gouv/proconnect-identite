@@ -6,8 +6,8 @@ const getRedisClient = () =>
     keyPrefix: "mcp:selected-organization:",
   });
 
-export const getSelectedOrganizationId = async (user_id: number) => {
-  const rawResult = await getRedisClient().get(user_id.toString());
+export const getSelectedOrganizationId = async (userId: number) => {
+  const rawResult = await getRedisClient().get(userId.toString());
   return rawResult === null ? null : parseInt(rawResult, 10);
 };
 

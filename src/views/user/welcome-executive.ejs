@@ -1,0 +1,50 @@
+<div>
+    <div class="fr-mb-2w">
+        <img src="/dist/check.svg" alt="" />
+    </div>
+    <h1 class="fr-h3">
+      Vous êtes bien certifié !
+    </h1>
+    <div>
+        <p>
+            Vous avez reçu un email de confirmation.
+        </p>
+
+        <p>
+          Prénom <br/>
+          <b><%= user.given_name; %></b>
+        </p>
+
+        <p>
+          Nom <br/>
+          <b><%= user.family_name; %></b>
+        </p>
+
+        <p>
+          Email professionnel <br/>
+          <b><%= user.email; %></b>
+        </p>
+
+        <p>
+          Rôle <br/>
+          <b><%= user.job; %></b>
+        </p>
+
+        <p>
+          Organisation <br/>
+          <b><%= organization.libelle; %></b>
+        </p>
+
+        <p>
+          Statut <br/>
+          <b>Compte certifié</b>
+        </p>
+
+
+        <form action="/users/welcome" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
+
+            <%- include('../partials/submit-button.ejs', {label: 'Continuer'}) %>
+        </form>
+    </div>
+</div>

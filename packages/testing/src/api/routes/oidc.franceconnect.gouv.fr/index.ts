@@ -5,6 +5,7 @@ import {
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
+import { secureHeaders } from "hono/secure-headers";
 import { CompactSign, generateKeyPair } from "jose";
 import { z } from "zod";
 import SelectPage from "./select.page.js";
@@ -122,6 +123,12 @@ export const TestingOidcFranceConnectRouter = new Hono<{
   .get("/api/v2/userinfo", ({ json }) => json(userinfo))
   .get(
     "/interaction/:code/login",
+    secureHeaders({
+      contentSecurityPolicy: {
+        styleSrcElem: ["'self'", "unpkg.com"],
+        imgSrc: ["'self'", "data:", "avataaars.io"],
+      },
+    }),
     zValidator("param", z.object({ code: z.string() })),
     async ({ html }) => {
       return html(SelectPage({ userinfo: DEFAULT_USERINFO }));

@@ -1,21 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
 import Provider, { errors } from "oidc-provider";
 import { z } from "zod";
-import {
-  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
-  ACR_VALUE_FOR_IAL1_AAL1,
-  ACR_VALUE_FOR_IAL1_AAL2,
-  ACR_VALUE_FOR_IAL2_AAL1,
-  ACR_VALUE_FOR_IAL2_AAL2,
-  FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR,
-} from "../config/env";
+import { FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR } from "../config/env";
 import { OidcError } from "../config/errors";
 import {
+  getCurrentAcr,
   getSessionStandardizedAuthenticationMethodsReferences,
   getUserFromAuthenticatedSession,
-  isIdentityConsistencyChecked,
   isWithinAuthenticatedSession,
-  isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { setLoginHintInUnauthenticatedSession } from "../managers/session/unauthenticated";
 import { findByClientId } from "../repositories/oidc-client";
@@ -40,12 +32,12 @@ export const interactionStartControllerFactory =
       } = await oidcProvider.interactionDetails(req, res);
       const { client_id, login_hint, scope } = params as OIDCContextParams;
 
+      req.session.certificationDirigeantRequested =
+        certificationDirigeantRequested(prompt);
       req.session.interactionId = interactionId;
       req.session.mustReturnOneOrganizationInPayload =
         mustReturnOneOrganizationInPayload(scope);
       req.session.twoFactorsAuthRequested = twoFactorsAuthRequested(prompt);
-      req.session.certificationDirigeantRequested =
-        certificationDirigeantRequested(prompt);
 
       const oidcClient = await findByClientId(client_id);
       req.session.authForProconnectFederation =
@@ -91,19 +83,7 @@ export const interactionEndControllerFactory =
     try {
       const user = getUserFromAuthenticatedSession(req);
 
-      const isConsistencyChecked = await isIdentityConsistencyChecked(req);
-
-      let currentAcr = isWithinTwoFactorAuthenticatedSession(req)
-        ? isConsistencyChecked
-          ? ACR_VALUE_FOR_IAL2_AAL2
-          : ACR_VALUE_FOR_IAL1_AAL2
-        : isConsistencyChecked
-          ? ACR_VALUE_FOR_IAL2_AAL1
-          : ACR_VALUE_FOR_IAL1_AAL1;
-
-      currentAcr = req.session.certificationDirigeantRequested
-        ? ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT
-        : currentAcr;
+      let currentAcr = await getCurrentAcr(req);
 
       const amr = getSessionStandardizedAuthenticationMethodsReferences(req);
       const ts = user.last_sign_in_at
@@ -146,10 +126,12 @@ export const interactionEndControllerFactory =
         );
       }
 
+      req.session.authForProconnectFederation = undefined;
+      req.session.certificationDirigeantRequested = undefined;
       req.session.interactionId = undefined;
       req.session.mustReturnOneOrganizationInPayload = undefined;
+      req.session.passCertificationPage = undefined;
       req.session.twoFactorsAuthRequested = undefined;
-      req.session.authForProconnectFederation = undefined;
 
       await oidcProvider.interactionFinished(req, res, result);
     } catch (error) {
@@ -167,10 +149,12 @@ export const interactionErrorControllerFactory =
   (oidcProvider: Provider) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      req.session.authForProconnectFederation = undefined;
+      req.session.certificationDirigeantRequested = undefined;
       req.session.interactionId = undefined;
       req.session.mustReturnOneOrganizationInPayload = undefined;
+      req.session.passCertificationPage = undefined;
       req.session.twoFactorsAuthRequested = undefined;
-      req.session.authForProconnectFederation = undefined;
 
       const schema = z.object({
         error: oidcErrorSchema(),

@@ -1,3 +1,4 @@
+import type { CertificationSession } from "../managers/session/certification";
 import type { FranceConnectOidcSession } from "../managers/session/franceconnect";
 
 export interface UnauthenticatedSessionData {
@@ -33,7 +34,8 @@ export interface AuthenticatedSessionData {
 declare module "express-session" {
   export interface SessionData
     extends UnauthenticatedSessionData,
-      FranceConnectOidcSession {
+      FranceConnectOidcSession,
+      CertificationSession {
     user?: User;
     temporaryEncryptedTotpKey?: string;
     amr?: AmrValue[];
