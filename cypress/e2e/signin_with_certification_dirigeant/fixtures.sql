@@ -22,7 +22,7 @@ VALUES
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
    'Jean', 'Cinq', '0123456789', 'FranceConnect-ed Entreprise Unipersonnelle Dirigeant',
    null, null, false),
-  (6, 'gray+douglasduteil@mail.com', true, CURRENT_TIMESTAMP,
+  (6, 'outdated-franceconnected+douglasduteil@mail.com', true, CURRENT_TIMESTAMP,
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
    'Douglas Le Gris', 'Duteil', '0123456789', 'HyyyperProConnectDev4000',
    null, null, false),

@@ -78,7 +78,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
   });
 
   it("should re-FranceConnect expired Douglas Le Gris Duteil as an executive of ONEDOES.DRAW.DOUBLEACE", function () {
-    cy.login("gray+douglasduteil@mail.com");
+    cy.login("outdated-franceconnected+douglasduteil@mail.com");
 
     cy.title().should("include", "Certification dirigeant -");
     cy.contains("Certifier votre statut");
@@ -110,7 +110,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Vous êtes bien certifié !");
     cy.contains("Douglas Le Gris");
     cy.contains("Duteil");
-    cy.contains("gray+douglasduteil@mail.com");
+    cy.contains("outdated-franceconnected+douglasduteil@mail.com");
     cy.contains("HyyyperProConnectDev4000");
     cy.contains("Douglas Duteil");
     cy.contains("Compte certifié");
