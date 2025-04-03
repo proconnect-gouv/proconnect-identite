@@ -11,8 +11,8 @@ $.verbose = true;
 //
 
 let testCase = argv._[0];
-const mode = argv.dev ? "development" : "single";
-const interactive = !process.env.CI;
+const mode = argv["dev"] ? "development" : "single";
+const interactive = !process.env["CI"];
 
 const doesExist = await fs.exists(`cypress/e2e/${testCase}`);
 
