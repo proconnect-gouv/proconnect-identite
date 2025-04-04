@@ -127,7 +127,7 @@ export const joinOrganization = async ({
   siret: string;
   user_id: number;
   confirmed: boolean;
-  certificationRequested: boolean;
+  certificationRequested?: boolean;
 }): Promise<UserOrganizationLink> => {
   // Update organizationInfo
   let organizationInfo: OrganizationInfo;
@@ -174,14 +174,6 @@ export const joinOrganization = async ({
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
 
-  if (isEntrepriseUnipersonnelle(organization)) {
-    return await linkUserToOrganization({
-      organization_id,
-      user_id,
-      verification_type: "no_verification_means_for_entreprise_unipersonnelle",
-    });
-  }
-
   if (certificationRequested) {
     const isDirigeant = await isOrganizationDirigeant(siret, user_id);
 
@@ -191,6 +183,14 @@ export const joinOrganization = async ({
       organization_id,
       user_id,
       verification_type: "organization_dirigeant",
+    });
+  }
+
+  if (isEntrepriseUnipersonnelle(organization)) {
+    return await linkUserToOrganization({
+      organization_id,
+      user_id,
+      verification_type: "no_verification_means_for_entreprise_unipersonnelle",
     });
   }
 

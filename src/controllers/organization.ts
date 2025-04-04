@@ -114,9 +114,7 @@ export const postJoinOrganizationMiddleware = async (
       siret,
       user_id,
       confirmed,
-      certificationRequested: Boolean(
-        req.session.certificationDirigeantRequested,
-      ),
+      certificationRequested: req.session.certificationDirigeantRequested,
     });
 
     if (req.session.mustReturnOneOrganizationInPayload) {
@@ -131,6 +129,7 @@ export const postJoinOrganizationMiddleware = async (
     if (error instanceof InvalidCertificationError) {
       return res.redirect("/users/unable-to-certify-user-as-executive");
     }
+
     if (
       error instanceof UnableToAutoJoinOrganizationError ||
       error instanceof UserAlreadyAskedToJoinOrganizationError

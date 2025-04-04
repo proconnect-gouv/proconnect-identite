@@ -303,7 +303,7 @@ export async function getCurrentIAL(req: Request) {
     throw new NotFoundError("link should be set");
   }
 
-  if (link.is_executive) {
+  if (link.verification_type === "organization_dirigeant") {
     return 3;
   }
 

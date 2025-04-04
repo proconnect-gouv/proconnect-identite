@@ -470,6 +470,8 @@ export function checkUserWantToRepresentAnOrganization(
         );
         if (!isDirigeant) throw new InvalidCertificationError();
 
+        // user is already in the organization
+        // we override the previous verification_type
         await updateUserOrganizationLink(
           userOrganizationLink.organization_id,
           userOrganizationLink.user_id,
