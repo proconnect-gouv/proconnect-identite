@@ -4,7 +4,9 @@ import dotenvFlow from "dotenv-flow";
 import { fromZodError } from "zod-validation-error";
 import { envSchema } from "./env.zod";
 
-dotenvFlow.config();
+dotenvFlow.config({
+  default_node_env: "development",
+});
 
 const parsedEnv = envSchema.safeParse(process.env, {
   path: ["process.env"],
