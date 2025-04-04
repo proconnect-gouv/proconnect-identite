@@ -1,4 +1,7 @@
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
+import {
+  NotFoundError,
+  UserNotFoundError,
+} from "@gouvfr-lasuite/proconnect.identite/errors";
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
@@ -16,7 +19,6 @@ import moment from "moment";
 import "moment-timezone";
 import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
 import {
-  UserNotFoundError,
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
@@ -29,8 +31,8 @@ import {
   updateAuthenticator,
 } from "../repositories/authenticator";
 import {
-  findById,
   findByEmail as findUserByEmail,
+  getById,
   update,
 } from "../repositories/user";
 import { encodeBase64URL } from "../services/base64";
@@ -45,14 +47,10 @@ const rpID = WEBSITE_IDENTIFIER;
 const origin = HOST;
 
 export const isWebauthnConfiguredForUser = async (user_id: number) => {
-  const user = await findById(user_id);
-
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
+  // ASSERTION: user exists
+  await getById(user_id);
 
   const authenticators = await getAuthenticatorsByUserId(user_id);
-
   return !isEmpty(authenticators);
 };
 
