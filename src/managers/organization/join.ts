@@ -4,8 +4,8 @@ import { Welcome } from "@gouvfr-lasuite/proconnect.email";
 import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import {
   InvalidSiretError,
-  NotFoundError,
   OrganizationNotActiveError,
+  OrganizationNotFoundError,
 } from "@gouvfr-lasuite/proconnect.identite/errors";
 import { forceJoinOrganizationFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
 import type {
@@ -27,7 +27,6 @@ import {
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
   UserMustConfirmToJoinOrganizationError,
-  UserNotFoundError,
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmail } from "../../connectors/api-annuaire-service-public";
@@ -40,16 +39,16 @@ import {
   findPendingModeration,
 } from "../../repositories/moderation";
 import {
-  findById,
   findByUserId,
   findByVerifiedEmailDomain,
+  getById,
 } from "../../repositories/organization/getters";
 import {
   linkUserToOrganization,
   updateUserOrganizationLink,
   upsert,
 } from "../../repositories/organization/setters";
-import { findById as findUserById } from "../../repositories/user";
+import { getById as getUserById } from "../../repositories/user";
 import {
   isAFreeEmailProvider,
   usesAFreeEmailProvider,
@@ -148,10 +147,7 @@ export const joinOrganization = async ({
   }
 
   // Ensure user_id is valid
-  const user = await findUserById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
+  const user = await getUserById(user_id);
 
   const usersOrganizations = await findByUserId(user_id);
   if (some(usersOrganizations, ["id", organization.id])) {
@@ -366,9 +362,9 @@ export const joinOrganization = async ({
 };
 
 export const forceJoinOrganization = forceJoinOrganizationFactory({
-  findById,
   findEmailDomainsByOrganizationId,
-  findUserById,
+  getUserById,
+  getById,
   linkUserToOrganization,
 });
 
@@ -384,11 +380,9 @@ export const greetForJoiningOrganization = async ({
     ({ id }) => id === organization_id,
   );
 
-  if (isEmpty(organization)) {
-    throw new NotFoundError();
-  }
+  if (isEmpty(organization)) throw new OrganizationNotFoundError();
 
-  const { given_name, family_name, email } = (await findUserById(user_id))!;
+  const { given_name, family_name, email } = await getUserById(user_id);
 
   // Welcome the user when he joins is first organization as he may now be able to connect
   await sendMail({

@@ -68,13 +68,13 @@ suite("markDomainAsVerifiedFactory", () => {
       updateUserOrganizationLink: () => Promise.reject(),
     });
 
-    assert.rejects(
+    await assert.rejects(
       markDomainAsVerified({
         domain: "darkangels.world",
         domain_verification_type: "verified",
         organization_id: 42,
       }),
-      NotFoundError,
+      new NotFoundError(""),
     );
   });
 });

@@ -1,5 +1,7 @@
 import {
+  findByIdFactory,
   findByUserIdFactory,
+  getByIdFactory,
   getUsersByOrganizationFactory,
 } from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
 import type {
@@ -9,27 +11,17 @@ import type {
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../../connectors/postgres";
 
-export const findById = async (id: number) => {
-  const connection = getDatabaseConnection();
-
-  const { rows }: QueryResult<Organization> = await connection.query(
-    `
-SELECT *
-FROM organizations
-WHERE id = $1`,
-    [id],
-  );
-
-  return rows.shift();
-};
-
+export const getById = getByIdFactory({ pg: getDatabaseConnection() });
+export const findById = findByIdFactory({ pg: getDatabaseConnection() });
 export const findByUserId = findByUserIdFactory({
   pg: getDatabaseConnection(),
 });
+
 export const findWhereUserIsExecutive = async (userId: number) => {
   const organizations = await findByUserId(userId);
   return organizations.filter((organization) => organization.is_dirigeant);
 };
+
 export const findPendingByUserId = async (user_id: number) => {
   const connection = getDatabaseConnection();
 

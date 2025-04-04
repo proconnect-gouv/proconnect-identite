@@ -2,17 +2,17 @@ import { getTrustedReferrerPath } from "@gouvfr-lasuite/proconnect.core/security
 import {
   InvalidCertificationError,
   NotFoundError,
+  UserNotFoundError,
 } from "@gouvfr-lasuite/proconnect.identite/errors";
+import to from "await-to-js";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
-import assert from "node:assert";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
   HOST,
 } from "../config/env";
-import { UserNotFoundError } from "../config/errors";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import { isOrganizationExecutive } from "../managers/certification";
@@ -384,21 +384,16 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
     try {
       if (error) return next(error);
 
-      const selectedOrganizationId = await getSelectedOrganizationId(
-        getUserFromAuthenticatedSession(req).id,
+      const [selectedOrganizationIdNotFound] = await to(
+        getSelectedOrganizationId(getUserFromAuthenticatedSession(req).id),
       );
+      if (selectedOrganizationIdNotFound) return next();
 
-      if (
-        req.session.certificationDirigeantRequested &&
-        !selectedOrganizationId
-      ) {
+      if (req.session.certificationDirigeantRequested) {
         return res.redirect("/users/select-organization");
       }
 
-      if (
-        req.session.mustReturnOneOrganizationInPayload &&
-        !selectedOrganizationId
-      ) {
+      if (req.session.mustReturnOneOrganizationInPayload) {
         const userOrganisations = await getOrganizationsByUserId(
           getUserFromAuthenticatedSession(req).id,
         );
@@ -435,7 +430,6 @@ export function checkUserWantToRepresentAnOrganization(
 
         const { id: user_id } = getUserFromAuthenticatedSession(req);
         const selectedOrganizationId = await getSelectedOrganizationId(user_id);
-        assert.ok(selectedOrganizationId);
 
         const organization = await getOrganizationById(selectedOrganizationId);
         if (isEmpty(organization)) {

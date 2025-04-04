@@ -7,10 +7,14 @@ export class InvalidEmailError extends Error {
   }
 }
 
-export class UserNotFoundError extends Error {}
-
 export class ForbiddenError extends Error {}
 
+export class SelectedOrganizationIdNotFoundError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "SelectedOrganizationIdNotFoundError";
+  }
+}
 export class UnableToAutoJoinOrganizationError extends Error {
   constructor(public moderationId: number) {
     super();

@@ -27,8 +27,6 @@ export const getWelcomeController = async (
       const selectedOrganizationId = await getSelectedOrganizationId(
         getUserFromAuthenticatedSession(req).id,
       );
-      if (!selectedOrganizationId)
-        throw new NotFoundError("Selected organization not found");
       const userOrganisations = await getOrganizationById(
         selectedOrganizationId,
       );

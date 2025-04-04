@@ -246,11 +246,6 @@ export const isIdentityConsistencyChecked = async (req: Request) => {
 
   const user = getUserFromAuthenticatedSession(req);
   const selectedOrganizationId = await getSelectedOrganizationId(user.id);
-
-  if (selectedOrganizationId === null) {
-    throw new Error("selectedOrganizationId should be set");
-  }
-
   const link = await getUserOrganizationLink(selectedOrganizationId, user.id);
 
   if (isEmpty(link)) {

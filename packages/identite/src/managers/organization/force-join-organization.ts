@@ -1,31 +1,30 @@
 //
 
-import { NotFoundError } from "#src/errors";
 import type { FindEmailDomainsByOrganizationIdHandler } from "#src/repositories/email-domain";
 import type {
-  FindByIdHandler as FindOrganizationByIdHandler,
+  GetByIdHandler as GetOrganizationByIdHandler,
   LinkUserToOrganizationHandler,
 } from "#src/repositories/organization";
-import type { FindByIdHandler as FindUserByIdHandler } from "#src/repositories/user";
+import type { GetByIdHandler as GetUserByIdHandler } from "#src/repositories/user";
 import type { BaseUserOrganizationLink } from "#src/types";
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
-import { isEmpty, some } from "lodash-es";
+import { some } from "lodash-es";
 
 //
 
 type FactoryDependencies = {
-  findById: FindOrganizationByIdHandler;
   findEmailDomainsByOrganizationId: FindEmailDomainsByOrganizationIdHandler;
-  findUserById: FindUserByIdHandler;
+  getById: GetOrganizationByIdHandler;
+  getUserById: GetUserByIdHandler;
   linkUserToOrganization: LinkUserToOrganizationHandler;
 };
 
 //
 
 export function forceJoinOrganizationFactory({
-  findById,
   findEmailDomainsByOrganizationId,
-  findUserById,
+  getById,
+  getUserById,
   linkUserToOrganization,
 }: FactoryDependencies) {
   return async function forceJoinOrganization({
@@ -37,11 +36,11 @@ export function forceJoinOrganizationFactory({
     user_id: number;
     is_external?: boolean;
   }) {
-    const user = await findUserById(user_id);
-    const organization = await findById(organization_id);
-    if (isEmpty(user) || isEmpty(organization)) {
-      throw new NotFoundError();
-    }
+    const user = await getUserById(user_id);
+
+    // Ensure that the organization exists (Ceinture Bretelle)
+    await getById(organization_id);
+
     const { email } = user;
     const domain = getEmailDomain(email);
     const organizationEmailDomains =

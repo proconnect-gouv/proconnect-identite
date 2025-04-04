@@ -18,7 +18,10 @@ import {
   UpdatePersonalDataMail,
   VerifyEmail,
 } from "@gouvfr-lasuite/proconnect.email";
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
+import {
+  NotFoundError,
+  UserNotFoundError,
+} from "@gouvfr-lasuite/proconnect.identite/errors";
 import {
   type FranceConnectUserInfoResponse,
   type User,
@@ -41,7 +44,6 @@ import {
   InvalidTokenError,
   LeakedPasswordError,
   NoNeedVerifyEmailAddressError,
-  UserNotFoundError,
   WeakPasswordError,
 } from "../config/errors";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
@@ -50,9 +52,9 @@ import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import {
   create,
   findByEmail,
-  findById,
   findByMagicLinkToken,
   findByResetPasswordToken,
+  getById,
   getFranceConnectUserInfo,
   update,
   upsetFranceconnectUserinfo,
@@ -209,11 +211,7 @@ export const sendEmailAddressVerificationEmail = async ({
 };
 
 export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -233,11 +231,7 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
 }: {
   user_id: number;
 }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -254,11 +248,7 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
 };
 
 export const sendDisable2faMail = async ({ user_id }: { user_id: number }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -277,11 +267,7 @@ export const sendDeleteAccessKeyMail = async ({
 }: {
   user_id: number;
 }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -301,11 +287,7 @@ export const sendAddFreeTOTPEmail = async ({
 }: {
   user_id: number;
 }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -325,11 +307,7 @@ export const sendActivateAccessKeyMail = async ({
 }: {
   user_id: number;
 }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],

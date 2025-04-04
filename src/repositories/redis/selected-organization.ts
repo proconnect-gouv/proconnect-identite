@@ -1,4 +1,5 @@
 import { SESSION_MAX_AGE_IN_SECONDS } from "../../config/env";
+import { SelectedOrganizationIdNotFoundError } from "../../config/errors";
 import { getNewRedisClient } from "../../connectors/redis";
 
 const getRedisClient = () =>
@@ -8,7 +9,12 @@ const getRedisClient = () =>
 
 export const getSelectedOrganizationId = async (userId: number) => {
   const rawResult = await getRedisClient().get(userId.toString());
-  return rawResult === null ? null : parseInt(rawResult, 10);
+  const id = parseInt(rawResult ?? "", 10);
+  if (Number.isNaN(id))
+    throw new SelectedOrganizationIdNotFoundError(
+      "selectedOrganizationId should be set",
+    );
+  return id;
 };
 
 export const setSelectedOrganizationId = async (
