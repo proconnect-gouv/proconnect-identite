@@ -265,9 +265,6 @@ export function getUnableToCertifyUserAsExecutiveController(
       use_dashboard_layout: false,
     });
   } catch (e) {
-    if (e instanceof NotFoundError) {
-      next(new HttpErrors.NotFound());
-    }
     next(e);
   }
 }

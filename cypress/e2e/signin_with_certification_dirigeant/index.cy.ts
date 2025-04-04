@@ -188,7 +188,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
   });
 });
 
-describe("connected user should go through the certification flow ", function () {
+describe("connected user should go through the certification flow", function () {
   it("with valid FranceConnect user", function () {
     cy.visit("/");
     cy.login("certified-franceconnected+dirigeant@yopmail.com");
