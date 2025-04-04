@@ -286,36 +286,91 @@ export const isIdentityConsistencyChecked = async (req: Request) => {
     .otherwise(() => false);
 };
 
-export async function getCurrentAcr(req: Request) {
-  const { certificationDirigeantRequested } = req.session;
-  const isConsistencyChecked = await isIdentityConsistencyChecked(req);
-  const isWithinTwoFactorAuthentication =
-    await isWithinTwoFactorAuthenticatedSession(req);
+// get the current Identity Assurance Level (e.g. self-asserted, consistency-checked, certified)
+export async function getCurrentIAL(req: Request) {
+  if (!req.session.mustReturnOneOrganizationInPayload) {
+    // identity is always considered as self-asserted for legacy payloads
+    return 1;
+  }
 
-  return match({
-    certificationDirigeantRequested,
-    isConsistencyChecked,
-    isWithinTwoFactorAuthentication,
-  })
-    .with(
-      { isConsistencyChecked: true, certificationDirigeantRequested: true },
-      () => ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
-    )
-    .with(
-      { isConsistencyChecked: true, isWithinTwoFactorAuthentication: true },
-      () => ACR_VALUE_FOR_IAL2_AAL2,
-    )
-    .with(
-      { isConsistencyChecked: false, isWithinTwoFactorAuthentication: true },
-      () => ACR_VALUE_FOR_IAL1_AAL2,
-    )
-    .with(
-      { isConsistencyChecked: true, isWithinTwoFactorAuthentication: false },
-      () => ACR_VALUE_FOR_IAL2_AAL1,
-    )
-    .with(
-      { isConsistencyChecked: false, isWithinTwoFactorAuthentication: false },
-      () => ACR_VALUE_FOR_IAL1_AAL1,
-    )
-    .exhaustive();
+  const user = getUserFromAuthenticatedSession(req);
+  const selectedOrganizationId = await getSelectedOrganizationId(user.id);
+
+  if (selectedOrganizationId === null) {
+    throw new Error("selectedOrganizationId should be set");
+  }
+
+  const link = await getUserOrganizationLink(selectedOrganizationId, user.id);
+
+  if (isEmpty(link)) {
+    throw new NotFoundError("link should be set");
+  }
+
+  if (link.is_executive) {
+    return 3;
+  }
+
+  const hasConsistencyCheckVerificationType = [
+    "code_sent_to_official_contact_email",
+    "domain",
+    "imported_from_inclusion_connect",
+    "imported_from_coop_mediation_numerique",
+    "in_liste_dirigeants_rna",
+    "official_contact_email",
+    "bypassed",
+  ].includes(link?.verification_type ?? "");
+
+  if (hasConsistencyCheckVerificationType) {
+    return 2;
+  }
+
+  return 1;
+}
+
+// get the current Authentication Assurance Level (e.g. password, 2 factor, carte agent, etc.)
+export async function getCurrentAAL(req: Request) {
+  const currentAmrValues = req.session.amr!;
+
+  if (currentAmrValues.includes("hwk")) {
+    return 3;
+  }
+
+  if (currentAmrValues.includes("mfa")) {
+    return 2;
+  }
+
+  return 1;
+}
+
+export async function getCurrentAcr(req: Request) {
+  const ial = await getCurrentIAL(req);
+  const aal = await getCurrentAAL(req);
+
+  return (
+    match({
+      ial,
+      aal,
+    })
+      // ial: "carte agent" & aal: "carte agent" => acr: "eidas3" (alias: certification-dirigeant)
+      .with({ ial: 3, aal: 3 }, () => {
+        throw new Error("not implemented");
+      })
+      // ial: "certified" (FC+ + source authentique) & aal: "mfa" => acr: "eidas2"
+      .with({ ial: 3, aal: 2 }, () => {
+        throw new Error("not implemented");
+      })
+      // ial: "consistency-checked" & aal: "mfa" => acr: "consistency-checked-mfa"
+      .with({ ial: 2, aal: 2 }, () => ACR_VALUE_FOR_IAL2_AAL2)
+      // ial: "self-asserted" & aal: "mfa" => acr: "self-asserted-mfa"
+      .with({ ial: 1, aal: 2 }, () => ACR_VALUE_FOR_IAL1_AAL2)
+      // ial: "certified" (FC + source authentique) & aal: "pwd" => acr: "certification-dirigeant"
+      .with({ ial: 3, aal: 1 }, () => ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT)
+      // ial: "consistency-checked" & aal: "pwd" => acr: "consistency-checked"
+      .with({ ial: 2, aal: 1 }, () => ACR_VALUE_FOR_IAL2_AAL1)
+      // ial: "self-asserted" & aal: "pwd" => acr: "self-asserted"
+      .with({ ial: 1, aal: 1 }, () => ACR_VALUE_FOR_IAL1_AAL1)
+      // ial: 1 "self-asserted" & all: 3 "carte-agent" => server_error (HTTP error code 500)
+      // ial: 2 "consistency-checked" & all: 3 "carte-agent" => server_error (HTTP error code 500)
+      .exhaustive()
+  );
 }

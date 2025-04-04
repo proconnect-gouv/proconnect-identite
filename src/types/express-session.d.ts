@@ -16,6 +16,7 @@ export interface UnauthenticatedSessionData {
 
 export type AmrValue =
   // Standard values are described here https://datatracker.ietf.org/doc/html/rfc8176#section-2
+  | "hwk"
   | "pwd"
   | "totp"
   | "pop"
