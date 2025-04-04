@@ -500,7 +500,7 @@ export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware = (
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserHasSelectedAnOrganizationMiddleware(req, res, async (error) => {
+  checkUserWantToRepresentAnOrganization(req, res, async (error) => {
     try {
       if (error) return next(error);
 

@@ -89,7 +89,6 @@ import {
   checkUserIsVerifiedMiddleware,
   checkUserSignInRequirementsMiddleware,
   checkUserTwoFactorAuthMiddleware,
-  checkUserWantToRepresentAnOrganization,
 } from "../middlewares/user";
 
 export const userRouter = () => {
@@ -368,7 +367,6 @@ export const userRouter = () => {
     checkUserHasAtLeastOneOrganizationMiddleware,
     csrfProtectionMiddleware,
     postSelectOrganizationMiddleware,
-    checkUserWantToRepresentAnOrganization,
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,
   );
