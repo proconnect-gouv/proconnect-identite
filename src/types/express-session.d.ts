@@ -34,8 +34,8 @@ export interface AuthenticatedSessionData {
 declare module "express-session" {
   export interface SessionData
     extends UnauthenticatedSessionData,
-      FranceConnectOidcSession,
-      CertificationSession {
+      Partial<FranceConnectOidcSession>,
+      Partial<CertificationSession> {
     user?: User;
     temporaryEncryptedTotpKey?: string;
     amr?: AmrValue[];
