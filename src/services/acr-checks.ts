@@ -7,6 +7,8 @@ import {
   ACR_VALUE_FOR_IAL1_AAL2,
   ACR_VALUE_FOR_IAL2_AAL1,
   ACR_VALUE_FOR_IAL2_AAL2,
+  ACR_VALUE_FOR_IAL3_AAL1,
+  ACR_VALUE_FOR_IAL3_AAL2,
 } from "../config/env";
 
 const areAcrsRequestedInPrompt = ({
@@ -49,11 +51,20 @@ export const twoFactorsAuthRequested = (prompt: PromptDetail) => {
     containsEssentialAcrs(prompt) &&
     areAcrsRequestedInPrompt({
       prompt,
-      acrs: [ACR_VALUE_FOR_IAL1_AAL2, ACR_VALUE_FOR_IAL2_AAL2],
+      acrs: [
+        ACR_VALUE_FOR_IAL1_AAL2,
+        ACR_VALUE_FOR_IAL2_AAL2,
+        ACR_VALUE_FOR_IAL3_AAL2,
+      ],
     }) &&
     !areAcrsRequestedInPrompt({
       prompt,
-      acrs: [ACR_VALUE_FOR_IAL1_AAL1, ACR_VALUE_FOR_IAL2_AAL1],
+      acrs: [
+        ACR_VALUE_FOR_IAL1_AAL1,
+        ACR_VALUE_FOR_IAL2_AAL1,
+        ACR_VALUE_FOR_IAL3_AAL1,
+        ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
+      ],
     })
   );
 };
