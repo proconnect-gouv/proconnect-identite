@@ -4,7 +4,6 @@ import {
   NotFoundError,
   UserNotFoundError,
 } from "@gouvfr-lasuite/proconnect.identite/errors";
-import to from "await-to-js";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
@@ -384,12 +383,14 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
     try {
       if (error) return next(error);
 
-      const [selectedOrganizationIdNotFound] = await to(
-        getSelectedOrganizationId(getUserFromAuthenticatedSession(req).id),
+      const selectedOrganizationId = await getSelectedOrganizationId(
+        getUserFromAuthenticatedSession(req).id,
       );
-      if (selectedOrganizationIdNotFound) return next();
 
-      if (req.session.certificationDirigeantRequested) {
+      if (
+        req.session.certificationDirigeantRequested &&
+        !selectedOrganizationId
+      ) {
         return res.redirect("/users/select-organization");
       }
 
@@ -430,6 +431,7 @@ export function checkUserWantToRepresentAnOrganization(
 
         const { id: user_id } = getUserFromAuthenticatedSession(req);
         const selectedOrganizationId = await getSelectedOrganizationId(user_id);
+        if (selectedOrganizationId === null) return next();
 
         const organization = await getOrganizationById(selectedOrganizationId);
         if (isEmpty(organization)) {
@@ -450,16 +452,19 @@ export function checkUserWantToRepresentAnOrganization(
         }
 
         const expiredCertification = isExpired(
-          userOrganizationLink.is_dirigeant_verified_at,
+          userOrganizationLink.verified_at,
           CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
         );
         const expiredVerification =
           Number(franceconnectUserInfo.updated_at) >
-          Number(userOrganizationLink.is_dirigeant_verified_at);
+          Number(userOrganizationLink.verified_at);
 
         const renewalNeeded = expiredCertification || expiredVerification;
 
-        if (userOrganizationLink.is_dirigeant && !renewalNeeded) {
+        if (
+          userOrganizationLink.verification_type === "organization_dirigeant" &&
+          !renewalNeeded
+        ) {
           return next();
         }
 
@@ -473,8 +478,8 @@ export function checkUserWantToRepresentAnOrganization(
           userOrganizationLink.organization_id,
           userOrganizationLink.user_id,
           {
-            is_dirigeant: true,
-            is_dirigeant_verified_at: new Date(),
+            verification_type: "organization_dirigeant",
+            verified_at: new Date(),
           },
         );
 

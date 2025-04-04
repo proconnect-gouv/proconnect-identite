@@ -17,11 +17,6 @@ export const findByUserId = findByUserIdFactory({
   pg: getDatabaseConnection(),
 });
 
-export const findWhereUserIsExecutive = async (userId: number) => {
-  const organizations = await findByUserId(userId);
-  return organizations.filter((organization) => organization.is_dirigeant);
-};
-
 export const findPendingByUserId = async (user_id: number) => {
   const connection = getDatabaseConnection();
 
@@ -81,8 +76,6 @@ export const getUserOrganizationLink = async (
 SELECT
   user_id,
   organization_id,
-  is_dirigeant_verified_at,
-  is_dirigeant,
   is_external,
   created_at,
   updated_at,

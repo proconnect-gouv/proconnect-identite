@@ -52,12 +52,12 @@ VALUES
 ;
 
 INSERT INTO users_organizations
-  (user_id, organization_id, is_external, is_dirigeant, is_dirigeant_verified_at, verification_type, has_been_greeted)
+  (user_id, organization_id, is_external, verification_type, verified_at, has_been_greeted)
 VALUES
-  (1, 1, false, true, CURRENT_TIMESTAMP, 'domain', true),
-  (2, 2, false, false, CURRENT_TIMESTAMP, 'domain', true),
-  (4, 2, false, true, CURRENT_TIMESTAMP - INTERVAL '1 day', 'domain', true),
-  (5, 2, false, true, CURRENT_TIMESTAMP, 'domain', true)
+  (1, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true),
+  (2, 2, false, 'domain', CURRENT_TIMESTAMP, true),
+  (4, 2, false, 'organization_dirigeant', CURRENT_TIMESTAMP - INTERVAL '1 day', true),
+  (5, 2, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true)
 ;
 
 INSERT INTO oidc_clients

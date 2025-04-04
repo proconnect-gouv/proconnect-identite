@@ -76,12 +76,15 @@ export async function getFranceConnectOidcCallbackController(
     updateUserInAuthenticatedSession(req, updatedUser);
 
     const userOrganizations = await getOrganizationsByUserId(userId);
-    for (let { id } of userOrganizations) {
-      updateUserOrganizationLink(id, userId, {
-        is_dirigeant: false,
-        is_dirigeant_verified_at: null,
-      });
-    }
+
+    await Promise.all(
+      userOrganizations.map(({ id }) =>
+        updateUserOrganizationLink(id, userId, {
+          verification_type: null,
+          verified_at: null,
+        }),
+      ),
+    );
 
     return res.redirect(redirectTo);
   } catch (error) {

@@ -1,10 +1,7 @@
 describe("sign-in with a client requiring certification dirigeant", () => {
   beforeEach(() => {
     cy.visit("http://localhost:4000");
-    cy.setRequestedAcrs([
-      "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-    ]);
-    cy.get("button#custom-connection").click({ force: true });
+    cy.contains("Forcer une connexion par certification dirigeant").click();
   });
 
   it("should sign-in as the executive of an organization", function () {
@@ -195,10 +192,7 @@ describe("connected user should go through the certification flow", function () 
 
     cy.visit("http://localhost:4000");
     cy.title().should("equal", "standard-client - ProConnect");
-    cy.setRequestedAcrs([
-      "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-    ]);
-    cy.get("button#custom-connection").click({ force: true });
+    cy.contains("Forcer une connexion par certification dirigeant").click();
 
     cy.title().should("include", "Certification dirigeant - ");
     cy.contains("Continuer").click();
@@ -215,10 +209,7 @@ describe("connected user should go through the certification flow", function () 
 
     cy.visit("http://localhost:4000");
     cy.title().should("equal", "standard-client - ProConnect");
-    cy.setRequestedAcrs([
-      "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-    ]);
-    cy.get("button#custom-connection").click({ force: true });
+    cy.contains("Forcer une connexion par certification dirigeant").click();
 
     cy.title().should("include", "Certification dirigeant - ");
     cy.contains("Certifier votre statut");

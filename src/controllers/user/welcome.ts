@@ -27,6 +27,7 @@ export const getWelcomeController = async (
       const selectedOrganizationId = await getSelectedOrganizationId(
         getUserFromAuthenticatedSession(req).id,
       );
+      if (selectedOrganizationId === null) return next();
       const userOrganisations = await getOrganizationById(
         selectedOrganizationId,
       );

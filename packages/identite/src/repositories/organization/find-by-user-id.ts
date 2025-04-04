@@ -17,7 +17,6 @@ export function findByUserIdFactory({ pg }: DatabaseContext) {
         SELECT
           o.*,
           uo.is_external,
-          uo.is_dirigeant,
           uo.verification_type,
           uo.has_been_greeted,
           uo.needs_official_contact_email_verification,

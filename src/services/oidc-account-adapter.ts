@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/node";
-import to from "await-to-js";
+import { to } from "await-to-js";
 import { isEmpty } from "lodash-es";
 import type { FindAccount } from "oidc-provider";
 import { findByUserId as getUsersOrganizations } from "../repositories/organization/getters";

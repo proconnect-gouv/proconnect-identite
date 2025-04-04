@@ -246,6 +246,7 @@ export const isIdentityConsistencyChecked = async (req: Request) => {
 
   const user = getUserFromAuthenticatedSession(req);
   const selectedOrganizationId = await getSelectedOrganizationId(user.id);
+  if (selectedOrganizationId === null) return false;
   const link = await getUserOrganizationLink(selectedOrganizationId, user.id);
 
   if (isEmpty(link)) {
@@ -266,7 +267,8 @@ export const isIdentityConsistencyChecked = async (req: Request) => {
   ].includes(link?.verification_type ?? "");
 
   return match({
-    isOrganizationExecutive: link.is_dirigeant,
+    isOrganizationExecutive:
+      link.verification_type === "organization_dirigeant",
     askForExecutiveCertification,
     hasValidVerificationType,
   })
