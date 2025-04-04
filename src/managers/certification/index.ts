@@ -1,6 +1,6 @@
 //
 
-import { isOrganizationExecutiveFactory } from "@gouvfr-lasuite/proconnect.identite/managers/certification";
+import { isOrganizationDirigeantFactory } from "@gouvfr-lasuite/proconnect.identite/managers/certification";
 import {
   findBySiret,
   findMandatairesSociauxBySiren,
@@ -10,7 +10,7 @@ import { logger } from "../../services/log";
 
 //
 
-export const isOrganizationExecutive = isOrganizationExecutiveFactory({
+export const isOrganizationDirigeant = isOrganizationDirigeantFactory({
   findBySiret,
   findMandatairesSociauxBySiren,
   getFranceConnectUserInfo,

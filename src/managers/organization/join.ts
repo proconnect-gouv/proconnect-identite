@@ -64,7 +64,7 @@ import {
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
-import { isOrganizationExecutive } from "../certification";
+import { isOrganizationDirigeant } from "../certification";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
 
 export const doSuggestOrganizations = async ({
@@ -183,9 +183,9 @@ export const joinOrganization = async ({
   }
 
   if (certificationRequested) {
-    const isExecutive = await isOrganizationExecutive(siret, user_id);
+    const isDirigeant = await isOrganizationDirigeant(siret, user_id);
 
-    if (!isExecutive) throw new InvalidCertificationError();
+    if (!isDirigeant) throw new InvalidCertificationError();
 
     return await linkUserToOrganization({
       organization_id,

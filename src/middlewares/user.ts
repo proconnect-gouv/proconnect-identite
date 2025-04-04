@@ -14,7 +14,7 @@ import {
 } from "../config/env";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
-import { isOrganizationExecutive } from "../managers/certification";
+import { isOrganizationDirigeant } from "../managers/certification";
 import { greetForJoiningOrganization } from "../managers/organization/join";
 import {
   getOrganizationById,
@@ -468,11 +468,11 @@ export function checkUserWantToRepresentAnOrganization(
           return next();
         }
 
-        const isExecutive = await isOrganizationExecutive(
+        const isDirigeant = await isOrganizationDirigeant(
           organization.siret,
           user_id,
         );
-        if (!isExecutive) throw new InvalidCertificationError();
+        if (!isDirigeant) throw new InvalidCertificationError();
 
         await updateUserOrganizationLink(
           userOrganizationLink.organization_id,
