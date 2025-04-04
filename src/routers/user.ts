@@ -12,8 +12,8 @@ import {
 import { postSignInWithAuthenticatorAppController } from "../controllers/totp";
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
 import {
+  getCertificationDirigeantConfirmController,
   getCertificationDirigeantController,
-  getCertificationDirigeantRepresentingController,
   postCertificationDirigeantController,
 } from "../controllers/user/certification-dirigeant";
 import { postDeleteUserController } from "../controllers/user/delete";
@@ -462,11 +462,11 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/certification-dirigeant/representing",
+    "/certification-dirigeant/confirm",
     rateLimiterMiddleware,
     // checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
-    getCertificationDirigeantRepresentingController,
+    getCertificationDirigeantConfirmController,
   );
 
   userRouter.get(

@@ -37,7 +37,7 @@ export async function postCertificationDirigeantController(
     const { nonce, state } = createOidcChecks();
     req.session.nonce = nonce;
     req.session.state = state;
-    req.session.redirectTo = "/users/certification-dirigeant/representing";
+    req.session.redirectTo = "/users/certification-dirigeant/confirm";
     const url = await getFranceConnectRedirectUrl(nonce, state);
 
     return res.redirect(url.toString());
@@ -46,7 +46,7 @@ export async function postCertificationDirigeantController(
   }
 }
 
-export async function getCertificationDirigeantRepresentingController(
+export async function getCertificationDirigeantConfirmController(
   req: Request,
   res: Response,
   next: NextFunction,
