@@ -38,7 +38,7 @@ VALUES
   (1, '21340126800130', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO users_organizations
-  (user_id, organization_id, is_external, is_executive, is_executive_verified_at, verification_type, has_been_greeted)
+  (user_id, organization_id, is_external, is_dirigeant, is_dirigeant_verified_at, verification_type, has_been_greeted)
 VALUES
   (1, 1, false, false, null, 'domain', true),
   (2, 1, false, false, null, null, true),

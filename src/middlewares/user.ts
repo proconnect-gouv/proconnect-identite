@@ -456,16 +456,16 @@ export function checkUserWantToRepresentAnOrganization(
         }
 
         const expiredCertification = isExpired(
-          userOrganizationLink.is_executive_verified_at,
+          userOrganizationLink.is_dirigeant_verified_at,
           CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
         );
         const expiredVerification =
           Number(franceconnectUserInfo.updated_at) >
-          Number(userOrganizationLink.is_executive_verified_at);
+          Number(userOrganizationLink.is_dirigeant_verified_at);
 
         const renewalNeeded = expiredCertification || expiredVerification;
 
-        if (userOrganizationLink.is_executive && !renewalNeeded) {
+        if (userOrganizationLink.is_dirigeant && !renewalNeeded) {
           return next();
         }
 
@@ -479,8 +479,8 @@ export function checkUserWantToRepresentAnOrganization(
           userOrganizationLink.organization_id,
           userOrganizationLink.user_id,
           {
-            is_executive: true,
-            is_executive_verified_at: new Date(),
+            is_dirigeant: true,
+            is_dirigeant_verified_at: new Date(),
           },
         );
 

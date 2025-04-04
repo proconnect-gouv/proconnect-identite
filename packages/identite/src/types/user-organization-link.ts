@@ -21,9 +21,9 @@ export type UserOrganizationLinkVerificationType = z.output<
 //
 
 export const BaseUserOrganizationLinkSchema = z.object({
-  is_executive: z.boolean(),
+  is_dirigeant: z.boolean(),
   is_external: z.boolean(),
-  is_executive_verified_at: z.date().nullable(),
+  is_dirigeant_verified_at: z.date().nullable(),
   verification_type: UserOrganizationLinkVerificationTypeSchema.nullable(),
   // updated when verification_type is changed
   verified_at: z.date().or(z.literal(null)),
@@ -61,7 +61,7 @@ export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
 ).merge(
   UserOrganizationLinkSchema.pick({
     is_external: true,
-    is_executive: true,
+    is_dirigeant: true,
     needs_official_contact_email_verification: true,
   }).partial(),
 );

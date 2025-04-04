@@ -52,7 +52,7 @@ VALUES
 ;
 
 INSERT INTO users_organizations
-  (user_id, organization_id, is_external, is_executive, is_executive_verified_at, verification_type, has_been_greeted)
+  (user_id, organization_id, is_external, is_dirigeant, is_dirigeant_verified_at, verification_type, has_been_greeted)
 VALUES
   (1, 1, false, true, CURRENT_TIMESTAMP, 'domain', true),
   (2, 2, false, false, CURRENT_TIMESTAMP, 'domain', true),

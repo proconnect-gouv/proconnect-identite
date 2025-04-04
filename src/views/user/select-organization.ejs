@@ -7,7 +7,7 @@
         <p><span class="fr-label">Quelle organisation voulez-vous représenter ?</span></p>
         <% } %>
         <div class="fr-grid-row fr-grid-row--gutters fr-mb-3v">
-            <% userOrganizations.forEach(({ id, is_executive, siret, cached_libelle, cached_adresse, cached_libelle_activite_principale }, index) => { %>
+            <% userOrganizations.forEach(({ id, is_dirigeant, siret, cached_libelle, cached_adresse, cached_libelle_activite_principale }, index) => { %>
                 <div class="fr-col-12" aria-describedby="submit-join-organization-<%= id %>">
                     <div id="submit-join-organization-<%= id %>" class="fr-tile fr-enlarge-link fr-tile--horizontal selectable-tile <% if (index === 0) { %>selected-tile<% } %>">
                         <div class="fr-tile__body">
@@ -16,7 +16,7 @@
                             </h2>
                             <p class="fr-tile__desc fr-pb-0"><%= cached_adresse; %></p>
                             <p class="fr-tile__desc"><%= cached_libelle_activite_principale; %></p>
-                            <% if (is_executive) { %>
+                            <% if (is_dirigeant) { %>
                             <div class="fr-tile__start">
                                 <p class="fr-badge fr-badge--sm fr-badge--purple-glycine">certifié</p>
                             </div>

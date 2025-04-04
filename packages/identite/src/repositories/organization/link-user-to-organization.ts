@@ -8,7 +8,7 @@ import type { QueryResult } from "pg";
 
 export function linkUserToOrganizationFactory({ pg }: DatabaseContext) {
   return async function linkUserToOrganization({
-    is_executive = false,
+    is_dirigeant = false,
     is_external = false,
     needs_official_contact_email_verification = false,
     organization_id,
@@ -18,8 +18,8 @@ export function linkUserToOrganizationFactory({ pg }: DatabaseContext) {
     const { paramsString, valuesString, values } =
       hashToPostgresParams<UserOrganizationLink>({
         created_at: new Date(),
-        is_executive_verified_at: is_executive ? new Date() : undefined,
-        is_executive,
+        is_dirigeant_verified_at: is_dirigeant ? new Date() : undefined,
+        is_dirigeant,
         is_external,
         needs_official_contact_email_verification,
         organization_id,

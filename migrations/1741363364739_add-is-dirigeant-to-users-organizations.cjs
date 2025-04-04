@@ -11,8 +11,8 @@ exports.shorthands = undefined;
 exports.up = async (pgm) => {
   await pgm.db.query(`
     ALTER TABLE users_organizations
-    ADD COLUMN is_executive boolean DEFAULT FALSE NOT NULL,
-    ADD COLUMN is_executive_verified_at TIMESTAMP WITH TIME ZONE;
+    ADD COLUMN is_dirigeant boolean DEFAULT FALSE NOT NULL,
+    ADD COLUMN is_dirigeant_verified_at TIMESTAMP WITH TIME ZONE;
   `);
 };
 
@@ -24,7 +24,7 @@ exports.up = async (pgm) => {
 exports.down = async (pgm) => {
   await pgm.db.query(`
     ALTER TABLE users_organizations
-    DROP COLUMN is_executive,
-    DROP COLUMN is_executive_verified_at;
+    DROP COLUMN is_dirigeant,
+    DROP COLUMN is_dirigeant_verified_at;
   `);
 };

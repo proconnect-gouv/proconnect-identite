@@ -271,7 +271,7 @@ export const isIdentityConsistencyChecked = async (req: Request) => {
   ].includes(link?.verification_type ?? "");
 
   return match({
-    isOrganizationExecutive: link.is_executive,
+    isOrganizationExecutive: link.is_dirigeant,
     askForExecutiveCertification,
     hasValidVerificationType,
   })

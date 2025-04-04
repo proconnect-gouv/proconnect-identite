@@ -11,8 +11,8 @@ exports[`linkUserToOrganizationFactory > should link user to organization 1`] = 
   "official_contact_email_verification_token": null,
   "official_contact_email_verification_sent_at": null,
   "verified_at": null,
-  "is_executive": false,
-  "is_executive_verified_at": null
+  "is_dirigeant": false,
+  "is_dirigeant_verified_at": null
 }
 `;
 
@@ -29,7 +29,7 @@ exports[`linkUserToOrganizationFactory > should mark a user as executive 1`] = `
   "official_contact_email_verification_token": null,
   "official_contact_email_verification_sent_at": null,
   "verified_at": null,
-  "is_executive": true,
-  "is_executive_verified_at": "4444-04-04T00:00:00.000Z"
+  "is_dirigeant": true,
+  "is_dirigeant_verified_at": "4444-04-04T00:00:00.000Z"
 }
 `;

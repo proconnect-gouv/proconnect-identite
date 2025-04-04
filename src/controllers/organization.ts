@@ -127,8 +127,8 @@ export const postJoinOrganizationMiddleware = async (
         userOrganizationLink.organization_id,
         userOrganizationLink.user_id,
         {
-          is_executive: true,
-          is_executive_verified_at: new Date(),
+          is_dirigeant: true,
+          is_dirigeant_verified_at: new Date(),
         },
       );
     }

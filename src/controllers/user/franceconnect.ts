@@ -78,8 +78,8 @@ export async function getFranceConnectOidcCallbackController(
     const userOrganizations = await getOrganizationsByUserId(userId);
     for (let { id } of userOrganizations) {
       updateUserOrganizationLink(id, userId, {
-        is_executive: false,
-        is_executive_verified_at: null,
+        is_dirigeant: false,
+        is_dirigeant_verified_at: null,
       });
     }
 

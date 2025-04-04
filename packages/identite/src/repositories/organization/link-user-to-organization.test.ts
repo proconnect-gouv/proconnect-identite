@@ -58,7 +58,7 @@ suite("linkUserToOrganizationFactory", () => {
       organization_id: 1,
       user_id: 1,
       verification_type: "bypassed",
-      is_executive: true,
+      is_dirigeant: true,
     });
 
     t.assert.snapshot(userOrganizationLink);

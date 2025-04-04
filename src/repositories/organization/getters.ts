@@ -28,7 +28,7 @@ export const findByUserId = findByUserIdFactory({
 });
 export const findWhereUserIsExecutive = async (userId: number) => {
   const organizations = await findByUserId(userId);
-  return organizations.filter((organization) => organization.is_executive);
+  return organizations.filter((organization) => organization.is_dirigeant);
 };
 export const findPendingByUserId = async (user_id: number) => {
   const connection = getDatabaseConnection();
@@ -89,8 +89,8 @@ export const getUserOrganizationLink = async (
 SELECT
   user_id,
   organization_id,
-  is_executive_verified_at,
-  is_executive,
+  is_dirigeant_verified_at,
+  is_dirigeant,
   is_external,
   created_at,
   updated_at,
