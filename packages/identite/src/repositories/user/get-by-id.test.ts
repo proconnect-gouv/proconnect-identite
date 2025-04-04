@@ -1,15 +1,16 @@
 //
 
+import { UserNotFoundError } from "#src/errors";
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, mock, suite, test } from "node:test";
-import { findByIdFactory } from "./find-by-id.js";
+import { getByIdFactory } from "./get-by-id.js";
 
 //
 
-const findById = findByIdFactory({ pg: pg as any });
+const getById = getByIdFactory({ pg: pg as any });
 
-suite("findByIdFactory", () => {
+suite("getByIdFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
@@ -25,7 +26,7 @@ suite("findByIdFactory", () => {
       ;
     `;
 
-    const user = await findById(1);
+    const user = await getById(1);
 
     assert.deepEqual(user, {
       created_at: new Date("4444-04-04"),
@@ -57,8 +58,6 @@ suite("findByIdFactory", () => {
   });
 
   test("❎ fail to find the God-Emperor of Mankind", async () => {
-    const user = await findById(42);
-
-    assert.equal(user, undefined);
+    await assert.rejects(getById(42), new UserNotFoundError("User not found"));
   });
 });

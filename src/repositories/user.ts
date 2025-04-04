@@ -2,6 +2,7 @@ import {
   createUserFactory,
   findByEmailFactory,
   findByIdFactory,
+  getByIdFactory,
   getFranceConnectUserInfoFactory,
   updateUserFactory,
   upsertFranceconnectUserinfoFactory,
@@ -12,6 +13,7 @@ import { getDatabaseConnection } from "../connectors/postgres";
 
 //
 
+export const getById = getByIdFactory({ pg: getDatabaseConnection() });
 export const findById = findByIdFactory({ pg: getDatabaseConnection() });
 
 export const findByEmail = findByEmailFactory({ pg: getDatabaseConnection() });
