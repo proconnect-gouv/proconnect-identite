@@ -3,6 +3,7 @@ import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import { Welcome } from "@gouvfr-lasuite/proconnect.email";
 import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import {
+  InvalidCertificationError,
   InvalidSiretError,
   NotFoundError,
   OrganizationNotActiveError,
@@ -64,6 +65,7 @@ import {
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
+import { isOrganizationExecutive } from "../certification";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
 
 export const doSuggestOrganizations = async ({
@@ -121,10 +123,12 @@ export const joinOrganization = async ({
   siret,
   user_id,
   confirmed = false,
+  certificationRequested = false,
 }: {
   siret: string;
   user_id: number;
   confirmed: boolean;
+  certificationRequested?: boolean;
 }): Promise<UserOrganizationLink> => {
   // Update organizationInfo
   let organizationInfo: OrganizationInfo;
@@ -173,6 +177,18 @@ export const joinOrganization = async ({
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
+
+  if (certificationRequested) {
+    const isExecutive = await isOrganizationExecutive(siret, user_id);
+
+    if (!isExecutive) throw new InvalidCertificationError();
+
+    return await linkUserToOrganization({
+      organization_id,
+      user_id,
+      verification_type: "organization_dirigeant",
+    });
+  }
 
   if (isEntrepriseUnipersonnelle(organization)) {
     return await linkUserToOrganization({

@@ -16,7 +16,6 @@ import {
   UserInOrganizationAlreadyError,
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
-import { isOrganizationExecutive } from "../managers/certification";
 import { getOrganizationFromModeration } from "../managers/moderation";
 import {
   doSuggestOrganizations,
@@ -30,7 +29,6 @@ import {
 } from "../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import {
   idSchema,
   optionalBooleanSchema,
@@ -111,27 +109,12 @@ export const postJoinOrganizationMiddleware = async (
     const { confirmed, siret } = await schema.parseAsync(req.body);
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    if (req.session.certificationDirigeantRequested) {
-      const isExecutive = await isOrganizationExecutive(siret, user_id);
-      if (!isExecutive) throw new InvalidCertificationError();
-    }
-
     const userOrganizationLink = await joinOrganization({
       siret,
       user_id,
       confirmed,
+      certificationRequested: req.session.certificationDirigeantRequested,
     });
-
-    if (req.session.certificationDirigeantRequested) {
-      await updateUserOrganizationLink(
-        userOrganizationLink.organization_id,
-        userOrganizationLink.user_id,
-        {
-          is_executive: true,
-          is_executive_verified_at: new Date(),
-        },
-      );
-    }
 
     if (req.session.mustReturnOneOrganizationInPayload) {
       await selectOrganization({
@@ -145,6 +128,7 @@ export const postJoinOrganizationMiddleware = async (
     if (error instanceof InvalidCertificationError) {
       return res.redirect("/users/unable-to-certify-user-as-executive");
     }
+
     if (
       error instanceof UnableToAutoJoinOrganizationError ||
       error instanceof UserAlreadyAskedToJoinOrganizationError

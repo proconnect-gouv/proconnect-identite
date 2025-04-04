@@ -6,6 +6,7 @@ export const UserOrganizationLinkVerificationTypeSchema = z.enum([
   "imported_from_inclusion_connect",
   "imported_from_coop_mediation_numerique",
   "in_liste_dirigeants_rna",
+  "organization_dirigeant",
   "no_validation_means_available",
   "no_verification_means_for_entreprise_unipersonnelle",
   "no_verification_means_for_small_association",
