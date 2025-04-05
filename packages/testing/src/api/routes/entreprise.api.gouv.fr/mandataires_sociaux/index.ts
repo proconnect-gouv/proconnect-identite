@@ -10,7 +10,7 @@ import errorHandler from "./_error.js";
 //
 
 export default new Hono().onError(errorHandler).get(
-  "v3/infogreffe/rcs/unites_legales/:siren/mandataires_sociaux",
+  "/v3/infogreffe/rcs/unites_legales/:siren/mandataires_sociaux",
   zValidator(
     "param",
     z.object({

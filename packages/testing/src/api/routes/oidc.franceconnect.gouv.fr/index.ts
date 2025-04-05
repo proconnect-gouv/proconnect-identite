@@ -48,7 +48,7 @@ let userinfo: FranceConnectUserInfoResponse;
 export const TestingOidcFranceConnectRouter = new Hono<{
   Bindings: FranceConnectBindings;
 }>()
-  .get("/", ({ text }) => text("🎭 FranceConnect theater"))
+  .get("/healthz", ({ text }) => text("ok"))
   .get(
     "/api/v2/.well-known/openid-configuration",
     ({ json, env: { ISSUER } }) => json(wellKnown(ISSUER)),
