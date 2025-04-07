@@ -9,7 +9,7 @@ import { z } from "zod";
 //
 
 export default new Hono().get(
-  "/sirene/etablissements/:siret",
+  "/v3/insee/sirene/etablissements/:siret",
   zValidator(
     "param",
     z.object({
