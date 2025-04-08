@@ -1,0 +1,49 @@
+{
+  "name": "@gouvfr-lasuite/proconnect.lannuaire",
+  "version": "0.0.0",
+  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/lannuaire#readme",
+  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
+    "directory": "packages/lannuaire"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "imports": {
+    "#openapi": "./openapi/index.d.ts",
+    "#src/*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    }
+  },
+  "exports": {
+    "./*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.lib.json",
+    "check": "npm run build -- --noEmit",
+    "dev": "npm run build -- --watch --preserveWatchOutput",
+    "build:openapi": "openapi-typescript ./openapi/index.yaml -o openapi/index.d.ts",
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "postbuild:openapi": "prettier --write openapi/index.d.ts",
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.13.5"
+  },
+  "devDependencies": {
+    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@types/node": "^22.13.17",
+    "msw": "^2.7.3",
+    "openapi-typescript": "^7.6.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

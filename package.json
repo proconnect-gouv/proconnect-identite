@@ -15,6 +15,7 @@
     "packages/devtools/typescript",
     "packages/email",
     "packages/entreprise",
+    "packages/lannuaire",
     "packages/identite",
     "packages/testing"
   ],

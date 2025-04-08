@@ -1,6 +1,7 @@
 //
 
 import yargs from "yargs";
+import { AnnuaireCommandFactory } from "../packages/testing/src/cli/annuaire";
 import { EntrepriseCommandFactory } from "../packages/testing/src/cli/entreprise";
 import {
   ENTREPRISE_API_TOKEN,
@@ -12,6 +13,7 @@ import {
 //
 
 yargs(process.argv.slice(2))
+  .command(AnnuaireCommandFactory({}))
   .command(
     EntrepriseCommandFactory({
       ENTREPRISE_API_TOKEN,

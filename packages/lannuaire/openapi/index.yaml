@@ -1,0 +1,56 @@
+openapi: 3.0.4
+
+paths:
+  /api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records:
+    get:
+      summary: Returns a list of users.
+      description: Optional extended description in CommonMark or HTML.
+      parameters:
+        - name: where
+          in: query
+          description: >-
+            The where clause can be used in the whole Explore API as the parameter where.
+          example: my_numeric_field > 10 and my_text_field like "paris" or within_distance(my_geo_field, geom'POINT(1 1)', 1km)
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_count:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ApiLannuaireAdministrationRecord"
+components:
+  schemas:
+    ApiLannuaireAdministrationRecord:
+      type: object
+      properties:
+        nom:
+          type: string
+        adresse_courriel:
+          type: string
+        adresse:
+          type: string
+    ApiLannuaireAdresse:
+      type: object
+      properties:
+        code_postal:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+        nom_commune:
+          type: string
+        numero_voie:
+          type: string
+        type_adresse:
+          type: string
