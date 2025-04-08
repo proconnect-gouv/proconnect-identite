@@ -80,6 +80,7 @@ SELECT
   created_at,
   updated_at,
   verification_type,
+  verified_at,
   has_been_greeted,
   needs_official_contact_email_verification,
   official_contact_email_verification_token,
