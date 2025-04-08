@@ -2,6 +2,7 @@
 
 import {
   getFranceConnectConfigurationFactory,
+  getFranceConnectLogoutRedirectUrlFactory,
   getFranceConnectRedirectUrlFactory,
   getFranceConnectUserFactory,
 } from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
@@ -40,3 +41,6 @@ export const getFranceConnectRedirectUrl = getFranceConnectRedirectUrlFactory(
 export const getFranceConnectUser = getFranceConnectUserFactory(
   getFranceConnectConfiguration,
 );
+
+export const getFranceConnectLogoutRedirectUrl =
+  getFranceConnectLogoutRedirectUrlFactory(getFranceConnectConfiguration);

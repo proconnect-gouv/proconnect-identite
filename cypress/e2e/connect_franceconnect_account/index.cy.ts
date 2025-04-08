@@ -23,5 +23,14 @@ describe("Connect FranceConnect account", () => {
 
     cy.seeInField("Prénom", "Jean");
     cy.seeInField("Nom", "De La Rose");
+
+    cy.getByLabel("Se déconnecter - Jean De La Rose")
+      .filter(":visible")
+      .click();
+
+    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
+    cy.contains("Déconnexion en cours...");
+
+    cy.title().should("include", "S'inscrire ou se connecter -");
   });
 });

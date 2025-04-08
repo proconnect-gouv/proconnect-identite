@@ -1,13 +1,13 @@
 <div class="centered-container">
-    <div class="message"><%= actionLabel; %></div>
-    <p class="fr-sr-only">Chargement…</p>
-    <div class="loader"></div>
-    <form action="<%= actionPath; %>" method="post" hidden>
-        <input type="hidden" name="xsrf" value="<%= csrfToken; %>">
-        <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-        <input type="hidden" name="<%= inputName; %>" value="<%= inputValue %>">
-        <button type="submit" class="fr-btn"></button>
-    </form>
-    <script type="module" src="<%= js('autosubmit-form.js') %>"></script>
-    <link rel="stylesheet" href="<%= css('loader.css') %>">
+  <div class="message"><%= actionLabel; %></div>
+  <p class="fr-sr-only">Chargement…</p>
+  <div class="loader"></div>
+  <form action="<%= actionPath; %>" method="post" hidden>
+    <input type="hidden" name="xsrf" value="<%= csrfToken; %>" />
+    <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+    <input type="hidden" name="<%= inputName; %>" value="<%= inputValue %>" />
+    <button type="submit" class="fr-btn"></button>
+  </form>
+  <script type="module" src="<%= js('autosubmit-form.js') %>"></script>
+  <link rel="stylesheet" href="<%= css('loader.css') %>" />
 </div>
