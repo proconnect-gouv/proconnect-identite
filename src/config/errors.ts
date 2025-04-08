@@ -1,6 +1,3 @@
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
-import { AxiosError } from "axios";
-
 export class InvalidEmailError extends Error {
   constructor(public didYouMean: string) {
     super();
@@ -10,12 +7,6 @@ export class InvalidEmailError extends Error {
 
 export class ForbiddenError extends Error {}
 
-export class SelectedOrganizationIdNotFoundError extends NotFoundError {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "SelectedOrganizationIdNotFoundError";
-  }
-}
 export class UnableToAutoJoinOrganizationError extends Error {
   constructor(public moderationId: number) {
     super();
@@ -62,17 +53,6 @@ export class ApiAnnuaireTooManyResultsError extends Error {}
 export class ApiAnnuaireInvalidEmailError extends Error {}
 
 export class ApiAnnuaireConnectionError extends Error {}
-
-export class BrevoApiError extends Error {
-  constructor(error: AxiosError<{ message: string; code: string }>) {
-    if (error.response?.data?.code && error.response?.data?.message) {
-      super(error.response?.data?.message);
-      this.name = `BrevoApiError ${error.response?.data?.code}`;
-    } else {
-      super();
-    }
-  }
-}
 
 export class OfficialContactEmailVerificationNotNeededError extends Error {}
 

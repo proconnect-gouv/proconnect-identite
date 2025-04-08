@@ -386,11 +386,9 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
       const selectedOrganizationId = await getSelectedOrganizationId(
         getUserFromAuthenticatedSession(req).id,
       );
+      if (selectedOrganizationId) return next();
 
-      if (
-        req.session.certificationDirigeantRequested &&
-        !selectedOrganizationId
-      ) {
+      if (req.session.certificationDirigeantRequested) {
         return res.redirect("/users/select-organization");
       }
 
