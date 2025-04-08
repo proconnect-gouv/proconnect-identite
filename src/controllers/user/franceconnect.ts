@@ -57,19 +57,17 @@ export async function getFranceConnectOidcCallbackController(
     const { nonce, state } = await FranceConnectOidcSessionSchema.parseAsync(
       req.session,
     );
-    const franceconnectUserInfo = await getFranceConnectUser({
+    const { user_info, id_token } = await getFranceConnectUser({
       code,
       currentUrl: `${HOST}${FRANCECONNECT_CALLBACK_URL}${req.url.substring(req.path.length)}`,
       expectedNonce: nonce,
       expectedState: state,
     });
+    req.session.id_token_hint = id_token;
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await updateFranceConnectUserInfo(
-      user_id,
-      franceconnectUserInfo,
-    );
+    const updatedUser = await updateFranceConnectUserInfo(user_id, user_info);
     updateUserInAuthenticatedSession(req, updatedUser);
 
     return res.redirect(
