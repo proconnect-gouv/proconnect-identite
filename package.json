@@ -108,7 +108,7 @@
     "@dotenvx/dotenvx": "^1.39.1",
     "@fullhuman/postcss-purgecss": "^7.0.2",
     "@gouvfr-lasuite/proconnect.devtools.typescript": "workspace:*",
-    "@gouvfr/dsfr": "^1.13.0",
+    "@gouvfr/dsfr": "^1.13.1",
     "@kitajs/html": "^4.2.7",
     "@kitajs/ts-html-plugin": "^4.1.1",
     "@panva/jose": "^1.9.3",
