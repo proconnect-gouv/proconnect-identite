@@ -12,12 +12,10 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Choisir une organisation -");
-    cy.getDescribed("Commune de lamalou-les-bains - Mairie").within(() => {
+    cy.getDescribed("Clamart").within(() => {
       cy.contains("certifié");
     });
-    cy.getByLabel(
-      "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
-    ).click();
+    cy.getByLabel("Clamart (choisir cette organisation)").click();
 
     //
     cy.title().should("equal", "standard-client - ProConnect");
@@ -198,7 +196,7 @@ describe("connected user should go through the certification flow", function () 
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Choisir une organisation -");
-    cy.getDescribed("Commune de lamalou-les-bains - Mairie").within(() => {
+    cy.getDescribed("Clamart").within(() => {
       cy.contains("certifié");
     });
   });

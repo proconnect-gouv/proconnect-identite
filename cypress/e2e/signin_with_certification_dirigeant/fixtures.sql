@@ -46,18 +46,17 @@ VALUES
 INSERT INTO organizations
   (id, siret, created_at, updated_at)
 VALUES
-  (1, '21340126800130', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (2, '45334017600024', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (3, '82869625200018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  (1, '45334017600024', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (2, '82869625200018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ;
 
 INSERT INTO users_organizations
   (user_id, organization_id, is_external, verification_type, verified_at, has_been_greeted)
 VALUES
   (1, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true),
-  (2, 2, false, 'domain', CURRENT_TIMESTAMP, true),
-  (4, 2, false, 'organization_dirigeant', CURRENT_TIMESTAMP - INTERVAL '1 day', true),
-  (5, 2, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true)
+  (2, 1, false, 'domain', CURRENT_TIMESTAMP, true),
+  (4, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP - INTERVAL '1 day', true),
+  (5, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true)
 ;
 
 INSERT INTO oidc_clients
