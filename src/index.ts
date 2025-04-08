@@ -253,7 +253,7 @@ app.use(async (req, res, next) => {
     const [err, url] = await to(
       getFranceConnectLogoutRedirectUrl(
         req.session.id_token_hint,
-        `${HOST}/oauth/logout`,
+        `${HOST}/users/franceconnect/logout`,
         state,
       ),
     );
