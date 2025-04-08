@@ -77,3 +77,11 @@ export async function getFranceConnectOidcCallbackController(
     next(error);
   }
 }
+
+export async function getFranceConnectLogoutController(
+  req: Request,
+  res: Response,
+) {
+  req.session.id_token_hint = undefined;
+  return res.redirect("/oauth/logout");
+}

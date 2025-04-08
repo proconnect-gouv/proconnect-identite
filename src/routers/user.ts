@@ -13,6 +13,7 @@ import { get2faSignInController } from "../controllers/user/2fa-sign-in";
 import { postDeleteUserController } from "../controllers/user/delete";
 import { postCancelModerationAndRedirectControllerFactory } from "../controllers/user/edit-moderation";
 import {
+  getFranceConnectLogoutController,
   getFranceConnectOidcCallbackController,
   postFranceConnectController,
 } from "../controllers/user/franceconnect";
@@ -435,6 +436,12 @@ export const userRouter = () => {
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectOidcCallbackController,
+  );
+  userRouter.get(
+    "/franceconnect/logout",
+    rateLimiterMiddleware,
+    checkUserCanAccessAdminMiddleware,
+    getFranceConnectLogoutController,
   );
 
   return userRouter;
