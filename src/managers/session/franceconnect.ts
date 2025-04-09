@@ -9,6 +9,7 @@ export const FranceConnectOidcSessionSchema = z.object({
   state: z.string(),
   //
   redirectTo: z.string(),
+  id_token_hint: z.string().optional(),
 });
 
 export type FranceConnectOidcSession = z.output<

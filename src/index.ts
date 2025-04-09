@@ -1,5 +1,7 @@
+import { createOidcChecks } from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
 import { createTestingHandler } from "@gouvfr-lasuite/proconnect.testing/api";
 import * as Sentry from "@sentry/node";
+import { to } from "await-to-js";
 import { RedisStore } from "connect-redis";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
@@ -29,6 +31,7 @@ import {
 } from "./config/env";
 import { OidcError } from "./config/errors";
 import { oidcProviderConfiguration } from "./config/oidc-provider-configuration";
+import { getFranceConnectLogoutRedirectUrl } from "./connectors/franceconnect";
 import { getNewRedisClient } from "./connectors/redis";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
 import { connectionCountMiddleware } from "./middlewares/connection-count";
@@ -239,10 +242,27 @@ app.use(
 app.use("/users", ejsLayoutMiddlewareFactory(app), userRouter());
 app.use("/api", apiRouter());
 
-app.use((req, _res, next) => {
+app.use(async (req, res, next) => {
   if (req.url === "/.well-known/openid-configuration") {
     req.url = "/oauth/.well-known/openid-configuration";
   }
+
+  if (req.url === "/oauth/logout" && req.session?.id_token_hint) {
+    const { state } = createOidcChecks();
+    req.session.state = state;
+    const [err, url] = await to(
+      getFranceConnectLogoutRedirectUrl(
+        req.session.id_token_hint,
+        `${HOST}/users/franceconnect/logout`,
+        state,
+      ),
+    );
+    if (err) return next(err);
+
+    req.session.id_token_hint = undefined;
+    return res.redirect(url.href);
+  }
+
   next();
 });
 app.use("/oauth", oidcProvider.callback());

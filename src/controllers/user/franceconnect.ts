@@ -60,19 +60,17 @@ export async function getFranceConnectOidcCallbackController(
 
     const { nonce, state, redirectTo } =
       await FranceConnectOidcSessionSchema.parseAsync(req.session);
-    const franceconnectUserInfo = await getFranceConnectUser({
+    const { user_info, id_token } = await getFranceConnectUser({
       code,
       currentUrl: `${HOST}${FRANCECONNECT_CALLBACK_URL}${req.url.substring(req.path.length)}`,
       expectedNonce: nonce,
       expectedState: state,
     });
+    req.session.id_token_hint = id_token;
 
     const { id: userId } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await updateFranceConnectUserInfo(
-      userId,
-      franceconnectUserInfo,
-    );
+    const updatedUser = await updateFranceConnectUserInfo(userId, user_info);
     updateUserInAuthenticatedSession(req, updatedUser);
 
     const userOrganizations = await getOrganizationsByUserId(userId);
@@ -90,4 +88,12 @@ export async function getFranceConnectOidcCallbackController(
   } catch (error) {
     next(error);
   }
+}
+
+export async function getFranceConnectLogoutController(
+  req: Request,
+  res: Response,
+) {
+  req.session.id_token_hint = undefined;
+  return res.redirect("/oauth/logout");
 }

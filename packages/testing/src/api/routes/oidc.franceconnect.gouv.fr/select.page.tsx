@@ -26,9 +26,7 @@ export default function SelectPage(props: SelectPageProps) {
   return `
   <html color-mode="user">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇫🇷</text></svg>">
-    <link rel="stylesheet" href="https://unpkg.com/mvp.css@1.17.2/mvp.css">
-    <script src="https://unpkg.com/hyperscript.org@0.9.14/dist/_hyperscript.min.js"></script>
-    <title>🎭 FranceConnect 🎭</title>
+    <title>Connexion 🎭 FranceConnect 🎭</title>
     <header>
       <section>
         <h1>🎭 FranceConnect 🎭</h1>
@@ -64,6 +62,8 @@ export default function SelectPage(props: SelectPageProps) {
 
       <hr>
     </main>
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css@1.17.2/mvp.css">
+    <script src="https://unpkg.com/hyperscript.org@0.9.14/dist/_hyperscript.min.js"></script>
   </html>
   `;
 }

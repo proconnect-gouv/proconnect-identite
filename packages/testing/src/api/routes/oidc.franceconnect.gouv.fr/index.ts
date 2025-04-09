@@ -8,6 +8,7 @@ import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { CompactSign, generateKeyPair } from "jose";
 import { z } from "zod";
+import LogoutPage from "./logout.page.js";
 import SelectPage from "./select.page.js";
 import wellKnown from "./well-known.js";
 
@@ -48,7 +49,8 @@ let userinfo: FranceConnectUserInfoResponse;
 export const TestingOidcFranceConnectRouter = new Hono<{
   Bindings: FranceConnectBindings;
 }>()
-  .get("/healthz", ({ text }) => text("ok"))
+  .onError((error, { text }) => text(error.toString()))
+  .get("/", ({ text }) => text("🎭 FranceConnect theater"))
   .get(
     "/api/v2/.well-known/openid-configuration",
     ({ json, env: { ISSUER } }) => json(wellKnown(ISSUER)),
@@ -76,6 +78,45 @@ export const TestingOidcFranceConnectRouter = new Hono<{
         .join("/");
 
       return redirect(`${basePath}/interaction/${codeValue}/login`);
+    },
+  )
+  .get(
+    "/api/v2/session/end",
+    zValidator(
+      "query",
+      z.object({
+        id_token_hint: z.string(),
+        post_logout_redirect_uri: z.string().url(),
+        state: z.string(),
+      }),
+    ),
+    ({ req }) => {
+      const { post_logout_redirect_uri, state } = req.valid("query");
+
+      const redirect_url = new URL(post_logout_redirect_uri);
+      redirect_url.searchParams.set("state", state);
+
+      const html = new TextEncoder().encode(
+        LogoutPage({
+          redirect_url: post_logout_redirect_uri,
+        }),
+      );
+
+      const stream = new ReadableStream({
+        async start(controller) {
+          controller.enqueue(html);
+          await new Promise((resolve) => setTimeout(resolve, 1_111));
+          controller.close();
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/html; charset=UTF-8",
+          "Transfer-Encoding": "chunked",
+        },
+        status: 303,
+      });
     },
   )
   .post(
@@ -130,9 +171,7 @@ export const TestingOidcFranceConnectRouter = new Hono<{
       },
     }),
     zValidator("param", z.object({ code: z.string() })),
-    async ({ html }) => {
-      return html(SelectPage({ userinfo: DEFAULT_USERINFO }));
-    },
+    async ({ html }) => html(SelectPage({ userinfo: DEFAULT_USERINFO })),
   )
   .post(
     "/interaction/:code/login",
