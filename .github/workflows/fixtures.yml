@@ -7,13 +7,7 @@ on:
       - "!master"
 
 env:
-  ACCESS_LOG_PATH:
-  PGUSER: moncomptepro
-  PGPASSWORD: moncomptepro
-  PGDATABASE: moncomptepro
-  PGHOST: 127.0.0.1
-  PGPORT: 5432
-  DATABASE_URL: postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
   NODE_ENV: test
   SYMMETRIC_ENCRYPTION_KEY: aTrueRandom32BytesLongBase64EncodedStringAA=
 
@@ -21,14 +15,28 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     services:
-      postgres:
+      source_database:
         image: postgres:15.10
         env:
-          POSTGRES_USER: ${{ env.PGUSER }}
-          POSTGRES_PASSWORD: ${{ env.PGPASSWORD }}
-          POSTGRES_DB: ${{ env.PGDATABASE }}
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      metabase:
+        image: postgres:15.10
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
@@ -43,3 +51,8 @@ jobs:
       - run: npm run migrate up
       - run: npm run fixtures:load-ci -- scripts/fixtures.sql
       - run: npm run update-organization-info -- 0
+      - run: sh -x scripts/create-anonymized-copy-of-database.sh
+        env:
+          APP: proconnect-identite
+          METABASE_DB_URL: postgresql://postgres:postgres@localhost:5433/postgres
+          SCALINGO_POSTGRESQL_URL: ${{ env.DATABASE_URL }}

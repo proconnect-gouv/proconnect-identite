@@ -8,7 +8,11 @@ logPrefix(){
 
 if [ -n "$(which dbclient-fetcher)" ]; then
   dbclient-fetcher pgsql 15
+else
+  alias psql="docker run --rm postgres:15 psql";
+  alias pg_dump="docker run --rm --network host postgres:15 pg_dump";
 fi
+
 
 export SRC_DB_URL=$SCALINGO_POSTGRESQL_URL
 export DEST_DB_URL=$METABASE_DB_URL
