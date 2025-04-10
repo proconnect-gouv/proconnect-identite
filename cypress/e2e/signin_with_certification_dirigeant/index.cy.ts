@@ -80,18 +80,6 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.getByLabel("S’identifier avec FranceConnect").click();
 
     cy.title().should("include", "🎭 FranceConnect 🎭");
-    cy.get("input[name='family_name']").type("{selectAll}Duteil", {
-      force: true,
-    });
-    cy.get("input[name='given_name']").type("{selectAll}Douglas Le Gris", {
-      force: true,
-    });
-    cy.get("input[name='birthdate']").type("{selectAll}1980-06-01", {
-      force: true,
-    });
-    cy.get("input[name='birthplace']").type("{selectAll}75000", {
-      force: true,
-    });
     cy.contains("Je suis Douglas Le Gris Duteil").click();
 
     cy.title().should("include", "Rejoindre une organisation");
@@ -125,19 +113,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.getByLabel("S’identifier avec FranceConnect").click();
 
     cy.title().should("include", "🎭 FranceConnect 🎭");
-    cy.get("input[name='family_name']").type("{selectAll}Duteil", {
-      force: true,
-    });
-    cy.get("input[name='given_name']").type("{selectAll}Douglas Le Frais", {
-      force: true,
-    });
-    cy.get("input[name='birthdate']").type("{selectAll}1990-06-01", {
-      force: true,
-    });
-    cy.get("input[name='birthplace']").type("{selectAll}75000", {
-      force: true,
-    });
-    cy.contains("Je suis Douglas Le Frais Duteil").click();
+    cy.contains("Je suis Douglas Le Gris Duteil").click();
 
     cy.title().should("include", "Rejoindre une organisation");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -148,7 +124,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
 
     cy.title().should("include", "Compte certifié -");
     cy.contains("Vous êtes bien certifié !");
-    cy.contains("Douglas Le Frais");
+    cy.contains("Douglas Le Gris");
     cy.contains("Duteil");
     cy.contains("fresh+douglasduteil@mail.com");
     cy.contains("HyyyperProConnectDev4000");
@@ -214,7 +190,7 @@ describe("connected user should go through the certification flow", function () 
     cy.getByLabel("S’identifier avec FranceConnect").click();
 
     cy.title().should("include", "🎭 FranceConnect 🎭");
-    cy.contains("Je suis Jean Dupont").click();
+    cy.contains("Je suis Marie Héricart").click();
 
     cy.getDescribed("Clamart").within(() => {
       cy.contains("certifié").should("not.exist");

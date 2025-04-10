@@ -24,11 +24,11 @@ VALUES
    null, null, false),
   (6, 'outdated-franceconnected+douglasduteil@mail.com', true, CURRENT_TIMESTAMP,
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
-   'Douglas Le Gris', 'Duteil', '0123456789', 'HyyyperProConnectDev4000',
+   'Douglas Outdated FranceConnect', 'Duteil', '0123456789', 'HyyyperProConnectDev4000',
    null, null, false),
   (7, 'fresh+douglasduteil@mail.com', true, CURRENT_TIMESTAMP,
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
-   'Douglas Le Rouge', 'Duteil', '0123456789', 'HyyyperProConnectDev4000',
+   'Douglas Le Frais', 'Duteil', '0123456789', 'HyyyperProConnectDev4000',
    null, null, false)
 ;
 

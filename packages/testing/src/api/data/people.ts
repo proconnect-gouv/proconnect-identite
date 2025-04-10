@@ -52,20 +52,18 @@ export const PEOPLE = new Map<
   ],
 ]);
 
-export const FRANCECONNECT_PEOPLE = new Map<
-  string,
-  {
-    user_info: FranceConnectUserInfoResponse;
-    avataaars: string;
-  }
->([
+export interface Citizen {
+  user_info: FranceConnectUserInfoResponse;
+  avataaars: string;
+}
+export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
   [
-    "Jean Dupont",
+    "Jean De La Rose",
     {
       user_info: {
         birthdate: new Date("2001-01-01"),
         birthplace: "Internet",
-        family_name: "Dupont",
+        family_name: "De La Rose",
         gender: "male",
         given_name: "Jean",
         preferred_username: "Dulac",
@@ -145,10 +143,10 @@ export const FRANCECONNECT_PEOPLE = new Map<
     },
   ],
   [
-    "Douglas Duteil",
+    "Douglas Le Gris Duteil",
     {
       user_info: {
-        birthdate: new Date("2001-01-01"),
+        birthdate: new Date("1980-06-01"),
         birthplace: "75000",
         family_name: "Duteil",
         gender: "male",

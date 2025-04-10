@@ -8,6 +8,7 @@ import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { CompactSign, generateKeyPair } from "jose";
 import { z } from "zod";
+import { FRANCECONNECT_CITIZENS } from "../../data/people.js";
 import LogoutPage from "./logout.page.js";
 import SelectPage from "./select.page.js";
 import wellKnown from "./well-known.js";
@@ -171,7 +172,10 @@ export const TestingOidcFranceConnectRouter = new Hono<{
       },
     }),
     zValidator("param", z.object({ code: z.string() })),
-    async ({ html }) => html(SelectPage({ userinfo: DEFAULT_USERINFO })),
+    async ({ html }) =>
+      html(
+        SelectPage({ citizens: Array.from(FRANCECONNECT_CITIZENS.values()) }),
+      ),
   )
   .post(
     "/interaction/:code/login",

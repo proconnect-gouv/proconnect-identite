@@ -13,9 +13,6 @@ describe("Connect FranceConnect account", () => {
 
     cy.contains("S’identifier avec").click();
 
-    cy.contains("Edit").click();
-    cy.contains("label", "family_name").click();
-    cy.focused().clear().type("De La Rose");
     cy.contains("Je suis Jean De La Rose").click();
 
     cy.title().should("include", "Informations personnelles -");
@@ -32,5 +29,6 @@ describe("Connect FranceConnect account", () => {
     cy.contains("Déconnexion en cours...");
 
     cy.title().should("include", "S'inscrire ou se connecter -");
+    cy.contains("Information : vous êtes maintenant déconnecté.");
   });
 });
