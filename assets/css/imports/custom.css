@@ -2,6 +2,10 @@
   text-transform: lowercase !important;
 }
 
+.float-right {
+  float: right;
+}
+
 .inline-form {
   display: inline;
 }
