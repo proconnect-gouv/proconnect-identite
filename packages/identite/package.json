@@ -54,7 +54,7 @@
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@gouvfr-lasuite/proconnect.entreprise": "^0.0.0",
     "@sinonjs/fake-timers": "^14.0.0",
-    "@types/node": "^22.14.0",
+    "@types/node": "^22.14.1",
     "await-to-js": "^3.0.0",
     "node-pg-migrate": "^7.9.1",
     "pg": "^8.14.1",

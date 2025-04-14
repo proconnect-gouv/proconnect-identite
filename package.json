@@ -124,7 +124,7 @@
     "@types/lodash": "^4.17.16",
     "@types/lodash-es": "^4.17.12",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^22.14.0",
+    "@types/node": "^22.14.1",
     "@types/nodemailer": "^6.4.17",
     "@types/oidc-provider": "^8.8.1",
     "@types/qrcode": "^1.5.5",
