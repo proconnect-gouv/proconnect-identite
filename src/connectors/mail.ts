@@ -2,7 +2,7 @@
 
 import { convert } from "html-to-text";
 import { createTransport, type SendMailOptions } from "nodemailer";
-import { DEPLOY_ENV, SMTP_URL } from "../config/env";
+import { DEPLOY_ENV, SMTP_FROM, SMTP_URL } from "../config/env";
 
 //
 
@@ -25,7 +25,7 @@ export function sendMail(options: SendMailBrevoOptions) {
     headers: [...tag],
     ...options,
     subject,
-    from: "nepasrepondre@email.moncomptepro.beta.gouv.fr",
+    from: SMTP_FROM,
   });
 }
 
