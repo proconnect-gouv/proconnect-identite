@@ -1,12 +1,13 @@
 //
 
 import { createOidcChecks } from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
+import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { z } from "zod";
-import { FRANCECONNECT_CALLBACK_URL, HOST } from "../../config/env";
+import { HOST } from "../../config/env";
 import { OidcError } from "../../config/errors";
 import {
-  getFranceConnectRedirectUrl,
+  getFranceConnectLogoutRedirectUrl,
   getFranceConnectUser,
 } from "../../connectors/franceconnect";
 import {
@@ -18,29 +19,9 @@ import { updateFranceConnectUserInfo } from "../../managers/user";
 
 //
 
-export async function postFranceConnectController(
+export async function getFranceConnectOidcCallbackToUpdateUserMiddleware(
   req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const { nonce, state } = createOidcChecks();
-    req.session.nonce = nonce;
-    req.session.state = state;
-
-    const url = await getFranceConnectRedirectUrl(nonce, state);
-
-    return res.redirect(url.toString());
-  } catch (error) {
-    next(error);
-  }
-}
-
-//
-
-export async function getFranceConnectOidcCallbackController(
-  req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) {
   try {
@@ -57,9 +38,10 @@ export async function getFranceConnectOidcCallbackController(
     const { nonce, state } = await FranceConnectOidcSessionSchema.parseAsync(
       req.session,
     );
+
     const { user_info, id_token } = await getFranceConnectUser({
       code,
-      currentUrl: `${HOST}${FRANCECONNECT_CALLBACK_URL}${req.url.substring(req.path.length)}`,
+      currentUrl: `${HOST}${req.url}`,
       expectedNonce: nonce,
       expectedState: state,
     });
@@ -70,18 +52,58 @@ export async function getFranceConnectOidcCallbackController(
     const updatedUser = await updateFranceConnectUserInfo(user_id, user_info);
     updateUserInAuthenticatedSession(req, updatedUser);
 
-    return res.redirect(
-      "/personal-information?notification=personal_information_update_via_franceconnect_success",
-    );
+    next();
   } catch (error) {
     next(error);
   }
 }
 
-export async function getFranceConnectLogoutController(
-  req: Request,
-  res: Response,
+export function getFranceConnectLogoutMiddlewareFactory(
+  post_logout_redirect_uri: string,
 ) {
-  req.session.id_token_hint = undefined;
-  return res.redirect("/oauth/logout");
+  return async function getFranceConnectLogoutMiddleware(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      if (!req.session?.id_token_hint) {
+        return next();
+      }
+
+      const { state } = createOidcChecks();
+      req.session.state = state;
+      const [err, url] = await to(
+        getFranceConnectLogoutRedirectUrl(
+          req.session.id_token_hint,
+          post_logout_redirect_uri,
+          state,
+        ),
+      );
+      if (err) return next(err);
+      return res.redirect(url.href);
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
+export function getFranceConnectLogoutCallbackControllerFactory(
+  redirect_url: string,
+) {
+  return function getFranceConnectLogoutController(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      req.session.id_token_hint = undefined;
+      req.session.nonce = undefined;
+      req.session.state = undefined;
+
+      return res.redirect(redirect_url);
+    } catch (error) {
+      next(error);
+    }
+  };
 }

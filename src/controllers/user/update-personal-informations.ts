@@ -1,6 +1,15 @@
+import {
+  createOidcChecks,
+  getFranceConnectRedirectUrlFactory,
+} from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
-import { FEATURE_FRANCECONNECT_CONNECTION } from "../../config/env";
+import {
+  FEATURE_FRANCECONNECT_CONNECTION,
+  FRANCECONNECT_SCOPES,
+  HOST,
+} from "../../config/env";
+import { getFranceConnectConfiguration } from "../../connectors/franceconnect";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -93,3 +102,27 @@ export const postPersonalInformationsController = async (
     next(error);
   }
 };
+
+export async function postPersonalInformationsOauthFranceConnectController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const getFranceConnectRedirectUrl =
+      await getFranceConnectRedirectUrlFactory(getFranceConnectConfiguration, {
+        callbackUrl: `${HOST}/users/personal-information/oauth/franceconnect/callback`,
+        scope: FRANCECONNECT_SCOPES.join(" "),
+      });
+
+    const { nonce, state } = createOidcChecks();
+    req.session.nonce = nonce;
+    req.session.state = state;
+
+    const url = await getFranceConnectRedirectUrl(nonce, state);
+
+    return res.redirect(url.toString());
+  } catch (error) {
+    next(error);
+  }
+}
