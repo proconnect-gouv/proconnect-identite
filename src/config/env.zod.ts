@@ -25,6 +25,9 @@ export const connectorEnvSchema = z.object({
     .default("https://staging.entreprise.api.gouv.fr"),
   ENTREPRISE_API_TRACKING_CONTEXT: z.string().default("ProConnect Identité"),
   ENTREPRISE_API_TRACKING_RECIPIENT: z.string().default("13002526500013"),
+  FRANCECONNECT_CALLBACK_URL: z
+    .string()
+    .default("/users/franceconnect/callback"),
   FRANCECONNECT_CLIENT_ID: z
     .string()
     .default("🎭 Mocked FranceConnect Client ID"),

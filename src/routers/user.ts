@@ -1,6 +1,5 @@
 import { Router, urlencoded } from "express";
 import nocache from "nocache";
-import { HOST } from "../config/env";
 import {
   getJoinOrganizationConfirmController,
   getJoinOrganizationController,
@@ -14,9 +13,9 @@ import { get2faSignInController } from "../controllers/user/2fa-sign-in";
 import { postDeleteUserController } from "../controllers/user/delete";
 import { postCancelModerationAndRedirectControllerFactory } from "../controllers/user/edit-moderation";
 import {
-  getFranceConnectLogoutCallbackControllerFactory,
-  getFranceConnectLogoutMiddlewareFactory,
-  getFranceConnectOidcCallbackToUpdateUserMiddleware,
+  getFranceConnectLogoutController,
+  getFranceConnectOidcCallbackController,
+  postFranceConnectController,
 } from "../controllers/user/franceconnect";
 import { issueSessionOrRedirectController } from "../controllers/user/issue-session-or-redirect";
 import {
@@ -52,7 +51,6 @@ import {
 import {
   getPersonalInformationsController,
   postPersonalInformationsController,
-  postPersonalInformationsOauthFranceConnectController,
 } from "../controllers/user/update-personal-informations";
 import {
   getVerifyEmailController,
@@ -284,31 +282,6 @@ export const userRouter = () => {
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,
   );
-  userRouter.post(
-    "/personal-information/oauth/franceconnect",
-    rateLimiterMiddleware,
-    checkUserIsVerifiedMiddleware,
-    csrfProtectionMiddleware,
-    postPersonalInformationsOauthFranceConnectController,
-  );
-  userRouter.get(
-    "/personal-information/oauth/franceconnect/callback",
-    rateLimiterMiddleware,
-    checkUserIsVerifiedMiddleware,
-    getFranceConnectOidcCallbackToUpdateUserMiddleware,
-    getFranceConnectLogoutMiddlewareFactory(
-      `${HOST}/users/personal-information/logout/franceconnect/callback`,
-    ),
-  );
-  userRouter.get(
-    "/personal-information/logout/franceconnect/callback",
-    rateLimiterMiddleware,
-    checkUserIsVerifiedMiddleware,
-    csrfProtectionMiddleware,
-    getFranceConnectLogoutCallbackControllerFactory(
-      "/personal-information?notification=personal_information_update_via_franceconnect_success",
-    ),
-  );
 
   userRouter.get(
     "/organization-suggestions",
@@ -450,11 +423,25 @@ export const userRouter = () => {
     postDeleteUserController,
   );
 
-  userRouter.get(
-    "/logout/franceconnect/callback",
+  userRouter.post(
+    "/franceconnect",
     rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
-    getFranceConnectLogoutCallbackControllerFactory(`${HOST}/oauth/logout`),
+    csrfProtectionMiddleware,
+    postFranceConnectController,
+  );
+  userRouter.get(
+    "/franceconnect/callback",
+    rateLimiterMiddleware,
+    checkUserCanAccessAdminMiddleware,
+    csrfProtectionMiddleware,
+    getFranceConnectOidcCallbackController,
+  );
+  userRouter.get(
+    "/franceconnect/logout",
+    rateLimiterMiddleware,
+    checkUserCanAccessAdminMiddleware,
+    getFranceConnectLogoutController,
   );
 
   return userRouter;

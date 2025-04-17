@@ -62,6 +62,7 @@ describe("env.zod", () => {
       FEATURE_USE_ANNUAIRE_EMAILS: false,
       FEATURE_USE_SECURE_COOKIES: false,
       FEATURE_USE_SECURITY_RESPONSE_HEADERS: false,
+      FRANCECONNECT_CALLBACK_URL: "/users/franceconnect/callback",
       FRANCECONNECT_CLIENT_ID: "🎭 Mocked FranceConnect Client ID",
       FRANCECONNECT_CLIENT_SECRET: "🎭 Mocked FranceConnect Client Secret",
       FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: "ES256",

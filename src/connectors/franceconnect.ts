@@ -8,6 +8,7 @@ import {
 } from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
 import {
   DEPLOY_ENV,
+  FRANCECONNECT_CALLBACK_URL,
   FRANCECONNECT_CLIENT_ID,
   FRANCECONNECT_CLIENT_SECRET,
   FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG,
@@ -32,7 +33,7 @@ export const getFranceConnectConfiguration =
 export const getFranceConnectRedirectUrl = getFranceConnectRedirectUrlFactory(
   getFranceConnectConfiguration,
   {
-    callbackUrl: `${HOST}/users/franceconnect/callback`,
+    callbackUrl: `${HOST}${FRANCECONNECT_CALLBACK_URL}`,
     scope: FRANCECONNECT_SCOPES.join(" "),
   },
 );
