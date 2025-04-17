@@ -18,6 +18,9 @@ describe("Connect FranceConnect account", () => {
     cy.focused().clear().type("De La Rose");
     cy.contains("Je suis Jean De La Rose").click();
 
+    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
+    cy.contains("Déconnexion en cours...");
+
     cy.title().should("include", "Informations personnelles -");
     cy.contains("Nous avons bien récupéré vos données via FranceConnect.");
 
@@ -27,9 +30,6 @@ describe("Connect FranceConnect account", () => {
     cy.getByLabel("Se déconnecter - Jean De La Rose")
       .filter(":visible")
       .click();
-
-    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-    cy.contains("Déconnexion en cours...");
 
     cy.title().should("include", "S'inscrire ou se connecter -");
   });
