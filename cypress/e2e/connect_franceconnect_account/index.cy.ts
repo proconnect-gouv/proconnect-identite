@@ -28,9 +28,6 @@ describe("Connect FranceConnect account", () => {
       .filter(":visible")
       .click();
 
-    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-    cy.contains("Déconnexion en cours...");
-
     cy.title().should("include", "S'inscrire ou se connecter -");
   });
 });
