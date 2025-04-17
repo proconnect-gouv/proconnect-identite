@@ -30,7 +30,7 @@ import {
 import { OidcError } from "./config/errors";
 import { oidcProviderConfiguration } from "./config/oidc-provider-configuration";
 import { getNewRedisClient } from "./connectors/redis";
-import { getFranceConnectLogoutMiddlewareFactory } from "./controllers/user/franceconnect";
+import { useFranceConnectLogoutMiddlewareFactory } from "./controllers/user/franceconnect";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
 import { connectionCountMiddleware } from "./middlewares/connection-count";
 import { getClients } from "./repositories/oidc-client";
@@ -248,8 +248,8 @@ app.use(async (req, _res, next) => {
 });
 app.use(
   "/oauth/logout",
-  getFranceConnectLogoutMiddlewareFactory(
-    `${HOST}/users/logout/franceconnect/callback`,
+  useFranceConnectLogoutMiddlewareFactory(
+    `${HOST}/users/franceconnect/logout/callback`,
   ),
 );
 app.use("/oauth", oidcProvider.callback());
