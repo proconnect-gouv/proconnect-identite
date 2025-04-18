@@ -25,9 +25,6 @@ export const connectorEnvSchema = z.object({
     .default("https://staging.entreprise.api.gouv.fr"),
   ENTREPRISE_API_TRACKING_CONTEXT: z.string().default("ProConnect Identité"),
   ENTREPRISE_API_TRACKING_RECIPIENT: z.string().default("13002526500013"),
-  FRANCECONNECT_CALLBACK_URL: z
-    .string()
-    .default("/users/franceconnect/callback"),
   FRANCECONNECT_CLIENT_ID: z
     .string()
     .default("🎭 Mocked FranceConnect Client ID"),
@@ -54,6 +51,9 @@ export const connectorEnvSchema = z.object({
     .default(3 * 30 * 24 * 60), // 3 months in minutes
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   SENTRY_DSN: z.string().default(""),
+  SMTP_FROM: z
+    .string()
+    .default("nepasrepondre@email.moncomptepro.beta.gouv.fr"),
   SMTP_URL: z.string().default("smtp://localhost:1025"),
 });
 
