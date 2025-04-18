@@ -5,8 +5,10 @@ import {
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
+import { secureHeaders } from "hono/secure-headers";
 import { CompactSign, generateKeyPair } from "jose";
 import { z } from "zod";
+import { FRANCECONNECT_CITIZENS } from "../../data/people.js";
 import LogoutPage from "./logout.page.js";
 import SelectPage from "./select.page.js";
 import wellKnown from "./well-known.js";
@@ -163,8 +165,17 @@ export const TestingOidcFranceConnectRouter = new Hono<{
   .get("/api/v2/userinfo", ({ json }) => json(userinfo))
   .get(
     "/interaction/:code/login",
+    secureHeaders({
+      contentSecurityPolicy: {
+        styleSrcElem: ["'self'", "unpkg.com"],
+        imgSrc: ["'self'", "data:", "avataaars.io"],
+      },
+    }),
     zValidator("param", z.object({ code: z.string() })),
-    async ({ html }) => html(SelectPage({ userinfo: DEFAULT_USERINFO })),
+    async ({ html }) =>
+      html(
+        SelectPage({ citizens: Array.from(FRANCECONNECT_CITIZENS.values()) }),
+      ),
   )
   .post(
     "/interaction/:code/login",

@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "data": {
+        "numero_identification": "▪︎ ▪︎ ▪︎",
+        "type": "personne_morale",
+        "fonction": "PRESIDENT",
+        "raison_sociale": "▪︎ ▪︎ ▪︎ - SOCIETE PAR ACTIONS SIMPLIFIEE",
+        "code_greffe": "9201",
+        "libelle_greffe": "NANTERRE"
+      },
+      "links": {},
+      "meta": {}
+    },
+    {
+      "data": {
+        "numero_identification": "▪︎ ▪︎ ▪︎",
+        "type": "personne_morale",
+        "fonction": "COMMISSAIRE AUX COMPTES TITULAIRE",
+        "raison_sociale": "▪︎ ▪︎ ▪︎ - SOCIETE ANONYME",
+        "code_greffe": "9201",
+        "libelle_greffe": "NANTERRE"
+      },
+      "links": {},
+      "meta": {}
+    }
+  ],
+  "meta": {
+    "personnes_physiques_count": 0,
+    "personnes_morales_count": 2,
+    "count": 2
+  },
+  "links": {}
+}

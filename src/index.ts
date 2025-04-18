@@ -258,6 +258,7 @@ if (DEPLOY_ENV === "localhost" || DEPLOY_ENV === "preview") {
   app.use(
     createTestingHandler("/___testing___", {
       ISSUER: FRANCECONNECT_ISSUER,
+      log: logger.warn,
     }),
   );
 }
