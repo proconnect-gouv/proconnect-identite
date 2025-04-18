@@ -33,6 +33,7 @@ export const AddEstablishmentCommand: CommandModule<
     );
     async function intercepter(input: Request) {
       const response = await fetch(input);
+      if (!response.ok) throw new Error(await response.text());
       const content = (await response.json()) as {
         data: InseeSiretEstablishment;
       };
