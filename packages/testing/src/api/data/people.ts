@@ -1,4 +1,5 @@
 import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { FranceConnectUserInfoResponse } from "@gouvfr-lasuite/proconnect.identite/types";
 
 export const PEOPLE = new Map<
   string,
@@ -47,6 +48,127 @@ export const PEOPLE = new Map<
         pseudonyme: "PRAETORIAN",
         sexe: "M",
       },
+    },
+  ],
+]);
+
+export interface Citizen {
+  user_info: FranceConnectUserInfoResponse;
+  avataaars: string;
+}
+export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
+  [
+    "Jean De La Rose",
+    {
+      user_info: {
+        birthdate: new Date("2001-01-01"),
+        birthplace: "Internet",
+        family_name: "De La Rose",
+        gender: "male",
+        given_name: "Jean",
+        preferred_username: "Dulac",
+        sub: "🎭 FranceConnect Sub",
+      },
+      avataaars: `https://avataaars.io/?${new URLSearchParams({
+        avatarStyle: "Circle",
+        topType: "LongHairCurly",
+        accessoriesType: "Round",
+        hairColor: "PastelPink",
+        facialHairType: "BeardMedium",
+        facialHairColor: "BrownDark",
+        clotheType: "ShirtCrewNeck",
+        clotheColor: "Pink",
+        eyeType: "Surprised",
+        eyebrowType: "SadConcernedNatural",
+        mouthType: "Serious",
+        skinColor: "Brown",
+      })}`,
+    },
+  ],
+  [
+    "Marie Héricart",
+    {
+      user_info: {
+        birthdate: new Date("2001-01-01"),
+        birthplace: "75000",
+        family_name: "Héricart",
+        gender: "female",
+        given_name: "Marie",
+        preferred_username: "Heric",
+        sub: "🎭 FranceConnect Sub",
+      },
+      avataaars: `https://avataaars.io/?${new URLSearchParams({
+        avatarStyle: "Circle",
+        topType: "Hijab",
+        accessoriesType: "Kurt",
+        hatColor: "Gray01",
+        hairColor: "Brown",
+        facialHairType: "BeardMajestic",
+        facialHairColor: "Platinum",
+        clotheType: "CollarSweater",
+        clotheColor: "Gray01",
+        eyeType: "Squint",
+        eyebrowType: "Angry",
+        mouthType: "Sad",
+        skinColor: "Brown",
+      })}`,
+    },
+  ],
+  [
+    "Rogal Dorn",
+    {
+      user_info: {
+        birthdate: new Date("2001-01-01"),
+        birthplace: "00007",
+        family_name: "Dorn",
+        gender: "male",
+        given_name: "Rogal",
+        preferred_username: "Prætor",
+        sub: "🎭 FranceConnect Sub",
+      },
+      avataaars: `https://avataaars.io/?${new URLSearchParams({
+        avatarStyle: "Circle",
+        topType: "Hat",
+        accessoriesType: "Round",
+        facialHairType: "BeardMedium",
+        facialHairColor: "Black",
+        clotheType: "GraphicShirt",
+        clotheColor: "Black",
+        graphicType: "SkullOutline",
+        eyeType: "Side",
+        eyebrowType: "AngryNatural",
+        mouthType: "Serious",
+        skinColor: "Light",
+      })}`,
+    },
+  ],
+  [
+    "Douglas Le Gris Duteil",
+    {
+      user_info: {
+        birthdate: new Date("1980-06-01"),
+        birthplace: "75000",
+        family_name: "Duteil",
+        gender: "male",
+        given_name: "Douglas Le Gris",
+        preferred_username: "Dulac",
+        sub: "🎭 FranceConnect Sub",
+      },
+      avataaars: `https://avataaars.io/?${new URLSearchParams({
+        avatarStyle: "Circle",
+        topType: "ShortHairDreads01",
+        accessoriesType: "Round",
+        hatColor: "Blue02",
+        hairColor: "BlondeGolden",
+        facialHairType: "BeardLight",
+        facialHairColor: "BrownDark",
+        clotheType: "ShirtVNeck",
+        clotheColor: "White",
+        eyeType: "Squint",
+        eyebrowType: "AngryNatural",
+        mouthType: "Default",
+        skinColor: "Black",
+      })}`,
     },
   ],
 ]);

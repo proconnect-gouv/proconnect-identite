@@ -9,7 +9,10 @@ import {
 
 //
 
-export type TestingBindings = FranceConnectBindings;
+export type TestingBindings = {
+  log: typeof console.log;
+} & FranceConnectBindings;
 export const router = new Hono<{ Bindings: TestingBindings }>()
+  .get("/healthz", ({ text }) => text("ok"))
   .route("/entreprise.api.gouv.fr", TestingEntrepriseApiRouter)
   .route("/oidc.franceconnect.gouv.fr", TestingOidcFranceConnectRouter);
