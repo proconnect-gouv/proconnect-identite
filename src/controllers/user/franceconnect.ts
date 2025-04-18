@@ -1,12 +1,16 @@
 //
 
-import { createOidcChecks } from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
+import {
+  createOidcChecks,
+  getFranceConnectRedirectUrlFactory,
+} from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
 import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { z } from "zod";
-import { HOST } from "../../config/env";
+import { FRANCECONNECT_SCOPES, HOST } from "../../config/env";
 import { OidcError } from "../../config/errors";
 import {
+  getFranceConnectConfiguration,
   getFranceConnectLogoutRedirectUrl,
   getFranceConnectUser,
 } from "../../connectors/franceconnect";
@@ -58,10 +62,40 @@ export async function getFranceConnectOidcCallbackToUpdateUserMiddleware(
   }
 }
 
-export function getFranceConnectLogoutMiddlewareFactory(
+export function postFranceConnectLoginRedirectControllerFactory(
+  post_login_redirect_uri: string,
+) {
+  const getFranceConnectRedirectUrl = getFranceConnectRedirectUrlFactory(
+    getFranceConnectConfiguration,
+    {
+      callbackUrl: post_login_redirect_uri,
+      scope: FRANCECONNECT_SCOPES.join(" "),
+    },
+  );
+
+  return async function postFranceConnectLoginRedirectController(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { nonce, state } = createOidcChecks();
+      req.session.nonce = nonce;
+      req.session.state = state;
+
+      const url = await getFranceConnectRedirectUrl(nonce, state);
+
+      return res.redirect(url.toString());
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
+export function useFranceConnectLogoutMiddlewareFactory(
   post_logout_redirect_uri: string,
 ) {
-  return async function getFranceConnectLogoutMiddleware(
+  return async function franceConnectLogoutMiddleware(
     req: Request,
     res: Response,
     next: NextFunction,
