@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "data": {
+        "fonction": "DIRIGEANT",
+        "nom": "AKNINE",
+        "type": "personne_physique",
+        "prenom": "Karima",
+        "date_naissance": "1999-07-15",
+        "date_naissance_timestamp": 931996800000,
+        "lieu_naissance": "Internet",
+        "pays_naissance": "FRANCE",
+        "code_pays_naissance": "FR",
+        "nationalite": "Française",
+        "code_nationalite": "FR"
+      },
+      "links": {},
+      "meta": {}
+    }
+  ],
+  "meta": {
+    "personnes_physiques_count": 1,
+    "personnes_morales_count": 0,
+    "count": 1
+  },
+  "links": {}
+}
