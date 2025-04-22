@@ -33,11 +33,15 @@ export const AddEstablishmentCommand: CommandModule<
     );
     async function intercepter(input: Request) {
       const response = await fetch(input);
-      const content = await response.json();
+      if (!response.ok) throw new Error(await response.text());
+      const content = (await response.json()) as {
+        data: InseeSiretEstablishment;
+      };
+      // NOTE(douglasduteil): ensure the siret is the same as the one we got
+      // Protection against some staging endpoint magic
+      assert.equal(content.data.siret, siret);
 
-      const safeContent = anonymize(
-        content as { data: InseeSiretEstablishment },
-      );
+      const safeContent = anonymize(content);
       await writeFile(filename, await format(safeContent, { parser: "json" }));
       console.log("wrote", filename);
 
@@ -56,11 +60,7 @@ export const AddEstablishmentCommand: CommandModule<
       recipient,
     });
 
-    const establishment = await findBySiret(siret);
-
-    // NOTE(douglasduteil): ensure the siret is the same as the one we got
-    // Protection against some staging endpoint magic
-    assert.equal(establishment.siret, siret);
+    await findBySiret(siret);
   },
 };
 

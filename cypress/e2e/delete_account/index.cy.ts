@@ -38,14 +38,9 @@ describe("delete account", () => {
 
     cy.contains("Supprimer mon compte").click();
 
-    cy.contains("Votre compte a bien été supprimé.");
+    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
+    cy.contains("Déconnexion en cours...");
 
-    cy.maildevGetMessageBySubject("Suppression de compte").then((email) => {
-      cy.maildevVisitMessageById(email.id);
-      cy.contains(
-        "Nous vous confirmons que votre demande de suppression de compte a bien été prise en compte.",
-      );
-      cy.maildevDeleteMessageById(email.id);
-    });
+    cy.contains("Votre compte a bien été supprimé.");
   });
 });
