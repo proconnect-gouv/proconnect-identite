@@ -2,23 +2,6 @@
   "data": [
     {
       "data": {
-        "fonction": "EMPLOYE",
-        "nom": "VOLCKAERT",
-        "type": "personne_physique",
-        "prenom": "Adrian",
-        "date_naissance": "1984-06-05",
-        "date_naissance_timestamp": 455241600000,
-        "lieu_naissance": "Internet",
-        "pays_naissance": "FRANCE",
-        "code_pays_naissance": "FR",
-        "nationalite": "Française",
-        "code_nationalite": "FR"
-      },
-      "links": {},
-      "meta": {}
-    },
-    {
-      "data": {
         "fonction": "DIRIGEANT",
         "nom": "TOSI",
         "type": "personne_physique",

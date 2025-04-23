@@ -264,4 +264,59 @@ describe.only("Signup with a client requiring certification dirigeant", () => {
     cy.contains('"siret": "49430870300052",');
     cy.contains('"label": "Jeremie Cook",');
   });
+
+  it("should no allow Adrian Volckaert to represent Danone", () => {
+    cy.visit("http://localhost:4000");
+    cy.contains("Forcer une connexion par certification dirigeant").click();
+
+    cy.title().should("include", "S'inscrire ou se connecter - ");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("adrian.volckaert@yopmail.com");
+    cy.contains("Valider").click();
+
+    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.contains("Mot de passe").click();
+    cy.contains("Recevoir un lien d’identification").click();
+    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
+      (email) => {
+        cy.maildevVisitMessageById(email.id);
+        cy.contains(
+          "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+        );
+        cy.contains("Se connecter").click();
+        cy.maildevDeleteMessageById(email.id);
+      },
+    );
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Adrian Volckaert").click();
+
+    cy.title().should("include", "Renseigner votre identité -");
+    cy.seeInField("Prénom", "Adrian");
+    cy.seeInField("Nom", "Volckaert");
+    cy.seeInField("Numéro de téléphone professionnel", "");
+    cy.seeInField("Profession ou rôle au sein de votre organisation", "");
+    cy.contains("Profession ou rôle au sein de votre organisation").click();
+    cy.focused().type("Non dirigeant");
+    cy.contains("Valider").click();
+
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("55203253400646");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Danone",
+    ).click();
+
+    cy.title().should("include", "Certification impossible -");
+    cy.contains("Nous n’arrivons pas à certifier votre compte.");
+    cy.contains("Continuer").click();
+
+    cy.title().should("include", "Error");
+    cy.contains(
+      "AuthorizationResponseError: authorization response from the server is an error",
+    );
+  });
 });
