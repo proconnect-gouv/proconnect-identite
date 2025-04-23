@@ -7,7 +7,7 @@
   </p>
 
   <% if (requiresVerification) { %>
-  <form action="/users/certification-dirigeant" method="post">
+  <form action="/users/certification-dirigeant/franceconnect/login" method="post">
     <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
     <div class="fr-connect-group">
       <button aria-label="S’identifier avec FranceConnect" class="fr-connect">
