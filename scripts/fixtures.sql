@@ -160,7 +160,8 @@ VALUES
   (75, 'vhugovhugovhugo99@gmail.com', false, null, null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Victor', 'Hugo', null, null, null, null, false, true, true),
   -- password for the following user is 'password123'
   (76, 'admin+playwright@immersion-facile.beta.gouv.fr', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Immersion', '0123456789', 'Immersion', null, null, false, false, false),
-  (77, 'recette+playwright@immersion-facile.beta.gouv.fr', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Immersion', '0123456789', 'Immersion', null, null, false, false, false)
+  (77, 'recette+playwright@immersion-facile.beta.gouv.fr', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Immersion', '0123456789', 'Immersion', null, null, false, false, false),
+  (78, 'karima.aknine@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Karima', 'Aknine', '0123456789', 'Dirigeant', null, null, false, false, false)
 ON CONFLICT (id)
   DO UPDATE
   SET (email, email_verified, email_verified_at, encrypted_password, created_at, updated_at, given_name, family_name,

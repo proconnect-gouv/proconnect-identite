@@ -26,9 +26,9 @@ VALUES
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
    'Douglas Outdated FranceConnect', 'Duteil', '0123456789', 'HyyyperProConnectDev4000',
    null, null, false),
-  (7, 'fresh+douglasduteil@mail.com', true, CURRENT_TIMESTAMP,
+  (7, 'karima.aknine@yopmail.com', true, CURRENT_TIMESTAMP,
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
-   'Douglas Le Frais', 'Duteil', '0123456789', 'HyyyperProConnectDev4000',
+   'Karima', 'Aknine', '0123456789', 'Dirigeant',
    null, null, false)
 ;
 

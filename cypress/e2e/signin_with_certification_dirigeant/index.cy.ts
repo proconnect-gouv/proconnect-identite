@@ -105,30 +105,30 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     );
   });
 
-  it("should FranceConnect and match Douglas Le Frais as an executive of ONEDOES.DRAW.DOUBLEACE", function () {
-    cy.login("fresh+douglasduteil@mail.com");
+  it("should welcome Karima Aknine as dirigeant of BATI-SEREIN", () => {
+    cy.login("karima.aknine@yopmail.com");
 
     cy.title().should("include", "Certification dirigeant -");
     cy.contains("Certifier votre statut");
     cy.getByLabel("S’identifier avec FranceConnect").click();
 
     cy.title().should("include", "🎭 FranceConnect 🎭");
-    cy.contains("Je suis Douglas Le Gris Duteil").click();
+    cy.contains("Je suis Karima Aknine").click();
 
     cy.title().should("include", "Rejoindre une organisation");
     cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("82869625200018");
+    cy.focused().clear().type("51025277800012");
     cy.getByLabel(
-      "Organisation correspondante au SIRET donné : Douglas Duteil",
+      "Organisation correspondante au SIRET donné : Bati-serein",
     ).click();
 
     cy.title().should("include", "Compte certifié -");
     cy.contains("Vous êtes bien certifié !");
-    cy.contains("Prénom Douglas Le Gris");
-    cy.contains("Nom Duteil");
-    cy.contains("Email professionnel fresh+douglasduteil@mail.com");
-    cy.contains("Rôle HyyyperProConnectDev4000");
-    cy.contains("Organisation Douglas Duteil");
+    cy.contains("Prénom Karima");
+    cy.contains("Nom Aknine");
+    cy.contains("Email professionnel karima.aknine@yopmail.com");
+    cy.contains("Rôle Dirigeant");
+    cy.contains("Organisation Bati-serein");
     cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
@@ -198,7 +198,7 @@ describe("connected user should go through the certification flow", function () 
   });
 });
 
-describe.only("Signup with a client requiring certification dirigeant", () => {
+describe("Signup with a client requiring certification dirigeant", () => {
   it("shuold welcome Elia Alvernhe as dirigeant of JEREMIE COOK", () => {
     cy.visit("http://localhost:4000");
     cy.contains("Forcer une connexion par certification dirigeant").click();
