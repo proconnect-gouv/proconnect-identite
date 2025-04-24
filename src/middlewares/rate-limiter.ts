@@ -1,7 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { RateLimiterRedis } from "rate-limiter-flexible";
-import { FEATURE_RATE_LIMIT } from "../config/env";
+import {
+  FEATURE_RATE_LIMIT_BY_EMAIL,
+  FEATURE_RATE_LIMIT_BY_IP,
+} from "../config/env";
 import { getNewRedisClient } from "../connectors/redis";
 import {
   getUserFromAuthenticatedSession,
@@ -17,7 +20,7 @@ const ipRateLimiterMiddlewareFactory =
   (rateLimiter: RateLimiterRedis) =>
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      if (FEATURE_RATE_LIMIT) {
+      if (FEATURE_RATE_LIMIT_BY_IP) {
         await rateLimiter.consume(req.ip);
       }
       next();
@@ -30,7 +33,7 @@ const emailRateLimiterMiddlewareFactory =
   (rateLimiter: RateLimiterRedis) =>
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      if (!FEATURE_RATE_LIMIT) {
+      if (!FEATURE_RATE_LIMIT_BY_EMAIL) {
       } else if (isWithinAuthenticatedSession(req.session)) {
         const { email } = getUserFromAuthenticatedSession(req);
         await rateLimiter.consume(email);
