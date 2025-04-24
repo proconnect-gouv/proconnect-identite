@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { RateLimiterRedis } from "rate-limiter-flexible";
@@ -38,10 +37,8 @@ const emailRateLimiterMiddlewareFactory =
       } else if (getEmailFromUnauthenticatedSession(req)) {
         await rateLimiter.consume(getEmailFromUnauthenticatedSession(req)!);
       } else {
-        const err = new Error("Falling back to ip rate limiting.");
-        Sentry.captureException(err);
-        // Fall back to ip rate limiting to avoid security flaw
-        await rateLimiter.consume(req.ip);
+        // Throw an error to avoid a security flaw.
+        next(new Error("Rate limiting failed."));
       }
 
       return next();
