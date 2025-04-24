@@ -72,6 +72,7 @@ import {
   rateLimiterMiddleware,
   resetPasswordRateLimiterMiddleware,
   sendMagicLinkRateLimiterMiddleware,
+  verifyEmailRateLimiterMiddleware,
 } from "../middlewares/rate-limiter";
 import {
   checkCredentialPromptRequirementsMiddleware,
@@ -186,6 +187,7 @@ export const userRouter = () => {
     "/verify-email",
     checkUserTwoFactorAuthMiddleware,
     csrfProtectionMiddleware,
+    verifyEmailRateLimiterMiddleware,
     postVerifyEmailController,
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,

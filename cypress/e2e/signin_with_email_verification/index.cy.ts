@@ -67,4 +67,17 @@ describe("sign-in with email verification renewal", () => {
 
     cy.contains("Votre compte ProConnect");
   });
+
+  it("should trigger email verification rate limiting", function () {
+    cy.visit("/users/start-sign-in");
+    cy.login("darnath.lysander@imperialfists.world");
+
+    // trigger reset email verification rate limiter
+    for (let i = 0; i <= 10; i++) {
+      cy.get('[name="verify_email_token"]').type("1234567890");
+      cy.get('[type="submit"]').click();
+    }
+
+    cy.contains("Too Many Requests");
+  });
 });
