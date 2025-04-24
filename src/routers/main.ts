@@ -32,10 +32,9 @@ import { ejsLayoutMiddlewareFactory } from "../services/renderer";
 export const mainRouter = (app: Express) => {
   const mainRouter = Router();
 
-  mainRouter.use(nocache());
-
   mainRouter.get(
     "/connection-and-account",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -46,6 +45,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.get(
     "/double-authentication",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -56,6 +56,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.get(
     "/configuring-single-use-code",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -65,6 +66,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.get(
     "/authenticator-app-configuration",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -75,6 +77,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/authenticator-app-configuration",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -85,6 +88,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/delete-authenticator-app-configuration",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -95,6 +99,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/passkeys/verify-registration",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -105,6 +110,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/delete-passkeys/:credential_id",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -115,6 +121,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/set-force-2fa",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -125,6 +132,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.get(
     "/personal-information",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -135,6 +143,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/personal-information",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -145,6 +154,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.get(
     "/manage-organizations",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
@@ -155,6 +165,7 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.get(
     "/",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
