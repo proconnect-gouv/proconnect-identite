@@ -138,6 +138,45 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     );
   });
 
+  it("should welcome Ulysse Tosi as dirigeant of PAPILLON and DANONE", () => {
+    cy.login("ulysse.tosi@yopmail.com");
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.contains("Certifier votre statut");
+    cy.contains("Continue").click();
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getDescribed("Danone").within(() => {
+      cy.contains("certifié");
+    });
+    cy.contains("Je veux représenter une autre organisation").click();
+
+    cy.title().should("include", "Rejoindre une organisation");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("39234600300198");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Papillon",
+    ).click();
+
+    cy.title().should("include", "Compte certifié -");
+    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Prénom Ulysse");
+    cy.contains("Nom Tosi");
+    cy.contains("Email professionnel ulysse.tosi@yopmail.com");
+    cy.contains("Rôle Dirigeant DANONE et PAPILLON");
+    cy.contains("Organisation Papillon");
+    cy.contains("Statut Compte certifié");
+    cy.contains("Continuer").click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
+    );
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains('"siret": "39234600300198",');
+    cy.contains('"label": "Papillon"');
+  });
+
   it("should try to re-certify expired certificated FranceConnect user", function () {
     cy.login("outdated-certified-franceconnected+dirigeant@unipersonnelle.com");
 

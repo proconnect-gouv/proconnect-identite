@@ -161,7 +161,8 @@ VALUES
   -- password for the following user is 'password123'
   (76, 'admin+playwright@immersion-facile.beta.gouv.fr', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Immersion', '0123456789', 'Immersion', null, null, false, false, false),
   (77, 'recette+playwright@immersion-facile.beta.gouv.fr', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Immersion', '0123456789', 'Immersion', null, null, false, false, false),
-  (78, 'karima.aknine@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Karima', 'Aknine', '0123456789', 'Dirigeant', null, null, false, false, false)
+  (78, 'karima.aknine@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Karima', 'Aknine', '0123456789', 'Dirigeant', null, null, false, false, false),
+  (79, 'ulysse.tosi@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Ulysse', 'Tosi', '0123456789', 'Dirigeant DANONE et PAPILLON', null, null, false, false, false)
 ON CONFLICT (id)
   DO UPDATE
   SET (email, email_verified, email_verified_at, encrypted_password, created_at, updated_at, given_name, family_name,
@@ -238,7 +239,8 @@ VALUES
   (50, '20004697700019', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   -- back to normal organizations
   (51, '13003013300016', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (52, '21850292000018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  (52, '21850292000018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (53, '55203253400646', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
   ON CONFLICT (id)
   DO UPDATE
          SET (siret, created_at, updated_at) = (EXCLUDED.siret, EXCLUDED.created_at, EXCLUDED.updated_at);
@@ -433,7 +435,8 @@ VALUES
   (75, 50, 'verified_email_domain', true),
   (76, 51, 'verified_email_domain', true),
   (77, 51, 'verified_email_domain', true),
-  (1, 52, 'verified_email_domain', true)
+  (1, 52, 'verified_email_domain', true),
+  (79, 53, 'organization_dirigeant', true)
 ON CONFLICT (user_id, organization_id)
   DO UPDATE
   SET (verification_type, has_been_greeted)

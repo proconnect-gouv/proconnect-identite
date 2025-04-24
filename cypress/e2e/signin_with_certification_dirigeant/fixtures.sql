@@ -29,25 +29,31 @@ VALUES
   (7, 'karima.aknine@yopmail.com', true, CURRENT_TIMESTAMP,
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
    'Karima', 'Aknine', '0123456789', 'Dirigeant',
+   null, null, false),
+  (8, 'ulysse.tosi@yopmail.com', true, CURRENT_TIMESTAMP,
+   '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
+   'Ulysse', 'Tosi', '0123456789', 'Dirigeant DANONE et PAPILLON',
    null, null, false)
 ;
 
 INSERT INTO franceconnect_userinfo
   (user_id, birthdate, birthplace, family_name, given_name, created_at, updated_at)
 VALUES
-  (1, '1990-06-01', '75000', 'Jean', 'Un', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (2, '1990-06-01', '75000', 'Jean', 'Deux', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (3, '1990-06-01', '75000', 'Jean', 'Trois', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (4, '1990-06-01', '75000', 'Jean', 'Quatre', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (5, '1980-06-01', '75000', 'Jean', 'Cinq', CURRENT_TIMESTAMP - INTERVAL '6 months', CURRENT_TIMESTAMP  - INTERVAL '3 months'),
-  (6, '1980-06-01', '75000', 'DUTEIL', 'Douglas Le Gris', CURRENT_TIMESTAMP - INTERVAL '6 months', CURRENT_TIMESTAMP  - INTERVAL '3 months')
+  (1, '1990-06-01', '75000', 'Un', 'Jean', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (2, '1990-06-01', '75000', 'Deux', 'Jean', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (3, '1990-06-01', '75000', 'Trois', 'Jean', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (4, '1990-06-01', '75000', 'Quatre', 'Jean', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (5, '1980-06-01', '75000', 'Cinq', 'Jean', CURRENT_TIMESTAMP - INTERVAL '6 months', CURRENT_TIMESTAMP  - INTERVAL '3 months'),
+  (6, '1980-06-01', '75000', 'DUTEIL', 'Douglas Le Gris', CURRENT_TIMESTAMP - INTERVAL '6 months', CURRENT_TIMESTAMP  - INTERVAL '3 months'),
+  (8, '1992-09-07', 'Internet', 'Tosi', 'Ulysse', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ;
 
 INSERT INTO organizations
   (id, siret, created_at, updated_at)
 VALUES
   (1, '45334017600024', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (2, '82869625200018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  (2, '82869625200018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (3, '55203253400646', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ;
 
 INSERT INTO users_organizations
@@ -56,7 +62,8 @@ VALUES
   (1, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true),
   (2, 1, false, 'domain', CURRENT_TIMESTAMP, true),
   (4, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP - INTERVAL '1 day', true),
-  (5, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true)
+  (5, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true),
+  (8, 3, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true)
 ;
 
 INSERT INTO oidc_clients
