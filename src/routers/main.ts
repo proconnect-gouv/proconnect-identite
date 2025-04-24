@@ -38,6 +38,7 @@ export const mainRouter = (app: Express) => {
     "/connection-and-account",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     getConnectionAndAccountController,
@@ -47,6 +48,7 @@ export const mainRouter = (app: Express) => {
     "/double-authentication",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     getDoubleAuthenticationController,
@@ -56,6 +58,7 @@ export const mainRouter = (app: Express) => {
     "/configuring-single-use-code",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     getConfiguringSingleUseCodeController,
   );
@@ -64,6 +67,7 @@ export const mainRouter = (app: Express) => {
     "/authenticator-app-configuration",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     getAuthenticatorAppConfigurationController,
@@ -73,6 +77,7 @@ export const mainRouter = (app: Express) => {
     "/authenticator-app-configuration",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postAuthenticatorAppConfigurationController,
@@ -82,6 +87,7 @@ export const mainRouter = (app: Express) => {
     "/delete-authenticator-app-configuration",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postDeleteAuthenticatorAppConfigurationController,
@@ -89,9 +95,9 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/passkeys/verify-registration",
-    rateLimiterMiddleware,
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postVerifyRegistrationController,
@@ -99,9 +105,9 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/delete-passkeys/:credential_id",
-    rateLimiterMiddleware,
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     deletePasskeyController,
@@ -109,9 +115,9 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/set-force-2fa",
-    rateLimiterMiddleware,
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postSetForce2faController,
@@ -121,6 +127,7 @@ export const mainRouter = (app: Express) => {
     "/personal-information",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     csrfProtectionMiddleware,
     getPersonalInformationsController,
@@ -128,9 +135,9 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/personal-information",
-    rateLimiterMiddleware,
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
@@ -140,6 +147,7 @@ export const mainRouter = (app: Express) => {
     "/manage-organizations",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     csrfProtectionMiddleware,
     getManageOrganizationsController,
@@ -149,6 +157,7 @@ export const mainRouter = (app: Express) => {
     "/",
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     getHomeController,
   );
