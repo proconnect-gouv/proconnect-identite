@@ -106,14 +106,12 @@ describe("sign-in with a client requiring 2fa identity", () => {
 });
 
 describe("sign-in with a client requiring certification dirigeant identity", () => {
-  beforeEach(() => {
+  it("should sign-in an return the ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT acr value", function () {
     cy.visit("http://localhost:4000");
     cy.setRequestedAcrs([
       "https://proconnect.gouv.fr/assurance/certification-dirigeant",
     ]);
-  });
 
-  it("should sign-in an return the ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT acr value", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("certification-dirigeant@yopmail.com");
@@ -159,16 +157,14 @@ describe("sign-in with a client requiring certification dirigeant and 2fa identi
 });
 
 describe("sign-in with a client requiring certification dirigeant and consistency-checked", () => {
-  beforeEach(() => {
+  it("should return an error with no self asserted acr", function () {
     cy.visit("http://localhost:4000");
     cy.setRequestedAcrs([
       "https://proconnect.gouv.fr/assurance/certification-dirigeant",
       "https://proconnect.gouv.fr/assurance/consistency-checked",
       "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
     ]);
-  });
 
-  it("should return an error with no self asserted acr", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial1-aal1@yopmail.com");
