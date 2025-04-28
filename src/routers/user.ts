@@ -12,10 +12,7 @@ import {
 } from "../controllers/organization";
 import { postSignInWithAuthenticatorAppController } from "../controllers/totp";
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
-import {
-  getCertificationDirigeantConfirmController,
-  getCertificationDirigeantController,
-} from "../controllers/user/certification-dirigeant";
+import { getCertificationDirigeantController } from "../controllers/user/certification-dirigeant";
 import { postDeleteUserController } from "../controllers/user/delete";
 import { postCancelModerationAndRedirectControllerFactory } from "../controllers/user/edit-moderation";
 import {
@@ -507,16 +504,8 @@ export const userRouter = () => {
     checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackControllerFactory(
-      "/users/certification-dirigeant/confirm",
+      "/users/select-organization",
     ),
-  );
-
-  userRouter.get(
-    "/certification-dirigeant/confirm",
-    rateLimiterMiddleware,
-    // checkUserHasPersonalInformationsMiddleware,
-    csrfProtectionMiddleware,
-    getCertificationDirigeantConfirmController,
   );
 
   userRouter.get(
@@ -525,6 +514,7 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     getUnableToCertifyUserAsExecutiveController,
   );
+
   return userRouter;
 };
 

@@ -130,7 +130,6 @@ export const interactionEndControllerFactory =
       req.session.certificationDirigeantRequested = undefined;
       req.session.interactionId = undefined;
       req.session.mustReturnOneOrganizationInPayload = undefined;
-      req.session.passCertificationPage = undefined;
       req.session.twoFactorsAuthRequested = undefined;
 
       await oidcProvider.interactionFinished(req, res, result);
@@ -153,7 +152,6 @@ export const interactionErrorControllerFactory =
       req.session.certificationDirigeantRequested = undefined;
       req.session.interactionId = undefined;
       req.session.mustReturnOneOrganizationInPayload = undefined;
-      req.session.passCertificationPage = undefined;
       req.session.twoFactorsAuthRequested = undefined;
 
       const schema = z.object({

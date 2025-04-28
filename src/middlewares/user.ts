@@ -179,7 +179,6 @@ export const checkUserTwoFactorAuthMiddleware = async (
           req.session.authForProconnectFederation = undefined;
           req.session.interactionId = undefined;
           req.session.mustReturnOneOrganizationInPayload = undefined;
-          req.session.passCertificationPage = undefined;
           req.session.twoFactorsAuthRequested = undefined;
 
           return res.redirect(
@@ -257,16 +256,14 @@ export const checkUserNeedCertificationDirigeantMiddleware = (
       if (error) return next(error);
       if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
 
-      const {
-        certificationDirigeantRequested: isRequested,
-        passCertificationPage,
-      } = await CertificationSessionSchema.parseAsync(req.session);
+      const { certificationDirigeantRequested: isRequested } =
+        await CertificationSessionSchema.parseAsync(req.session);
       if (!isRequested) return next();
 
       const { id: userId } = getUserFromAuthenticatedSession(req);
       const isVerified = await isUserVerifiedWithFranceconnect(userId);
 
-      if (isVerified && passCertificationPage) return next();
+      if (isVerified) return next();
 
       return res.redirect("/users/certification-dirigeant");
     } catch (error) {

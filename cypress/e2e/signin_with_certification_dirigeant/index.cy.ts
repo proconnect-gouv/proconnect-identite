@@ -7,10 +7,6 @@ describe("sign-in with a client requiring certification dirigeant", () => {
   it("should sign-in as the executive of an organization", function () {
     cy.login("certified-franceconnected+dirigeant@yopmail.com");
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.contains("Certifier votre statut");
-    cy.contains("Continuer").click();
-
     cy.title().should("include", "Choisir une organisation -");
     cy.getDescribed("Clamart").within(() => {
       cy.contains("certifié");
@@ -27,10 +23,6 @@ describe("sign-in with a client requiring certification dirigeant", () => {
 
   it("should refuse FranceConnect-ed empolyee of known organization", function () {
     cy.login("franceconnected+employee@yopmail.com");
-
-    cy.title().should("include", "Certification dirigeant -");
-    cy.contains("Certifier votre statut");
-    cy.contains("Continuer").click();
 
     cy.title().should("include", "Choisir une organisation -");
     cy.getDescribed("Clamart").within(() => {
@@ -50,10 +42,6 @@ describe("sign-in with a client requiring certification dirigeant", () => {
 
   it("Jean is not certified for ONEDOES.DRAW.DOUBLEACE", function () {
     cy.login("franceconnected+dirigeant@unipersonnelle.com");
-
-    cy.title().should("include", "Certification dirigeant -");
-    cy.contains("Certifier votre statut");
-    cy.contains("Continuer").click();
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -141,10 +129,6 @@ describe("sign-in with a client requiring certification dirigeant", () => {
   it("should welcome Ulysse Tosi as dirigeant of PAPILLON and DANONE", () => {
     cy.login("ulysse.tosi@yopmail.com");
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.contains("Certifier votre statut");
-    cy.contains("Continue").click();
-
     cy.title().should("include", "Choisir une organisation -");
     cy.getDescribed("Danone").within(() => {
       cy.contains("certifié");
@@ -180,10 +164,6 @@ describe("sign-in with a client requiring certification dirigeant", () => {
   it("should welcome Stevens Cheron as dirigeant of SURICATE", () => {
     cy.login("stevens.cheron@yopmail.com");
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.contains("Certifier votre statut");
-    cy.contains("Continue").click();
-
     cy.title().should("include", "Choisir une organisation -");
     cy.getDescribed("Herisson").within(() => {
       cy.contains("certifié");
@@ -207,10 +187,6 @@ describe("sign-in with a client requiring certification dirigeant", () => {
   it("should try to re-certify expired certificated FranceConnect user", function () {
     cy.login("outdated-certified-franceconnected+dirigeant@unipersonnelle.com");
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.contains("Certifier votre statut");
-    cy.contains("Continuer").click();
-
     cy.title().should("include", "Choisir une organisation -");
     cy.getByLabel("Clamart (choisir cette organisation)").click();
 
@@ -233,9 +209,6 @@ describe("connected user should go through the certification flow", function () 
     cy.visit("http://localhost:4000");
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("Forcer une connexion par certification dirigeant").click();
-
-    cy.title().should("include", "Certification dirigeant - ");
-    cy.contains("Continuer").click();
 
     cy.title().should("include", "Choisir une organisation -");
     cy.getDescribed("Clamart").within(() => {
