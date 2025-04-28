@@ -52,6 +52,8 @@ export async function getFranceConnectLoginCallbackMiddleware(
       expectedState: state,
     });
     req.session.id_token_hint = id_token;
+    req.session.nonce = undefined;
+    req.session.state = undefined;
 
     const { id: userId } = getUserFromAuthenticatedSession(req);
 
