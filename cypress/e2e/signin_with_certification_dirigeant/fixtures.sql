@@ -28,11 +28,15 @@ VALUES
    null, null, false),
   (7, 'karima.aknine@yopmail.com', true, CURRENT_TIMESTAMP,
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
-   'Karima', 'Aknine', '0123456789', 'Dirigeant',
+   'Karima', 'Aknine', '0123456789', 'Grande cheffe de BATI-SEREIN',
    null, null, false),
   (8, 'ulysse.tosi@yopmail.com', true, CURRENT_TIMESTAMP,
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
-   'Ulysse', 'Tosi', '0123456789', 'Dirigeant DANONE et PAPILLON',
+   'Ulysse', 'Tosi', '0123456789', 'Grand chef de DANONE et PAPILLON',
+   null, null, false),
+  (9, 'stevens.cheron@yopmail.com', true, CURRENT_TIMESTAMP,
+   '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
+   'Stevens', 'Cheron', '0123456789', 'Grand chef de HERISSON et SURICATE',
    null, null, false)
 ;
 
@@ -45,7 +49,8 @@ VALUES
   (4, '1990-06-01', '75000', 'Quatre', 'Jean', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   (5, '1980-06-01', '75000', 'Cinq', 'Jean', CURRENT_TIMESTAMP - INTERVAL '6 months', CURRENT_TIMESTAMP  - INTERVAL '3 months'),
   (6, '1980-06-01', '75000', 'DUTEIL', 'Douglas Le Gris', CURRENT_TIMESTAMP - INTERVAL '6 months', CURRENT_TIMESTAMP  - INTERVAL '3 months'),
-  (8, '1992-09-07', 'Internet', 'Tosi', 'Ulysse', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  (8, '1992-09-07', 'Internet', 'Tosi', 'Ulysse', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (9, '1979-11-12', 'Internet', 'Cheron', 'Stevens', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ;
 
 INSERT INTO organizations
@@ -53,7 +58,9 @@ INSERT INTO organizations
 VALUES
   (1, '45334017600024', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   (2, '82869625200018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (3, '55203253400646', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  (3, '55203253400646', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (4, '79271377800019', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (5, '52169091700021', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ;
 
 INSERT INTO users_organizations
@@ -63,7 +70,9 @@ VALUES
   (2, 1, false, 'domain', CURRENT_TIMESTAMP, true),
   (4, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP - INTERVAL '1 day', true),
   (5, 1, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true),
-  (8, 3, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true)
+  (8, 3, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true),
+  (9, 4, false, 'organization_dirigeant', CURRENT_TIMESTAMP, true),
+  (9, 5, false, 'domain', CURRENT_TIMESTAMP, true)
 ;
 
 INSERT INTO oidc_clients

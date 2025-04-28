@@ -127,7 +127,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Prénom Karima");
     cy.contains("Nom Aknine");
     cy.contains("Email professionnel karima.aknine@yopmail.com");
-    cy.contains("Rôle Dirigeant");
+    cy.contains("Rôle Grande cheffe de BATI-SEREIN");
     cy.contains("Organisation Bati-serein");
     cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
@@ -163,7 +163,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Prénom Ulysse");
     cy.contains("Nom Tosi");
     cy.contains("Email professionnel ulysse.tosi@yopmail.com");
-    cy.contains("Rôle Dirigeant DANONE et PAPILLON");
+    cy.contains("Rôle Grand chef de DANONE et PAPILLON");
     cy.contains("Organisation Papillon");
     cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
@@ -175,6 +175,33 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains('"siret": "39234600300198",');
     cy.contains('"label": "Papillon"');
+  });
+
+  it("should welcome Stevens Cheron as dirigeant of SURICATE", () => {
+    cy.login("stevens.cheron@yopmail.com");
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.contains("Certifier votre statut");
+    cy.contains("Continue").click();
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getDescribed("Herisson").within(() => {
+      cy.contains("certifié");
+    });
+    cy.getDescribed("Suricate - The kilberry").within(() => {
+      cy.contains("certifié").should("not.exist");
+    });
+    cy.getByLabel(
+      "Suricate - The kilberry (choisir cette organisation)",
+    ).click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
+    );
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains('"siret": "52169091700021",');
+    cy.contains('"label": "Suricate - The kilberry"');
   });
 
   it("should try to re-certify expired certificated FranceConnect user", function () {
