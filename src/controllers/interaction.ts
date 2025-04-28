@@ -9,6 +9,7 @@ import {
   getUserFromAuthenticatedSession,
   isWithinAuthenticatedSession,
 } from "../managers/session/authenticated";
+import { clearInteractionSession } from "../managers/session/interaction";
 import { setLoginHintInUnauthenticatedSession } from "../managers/session/unauthenticated";
 import { findByClientId } from "../repositories/oidc-client";
 import {
@@ -126,11 +127,7 @@ export const interactionEndControllerFactory =
         );
       }
 
-      req.session.authForProconnectFederation = undefined;
-      req.session.certificationDirigeantRequested = undefined;
-      req.session.interactionId = undefined;
-      req.session.mustReturnOneOrganizationInPayload = undefined;
-      req.session.twoFactorsAuthRequested = undefined;
+      clearInteractionSession(req);
 
       await oidcProvider.interactionFinished(req, res, result);
     } catch (error) {
@@ -148,11 +145,7 @@ export const interactionErrorControllerFactory =
   (oidcProvider: Provider) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      req.session.authForProconnectFederation = undefined;
-      req.session.certificationDirigeantRequested = undefined;
-      req.session.interactionId = undefined;
-      req.session.mustReturnOneOrganizationInPayload = undefined;
-      req.session.twoFactorsAuthRequested = undefined;
+      clearInteractionSession(req);
 
       const schema = z.object({
         error: oidcErrorSchema(),

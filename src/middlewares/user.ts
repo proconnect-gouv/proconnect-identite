@@ -29,6 +29,7 @@ import {
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
+import { clearInteractionSession } from "../managers/session/interaction";
 import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
@@ -176,10 +177,7 @@ export const checkUserTwoFactorAuthMiddleware = async (
         if (!(await is2FACapable(user_id))) {
           // We break the connexion flow
 
-          req.session.authForProconnectFederation = undefined;
-          req.session.interactionId = undefined;
-          req.session.mustReturnOneOrganizationInPayload = undefined;
-          req.session.twoFactorsAuthRequested = undefined;
+          clearInteractionSession(req);
 
           return res.redirect(
             "/connection-and-account?notification=2fa_not_configured",
