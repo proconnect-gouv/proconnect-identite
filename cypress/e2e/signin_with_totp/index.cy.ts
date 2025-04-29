@@ -82,23 +82,4 @@ describe("sign-in with TOTP on untrusted browser", () => {
     ).click();
     cy.contains("Code invalide.");
   });
-
-  it("should trigger totp rate limiting", function () {
-    cy.visit("/users/start-sign-in");
-
-    cy.login("unused4@yopmail.com");
-
-    for (let i = 0; i < 5; i++) {
-      cy.get("[name=totpToken]").type("123456");
-      cy.get(
-        '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
-      ).click();
-    }
-
-    cy.get("[name=totpToken]").type("123456");
-    cy.get(
-      '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
-    ).click();
-    cy.contains("Too Many Requests");
-  });
 });

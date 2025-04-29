@@ -72,6 +72,7 @@ import {
   rateLimiterMiddleware,
   resetPasswordRateLimiterMiddleware,
   sendMagicLinkRateLimiterMiddleware,
+  verifyEmailRateLimiterMiddleware,
 } from "../middlewares/rate-limiter";
 import {
   checkCredentialPromptRequirementsMiddleware,
@@ -95,6 +96,8 @@ export const userRouter = () => {
 
   userRouter.use(urlencoded({ extended: false }));
 
+  userRouter.use(rateLimiterMiddleware);
+
   userRouter.get(
     "/start-sign-in",
     checkIsUser,
@@ -103,7 +106,6 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/start-sign-in",
-    rateLimiterMiddleware,
     checkIsUser,
     csrfProtectionMiddleware,
     postStartSignInController,
@@ -129,10 +131,9 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/sign-in",
-    rateLimiterMiddleware,
     checkCredentialPromptRequirementsMiddleware,
-    passwordRateLimiterMiddleware,
     csrfProtectionMiddleware,
+    passwordRateLimiterMiddleware,
     postSignInMiddleware,
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,
@@ -145,7 +146,6 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/sign-up",
-    rateLimiterMiddleware,
     checkCredentialPromptRequirementsMiddleware,
     csrfProtectionMiddleware,
     postSignUpController,
@@ -161,16 +161,15 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/2fa-sign-in-with-authenticator-app",
-    authenticatorRateLimiterMiddleware,
     checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
+    authenticatorRateLimiterMiddleware,
     postSignInWithAuthenticatorAppController,
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,
   );
   userRouter.post(
     "/2fa-sign-in-with-passkey",
-    rateLimiterMiddleware,
     checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
     postVerifySecondFactorAuthenticationController,
@@ -186,9 +185,9 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/verify-email",
-    rateLimiterMiddleware,
     checkUserTwoFactorAuthMiddleware,
     csrfProtectionMiddleware,
+    verifyEmailRateLimiterMiddleware,
     postVerifyEmailController,
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,
@@ -196,14 +195,12 @@ export const userRouter = () => {
 
   userRouter.post(
     "/send-email-verification",
-    rateLimiterMiddleware,
     checkUserTwoFactorAuthMiddleware,
     csrfProtectionMiddleware,
     postSendEmailVerificationController,
   );
   userRouter.post(
     "/send-magic-link",
-    rateLimiterMiddleware,
     checkCredentialPromptRequirementsMiddleware,
     csrfProtectionMiddleware,
     sendMagicLinkRateLimiterMiddleware,
@@ -214,13 +211,11 @@ export const userRouter = () => {
   userRouter.get("/magic-link-sent", getMagicLinkSentController);
   userRouter.get(
     "/sign-in-with-magic-link",
-    rateLimiterMiddleware,
     csrfProtectionMiddleware,
     getSignInWithMagicLinkController,
   );
   userRouter.post(
     "/sign-in-with-magic-link",
-    rateLimiterMiddleware,
     csrfProtectionMiddleware,
     postSignInWithMagicLinkController,
     checkUserSignInRequirementsMiddleware,
@@ -228,7 +223,6 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/sign-in-with-passkey",
-    rateLimiterMiddleware,
     checkCredentialPromptRequirementsMiddleware,
     csrfProtectionMiddleware,
     getSignInWithPasskeyController,
@@ -238,7 +232,6 @@ export const userRouter = () => {
 
   userRouter.post(
     "/sign-in-with-passkey",
-    rateLimiterMiddleware,
     checkCredentialPromptRequirementsMiddleware,
     csrfProtectionMiddleware,
     postVerifyFirstFactorAuthenticationController,
@@ -252,7 +245,6 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/reset-password",
-    rateLimiterMiddleware,
     csrfProtectionMiddleware,
     resetPasswordRateLimiterMiddleware,
     postResetPasswordController,
@@ -264,7 +256,6 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/change-password",
-    rateLimiterMiddleware,
     csrfProtectionMiddleware,
     postChangePasswordController,
   );
@@ -277,7 +268,6 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/personal-information",
-    rateLimiterMiddleware,
     checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
@@ -286,7 +276,6 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/personal-information/franceconnect/login",
-    rateLimiterMiddleware,
     checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
@@ -295,7 +284,6 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
-    rateLimiterMiddleware,
     checkUserIsVerifiedMiddleware,
     getFranceConnectOidcCallbackToUpdateUserMiddleware,
     useFranceConnectLogoutMiddlewareFactory(
@@ -304,7 +292,6 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/logout/callback",
-    rateLimiterMiddleware,
     checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackControllerFactory(
@@ -327,7 +314,6 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/join-organization",
-    rateLimiterMiddleware,
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
     postJoinOrganizationMiddleware,
@@ -337,7 +323,6 @@ export const userRouter = () => {
 
   userRouter.get(
     "/join-organization-confirm",
-    rateLimiterMiddleware,
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
     getJoinOrganizationConfirmController,
@@ -352,7 +337,6 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-sign-in/:moderation_id",
-    rateLimiterMiddleware,
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory("/users/start-sign-in"),
@@ -360,7 +344,6 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-join-org/:moderation_id",
-    rateLimiterMiddleware,
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
@@ -370,7 +353,6 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-personal-information/:moderation_id",
-    rateLimiterMiddleware,
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
@@ -387,7 +369,6 @@ export const userRouter = () => {
 
   userRouter.post(
     "/select-organization",
-    rateLimiterMiddleware,
     checkUserHasAtLeastOneOrganizationMiddleware,
     csrfProtectionMiddleware,
     postSelectOrganizationMiddleware,
@@ -397,7 +378,6 @@ export const userRouter = () => {
 
   userRouter.get(
     "/official-contact-email-verification/:organization_id",
-    rateLimiterMiddleware,
     checkUserHasSelectedAnOrganizationMiddleware,
     csrfProtectionMiddleware,
     getOfficialContactEmailVerificationController,
@@ -405,7 +385,6 @@ export const userRouter = () => {
 
   userRouter.post(
     "/official-contact-email-verification/:organization_id",
-    rateLimiterMiddleware,
     checkUserHasSelectedAnOrganizationMiddleware,
     csrfProtectionMiddleware,
     postOfficialContactEmailVerificationMiddleware,
@@ -421,7 +400,6 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/welcome",
-    rateLimiterMiddleware,
     checkUserSignInRequirementsMiddleware,
     csrfProtectionMiddleware,
     issueSessionOrRedirectController,
@@ -436,7 +414,6 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation/:moderation_id",
-    rateLimiterMiddleware,
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
@@ -446,7 +423,6 @@ export const userRouter = () => {
 
   userRouter.get(
     "/delete",
-    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     useFranceConnectLogoutMiddlewareFactory(
@@ -456,14 +432,12 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/delete/franceconnect/logout/callback",
-    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     getFranceConnectLogoutCallbackControllerFactory(`${HOST}/users/delete`),
   );
 
   userRouter.get(
     "/franceconnect/logout/callback",
-    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     getFranceConnectLogoutCallbackControllerFactory(`${HOST}/oauth/logout`),
   );

@@ -27,40 +27,33 @@ export const apiRouter = () => {
 
   apiRouter.use(urlencoded({ extended: false }));
 
-  apiRouter.get(
-    "/sirene/ping",
-    apiRateLimiterMiddleware,
-    getPingApiSireneController,
-  );
+  apiRouter.use(apiRateLimiterMiddleware);
+
+  apiRouter.get("/sirene/ping", getPingApiSireneController);
 
   apiRouter.get(
     "/sirene/organization-info/:siret",
-    apiRateLimiterMiddleware,
     getOrganizationInfoController,
   );
 
   apiRouter.get(
     "/webauthn/generate-registration-options",
-    apiRateLimiterMiddleware,
     getGenerateRegistrationOptionsController,
   );
 
   apiRouter.get(
     "/webauthn/generate-authentication-options-for-first-factor",
-    apiRateLimiterMiddleware,
     getGenerateAuthenticationOptionsForFirstFactorController,
   );
 
   apiRouter.get(
     "/webauthn/generate-authentication-options-for-second-factor",
-    apiRateLimiterMiddleware,
     getGenerateAuthenticationOptionsForSecondFactorController,
   );
 
   const apiAdminRouter = Router();
 
   apiAdminRouter.use(
-    apiRateLimiterMiddleware,
     expressBasicAuth({
       users: { [API_AUTH_USERNAME]: API_AUTH_PASSWORD },
     }),

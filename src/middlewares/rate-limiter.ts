@@ -1,8 +1,10 @@
-import * as Sentry from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { RateLimiterRedis } from "rate-limiter-flexible";
-import { FEATURE_RATE_LIMIT } from "../config/env";
+import {
+  FEATURE_RATE_LIMIT_BY_EMAIL,
+  FEATURE_RATE_LIMIT_BY_IP,
+} from "../config/env";
 import { getNewRedisClient } from "../connectors/redis";
 import {
   getUserFromAuthenticatedSession,
@@ -18,7 +20,7 @@ const ipRateLimiterMiddlewareFactory =
   (rateLimiter: RateLimiterRedis) =>
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      if (FEATURE_RATE_LIMIT) {
+      if (FEATURE_RATE_LIMIT_BY_IP) {
         await rateLimiter.consume(req.ip);
       }
       next();
@@ -31,17 +33,15 @@ const emailRateLimiterMiddlewareFactory =
   (rateLimiter: RateLimiterRedis) =>
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      if (!FEATURE_RATE_LIMIT) {
+      if (!FEATURE_RATE_LIMIT_BY_EMAIL) {
       } else if (isWithinAuthenticatedSession(req.session)) {
         const { email } = getUserFromAuthenticatedSession(req);
         await rateLimiter.consume(email);
       } else if (getEmailFromUnauthenticatedSession(req)) {
         await rateLimiter.consume(getEmailFromUnauthenticatedSession(req)!);
       } else {
-        const err = new Error("Falling back to ip rate limiting.");
-        Sentry.captureException(err);
-        // Fall back to ip rate limiting to avoid security flaw
-        await rateLimiter.consume(req.ip);
+        // Throw an error to avoid a security flaw.
+        next(new Error("Rate limiting failed."));
       }
 
       return next();
@@ -54,7 +54,7 @@ export const rateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "rate-limiter",
-    points: 20, // 20 requests
+    points: 42, // 42 requests
     duration: 60, // per minute per IP
   }),
 );
@@ -76,6 +76,16 @@ export const passwordRateLimiterMiddleware = emailRateLimiterMiddlewareFactory(
     duration: 5 * 60, // per 5 minutes per email
   }),
 );
+
+export const verifyEmailRateLimiterMiddleware =
+  emailRateLimiterMiddlewareFactory(
+    new RateLimiterRedis({
+      storeClient: redisClient,
+      keyPrefix: "rate-limiter-send-magic-link",
+      points: 10, // 10 requests
+      duration: 5 * 60, // per 5 minutes per email
+    }),
+  );
 
 export const authenticatorRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(

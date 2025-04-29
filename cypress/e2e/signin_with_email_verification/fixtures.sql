@@ -3,7 +3,8 @@ INSERT INTO users
    phone_number, job)
 VALUES
   (1, 'lion.eljonson@darkangels.world', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Jean', '0123456789', 'Sbire'),
-  (2, 'rogal.dorn@imperialfists.world', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Jean', '0123456789', 'Sbire');
+  (2, 'rogal.dorn@imperialfists.world', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Jean', '0123456789', 'Sbire'),
+  (3, 'darnath.lysander@imperialfists.world', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Jean', '0123456789', 'Sbire');
 
 INSERT INTO organizations
   (id, siret, created_at, updated_at)
