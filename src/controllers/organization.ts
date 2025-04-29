@@ -31,6 +31,7 @@ import { getUserFromAuthenticatedSession } from "../managers/session/authenticat
 import { csrfToken } from "../middlewares/csrf-protection";
 import {
   idSchema,
+  oidcErrorSchema,
   optionalBooleanSchema,
   siretSchema,
 } from "../services/custom-zod-schemas";
@@ -244,7 +245,7 @@ export function getUnableToCertifyUserAsExecutiveController(
   try {
     return res.render("user/unable-to-certify-user-as-executive", {
       illustration: "error.svg",
-      oidcError: "server_error",
+      oidcError: oidcErrorSchema().Enum.login_required,
       interactionId: req.session.interactionId,
       pageTitle: "Certification impossible",
       use_dashboard_layout: false,
