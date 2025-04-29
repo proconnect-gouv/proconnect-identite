@@ -61,7 +61,10 @@ import {
   postSendEmailVerificationController,
   postVerifyEmailController,
 } from "../controllers/user/verify-email";
-import { getWelcomeController } from "../controllers/user/welcome";
+import {
+  getWelcomeController,
+  getWelcomeDirigeantController,
+} from "../controllers/user/welcome";
 import {
   getSignInWithPasskeyController,
   postVerifyFirstFactorAuthenticationController,
@@ -421,6 +424,13 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     getWelcomeController,
   );
+  userRouter.get(
+    "/welcome/dirigeant",
+    checkUserSignInRequirementsMiddleware,
+    csrfProtectionMiddleware,
+    getWelcomeDirigeantController,
+  );
+
   userRouter.post(
     "/welcome",
     rateLimiterMiddleware,

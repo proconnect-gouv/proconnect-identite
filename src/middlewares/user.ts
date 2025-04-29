@@ -15,7 +15,10 @@ import {
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import { isOrganizationDirigeant } from "../managers/certification";
-import { greetForJoiningOrganization } from "../managers/organization/join";
+import {
+  greetForCertification,
+  greetForJoiningOrganization,
+} from "../managers/organization/join";
 import {
   getOrganizationById,
   getOrganizationsByUserId,
@@ -473,6 +476,7 @@ export function checkUserWantToRepresentAnOrganization(
           {
             verification_type: "organization_dirigeant",
             verified_at: new Date(),
+            has_been_greeted: false,
           },
         );
 
@@ -568,6 +572,17 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = (
         }
 
         if (!isEmpty(organizationThatNeedsGreetings)) {
+          if (
+            organizationThatNeedsGreetings.verification_type ===
+            "organization_dirigeant"
+          ) {
+            await greetForCertification({
+              user_id: getUserFromAuthenticatedSession(req).id,
+              organization_id: organizationThatNeedsGreetings.id,
+            });
+            return res.redirect(`/users/welcome/dirigeant`);
+          }
+
           await greetForJoiningOrganization({
             user_id: getUserFromAuthenticatedSession(req).id,
             organization_id: organizationThatNeedsGreetings.id,

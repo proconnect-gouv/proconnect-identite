@@ -175,6 +175,16 @@ describe("sign-in with a client requiring certification dirigeant", () => {
       "Suricate - The kilberry (choisir cette organisation)",
     ).click();
 
+    cy.title().should("include", "Compte certifié - ");
+    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Prénom Stevens");
+    cy.contains("Nom Cheron");
+    cy.contains("Email professionnel stevens.cheron@yopmail.com");
+    cy.contains("Rôle Grand chef de HERISSON et SURICATE");
+    cy.contains("Organisation Suricate - The kilberry");
+    cy.contains("Statut Compte certifié");
+    cy.contains("Continuer").click();
+
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains(
       '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',

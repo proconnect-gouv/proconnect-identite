@@ -416,3 +416,22 @@ export const greetForJoiningOrganization = async ({
     has_been_greeted: true,
   });
 };
+
+export const greetForCertification = async ({
+  user_id,
+  organization_id,
+}: {
+  user_id: number;
+  organization_id: number;
+}) => {
+  const userOrganisations = await getOrganizationsByUserId(user_id);
+  const organization = userOrganisations.find(
+    ({ id }) => id === organization_id,
+  );
+
+  if (isEmpty(organization)) throw new OrganizationNotFoundError();
+
+  return await updateUserOrganizationLink(organization_id, user_id, {
+    has_been_greeted: true,
+  });
+};
