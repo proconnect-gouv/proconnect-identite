@@ -90,12 +90,12 @@ export const oidcProviderConfiguration = ({
     policy,
   },
   loadExistingGrant: async (ctx) => {
-    // we want to skip the consent
+    // We want to skip the consent
     // inspired from https://github.com/panva/node-oidc-provider/blob/main/recipes/skip_consent.md
     // We updated the function to ensure it always return a grant.
     // As a consequence, the consent prompt should never be requested afterward.
 
-    // The grant id never comes from consent results so we simplified this line
+    // The grant id never comes from consent results, so we simplified this line
     if (!ctx.oidc.session || !ctx.oidc.client || !ctx.oidc.params) {
       return undefined;
     }
@@ -106,10 +106,10 @@ export const oidcProviderConfiguration = ({
 
     if (grantId) {
       grant = await ctx.oidc.provider.Grant.find(grantId);
-      // if the grant has expired, grant can be undefined at this point.
+      // if the grant has expired, the grant can be undefined at this point.
       if (grant) {
-        // keep grant expiry aligned with session expiry to prevent consent
-        // prompt being requested when grant is about to expires.
+        // Keep grant expiry aligned with session expiry to prevent consent
+        // prompt being requested when the grant is about to expire.
         // The original code is overkill as session length is extended on every
         // interaction.
         grant.exp = epochTime() + sessionTtlInSeconds;
