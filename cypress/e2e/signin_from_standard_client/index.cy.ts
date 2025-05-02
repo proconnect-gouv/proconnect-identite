@@ -66,4 +66,31 @@ describe("sign-in from standard client", () => {
     cy.contains("standard-client");
     cy.contains("unused1@yopmail.com");
   });
+
+  it("should bypass consent prompt", () => {
+    cy.visit("http://localhost:4000");
+    cy.setCustomParams({
+      prompt: "consent",
+    });
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("unused1@yopmail.com");
+    cy.contains("standard-client");
+  });
+
+  it("should support claim requests", () => {
+    cy.visit("http://localhost:4000");
+    cy.setCustomParams({
+      claims: {
+        id_token: {
+          given_name: { essential: true },
+          family_name: {},
+        },
+      },
+    });
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("unused1@yopmail.com");
+    cy.contains("standard-client");
+  });
 });
