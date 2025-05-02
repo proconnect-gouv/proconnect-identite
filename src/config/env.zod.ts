@@ -104,6 +104,8 @@ export const paramsEnvSchema = z.object({
   ACR_VALUE_FOR_IAL2_AAL2: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/consistency-checked-2fa"),
+  ACR_VALUE_FOR_IAL3_AAL1: z.string().default("eidas3"),
+  ACR_VALUE_FOR_IAL3_AAL2: z.string().default("eidas3"),
   ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/certification-dirigeant"),
