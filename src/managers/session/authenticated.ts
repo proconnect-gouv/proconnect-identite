@@ -368,6 +368,9 @@ export async function getCurrentAcr(req: Request) {
       .with({ ial: 1, aal: 1 }, () => ACR_VALUE_FOR_IAL1_AAL1)
       // ial: 1 "self-asserted" & all: 3 "carte-agent" => server_error (HTTP error code 500)
       // ial: 2 "consistency-checked" & all: 3 "carte-agent" => server_error (HTTP error code 500)
+      .with({ ial: 2, aal: 3 }, { ial: 1, aal: 3 }, () => {
+        throw new Error("not implemented");
+      })
       .exhaustive()
   );
 }
