@@ -127,6 +127,7 @@ export const oidcProviderConfiguration = ({
     // event existing grant should be updated, as requested scopes might
     // be different
     grant.addOIDCScope(oidcContextParams.scope);
+    grant.addOIDCClaims(Array.from(ctx.oidc.requestParamClaims || []));
     await grant.save();
     return grant;
   },
