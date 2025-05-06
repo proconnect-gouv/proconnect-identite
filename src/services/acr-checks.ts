@@ -96,6 +96,7 @@ export const isThereAnyRequestedAcr = (prompt: PromptDetail) => {
       ACR_VALUE_FOR_IAL1_AAL2,
       ACR_VALUE_FOR_IAL2_AAL1,
       ACR_VALUE_FOR_IAL2_AAL2,
+      ACR_VALUE_FOR_IAL3_AAL1,
     ],
   });
 };
