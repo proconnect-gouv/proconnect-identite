@@ -8,7 +8,10 @@ import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { z } from "zod";
 import { FRANCECONNECT_SCOPES, HOST } from "../../config/env";
-import { OidcError } from "../../config/errors";
+import {
+  OidcError,
+  OidcFranceConnectBackChannelError,
+} from "../../config/errors";
 import {
   getFranceConnectConfiguration,
   getFranceConnectLogoutRedirectUrl,
@@ -43,12 +46,20 @@ export async function getFranceConnectOidcCallbackToUpdateUserMiddleware(
       req.session,
     );
 
-    const { user_info, id_token } = await getFranceConnectUser({
-      code,
-      currentUrl: `${HOST}${req.url}`,
-      expectedNonce: nonce,
-      expectedState: state,
-    });
+    const [franceconnect_error, franceconnect_response] = await to(
+      getFranceConnectUser({
+        code,
+        currentUrl: `${HOST}${req.url}`,
+        expectedNonce: nonce,
+        expectedState: state,
+      }),
+    );
+    if (franceconnect_error)
+      throw new OidcFranceConnectBackChannelError(franceconnect_error.name, {
+        cause: franceconnect_error,
+      });
+
+    const { user_info, id_token } = franceconnect_response;
     req.session.id_token_hint = id_token;
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
