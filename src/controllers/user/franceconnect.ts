@@ -4,6 +4,7 @@ import {
   createOidcChecks,
   getFranceConnectRedirectUrlFactory,
 } from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
+import { logger } from "@sentry/node";
 import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { z } from "zod";
@@ -43,9 +44,18 @@ export async function getFranceConnectOidcCallbackToUpdateUserMiddleware(
       req.session,
     );
 
+    const currentUrl = new URL(
+      `${req.protocol}://${HOST ?? req.hostname}${req.originalUrl ?? req.url}`,
+    );
+    logger.debug("FranceConnect oidc callback", {
+      code,
+      nonce,
+      state,
+      currentUrl,
+    });
     const { user_info, id_token } = await getFranceConnectUser({
       code,
-      currentUrl: `${HOST}${req.url}`,
+      currentUrl,
       expectedNonce: nonce,
       expectedState: state,
     });
