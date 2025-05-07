@@ -71,9 +71,7 @@ describe("sign-in with a client requiring consistency-checked identity", () => {
 
     cy.get("a.fr-btn").contains("Continuer").click();
 
-    cy.contains(
-      "AuthorizationResponseError: authorization response from the server is an error",
-    );
+    cy.contains("AuthorizationResponseError");
   });
 });
 
@@ -175,8 +173,6 @@ describe("sign-in with a client requiring certification dirigeant and consistenc
 
     cy.get("a.fr-btn").contains("Continuer").click();
 
-    cy.contains(
-      "AuthorizationResponseError: authorization response from the server is an error",
-    );
+    cy.contains("AuthorizationResponseError");
   });
 });

@@ -33,6 +33,8 @@ jobs:
           - join_with_code_sent_to_official_contact_email
           - join_with_code_sent_to_official_educ_nat_contact_email
           - join_with_official_contact_email
+          - rate_limit_by_email
+          - rate_limit_by_ip
           - reauthenticate_on_admin_page
           - redirect_after_session_expiration
           - reset_password
@@ -65,7 +67,7 @@ jobs:
       - run: npm run fixtures:load-ci -- cypress/e2e/${{ matrix.e2e_test }}/fixtures.sql
       - run: npm run update-organization-info -- 0
       - name: Cypress run
-        uses: cypress-io/github-action@v6.7.16
+        uses: cypress-io/github-action@v6.9.0
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets

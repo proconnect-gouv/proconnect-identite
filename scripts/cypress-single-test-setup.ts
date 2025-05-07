@@ -23,7 +23,7 @@ if (interactive && (!testCase || !doesExist)) {
     `They are ${availableTestCases.length} test cases in the cypress/e2e folder :`,
   );
   console.log(
-    availableTestCases.map((name, index) => `${index}) ${name}`).join("\t"),
+    availableTestCases.map((name, index) => `${index}) ${name}`).join("\n"),
   );
   console.log("Please select one of them:");
 

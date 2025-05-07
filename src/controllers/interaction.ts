@@ -64,6 +64,12 @@ export const interactionStartControllerFactory =
         return res.redirect(`/interaction/${interactionId}/login`);
       }
 
+      // Skip consent interaction since application consent is always granted
+      // Support for prompt=consent is still required by the spec.
+      if (prompt.name === "consent") {
+        return res.redirect(`/interaction/${interactionId}/login`);
+      }
+
       if (prompt.name === "select_organization") {
         return res.redirect(`/users/select-organization`);
       }
@@ -109,6 +115,8 @@ export const interactionEndControllerFactory =
         },
         select_organization: false,
         update_userinfo: false,
+        // skip the consent
+        consent: {},
       };
       if (prompt.name === "select_organization") {
         result.select_organization = true;
