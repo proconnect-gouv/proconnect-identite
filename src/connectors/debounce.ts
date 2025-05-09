@@ -34,16 +34,24 @@ export const isEmailSafeToSendTransactional = async (
   }
 
   try {
-    const { send_transactional, did_you_mean: didYouMean } =
-      await singleValidation(email);
+    const {
+      send_transactional,
+      did_you_mean: didYouMean,
+      code,
+    } = await singleValidation(email);
+    const isEmailSafeToSend = send_transactional === "1";
 
-    logger.info(
-      `Email address "${email}" is ${
-        send_transactional === "1" ? "" : "NOT "
-      }safe to send.${didYouMean ? ` Suggested email ${didYouMean}` : ""}`,
-    );
+    if (isEmailSafeToSend) {
+      logger.info(
+        `Email address "${email}" is safe to send (code ${code}).${didYouMean ? ` Suggested email ${didYouMean}` : ""}`,
+      );
+    } else {
+      logger.warn(
+        `Email address "${email}" is NOT safe to send (code ${code}).${didYouMean ? ` Suggested email ${didYouMean}` : ""}`,
+      );
+    }
 
-    return { isEmailSafeToSend: send_transactional === "1", didYouMean };
+    return { isEmailSafeToSend, didYouMean };
   } catch (error) {
     throw new Error("Error from Debounce API", { cause: error });
   }
