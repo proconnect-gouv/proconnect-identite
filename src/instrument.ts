@@ -18,6 +18,9 @@ Sentry.init({
   initialScope: { tags: { NODE_ENV, DEPLOY_ENV, HOST } },
   integrations: [
     nodeProfilingIntegration(),
+    Sentry.captureConsoleIntegration({
+      levels: ["log", "info", "warn", "error", "debug", "assert"],
+    }),
     Sentry.expressIntegration(),
     Sentry.httpIntegration(),
     Sentry.postgresIntegration(),
