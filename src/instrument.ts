@@ -19,7 +19,13 @@ Sentry.init({
   integrations: [
     nodeProfilingIntegration(),
     Sentry.captureConsoleIntegration({
-      levels: ["log", "info", "warn", "error", "debug", "assert"],
+      levels: [
+        // "log", "info",
+        "warn",
+        "error",
+        "debug",
+        "assert",
+      ],
     }),
     Sentry.expressIntegration(),
     Sentry.httpIntegration(),
