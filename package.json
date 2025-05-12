@@ -138,7 +138,7 @@
     "lodash": "^4.17.21",
     "nock": "^14.0.4",
     "node-pg-migrate": "^7.9.1",
-    "npm-run-all2": "^7.0.2",
+    "npm-run-all2": "^8.0.1",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "tld-extract": "^2.1.0",
