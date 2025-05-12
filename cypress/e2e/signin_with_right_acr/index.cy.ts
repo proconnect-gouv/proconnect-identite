@@ -128,8 +128,7 @@ describe("sign-in with a client requiring certification dirigeant and 2fa identi
   beforeEach(() => {
     cy.visit("http://localhost:4000");
     cy.setRequestedAcrs([
-      "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-      "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
+      "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
     ]);
   });
 
@@ -139,7 +138,7 @@ describe("sign-in with a client requiring certification dirigeant and 2fa identi
     cy.mfaLogin("certification-dirigeant-aal2@yopmail.com");
 
     cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/self-asserted-2fa"',
+      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa"',
     );
   });
 

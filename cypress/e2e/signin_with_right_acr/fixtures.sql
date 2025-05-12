@@ -45,7 +45,7 @@ VALUES
   (3, 1, false, null, 'domain', true),
   (4, 1, false, null, null, true),
   (5, 1, false, CURRENT_TIMESTAMP, 'organization_dirigeant', true),
-  (6, 1, false, null, null, true);
+  (6, 1, false, CURRENT_TIMESTAMP, 'organization_dirigeant', true);
 
 INSERT INTO oidc_clients
 (client_name, client_id, client_secret, redirect_uris,

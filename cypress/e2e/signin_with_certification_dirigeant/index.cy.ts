@@ -35,9 +35,8 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
-    cy.contains(
-      "AuthorizationResponseError: authorization response from the server is an error",
-    );
+    cy.contains("AuthorizationResponseError");
+    cy.contains("login_required");
   });
 
   it("Jean is not certified for ONEDOES.DRAW.DOUBLEACE", function () {
@@ -55,9 +54,8 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
-    cy.contains(
-      "AuthorizationResponseError: authorization response from the server is an error",
-    );
+    cy.contains("AuthorizationResponseError");
+    cy.contains("login_required");
   });
 
   it("should re-FranceConnect expired Douglas Le Gris Duteil as an executive of ONEDOES.DRAW.DOUBLEACE", function () {
@@ -205,9 +203,8 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
-    cy.contains(
-      "AuthorizationResponseError: authorization response from the server is an error",
-    );
+    cy.contains("AuthorizationResponseError");
+    cy.contains("login_required");
   });
 });
 
@@ -364,8 +361,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
-    cy.contains(
-      "AuthorizationResponseError: authorization response from the server is an error",
-    );
+    cy.contains("AuthorizationResponseError");
+    cy.contains("login_required");
   });
 });

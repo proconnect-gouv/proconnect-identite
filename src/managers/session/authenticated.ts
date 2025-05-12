@@ -11,6 +11,7 @@ import {
   ACR_VALUE_FOR_IAL1_AAL2,
   ACR_VALUE_FOR_IAL2_AAL1,
   ACR_VALUE_FOR_IAL2_AAL2,
+  ACR_VALUE_FOR_IAL3_AAL2,
   RECENT_LOGIN_INTERVAL_IN_SECONDS,
 } from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
@@ -352,10 +353,8 @@ export async function getCurrentAcr(req: Request) {
       .with({ ial: 3, aal: 3 }, () => {
         throw new Error("not implemented");
       })
-      // ial: "certified" (FC + source authentique) & aal: "mfa" => acr: "certification-dirigeant-mfa"  ("eidas2")
-      .with({ ial: 3, aal: 2 }, () => {
-        throw new Error("not implemented");
-      })
+      // ial: "certified" (FC + source authentique) & aal: "mfa" => acr: "certification-dirigeant-mfa" ("eidas2")
+      .with({ ial: 3, aal: 2 }, () => ACR_VALUE_FOR_IAL3_AAL2)
       // ial: "consistency-checked" & aal: "mfa" => acr: "consistency-checked-mfa"
       .with({ ial: 2, aal: 2 }, () => ACR_VALUE_FOR_IAL2_AAL2)
       // ial: "self-asserted" & aal: "mfa" => acr: "self-asserted-mfa"
