@@ -11,7 +11,9 @@
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "imports": {},
+  "imports": {
+    "#src/*": "./src/*/index.ts"
+  },
   "exports": {
     "./*": "./src/*/index.ts"
   },
