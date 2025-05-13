@@ -104,7 +104,7 @@
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.0",
+    "@changesets/cli": "^2.29.4",
     "@dotenvx/dotenvx": "^1.40.0",
     "@fullhuman/postcss-purgecss": "^7.0.2",
     "@gouvfr-lasuite/proconnect.devtools.typescript": "workspace:*",
