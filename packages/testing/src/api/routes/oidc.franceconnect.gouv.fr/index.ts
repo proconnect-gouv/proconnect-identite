@@ -51,6 +51,7 @@ export const TestingOidcFranceConnectRouter = new Hono<{
   Bindings: FranceConnectBindings;
 }>()
   .onError((error, { text }) => text(error.toString()))
+  .get("/healthz", ({ text }) => text("ok"))
   .get("/", ({ text }) => text("🎭 FranceConnect theater"))
   .get(
     "/api/v2/.well-known/openid-configuration",
