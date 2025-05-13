@@ -78,7 +78,7 @@
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@types/node": "^22.14.1",
     "pkgroll": "^2.12.1",
-    "tsx": "^4.19.3"
+    "tsx": "^4.19.4"
   },
   "publishConfig": {
     "access": "public",

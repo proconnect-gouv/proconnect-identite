@@ -4,12 +4,14 @@ import {
   createOidcChecks,
   getFranceConnectRedirectUrlFactory,
 } from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
-import { logger } from "@sentry/node";
 import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { z } from "zod";
 import { FRANCECONNECT_SCOPES, HOST } from "../../config/env";
-import { OidcError } from "../../config/errors";
+import {
+  OidcError,
+  OidcFranceConnectBackChannelError,
+} from "../../config/errors";
 import {
   getFranceConnectConfiguration,
   getFranceConnectLogoutRedirectUrl,
@@ -45,20 +47,22 @@ export async function getFranceConnectOidcCallbackToUpdateUserMiddleware(
     );
 
     const currentUrl = new URL(
-      `${req.protocol}://${HOST ?? req.hostname}${req.originalUrl ?? req.url}`,
+      `${HOST ?? `${req.protocol}://${req.hostname}`}${req.originalUrl ?? req.url}`,
     );
-    logger.debug("FranceConnect oidc callback", {
-      code,
-      nonce,
-      state,
-      currentUrl,
-    });
-    const { user_info, id_token } = await getFranceConnectUser({
-      code,
-      currentUrl,
-      expectedNonce: nonce,
-      expectedState: state,
-    });
+    const [franceconnect_error, franceconnect_response] = await to(
+      getFranceConnectUser({
+        code,
+        currentUrl,
+        expectedNonce: nonce,
+        expectedState: state,
+      }),
+    );
+    if (franceconnect_error)
+      throw new OidcFranceConnectBackChannelError(franceconnect_error.name, {
+        cause: franceconnect_error,
+      });
+
+    const { user_info, id_token } = franceconnect_response;
     req.session.id_token_hint = id_token;
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);

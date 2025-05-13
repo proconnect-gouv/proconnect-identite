@@ -1,11 +1,11 @@
 //
 
+import { createTestingHandler } from "#src/api";
 import { createServer, type Server } from "http";
 import type { AddressInfo } from "net";
 import { equal, ok } from "node:assert/strict";
 import { describe, it } from "node:test";
 import { join } from "path";
-import { createTestingHandler } from "../src/api";
 
 //
 async function HttpTestingServer() {
@@ -62,7 +62,7 @@ describe("entreprise.api.gouv.fr", () => {
       "/entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/213401268/mandataires_sociaux",
     );
     equal(response.status, 422);
-    const body: { errors: any[] } = await response.json();
+    const body = (await response.json()) as { errors: any[] };
     ok(Array.isArray(body.errors));
   });
 
@@ -72,7 +72,7 @@ describe("entreprise.api.gouv.fr", () => {
       "/entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/453340176/mandataires_sociaux",
     );
     equal(response.status, 200);
-    const body: { data: any[] } = await response.json();
+    const body = (await response.json()) as { data: any[] };
     ok(Array.isArray(body.data));
   });
 });
@@ -101,7 +101,7 @@ describe("oidc.franceconnect.gouv.fr", () => {
     );
     equal(response.status, 200);
     equal(response.statusText, "OK");
-    const body: { issuer: string } = await response.json();
+    const body = (await response.json()) as { issuer: string };
     ok(body);
     equal(body.issuer, "oidc.franceconnect.localhost");
   });
