@@ -4,6 +4,7 @@ import {
   type FranceConnectUserInfoResponse,
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import { zValidator } from "@hono/zod-validator";
+import assert from "assert/strict";
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { CompactSign, generateKeyPair } from "jose";
@@ -39,6 +40,20 @@ const DEFAULT_USERINFO: FranceConnectUserInfoResponse = {
 
 const CodeParamSchema = z.object({
   code: z.string().min(1, "Authorization code is required"),
+  grant_type: z.string(),
+  redirect_uri: z.string(),
+});
+
+const AuthorizationEndpointQueryParams = z.object({
+  acr_values: z.literal("eidas1"),
+  claims: z.string().optional(),
+  client_id: z.string(),
+  nonce: z.string().min(22),
+  prompt: z.string().default("login"),
+  redirect_uri: z.string(),
+  response_type: z.string(),
+  scope: z.string(),
+  state: z.string().min(22),
 });
 
 //
@@ -50,7 +65,10 @@ let userinfo: FranceConnectUserInfoResponse;
 export const TestingOidcFranceConnectRouter = new Hono<{
   Bindings: FranceConnectBindings;
 }>()
-  .onError((error, { text }) => text(error.toString()))
+  .onError((error, { text }) => {
+    console.error("[🎭] ", error);
+    return text(error.toString());
+  })
   .get("/", ({ text }) => text("🎭 FranceConnect theater"))
   .get(
     "/api/v2/.well-known/openid-configuration",
@@ -58,17 +76,7 @@ export const TestingOidcFranceConnectRouter = new Hono<{
   )
   .get(
     "/api/v2/authorize",
-    zValidator(
-      "query",
-      z.object({
-        client_id: z.string(),
-        redirect_uri: z.string(),
-        response_type: z.string(),
-        scope: z.string(),
-        state: z.string(),
-        nonce: z.string(),
-      }),
-    ),
+    zValidator("query", AuthorizationEndpointQueryParams),
     async ({ req, redirect }) => {
       const { client_id, redirect_uri, state, nonce } = req.valid("query");
       const codeValue = `_${Date.now()}`;
@@ -124,13 +132,16 @@ export const TestingOidcFranceConnectRouter = new Hono<{
     "/api/v2/token",
     zValidator("form", CodeParamSchema),
     async ({ env: { ISSUER }, json, req }) => {
-      const { code } = req.valid("form");
+      const form = req.valid("form");
+      console.warn({ form });
+      const { code } = form;
+
       const codeObj = CODE_MAP.get(code);
-      if (!codeObj) {
-        throw new Error("Invalid authorization code");
-      }
+      assert.ok(codeObj);
       CODE_MAP.delete(code);
+
       const { client_id, nonce } = codeObj;
+      assert.equal(codeObj.redirect_uri, form.redirect_uri);
 
       const { privateKey } = await generateKeyPair("ES256");
 

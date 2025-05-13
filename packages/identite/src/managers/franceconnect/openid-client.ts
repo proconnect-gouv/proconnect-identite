@@ -82,7 +82,7 @@ export function getFranceConnectUserFactory(
 ) {
   return async function getFranceConnectUser(parameters: {
     code: string;
-    currentUrl: string;
+    currentUrl: URL;
     expectedNonce: string;
     expectedState: string;
   }) {
@@ -90,7 +90,7 @@ export function getFranceConnectUserFactory(
     const config = await getConfiguration();
     const tokens = await authorizationCodeGrant(
       config,
-      new URL(currentUrl),
+      currentUrl,
       {
         expectedNonce,
         expectedState,
