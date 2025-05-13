@@ -46,10 +46,13 @@ export async function getFranceConnectOidcCallbackToUpdateUserMiddleware(
       req.session,
     );
 
+    const currentUrl = new URL(
+      `${HOST ?? `${req.protocol}://${req.hostname}`}${req.originalUrl ?? req.url}`,
+    );
     const [franceconnect_error, franceconnect_response] = await to(
       getFranceConnectUser({
         code,
-        currentUrl: `${HOST}${req.url}`,
+        currentUrl,
         expectedNonce: nonce,
         expectedState: state,
       }),
