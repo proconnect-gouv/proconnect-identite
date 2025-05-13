@@ -1,0 +1,25 @@
+<div class="dashboard-container">
+    <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
+    
+    <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+        <%- include('partials/breadcrumb.ejs'); %>
+        <h2>Configurer un code à usage unique (OTP)</h2>
+        <p>Un code unique vous sera demandé à chaque nouvelle session. Pour l’obtenir, vous devez utiliser une application mobile.</p>
+        <p>Si vous n’avez pas encore d’application, nous vous conseillons d’utiliser l’outil opensource <a href="https://freeotp.github.io/" target="_blank" rel="noopener noreferrer" aria-label="FreeOTP Authenticator. (nouvelle fenêtre)">FreeOTP Authenticator.</a></p>
+        <div class="fr-checkbox-group">
+            <input name="is-authenticator-app-installed" id="is-authenticator-app-installed" type="checkbox" aria-describedby="is-authenticator-app-installed">
+            <label class="fr-label" for="is-authenticator-app-installed">
+                J'ai installé une application d'authentification sur mon smartphone
+            </label>
+        </div>
+        <div class="card-button-container">
+            <a
+                class="fr-btn fr-btn--tertiary"
+                href="/connection-and-account"
+                >Annuler
+            </a>
+            <a class="fr-btn fr-my-3w" id="continue-button" href="/authenticator-app-configuration" role="button" aria-disabled="true">Continuer</a>
+        </div>
+    </div>
+</div>
+<script type="module" src="<%= js('authent-app-installed-on-phone.js') %>"></script>

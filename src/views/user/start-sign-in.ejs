@@ -18,13 +18,14 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 
             <div class="fr-input-group <% if (locals.hasEmailError) { %>  fr-input-group--error<% } %>">
-                <label class="fr-label" for="did-you-mean-input">Email
-                    <span class="fr-hint-text">Celui que vous utilisez dans le cadre de votre travail</span>
+                <label class="fr-label" for="did-you-mean-input">Email professionnel
+                    <span class="fr-hint-text">Format attendu : nom@domaine.fr</span>
                 </label>
                 <input
                         id="did-you-mean-input"
                         class="fr-input"
                         required type="email" name="login"
+                        autocomplete="on"
                 <% if (!locals.loginHint) { %>
                         autofocus
                 <% } else { %>

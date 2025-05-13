@@ -1,6 +1,7 @@
 <div class="dashboard-container">
     <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+        <%- include('partials/breadcrumb.ejs'); %>
         <%- include('partials/notifications.ejs', {notifications: notifications}) %>
         <% if (isAuthenticatorAlreadyConfigured) { %>
             <h2>Changer d’application d’authentification</h2>
@@ -9,47 +10,32 @@
                 application d’authentification.
             </p>
         <% } else { %>
-            <h2>Configurer une application d’authentification</h2>
+            <h2>Configurer un code à usage unique (OTP)</h2>
         <% } %>
-        <p>
-            1. Dans l’application FreeOTP, appuyez sur <b>+</b>
-        </p>
-        <p>
-            2. Sélectionnez <b><span class="fr-icon-qr-code-fill" aria-label="Scanner un code QR"></span></b>
-        </p>
+        <h3>Scanner ce QRcode avec votre application</h3>
         <img src="<%= locals.qrCodeDataUrl; %>" alt="Code QR à utiliser dans l’appli FreeOTP">
         <div class="fr-accordion fr-mb-3w">
             <h3 class="fr-accordion__title">
                 <button class="fr-accordion__btn" aria-expanded="false" aria-controls="vous-ne-pouvez-pas-scanner">
-                    Vous ne pouvez pas scanner ?
+                    Vous ne pouvez pas scanner le code ?
                 </button>
             </h3>
             <div class="fr-collapse" id="vous-ne-pouvez-pas-scanner">
-                <p>
-                    2. Dans l’application FreeOTP, appuyez sur <b>+</b>, puis sur
-                    <b><span class="fr-icon-pencil-fill" aria-label="Saisir une clé de configuration"></span></b>
-                </p>
-                <p>
-                    3. Saisissez votre adresse email et cette clé (espaces non pris en compte) :<br />
-                    <b id="humanReadableTotpKey"><%= locals.humanReadableTotpKey; %></b>
-                </p>
-                <p>
-                    4. Assurez-vous que <b>TOTP</b> est sélectionné
-                </p>
-                <p>
-                    5. Assurez-vous que <b>SHA1</b> est sélectionné
-                </p>
-                <p>
-                    6. Appuyez sur <b>Ajouter</b> pour terminer
-                </p>
+                <b>
+                    <p>Pour configurer manuellement votre application d’authentification mobile :</p>
+                    <p>Clé/secret : <span id="humanReadableTotpKey"><%= locals.humanReadableTotpKey; %></span></p>
+                    <p>Type : TOTP</p>
+                    <p>Algorithme : SHA1</p>
+                </b>
+                <a href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-icon-question-fill fr-btn--icon-left" target="_blank" rel="noopener noreferrer">Consulter notre page d'aide sur la double authentification</a>
             </div>
         </div>
+        <h3>Insérez le code généré par votre application</h3>
         <form action="/authenticator-app-configuration" method="post" class="fr-mb-6w">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-
             <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
                 <label class="fr-label" for="totpToken">
-                    Saisissez le code à six chiffres affiché dans l’application
+                    Entrez le code à usage unique
                 </label>
 
                 <input
@@ -68,7 +54,7 @@
                 <% if (locals.hasCodeError) { %>
                     <p class="fr-error-text" id="email-error">
                         Code invalide. 
-                        <a href="https://agentconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/#2-comment-faire-si-le-code-a-usage-unique-ne-fonctionne-pas"
+                        <a href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/#2-comment-faire-si-le-code-a-usage-unique-ne-fonctionne-pas"
                            target="_blank"
                            rel="noopener noreferrer"
                            aria-label="Page d'aide"
@@ -82,8 +68,8 @@
 
             <div class="card-button-container">
                 <a
-                        class="fr-btn fr-btn--tertiary fr-icon-arrow-go-back-line fr-btn--icon-left"
-                        href="/connection-and-account"
+                    class="fr-btn fr-btn--tertiary"
+                    href="/connection-and-account"
                 >Annuler</a>
                 <button class="fr-btn" type="submit">Valider le code</button>
             </div>

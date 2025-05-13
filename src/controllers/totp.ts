@@ -1,6 +1,7 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
-import { InvalidTotpTokenError, NotFoundError } from "../config/errors";
+import { InvalidTotpTokenError } from "../config/errors";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
@@ -20,7 +21,6 @@ import {
 } from "../managers/totp";
 import {
   sendAddFreeTOTPEmail,
-  sendChangeAppliTotpEmail,
   sendDeleteFreeTOTPApplicationEmail,
 } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
@@ -59,6 +59,12 @@ export const getAuthenticatorAppConfigurationController = async (
         await isAuthenticatorAppConfiguredForUser(user_id),
       humanReadableTotpKey,
       qrCodeDataUrl,
+      breadcrumbs: [
+        { label: "Tableau de bord", href: "/" },
+        { label: "Compte et connexion", href: "/connection-and-account" },
+        { label: "Double authentification", href: "/double-authentication" },
+        { label: "Code à usage unique" },
+      ],
     });
   } catch (error) {
     next(error);
@@ -77,8 +83,6 @@ export const postAuthenticatorAppConfigurationController = async (
     const { totpToken } = await schema.parseAsync(req.body);
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
-    const isAuthenticatorAlreadyConfigured =
-      await isAuthenticatorAppConfiguredForUser(user_id);
     const temporaryTotpKey = getTemporaryTotpKey(req);
 
     if (!temporaryTotpKey) {
@@ -94,17 +98,10 @@ export const postAuthenticatorAppConfigurationController = async (
     deleteTemporaryTotpKey(req);
     addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
 
-    if (!isAuthenticatorAlreadyConfigured) {
-      await sendAddFreeTOTPEmail({ user_id });
-    } else {
-      await sendChangeAppliTotpEmail({ user_id });
-    }
+    await sendAddFreeTOTPEmail({ user_id });
+
     return res.redirect(
-      `/connection-and-account?notification=${
-        isAuthenticatorAlreadyConfigured
-          ? "authenticator_updated"
-          : "authenticator_added"
-      }`,
+      "/connection-and-account?notification=authenticator_added",
     );
   } catch (error) {
     if (error instanceof InvalidTotpTokenError) {

@@ -1,18 +1,11 @@
 {
   "compilerOptions": {
-    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
     "rootDir": "src",
-    "types": ["node"],
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
-    "verbatimModuleSyntax": true,
-    "paths": {
-      "#src/*": ["./src/*"]
-    }
+    "types": ["node"]
   },
-  "extends": "@tsconfig/node22/tsconfig.json",
+  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
   "references": []
 }

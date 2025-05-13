@@ -14,8 +14,8 @@ export default function Add2fa(props: Props) {
       </Text>
       <br />
       <Text>
-        Votre compte ProConnect {email} est à présent protégé par la validation
-        en deux étapes. Lorsque vous vous connectez sur un nouvel appareil ou
+        Votre compte ProConnect {email} est à présent protégé par la double
+        authentification. Lorsque vous vous connectez sur un nouvel appareil ou
         sur un appareil qui n'est pas fiable, vous devez utiliser votre deuxième
         facteur pour confirmer votre identité.
       </Text>

@@ -1,5 +1,7 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import {
+  certificationDirigeantRequested,
   isAcrSatisfied,
   isThereAnyRequestedAcr,
   twoFactorsAuthRequested,
@@ -241,5 +243,64 @@ describe("isThereAnyRequestedAcr", () => {
     };
 
     assert.equal(isThereAnyRequestedAcr(prompt), true);
+  });
+});
+
+describe("certificationDirigeantRequested", () => {
+  it("should return true for certification dirigeant acr", () => {
+    const prompt = {
+      details: {
+        acr: {
+          essential: true,
+          values: [
+            "https://proconnect.gouv.fr/assurance/certification-dirigeant",
+          ],
+        },
+      },
+      name: "login",
+      reasons: ["essential_acrs"],
+    };
+
+    assert.equal(certificationDirigeantRequested(prompt), true);
+  });
+
+  it("should return false if non certification dirigeant acr are requested", () => {
+    const prompt = {
+      details: {
+        acr: {
+          essential: true,
+          values: [
+            "https://proconnect.gouv.fr/assurance/certification-dirigeant",
+            "https://proconnect.gouv.fr/assurance/consistency-checked",
+            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
+            "https://proconnect.gouv.fr/assurance/self-asserted",
+            "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
+          ],
+        },
+      },
+      name: "login",
+      reasons: ["essential_acrs"],
+    };
+
+    assert.equal(certificationDirigeantRequested(prompt), false);
+  });
+
+  it("should return false if non self asserted acr are requested", () => {
+    const prompt = {
+      details: {
+        acr: {
+          essential: true,
+          values: [
+            "https://proconnect.gouv.fr/assurance/certification-dirigeant",
+            "https://proconnect.gouv.fr/assurance/consistency-checked",
+            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
+          ],
+        },
+      },
+      name: "login",
+      reasons: ["essential_acrs"],
+    };
+
+    assert.equal(certificationDirigeantRequested(prompt), false);
   });
 });

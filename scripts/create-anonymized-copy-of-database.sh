@@ -7,13 +7,13 @@ logPrefix(){
 }
 
 if [ -n "$(which dbclient-fetcher)" ]; then
-  dbclient-fetcher psql 15.10
+  dbclient-fetcher pgsql 15
 fi
 
 export SRC_DB_URL=$SCALINGO_POSTGRESQL_URL
 export DEST_DB_URL=$METABASE_DB_URL
 
-if [ "$APP" != "moncomptepro" ]; then exit 0; fi
+if [ "$APP" != "proconnect-identite" ]; then exit 0; fi
 
 echo "$(logPrefix) Creating anonymized copy of database $SRC_DB_URL in $DEST_DB_URL..."
 

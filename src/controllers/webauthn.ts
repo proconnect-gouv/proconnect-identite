@@ -1,3 +1,4 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,
@@ -6,7 +7,6 @@ import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z, ZodError } from "zod";
 import {
-  NotFoundError,
   UserNotLoggedInError,
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,

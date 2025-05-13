@@ -4,9 +4,9 @@ describe("delete TOTP connexion", () => {
 
     cy.mfaLogin("rogal.dorn@imperialfists.world");
 
-    cy.contains("Configurer un code à usage unique");
+    cy.contains("Code à usage unique");
 
-    cy.contains("Supprimer l’application d’authentification").click();
+    cy.contains("Supprimer").click();
 
     cy.contains("L’application d’authentification a bien été supprimée.");
 
@@ -34,16 +34,16 @@ describe("delete TOTP connexion", () => {
 
     cy.mfaLogin("konrad.curze@nightlords.world");
 
-    cy.contains("Validation en deux étapes");
+    cy.contains("Double authentification");
 
-    cy.contains("Désactiver la validation en deux étapes").click();
+    cy.get("form[action='/delete-authenticator-app-configuration']").submit();
 
     cy.maildevGetMessageBySubject(
-      "Désactivation de la validation en deux étapes",
+      "Suppression d'une application d'authentification à double facteur",
     ).then((email) => {
       cy.maildevVisitMessageById(email.id);
       cy.contains(
-        "Votre compte ProConnect n'est plus protégé par la validation en deux étapes.",
+        "L'application a été supprimée comme étape de connexion à deux facteurs.",
       );
       cy.maildevDeleteMessageById(email.id);
     });

@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "94957325700019",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "62.02A",
+      "nomenclature": "NAFRev2",
+      "libelle": "Conseil en systèmes et logiciels informatiques"
+    },
+    "tranche_effectif_salarie": {
+      "de": null,
+      "a": null,
+      "code": null,
+      "date_reference": null,
+      "intitule": null
+    },
+    "diffusable_commercialement": false,
+    "status_diffusion": "partiellement_diffusible",
+    "date_creation": 1678662000,
+    "unite_legale": {
+      "siren": "949573257",
+      "rna": null,
+      "siret_siege_social": "94957325700019",
+      "type": "personne_physique",
+      "personne_morale_attributs": { "raison_sociale": null, "sigle": null },
+      "personne_physique_attributs": {
+        "nom_naissance": "DORN",
+        "nom_usage": "DORN",
+        "prenom_1": "ROGAL",
+        "prenom_2": "AURELIUS",
+        "prenom_3": "IMPERIUS",
+        "prenom_4": null,
+        "prenom_usuel": "ROGAL",
+        "pseudonyme": "PRAETORIAN",
+        "sexe": "M"
+      },
+      "categorie_entreprise": null,
+      "status_diffusion": "partiellement_diffusible",
+      "diffusable_commercialement": false,
+      "forme_juridique": {
+        "code": "1000",
+        "libelle": "Entrepreneur individuel"
+      },
+      "activite_principale": {
+        "code": "62.02A",
+        "nomenclature": "NAFRev2",
+        "libelle": "Conseil en systèmes et logiciels informatiques"
+      },
+      "tranche_effectif_salarie": {
+        "de": null,
+        "a": null,
+        "code": null,
+        "date_reference": null,
+        "intitule": null
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 1678662000,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "acheminement_postal": {
+        "l1": "ROGAL DORN",
+        "l2": "PHALANX",
+        "l3": "7 IMPERIAL PALACE",
+        "l4": "IMPERIAL FISTS CHAPTER",
+        "l5": "00007 TERRA",
+        "l6": "TER07 SEGMENTUM SOLAR",
+        "l7": "IMPERIUM OF MAN"
+      },
+      "code_cedex": "TER07",
+      "code_commune": "00007",
+      "code_pays_etranger": null,
+      "code_postal": "00007",
+      "complement_adresse": "PHALANX",
+      "distribution_speciale": "IMPERIAL FISTS CHAPTER",
+      "indice_repetition_voie": null,
+      "libelle_cedex": "SEGMENTUM SOLAR",
+      "libelle_commune_etranger": null,
+      "libelle_commune": "TERRA",
+      "libelle_pays_etranger": null,
+      "libelle_voie": "IMPERIAL PALACE",
+      "numero_voie": "7",
+      "status_diffusion": "partiellement_diffusible",
+      "type_voie": "PLACE"
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/949573257"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1737414000,
+    "redirect_from_siret": null
+  }
+}

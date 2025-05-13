@@ -21,7 +21,16 @@ VALUES
   (4, 'ial1-aal1@yopmail.com', true, CURRENT_TIMESTAMP,
    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
    'Jean', 'IAL1 AAL1', '0123456789', 'Sbire',
-   null, null, false);
+   null, null, false),
+  (5, 'certification-dirigeant@yopmail.com', true, CURRENT_TIMESTAMP,
+   '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
+   'Jean', 'Certification', '0123456789', 'Dirigeant',
+   null, null, false),
+  (6, 'certification-dirigeant-aal2@yopmail.com', true, CURRENT_TIMESTAMP,
+   '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
+   'Jean', 'Certification AAL2', '0123456789', 'Dirigeant',
+   'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+   CURRENT_TIMESTAMP, false);
 
 INSERT INTO organizations
   (id, siret, created_at, updated_at)
@@ -34,7 +43,9 @@ VALUES
   (1, 1, false, 'domain', true),
   (2, 1, false, null, true),
   (3, 1, false, 'domain', true),
-  (4, 1, false, null, true);
+  (4, 1, false, null, true),
+  (5, 1, false, null, true),
+  (6, 1, false, null, true);
 
 INSERT INTO oidc_clients
 (client_name, client_id, client_secret, redirect_uris,

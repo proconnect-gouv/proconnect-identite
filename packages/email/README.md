@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 const info = await transporter.sendMail({
   from: "user@example.com",
   to: "user@example.com",
-  subject: "[MonComptePro] Delete free TOTP",
+  subject: "[ProConnect] Delete free TOTP",
   html: DeleteFreeTotpMail({
     baseurl: my_host_name,
     email: user.email,

@@ -1,24 +1,17 @@
 {
   "compilerOptions": {
-    "composite": true,
+    "baseUrl": "./src",
     "declaration": true,
     "declarationMap": true,
-    "esModuleInterop": true,
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
     "outDir": "./dist",
     "resolveJsonModule": true,
-    "rootDir": "src",
-    "types": ["node"],
-    "verbatimModuleSyntax": true,
-    "paths": {
-      "#src/*": ["./src/*"]
-    }
+    "rootDir": "./src",
+    "types": ["node"]
   },
-  "extends": "@tsconfig/node22/tsconfig.json",
+  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
   "references": [
     { "path": "../core/tsconfig.lib.json" },
-    { "path": "../insee/tsconfig.lib.json" }
+    { "path": "../entreprise/tsconfig.lib.json" }
   ],
-  "include": ["./src/**/*", "./src/**/*.json"]
+  "include": ["./src/**/*", "./src/**/*.json", "testing"]
 }

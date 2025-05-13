@@ -33,12 +33,13 @@ document.addEventListener(
       errorElement.innerText = "";
       beginElement.disabled = true;
 
-      // GET registration options from the endpoint that calls
-      // @simplewebauthn/server -> generateRegistrationOptions()
-      const authOptions = await fetch(authOptionsUrl);
-
       let asseResp;
+
       try {
+        // GET registration options from the endpoint that calls
+        // @simplewebauthn/server -> generateRegistrationOptions()
+        const authOptions = await fetch(authOptionsUrl);
+
         // Pass the options to the authenticator and wait for a response
         asseResp = await startAuthentication(await authOptions.json());
       } catch (error) {
@@ -66,8 +67,9 @@ document.addEventListener(
       const hasNotification = urlParams.get("notification") !== null;
 
       if (!hasNotification) {
-        const authOptions = await fetch(authOptionsUrl);
         try {
+          const authOptions = await fetch(authOptionsUrl);
+
           let asseResp = await startAuthentication(
             await authOptions.json(),
             true,
@@ -78,6 +80,7 @@ document.addEventListener(
           authenticationResponseForm.requestSubmit();
         } catch (e) {
           // fail silently
+          console.error(e);
         }
       }
     };

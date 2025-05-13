@@ -1,16 +1,10 @@
-import FakeTimers, { type InstalledClock } from "@sinonjs/fake-timers";
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { before, describe, it, mock } from "node:test";
 import epochTime from "../src/services/epoch-time";
 
 describe("epochTime", () => {
-  let clock: InstalledClock;
-
-  beforeEach(() => {
-    clock = FakeTimers.install({ now: new Date("2023-12-01T00:00:00.000Z") });
-  });
-
-  afterEach(() => {
-    clock.uninstall();
+  before(() => {
+    mock.timers.enable({ apis: ["Date"], now: new Date("2023-12-01") });
   });
 
   it("should return current date in epoch format", () => {

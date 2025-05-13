@@ -6,7 +6,7 @@ import { HOST } from "../../config/env";
 
 export function unableToAutoJoinOrganizationMd() {
   return `
-![MonComptePro](${HOST}/dist/mail-proconnect.png)
+![ProConnect](${HOST}/dist/mail-proconnect.png)
 
 Bonjour,
 

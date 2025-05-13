@@ -16,12 +16,20 @@ import {
   MagicLink,
   ResetPassword,
   UpdatePersonalDataMail,
-  UpdateTotpApplication,
   VerifyEmail,
 } from "@gouvfr-lasuite/proconnect.email";
-import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
+import {
+  NotFoundError,
+  UserNotFoundError,
+} from "@gouvfr-lasuite/proconnect.identite/errors";
+import {
+  type FranceConnectUserInfoResponse,
+  type User,
+} from "@gouvfr-lasuite/proconnect.identite/types";
+import { to } from "await-to-js";
 import { isEmpty } from "lodash-es";
 import {
+  FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
   HOST,
   MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
   MAX_DURATION_BETWEEN_TWO_EMAIL_ADDRESS_VERIFICATION_IN_MINUTES,
@@ -36,21 +44,20 @@ import {
   InvalidTokenError,
   LeakedPasswordError,
   NoNeedVerifyEmailAddressError,
-  NotFoundError,
-  UserNotFoundError,
   WeakPasswordError,
 } from "../config/errors";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
-
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import {
   create,
   findByEmail,
-  findById,
   findByMagicLinkToken,
   findByResetPasswordToken,
+  getById,
+  getFranceConnectUserInfo,
   update,
+  upsetFranceconnectUserinfo,
 } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
 import { isWebauthnConfiguredForUser } from "./webauthn";
@@ -204,11 +211,7 @@ export const sendEmailAddressVerificationEmail = async ({
 };
 
 export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -217,7 +220,7 @@ export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
       baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
-      support_email: "contact@moncomptepro.beta.gouv.fr",
+      support_email: "support+identite@proconnect.gouv.fr",
     }).toString(),
     tag: "delete-account",
   });
@@ -228,11 +231,7 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
 }: {
   user_id: number;
 }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -242,22 +241,18 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
       baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
-      support_email: "contact@moncomptepro.beta.gouv.fr",
+      support_email: "support+identite@proconnect.gouv.fr",
     }).toString(),
     tag: "delete-free-totp",
   });
 };
 
 export const sendDisable2faMail = async ({ user_id }: { user_id: number }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
-    subject: "Désactivation de la validation en deux étapes",
+    subject: "Désactivation de la validation avec la double authentification",
     html: Delete2faProtection({
       baseurl: HOST,
       family_name: family_name ?? "",
@@ -267,39 +262,12 @@ export const sendDisable2faMail = async ({ user_id }: { user_id: number }) => {
   });
 };
 
-export const sendChangeAppliTotpEmail = async ({
-  user_id,
-}: {
-  user_id: number;
-}) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
-  return sendMail({
-    to: [email],
-    subject: "Changement d'application d’authentification",
-    html: UpdateTotpApplication({
-      baseurl: HOST,
-      family_name: family_name ?? "",
-      given_name: given_name ?? "",
-      support_email: "contact@moncomptepro.beta.gouv.fr",
-    }).toString(),
-    tag: "update-totp-application",
-  });
-};
-
 export const sendDeleteAccessKeyMail = async ({
   user_id,
 }: {
   user_id: number;
 }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -308,7 +276,7 @@ export const sendDeleteAccessKeyMail = async ({
       baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
-      support_email: "contact@moncomptepro.beta.gouv.fr",
+      support_email: "support+identite@proconnect.gouv.fr",
     }).toString(),
     tag: "delete-access-key",
   });
@@ -319,15 +287,11 @@ export const sendAddFreeTOTPEmail = async ({
 }: {
   user_id: number;
 }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
-    subject: "Validation en deux étapes activée",
+    subject: "Double authentification activée",
     html: Add2fa({
       baseurl: HOST,
       email,
@@ -343,11 +307,7 @@ export const sendActivateAccessKeyMail = async ({
 }: {
   user_id: number;
 }) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-  const { given_name, family_name, email } = user;
+  const { given_name, family_name, email } = await getById(user_id);
 
   return sendMail({
     to: [email],
@@ -356,7 +316,7 @@ export const sendActivateAccessKeyMail = async ({
       baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
-      support_email: "contact@moncomptepro.beta.gouv.fr",
+      support_email: "support+identite@proconnect.gouv.fr",
     }).toString(),
     tag: "add-access-key",
   });
@@ -605,10 +565,49 @@ export const updatePersonalInformations = async (
     job,
   }: Pick<User, "given_name" | "family_name" | "phone_number" | "job">,
 ): Promise<User> => {
-  return await update(userId, {
-    given_name,
-    family_name,
+  const isUserVerified = await getFranceConnectUserInfo(userId);
+  const names = isUserVerified ? {} : { given_name, family_name };
+
+  return update(userId, {
+    ...names,
     phone_number,
     job,
   });
 };
+
+export async function isUserVerifiedWithFranceconnect(user_id: number) {
+  const userFranceConnect = await getFranceConnectUserInfo(user_id);
+
+  if (isEmpty(userFranceConnect)) {
+    return false;
+  }
+
+  return !isExpired(
+    userFranceConnect.updated_at,
+    FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
+  );
+}
+
+export async function updateFranceConnectUserInfo(
+  userId: number,
+  userInfo: FranceConnectUserInfoResponse,
+) {
+  const { family_name, given_name } = userInfo;
+  const user = await update(userId, { family_name, given_name });
+  await upsetFranceconnectUserinfo({
+    ...userInfo,
+    user_id: userId,
+  });
+  return user;
+}
+
+export async function getUserVerificationLabel(userId: number) {
+  const [, franceconnectUserinfo] = await to(getFranceConnectUserInfo(userId));
+
+  if (franceconnectUserinfo) {
+    undefined;
+    return "FranceConnect";
+  }
+
+  return undefined;
+}

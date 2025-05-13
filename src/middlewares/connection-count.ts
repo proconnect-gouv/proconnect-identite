@@ -31,8 +31,8 @@ export const connectionCountMiddleware = async (
   ) {
     // we log a connection in 2 cases:
     // 1. a client ask for a connection and the oidcProvider answer back with an accountId
-    // this happens when users is already logged in MonComptePro but not on the client
-    // 2. a client ask for a connection but is not logged in MonComptePro
+    // this happens when users is already logged in ProConnect Identité but not on the client
+    // 2. a client ask for a connection but is not logged in ProConnect Identité
     // There is no accountId in the session, we wait for a session to be open.
     // This happens when hitting the resume route.
     try {

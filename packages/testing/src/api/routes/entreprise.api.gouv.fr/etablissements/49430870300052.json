@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "49430870300052",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "62.01Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Programmation informatique"
+    },
+    "tranche_effectif_salarie": {
+      "de": null,
+      "a": null,
+      "code": null,
+      "date_reference": null,
+      "intitule": null
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1598911200,
+    "unite_legale": {
+      "siren": "494308703",
+      "rna": null,
+      "siret_siege_social": "49430870300052",
+      "type": "personne_physique",
+      "personne_morale_attributs": { "raison_sociale": null, "sigle": null },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": "JEREMIE",
+        "prenom_1": "JEREMIE",
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": "COOK",
+        "sexe": "M"
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "1000",
+        "libelle": "Entrepreneur individuel"
+      },
+      "activite_principale": {
+        "code": "62.01Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Programmation informatique"
+      },
+      "tranche_effectif_salarie": {
+        "de": null,
+        "a": null,
+        "code": null,
+        "date_reference": null,
+        "intitule": null
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 1172703600,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "38",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "DE LA FOLIE-REGNAULT",
+      "code_postal": "75011",
+      "libelle_commune": "PARIS",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "75111",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "",
+        "l2": "COOK JEREMIE",
+        "l3": "",
+        "l4": "38 RUE DE LA FOLIE-REGNAULT",
+        "l5": "",
+        "l6": "75011 PARIS",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/494308703"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1711753200,
+    "redirect_from_siret": null
+  }
+}

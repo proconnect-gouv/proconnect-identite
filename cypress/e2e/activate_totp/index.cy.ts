@@ -6,20 +6,36 @@ describe("add 2fa authentication", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.contains("Configurer un code à usage unique");
+    cy.contains("Double authentification");
 
-    cy.get('[href="/authenticator-app-configuration"]')
-      .contains("Configurer un code à usage unique")
+    cy.get('[href="/double-authentication"]')
+      .contains("Configurer la 2FA")
       .click();
 
-    cy.contains("Configurer une application d’authentification");
+    cy.contains(
+      "Choisissez une de ces deux méthodes de validation supplémentaire",
+    );
+
+    cy.get('[href="/configuring-single-use-code"]')
+      .contains("Code à usage unique")
+      .click();
+
+    cy.contains("Configurer un code à usage unique (OTP)");
+
+    cy.get('label[for="is-authenticator-app-installed"]').click();
+
+    cy.get("#is-authenticator-app-installed").should("be.checked");
+
+    cy.get("#continue-button")
+      .should("not.have.attr", "aria-disabled", "true")
+      .click();
 
     // Extract the code from the front to generate the TOTP key
     cy.get("#humanReadableTotpKey")
       .invoke("text")
       .then((text) => {
         const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
-        const totp = generateToken(humanReadableTotpKey, Date.now());
+        const totp = generateToken(humanReadableTotpKey);
         cy.get("[name=totpToken]").type(totp);
         cy.get(
           '[action="/authenticator-app-configuration"] [type="submit"]',
@@ -28,11 +44,11 @@ describe("add 2fa authentication", () => {
 
     cy.contains("L’application d’authentification a été configurée.");
 
-    cy.maildevGetMessageBySubject("Validation en deux étapes activée").then(
+    cy.maildevGetMessageBySubject("Double authentification activée").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
         cy.contains(
-          "Votre compte ProConnect lion.eljonson@darkangels.world est à présent protégé par la validation en deux étapes",
+          "Votre compte ProConnect lion.eljonson@darkangels.world est à présent protégé par la double authentification.",
         );
         cy.maildevDeleteMessageById(email.id);
       },
@@ -44,8 +60,28 @@ describe("add 2fa authentication", () => {
 
     cy.login("unused1@yopmail.com");
 
-    cy.get('[href="/authenticator-app-configuration"]')
-      .contains("Configurer un code à usage unique")
+    cy.contains("Double authentification");
+
+    cy.get('[href="/double-authentication"]')
+      .contains("Configurer la 2FA")
+      .click();
+
+    cy.contains(
+      "Choisissez une de ces deux méthodes de validation supplémentaire",
+    );
+
+    cy.get('[href="/configuring-single-use-code"]')
+      .contains("Code à usage unique")
+      .click();
+
+    cy.contains("Configurer un code à usage unique (OTP)");
+
+    cy.get('label[for="is-authenticator-app-installed"]').click();
+
+    cy.get("#is-authenticator-app-installed").should("be.checked");
+
+    cy.get("#continue-button")
+      .should("not.have.attr", "aria-disabled", "true")
       .click();
 
     cy.get("[name=totpToken]").type("123456");

@@ -68,6 +68,15 @@ To log in, use the email address user@yopmail.com and the password "user@yopmail
 
 Emails are not sent but printed in the console.
 
+By default the application will run with testing mocks for external apis.  
+Use the testing cli to add additional data needed for dev or tests.
+
+```bash
+$ npx tsx scripts/testing.ts --help
+```
+
+Note that the ./packages/testing/src/api/data/people.ts file contains a list of people that are used to anonymize data.
+
 ## Testing the Connection with a Test Client
 
 ProConnect Identité is provided with a test client: https://github.com/numerique-gouv/proconnect-test-client
@@ -126,7 +135,7 @@ npx changeset
 ```
 
 You will be prompted to select the type of change you want to make.  
-As this changelog is for end frensh users, we recommend you write your change in french :fr:.
+As this changelog is intended for french end users, we recommend you write your change in French :fr:.
 
 Commit your changes and push them in your branch.  
 We will merge a "Version Packages" PR when we are ready to release :wink:

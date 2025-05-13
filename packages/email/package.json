@@ -1,12 +1,12 @@
 {
   "name": "@gouvfr-lasuite/proconnect.email",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
-  "homepage": "https://github.com/numerique-gouv/moncomptepro/tree/master/packages/email#readme",
-  "bugs": "https://github.com/numerique-gouv/moncomptepro/issues",
+  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/email#readme",
+  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/numerique-gouv/moncomptepro.git",
+    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
     "directory": "packages/email"
   },
   "license": "MIT",
@@ -33,13 +33,13 @@
     "test": "tsc --noEmit"
   },
   "dependencies": {
-    "@kitajs/html": "^4.2.4",
-    "@kitajs/ts-html-plugin": "^4.1.0"
+    "@kitajs/html": "^4.2.7",
+    "@kitajs/ts-html-plugin": "^4.1.1"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.0",
-    "@storybook/csf": "^0.1.11",
-    "vite": "^5.4.12"
+    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@storybook/csf": "^0.1.13",
+    "vite": "^6.3.4"
   },
   "publishConfig": {
     "access": "public",

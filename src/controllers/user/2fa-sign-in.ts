@@ -37,7 +37,7 @@ export const get2faSignInController = async (
       (await isWebauthnConfiguredForUser(id));
 
     return res.render("user/2fa-sign-in", {
-      pageTitle: "Se connecter en deux étapes",
+      pageTitle: "Se connecter avec la double authentification",
       notifications,
       hasCodeError,
       csrfToken: csrfToken(req),

@@ -54,11 +54,13 @@ export const createAuthenticatedSession = async (
   // email and needsInclusionconnectWelcomePage are not passed to the new session as it is not useful within logged session
   // csrfToken should not be passed to the new session for security reasons
   const {
+    authForProconnectFederation,
     interactionId,
     mustReturnOneOrganizationInPayload,
-    twoFactorsAuthRequested,
+    nonce,
     referrerPath,
-    authForProconnectFederation,
+    state,
+    twoFactorsAuthRequested,
   } = req.session;
 
   // as selected org is not stored in session,
@@ -86,6 +88,8 @@ export const createAuthenticatedSession = async (
         req.session.authForProconnectFederation = authForProconnectFederation;
         // new session reset amr
         req.session.amr = [];
+        req.session.nonce = nonce;
+        req.session.state = state;
 
         req.session.amr = addAuthenticationMethodReference(
           req.session.amr,
@@ -137,7 +141,7 @@ export const getUserFromAuthenticatedSession = (req: Request) => {
     ip_address: req.ip,
     username: `${req.session.user.given_name} ${req.session.user.family_name}`,
   });
-  return req.session.user;
+  return req.session.user as User;
 };
 
 export const updateUserInAuthenticatedSession = (req: Request, user: User) => {
@@ -241,5 +245,13 @@ export const isIdentityConsistencyChecked = async (req: Request) => {
     throw new Error("link should be set");
   }
 
-  return link?.verification_type !== null;
+  return [
+    "code_sent_to_official_contact_email",
+    "domain",
+    "imported_from_inclusion_connect",
+    "imported_from_coop_mediation_numerique",
+    "in_liste_dirigeants_rna",
+    "official_contact_email",
+    "bypassed",
+  ].includes(link?.verification_type ?? "");
 };

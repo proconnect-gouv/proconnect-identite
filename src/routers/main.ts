@@ -1,12 +1,15 @@
 import { type Express, Router, urlencoded } from "express";
 import nocache from "nocache";
 import {
+  getConfiguringSingleUseCodeController,
+  getDoubleAuthenticationController,
+  postSetForce2faController,
+} from "../controllers/2fa";
+import {
   getConnectionAndAccountController,
   getHomeController,
   getManageOrganizationsController,
   getPersonalInformationsController,
-  postDisableForce2faController,
-  postEnableForce2faController,
   postPersonalInformationsController,
 } from "../controllers/main";
 import {
@@ -29,21 +32,44 @@ import { ejsLayoutMiddlewareFactory } from "../services/renderer";
 export const mainRouter = (app: Express) => {
   const mainRouter = Router();
 
-  mainRouter.use(nocache());
-
   mainRouter.get(
     "/connection-and-account",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     getConnectionAndAccountController,
   );
 
   mainRouter.get(
-    "/authenticator-app-configuration",
+    "/double-authentication",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    checkUserCanAccessAdminMiddleware,
+    csrfProtectionMiddleware,
+    getDoubleAuthenticationController,
+  );
+
+  mainRouter.get(
+    "/configuring-single-use-code",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    checkUserCanAccessAdminMiddleware,
+    getConfiguringSingleUseCodeController,
+  );
+
+  mainRouter.get(
+    "/authenticator-app-configuration",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     getAuthenticatorAppConfigurationController,
@@ -51,8 +77,10 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/authenticator-app-configuration",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postAuthenticatorAppConfigurationController,
@@ -60,8 +88,10 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/delete-authenticator-app-configuration",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postDeleteAuthenticatorAppConfigurationController,
@@ -69,9 +99,10 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/passkeys/verify-registration",
-    rateLimiterMiddleware,
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postVerifyRegistrationController,
@@ -79,38 +110,32 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/delete-passkeys/:credential_id",
-    rateLimiterMiddleware,
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     deletePasskeyController,
   );
 
   mainRouter.post(
-    "/disable-force-2fa",
-    rateLimiterMiddleware,
+    "/set-force-2fa",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    checkUserCanAccessAdminMiddleware,
-    csrfProtectionMiddleware,
-    postDisableForce2faController,
-  );
-
-  mainRouter.post(
-    "/enable-force-2fa",
     rateLimiterMiddleware,
-    urlencoded({ extended: false }),
-    ejsLayoutMiddlewareFactory(app, true),
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
-    postEnableForce2faController,
+    postSetForce2faController,
   );
 
   mainRouter.get(
     "/personal-information",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     csrfProtectionMiddleware,
     getPersonalInformationsController,
@@ -118,9 +143,10 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.post(
     "/personal-information",
-    rateLimiterMiddleware,
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
@@ -128,8 +154,10 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.get(
     "/manage-organizations",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     csrfProtectionMiddleware,
     getManageOrganizationsController,
@@ -137,8 +165,10 @@ export const mainRouter = (app: Express) => {
 
   mainRouter.get(
     "/",
+    nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     getHomeController,
   );

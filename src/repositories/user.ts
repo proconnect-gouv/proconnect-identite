@@ -1,24 +1,20 @@
-import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
 import {
   createUserFactory,
   findByEmailFactory,
+  findByIdFactory,
+  getByIdFactory,
+  getFranceConnectUserInfoFactory,
   updateUserFactory,
-} from "@gouvfr-lasuite/proconnect.identite/user";
+  upsertFranceconnectUserinfoFactory,
+} from "@gouvfr-lasuite/proconnect.identite/repositories/user";
+import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../connectors/postgres";
-export const findById = async (id: number) => {
-  const connection = getDatabaseConnection();
 
-  const { rows }: QueryResult<User> = await connection.query(
-    `
-SELECT *
-FROM users WHERE id = $1
-`,
-    [id],
-  );
+//
 
-  return rows.shift();
-};
+export const getById = getByIdFactory({ pg: getDatabaseConnection() });
+export const findById = findByIdFactory({ pg: getDatabaseConnection() });
 
 export const findByEmail = findByEmailFactory({ pg: getDatabaseConnection() });
 
@@ -69,3 +65,11 @@ export const deleteUser = async (id: number) => {
 
   return rowCount > 0;
 };
+
+export const getFranceConnectUserInfo = getFranceConnectUserInfoFactory({
+  pg: getDatabaseConnection(),
+});
+
+export const upsetFranceconnectUserinfo = upsertFranceconnectUserinfoFactory({
+  pg: getDatabaseConnection(),
+});

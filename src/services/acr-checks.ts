@@ -1,39 +1,19 @@
+import { containsEssentialAcrs } from "@gouvfr-lasuite/proconnect.core/services/oidc";
 import { get, intersection, isArray, isEmpty } from "lodash-es";
-import type { UnknownObject } from "oidc-provider";
+import type { PromptDetail } from "oidc-provider";
 import {
+  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
   ACR_VALUE_FOR_IAL1_AAL1,
   ACR_VALUE_FOR_IAL1_AAL2,
   ACR_VALUE_FOR_IAL2_AAL1,
   ACR_VALUE_FOR_IAL2_AAL2,
 } from "../config/env";
 
-interface EssentialAcrPromptDetail {
-  name: "login" | "consent" | string;
-  reasons: string[];
-  details:
-    | {
-        acr: { essential: boolean; value?: string; values?: string[] };
-      }
-    | UnknownObject;
-}
-
-const containsEssentialAcrs = (prompt: EssentialAcrPromptDetail) => {
-  if (
-    prompt.name === "login" &&
-    (prompt.reasons.includes("essential_acr") ||
-      prompt.reasons.includes("essential_acrs"))
-  ) {
-    return true;
-  }
-
-  return false;
-};
-
 const areAcrsRequestedInPrompt = ({
   prompt,
   acrs,
 }: {
-  prompt: EssentialAcrPromptDetail;
+  prompt: PromptDetail;
   acrs: string[];
 }) => {
   const requestedAcr = get(prompt.details, "acr.value") as string | undefined;
@@ -64,23 +44,42 @@ const areAcrsRequestedInPrompt = ({
   return false;
 };
 
-export const twoFactorsAuthRequested = (prompt: EssentialAcrPromptDetail) => {
+export const twoFactorsAuthRequested = (prompt: PromptDetail) => {
   return (
     containsEssentialAcrs(prompt) &&
     areAcrsRequestedInPrompt({
-      prompt: prompt,
+      prompt,
       acrs: [ACR_VALUE_FOR_IAL1_AAL2, ACR_VALUE_FOR_IAL2_AAL2],
     }) &&
     !areAcrsRequestedInPrompt({
-      prompt: prompt,
+      prompt,
       acrs: [ACR_VALUE_FOR_IAL1_AAL1, ACR_VALUE_FOR_IAL2_AAL1],
     })
   );
 };
 
-export const isThereAnyRequestedAcr = (prompt: EssentialAcrPromptDetail) => {
+export const certificationDirigeantRequested = (prompt: PromptDetail) => {
+  return (
+    containsEssentialAcrs(prompt) &&
+    areAcrsRequestedInPrompt({
+      prompt,
+      acrs: [ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT],
+    }) &&
+    !areAcrsRequestedInPrompt({
+      prompt,
+      acrs: [
+        ACR_VALUE_FOR_IAL1_AAL1,
+        ACR_VALUE_FOR_IAL1_AAL2,
+        ACR_VALUE_FOR_IAL2_AAL1,
+        ACR_VALUE_FOR_IAL2_AAL2,
+      ],
+    })
+  );
+};
+
+export const isThereAnyRequestedAcr = (prompt: PromptDetail) => {
   return areAcrsRequestedInPrompt({
-    prompt: prompt,
+    prompt,
     acrs: [
       ACR_VALUE_FOR_IAL1_AAL1,
       ACR_VALUE_FOR_IAL1_AAL2,
@@ -90,10 +89,7 @@ export const isThereAnyRequestedAcr = (prompt: EssentialAcrPromptDetail) => {
   });
 };
 
-export const isAcrSatisfied = (
-  prompt: EssentialAcrPromptDetail,
-  currentAcr: string,
-) => {
+export const isAcrSatisfied = (prompt: PromptDetail, currentAcr: string) => {
   // if no acr is required it is satisfied
   if (!containsEssentialAcrs(prompt)) {
     return true;
@@ -101,7 +97,7 @@ export const isAcrSatisfied = (
 
   // if current acr is requested in prompt it is satisfied
   return areAcrsRequestedInPrompt({
-    prompt: prompt,
+    prompt,
     acrs: [currentAcr],
   });
 };

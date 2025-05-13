@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "ProConnect Base",
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    "checkJs": false,
+    "composite": true,
+    "esModuleInterop": true,
+    // TODO(douglasduteil): remove this line
+    // We might want to acticate exactOptionalPropertyTypes
+    "exactOptionalPropertyTypes": false,
+    "ignoreDeprecations": "5.0",
+    "isolatedModules": true,
+    "lib": ["ESNext"],
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "noImplicitReturns": false,
+    // TODO(douglasduteil): remove this line
+    // We might want to acticate noUncheckedIndexedAccess
+    "noUncheckedIndexedAccess": false,
+    "preserveSymlinks": true,
+    "preserveWatchOutput": true,
+    "target": "ESNext",
+    "types": [],
+    "verbatimModuleSyntax": true,
+  }
+}

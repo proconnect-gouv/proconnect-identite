@@ -1,3 +1,5 @@
+import type { FranceConnectOidcSession } from "../managers/session/franceconnect";
+
 export interface UnauthenticatedSessionData {
   email?: string;
   loginHint?: string;
@@ -8,6 +10,7 @@ export interface UnauthenticatedSessionData {
   twoFactorsAuthRequested?: boolean;
   referrerPath?: string;
   authForProconnectFederation?: boolean;
+  certificationDirigeantRequested?: boolean;
 }
 
 export type AmrValue =
@@ -18,7 +21,7 @@ export type AmrValue =
   | "mfa"
   // "email-link" is described as "mail" here https://docs.partenaires.franceconnect.gouv.fr/fs/fs-technique/fs-technique-amr/
   | "email-link"
-  // "email-otp" and "uv" is used in MonComptePro for internal usage
+  // "email-otp" and "uv" is used in ProConnect Identité for internal usage
   | "email-otp"
   | "uv";
 
@@ -28,7 +31,9 @@ export interface AuthenticatedSessionData {
 }
 
 declare module "express-session" {
-  export interface SessionData extends UnauthenticatedSessionData {
+  export interface SessionData
+    extends UnauthenticatedSessionData,
+      FranceConnectOidcSession {
     user?: User;
     temporaryEncryptedTotpKey?: string;
     amr?: AmrValue[];

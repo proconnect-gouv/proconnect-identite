@@ -1,8 +1,8 @@
-import { upsertFactory } from "@gouvfr-lasuite/proconnect.identite/organization";
-import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
+import { upsertFactory } from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
+import { updateUserOrganizationLinkFactory } from "@gouvfr-lasuite/proconnect.identite/repositories/user";
+import type { UserOrganizationLink } from "@gouvfr-lasuite/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../../connectors/postgres";
-import { hashToPostgresParams } from "../../services/hash-to-postgres-params";
 
 export const upsert = upsertFactory({ pg: getDatabaseConnection() });
 
@@ -48,32 +48,9 @@ RETURNING *`,
   return rows.shift()!;
 };
 
-export const updateUserOrganizationLink = async (
-  organization_id: number,
-  user_id: number,
-  fieldsToUpdate: Partial<BaseUserOrganizationLink>,
-) => {
-  const connection = getDatabaseConnection();
-
-  const fieldsToUpdateWithTimestamps = {
-    ...fieldsToUpdate,
-    updated_at: new Date(),
-  };
-
-  const { paramsString, valuesString, values } = hashToPostgresParams<User>(
-    fieldsToUpdateWithTimestamps,
-  );
-
-  const { rows }: QueryResult<UserOrganizationLink> = await connection.query(
-    `
-UPDATE users_organizations SET ${paramsString} = ${valuesString}
-WHERE organization_id = $${values.length + 1}
-AND user_id = $${values.length + 2} RETURNING *`,
-    [...values, organization_id, user_id],
-  );
-
-  return rows.shift()!;
-};
+export const updateUserOrganizationLink = updateUserOrganizationLinkFactory({
+  pg: getDatabaseConnection(),
+});
 
 export const deleteUserOrganization = async ({
   user_id,

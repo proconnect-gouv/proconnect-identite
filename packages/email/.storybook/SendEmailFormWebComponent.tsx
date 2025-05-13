@@ -54,7 +54,7 @@ export class SendEmailFormWebComponent extends HTMLElement {
       body: JSON.stringify({
         htmlContent: template,
         sender: {
-          name: "MonComptePro",
+          name: "ProConnect",
           email: "nepasrepondre@email.moncomptepro.beta.gouv.fr",
         },
         subject: this.#object.value,

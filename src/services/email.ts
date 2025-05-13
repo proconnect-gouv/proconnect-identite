@@ -1,7 +1,9 @@
 //
 
-import { isAFreeDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
-import { parse_host } from "tld-extract";
+import {
+  getEmailDomain,
+  isAFreeDomain,
+} from "@gouvfr-lasuite/proconnect.core/services/email";
 import {
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE,
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE,
@@ -17,14 +19,6 @@ export const isAFreeEmailProvider = (domain: string) => {
   }
 
   return isAFreeDomain(domain);
-};
-
-export const getEmailDomain = (email: string) => {
-  const parts = email.split("@");
-  const host = parts[parts.length - 1];
-  const { sub, domain } = parse_host(host, { allowDotlessTLD: true });
-
-  return [sub, domain].filter((e) => !!e).join(".");
 };
 
 export const usesAFreeEmailProvider = (email: string) => {

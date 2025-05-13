@@ -10,8 +10,8 @@ const obfuscatedConnectionString = (DATABASE_URL || "").replace(
   "//****:****@",
 );
 
-// This function is used in Hyyypertool to enable the manager function from MonComptePro.
-// Hyyypertool imports MonComptePro and then updates the Database connection to use its own.
+// This function is used in Hyyypertool to enable the manager function from ProConnect Identité.
+// Hyyypertool imports ProConnect Identité and then updates the Database connection to use its own.
 export const setDatabaseConnection = (newPool: Pg.Pool) => {
   pool = newPool;
 };

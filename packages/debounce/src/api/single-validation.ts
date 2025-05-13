@@ -1,6 +1,6 @@
 //
 
-import type { DebounceSuccessResponse } from "#src/types/index.js";
+import type { DebounceSuccessResponse } from "#src/types";
 import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
 
 //

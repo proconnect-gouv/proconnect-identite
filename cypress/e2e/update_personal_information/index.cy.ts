@@ -19,12 +19,12 @@ describe("Signup into new entreprise unipersonnelle", () => {
       "Mise à jour de vos données personnelles",
     ).then((email) => {
       cy.maildevVisitMessageById(email.id);
+      cy.maildevDeleteMessageById(email.id);
       cy.contains(
         "Nous vous informons que vos données personnelles ont été mises à jour avec succès.",
       );
       cy.contains("Prénom : Night");
       cy.contains("Nom de famille : Haunter");
-      cy.maildevDeleteMessageById(email.id);
     });
   });
 
@@ -42,5 +42,31 @@ describe("Signup into new entreprise unipersonnelle", () => {
         "Erreur : le format des informations personnelles est invalide.",
       );
     });
+  });
+
+  it("should no allow verified user to update given and family name", () => {
+    cy.visit("/personal-information");
+
+    cy.login("god-emperor@mankind.world");
+
+    ["given_name", "family_name"].forEach((inputName) => {
+      cy.get(`input[name="${inputName}"]`).should(
+        "have.attr",
+        "readonly",
+        "readonly",
+      );
+    });
+
+    cy.contains("Issue de votre vérification par FranceConnect");
+    cy.contains("Profession").click();
+    cy.focused().clear().type("Guide GPS Warp");
+
+    cy.get('[type="submit"]').contains("Mettre à jour").click();
+
+    cy.contains("Vos informations ont été mises à jour.");
+    cy.seeInField(
+      "Profession ou rôle au sein de votre organisation",
+      "Guide GPS Warp",
+    );
   });
 });

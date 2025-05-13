@@ -2,28 +2,32 @@
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "@kitajs/html",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@kitajs/html",
     "module": "Preserve",
     "moduleResolution": "Bundler",
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "outDir": "./build",
     "resolveJsonModule": true,
-    "rootDir": ".",
-    "verbatimModuleSyntax": true
+    "types": ["cypress"]
   },
-  "exclude": ["packages/*", "build/*"],
+  "exclude": ["packages/*", "build/*", "dist/*"],
+  "include": [
+    "cypress.config.ts",
+    "cypress/e2e",
+    "cypress/support",
+    "scripts",
+    "src"
+  ],
   "references": [
     { "path": "./packages/core/tsconfig.lib.json" },
+    { "path": "./packages/debounce/tsconfig.lib.json" },
     { "path": "./packages/email/tsconfig.lib.json" },
+    { "path": "./packages/entreprise/tsconfig.lib.json" },
     { "path": "./packages/identite/tsconfig.lib.json" },
-    { "path": "./packages/insee/tsconfig.lib.json" }
+    { "path": "./packages/testing/tsconfig.lib.json" }
   ],
-  "extends": "@tsconfig/node22/tsconfig.json"
+  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json"
 }

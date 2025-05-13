@@ -1,19 +1,30 @@
-// ***********************************************************
-// This example support/index.js is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
-
 import "cypress-axe";
 import "cypress-maildev";
 
 import "./commands";
+
+const RECORD_FOR_HUMANS = Cypress.env("RECORD_FOR_HUMANS") === true;
+
+if (RECORD_FOR_HUMANS) {
+  ["visit", "click", "trigger", "type", "clear", "reload", "select"].forEach(
+    (command) => {
+      Cypress.Commands.overwrite(
+        command as unknown as keyof Cypress.Chainable<any>,
+        (originalFn, ...args) => {
+          const origVal = originalFn(...args);
+
+          return new Promise((resolve) => {
+            setTimeout(
+              () => {
+                resolve(origVal);
+              },
+              RECORD_FOR_HUMANS ? 2000 : 0,
+            );
+          });
+        },
+      );
+    },
+  );
+  Cypress.config("viewportWidth", 1920);
+  Cypress.config("viewportHeight", 1080);
+}

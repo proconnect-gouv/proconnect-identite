@@ -1,12 +1,15 @@
+import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
+import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import {
+  InvalidSiretError,
+  NotFoundError,
+  OrganizationNotActiveError,
+} from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { z, ZodError } from "zod";
 import {
-  InseeConnectionError,
-  InseeNotActiveError,
-  InvalidSiretError,
-  NotFoundError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -30,7 +33,6 @@ import {
   optionalBooleanSchema,
   siretSchema,
 } from "../services/custom-zod-schemas";
-import { getEmailDomain } from "../services/email";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
 
@@ -131,7 +133,7 @@ export const postJoinOrganizationMiddleware = async (
 
     if (
       error instanceof InvalidSiretError ||
-      error instanceof InseeNotActiveError ||
+      error instanceof OrganizationNotActiveError ||
       (error instanceof ZodError && hasErrorFromField(error, "siret"))
     ) {
       return res.redirect(
@@ -139,7 +141,7 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
-    if (error instanceof InseeConnectionError) {
+    if (error instanceof EntrepriseApiError) {
       return res.redirect(
         `/users/join-organization?notification=insee_unexpected_error&siret_hint=${req.body.siret}`,
       );

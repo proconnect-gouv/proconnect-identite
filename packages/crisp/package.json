@@ -1,6 +1,6 @@
 {
   "name": "@gouvfr-lasuite/proconnect.crisp",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "⚡ Typed Crisp API",
   "keywords": [
     "crisp",
@@ -9,19 +9,22 @@
     "api",
     "rest"
   ],
-  "homepage": "https://github.com/numerique-gouv/moncomptepro/tree/master/packages/crisp#readme",
-  "bugs": "https://github.com/numerique-gouv/moncomptepro/issues",
+  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/crisp#readme",
+  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/numerique-gouv/moncomptepro.git",
+    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
     "directory": "packages/crisp"
   },
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
   "imports": {
-    "#src/*": "./src/*.ts",
-    "#test/*": "./test/*.ts"
+    "#src/*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    },
+    "#testing/*": "./testing/*.ts"
   },
   "exports": {
     "./*": {
@@ -43,23 +46,11 @@
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "test": "exit 0"
   },
-  "mocha": {
-    "file": [
-      "test/dotenv.ts"
-    ],
-    "reporter": "spec",
-    "require": [
-      "tsx"
-    ],
-    "spec": "src/**/*.test.ts"
-  },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.0",
-    "@vitest/expect": "^2.1.8",
-    "chai": "^5.1.2",
-    "dotenv": "^16.4.5",
-    "mocha": "^11.0.1",
-    "tsx": "^4.19.2"
+    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@vitest/expect": "^3.1.1",
+    "dotenv": "^16.5.0",
+    "tsx": "^4.19.4"
   },
   "publishConfig": {
     "access": "public",

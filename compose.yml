@@ -1,0 +1,78 @@
+services:
+  db:
+    image: postgres:16.6
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: moncomptepro
+      POSTGRES_PASSWORD: moncomptepro
+      POSTGRES_DB: moncomptepro
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.2
+    ports:
+      - "6379:6379"
+
+  demo-test-client:
+    image: ghcr.io/numerique-gouv/proconnect-test-client
+    environment:
+      PORT: 3001
+      # default env var can be found at https://github.com/numerique-gouv/proconnect-test-client/blob/master/.env
+      HOST: http://localhost:3001
+      PC_CLIENT_ID: client_id
+      PC_PROVIDER: http://localhost:3000/
+    network_mode: "host"
+
+  standard-client:
+    image: ghcr.io/numerique-gouv/proconnect-test-client
+    environment:
+      PORT: 4000
+      SITE_TITLE: standard-client
+      HOST: http://localhost:4000
+      PC_CLIENT_ID: standard_client_id
+      PC_CLIENT_SECRET: standard_client_secret
+      PC_PROVIDER: http://localhost:3000
+      PC_SCOPES: openid email profile organization
+      ACR_VALUE_FOR_2FA: "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"
+      STYLESHEET_URL:
+    network_mode: "host"
+
+  proconnect-federation-client:
+    image: ghcr.io/numerique-gouv/proconnect-test-client
+    environment:
+      PORT: 4001
+      SITE_TITLE: proconnect-federation-client
+      HOST: http://localhost:4001
+      PC_CLIENT_ID: proconnect_federation_client_id
+      PC_CLIENT_SECRET: proconnect_federation_client_secret
+      PC_PROVIDER: http://localhost:3000
+      PC_SCOPES: openid uid given_name usual_name email siren siret organizational_unit belonging_population phone chorusdt is_service_public is_public_service
+      PC_ID_TOKEN_SIGNED_RESPONSE_ALG: ES256
+      PC_USERINFO_SIGNED_RESPONSE_ALG: ES256
+      STYLESHEET_URL:
+      LOGIN_HINT: unused1@yopmail.com
+      ACR_VALUES: eidas1
+    network_mode: "host"
+
+  maildev:
+    image: soulteary/maildev
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://127.0.0.1:1080/healthz",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    network_mode: "host"
+
+volumes:
+  db-data:

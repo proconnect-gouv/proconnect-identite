@@ -1,5 +1,6 @@
 import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import {
   isCommune,
   isEducationNationaleDomain,
@@ -36,7 +37,7 @@ const small_association_org_info = {
 } as Organization;
 
 const entreprise_unipersonnelle_org_info = {
-  siret: "81801912700021",
+  siret: "82869625200018",
   cached_tranche_effectifs: null,
   cached_tranche_effectifs_unite_legale: null,
   cached_libelle_tranche_effectif: null,

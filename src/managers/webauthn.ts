@@ -1,4 +1,8 @@
 import {
+  NotFoundError,
+  UserNotFoundError,
+} from "@gouvfr-lasuite/proconnect.identite/errors";
+import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
   type VerifiedAuthenticationResponse,
@@ -13,10 +17,8 @@ import type {
 import { isEmpty } from "lodash-es";
 import moment from "moment";
 import "moment-timezone";
-import { APPLICATION_NAME, HOST, MONCOMPTEPRO_IDENTIFIER } from "../config/env";
+import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
 import {
-  NotFoundError,
-  UserNotFoundError,
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
@@ -29,8 +31,8 @@ import {
   updateAuthenticator,
 } from "../repositories/authenticator";
 import {
-  findById,
   findByEmail as findUserByEmail,
+  getById,
   update,
 } from "../repositories/user";
 import { encodeBase64URL } from "../services/base64";
@@ -40,19 +42,15 @@ import { disableForce2fa, enableForce2fa, is2FACapable } from "./2fa";
 // Human-readable title for your website
 const rpName = APPLICATION_NAME;
 // A unique identifier for your website
-const rpID = MONCOMPTEPRO_IDENTIFIER;
+const rpID = WEBSITE_IDENTIFIER;
 // The URL at which registrations and authentications should occur
 const origin = HOST;
 
 export const isWebauthnConfiguredForUser = async (user_id: number) => {
-  const user = await findById(user_id);
-
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
+  // ASSERTION: user exists
+  await getById(user_id);
 
   const authenticators = await getAuthenticatorsByUserId(user_id);
-
   return !isEmpty(authenticators);
 };
 

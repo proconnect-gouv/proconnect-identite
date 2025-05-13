@@ -1,6 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
     "composite": true,
     "esModuleInterop": true,
@@ -11,21 +10,13 @@
     "module": "Preserve",
     "moduleResolution": "Bundler",
     "noEmitOnError": true,
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "plugins": [{ "name": "@kitajs/ts-html-plugin" }],
     "preserveSymlinks": true,
-    "preserveWatchOutput": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
     "strictNullChecks": true,
-    "target": "ESNext",
-    "types": ["vite/client"],
-    "verbatimModuleSyntax": true
+    "types": ["vite/client"]
   },
+  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
   "files": [],
   "include": ["src/**/*.ts", "src/**/*.tsx", ".storybook/**/*.tsx"],
   "references": []

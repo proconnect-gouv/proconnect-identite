@@ -17,11 +17,9 @@ describe("force recent connexion + 2FA on admin pages", () => {
     // Wait for connexion to last
     cy.wait(5 * 1000);
 
-    cy.get(
-      '[action="/delete-authenticator-app-configuration"]  [type="submit"]',
-    )
-      .contains("Supprimer l’application d’authentification")
-      .click();
+    cy.getDescribed("Code à usage unique").within(() => {
+      cy.contains("Supprimer").click();
+    });
 
     cy.contains("merci de vous identifier à nouveau");
 

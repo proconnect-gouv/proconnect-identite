@@ -18,7 +18,7 @@
                                 <h3 class="fr-tile__title">
                                     <a
                                             class="fr-link fr-tile__link"
-                                            href="https://annuaire-entreprises.data.gouv.fr/etablissement/<%= siret; %>?mtm_campaign=moncomptepro"
+                                            href="https://annuaire-entreprises.data.gouv.fr/etablissement/<%= siret; %>?mtm_campaign=proconnect"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             aria-label="<%= cached_libelle; %> - détails sur l’Annuaire des Entreprises (nouvelle fenêtre)"
@@ -67,7 +67,7 @@
                                 <h3 class="fr-tile__title">
                                     <a
                                             class="fr-link fr-tile__link"
-                                            href="https://annuaire-entreprises.data.gouv.fr/etablissement/<%= siret; %>?mtm_campaign=moncomptepro"
+                                            href="https://annuaire-entreprises.data.gouv.fr/etablissement/<%= siret; %>?mtm_campaign=proconnect"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             aria-label="<%= cached_libelle; %> - détails sur l’Annuaire des Entreprises (nouvelle fenêtre)"
@@ -75,7 +75,7 @@
                                 </h3>
                                 <p class="fr-tile__desc fr-pb-0"><%= cached_adresse; %></p>
                                 <p class="fr-tile__desc"><%= cached_libelle_activite_principale; %></p>
-                                <p class="fr-card__detail fr-icon-time-line">
+                                <p class="fr-card__detail fr-icon-time-line fr-mb-2w">
                                     Votre demande pour représenter cette organisation en cours de traitement
                                 </p>
                                 <form action="/users/cancel-moderation/<%= moderation_id %>" method="post">

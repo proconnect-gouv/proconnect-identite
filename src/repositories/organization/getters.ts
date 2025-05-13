@@ -1,46 +1,22 @@
+import {
+  findByIdFactory,
+  findByUserIdFactory,
+  getByIdFactory,
+  getUsersByOrganizationFactory,
+} from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
 import type {
   Organization,
-  User,
+  UserOrganizationLink,
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../../connectors/postgres";
 
-export const findById = async (id: number) => {
-  const connection = getDatabaseConnection();
+export const getById = getByIdFactory({ pg: getDatabaseConnection() });
+export const findById = findByIdFactory({ pg: getDatabaseConnection() });
+export const findByUserId = findByUserIdFactory({
+  pg: getDatabaseConnection(),
+});
 
-  const { rows }: QueryResult<Organization> = await connection.query(
-    `
-SELECT *
-FROM organizations
-WHERE id = $1`,
-    [id],
-  );
-
-  return rows.shift();
-};
-export const findByUserId = async (user_id: number) => {
-  const connection = getDatabaseConnection();
-
-  const { rows }: QueryResult<Organization & BaseUserOrganizationLink> =
-    await connection.query(
-      `
-SELECT
-    o.*,
-    uo.is_external,
-    uo.verification_type,
-    uo.has_been_greeted,
-    uo.needs_official_contact_email_verification,
-    uo.official_contact_email_verification_token,
-    uo.official_contact_email_verification_sent_at
-FROM organizations o
-INNER JOIN users_organizations uo ON uo.organization_id = o.id
-WHERE uo.user_id = $1
-ORDER BY uo.created_at`,
-      [user_id],
-    );
-
-  return rows;
-};
 export const findPendingByUserId = async (user_id: number) => {
   const connection = getDatabaseConnection();
 
@@ -85,37 +61,9 @@ ORDER BY member_count desc NULLS LAST;`,
   return rows;
 };
 
-export const getUsersByOrganization = async (
-  organization_id: number,
-  additionalWhereClause: string = "",
-  additionalParams: any[] = [],
-) => {
-  const connection = getDatabaseConnection();
-  const baseParams = [organization_id];
-
-  const { rows }: QueryResult<User & BaseUserOrganizationLink> =
-    await connection.query(
-      `
-SELECT
-    u.*,
-    uo.is_external,
-    uo.verification_type,
-    uo.has_been_greeted,
-    uo.needs_official_contact_email_verification,
-    uo.official_contact_email_verification_token,
-    uo.official_contact_email_verification_sent_at
-FROM users u
-INNER JOIN users_organizations AS uo ON uo.user_id = u.id
-WHERE uo.organization_id = $1
-${additionalWhereClause}`,
-      [...baseParams, ...additionalParams],
-    );
-
-  return rows;
-};
-
-export const getUsers = (organization_id: number) =>
-  getUsersByOrganization(organization_id);
+export const getUsers = getUsersByOrganizationFactory({
+  pg: getDatabaseConnection(),
+});
 
 export const getUserOrganizationLink = async (
   organization_id: number,

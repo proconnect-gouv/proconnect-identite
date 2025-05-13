@@ -1,3 +1,4 @@
+import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import { singleValidationFactory } from "@gouvfr-lasuite/proconnect.debounce/api";
 import {
   DEBOUNCE_API_KEY,
@@ -5,7 +6,6 @@ import {
   FEATURE_CHECK_EMAIL_DELIVERABILITY,
   HTTP_CLIENT_TIMEOUT,
 } from "../config/env";
-import { getEmailDomain } from "../services/email";
 import { logger } from "../services/log";
 
 type EmailDebounceInfo = {
@@ -13,7 +13,7 @@ type EmailDebounceInfo = {
   didYouMean?: string;
 };
 
-const singleValidation = singleValidationFactory(DEBOUNCE_API_KEY, {
+export const singleValidation = singleValidationFactory(DEBOUNCE_API_KEY, {
   timeout: HTTP_CLIENT_TIMEOUT,
 });
 
@@ -34,19 +34,25 @@ export const isEmailSafeToSendTransactional = async (
   }
 
   try {
-    const { send_transactional, did_you_mean: didYouMean } =
-      await singleValidation(email);
+    const {
+      send_transactional,
+      did_you_mean: didYouMean,
+      code,
+    } = await singleValidation(email);
+    const isEmailSafeToSend = send_transactional === "1";
 
-    logger.info(
-      `Email address "${email}" is ${
-        send_transactional === "1" ? "" : "NOT "
-      }safe to send.${didYouMean ? ` Suggested email ${didYouMean}` : ""}`,
-    );
+    if (isEmailSafeToSend) {
+      logger.info(
+        `Email address "${email}" is safe to send (code ${code}).${didYouMean ? ` Suggested email ${didYouMean}` : ""}`,
+      );
+    } else {
+      logger.warn(
+        `Email address "${email}" is NOT safe to send (code ${code}).${didYouMean ? ` Suggested email ${didYouMean}` : ""}`,
+      );
+    }
 
-    return { isEmailSafeToSend: send_transactional === "1", didYouMean };
+    return { isEmailSafeToSend, didYouMean };
   } catch (error) {
-    logger.error(error);
-
-    throw new Error("Error from Debounce API");
+    throw new Error("Error from Debounce API", { cause: error });
   }
 };

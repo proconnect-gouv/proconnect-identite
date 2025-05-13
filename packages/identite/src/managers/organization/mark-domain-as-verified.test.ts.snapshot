@@ -1,0 +1,31 @@
+exports[`markDomainAsVerifiedFactory > should update organization members > should call addDomain with 1`] = `
+[
+  {
+    "arguments": [
+      {
+        "organization_id": 42,
+        "domain": "darkangels.world",
+        "verification_type": "verified"
+      }
+    ],
+    "result": {},
+    "stack": {}
+  }
+]
+`;
+
+exports[`markDomainAsVerifiedFactory > should update organization members > should call updateUserOrganizationLink with 1`] = `
+[
+  {
+    "arguments": [
+      42,
+      42,
+      {
+        "verification_type": "domain"
+      }
+    ],
+    "result": {},
+    "stack": {}
+  }
+]
+`;

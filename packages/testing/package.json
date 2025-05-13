@@ -1,0 +1,41 @@
+{
+  "name": "@gouvfr-lasuite/proconnect.testing",
+  "version": "0.5.2",
+  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/testing#readme",
+  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
+    "directory": "packages/testing"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*/index.ts"
+  },
+  "exports": {
+    "./*": "./src/*/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.lib.json",
+    "dev:test": "tsx --watch --test src/**/*.test.ts tests/**/*.test.ts",
+    "test": "npm run test:unit",
+    "test:unit": "tsx --test --test-only --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
+  },
+  "dependencies": {
+    "@gouvfr-lasuite/proconnect.entreprise": "0.0.0",
+    "@hono/node-server": "^1.14.1",
+    "@hono/zod-validator": "^0.5.0",
+    "hono": "^4.7.9"
+  },
+  "devDependencies": {
+    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@types/yargs": "^17.0.33",
+    "yargs": "^17.7.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

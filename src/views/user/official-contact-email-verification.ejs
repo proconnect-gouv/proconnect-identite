@@ -2,13 +2,13 @@
     <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
     <div class="fr-mb-2w">
         <h1 class="fr-h3">
-            Vérifier votre email
+            Vérifier votre adresse email
         </h1>
         <div>
             <form id="verify-email" action="/users/official-contact-email-verification/<%= organization_id %>" method="post" autocomplete="off">
                 <p>
                     Pour vérifier votre appartenance à l’organisation <%= libelle %>,
-                    nous avons envoyé un <% if (newCodeSent) { %>nouveau <% } %>code secret à l’adresse email de votre <%= organization_type_label; %> :
+                    nous avons envoyé un <% if (newCodeSent) { %>nouveau <% } %>code à l’adresse email officielle de votre <%= organization_type_label; %> :
                     <span class="fr-badge fr-badge--info fr-badge--no-icon email-badge-lowercase">
                         <%= contactEmail; %>
                     </span>.
@@ -27,18 +27,18 @@
                            autocomplete="off">
                 </div>
                 <%- include('../partials/submit-button.ejs', {label: 'Valider'}) %>
+                <div class="fr-alert fr-alert--info fr-mt-2w">
+                    <p>
+                        Cette adresse email n’est plus à jour ?
+                    </p>
+                    <p>
+                        <a class="fr-link" href="https://lannuaire.service-public.fr/" target="_blank" rel="noopener noreferrer">
+                            Modifiez-la sur l’annuaire du service public.
+                        </a>
+                    </p>
+                </div>
                 <%- include('../partials/go-back.ejs') %>
             </form>
         </div>
-    </div>
-    <div class="fr-alert fr-alert--info">
-        <p>
-            Cette adresse email n’est pas à jour.
-        </p>
-        <p>
-            <a class="fr-link fr-fi-arrow-right-line fr-link--icon-left" href="https://lannuaire.service-public.fr/">
-                Faire une demande de mise à jour sur l’annuaire du service public.
-            </a>
-        </p>
     </div>
 </div>

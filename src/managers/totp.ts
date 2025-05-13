@@ -3,11 +3,11 @@ import { isEmpty } from "lodash-es";
 import qrcode from "qrcode";
 import {
   APPLICATION_NAME,
-  MONCOMPTEPRO_IDENTIFIER,
   SYMMETRIC_ENCRYPTION_KEY,
+  WEBSITE_IDENTIFIER,
 } from "../config/env";
-import { InvalidTotpTokenError, UserNotFoundError } from "../config/errors";
-import { findById, update } from "../repositories/user";
+import { InvalidTotpTokenError } from "../config/errors";
+import { getById, update } from "../repositories/user";
 import {
   decryptSymmetric,
   encryptSymmetric,
@@ -20,12 +20,7 @@ export const generateAuthenticatorAppRegistrationOptions = async (
 ) => {
   let totpKey = existingTotpKey ?? generateSecret(32);
 
-  const uri = generateUri(
-    APPLICATION_NAME,
-    email,
-    totpKey,
-    MONCOMPTEPRO_IDENTIFIER,
-  );
+  const uri = generateUri(APPLICATION_NAME, email, totpKey, WEBSITE_IDENTIFIER);
 
   // lower case for easier usage (no caps lock required)
   // add a space every 4 char for better readability
@@ -51,11 +46,8 @@ export const confirmAuthenticatorAppRegistration = async (
   temporaryTotpKey: string | undefined,
   totpToken: string,
 ) => {
-  const user = await findById(user_id);
-
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
+  // ASSERTION: user exists
+  await getById(user_id);
 
   if (!temporaryTotpKey || !validateToken(temporaryTotpKey, totpToken, 2)) {
     throw new InvalidTotpTokenError();
@@ -74,11 +66,7 @@ export const confirmAuthenticatorAppRegistration = async (
 };
 
 export const deleteAuthenticatorAppConfiguration = async (user_id: number) => {
-  let user = await findById(user_id);
-
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
+  let user = await getById(user_id);
 
   user = await update(user_id, {
     encrypted_totp_key: null,
@@ -93,12 +81,7 @@ export const deleteAuthenticatorAppConfiguration = async (user_id: number) => {
 };
 
 export const isAuthenticatorAppConfiguredForUser = async (user_id: number) => {
-  const user = await findById(user_id);
-
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-
+  const user = await getById(user_id);
   return !isEmpty(user.encrypted_totp_key);
 };
 
@@ -106,11 +89,7 @@ export const authenticateWithAuthenticatorApp = async (
   user_id: number,
   token: string,
 ) => {
-  const user = await findById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-
+  const user = await getById(user_id);
   const decryptedTotpKey = decryptSymmetric(
     SYMMETRIC_ENCRYPTION_KEY,
     user.encrypted_totp_key,

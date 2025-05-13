@@ -32,12 +32,13 @@ document.addEventListener(
       clearDisplay();
       beginElement.disabled = true;
 
-      // GET registration options from the endpoint that calls
-      // @simplewebauthn/server -> generateRegistrationOptions()
-      const resp = await fetch("/api/webauthn/generate-registration-options");
-
       let attResp;
+
       try {
+        // GET registration options from the endpoint that calls
+        // @simplewebauthn/server -> generateRegistrationOptions()
+        const resp = await fetch("/api/webauthn/generate-registration-options");
+
         // Pass the options to the authenticator and wait for a response
         attResp = await startRegistration(await resp.json());
       } catch (error) {

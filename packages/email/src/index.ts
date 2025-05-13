@@ -11,6 +11,5 @@ export { default as ModerationProcessed } from "./ModerationProcessed";
 export { default as OfficialContactEmailVerification } from "./OfficialContactEmailVerification";
 export { default as ResetPassword } from "./ResetPassword";
 export { default as UpdatePersonalDataMail } from "./UpdatePersonalDataMail";
-export { default as UpdateTotpApplication } from "./UpdateTotpApplication";
 export { default as VerifyEmail } from "./VerifyEmail";
 export { default as Welcome } from "./Welcome";

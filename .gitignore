@@ -2,8 +2,9 @@ node_modules
 *.swp
 *.swo
 *.orig
-.env
-.env*.local
+# https://www.npmjs.com/package/dotenv-flow?activeTab=readme#files-under-version-control
+.env.local
+.env.*.local
 jwks.json
 *.log
 

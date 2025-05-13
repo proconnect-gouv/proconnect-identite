@@ -1,11 +1,11 @@
 {
   "name": "@gouvfr-lasuite/proconnect.identite",
-  "version": "0.3.0",
-  "homepage": "https://github.com/numerique-gouv/moncomptepro/tree/master/packages/identite#readme",
-  "bugs": "https://github.com/numerique-gouv/moncomptepro/issues",
+  "version": "0.5.2",
+  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/identite#readme",
+  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/numerique-gouv/moncomptepro.git",
+    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
     "directory": "packages/identite"
   },
   "license": "MIT",
@@ -15,7 +15,9 @@
     "#src/*": {
       "types": "./dist/*/index.d.ts",
       "default": "./dist/*/index.js"
-    }
+    },
+    "#testing": "./testing/index.ts",
+    "#testing/*": "./testing/*/index.ts"
   },
   "exports": {
     "./*": {
@@ -33,34 +35,30 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.lib.json",
-    "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "check": "npm run build -- --noEmit",
+    "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "dev": "npm run build -- --watch --preserveWatchOutput",
-    "test": "mocha"
-  },
-  "mocha": {
-    "reporter": "spec",
-    "require": [
-      "tsx"
-    ],
-    "spec": "src/**/*.test.ts"
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "test": "tsx --test --test-only --test-reporter=spec src/**/*.test.ts",
+    "test:update-snapshots": "tsx --test --test-reporter=spec --test-update-snapshots src/**/*.test.ts"
   },
   "dependencies": {
-    "sql-template-tag": "^5.2.1"
+    "leven": "^4.0.0",
+    "openid-client": "^6.4.2",
+    "sql-template-tag": "^5.2.1",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.2.15",
-    "@gouvfr-lasuite/proconnect.core": "^0.3.0",
-    "@gouvfr-lasuite/proconnect.insee": "^0.3.0",
-    "@tsconfig/node22": "^22.0.0",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^22.10.2",
+    "@electric-sql/pglite": "^0.3.0",
+    "@gouvfr-lasuite/proconnect.core": "^0.5.0",
+    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@gouvfr-lasuite/proconnect.entreprise": "^0.0.0",
+    "@sinonjs/fake-timers": "^14.0.0",
+    "@types/node": "^22.14.1",
     "await-to-js": "^3.0.0",
-    "chai": "^5.1.2",
-    "mocha": "^11.0.1",
-    "node-pg-migrate": "^7.6.1",
-    "pg": "^8.13.0",
-    "tsx": "^4.19.2"
+    "node-pg-migrate": "^7.9.1",
+    "pg": "^8.14.1",
+    "tsx": "^4.19.4"
   },
   "publishConfig": {
     "access": "public",

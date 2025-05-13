@@ -158,8 +158,9 @@ VALUES
   (73, 'vhugovhugovhugo99+11@gmail.com', false, null, null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Victor', 'Hugo', null, null, null, null, false, true, true),
   (74, 'vhugovhugovhugo99+12@gmail.com', false, null, null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Victor', 'Hugo', null, null, null, null, false, true, true),
   (75, 'vhugovhugovhugo99@gmail.com', false, null, null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Victor', 'Hugo', null, null, null, null, false, true, true),
-  (76, 'admin+playwright@immersion-facile.beta.gouv.fr', false, null, null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Victor', 'Hugo', null, null, null, null, false, true, true),
-  (77, 'recette+playwright@immersion-facile.beta.gouv.fr', false, null, null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Victor', 'Hugo', null, null, null, null, false, true, true)
+  -- password for the following user is 'password123'
+  (76, 'admin+playwright@immersion-facile.beta.gouv.fr', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Immersion', '0123456789', 'Immersion', null, null, false, false, false),
+  (77, 'recette+playwright@immersion-facile.beta.gouv.fr', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Immersion', '0123456789', 'Immersion', null, null, false, false, false)
 ON CONFLICT (id)
   DO UPDATE
   SET (email, email_verified, email_verified_at, encrypted_password, created_at, updated_at, given_name, family_name,
@@ -235,7 +236,8 @@ VALUES
   (49, '50056940503239', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   (50, '20004697700019', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   -- back to normal organizations
-  (51, '13003013300016', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  (51, '13003013300016', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (52, '21850292000018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
   ON CONFLICT (id)
   DO UPDATE
          SET (siret, created_at, updated_at) = (EXCLUDED.siret, EXCLUDED.created_at, EXCLUDED.updated_at);
@@ -429,7 +431,8 @@ VALUES
   (74, 50, 'verified_email_domain', true),
   (75, 50, 'verified_email_domain', true),
   (76, 51, 'verified_email_domain', true),
-  (77, 51, 'verified_email_domain', true)
+  (77, 51, 'verified_email_domain', true),
+  (1, 52, 'verified_email_domain', true)
 ON CONFLICT (user_id, organization_id)
   DO UPDATE
   SET (verification_type, has_been_greeted)
@@ -788,7 +791,7 @@ VALUES
      'https://fca.integ01.dev-agentconnect.fr/api/v2/client/logout-callback'
      ],
    'openid uid given_name usual_name email phone siret is_service_public is_public_service',
-   'https://agentconnect.gouv.fr/',
+   'https://www.proconnect.gouv.fr/',
    'Dispositif d’identification des agents de la fonction publique.',
    'ES256', 'ES256', 'ES256', 'ES256'),
   (16,
@@ -921,17 +924,19 @@ VALUES
    'client_id',
    'client_secret',
    ARRAY [
-     'https://test.moncomptepro.beta.gouv.fr/login-callback',
+     'https://test.identite.proconnect.gouv.fr/login-callback',
+     'https://test.identite-preprod.proconnect.gouv.fr/login-callback',
      'http://localhost:3000/login-callback',
      'http://localhost:3001/login-callback'
      ],
    ARRAY [
-     'https://test.moncomptepro.beta.gouv.fr/',
+     'https://test.identite.proconnect.gouv.fr/',
+     'https://test.identite-preprod.proconnect.gouv.fr/',
      'http://localhost:3000/',
      'http://localhost:3001/'
      ],
    'openid email profile organization',
-   'https://test.moncomptepro.beta.gouv.fr/',
+   'https://test.identite.proconnect.gouv.fr/',
    'ProConnect test client. More info: https://github.com/numerique-gouv/proconnect-test-client.',
    null, null, null, null),
   (24,
@@ -1142,6 +1147,20 @@ VALUES
    'openid email organization profile',
    'https://localhost/',
    'Le Planka du Lab de l’ANSSI',
+   null, null, null, null),
+  (36,
+   'ProConnect ID - Usability test client',
+   '6HR83qf5zJXENcN2yrjVHPJvM9hxgVM4DuT70Zz0REtc1ZgCWNMPmijw0AK3TuC2gejwvLUkKCQ5XSxUtWmyYCrjnAGMeqkhS1yaTErc7YPdMpaDp9aPSprT01hdeZPA',
+   'Crvkykfi6yAeH0JFQMteCmwqateVH4rBQtKeTx7hf0H2NkUNqVxGTcyKR9PDVQN6QeJZr48W8kuH2z1YXGKwFJiJafiJ1jDriGf0dvfB58z3vKviHbx1g4ALUBWmC7Zy',
+   ARRAY [
+     'https://test-usability.identite.proconnect.gouv.fr/login-callback'
+     ],
+   ARRAY [
+     'https://test-usability.identite.proconnect.gouv.fr/'
+     ],
+   'openid email organization profile',
+   'https://test-usability.identite.proconnect.gouv.fr/',
+   'Application pour tests UX',
    null, null, null, null)
 ON CONFLICT (id)
   DO UPDATE

@@ -16,8 +16,11 @@ declare global {
       fillTotpFields(totpSecret?: string): Chainable<void>;
       login(email: string): Chainable<void>;
       mfaLogin(email: string): Chainable<void>;
+      seeInField: typeof seeInFieldCommand;
       setCustomParams(customParams: any): Chainable<void>;
       setRequestedAcrs(requestedAcrs?: string[]): Chainable<void>;
+      getDescribed: typeof getDescribedCommand;
+      getByLabel: typeof getByLabelCommand;
     }
   }
 }
@@ -30,7 +33,7 @@ const defaultTotpSecret = "din5ncvbluqpx7xfzqcybmibmtjocnsf";
 const defaultPassword = "password123";
 
 Cypress.Commands.add("fillTotpFields", (totpSecret = defaultTotpSecret) => {
-  const totp = generateToken(totpSecret, Date.now());
+  const totp = generateToken(totpSecret);
   cy.get("[name=totpToken]").type(totp);
   cy.get(
     '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
@@ -51,7 +54,7 @@ Cypress.Commands.add(
 
     if (totpSecret) {
       // redirect to the TOTP login page
-      cy.contains("Valider en deux étapes");
+      cy.contains("Valider avec la double authentification");
 
       cy.fillTotpFields(totpSecret);
     }
@@ -69,6 +72,16 @@ Cypress.Commands.add("mfaLogin", (email) => {
     totpSecret: defaultTotpSecret,
   });
 });
+
+function seeInFieldCommand(field: string, value: string) {
+  return cy
+    .contains("label", field)
+    .invoke("attr", "for")
+    .then((id) => {
+      cy.get(`#${id}`).should("have.value", value);
+    });
+}
+Cypress.Commands.add("seeInField", seeInFieldCommand);
 
 Cypress.Commands.add("setCustomParams", (customParams) => {
   cy.get('[name="custom-params"]')
@@ -97,3 +110,19 @@ Cypress.Commands.add("setRequestedAcrs", (requestedAcrs) => {
 
   cy.setCustomParams(customParams);
 });
+
+function getDescribedCommand(text: string) {
+  return cy
+    .contains(text)
+    .closest("[id]")
+    .invoke("attr", "id")
+    .then((id) => {
+      return cy.get(`[aria-describedby="${id}"]`).as(`${text}`);
+    });
+}
+Cypress.Commands.add("getDescribed", getDescribedCommand);
+
+function getByLabelCommand(text: string) {
+  return cy.get(`[aria-label="${text}"]`);
+}
+Cypress.Commands.add("getByLabel", getByLabelCommand);
