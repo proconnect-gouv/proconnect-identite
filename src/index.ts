@@ -27,7 +27,6 @@ import {
 import { OidcError } from "./config/errors";
 import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
-
 import { useFranceConnectLogoutMiddlewareFactory } from "./controllers/user/franceconnect";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
 import { apiRouter } from "./routers/api";
@@ -131,6 +130,7 @@ app.use(trustedBrowserMiddleware);
 
 app.set("views", path.join(import.meta.dirname, "views"));
 app.set("view engine", "ejs");
+
 app.use(
   "/dist/mail-proconnect.png",
   (req, res, next) => {
@@ -189,17 +189,10 @@ app.use("/oauth", oidcProvider.callback());
 
 if (DEPLOY_ENV === "localhost" || DEPLOY_ENV === "preview") {
   app.use(
-    createTestingHandler(
-      "/___testing___",
-      {
-        ISSUER: FRANCECONNECT_ISSUER,
-        log: logger.warn,
-      },
-      {
-        getClientsMetadata: () => Promise.resolve([]),
-        provider: oidcProvider,
-      },
-    ),
+    createTestingHandler("/___testing___", {
+      ISSUER: FRANCECONNECT_ISSUER,
+      log: logger.warn,
+    }),
   );
 }
 

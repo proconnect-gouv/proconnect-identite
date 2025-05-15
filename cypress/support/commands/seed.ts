@@ -6,6 +6,11 @@ import { dirname } from "path";
 
 export function seed() {
   {
+    const command = "docker compose exec redis redis-cli FLUSHALL";
+    cy.task("log", `$ ${command}`);
+    cy.exec(command).then((result) => cy.task("log", result.stdout));
+  }
+  {
     const command = "npm run delete-database";
     cy.task("log", `$ ${command}`);
     cy.exec(command, { env: { ENABLE_DATABASE_DELETION: "True" } }).then(
