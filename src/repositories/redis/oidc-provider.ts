@@ -1,5 +1,6 @@
 // source https://github.com/panva/node-oidc-provider/blob/6fbcd71b08b8b8f381a97a82809de42c75904c6b/example/adapters/redis.js
-import { isEmpty } from "lodash-es";
+import type { Dictionary } from "lodash";
+import { isEmpty, isNull, omitBy } from "lodash-es";
 import { getNewRedisClient } from "../../connectors/redis";
 import { findByClientId } from "../oidc-client";
 
@@ -34,6 +35,9 @@ function userCodeKeyFor(userCode: any) {
 function uidKeyFor(uid: any) {
   return `uid:${uid}`;
 }
+function omitNullProperties<T extends object>(object: T): Dictionary<T> {
+  return omitBy(object, isNull);
+}
 
 class RedisAdapter {
   name: any;
@@ -46,8 +50,6 @@ class RedisAdapter {
     payload: { grantId: any; userCode: any; uid: any },
     expiresIn: number,
   ) {
-    console.log("upsert", id, payload, expiresIn);
-    console.trace();
     const key = this.key(id);
     const store = consumable.has(this.name)
       ? { payload: JSON.stringify(payload) }
@@ -88,20 +90,17 @@ class RedisAdapter {
   }
 
   async find(id: any) {
-    return (await this.findInRedis(id)) ?? (await this.findInPostgres(id));
-  }
-
-  private async findInRedis(id: any) {
-    console.log("findInRedis", id);
-    console.trace();
     const data = consumable.has(this.name)
       ? await getClient().hgetall(this.key(id))
       : await getClient().get(this.key(id));
 
     if (isEmpty(data)) {
-      return undefined;
+      const maybe_client = await findByClientId(id);
+      if (isEmpty(maybe_client)) return undefined;
+      const client = omitNullProperties(maybe_client);
+      await getClient().set(this.key(id), JSON.stringify(client));
+      return client;
     }
-    console.log("findInRedis", data);
 
     if (typeof data === "string") {
       return JSON.parse(data);
@@ -112,15 +111,6 @@ class RedisAdapter {
       ...rest,
       ...JSON.parse(payload),
     };
-  }
-
-  private async findInPostgres(id: any) {
-    console.log("findInPostgres", id);
-    console.trace();
-    const data = await findByClientId(id);
-    if (isEmpty(data)) return undefined;
-
-    return data;
   }
 
   async findByUid(uid: any) {

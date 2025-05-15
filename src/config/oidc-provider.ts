@@ -19,7 +19,6 @@ import { oidcProviderConfiguration } from "./oidc-provider-configuration";
 
 export async function createOidcProvider() {
   const oidcProvider = new Provider(`${HOST}`, {
-    // clients: clientsWithoutNullProperties,
     adapter: oidcProviderRepository,
     jwks: JWKS,
     async renderError(ctx, { error, error_description }, err) {
