@@ -1,4 +1,8 @@
 describe("Connect FranceConnect account", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("Should update personal information with FranceConnect data", function () {
     cy.visit("/personal-information");
 
