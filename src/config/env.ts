@@ -1,21 +1,11 @@
 //
 
-import dotenv from "dotenv";
+import dotenvFlow from "dotenv-flow";
 import { fromZodError } from "zod-validation-error";
 import { envSchema } from "./env.zod";
 
-// Load variable from .env.<NODE_ENV>.local file,
-// Load variable from .env.local file,
-// Load variable from .env.<NODE_ENV> file,
-// Load variable from .env file
-// only used in local dev env and test
-dotenv.config({
-  path: [
-    `.env.${process.env["NODE_ENV"] ?? "development"}.local`,
-    ".env.local",
-    `.env.${process.env["NODE_ENV"] ?? "development"}`,
-    ".env",
-  ],
+dotenvFlow.config({
+  default_node_env: "development",
 });
 
 const parsedEnv = envSchema.safeParse(process.env, {
@@ -34,7 +24,6 @@ export const {
   API_AUTH_PASSWORD,
   API_AUTH_USERNAME,
   APPLICATION_NAME,
-  BREVO_API_KEY,
   CRISP_BASE_URL,
   CRISP_IDENTIFIER,
   CRISP_KEY,
@@ -61,12 +50,11 @@ export const {
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
   FEATURE_DISPLAY_TEST_ENV_WARNING,
   FEATURE_FRANCECONNECT_CONNECTION,
-  FEATURE_RATE_LIMIT,
-  FEATURE_SEND_MAIL,
+  FEATURE_RATE_LIMIT_BY_EMAIL,
+  FEATURE_RATE_LIMIT_BY_IP,
   FEATURE_USE_ANNUAIRE_EMAILS,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
-  FRANCECONNECT_CALLBACK_URL,
   FRANCECONNECT_CLIENT_ID,
   FRANCECONNECT_CLIENT_SECRET,
   FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG,
@@ -89,6 +77,7 @@ export const {
   SENTRY_DSN,
   SESSION_COOKIE_SECRET,
   SESSION_MAX_AGE_IN_SECONDS,
+  SMTP_FROM,
   SMTP_URL,
   SYMMETRIC_ENCRYPTION_KEY,
   TEST_CONTACT_EMAIL,

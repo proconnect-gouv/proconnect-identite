@@ -63,20 +63,4 @@ describe("sign-in with magic link", () => {
 
     cy.contains("Votre compte ProConnect");
   });
-
-  it("should trigger totp rate limiting", function () {
-    // Set email in unauthenticated session
-    cy.visit("/users/start-sign-in");
-    cy.get('[name="login"]').type("unused@yopmail.com");
-    cy.get('[type="submit"]').click();
-
-    // trigger reset password rate limiter
-    for (let i = 0; i <= 5; i++) {
-      cy.visit("/users/reset-password");
-
-      cy.get('[action="/users/reset-password"] [type="submit"]').click();
-    }
-
-    cy.contains("Too Many Requests");
-  });
 });

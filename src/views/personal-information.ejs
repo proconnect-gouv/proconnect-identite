@@ -87,10 +87,14 @@
         <% if (canUseFranceConnect) { %>
         <p class="fr-mt-4w">Si votre état civil a été modifié, vous pouvez mettre à jour vos informations en récupérant vos données via FranceConnect.</p>
 
-        <form action="/users/franceconnect" method="post">
+        <form action="/users/personal-information/franceconnect/login" method="post">
           <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
 
           <div class="fr-connect-group">
+            <p class="text-muted">
+              FranceConnect est la solution proposée par l’État pour sécuriser et simplifier la connexion à vos services en ligne.
+            </p>
+
             <button class="fr-connect">
               <span class="fr-connect__login">S’identifier avec</span>
               <span class="fr-connect__brand">FranceConnect</span>

@@ -18,6 +18,7 @@
     // TODO(douglasduteil): remove this line
     // We might want to acticate noUncheckedIndexedAccess
     "noUncheckedIndexedAccess": false,
+    "preserveSymlinks": true,
     "preserveWatchOutput": true,
     "target": "ESNext",
     "types": [],

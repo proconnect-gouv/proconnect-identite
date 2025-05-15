@@ -185,8 +185,7 @@
             <p>
                 Pour des raisons légales, vos données sont sauvegardées pendant 3 ans après la suppression de votre compte.
             </p>
-            <form class="fr-mt-4w" action="/users/delete" method="post">
-                <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
+            <form class="fr-mt-4w" action="/users/delete">
                 <button
                         class="fr-btn btn--danger js-confirm"
                         data-confirm="Si vous avez changé d’organisation, vous pouvez les modifier sur votre espace personnel.&#10;&#10;Si vous n’utilisez plus ProConnect avec cette adresse email, vous pouvez supprimer ce compte.&#10;&#10;Voulez vous continuer ?"

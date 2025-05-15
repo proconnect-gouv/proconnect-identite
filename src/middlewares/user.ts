@@ -1,9 +1,9 @@
 import { getTrustedReferrerPath } from "@gouvfr-lasuite/proconnect.core/security";
+import { UserNotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { HOST } from "../config/env";
-import { UserNotFoundError } from "../config/errors";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import { greetForJoiningOrganization } from "../managers/organization/join";

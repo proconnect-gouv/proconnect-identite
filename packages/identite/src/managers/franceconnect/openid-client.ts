@@ -8,6 +8,7 @@ import {
   allowInsecureRequests,
   authorizationCodeGrant,
   buildAuthorizationUrl,
+  buildEndSessionUrl,
   ClientSecretBasic,
   discovery,
   fetchUserInfo,
@@ -81,7 +82,7 @@ export function getFranceConnectUserFactory(
 ) {
   return async function getFranceConnectUser(parameters: {
     code: string;
-    currentUrl: string;
+    currentUrl: URL;
     expectedNonce: string;
     expectedState: string;
   }) {
@@ -89,7 +90,7 @@ export function getFranceConnectUserFactory(
     const config = await getConfiguration();
     const tokens = await authorizationCodeGrant(
       config,
-      new URL(currentUrl),
+      currentUrl,
       {
         expectedNonce,
         expectedState,
@@ -100,10 +101,31 @@ export function getFranceConnectUserFactory(
     const claims = tokens.claims();
 
     const { sub } = await z.object({ sub: z.string() }).parseAsync(claims);
-    const userInfo = await fetchUserInfo(config, tokens.access_token, sub);
+    const user_info_response = await fetchUserInfo(
+      config,
+      tokens.access_token,
+      sub,
+    );
 
-    return FranceConnectUserInfoResponseSchema.parseAsync(
-      userInfo,
-    ) as Promise<FranceConnectUserInfoResponse>;
+    const user_info: FranceConnectUserInfoResponse =
+      await FranceConnectUserInfoResponseSchema.parseAsync(user_info_response);
+    return { user_info, id_token: tokens.id_token };
+  };
+}
+
+export function getFranceConnectLogoutRedirectUrlFactory(
+  getConfiguration: GetFranceConnectConfigurationHandler,
+) {
+  return async function getFranceConnectLogoutRedirectUrl(
+    id_token_hint: string,
+    post_logout_redirect_uri: string,
+    state: string,
+  ) {
+    const config = await getConfiguration();
+    return buildEndSessionUrl(config, {
+      id_token_hint,
+      post_logout_redirect_uri,
+      state,
+    });
   };
 }

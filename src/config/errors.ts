@@ -7,8 +7,6 @@ export class InvalidEmailError extends Error {
   }
 }
 
-export class UserNotFoundError extends Error {}
-
 export class ForbiddenError extends Error {}
 
 export class UnableToAutoJoinOrganizationError extends Error {
@@ -91,5 +89,12 @@ export class OidcError extends Error {
     super();
     this.error = error;
     this.error_description = error_description;
+  }
+}
+
+export class OidcFranceConnectBackChannelError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "OidcFranceConnectError";
   }
 }

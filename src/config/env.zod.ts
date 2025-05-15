@@ -4,7 +4,6 @@ import { defaultJWKS } from "./default-jwks";
 export const connectorEnvSchema = z.object({
   API_AUTH_PASSWORD: z.string().default("admin"),
   API_AUTH_USERNAME: z.string().default("admin"),
-  BREVO_API_KEY: z.string().optional(),
   CRISP_BASE_URL: z.string().url().default("https://api.crisp.chat"),
   CRISP_IDENTIFIER: z.string().default(""),
   CRISP_KEY: z.string().default(""),
@@ -26,9 +25,6 @@ export const connectorEnvSchema = z.object({
     .default("https://staging.entreprise.api.gouv.fr"),
   ENTREPRISE_API_TRACKING_CONTEXT: z.string().default("ProConnect Identité"),
   ENTREPRISE_API_TRACKING_RECIPIENT: z.string().default("13002526500013"),
-  FRANCECONNECT_CALLBACK_URL: z
-    .string()
-    .default("/users/franceconnect/callback"),
   FRANCECONNECT_CLIENT_ID: z
     .string()
     .default("🎭 Mocked FranceConnect Client ID"),
@@ -60,6 +56,9 @@ export const connectorEnvSchema = z.object({
     .default(3 * 30 * 24 * 60), // 3 months in minutes
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   SENTRY_DSN: z.string().default(""),
+  SMTP_FROM: z
+    .string()
+    .default("nepasrepondre@email.moncomptepro.beta.gouv.fr"),
   SMTP_URL: z.string().default("smtp://localhost:1025"),
 });
 
@@ -76,8 +75,8 @@ export const featureTogglesEnvSchema = z.object({
     zodTrueFalseBoolean().default("False"),
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default("False"),
   FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default("False"),
-  FEATURE_RATE_LIMIT: zodTrueFalseBoolean().default("False"),
-  FEATURE_SEND_MAIL: zodTrueFalseBoolean().default("False"),
+  FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default("False"),
+  FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default("False"),
   FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default("False"),

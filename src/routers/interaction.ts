@@ -6,6 +6,7 @@ import {
   interactionErrorControllerFactory,
   interactionStartControllerFactory,
 } from "../controllers/interaction";
+import { rateLimiterMiddleware } from "../middlewares/rate-limiter";
 import { checkUserSignInRequirementsMiddleware } from "../middlewares/user";
 
 export const interactionRouter = (oidcProvider: Provider) => {
@@ -14,6 +15,8 @@ export const interactionRouter = (oidcProvider: Provider) => {
   interactionRouter.use(nocache());
 
   interactionRouter.use(urlencoded({ extended: false }));
+
+  interactionRouter.use(rateLimiterMiddleware);
 
   interactionRouter.get(
     "/:grant",

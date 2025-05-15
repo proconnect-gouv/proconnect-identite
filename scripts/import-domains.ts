@@ -3,13 +3,13 @@ import {
   isDomainValid,
   isSiretValid,
 } from "@gouvfr-lasuite/proconnect.core/security";
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, some, toInteger } from "lodash-es";
 import { z } from "zod";
-import { InseeNotFoundError } from "../src/config/errors";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import {
   addDomain,
@@ -173,7 +173,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             success_count++;
             rowResults.push("success");
           } catch (error) {
-            if (error instanceof InseeNotFoundError) {
+            if (error instanceof NotFoundError) {
               i++;
               rejected_invalid_siret_count++;
               rowResults.push("rejected_invalid_siret");

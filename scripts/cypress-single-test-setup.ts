@@ -11,8 +11,8 @@ $.verbose = true;
 //
 
 let testCase = argv._[0];
-const mode = argv.dev ? "development" : "single";
-const interactive = !process.env.CI;
+const mode = argv["dev"] ? "development" : "single";
+const interactive = !process.env["CI"];
 
 const doesExist = await fs.exists(`cypress/e2e/${testCase}`);
 
@@ -23,7 +23,7 @@ if (interactive && (!testCase || !doesExist)) {
     `They are ${availableTestCases.length} test cases in the cypress/e2e folder :`,
   );
   console.log(
-    availableTestCases.map((name, index) => `${index}) ${name}`).join("\t"),
+    availableTestCases.map((name, index) => `${index}) ${name}`).join("\n"),
   );
   console.log("Please select one of them:");
 

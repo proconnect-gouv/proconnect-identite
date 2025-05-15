@@ -4,9 +4,13 @@ import {
   type FranceConnectUserInfoResponse,
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import { zValidator } from "@hono/zod-validator";
+import assert from "assert/strict";
 import { Hono } from "hono";
+import { secureHeaders } from "hono/secure-headers";
 import { CompactSign, generateKeyPair } from "jose";
 import { z } from "zod";
+import { FRANCECONNECT_CITIZENS } from "../../data/people.js";
+import LogoutPage from "./logout.page.js";
 import SelectPage from "./select.page.js";
 import wellKnown from "./well-known.js";
 
@@ -36,6 +40,20 @@ const DEFAULT_USERINFO: FranceConnectUserInfoResponse = {
 
 const CodeParamSchema = z.object({
   code: z.string().min(1, "Authorization code is required"),
+  grant_type: z.string(),
+  redirect_uri: z.string(),
+});
+
+const AuthorizationEndpointQueryParams = z.object({
+  acr_values: z.literal("eidas1"),
+  claims: z.string().optional(),
+  client_id: z.string(),
+  nonce: z.string().min(22),
+  prompt: z.string().default("login"),
+  redirect_uri: z.string(),
+  response_type: z.string(),
+  scope: z.string(),
+  state: z.string().min(22),
 });
 
 //
@@ -47,6 +65,10 @@ let userinfo: FranceConnectUserInfoResponse;
 export const TestingOidcFranceConnectRouter = new Hono<{
   Bindings: FranceConnectBindings;
 }>()
+  .onError((error, { text }) => {
+    console.error("[🎭] ", error);
+    return text(error.toString());
+  })
   .get("/", ({ text }) => text("🎭 FranceConnect theater"))
   .get(
     "/api/v2/.well-known/openid-configuration",
@@ -54,17 +76,7 @@ export const TestingOidcFranceConnectRouter = new Hono<{
   )
   .get(
     "/api/v2/authorize",
-    zValidator(
-      "query",
-      z.object({
-        client_id: z.string(),
-        redirect_uri: z.string(),
-        response_type: z.string(),
-        scope: z.string(),
-        state: z.string(),
-        nonce: z.string(),
-      }),
-    ),
+    zValidator("query", AuthorizationEndpointQueryParams),
     async ({ req, redirect }) => {
       const { client_id, redirect_uri, state, nonce } = req.valid("query");
       const codeValue = `_${Date.now()}`;
@@ -77,17 +89,59 @@ export const TestingOidcFranceConnectRouter = new Hono<{
       return redirect(`${basePath}/interaction/${codeValue}/login`);
     },
   )
+  .get(
+    "/api/v2/session/end",
+    zValidator(
+      "query",
+      z.object({
+        id_token_hint: z.string(),
+        post_logout_redirect_uri: z.string().url(),
+        state: z.string(),
+      }),
+    ),
+    ({ req }) => {
+      const { post_logout_redirect_uri, state } = req.valid("query");
+
+      const redirect_url = new URL(post_logout_redirect_uri);
+      redirect_url.searchParams.set("state", state);
+
+      const html = new TextEncoder().encode(
+        LogoutPage({
+          redirect_url: post_logout_redirect_uri,
+        }),
+      );
+
+      const stream = new ReadableStream({
+        async start(controller) {
+          controller.enqueue(html);
+          await new Promise((resolve) => setTimeout(resolve, 1_111));
+          controller.close();
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/html; charset=UTF-8",
+          "Transfer-Encoding": "chunked",
+        },
+        status: 303,
+      });
+    },
+  )
   .post(
     "/api/v2/token",
     zValidator("form", CodeParamSchema),
     async ({ env: { ISSUER }, json, req }) => {
-      const { code } = req.valid("form");
+      const form = req.valid("form");
+      console.warn({ form });
+      const { code } = form;
+
       const codeObj = CODE_MAP.get(code);
-      if (!codeObj) {
-        throw new Error("Invalid authorization code");
-      }
+      assert.ok(codeObj);
       CODE_MAP.delete(code);
+
       const { client_id, nonce } = codeObj;
+      assert.equal(codeObj.redirect_uri, form.redirect_uri);
 
       const { privateKey } = await generateKeyPair("ES256");
 
@@ -122,10 +176,17 @@ export const TestingOidcFranceConnectRouter = new Hono<{
   .get("/api/v2/userinfo", ({ json }) => json(userinfo))
   .get(
     "/interaction/:code/login",
+    secureHeaders({
+      contentSecurityPolicy: {
+        styleSrcElem: ["'self'", "unpkg.com"],
+        imgSrc: ["'self'", "data:", "avataaars.io"],
+      },
+    }),
     zValidator("param", z.object({ code: z.string() })),
-    async ({ html }) => {
-      return html(SelectPage({ userinfo: DEFAULT_USERINFO }));
-    },
+    async ({ html }) =>
+      html(
+        SelectPage({ citizens: Array.from(FRANCECONNECT_CITIZENS.values()) }),
+      ),
   )
   .post(
     "/interaction/:code/login",

@@ -9,7 +9,7 @@ import { findByIdFactory } from "./find-by-id.js";
 
 const findById = findByIdFactory({ pg: pg as any });
 
-suite("indByIdFactory", () => {
+suite("findByIdFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 

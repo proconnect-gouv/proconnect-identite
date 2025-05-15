@@ -48,11 +48,11 @@
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.13.14",
+    "@types/node": "^22.14.1",
     "chai": "^5.1.2",
     "mocha": "^11.1.0",
-    "pkgroll": "^2.11.2",
-    "tsx": "^4.19.3"
+    "pkgroll": "^2.12.1",
+    "tsx": "^4.19.4"
   },
   "publishConfig": {
     "access": "public",

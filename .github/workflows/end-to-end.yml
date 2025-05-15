@@ -7,11 +7,9 @@ on:
       - "!master"
 
 env:
-  BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
   CYPRESS_RECORD: true
   DATABASE_URL: postgres://moncomptepro:moncomptepro@localhost:5432/moncomptepro
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
-  FEATURE_SEND_MAIL: "True"
   ZAMMAD_TOKEN: ${{ secrets.ZAMMAD_TOKEN }}
 jobs:
   test:
@@ -33,6 +31,8 @@ jobs:
           - join_with_code_sent_to_official_contact_email
           - join_with_code_sent_to_official_educ_nat_contact_email
           - join_with_official_contact_email
+          - rate_limit_by_email
+          - rate_limit_by_ip
           - reauthenticate_on_admin_page
           - redirect_after_session_expiration
           - reset_password
@@ -62,7 +62,7 @@ jobs:
       - run: npm run build:workspaces
       - run: npm run migrate up
       - name: Cypress run
-        uses: cypress-io/github-action@v6.7.16
+        uses: cypress-io/github-action@v6.9.0
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets

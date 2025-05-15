@@ -11,18 +11,23 @@
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "imports": {},
+  "imports": {
+    "#src/*": "./src/*/index.ts"
+  },
   "exports": {
     "./*": "./src/*/index.ts"
   },
   "scripts": {
-    "build": "tsc --build tsconfig.lib.json"
+    "build": "tsc --build tsconfig.lib.json",
+    "dev:test": "tsx --watch --test src/**/*.test.ts tests/**/*.test.ts",
+    "test": "npm run test:unit",
+    "test:unit": "tsx --test --test-only --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
   },
   "dependencies": {
     "@gouvfr-lasuite/proconnect.entreprise": "0.0.0",
-    "@hono/node-server": "^1.14.0",
-    "@hono/zod-validator": "^0.4.3",
-    "hono": "^4.7.5"
+    "@hono/node-server": "^1.14.1",
+    "@hono/zod-validator": "^0.5.0",
+    "hono": "^4.7.9"
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",

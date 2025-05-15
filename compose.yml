@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15.10
+    image: postgres:16.9
     ports:
       - "5432:5432"
     environment:
@@ -59,7 +59,15 @@ services:
   maildev:
     image: soulteary/maildev
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:1080/healthz"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://127.0.0.1:1080/healthz",
+        ]
       interval: 10s
       timeout: 5s
       retries: 3
