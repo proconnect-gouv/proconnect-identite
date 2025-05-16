@@ -1,22 +1,26 @@
 //
 
-import { expect } from "chai";
+import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { isAFreeDomain } from "./is-a-free-domain.js";
 
 //
 
 describe("isAFreeDomain", () => {
-  it("should return true for free domains", () => {
-    expect(isAFreeDomain("gmail.com")).to.be.true;
-    expect(isAFreeDomain("hotmail.com")).to.be.true;
-    expect(isAFreeDomain("yahoo.com")).to.be.true;
-    expect(isAFreeDomain("outlook.com")).to.be.true;
-    expect(isAFreeDomain("aol.com")).to.be.true;
-    expect(isAFreeDomain("yopmail.com")).to.be.true;
+  [
+    "gmail.com",
+    "hotmail.com",
+    "yahoo.com",
+    "outlook.com",
+    "aol.com",
+    "yopmail.com",
+  ].forEach((domain) => {
+    it(`should return true for free domains "${domain}"`, () => {
+      assert.equal(isAFreeDomain(domain), true);
+    });
   });
 
   it("should return false for non-free domains", () => {
-    expect(isAFreeDomain("beta.gouv.fr")).to.be.false;
+    assert.equal(isAFreeDomain("beta.gouv.fr"), false);
   });
 });
