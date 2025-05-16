@@ -20,5 +20,13 @@ updates:
     versioning-strategy: increase
   - package-ecosystem: "docker"
     directory: "/"
+    labels:
+      - dependencies
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    labels:
+      - dependencies
     schedule:
       interval: "weekly"
