@@ -1,4 +1,4 @@
-FROM node:22-slim AS base
+FROM node:24-slim AS base
 RUN corepack enable
 
 RUN --mount=type=bind,source=package.json,target=package.json \
