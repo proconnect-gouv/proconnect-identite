@@ -6,7 +6,7 @@ import { libelleFromCodeEffectif } from "./libelle-from-code-effectif.js";
 
 //
 
-suite(libelleFromCodeEffectif.name, () => {
+suite(libelleFromCodeEffectif.name, { concurrency: true }, () => {
   const cases: [Parameters<typeof libelleFromCodeEffectif>, string][] = [
     [[null, null], ""],
     [["1 ou 2 salariés", null], "1 ou 2 salariés"],
