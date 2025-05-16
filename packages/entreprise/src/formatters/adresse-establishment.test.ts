@@ -16,7 +16,7 @@ import assert from "node:assert/strict";
 import { suite, test } from "node:test";
 import { formatAddress } from "./adresse-establishment.js";
 
-suite("formatAddress", () => {
+suite("formatAddress", { concurrency: true }, () => {
   const cases: [InseeAddressEstablishment, string][] = [
     [
       AppleEuropeInc.adresse,
