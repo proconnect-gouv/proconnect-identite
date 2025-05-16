@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   decryptSymmetric,
@@ -10,19 +10,21 @@ const key = "aTrueRandom32BytesLongBase64EncodedStringAA=";
 describe("Symmetric encryption with aes-128-ccm", () => {
   it("should encrypt and decrypt string", () => {
     const plain = "Bonjour monde !";
-    const encoded = encryptSymmetric(key, plain);
-    expect(decryptSymmetric(key, encoded)).to.eql(plain);
+    const encryptedText = encryptSymmetric(key, plain);
+    assert.equal(decryptSymmetric(key, encryptedText), plain);
   });
 
   it("should throw when encrypted string is null", () => {
-    expect(() => decryptSymmetric(key, null)).to.throw(
-      "Invalid encrypted text",
+    assert.throws(
+      () => decryptSymmetric(key, null),
+      new Error("Invalid encrypted text"),
     );
   });
 
   it("should throw when encrypted string is invalid", () => {
-    expect(() => decryptSymmetric(key, "null")).to.throw(
-      "Invalid encrypted text",
+    assert.throws(
+      () => decryptSymmetric(key, "null"),
+      new Error("Invalid encrypted text"),
     );
   });
 });

@@ -1,6 +1,7 @@
 //
 
 import type { Config } from "#src/types";
+import "#testing/dotenv";
 
 const {
   CRISP_BASE_URL,
