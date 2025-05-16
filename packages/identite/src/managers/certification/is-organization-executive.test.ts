@@ -8,7 +8,7 @@ import {
 import {
   LiElJonsonMandataire,
   RogalDornMandataire,
-} from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/infogreffe/mandataires";
+} from "#testing/seed/mandataires";
 import { RogalDornEntrepreneur } from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/insee/siret";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
