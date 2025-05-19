@@ -7,7 +7,7 @@ commandTests:
       - start
     exitCode: 1
     expectedOutput: ["tsx --import ./src/instrument.ts src/index.ts"]
-    expectedError: ["connect ECONNREFUSED 127.0.0.1:5432"]
+    expectedError: ["application is listening on port 3000"]
 
 containerRunOptions:
   envFile: .env.test
