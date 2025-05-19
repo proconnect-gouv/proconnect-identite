@@ -6,7 +6,7 @@ import { formatNomComplet } from "./nom-complet.js";
 
 //
 
-suite(formatNomComplet.name, () => {
+suite(formatNomComplet.name, { concurrency: true }, () => {
   const cases: [Parameters<typeof formatNomComplet>, string][] = [
     [
       [
