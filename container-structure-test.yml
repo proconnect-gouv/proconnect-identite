@@ -2,12 +2,16 @@ schemaVersion: "2.0.0"
 
 commandTests:
   - name: "Try to connect to unresolved postgres"
-    command: "npm"
+    command: "timeout"
     args:
+      - --preserve-status
+      - 3s
+      - npm
       - start
-    exitCode: 1
-    expectedOutput: ["tsx --import ./src/instrument.ts src/index.ts"]
-    expectedError: ["application is listening on port 3000"]
+    exitCode: 143
+    expectedOutput:
+      - tsx --import ./src/instrument.ts src/index.ts
+      - application is listening on port 3000
 
 containerRunOptions:
   envFile: .env.test
