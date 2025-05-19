@@ -1,6 +1,7 @@
 // source https://github.com/panva/node-oidc-provider/blob/6fbcd71b08b8b8f381a97a82809de42c75904c6b/example/adapters/redis.js
 import type { Dictionary } from "lodash";
 import { isEmpty, isNull, omitBy } from "lodash-es";
+import type { Adapter, AdapterFactory, AdapterPayload } from "oidc-provider";
 import { getNewRedisClient } from "../../connectors/redis";
 import { findByClientId } from "../oidc-client";
 
@@ -37,6 +38,31 @@ function uidKeyFor(uid: any) {
 }
 function omitNullProperties<T extends object>(object: T): Dictionary<T> {
   return omitBy(object, isNull);
+}
+
+class PostgresAdapter implements Adapter {
+  consume() {
+    return Promise.reject(new Error("Not implemented"));
+  }
+  destroy() {
+    return Promise.reject(new Error("Not implemented"));
+  }
+  async find(id: string): Promise<AdapterPayload | undefined | void> {
+    const client = await findByClientId(id);
+    return client ? omitNullProperties(client) : undefined;
+  }
+  findByUid() {
+    return Promise.reject(new Error("Not implemented"));
+  }
+  findByUserCode() {
+    return Promise.reject(new Error("Not implemented"));
+  }
+  revokeByGrantId() {
+    return Promise.reject(new Error("Not implemented"));
+  }
+  upsert() {
+    return Promise.reject(new Error("Not implemented"));
+  }
 }
 
 class RedisAdapter {
@@ -90,16 +116,13 @@ class RedisAdapter {
   }
 
   async find(id: any) {
+    console.log(`Adapter#${this.name}.find(${id})`);
     const data = consumable.has(this.name)
       ? await getClient().hgetall(this.key(id))
       : await getClient().get(this.key(id));
 
     if (isEmpty(data)) {
-      const maybe_client = await findByClientId(id);
-      if (isEmpty(maybe_client)) return undefined;
-      const client = omitNullProperties(maybe_client);
-      await getClient().set(this.key(id), JSON.stringify(client));
-      return client;
+      return undefined;
     }
 
     if (typeof data === "string") {
@@ -149,4 +172,6 @@ class RedisAdapter {
   }
 }
 
-export default RedisAdapter;
+export const oidcProviderAdapterFactory: AdapterFactory = (name) => {
+  return name === "Client" ? new PostgresAdapter() : new RedisAdapter(name);
+};

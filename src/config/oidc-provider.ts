@@ -5,7 +5,7 @@ import Provider, { errors } from "oidc-provider";
 import { logger } from "../services/log";
 import { renderWithEjsLayout } from "../services/renderer";
 import { connectionCountMiddleware } from "./../middlewares/connection-count";
-import oidcProviderRepository from "./../repositories/redis/oidc-provider";
+import { oidcProviderAdapterFactory } from "./../repositories/redis/oidc-provider";
 import {
   FEATURE_USE_SECURE_COOKIES,
   HOST,
@@ -19,7 +19,7 @@ import { oidcProviderConfiguration } from "./oidc-provider-configuration";
 
 export async function createOidcProvider() {
   const oidcProvider = new Provider(`${HOST}`, {
-    adapter: oidcProviderRepository,
+    adapter: oidcProviderAdapterFactory,
     jwks: JWKS,
     async renderError(ctx, { error, error_description }, err) {
       logger.error(err);
