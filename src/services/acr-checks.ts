@@ -7,7 +7,6 @@ import {
   ACR_VALUE_FOR_IAL1_AAL2,
   ACR_VALUE_FOR_IAL2_AAL1,
   ACR_VALUE_FOR_IAL2_AAL2,
-  ACR_VALUE_FOR_IAL3_AAL1,
   ACR_VALUE_FOR_IAL3_AAL2,
 } from "../config/env";
 
@@ -62,7 +61,6 @@ export const twoFactorsAuthRequested = (prompt: PromptDetail) => {
       acrs: [
         ACR_VALUE_FOR_IAL1_AAL1,
         ACR_VALUE_FOR_IAL2_AAL1,
-        ACR_VALUE_FOR_IAL3_AAL1,
         ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
       ],
     })
@@ -74,7 +72,7 @@ export const certificationDirigeantRequested = (prompt: PromptDetail) => {
     containsEssentialAcrs(prompt) &&
     areAcrsRequestedInPrompt({
       prompt,
-      acrs: [ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT],
+      acrs: [ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT, ACR_VALUE_FOR_IAL3_AAL2],
     }) &&
     !areAcrsRequestedInPrompt({
       prompt,
@@ -96,7 +94,8 @@ export const isThereAnyRequestedAcr = (prompt: PromptDetail) => {
       ACR_VALUE_FOR_IAL1_AAL2,
       ACR_VALUE_FOR_IAL2_AAL1,
       ACR_VALUE_FOR_IAL2_AAL2,
-      ACR_VALUE_FOR_IAL3_AAL1,
+      ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
+      ACR_VALUE_FOR_IAL3_AAL2,
     ],
   });
 };
