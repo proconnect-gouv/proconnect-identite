@@ -145,6 +145,10 @@ describe("sign-in with a client requiring certification dirigeant and 2fa identi
 
     cy.mfaLogin("certification-dirigeant-aal2@yopmail.com");
 
+    cy.getByLabel(
+      "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
+    ).click();
+
     cy.contains(
       '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa"',
     );
@@ -184,7 +188,7 @@ describe("sign-in with a client requiring certification dirigeant and consistenc
   });
 });
 
-describe.skip("sign-in with a client requiring eidas1", () => {
+describe("sign-in with a client requiring eidas1", () => {
   it("should return an error with no self asserted acr", function () {
     cy.visit("http://localhost:4000");
     cy.setCustomParams({
@@ -195,6 +199,6 @@ describe.skip("sign-in with a client requiring eidas1", () => {
 
     cy.login("ial1-aal1@yopmail.com");
 
-    cy.contains('"acr": "eidas1"');
+    cy.contains('"acr": "https://proconnect.gouv.fr/assurance/self-asserted",');
   });
 });
