@@ -242,6 +242,27 @@ describe("connected user should go through the certification flow", function () 
       cy.contains("certifié").should("not.exist");
     });
   });
+
+  it("with an organization pre-selected", () => {
+    cy.visit("http://localhost:4000");
+    cy.setCustomParams({
+      claims: {
+        id_token: { acr: {} },
+      },
+    });
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("certified-franceconnected+dirigeant@yopmail.com");
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Clamart (choisir cette organisation)").click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains('"job": "Certified Single Dirigeant",');
+    cy.contains('"acr": "https://proconnect.gouv.fr/assurance/self-asserted"');
+
+    cy.visit("http://localhost:4000");
+  });
 });
 
 describe("Signup with a client requiring certification dirigeant", () => {
