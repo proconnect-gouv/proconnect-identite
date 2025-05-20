@@ -245,7 +245,7 @@ describe("connected user should go through the certification flow", function () 
 });
 
 describe("Signup with a client requiring certification dirigeant", () => {
-  it("shuold welcome Elia Alvernhe as dirigeant of JEREMIE COOK", () => {
+  it("should welcome Elia Alvernhe as dirigeant of JEREMIE COOK", () => {
     cy.visit("http://localhost:4000");
     cy.contains("Forcer une connexion par certification dirigeant").click();
 
