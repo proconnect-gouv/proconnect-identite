@@ -239,51 +239,6 @@ export const destroyAuthenticatedSession = async (
   });
 };
 
-export const isIdentityConsistencyChecked = async (req: Request) => {
-  if (!req.session.mustReturnOneOrganizationInPayload) {
-    // identity is always considered as self-asserted for legacy payloads
-    return false;
-  }
-
-  const user = getUserFromAuthenticatedSession(req);
-  const selectedOrganizationId = await getSelectedOrganizationId(user.id);
-  if (selectedOrganizationId === null) return false;
-  const link = await getUserOrganizationLink(selectedOrganizationId, user.id);
-
-  if (isEmpty(link)) {
-    throw new NotFoundError("link should be set");
-  }
-
-  const askForExecutiveCertification = Boolean(
-    req.session.certificationDirigeantRequested,
-  );
-  const hasValidVerificationType = [
-    "code_sent_to_official_contact_email",
-    "domain",
-    "imported_from_inclusion_connect",
-    "imported_from_coop_mediation_numerique",
-    "in_liste_dirigeants_rna",
-    "official_contact_email",
-    "bypassed",
-  ].includes(link?.verification_type ?? "");
-
-  return match({
-    isOrganizationExecutive:
-      link.verification_type === "organization_dirigeant",
-    askForExecutiveCertification,
-    hasValidVerificationType,
-  })
-    .with(
-      {
-        askForExecutiveCertification: true,
-        isOrganizationExecutive: true,
-      },
-      { hasValidVerificationType: true },
-      () => true,
-    )
-    .otherwise(() => false);
-};
-
 // get the current Identity Assurance Level (e.g. self-asserted, consistency-checked, certified)
 export async function getCurrentIAL(req: Request) {
   if (!req.session.mustReturnOneOrganizationInPayload) {
@@ -304,7 +259,10 @@ export async function getCurrentIAL(req: Request) {
     throw new NotFoundError("link should be set");
   }
 
-  if (link.verification_type === "organization_dirigeant") {
+  if (
+    req.session.certificationDirigeantRequested &&
+    link.verification_type === "organization_dirigeant"
+  ) {
     return 3;
   }
 
