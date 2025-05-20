@@ -311,13 +311,13 @@ export async function getCurrentAcr(req: Request) {
       .with({ ial: 3, aal: 3 }, () => {
         throw new Error("not implemented");
       })
-      // ial: "certified" (FC + source authentique) & aal: "mfa" => acr: "certification-dirigeant-mfa" ("eidas2")
+      // ial: "certified" (FC + source authentique) & aal: "mfa" => acr: "certification-dirigeant-mfa" (alias "eidas2")
       .with({ ial: 3, aal: 2 }, () => ACR_VALUE_FOR_IAL3_AAL2)
       // ial: "consistency-checked" & aal: "mfa" => acr: "consistency-checked-mfa"
       .with({ ial: 2, aal: 2 }, () => ACR_VALUE_FOR_IAL2_AAL2)
       // ial: "self-asserted" & aal: "mfa" => acr: "self-asserted-mfa"
       .with({ ial: 1, aal: 2 }, () => ACR_VALUE_FOR_IAL1_AAL2)
-      // ial: "certified" (FC + source authentique) & aal: "pwd" => acr: "certification-dirigeant" (eidas1)
+      // ial: "certified" (FC + source authentique) & aal: "pwd" => acr: "certification-dirigeant" (alias "eidas1")
       .with({ ial: 3, aal: 1 }, () => ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT)
       // ial: "consistency-checked" & aal: "pwd" => acr: "consistency-checked"
       .with({ ial: 2, aal: 1 }, () => ACR_VALUE_FOR_IAL2_AAL1)
@@ -326,7 +326,7 @@ export async function getCurrentAcr(req: Request) {
       // ial: 1 "self-asserted" & all: 3 "carte-agent" => server_error (HTTP error code 500)
       // ial: 2 "consistency-checked" & all: 3 "carte-agent" => server_error (HTTP error code 500)
       .with({ ial: 1, aal: 3 }, { ial: 2, aal: 3 }, () => {
-        throw new Error("Impossible !");
+        throw new Error("not possible");
       })
       .exhaustive()
   );
