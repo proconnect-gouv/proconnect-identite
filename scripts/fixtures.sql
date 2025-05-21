@@ -935,14 +935,14 @@ VALUES
    ARRAY [
      'https://test.identite.proconnect.gouv.fr/login-callback',
      'https://test.identite-preprod.proconnect.gouv.fr/login-callback',
-     'https://proconnect-identite-test-client-pr59.osc-fr1.scalingo.io/login-callback',
+     'https://test.identite-showcase.proconnect.gouv.fr/login-callback',
      'http://localhost:3000/login-callback',
      'http://localhost:3001/login-callback'
      ],
    ARRAY [
      'https://test.identite.proconnect.gouv.fr/',
      'https://test.identite-preprod.proconnect.gouv.fr/',
-     'https://proconnect-identite-test-client-pr59.osc-fr1.scalingo.io/',
+     'https://test.identite-showcase.proconnect.gouv.fr/',
      'http://localhost:3000/',
      'http://localhost:3001/'
      ],
