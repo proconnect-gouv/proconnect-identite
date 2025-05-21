@@ -67,7 +67,7 @@ jobs:
       - run: npm run fixtures:load-ci -- cypress/e2e/${{ matrix.e2e_test }}/fixtures.sql
       - run: npm run update-organization-info -- 0
       - name: Cypress run
-        uses: cypress-io/github-action@v6.9.0
+        uses: cypress-io/github-action@v6.9.2
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets
