@@ -1,4 +1,10 @@
-# 🔑 ProConnect Identité
+# 🔑 ProConnect Identité / Certification Dirigeant
+
+> THIS PR IS A HACK TO ENSURE THE FEATURE SHOWCASE IS NOT DELETED
+> DO NOT PUSH OR BASE YOUR PR FROM HERE.   
+> DO NOT MERGE THIS PR.
+> ALWAYS FOLLOW THE MASTER BRANCH.
+> UPDATE THIS PR OFTEN.  
 
 ProConnect Identité est un fournisseur d'identité "OpenId Connect" géré par la DINUM.
 
