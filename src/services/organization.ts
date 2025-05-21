@@ -10,7 +10,10 @@ import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
 export const isEntrepriseUnipersonnelle = ({
   cached_libelle_categorie_juridique,
   cached_tranche_effectifs,
-}: Organization): boolean => {
+}: Pick<
+  Organization,
+  "cached_libelle_categorie_juridique" | "cached_tranche_effectifs"
+>): boolean => {
   // check that the organization has the right catégorie juridique
   const cat_jur_ok = [
     "Entrepreneur individuel",

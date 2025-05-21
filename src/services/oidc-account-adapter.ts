@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+import { to } from "await-to-js";
 import { isEmpty } from "lodash-es";
 import type { FindAccount } from "oidc-provider";
 import { findByUserId as getUsersOrganizations } from "../repositories/organization/getters";
@@ -44,20 +45,21 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
       };
       const organizations = await getUsersOrganizations(id);
       if (mustReturnOneOrganizationInPayload(scope)) {
-        const selectedOrganizationId = await getSelectedOrganizationId(id);
+        const [selectedOrganizationIdErr, selectedOrganizationId] = await to(
+          getSelectedOrganizationId(id),
+        );
 
-        if (selectedOrganizationId === null) {
-          const err = Error("selectedOrganizationId should be set");
+        if (selectedOrganizationIdErr) {
           // This Error will be silently swallowed by oidc-provider.
           // We add additional logs to keep traces.
-          logger.error(err);
-          Sentry.captureException(err);
+          logger.error(selectedOrganizationIdErr);
+          Sentry.captureException(selectedOrganizationIdErr);
           // this will result in a 400 Bad Request
           // Response: {
           //    "error": "invalid_grant",
           //    "error_description": "grant request is invalid"
           // }
-          throw err;
+          throw selectedOrganizationIdErr;
         }
 
         const organization = organizations.find(

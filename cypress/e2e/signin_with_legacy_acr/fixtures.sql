@@ -34,8 +34,7 @@ VALUES
   (1, 1, false, null, 'domain', true),
   (2, 1, false, null, null, true),
   (3, 1, false, null, 'domain', true),
-  (4, 1, false, null, null, true),
-  (6, 1, false, null, null, true);
+  (4, 1, false, null, null, true);
 
 INSERT INTO oidc_clients
 (client_name, client_id, client_secret, redirect_uris,

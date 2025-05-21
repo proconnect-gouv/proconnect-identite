@@ -38,14 +38,14 @@ VALUES
   (1, '21340126800130', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO users_organizations
-  (user_id, organization_id, is_external, verification_type, has_been_greeted)
+  (user_id, organization_id, is_external, verified_at, verification_type, has_been_greeted)
 VALUES
-  (1, 1, false, 'domain', true),
-  (2, 1, false, null, true),
-  (3, 1, false, 'domain', true),
-  (4, 1, false, null, true),
-  (5, 1, false, null, true),
-  (6, 1, false, null, true);
+  (1, 1, false, null, 'domain', true),
+  (2, 1, false, null, null, true),
+  (3, 1, false, null, 'domain', true),
+  (4, 1, false, null, null, true),
+  (5, 1, false, CURRENT_TIMESTAMP, 'organization_dirigeant', true),
+  (6, 1, false, CURRENT_TIMESTAMP, 'organization_dirigeant', true);
 
 INSERT INTO oidc_clients
 (client_name, client_id, client_secret, redirect_uris,

@@ -32,13 +32,13 @@ suite("linkUserToOrganizationFactory", () => {
     const userOrganizationLink = await linkUserToOrganization({
       organization_id: 1,
       user_id: 1,
-      verification_type: "bypassed",
+      verification_type: null,
     });
 
     t.assert.snapshot(userOrganizationLink);
   });
 
-  test("should mark a user as executive", async (t) => {
+  test("should mark a user as organization_dirigeant", async (t) => {
     await pg.sql`
       INSERT INTO organizations
         (cached_libelle, cached_nom_complet, id, siret, created_at, updated_at)
@@ -57,8 +57,7 @@ suite("linkUserToOrganizationFactory", () => {
     const userOrganizationLink = await linkUserToOrganization({
       organization_id: 1,
       user_id: 1,
-      verification_type: "bypassed",
-      is_executive: true,
+      verification_type: "organization_dirigeant",
     });
 
     t.assert.snapshot(userOrganizationLink);

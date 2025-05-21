@@ -1,3 +1,4 @@
+import type { CertificationSession } from "../managers/session/certification";
 import type { FranceConnectOidcSession } from "../managers/session/franceconnect";
 
 export interface UnauthenticatedSessionData {
@@ -15,6 +16,7 @@ export interface UnauthenticatedSessionData {
 
 export type AmrValue =
   // Standard values are described here https://datatracker.ietf.org/doc/html/rfc8176#section-2
+  | "hwk"
   | "pwd"
   | "totp"
   | "pop"
@@ -33,7 +35,8 @@ export interface AuthenticatedSessionData {
 declare module "express-session" {
   export interface SessionData
     extends UnauthenticatedSessionData,
-      FranceConnectOidcSession {
+      Partial<FranceConnectOidcSession>,
+      Partial<CertificationSession> {
     user?: User;
     temporaryEncryptedTotpKey?: string;
     amr?: AmrValue[];

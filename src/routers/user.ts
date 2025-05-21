@@ -6,16 +6,18 @@ import {
   getJoinOrganizationController,
   getOrganizationSuggestionsController,
   getUnableToAutoJoinOrganizationController,
+  getUnableToCertifyUserAsExecutiveController,
   postJoinOrganizationMiddleware,
   postQuitUserOrganizationController,
 } from "../controllers/organization";
 import { postSignInWithAuthenticatorAppController } from "../controllers/totp";
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
+import { getCertificationDirigeantController } from "../controllers/user/certification-dirigeant";
 import { postDeleteUserController } from "../controllers/user/delete";
 import { postCancelModerationAndRedirectControllerFactory } from "../controllers/user/edit-moderation";
 import {
+  getFranceConnectLoginCallbackMiddleware,
   getFranceConnectLogoutCallbackControllerFactory,
-  getFranceConnectOidcCallbackToUpdateUserMiddleware,
   postFranceConnectLoginRedirectControllerFactory,
   useFranceConnectLogoutMiddlewareFactory,
 } from "../controllers/user/franceconnect";
@@ -59,7 +61,10 @@ import {
   postSendEmailVerificationController,
   postVerifyEmailController,
 } from "../controllers/user/verify-email";
-import { getWelcomeController } from "../controllers/user/welcome";
+import {
+  getWelcomeController,
+  getWelcomeDirigeantController,
+} from "../controllers/user/welcome";
 import {
   getSignInWithPasskeyController,
   postVerifyFirstFactorAuthenticationController,
@@ -285,7 +290,7 @@ export const userRouter = () => {
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
     checkUserIsVerifiedMiddleware,
-    getFranceConnectOidcCallbackToUpdateUserMiddleware,
+    getFranceConnectLoginCallbackMiddleware,
     useFranceConnectLogoutMiddlewareFactory(
       `${HOST}/users/personal-information/franceconnect/logout/callback`,
     ),
@@ -398,6 +403,13 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     getWelcomeController,
   );
+  userRouter.get(
+    "/welcome/dirigeant",
+    checkUserSignInRequirementsMiddleware,
+    csrfProtectionMiddleware,
+    getWelcomeDirigeantController,
+  );
+
   userRouter.post(
     "/welcome",
     checkUserSignInRequirementsMiddleware,
@@ -440,6 +452,51 @@ export const userRouter = () => {
     "/franceconnect/logout/callback",
     checkUserCanAccessAdminMiddleware,
     getFranceConnectLogoutCallbackControllerFactory(`${HOST}/oauth/logout`),
+  );
+
+  userRouter.get(
+    "/certification-dirigeant",
+    rateLimiterMiddleware,
+    checkUserIsVerifiedMiddleware,
+    csrfProtectionMiddleware,
+    getCertificationDirigeantController,
+  );
+
+  userRouter.post(
+    "/certification-dirigeant/franceconnect/login",
+    rateLimiterMiddleware,
+    checkUserIsVerifiedMiddleware,
+    csrfProtectionMiddleware,
+    postFranceConnectLoginRedirectControllerFactory(
+      `${HOST}/users/certification-dirigeant/franceconnect/login/callback`,
+    ),
+  );
+
+  userRouter.get(
+    "/certification-dirigeant/franceconnect/login/callback",
+    rateLimiterMiddleware,
+    checkUserIsVerifiedMiddleware,
+    getFranceConnectLoginCallbackMiddleware,
+    useFranceConnectLogoutMiddlewareFactory(
+      `${HOST}/users/certification-dirigeant/franceconnect/logout/callback`,
+    ),
+  );
+
+  userRouter.get(
+    "/certification-dirigeant/franceconnect/logout/callback",
+    rateLimiterMiddleware,
+    checkUserIsVerifiedMiddleware,
+    csrfProtectionMiddleware,
+    getFranceConnectLogoutCallbackControllerFactory(
+      "/users/select-organization",
+    ),
+  );
+
+  userRouter.get(
+    "/unable-to-certify-user-as-executive",
+    checkUserHasPersonalInformationsMiddleware,
+    csrfProtectionMiddleware,
+    getUnableToCertifyUserAsExecutiveController,
   );
 
   return userRouter;

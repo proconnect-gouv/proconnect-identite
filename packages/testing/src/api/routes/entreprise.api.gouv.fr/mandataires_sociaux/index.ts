@@ -33,6 +33,7 @@ export default new Hono()
       );
     },
   )
+  //
   .get(
     "/mandataires_sociaux/discover",
     secureHeaders({

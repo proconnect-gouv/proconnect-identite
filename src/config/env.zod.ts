@@ -32,12 +32,7 @@ export const connectorEnvSchema = z.object({
     .string()
     .default("🎭 Mocked FranceConnect Client Secret"),
   FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("ES256"),
-  FRANCECONNECT_ISSUER: z
-    .string()
-    .url()
-    .default(
-      "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
-    ),
+  FRANCECONNECT_ISSUER: z.string().url(),
   FRANCECONNECT_SCOPES: zCoerceArray(z.string()).default(
     [
       "birthplace",
@@ -98,6 +93,9 @@ export const secretEnvSchema = z.object({
 
 export const paramsEnvSchema = z.object({
   ACCESS_LOG_PATH: z.string().optional(),
+  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: z
+    .string()
+    .default("https://proconnect.gouv.fr/assurance/certification-dirigeant"),
   ACR_VALUE_FOR_IAL1_AAL1: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/self-asserted"),
@@ -110,9 +108,19 @@ export const paramsEnvSchema = z.object({
   ACR_VALUE_FOR_IAL2_AAL2: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/consistency-checked-2fa"),
-  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: z
+  ACR_VALUE_FOR_IAL3_AAL1: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/certification-dirigeant"),
+  ACR_VALUE_FOR_IAL3_AAL2: z
+    .string()
+    .default(
+      "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
+    ),
+  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(1 * 24 * 60), // 1 day in minutes
   DEPLOY_ENV: z
     .enum(["localhost", "preview", "production", "sandbox"])
     .default("localhost"),

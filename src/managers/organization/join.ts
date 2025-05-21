@@ -3,6 +3,7 @@ import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import { Welcome } from "@gouvfr-lasuite/proconnect.email";
 import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import {
+  InvalidCertificationError,
   InvalidSiretError,
   OrganizationNotActiveError,
   OrganizationNotFoundError,
@@ -63,6 +64,7 @@ import {
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
+import { isOrganizationDirigeant } from "../certification";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
 
 export const doSuggestOrganizations = async ({
@@ -120,10 +122,12 @@ export const joinOrganization = async ({
   siret,
   user_id,
   confirmed = false,
+  certificationRequested = false,
 }: {
   siret: string;
   user_id: number;
   confirmed: boolean;
+  certificationRequested?: boolean;
 }): Promise<UserOrganizationLink> => {
   // Update organizationInfo
   let organizationInfo: OrganizationInfo;
@@ -169,6 +173,18 @@ export const joinOrganization = async ({
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
+
+  if (certificationRequested) {
+    const isDirigeant = await isOrganizationDirigeant(siret, user_id);
+
+    if (!isDirigeant) throw new InvalidCertificationError();
+
+    return await linkUserToOrganization({
+      organization_id,
+      user_id,
+      verification_type: "organization_dirigeant",
+    });
+  }
 
   if (isEntrepriseUnipersonnelle(organization)) {
     return await linkUserToOrganization({
@@ -395,6 +411,25 @@ export const greetForJoiningOrganization = async ({
     }).toString(),
     tag: "welcome",
   });
+
+  return await updateUserOrganizationLink(organization_id, user_id, {
+    has_been_greeted: true,
+  });
+};
+
+export const greetForCertification = async ({
+  user_id,
+  organization_id,
+}: {
+  user_id: number;
+  organization_id: number;
+}) => {
+  const userOrganisations = await getOrganizationsByUserId(user_id);
+  const organization = userOrganisations.find(
+    ({ id }) => id === organization_id,
+  );
+
+  if (isEmpty(organization)) throw new OrganizationNotFoundError();
 
   return await updateUserOrganizationLink(organization_id, user_id, {
     has_been_greeted: true,

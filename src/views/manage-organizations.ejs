@@ -11,10 +11,16 @@
                                                   cached_libelle,
                                                   cached_adresse,
                                                   cached_libelle_activite_principale,
+                                                  verification_type
                                               }) => { %>
                     <div class="fr-col-12 fr-col-lg-10">
                         <div class="fr-tile fr-tile--horizontal">
                             <div class="fr-tile__body">
+                                <% if (verification_type === "organization_dirigeant") { %>
+                                <div class="float-right">
+                                    <p class="fr-badge fr-badge--sm fr-badge--success">certifié</p>
+                                </div>
+                                <% } %>
                                 <h3 class="fr-tile__title">
                                     <a
                                             class="fr-link fr-tile__link"

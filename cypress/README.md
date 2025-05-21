@@ -33,7 +33,7 @@ See `scripts/cypress-single-test-setup.ts`
 If you want to run the app in development mode, you can use the `--dev` flag.
 
 ```bash
-ENABLE_DATABASE_DELETION=True npm run e2e:setup --dev redirect_after_session_expiration
+NODE_ENV=development ENABLE_DATABASE_DELETION=True npm run e2e:setup --dev redirect_after_session_expiration
 ```
 
 ### `npm run e2e:run <my_cypress_test_case>`

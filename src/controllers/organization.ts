@@ -1,6 +1,7 @@
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import {
+  InvalidCertificationError,
   InvalidSiretError,
   NotFoundError,
   OrganizationNotActiveError,
@@ -30,6 +31,7 @@ import { getUserFromAuthenticatedSession } from "../managers/session/authenticat
 import { csrfToken } from "../middlewares/csrf-protection";
 import {
   idSchema,
+  oidcErrorSchema,
   optionalBooleanSchema,
   siretSchema,
 } from "../services/custom-zod-schemas";
@@ -106,22 +108,28 @@ export const postJoinOrganizationMiddleware = async (
     });
 
     const { confirmed, siret } = await schema.parseAsync(req.body);
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     const userOrganizationLink = await joinOrganization({
       siret,
-      user_id: getUserFromAuthenticatedSession(req).id,
+      user_id,
       confirmed,
+      certificationRequested: req.session.certificationDirigeantRequested,
     });
 
     if (req.session.mustReturnOneOrganizationInPayload) {
       await selectOrganization({
-        user_id: getUserFromAuthenticatedSession(req).id,
+        user_id,
         organization_id: userOrganizationLink.organization_id,
       });
     }
 
     next();
   } catch (error) {
+    if (error instanceof InvalidCertificationError) {
+      return res.redirect("/users/unable-to-certify-user-as-executive");
+    }
+
     if (
       error instanceof UnableToAutoJoinOrganizationError ||
       error instanceof UserAlreadyAskedToJoinOrganizationError
@@ -227,6 +235,24 @@ export const getUnableToAutoJoinOrganizationController = async (
     next(e);
   }
 };
+
+export function getUnableToCertifyUserAsExecutiveController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    return res.render("user/unable-to-certify-user-as-executive", {
+      illustration: "error.svg",
+      oidcError: oidcErrorSchema().Enum.login_required,
+      interactionId: req.session.interactionId,
+      pageTitle: "Certification impossible",
+      use_dashboard_layout: false,
+    });
+  } catch (e) {
+    next(e);
+  }
+}
 
 export const postQuitUserOrganizationController = async (
   req: Request,

@@ -28,5 +28,6 @@ describe("Connect FranceConnect account", () => {
       .click();
 
     cy.title().should("include", "S'inscrire ou se connecter -");
+    cy.contains("Information : vous êtes maintenant déconnecté.");
   });
 });
