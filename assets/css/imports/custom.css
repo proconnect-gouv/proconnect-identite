@@ -60,3 +60,9 @@ input[readonly] {
   color: var(--text-disabled-grey);
   box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
 }
+
+/* Limited width */
+.limited-width {
+  max-width: 80px;
+  height: auto;
+}
