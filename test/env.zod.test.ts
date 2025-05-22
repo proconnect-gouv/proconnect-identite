@@ -15,6 +15,7 @@ describe("env.zod", () => {
       ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
+      SMTP_URL: "smtp://localhost:1025",
     };
 
     const env = envSchema.parse(sample_env);

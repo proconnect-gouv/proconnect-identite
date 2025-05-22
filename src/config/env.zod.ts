@@ -54,7 +54,7 @@ export const connectorEnvSchema = z.object({
   SMTP_FROM: z
     .string()
     .default("nepasrepondre@email.moncomptepro.beta.gouv.fr"),
-  SMTP_URL: z.string().default("smtp://localhost:1025"),
+  SMTP_URL: z.string(),
 });
 
 export const featureTogglesEnvSchema = z.object({
