@@ -191,9 +191,10 @@ describe("sign-in with a client requiring certification dirigeant and consistenc
 describe("sign-in with a client requiring eidas1", () => {
   it("should return an error with no self asserted acr", function () {
     cy.visit("http://localhost:4000");
-    cy.setCustomParams({
+    cy.updateCustomParams((customParams) => ({
+      ...customParams,
       acr_values: "eidas1",
-    });
+    }));
 
     cy.get("button#custom-connection").click({ force: true });
 
