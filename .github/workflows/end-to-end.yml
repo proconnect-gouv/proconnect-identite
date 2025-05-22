@@ -10,8 +10,9 @@ env:
   CYPRESS_RECORD: true
   DATABASE_URL: postgres://moncomptepro:moncomptepro@localhost:5432/moncomptepro
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
-  ZAMMAD_TOKEN: ${{ secrets.ZAMMAD_TOKEN }}
   FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
+  SMTP_URL: smtp://localhost:1025
+  ZAMMAD_TOKEN: ${{ secrets.ZAMMAD_TOKEN }}
 
 jobs:
   test:
