@@ -97,15 +97,12 @@ export const authenticatorRateLimiterMiddleware =
     }),
   );
 
-export const resetPasswordRateLimiterMiddleware =
-  emailRateLimiterMiddlewareFactory(
-    new RateLimiterRedis({
-      storeClient: redisClient,
-      keyPrefix: "rate-limiter-reset-password",
-      points: 5, // 5 requests
-      duration: 15 * 60, // per 15 minutes per email
-    }),
-  );
+export const resetPasswordRateLimiter = new RateLimiterRedis({
+  storeClient: redisClient,
+  keyPrefix: "rate-limiter-reset-password",
+  points: 5, // 5 requests
+  duration: 15 * 60, // per 15 minutes per email
+});
 
 export const sendMagicLinkRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(

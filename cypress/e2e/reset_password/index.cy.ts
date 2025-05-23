@@ -1,6 +1,6 @@
 //
 
-describe("sign-in with magic link", () => {
+describe("reset password", () => {
   it("should reset password then sign-in", function () {
     // Visit the signup page
     cy.visit("/users/start-sign-in");
@@ -58,5 +58,14 @@ describe("sign-in with magic link", () => {
     cy.get('[action="/users/sign-in"] [type="submit"]').click();
 
     cy.contains("Votre compte ProConnect");
+  });
+
+  it("user should be able to reset password via direct access to the page ", () => {
+    cy.visit("/users/reset-password");
+
+    cy.get('[name="login"]').type("keeper-of-secrets@darkangels.world");
+    cy.get('[type="submit"]').click();
+
+    cy.contains("vous allez recevoir un lien de réinitialisation par e-mail.");
   });
 });
