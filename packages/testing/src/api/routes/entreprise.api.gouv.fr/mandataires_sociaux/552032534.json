@@ -7,7 +7,7 @@
         "type": "personne_physique",
         "prenom": "Ulysse",
         "date_naissance": "1992-09-07",
-        "date_naissance_timestamp": 715903200000,
+        "date_naissance_timestamp": 715824000000,
         "lieu_naissance": "Internet",
         "pays_naissance": "FRANCE",
         "code_pays_naissance": "FR",

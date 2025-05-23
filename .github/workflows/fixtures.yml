@@ -8,18 +8,19 @@ on:
 
 env:
   ACCESS_LOG_PATH:
-  PGUSER: moncomptepro
-  PGPASSWORD: moncomptepro
-  PGDATABASE: moncomptepro
-  PGHOST: 127.0.0.1
-  PGPORT: 5432
   DATABASE_URL: postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro
   NODE_ENV: test
+  PGDATABASE: moncomptepro
+  PGHOST: 127.0.0.1
+  PGPASSWORD: moncomptepro
+  PGPORT: 5432
+  PGUSER: moncomptepro
+  SMTP_URL: smtp://localhost:1025
   SYMMETRIC_ENCRYPTION_KEY: aTrueRandom32BytesLongBase64EncodedStringAA=
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:16.9
