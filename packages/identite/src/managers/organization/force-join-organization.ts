@@ -8,7 +8,8 @@ import type {
 import type { GetByIdHandler as GetUserByIdHandler } from "#src/repositories/user";
 import type { BaseUserOrganizationLink } from "#src/types";
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
-import { some } from "lodash-es";
+import { match } from "ts-pattern";
+import { UserOrganizationLinkVerificationTypeSchema } from "../../types/index.js";
 
 //
 
@@ -46,22 +47,34 @@ export function forceJoinOrganizationFactory({
     const organizationEmailDomains =
       await findEmailDomainsByOrganizationId(organization_id);
 
-    let link_verification_type: BaseUserOrganizationLink["verification_type"];
-    if (
-      some(organizationEmailDomains, {
-        domain,
-        verification_type: "verified",
-      }) ||
-      some(organizationEmailDomains, {
-        domain,
-        verification_type: "trackdechets_postal_mail",
-      }) ||
-      some(organizationEmailDomains, { domain, verification_type: "external" })
-    ) {
-      link_verification_type = "domain";
-    } else {
-      link_verification_type = "no_validation_means_available";
-    }
+    const link_verification_type = organizationEmailDomains
+      .filter(({ domain: currentDomain }) => currentDomain === domain)
+      .reduce(
+        (acc, { verification_type }) => {
+          if (acc === "domain") {
+            return acc;
+          }
+
+          return match(verification_type)
+            .with(
+              "verified",
+              "trackdechets_postal_mail",
+              "external",
+              "official_contact",
+              () => UserOrganizationLinkVerificationTypeSchema.enum.domain,
+            )
+            .with(
+              null,
+              "blacklisted",
+              "refused",
+              () =>
+                UserOrganizationLinkVerificationTypeSchema.enum
+                  .no_validation_means_available,
+            )
+            .exhaustive();
+        },
+        "no_validation_means_available" as BaseUserOrganizationLink["verification_type"],
+      );
 
     return await linkUserToOrganization({
       organization_id,

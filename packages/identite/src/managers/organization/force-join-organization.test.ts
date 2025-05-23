@@ -2,6 +2,7 @@ import { NotFoundError } from "#src/errors";
 import type { Organization, User } from "#src/types";
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
+import type { EmailDomain } from "../../types/index.js";
 import { forceJoinOrganizationFactory } from "./force-join-organization.js";
 
 suite("forceJoinOrganizationFactory", () => {
@@ -24,6 +25,35 @@ suite("forceJoinOrganizationFactory", () => {
         organization_id: 42,
         user_id: 42,
         verification_type: "no_validation_means_available",
+      },
+    );
+  });
+
+  test("should update the organization user link with domain verification ", async () => {
+    const forceJoinOrganization = forceJoinOrganizationFactory({
+      findEmailDomainsByOrganizationId: () =>
+        Promise.resolve([
+          {
+            domain: "darkangels.world",
+            verification_type: "verified",
+          } as EmailDomain,
+        ]),
+      getById: () => Promise.resolve({ id: 42 } as Organization),
+      getUserById: () =>
+        Promise.resolve({ email: "lion.eljonson@darkangels.world" } as User),
+      linkUserToOrganization: (values) => Promise.resolve(values as any),
+    });
+
+    assert.deepEqual(
+      await forceJoinOrganization({
+        organization_id: 42,
+        user_id: 42,
+      }),
+      {
+        is_external: false,
+        organization_id: 42,
+        user_id: 42,
+        verification_type: "domain",
       },
     );
   });
