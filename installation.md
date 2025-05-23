@@ -4,7 +4,7 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
 
 ## Prerequisites
 
-- Node.js (v20) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm))
+- Node.js (v22) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm))
 - Docker (>= v25) and Docker Compose (>= v2.24) installed ([doc](https://docs.docker.com/engine/install/))
 - Clone the ProConnect Identité repository
 
@@ -28,27 +28,7 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
    npm install
    ```
 
-2. **Create a local version of dotenv file**: Inside the project's root directory, run:
-
-   ```bash
-   cp .env.sample .env
-   ```
-
-   This will create a local copy of the `.env` file containing the environnement variables to run ProConnect Identité.
-
-3. **Get your own INSEE api credential**: or use the one of your teammates.
-
-   Fetch them at https://api.gouv.fr/les-api/sirene_v3.
-
-   Then fill your `.env` file with them.
-
-4. **Build internal dependencies**: Build the internal dependencies located in the `packages` directory.
-
-   ```bash
-   npm run build:workspaces
-   ```
-
-5. **Database Initialization**: The database will be automatically initialized with data from `scripts/fixtures.sql`.
+2. **Database Initialization**: The database will be automatically initialized with data from `scripts/fixtures.sql`.
 
    ```bash
    npm run fixtures:load
