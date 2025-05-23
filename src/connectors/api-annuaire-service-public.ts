@@ -76,7 +76,7 @@ export const getAnnuaireServicePublicContactEmail = async (
         e.code === "ERR_BAD_RESPONSE" ||
         e.code === "EAI_AGAIN")
     ) {
-      throw new ApiAnnuaireConnectionError();
+      throw new ApiAnnuaireConnectionError(undefined, { cause: e });
     }
 
     throw e;
@@ -90,8 +90,9 @@ export const getAnnuaireServicePublicContactEmail = async (
 
   if (features.length > 1) {
     if (isEmpty(codePostal)) {
-      // without postal code we cannot choose a mairie
-      throw new ApiAnnuaireTooManyResultsError();
+      throw new ApiAnnuaireTooManyResultsError(
+        `Without postal code, we cannot choose a mairie between ${features.length} results.`,
+      );
     }
 
     // Take the first match
@@ -102,19 +103,25 @@ export const getAnnuaireServicePublicContactEmail = async (
   }
 
   if (isEmpty(feature)) {
-    throw new ApiAnnuaireNotFoundError();
+    throw new ApiAnnuaireNotFoundError(
+      `No pair found for (codeOfficielGeographique: ${codeOfficielGeographique}, codePostal: ${codePostal}).`,
+    );
   }
 
   const { adresse_courriel } = feature;
 
   if (!isString(adresse_courriel)) {
-    throw new ApiAnnuaireInvalidEmailError();
+    throw new ApiAnnuaireInvalidEmailError(
+      `${adresse_courriel} is not a string.`,
+    );
   }
 
   const formattedEmail = adresse_courriel.toLowerCase().trim();
 
   if (!isEmailValid(formattedEmail)) {
-    throw new ApiAnnuaireInvalidEmailError();
+    throw new ApiAnnuaireInvalidEmailError(
+      `${formattedEmail} is not a valid email address.`,
+    );
   }
 
   if (!FEATURE_USE_ANNUAIRE_EMAILS) {
