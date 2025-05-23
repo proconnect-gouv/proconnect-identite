@@ -5,6 +5,7 @@ import { isEmpty } from "lodash-es";
 import {
   addDomain,
   findEmailDomainsByOrganizationId,
+  updateDomainVerificationType,
 } from "../../repositories/email-domain";
 import {
   findByUserId,
@@ -52,6 +53,7 @@ export const quitOrganization = async ({
 
 export const markDomainAsVerified = markDomainAsVerifiedFactory({
   addDomain,
+  updateDomainVerificationType,
   findEmailDomainsByOrganizationId,
   findOrganizationById,
   getUsers,

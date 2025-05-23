@@ -2,6 +2,7 @@ import { NotFoundError } from "#src/errors";
 import {
   type AddDomainHandler,
   type FindEmailDomainsByOrganizationIdHandler,
+  type UpdateDomainVerificationTypeHandler,
 } from "#src/repositories/email-domain";
 import type {
   FindByIdHandler,
@@ -20,6 +21,10 @@ suite("markDomainAsVerifiedFactory", () => {
     const addDomain = mock.fn<AddDomainHandler>(() =>
       Promise.resolve({} as any),
     );
+    const updateDomainVerificationType =
+      mock.fn<UpdateDomainVerificationTypeHandler>(() =>
+        Promise.resolve({} as any),
+      );
     const updateUserOrganizationLink =
       mock.fn<UpdateUserOrganizationLinkHandler>(() =>
         Promise.resolve({} as any),
@@ -27,6 +32,7 @@ suite("markDomainAsVerifiedFactory", () => {
 
     const markDomainAsVerified = markDomainAsVerifiedFactory({
       addDomain,
+      updateDomainVerificationType,
       findEmailDomainsByOrganizationId:
         mock.fn<FindEmailDomainsByOrganizationIdHandler>(),
       findOrganizationById: mock.fn<FindByIdHandler>(() =>
@@ -62,6 +68,7 @@ suite("markDomainAsVerifiedFactory", () => {
   test("❎ throws NotFoundError for unknown organization", async () => {
     const markDomainAsVerified = markDomainAsVerifiedFactory({
       addDomain: () => Promise.reject(),
+      updateDomainVerificationType: () => Promise.reject(),
       findEmailDomainsByOrganizationId: () => Promise.reject(),
       findOrganizationById: () => Promise.resolve(undefined),
       getUsers: () => Promise.reject(),
