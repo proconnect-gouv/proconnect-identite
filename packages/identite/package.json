@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "leven": "^4.0.0",
-    "openid-client": "^6.4.2",
+    "openid-client": "^6.5.0",
     "sql-template-tag": "^5.2.1",
     "zod": "^3.25.28"
   },
