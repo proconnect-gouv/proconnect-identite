@@ -28,6 +28,7 @@ jobs:
           - delete_account
           - delete_totp
           - join_and_moderation
+          - join_collectivite_territoriale_free_contact_domain
           - join_collectivite_territoriale_official_contact_domain
           - join_must_confirm
           - join_org_with_trackdechets_domain
