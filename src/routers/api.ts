@@ -9,7 +9,6 @@ import {
   getOrganizationInfoController,
   getPingApiSireneController,
   postForceJoinOrganizationController,
-  postMarkDomainAsVerified,
   postSendModerationProcessedEmail,
 } from "../controllers/api";
 import {
@@ -68,8 +67,6 @@ export const apiRouter = () => {
     "/send-moderation-processed-email",
     postSendModerationProcessedEmail,
   );
-
-  apiAdminRouter.post("/mark-domain-as-verified", postMarkDomainAsVerified);
 
   apiRouter.use("/admin", apiAdminRouter);
 
