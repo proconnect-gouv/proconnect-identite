@@ -45,4 +45,37 @@ describe("join organizations", () => {
 
     cy.contains("Votre compte est créé !");
   });
+
+  it("join a mairie with a free email", function () {
+    cy.visit("/users/join-organization");
+    cy.login("unused1@yopmail.com");
+
+    cy.get('[name="siret"]').type("21690085200015");
+    cy.get('[type="submit"]').click();
+
+    cy.maildevGetMessageBySubject(
+      "[ProConnect] Authentifier un email sur ProConnect",
+    )
+      .then((email) => {
+        cy.maildevVisitMessageById(email.id);
+        cy.maildevDeleteMessageById(email.id);
+        cy.contains(
+          "Jean User1 (unused1@yopmail.com) souhaite rejoindre votre organisation « Commune de fleurieu sur saone - Mairie » sur ProConnect.",
+        );
+        return cy.get("em:nth-child(1)").invoke("text");
+      })
+      .then((code) => {
+        cy.wrap(code).as("code");
+      });
+
+    cy.go("back");
+
+    cy.get<string>("@code").then((code) => {
+      cy.log(code);
+      cy.get('[name="official_contact_email_verification_token"]').type(code);
+      cy.get('[type="submit"]').click();
+    });
+
+    cy.contains("Votre compte est créé !");
+  });
 });
