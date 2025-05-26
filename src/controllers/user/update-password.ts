@@ -1,4 +1,6 @@
+import { to } from "await-to-js";
 import type { NextFunction, Request, Response } from "express";
+import HttpErrors from "http-errors";
 import { z, ZodError } from "zod";
 import { HOST } from "../../config/env";
 import {
@@ -17,6 +19,7 @@ import {
 } from "../../managers/session/unauthenticated";
 import { changePassword, sendResetPasswordEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
+import { resetPasswordRateLimiter } from "../../middlewares/rate-limiter";
 import { emailSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 import hasErrorFromField from "../../services/has-error-from-field";
@@ -63,6 +66,14 @@ export const postResetPasswordController = async (
       // When the user is redirected to start of the sign-in process, the email value will be updated accordingly.
       // The email rate limiter will rely on the email value set in the session here.
       setEmailInUnauthenticatedSession(req, email);
+    }
+
+    const [rateLimiterError] = await to(
+      resetPasswordRateLimiter.consume(email),
+    );
+
+    if (rateLimiterError) {
+      return next(new HttpErrors.TooManyRequests());
     }
 
     await sendResetPasswordEmail(email, HOST);

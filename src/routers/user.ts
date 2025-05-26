@@ -75,7 +75,6 @@ import {
   authenticatorRateLimiterMiddleware,
   passwordRateLimiterMiddleware,
   rateLimiterMiddleware,
-  resetPasswordRateLimiterMiddleware,
   sendMagicLinkRateLimiterMiddleware,
   verifyEmailRateLimiterMiddleware,
 } from "../middlewares/rate-limiter";
@@ -251,7 +250,6 @@ export const userRouter = () => {
   userRouter.post(
     "/reset-password",
     csrfProtectionMiddleware,
-    resetPasswordRateLimiterMiddleware,
     postResetPasswordController,
   );
   userRouter.get(
