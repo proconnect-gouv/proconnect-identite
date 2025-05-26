@@ -15,7 +15,7 @@ describe("isVisibleString", () => {
   ];
 
   nonVisibleStrings.forEach((nonVisibleString) => {
-    it(`should return false for non-visible string: ${nonVisibleString}`, () => {
+    it(`should return false for non-visible string: "${nonVisibleString}"`, () => {
       assert.equal(isVisibleString(nonVisibleString), false);
     });
   });
@@ -23,7 +23,7 @@ describe("isVisibleString", () => {
   const visibleStrings = ["​a", "a"];
 
   visibleStrings.forEach((visibleString) => {
-    it(`should return true for visible string: ${visibleString}`, () => {
+    it(`should return true for visible string: "${visibleString}"`, () => {
       assert.equal(isVisibleString(visibleString), true);
     });
   });
