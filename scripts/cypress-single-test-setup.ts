@@ -54,20 +54,20 @@ if (interactive && (!testCase || !doesExist)) {
 
 //
 
-console.log("🚥 Setup test case", testCase);
+console.log(`🚥 Setup test "${testCase}" case in ${mode} mode`);
 console.log();
 await $`npm run build:workspaces`;
-await $({ nothrow: true })`npm run delete-database`;
-await $`npm run migrate up`;
-await $`npm run fixtures:load-ci cypress/e2e/${testCase}/fixtures.sql`;
-await $`npm run update-organization-info 0`;
-
-console.log();
-console.log("All set and ready !");
 
 if (mode === "development") {
   $`npx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev`;
 } else {
+  await $({ nothrow: true })`npm run delete-database`;
+  await $`npm run migrate up`;
+  await $`npm run fixtures:load-ci cypress/e2e/${testCase}/fixtures.sql`;
+  await $`npm run update-organization-info 0`;
+  console.log();
+  console.log("All set and ready !");
+
   console.log("Run the app with the specific env vars:");
 
   console.log(`
