@@ -44,11 +44,11 @@
     "build": "tsc --build tsconfig.lib.json",
     "check": "npm run build -- --noEmit",
     "dev": "npm run build -- --watch --preserveWatchOutput",
-    "test": "exit 0"
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
-    "@vitest/expect": "^3.1.1",
     "dotenv": "^16.5.0",
     "tsx": "^4.19.4"
   },

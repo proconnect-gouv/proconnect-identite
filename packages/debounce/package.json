@@ -32,25 +32,16 @@
     "build": "pkgroll --tsconfig=tsconfig.lib.json",
     "check": "npm run build -- --noEmit",
     "dev": "npm run build -- --watch --preserveWatchOutput",
-    "test": "mocha"
-  },
-  "mocha": {
-    "reporter": "spec",
-    "require": [
-      "tsx"
-    ],
-    "spec": "src/**/*.test.ts"
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {
     "axios": "^1.8.4",
-    "zod": "^3.24.1"
+    "zod": "^3.25.28"
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
-    "@types/mocha": "^10.0.10",
     "@types/node": "^22.14.1",
-    "chai": "^5.1.2",
-    "mocha": "^11.1.0",
     "pkgroll": "^2.12.1",
     "tsx": "^4.19.4"
   },

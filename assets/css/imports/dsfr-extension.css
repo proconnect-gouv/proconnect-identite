@@ -1,17 +1,3 @@
-.notice--email .fr-notice__body:before {
-  content: "";
-  background-image: url(/dist/060-at.svg);
-  background-color: inherit;
-}
-
-.fr-notice.notice--email {
-  background-color: var(--background-contrast-info);
-}
-
-.notice--email strong {
-  color: var(--text-default-info);
-}
-
 .fr-notice.notice--change-email {
   color: var(--text-action-high-blue-france);
   padding-bottom: 0.5rem;

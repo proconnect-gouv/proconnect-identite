@@ -13,11 +13,16 @@ describe("env.zod", () => {
       DATABASE_URL:
         "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro",
       ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
+      FRANCECONNECT_ISSUER:
+        "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
+      SMTP_URL: "smtp://localhost:1025",
     };
 
     const env = envSchema.parse(sample_env);
 
     assert.deepEqual(env, {
+      ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT:
+        "https://proconnect.gouv.fr/assurance/certification-dirigeant",
       ACR_VALUE_FOR_IAL1_AAL1:
         "https://proconnect.gouv.fr/assurance/self-asserted",
       ACR_VALUE_FOR_IAL1_AAL2:
@@ -26,10 +31,13 @@ describe("env.zod", () => {
         "https://proconnect.gouv.fr/assurance/consistency-checked",
       ACR_VALUE_FOR_IAL2_AAL2:
         "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-      ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT:
+      ACR_VALUE_FOR_IAL3_AAL1:
         "https://proconnect.gouv.fr/assurance/certification-dirigeant",
+      ACR_VALUE_FOR_IAL3_AAL2:
+        "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
       API_AUTH_PASSWORD: "admin",
       API_AUTH_USERNAME: "admin",
+      CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: 1440,
       CRISP_BASE_URL: "https://api.crisp.chat",
       CRISP_IDENTIFIER: "",
       CRISP_KEY: "",

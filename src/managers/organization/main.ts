@@ -20,16 +20,14 @@ import { setSelectedOrganizationId } from "../../repositories/redis/selected-org
 
 export const getOrganizationsByUserId = findByUserId;
 export const getOrganizationById = findOrganizationById;
-export const getUserOrganizations = async ({
-  user_id,
-}: {
-  user_id: number;
-}): Promise<{
+export const getUserOrganizations = async (
+  userId: number,
+): Promise<{
   userOrganizations: Organization[];
   pendingUserOrganizations: Organization[];
 }> => {
-  const userOrganizations = await findByUserId(user_id);
-  const pendingUserOrganizations = await findPendingByUserId(user_id);
+  const userOrganizations = await findByUserId(userId);
+  const pendingUserOrganizations = await findPendingByUserId(userId);
 
   return { userOrganizations, pendingUserOrganizations };
 };

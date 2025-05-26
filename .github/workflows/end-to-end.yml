@@ -10,7 +10,10 @@ env:
   CYPRESS_RECORD: true
   DATABASE_URL: postgres://moncomptepro:moncomptepro@localhost:5432/moncomptepro
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
+  FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
+  SMTP_URL: smtp://localhost:1025
   ZAMMAD_TOKEN: ${{ secrets.ZAMMAD_TOKEN }}
+
 jobs:
   test:
     strategy:
@@ -39,6 +42,7 @@ jobs:
           - set_info_after_account_provisioning
           - signin_from_proconnect_federation_client
           - signin_from_standard_client
+          - signin_with_certification_dirigeant
           - signin_with_email_verification
           - signin_with_email_verification_renewal
           - signin_with_legacy_scope
@@ -47,7 +51,7 @@ jobs:
           - signin_with_totp
           - signup_entreprise_unipersonnelle
           - update_personal_information
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -62,7 +66,7 @@ jobs:
       - run: npm run build:workspaces
       - run: npm run migrate up
       - name: Cypress run
-        uses: cypress-io/github-action@v6.9.0
+        uses: cypress-io/github-action@v6.9.2
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets

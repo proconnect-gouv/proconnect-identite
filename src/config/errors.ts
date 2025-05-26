@@ -1,5 +1,3 @@
-import { AxiosError } from "axios";
-
 export class InvalidEmailError extends Error {
   constructor(public didYouMean: string) {
     super();
@@ -48,22 +46,31 @@ export class InvalidMagicLinkError extends Error {}
 
 export class ApiAnnuaireError extends Error {}
 
-export class ApiAnnuaireNotFoundError extends Error {}
+export class ApiAnnuaireNotFoundError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ApiAnnuaireNotFoundError";
+  }
+}
 
-export class ApiAnnuaireTooManyResultsError extends Error {}
+export class ApiAnnuaireTooManyResultsError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ApiAnnuaireTooManyResultsError";
+  }
+}
 
-export class ApiAnnuaireInvalidEmailError extends Error {}
+export class ApiAnnuaireInvalidEmailError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ApiAnnuaireInvalidEmailError";
+  }
+}
 
-export class ApiAnnuaireConnectionError extends Error {}
-
-export class BrevoApiError extends Error {
-  constructor(error: AxiosError<{ message: string; code: string }>) {
-    if (error.response?.data?.code && error.response?.data?.message) {
-      super(error.response?.data?.message);
-      this.name = `BrevoApiError ${error.response?.data?.code}`;
-    } else {
-      super();
-    }
+export class ApiAnnuaireConnectionError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ApiAnnuaireConnectionError";
   }
 }
 

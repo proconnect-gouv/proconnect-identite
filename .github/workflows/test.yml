@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
@@ -22,12 +22,5 @@ jobs:
       - run: npm run build:workspaces
       - run: npm run test:lint
       - run: npm run test:workspaces
-        env:
-          CRISP_BASE_URL: https://api.crisp.chat
-          CRISP_IDENTIFIER: ${{ secrets.CRISP_IDENTIFIER }}
-          CRISP_KEY: ${{ secrets.CRISP_KEY }}
-          CRISP_PLUGIN_URN: ${{ secrets.CRISP_PLUGIN_URN }}
-          CRISP_USER_NICKNAME: ${{ secrets.CRISP_USER_NICKNAME }}
-          CRISP_WEBSITE_ID: ${{ secrets.CRISP_WEBSITE_ID }}
       - run: npm run test:type-check
       - run: npm run test:unit

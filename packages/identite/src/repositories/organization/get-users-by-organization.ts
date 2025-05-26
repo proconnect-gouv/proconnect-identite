@@ -25,6 +25,7 @@ export function getUsersByOrganizationFactory({ pg }: DatabaseContext) {
           u.*,
           uo.is_external,
           uo.verification_type,
+          uo.verified_at,
           uo.has_been_greeted,
           uo.needs_official_contact_email_verification,
           uo.official_contact_email_verification_token,

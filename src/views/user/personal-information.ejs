@@ -35,7 +35,7 @@
                         title="un nom ne doit pas contenir de chiffres ou de caractères spéciaux"
                         id="given_name"
                 <% if (given_name) { %>value="<%= given_name; %>"<% } %>
-                <% if (verifiedBy) { %> disabled readonly="readonly" <% } %>
+                <% if (verifiedBy) { %> readonly="readonly" <% } %>
                 >
             </div>
 
@@ -54,7 +54,7 @@
                         title="un nom ne doit pas contenir de chiffres ou de caractères spéciaux"
                         id="family_name"
                 <% if (family_name) { %>value="<%= family_name; %>"<% } %>
-                <% if (verifiedBy) { %> disabled readonly="readonly" <% } %>
+                <% if (verifiedBy) { %> readonly="readonly" <% } %>
                 >
             </div>
 

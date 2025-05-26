@@ -59,7 +59,8 @@ describe("sign-in from proconnect federation client", () => {
 describe("sign-in with a client requiring 2fa identity", () => {
   beforeEach(() => {
     cy.visit("http://localhost:4001");
-    cy.setCustomParams({
+    cy.updateCustomParams((customParams) => ({
+      ...customParams,
       acr_values: null,
       claims: {
         id_token: {
@@ -73,7 +74,7 @@ describe("sign-in with a client requiring 2fa identity", () => {
           },
         },
       },
-    });
+    }));
   });
 
   it("should sign-in an return the right acr value", function () {

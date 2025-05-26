@@ -4,7 +4,7 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
 
 ## Prerequisites
 
-- Node.js (v20) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm))
+- Node.js (v22) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm))
 - Docker (>= v25) and Docker Compose (>= v2.24) installed ([doc](https://docs.docker.com/engine/install/))
 - Clone the ProConnect Identité repository
 
@@ -28,27 +28,7 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
    npm install
    ```
 
-2. **Create a local version of dotenv file**: Inside the project's root directory, run:
-
-   ```bash
-   cp .env.sample .env
-   ```
-
-   This will create a local copy of the `.env` file containing the environnement variables to run ProConnect Identité.
-
-3. **Get your own INSEE api credential**: or use the one of your teammates.
-
-   Fetch them at https://api.gouv.fr/les-api/sirene_v3.
-
-   Then fill your `.env` file with them.
-
-4. **Build internal dependencies**: Build the internal dependencies located in the `packages` directory.
-
-   ```bash
-   npm run build:workspaces
-   ```
-
-5. **Database Initialization**: The database will be automatically initialized with data from `scripts/fixtures.sql`.
+2. **Database Initialization**: The database will be automatically initialized with data from `scripts/fixtures.sql`.
 
    ```bash
    npm run fixtures:load
@@ -68,14 +48,7 @@ To log in, use the email address user@yopmail.com and the password "user@yopmail
 
 Emails are not sent but printed in the console.
 
-By default the application will run with testing mocks for external apis.  
-Use the testing cli to add additional data needed for dev or tests.
-
-```bash
-$ npx tsx scripts/testing.ts --help
-```
-
-Note that the ./packages/testing/src/api/data/people.ts file contains a list of people that are used to anonymize data.
+By default the application will run with testing mocks for external apis.
 
 ## Testing the Connection with a Test Client
 
@@ -139,3 +112,15 @@ As this changelog is intended for french end users, we recommend you write your 
 
 Commit your changes and push them in your branch.  
 We will merge a "Version Packages" PR when we are ready to release :wink:
+
+## Adding new data
+
+Pense à récupérer des credentials de prod pour l'api auprès d'un collègue.
+
+Use the testing cli to add additional data needed for dev or tests.
+
+```bash
+$ npx tsx scripts/testing.ts --help
+```
+
+Note that the ./packages/testing/src/api/data/people.ts file contains a list of people that are used to anonymize data.

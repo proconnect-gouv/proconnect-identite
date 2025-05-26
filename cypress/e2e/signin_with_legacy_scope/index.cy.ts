@@ -7,9 +7,10 @@ describe("sign-in with legacy scope", () => {
 
   it("should sign-in", function () {
     cy.visit("http://localhost:4000");
-    cy.setCustomParams({
+    cy.updateCustomParams((customParams) => ({
+      ...customParams,
       scope: "openid email profile phone organizations",
-    });
+    }));
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("unused1@yopmail.com");

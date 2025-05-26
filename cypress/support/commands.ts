@@ -18,11 +18,11 @@ declare global {
       login(email: string): Chainable<void>;
       mfaLogin(email: string): Chainable<void>;
       seeInField: typeof seeInFieldCommand;
-      setCustomParams(customParams: any): Chainable<void>;
       setRequestedAcrs(requestedAcrs?: string[]): Chainable<void>;
       getDescribed: typeof getDescribedCommand;
       seed: typeof seed;
       getByLabel: typeof getByLabelCommand;
+      updateCustomParams: typeof updateCustomParams;
     }
   }
 }
@@ -85,32 +85,44 @@ function seeInFieldCommand(field: string, value: string) {
 }
 Cypress.Commands.add("seeInField", seeInFieldCommand);
 
-Cypress.Commands.add("setCustomParams", (customParams) => {
+const updateCustomParams = (updater: (customParams: any) => any): void => {
   cy.get('[name="custom-params"]')
-    .clear({ force: true })
-    .type(JSON.stringify(customParams), {
-      delay: 0,
-      parseSpecialCharSequences: false,
-      force: true,
+    .invoke("val")
+    .then((customParamsAsText) => {
+      const customParams = JSON.parse(customParamsAsText as string);
+
+      const newCustomParams = updater(customParams);
+      // note that null property should be set to a falsy
+      const newCustomParamsAsText = JSON.stringify(newCustomParams, null, 2);
+
+      cy.get('[name="custom-params"]').clear({ force: true });
+      cy.get('[name="custom-params"]').type(newCustomParamsAsText, {
+        delay: 0,
+        force: true,
+        parseSpecialCharSequences: false,
+      });
     });
-});
+};
+
+Cypress.Commands.add("updateCustomParams", updateCustomParams);
 
 Cypress.Commands.add("setRequestedAcrs", (requestedAcrs) => {
-  const customParams = {
-    claims: {
-      id_token: {
-        amr: { essential: true },
-        acr: { essential: true },
-      },
+  const newClaims = {
+    id_token: {
+      amr: { essential: true },
+      acr: { essential: true },
     },
   };
 
   if (requestedAcrs) {
     // @ts-ignore
-    customParams.claims.id_token.acr["values"] = requestedAcrs;
+    newClaims.id_token.acr["values"] = requestedAcrs;
   }
 
-  cy.setCustomParams(customParams);
+  cy.updateCustomParams((customParams) => ({
+    ...customParams,
+    claims: newClaims,
+  }));
 });
 
 function getDescribedCommand(text: string) {

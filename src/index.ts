@@ -281,6 +281,7 @@ let server: Server | undefined;
 try {
   server = app.listen(PORT, () => {
     logger.info(`application is listening on port ${PORT}`);
+    logger.info(`in ${DEPLOY_ENV} ${NODE_ENV} mode`);
   });
 } catch (err) {
   if (server && server.listening) server.close();

@@ -18,3 +18,23 @@ updates:
     schedule:
       interval: "weekly"
     versioning-strategy: increase
+  - package-ecosystem: "docker"
+    directory: "/"
+    labels:
+      - dependencies
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: postgres
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    labels:
+      - dependencies
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: postgres
+        update-types: ["version-update:semver-major"]
+      - dependency-name: redis
+        update-types: ["version-update:semver-major"]

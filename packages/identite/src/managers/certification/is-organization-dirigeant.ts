@@ -19,7 +19,7 @@ type IsOrganizationExecutiveFactoryFactoryConfig = {
 
 //
 
-export function isOrganizationExecutiveFactory(
+export function isOrganizationDirigeantFactory(
   config: IsOrganizationExecutiveFactoryFactoryConfig,
 ) {
   const {
@@ -30,7 +30,7 @@ export function isOrganizationExecutiveFactory(
     log = () => {},
   } = config;
 
-  return async function isOrganizationExecutive(
+  return async function isOrganizationDirigeant(
     siret: string,
     user_id: number,
   ) {
@@ -72,6 +72,6 @@ export function isOrganizationExecutiveFactory(
   };
 }
 
-export type IsOrganizationExecutiveHandler = ReturnType<
-  typeof isOrganizationExecutiveFactory
+export type IsOrganizationDirigeantHandler = ReturnType<
+  typeof isOrganizationDirigeantFactory
 >;

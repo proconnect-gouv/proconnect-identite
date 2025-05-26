@@ -8,54 +8,54 @@ import {
 import {
   LiElJonsonMandataire,
   RogalDornMandataire,
-} from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/infogreffe/mandataires";
+} from "#testing/seed/mandataires";
 import { RogalDornEntrepreneur } from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/insee/siret";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { isOrganizationExecutiveFactory } from "./is-organization-executive.js";
+import { isOrganizationDirigeantFactory } from "./is-organization-dirigeant.js";
 
 //
 
-describe("isOrganizationExecutiveFactory", () => {
+describe("isOrganizationDirigeantFactory", () => {
   it("should recognize a user as executive of a auto-entrepreneur found on infogreffe", async () => {
-    const isOrganizationExecutive = isOrganizationExecutiveFactory({
+    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
       findBySiret: () => Promise.resolve(RogalDornEntrepreneur),
       findMandatairesSociauxBySiren: () =>
         Promise.resolve([RogalDornMandataire]),
       getFranceConnectUserInfo: () =>
         Promise.resolve(RogalDornFranceConnectUserInfo),
     });
-    const isExecutive = await isOrganizationExecutive("94957325700019", 1);
-    assert.equal(isExecutive, true);
+    const isDirigeant = await isOrganizationDirigeant("94957325700019", 1);
+    assert.equal(isDirigeant, true);
   });
 
   it("should not match another mandataire", async () => {
-    const isOrganizationExecutive = isOrganizationExecutiveFactory({
+    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
       findBySiret: () => Promise.resolve(RogalDornEntrepreneur),
       findMandatairesSociauxBySiren: () =>
         Promise.resolve([LiElJonsonMandataire]),
       getFranceConnectUserInfo: () =>
         Promise.resolve(RogalDornFranceConnectUserInfo),
     });
-    const isExecutive = await isOrganizationExecutive("94957325700019", 1);
-    assert.equal(isExecutive, false);
+    const isDirigeant = await isOrganizationDirigeant("94957325700019", 1);
+    assert.equal(isDirigeant, false);
   });
 
   it("❎ fail with no franceconnect user info", async () => {
-    const isOrganizationExecutive = isOrganizationExecutiveFactory({
+    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
       findBySiret: () => Promise.resolve(RogalDornEntrepreneur),
       findMandatairesSociauxBySiren: () => Promise.resolve([]),
       getFranceConnectUserInfo: () => Promise.resolve(undefined),
     });
 
     await assert.rejects(
-      isOrganizationExecutive("94957325700019", 1),
+      isOrganizationDirigeant("94957325700019", 1),
       new NotFoundError("FranceConnect UserInfo not found"),
     );
   });
 
   it("❎ fail with no mandataires", async () => {
-    const isOrganizationExecutive = isOrganizationExecutiveFactory({
+    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
       findBySiret: () => Promise.resolve(RogalDornEntrepreneur),
       findMandatairesSociauxBySiren: () => Promise.resolve([]),
       getFranceConnectUserInfo: () =>
@@ -63,7 +63,7 @@ describe("isOrganizationExecutiveFactory", () => {
     });
 
     await assert.rejects(
-      isOrganizationExecutive("94957325700019", 1),
+      isOrganizationDirigeant("94957325700019", 1),
       new NotFoundError("No mandataires found"),
     );
   });

@@ -1,5 +1,11 @@
 # @gouvfr-lasuite/proconnect.identite
 
+## 0.5.3
+
+### Patch Changes
+
+- [#1252](https://github.com/numerique-gouv/proconnect-identite/pull/1252) [`d2d6759`](https://github.com/numerique-gouv/proconnect-identite/commit/d2d6759458b98ccc153005537ac2f5d063d0495a) Thanks [@rdubigny](https://github.com/rdubigny)! - La vérification de domaine official_contact permet de créer un lien vérifié avec le type "domain" plutôt qu'un lien non vérifié lors d'une validation du domaine par hyyypertool.
+
 ## 0.5.2
 
 ### Patch Changes

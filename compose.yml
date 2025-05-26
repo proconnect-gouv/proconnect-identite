@@ -11,12 +11,12 @@ services:
       - db-data:/var/lib/postgresql/data
 
   redis:
-    image: redis:7.2
+    image: redis:7.4
     ports:
       - "6379:6379"
 
   demo-test-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:f4fca19bbc4bf2dc7c9590a5ba6fb43fe8dc5a7e1163d6edb7ca48b3d648eea8 # latest
     environment:
       PORT: 3001
       # default env var can be found at https://github.com/numerique-gouv/proconnect-test-client/blob/master/.env
@@ -26,7 +26,7 @@ services:
     network_mode: "host"
 
   standard-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:f4fca19bbc4bf2dc7c9590a5ba6fb43fe8dc5a7e1163d6edb7ca48b3d648eea8 # latest
     environment:
       PORT: 4000
       SITE_TITLE: standard-client
@@ -40,7 +40,7 @@ services:
     network_mode: "host"
 
   proconnect-federation-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:f4fca19bbc4bf2dc7c9590a5ba6fb43fe8dc5a7e1163d6edb7ca48b3d648eea8 # latest
     environment:
       PORT: 4001
       SITE_TITLE: proconnect-federation-client

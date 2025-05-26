@@ -59,12 +59,12 @@ async function seed() {
 
   await pg.sql`
     INSERT INTO users_organizations
-      (user_id, organization_id, created_at, updated_at, is_external, verification_type, needs_official_contact_email_verification, official_contact_email_verification_token, official_contact_email_verification_sent_at, is_executive, has_been_greeted)
+      (user_id, organization_id, created_at, updated_at, is_external, verification_type, needs_official_contact_email_verification, official_contact_email_verification_token, official_contact_email_verification_sent_at, has_been_greeted)
     VALUES
-      (1, 1, '2023-01-25', '2024-02-20', false, 'necron', false, 'necron_token_1', '2023-01-26', true, true),
-      (1, 3, '2023-04-01', '2024-05-05', true, 'alliance', true, 'alliance_token_1', '2023-04-02', false, false),
-      (2, 2, '2023-03-01', '2024-04-01', false, 'necron', false, 'necron_token_2', '2023-03-02', true, true),
-      (6, 5, '2023-07-05', '2024-08-15', false, 'imperial', false, 'imperial_token_6', '2023-07-06', true, true)
+      (1, 1, '2023-01-25', '2024-02-20', false, 'necron', false, 'necron_token_1', '2023-01-26', true),
+      (1, 3, '2023-04-01', '2024-05-05', true, 'alliance', true, 'alliance_token_1', '2023-04-02', false),
+      (2, 2, '2023-03-01', '2024-04-01', false, 'necron', false, 'necron_token_2', '2023-03-02', true),
+      (6, 5, '2023-07-05', '2024-08-15', false, 'imperial', false, 'imperial_token_6', '2023-07-06', true)
     ;
   `;
 }

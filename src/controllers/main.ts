@@ -126,9 +126,7 @@ export const getManageOrganizationsController = async (
 ) => {
   try {
     const { userOrganizations, pendingUserOrganizations } =
-      await getUserOrganizations({
-        user_id: getUserFromAuthenticatedSession(req).id,
-      });
+      await getUserOrganizations(getUserFromAuthenticatedSession(req).id);
 
     return res.render("manage-organizations", {
       pageTitle: "Organisations",

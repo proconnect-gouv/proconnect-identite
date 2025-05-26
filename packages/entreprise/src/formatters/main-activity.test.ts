@@ -6,7 +6,7 @@ import { formatMainActivity } from "./main-activity.js";
 
 //
 
-suite(formatMainActivity.name, () => {
+suite(formatMainActivity.name, { concurrency: true }, () => {
   const cases: [Parameters<typeof formatMainActivity>, string][] = [
     [
       [

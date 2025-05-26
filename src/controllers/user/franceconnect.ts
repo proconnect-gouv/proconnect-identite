@@ -17,16 +17,18 @@ import {
   getFranceConnectLogoutRedirectUrl,
   getFranceConnectUser,
 } from "../../connectors/franceconnect";
+import { getOrganizationsByUserId } from "../../managers/organization/main";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import { FranceConnectOidcSessionSchema } from "../../managers/session/franceconnect";
 import { updateFranceConnectUserInfo } from "../../managers/user";
+import { updateUserOrganizationLink } from "../../repositories/organization/setters";
 
 //
 
-export async function getFranceConnectOidcCallbackToUpdateUserMiddleware(
+export async function getFranceConnectLoginCallbackMiddleware(
   req: Request,
   _res: Response,
   next: NextFunction,
@@ -64,11 +66,24 @@ export async function getFranceConnectOidcCallbackToUpdateUserMiddleware(
 
     const { user_info, id_token } = franceconnect_response;
     req.session.id_token_hint = id_token;
+    req.session.nonce = undefined;
+    req.session.state = undefined;
 
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: userId } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await updateFranceConnectUserInfo(user_id, user_info);
+    const updatedUser = await updateFranceConnectUserInfo(userId, user_info);
     updateUserInAuthenticatedSession(req, updatedUser);
+
+    const userOrganizations = await getOrganizationsByUserId(userId);
+
+    await Promise.all(
+      userOrganizations.map(({ id }) =>
+        updateUserOrganizationLink(id, userId, {
+          verification_type: null,
+          verified_at: null,
+        }),
+      ),
+    );
 
     next();
   } catch (error) {
@@ -109,7 +124,7 @@ export function postFranceConnectLoginRedirectControllerFactory(
 export function useFranceConnectLogoutMiddlewareFactory(
   post_logout_redirect_uri: string,
 ) {
-  return async function franceConnectLogoutMiddleware(
+  return async function useFranceConnectLogoutMiddleware(
     req: Request,
     res: Response,
     next: NextFunction,
@@ -139,7 +154,7 @@ export function useFranceConnectLogoutMiddlewareFactory(
 export function getFranceConnectLogoutCallbackControllerFactory(
   redirect_url: string,
 ) {
-  return function getFranceConnectLogoutController(
+  return function getFranceConnectLogoutCallbackController(
     req: Request,
     res: Response,
     next: NextFunction,

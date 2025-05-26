@@ -5,7 +5,7 @@ import type { InfogreffeSirenMandatairesSociaux } from "@gouvfr-lasuite/proconne
 //
 
 export default function DiscoverPage(
-  mandataires: Array<{
+  mandataires_siren: Array<{
     siren: string;
     mandataires: InfogreffeSirenMandatairesSociaux[];
   }>,
@@ -13,7 +13,7 @@ export default function DiscoverPage(
   return `
   <html color-mode="user">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇫🇷</text></svg>">
-    <title>Discover 🎭 Entreprise API 🎭</title>
+    <title>Mandataires sociaux 🎭 Discover 🎭 Entreprise API 🎭</title>
     <header>
       <section>
         <h1>🎭 Entreprise API 🎭</h1>
@@ -22,9 +22,9 @@ export default function DiscoverPage(
     <main>
       <h2>Liste des mandataires sociaux</h2>
       <ul>
-      ${mandataires
+      ${mandataires_siren
         .map(
-          ({ siren, mandataires }) => `
+          ({ mandataires, siren }) => `
           <li>
             ${Mandataire(siren, mandataires)}
           </li>

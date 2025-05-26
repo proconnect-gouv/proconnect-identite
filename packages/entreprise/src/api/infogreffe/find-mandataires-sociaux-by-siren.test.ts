@@ -2,6 +2,7 @@
 
 import { createEntrepriseOpenApiClient } from "#src/client";
 import { coolTrackingParams } from "#src/testing";
+import { EntrepriseApiError } from "#src/types";
 import assert from "node:assert/strict";
 import { mock, suite, test } from "node:test";
 import { findMandatairesSociauxBySirenFactory } from "./find-mandataires-sociaux-by-siren.js";
@@ -120,5 +121,41 @@ suite("findMandatairesSociauxBySirenFactory", () => {
 
     assert.equal(mandataires.length, 4);
     assert.equal(mandataires.at(0)?.prenom, "IMOTEKH");
+  });
+
+  test("fail with an EntrepriseApiError", async () => {
+    const fetch = mock.fn(() => {
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            errors: [
+              {
+                code: "02003",
+                title: "Entité non trouvée",
+                detail:
+                  "Le siren indiqué n'existe pas, n'est pas connu ou ne comporte aucune information pour cet appel. Veuillez vérifier que l'identifiant correspond au périmètre couvert par l'API.",
+                meta: {
+                  provider: "Infogreffe",
+                  provider_error: {
+                    code: "006",
+                    message: "DOSSIER NON TROUVE DANS LA BASE DE GREFFES",
+                  },
+                },
+              },
+            ],
+          }),
+          { status: 404 },
+        ),
+      );
+    });
+    const client = createEntrepriseOpenApiClient("SECRET_INSEE_TOKEN", {
+      fetch,
+    });
+    const findBySiren = findMandatairesSociauxBySirenFactory(
+      client,
+      coolTrackingParams,
+    );
+
+    await assert.rejects(findBySiren("791088917"), EntrepriseApiError);
   });
 });
