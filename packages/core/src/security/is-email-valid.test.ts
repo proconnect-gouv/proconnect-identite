@@ -64,7 +64,7 @@ describe("isEmailValid", () => {
   ];
 
   validEmailAddresses.forEach((validEmailAddress) => {
-    it("should return true for valid email address", () => {
+    it(`should return true for valid email address: "${validEmailAddress}"`, () => {
       assert.equal(isEmailValid(validEmailAddress), true);
     });
   });
