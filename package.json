@@ -75,7 +75,7 @@
     "@sunknudsen/totp": "^1.2.0",
     "await-to-js": "^3.0.0",
     "axios": "^1.8.4",
-    "connect-redis": "^8.0.2",
+    "connect-redis": "^8.1.0",
     "console-log-level": "^1.4.1",
     "cookie-parser": "^1.4.7",
     "csrf-sync": "^4.2.1",
