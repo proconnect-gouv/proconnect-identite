@@ -6,19 +6,23 @@ import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import type {
   AddDomainHandler,
-  FindEmailDomainsByOrganizationIdHandler,
-  UpdateDomainVerificationTypeHandler,
+  DeleteEmailDomainsByVerificationTypesHandler,
 } from "@gouvfr-lasuite/proconnect.identite/repositories/email-domain";
 import type { FindByIdHandler } from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
-import type { EmailDomain } from "@gouvfr-lasuite/proconnect.identite/types";
+import {
+  EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
+  EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
+  type EmailDomain,
+  type EmailDomainApprovedVerificationType,
+  type EmailDomainRejectedVerificationType,
+} from "@gouvfr-lasuite/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 
 //
 
 type FactoryDependencies = {
   addDomain: AddDomainHandler;
-  updateDomainVerificationType: UpdateDomainVerificationTypeHandler;
-  findEmailDomainsByOrganizationId: FindEmailDomainsByOrganizationIdHandler;
+  deleteEmailDomainsByVerificationTypes: DeleteEmailDomainsByVerificationTypesHandler;
   findOrganizationById: FindByIdHandler;
   getUsers: GetUsersByOrganizationHandler;
   updateUserOrganizationLink: UpdateUserOrganizationLinkHandler;
@@ -26,8 +30,7 @@ type FactoryDependencies = {
 
 export function markDomainAsVerifiedFactory({
   addDomain,
-  updateDomainVerificationType,
-  findEmailDomainsByOrganizationId,
+  deleteEmailDomainsByVerificationTypes,
   findOrganizationById,
   getUsers,
   updateUserOrganizationLink,
@@ -39,58 +42,95 @@ export function markDomainAsVerifiedFactory({
   }: {
     organization_id: number;
     domain: string;
-    domain_verification_type: EmailDomain["verification_type"];
+    domain_verification_type: NonNullable<EmailDomain["verification_type"]>;
   }) {
     const organization = await findOrganizationById(organization_id);
+
     if (isEmpty(organization)) {
       throw new NotFoundError();
     }
-    const emailDomains =
-      await findEmailDomainsByOrganizationId(organization_id);
 
-    const emailDomainCountForOrganization = emailDomains.length;
+    if (
+      EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.includes(
+        domain_verification_type as EmailDomainApprovedVerificationType,
+      )
+    ) {
+      await assignUserVerificationTypeToDomain(organization_id, domain);
 
-    if (emailDomainCountForOrganization === 0) {
-      await addDomain({
+      return markDomainAsApproved({
         organization_id,
         domain,
-        verification_type: domain_verification_type,
+        domain_verification_type:
+          domain_verification_type as EmailDomainApprovedVerificationType,
       });
-    } else {
-      const nullEmailDomain = emailDomains.find(
-        (emailDomain) => emailDomain.verification_type === null,
-      );
-      const isApprovedDomain = [
-        "official_contact",
-        "trackdechets_postal_mail",
-        "verified",
-      ].includes(domain_verification_type as string);
-      if (nullEmailDomain) {
-        // If there is a domain with no verification type, we update it
-        await updateDomainVerificationType({
-          id: nullEmailDomain.id,
-          verification_type: domain_verification_type,
-        });
-      } else if (isApprovedDomain) {
-        const existingApprovedDomain = emailDomains.find((emailDomain) =>
-          ["official_contact", "trackdechets_postal_mail", "verified"].includes(
-            emailDomain.verification_type as string,
-          ),
-        );
-        if (
-          existingApprovedDomain &&
-          existingApprovedDomain.verification_type !== domain_verification_type
-        ) {
-          // If there is an approved domain with a different verification type, we update it
-          await addDomain({
-            organization_id,
-            domain,
-            verification_type: domain_verification_type,
-          });
-        }
-      }
     }
 
+    if (
+      EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.includes(
+        domain_verification_type as EmailDomainRejectedVerificationType,
+      )
+    ) {
+      return markDomainAsRejected({
+        organization_id,
+        domain,
+        domain_verification_type:
+          domain_verification_type as EmailDomainRejectedVerificationType,
+      });
+    }
+  };
+
+  async function markDomainAsApproved({
+    organization_id,
+    domain,
+    domain_verification_type,
+  }: {
+    organization_id: number;
+    domain: string;
+    domain_verification_type: EmailDomainApprovedVerificationType;
+  }) {
+    await deleteEmailDomainsByVerificationTypes({
+      organization_id,
+      domain,
+      domain_verification_types: [
+        ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
+        null,
+      ],
+    });
+    return addDomain({
+      organization_id,
+      domain,
+      verification_type: domain_verification_type,
+    });
+  }
+
+  async function markDomainAsRejected({
+    organization_id,
+    domain,
+    domain_verification_type,
+  }: {
+    organization_id: number;
+    domain: string;
+    domain_verification_type: EmailDomainRejectedVerificationType;
+  }) {
+    await deleteEmailDomainsByVerificationTypes({
+      organization_id,
+      domain,
+      domain_verification_types: [
+        null,
+        ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
+      ],
+    });
+    return addDomain({
+      organization_id,
+      domain,
+      verification_type: domain_verification_type,
+    });
+  }
+
+  async function assignUserVerificationTypeToDomain(
+    organization_id: number,
+    domain: string,
+  ) {
     const usersInOrganization = await getUsers(organization_id);
 
     await Promise.all(
@@ -114,7 +154,7 @@ export function markDomainAsVerifiedFactory({
         },
       ),
     );
-  };
+  }
 }
 
 export type MarkDomainAsVerifiedHandler = ReturnType<

@@ -12,8 +12,10 @@ export const EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES = [
 
 export type EmailDomainApprovedVerificationType =
   (typeof EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES)[number];
+
 export type EmailDomainRejectedVerificationType =
   (typeof EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES)[number];
+
 export type EmailDomainVerificationType =
   | EmailDomainApprovedVerificationType
   | EmailDomainRejectedVerificationType
