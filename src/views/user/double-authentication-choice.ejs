@@ -1,0 +1,82 @@
+<div>
+  <div>
+    <div class="fr-alert fr-alert--info fr-mb-5w">
+      <p>
+        Le service demande la mise en place d'une <b>double authentification</b>
+        pour améliorer la sécurité de votre compte.
+      </p>
+    </div>
+    <h1 class="fr-h3">Choisir votre méthode de double authentification</h1>
+    <fieldset
+      class="fr-fieldset fr-mb-0"
+      id="radio-hint"
+      aria-labelledby="radio-hint-legend radio-hint-messages"
+    >
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input type="radio" id="radio-hint-1" name="radio-hint" />
+          <label class="fr-label" for="radio-hint-1">
+            Code à usage unique (TOTP)
+          </label>
+        </div>
+      </div>
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input type="radio" id="radio-hint-2" name="radio-hint" />
+          <label class="fr-label" for="radio-hint-2">
+            Clé d'accès (passkey)
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      class="fr-fieldset"
+      id="checkboxes"
+      aria-labelledby="checkboxes-legend checkboxes-messages"
+    >
+      <div class="fr-fieldset__element">
+        <div class="fr-checkbox-group">
+          <input
+            name="checkboxes-1"
+            id="checkboxes-1"
+            type="checkbox"
+            aria-describedby="checkboxes-1-messages"
+          />
+          <label class="fr-label" for="checkboxes-1">
+            Je configure la 2FA sur tous les sites que j’utilise avec ProConnect
+            <span class="fr-hint-text">Par défaut, la 2FA s’applique uniquement aux sites qui l’exigent</span>
+            </label>
+          </label>
+          <div
+            class="fr-messages-group"
+            id="checkboxes-1-messages"
+            aria-live="assertive"
+          ></div>
+        </div>
+      </div>
+      <div
+        class="fr-messages-group"
+        id="checkboxes-messages"
+        aria-live="assertive"
+      ></div>
+    </fieldset>
+    <a href="/2fa">
+      <button class="fr-btn btn--fullwidth" id="submitButton" disabled>
+        Continuer
+      </button>
+    </a>
+    <div class="fr-p-2w fr-mt-5w fr-grid-row fr-background-alt--blue-france">
+        <div class="fr-col-2 fr-px-1w">
+            <img class="fr-responsive-img" src="/dist/light.svg" alt="" />
+        </div>
+        <div class="fr-col">
+            <p class="fr-mb-1w">
+                <b>Trouvez la meilleure option selon votre appareil</b> (smartphone, gestionnaire de mot de passe, ordinateur, etc.)
+            </p>
+            <a class="fr-text-action-high--blue-france" href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/" target="_blank" rel="noopener noreferrer">Consultez notre guide</a>
+        </div>
+    </div>
+    
+    <%- include('../partials/go-back.ejs'); %>
+  </div>
+</div>
