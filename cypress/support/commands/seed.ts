@@ -29,7 +29,7 @@ export function seed() {
     cy.exec(command).then((result) => cy.task("log", result.stdout));
   }
   {
-    const command = "npm run update-organization-info -- 2000";
+    const command = "npm run update-organization-info -- 0";
     cy.task("log", `$ ${command}`);
     cy.exec(command, { timeout: 10_000 }).then((result) =>
       cy.task("log", result.stdout),

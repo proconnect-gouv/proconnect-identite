@@ -22,6 +22,7 @@ jobs:
       matrix:
         e2e_test:
           - activate_totp
+          - broken_standard_client
           - check_email_deliverability
           - connect_franceconnect_account
           - delete_account
