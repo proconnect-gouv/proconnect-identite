@@ -1,17 +1,44 @@
-//
+// source https://github.com/panva/node-oidc-provider/blob/6fbcd71b08b8b8f381a97a82809de42c75904c6b/example/adapters/redis.js
 
-import { isEmpty } from "lodash";
+import { isEmpty } from "lodash-es";
 import type { Adapter, AdapterPayload } from "oidc-provider";
-import {
-  consumable,
-  getClient,
-  grantable,
-  grantKeyFor,
-  uidKeyFor,
-  userCodeKeyFor,
-} from "./oidc-provider";
+import { getNewRedisClient } from "../../connectors/redis";
 
 //
+
+const getClient = () =>
+  getNewRedisClient({
+    keyPrefix: "oidc:",
+  });
+
+const grantable = new Set([
+  "AccessToken",
+  "AuthorizationCode",
+  "RefreshToken",
+  "DeviceCode",
+  "BackchannelAuthenticationRequest",
+]);
+
+const consumable = new Set([
+  "AuthorizationCode",
+  "RefreshToken",
+  "DeviceCode",
+  "BackchannelAuthenticationRequest",
+]);
+
+function grantKeyFor(id: any) {
+  return `grant:${id}`;
+}
+
+function userCodeKeyFor(userCode: any) {
+  return `userCode:${userCode}`;
+}
+
+function uidKeyFor(uid: any) {
+  return `uid:${uid}`;
+}
+
+type Store = { payload: string };
 
 export class RedisAdapter implements Adapter {
   constructor(public name: string) {}
@@ -19,7 +46,7 @@ export class RedisAdapter implements Adapter {
   async upsert(id: string, payload: AdapterPayload, expiresIn: number) {
     const key = this.key(id);
     const store = consumable.has(this.name)
-      ? { payload: JSON.stringify(payload) }
+      ? ({ payload: JSON.stringify(payload) } as Store)
       : JSON.stringify(payload);
 
     const multi = getClient().multi();
@@ -69,10 +96,7 @@ export class RedisAdapter implements Adapter {
       return JSON.parse(data);
     }
 
-    const { payload, ...rest } = data as {
-      payload: string;
-      [key: string]: any;
-    };
+    const { payload, ...rest } = data as AdapterPayload & Store;
     return {
       ...rest,
       ...JSON.parse(payload),

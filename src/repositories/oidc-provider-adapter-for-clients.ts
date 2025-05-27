@@ -1,8 +1,9 @@
 //
 
+import type { Dictionary } from "lodash";
+import { isNull, omitBy } from "lodash-es";
 import type { Adapter, AdapterPayload } from "oidc-provider";
 import { findByClientId } from "./oidc-client";
-import { omitNullProperties } from "./redis/oidc-provider";
 
 //
 
@@ -29,4 +30,8 @@ export class PostgresAdapter implements Adapter {
   upsert() {
     return Promise.reject(new Error("Not implemented"));
   }
+}
+
+function omitNullProperties<T extends object>(object: T): Dictionary<T> {
+  return omitBy(object, isNull);
 }
