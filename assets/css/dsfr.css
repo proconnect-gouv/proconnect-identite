@@ -1,2 +1,9 @@
 @import "@gouvfr/dsfr/dist/dsfr.min.css";
 @import "@gouvfr/dsfr/dist/utility/utility.css";
+
+/* NOTE(douglasduteil): this is a hack to make the France Connect team happy */
+/* see https://docs.partenaires.franceconnect.gouv.fr/fs/fs-integration/integration-bouton-fc/ */
+.fr-connect {
+  width: 209px;
+  height: 56px;
+}
