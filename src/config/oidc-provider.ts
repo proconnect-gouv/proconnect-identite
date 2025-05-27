@@ -3,9 +3,9 @@
 import * as Sentry from "@sentry/node";
 import Provider, { errors } from "oidc-provider";
 import { logger } from "../services/log";
+import { oidcProviderAdapterFactory } from "../services/oidc-provider-adapter";
 import { renderWithEjsLayout } from "../services/renderer";
 import { connectionCountMiddleware } from "./../middlewares/connection-count";
-import { oidcProviderAdapterFactory } from "./../repositories/redis/oidc-provider";
 import {
   FEATURE_USE_SECURE_COOKIES,
   HOST,
