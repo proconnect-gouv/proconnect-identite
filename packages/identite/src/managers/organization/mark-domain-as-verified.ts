@@ -1,9 +1,9 @@
 //
 
 import { NotFoundError } from "#src/errors";
+import { assignUserVerificationTypeToDomainFactory } from "#src/managers/user";
 import type { GetUsersByOrganizationHandler } from "#src/repositories/organization";
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
-import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import type {
   AddDomainHandler,
   DeleteEmailDomainsByVerificationTypesHandler,
@@ -12,11 +12,12 @@ import type { FindByIdHandler } from "@gouvfr-lasuite/proconnect.identite/reposi
 import {
   EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
   EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
-  type EmailDomain,
   type EmailDomainApprovedVerificationType,
   type EmailDomainRejectedVerificationType,
+  type EmailDomainVerificationType,
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
+import { match } from "ts-pattern";
 
 //
 
@@ -35,6 +36,11 @@ export function markDomainAsVerifiedFactory({
   getUsers,
   updateUserOrganizationLink,
 }: FactoryDependencies) {
+  const assignUserVerificationTypeToDomain =
+    assignUserVerificationTypeToDomainFactory({
+      getUsers,
+      updateUserOrganizationLink,
+    });
   return async function markDomainAsVerified({
     organization_id,
     domain,
@@ -50,33 +56,28 @@ export function markDomainAsVerifiedFactory({
       throw new NotFoundError();
     }
 
-    if (
-      EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.includes(
-        domain_verification_type as EmailDomainApprovedVerificationType,
+    return match(domain_verification_type)
+      .with(
+        ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
+        async (approved_verification_type) => {
+          await assignUserVerificationTypeToDomain(organization_id, domain);
+          return markDomainAsApproved({
+            organization_id,
+            domain,
+            domain_verification_type: approved_verification_type,
+          });
+        },
       )
-    ) {
-      await assignUserVerificationTypeToDomain(organization_id, domain);
-
-      return markDomainAsApproved({
-        organization_id,
-        domain,
-        domain_verification_type:
-          domain_verification_type as EmailDomainApprovedVerificationType,
-      });
-    }
-
-    if (
-      EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.includes(
-        domain_verification_type as EmailDomainRejectedVerificationType,
+      .with(
+        ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
+        (rejected_verification_type) =>
+          markDomainAsRejected({
+            organization_id,
+            domain,
+            domain_verification_type: rejected_verification_type,
+          }),
       )
-    ) {
-      return markDomainAsRejected({
-        organization_id,
-        domain,
-        domain_verification_type:
-          domain_verification_type as EmailDomainRejectedVerificationType,
-      });
-    }
+      .exhaustive();
   };
 
   async function markDomainAsApproved({
@@ -125,35 +126,6 @@ export function markDomainAsVerifiedFactory({
       domain,
       verification_type: domain_verification_type,
     });
-  }
-
-  async function assignUserVerificationTypeToDomain(
-    organization_id: number,
-    domain: string,
-  ) {
-    const usersInOrganization = await getUsers(organization_id);
-
-    await Promise.all(
-      usersInOrganization.map(
-        ({ id, email, verification_type: link_verification_type }) => {
-          const userDomain = getEmailDomain(email);
-          if (
-            userDomain === domain &&
-            [
-              null,
-              "no_verification_means_available",
-              "no_verification_means_for_entreprise_unipersonnelle",
-            ].includes(link_verification_type)
-          ) {
-            return updateUserOrganizationLink(organization_id, id, {
-              verification_type: "domain",
-            });
-          }
-
-          return null;
-        },
-      ),
-    );
   }
 }
 
