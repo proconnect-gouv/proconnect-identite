@@ -39,7 +39,6 @@
   background-color: #e0e0e0 !important;
   color: #a0a0a0 !important;
   cursor: not-allowed;
-  border: 1px solid #d0d0d0;
   opacity: 0.7;
   pointer-events: none;
 }
