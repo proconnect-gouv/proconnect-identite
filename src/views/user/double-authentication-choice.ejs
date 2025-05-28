@@ -7,12 +7,23 @@
       </p>
     </div>
     <h1 class="fr-h3">Choisir votre méthode de double authentification</h1>
+    <div class="fr-callout fr-icon-alert-line" id="webauthn-not-supported" hidden>
+      <h4 class="fr-callout__title">
+          Impossible de créer une clé d’accès sur cet appareil
+      </h4>
+      <p class="fr-callout__text">
+          Assurez-vous que le système d’exploitation de votre appareil est à jour, que le verrouillage de
+          l’écran
+          et le Bluetooth sont activés, et que vous utilisez un navigateur compatible.
+      </p>
+    </div>
+    <div class="fr-alert fr-alert--error fr-mb-2w" id="webauthn-alert-error" hidden></div>
     <fieldset
       class="fr-fieldset fr-mb-0"
       id="radio-hint"
       aria-labelledby="radio-hint-legend radio-hint-messages"
     >
-      <div class="fr-fieldset__element">
+      <div id="totp-option" class="fr-fieldset__element">
         <div class="fr-radio-group">
           <input type="radio" id="radio-hint-1" name="radio-hint" />
           <label class="fr-label" for="radio-hint-1">
@@ -20,7 +31,7 @@
           </label>
         </div>
       </div>
-      <div class="fr-fieldset__element">
+      <div id="webauthn-btn-begin-registration" class="fr-fieldset__element">
         <div class="fr-radio-group">
           <input type="radio" id="radio-hint-2" name="radio-hint" />
           <label class="fr-label" for="radio-hint-2">
@@ -60,12 +71,10 @@
         aria-live="assertive"
       ></div>
     </fieldset>
-    <a href="/2fa">
-      <button class="fr-btn btn--fullwidth" id="submitButton" disabled>
+    <a id="submit-button" class="fr-btn btn--fullwidth" href="/users/configuring-single-use-code">
         Continuer
-      </button>
     </a>
-    <div class="fr-p-2w fr-mt-5w fr-grid-row fr-background-alt--blue-france">
+    <div class="fr-p-2w fr-mt-2w fr-grid-row fr-background-alt--blue-france">
         <div class="fr-col-2 fr-px-1w">
             <img class="fr-responsive-img" src="/dist/light.svg" alt="" />
         </div>
@@ -76,7 +85,13 @@
             <a class="fr-text-action-high--blue-france" href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/" target="_blank" rel="noopener noreferrer">Consultez notre guide</a>
         </div>
     </div>
-    
     <%- include('../partials/go-back.ejs'); %>
+    <form id="webauthn-registration-response-form" action="/passkeys/verify-registration" method="post" hidden>
+      <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
+      <input type="hidden" name="webauthn_registration_response_string">
+      <button type="submit" class="fr-btn"></button>
+    </form>
   </div>
+  <script type="module" src="<%= js('enable-2fa-for-all-services.js') %>"></script>
+  <script type="module" src="<%= js('webauthn-registration.js') %>"></script>
 </div>
