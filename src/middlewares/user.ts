@@ -180,11 +180,11 @@ export const checkUserTwoFactorAuthMiddleware = async (
         if (!(await is2FACapable(user_id))) {
           // We break the connexion flow
 
+          // faire code ici pour la 2fa forcée
+
           clearInteractionSession(req);
 
-          return res.redirect(
-            "/connection-and-account?notification=2fa_not_configured",
-          );
+          return res.redirect("/users/double-authentication-choice");
         } else {
           return res.redirect("/users/2fa-sign-in");
         }
