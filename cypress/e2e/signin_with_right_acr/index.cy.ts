@@ -102,10 +102,26 @@ describe("sign-in with a client requiring 2fa identity", () => {
     );
   });
 
-  it("should return an error with ial1", function () {
+  it.only("should return an error with ial1", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial2-aal1@yopmail.com");
+
+    cy.contains(
+      "Le service demande la mise en place d'une double authentification pour améliorer la sécurité de votre compte.",
+    );
+
+    cy.get("button#totp").click();
+
+    cy.get("a.fr-btn").contains("Continuer").click();
+
+    // click on button de configuration (je choisis totp)
+    // click sur continuer
+
+    // à la fin de mon test je veux cette ligne :
+    // cy.contains(
+    //   '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
+    // );
 
     cy.contains("Attention : le site que vous voulez utiliser requiert la 2FA");
   });
