@@ -7,7 +7,7 @@ import { findByClientId } from "./oidc-client";
 
 //
 
-export class PostgresAdapter implements Adapter {
+export class OidcProviderAdapterForClients implements Adapter {
   consume() {
     return Promise.reject(new Error("Not implemented"));
   }

@@ -40,7 +40,7 @@ function uidKeyFor(uid: any) {
 
 type Store = { payload: string };
 
-export class RedisAdapter implements Adapter {
+export class OidcProviderAdapter implements Adapter {
   constructor(public name: string) {}
 
   async upsert(id: string, payload: AdapterPayload, expiresIn: number) {
