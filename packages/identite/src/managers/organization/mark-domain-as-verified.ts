@@ -42,7 +42,7 @@ export function markDomainAsVerifiedFactory({
   }: {
     organization_id: number;
     domain: string;
-    domain_verification_type: NonNullable<EmailDomain["verification_type"]>;
+    domain_verification_type: NonNullable<EmailDomainVerificationType>;
   }) {
     const organization = await findOrganizationById(organization_id);
 
