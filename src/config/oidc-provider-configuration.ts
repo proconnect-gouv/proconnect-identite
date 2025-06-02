@@ -6,6 +6,7 @@ import { findAccount } from "../services/oidc-account-adapter";
 import policy from "../services/oidc-policy";
 import { renderWithEjsLayout } from "../services/renderer";
 import {
+  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
   ACR_VALUE_FOR_IAL1_AAL1,
   ACR_VALUE_FOR_IAL1_AAL2,
   ACR_VALUE_FOR_IAL2_AAL1,
@@ -25,6 +26,7 @@ export const oidcProviderConfiguration = ({
     ACR_VALUE_FOR_IAL1_AAL2,
     ACR_VALUE_FOR_IAL2_AAL1,
     ACR_VALUE_FOR_IAL2_AAL2,
+    ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
   ],
   claims: {
     amr: null,
