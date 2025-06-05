@@ -31,6 +31,10 @@
   background-color: #f6f6f6 !important;
 }
 
+.grey-color {
+  color: var(--text-disabled-grey) !important;
+}
+
 .centered-content {
   justify-content: center !important;
 }
