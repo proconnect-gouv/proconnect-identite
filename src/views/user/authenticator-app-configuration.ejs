@@ -1,4 +1,5 @@
 <div>
+    <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
     <%- include('../partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre code à usage unique", nextStepTitle:"Sauvegarder les clés de récupération" }); %>
     <h2 class="fr-h5">Scanner ce QRcode avec votre application</h2>
     <img src="<%= locals.qrCodeDataUrl; %>" alt="Code QR à utiliser dans l’appli FreeOTP">
@@ -19,13 +20,12 @@
         </div>
     </div>
     <h3 class="fr-h5">Insérez le code généré par votre application</h3>
-    <form action="/authenticator-app-configuration" method="post" class="">
+    <form action="/users/authenticator-app-configuration" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
         <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
             <label class="fr-label" for="totpToken">
                 Entrez le code à usage unique
             </label>
-
             <input
                     class="fr-input"
                     type="text"
@@ -58,7 +58,8 @@
             <a
                 class="fr-btn fr-btn--tertiary"
                 href="/connection-and-account"
-            >Annuler</a>
+            >
+            Annuler</a>
             <button class="fr-btn" type="submit">Valider le code</button>
         </div>
     </form>

@@ -177,16 +177,16 @@ export const checkUserTwoFactorAuthMiddleware = async (
           req.session.twoFactorsAuthRequested) &&
         !isWithinTwoFactorAuthenticatedSession(req)
       ) {
-        if (!(await is2FACapable(user_id))) {
-          // We break the connexion flow
-
+        if (await is2FACapable(user_id)) {
+          return res.redirect("/users/2fa-sign-in");
+        } else {
           // faire code ici pour la 2fa forcée
+
+          // We break the connexion flow
 
           clearInteractionSession(req);
 
           return res.redirect("/users/double-authentication-choice");
-        } else {
-          return res.redirect("/users/2fa-sign-in");
         }
       }
       return next();

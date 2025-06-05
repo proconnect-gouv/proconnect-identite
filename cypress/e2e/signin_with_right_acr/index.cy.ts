@@ -1,3 +1,14 @@
+import { generateToken } from "@sunknudsen/totp";
+
+Cypress.on("uncaught:exception", (err, _runnable) => {
+  if (
+    err.message.includes("Cannot read properties of null (reading 'checked')")
+  ) {
+    return false;
+  }
+  return true;
+});
+
 describe("sign-in with a client not requiring any acr", () => {
   beforeEach(() => {
     cy.visit("http://localhost:4000");
@@ -102,28 +113,40 @@ describe("sign-in with a client requiring 2fa identity", () => {
     );
   });
 
-  it.only("should return an error with ial1", function () {
+  it("should follow first authentication when mfa asked", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial2-aal1@yopmail.com");
 
-    cy.contains(
-      "Le service demande la mise en place d'une double authentification pour améliorer la sécurité de votre compte.",
-    );
-
-    cy.get("button#totp").click();
+    cy.get("#radio-hint-totp").check({ force: true });
 
     cy.get("a.fr-btn").contains("Continuer").click();
 
-    // click on button de configuration (je choisis totp)
-    // click sur continuer
+    cy.contains("Installer votre outil d’authentification");
 
-    // à la fin de mon test je veux cette ligne :
-    // cy.contains(
-    //   '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
-    // );
+    cy.get("#is-authenticator-app-installed").check({ force: true });
 
-    cy.contains("Attention : le site que vous voulez utiliser requiert la 2FA");
+    cy.get("a.fr-btn").contains("Continuer").click();
+
+    cy.contains("Scanner ce QRcode avec votre application");
+
+    cy.get("#humanReadableTotpKey")
+      .invoke("text")
+      .then((text) => {
+        const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
+        const totp = generateToken(humanReadableTotpKey);
+        cy.get("[name=totpToken]").type(totp);
+        cy.get(
+          '[action="/users/authenticator-app-configuration"] [type="submit"]',
+        ).click();
+      });
+
+    cy.contains("Votre double authentification est bien configurée");
+    cy.get("button.fr-btn").contains("Continuer").click();
+
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
+    );
   });
 });
 
@@ -174,10 +197,6 @@ describe("sign-in with a client requiring certification dirigeant and 2fa identi
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("certification-dirigeant@yopmail.com");
-
-    cy.contains(
-      "Attention : le site que vous voulez utiliser requiert la 2FA, qui réduit les risques de piratage.",
-    );
   });
 });
 

@@ -1,11 +1,27 @@
+import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
-import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
+import { z } from "zod";
+import { InvalidTotpTokenError } from "../../config/errors";
 import {
+  addAuthenticationMethodReferenceInSession,
+  getUserFromAuthenticatedSession,
+} from "../../managers/session/authenticated";
+import {
+  deleteTemporaryTotpKey,
   getTemporaryTotpKey,
   setTemporaryTotpKey,
 } from "../../managers/session/temporary-totp-key";
-import { generateAuthenticatorAppRegistrationOptions } from "../../managers/totp";
+import {
+  confirmAuthenticatorAppRegistration,
+  generateAuthenticatorAppRegistrationOptions,
+} from "../../managers/totp";
+import { sendAddFreeTOTPEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
+import { codeSchema } from "../../services/custom-zod-schemas";
+import getNotificationsFromRequest, {
+  getNotificationLabelFromRequest,
+} from "../../services/get-notifications-from-request";
+
 export const getDoubleAuthenticationChoiceController = async (
   req: Request,
   res: Response,
@@ -52,14 +68,60 @@ export const getAuthenticatorAppConfigurationController = async (
         existingTemporaryTotpKey,
       );
     setTemporaryTotpKey(req, totpKey);
+
+    const notificationLabel = await getNotificationLabelFromRequest(req);
+    const hasCodeError = notificationLabel === "invalid_totp_token";
+
     return res.render("user/authenticator-app-configuration", {
       pageTitle: "Configurer un code à usage unique",
+      notifications: await getNotificationsFromRequest(req),
+      hasCodeError,
       csrfToken: csrfToken(req),
       illustration: "illu-2FA.svg",
       humanReadableTotpKey,
       qrCodeDataUrl,
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+export const postAuthenticatorAppConfigurationController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      totpToken: codeSchema(),
+    });
+    const { totpToken } = await schema.parseAsync(req.body);
+
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const temporaryTotpKey = getTemporaryTotpKey(req);
+
+    if (!temporaryTotpKey) {
+      throw new NotFoundError();
+    }
+    const updatedUser = await confirmAuthenticatorAppRegistration(
+      user_id,
+      temporaryTotpKey,
+      totpToken,
+    );
+
+    deleteTemporaryTotpKey(req);
+    addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
+
+    await sendAddFreeTOTPEmail({ user_id });
+
+    return res.redirect("/users/2fa-successfully-configured");
+  } catch (error) {
+    if (error instanceof InvalidTotpTokenError) {
+      return res.redirect(
+        "/users/authenticator-app-configuration?notification=invalid_totp_token",
+      );
+    }
+
     next(error);
   }
 };
@@ -85,5 +147,9 @@ export const post2faSuccessfullyConfiguredMiddleware = async (
   _res: Response,
   next: NextFunction,
 ) => {
-  return next();
+  try {
+    return next();
+  } catch (error) {
+    next(error);
+  }
 };

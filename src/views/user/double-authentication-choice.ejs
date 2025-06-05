@@ -7,91 +7,88 @@
       </p>
     </div>
     <h1 class="fr-h3">Choisir votre méthode de double authentification</h1>
-    <div class="fr-callout fr-icon-alert-line" id="webauthn-not-supported" hidden>
+    <div
+      class="fr-callout fr-icon-alert-line"
+      id="webauthn-not-supported"
+      hidden
+    >
       <h4 class="fr-callout__title">
-          Impossible de créer une clé d’accès sur cet appareil
+        Impossible de créer une clé d’accès sur cet appareil
       </h4>
       <p class="fr-callout__text">
-          Assurez-vous que le système d’exploitation de votre appareil est à jour, que le verrouillage de
-          l’écran
-          et le Bluetooth sont activés, et que vous utilisez un navigateur compatible.
+        Assurez-vous que le système d’exploitation de votre appareil est à jour,
+        que le verrouillage de l’écran et le Bluetooth sont activés, et que vous
+        utilisez un navigateur compatible.
       </p>
     </div>
-    <div class="fr-alert fr-alert--error fr-mb-2w" id="webauthn-alert-error" hidden></div>
+    <div
+      class="fr-alert fr-alert--error fr-mb-2w"
+      id="webauthn-alert-error"
+      hidden
+    ></div>
     <fieldset
       class="fr-fieldset fr-mb-0"
-      id="radio-hint"
+      id="radio-hint-2fa"
       aria-labelledby="radio-hint-legend radio-hint-messages"
     >
       <div id="totp-option" class="fr-fieldset__element">
         <div class="fr-radio-group">
-          <input type="radio" id="radio-hint-1" name="radio-hint" />
-          <label class="fr-label" for="radio-hint-1">
+          <input type="radio" id="radio-hint-totp" name="radio-hint-2fa" />
+          <label class="fr-label" for="radio-hint-totp">
             Code à usage unique (TOTP)
           </label>
         </div>
       </div>
       <div id="webauthn-btn-begin-registration" class="fr-fieldset__element">
         <div class="fr-radio-group">
-          <input type="radio" id="radio-hint-2" name="radio-hint" />
-          <label class="fr-label" for="radio-hint-2">
+          <input type="radio" id="radio-hint-passkey" name="radio-hint-2fa" />
+          <label class="fr-label" for="radio-hint-passkey">
             Clé d'accès (passkey)
           </label>
         </div>
       </div>
     </fieldset>
-    <fieldset
-      class="fr-fieldset"
-      id="checkboxes"
-      aria-labelledby="checkboxes-legend checkboxes-messages"
+
+    <a
+      id="submit-button"
+      class="fr-btn btn--fullwidth"
+      href="/users/configuring-single-use-code"
     >
-      <div class="fr-fieldset__element">
-        <div class="fr-checkbox-group">
-          <input
-            name="checkboxes-1"
-            id="checkboxes-1"
-            type="checkbox"
-            aria-describedby="checkboxes-1-messages"
-          />
-          <label class="fr-label" for="checkboxes-1">
-            Je configure la 2FA sur tous les sites que j’utilise avec ProConnect
-            <span class="fr-hint-text">Par défaut, la 2FA s’applique uniquement aux sites qui l’exigent</span>
-            </label>
-          </label>
-          <div
-            class="fr-messages-group"
-            id="checkboxes-1-messages"
-            aria-live="assertive"
-          ></div>
-        </div>
-      </div>
-      <div
-        class="fr-messages-group"
-        id="checkboxes-messages"
-        aria-live="assertive"
-      ></div>
-    </fieldset>
-    <a id="submit-button" class="fr-btn btn--fullwidth" href="/users/configuring-single-use-code">
-        Continuer
+      Continuer
     </a>
     <div class="fr-p-2w fr-mt-2w fr-grid-row fr-background-alt--blue-france">
-        <div class="fr-col-2 fr-px-1w">
-            <img class="fr-responsive-img" src="/dist/light.svg" alt="" />
-        </div>
-        <div class="fr-col">
-            <p class="fr-mb-1w">
-                <b>Trouvez la meilleure option selon votre appareil</b> (smartphone, gestionnaire de mot de passe, ordinateur, etc.)
-            </p>
-            <a class="fr-text-action-high--blue-france" href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/" target="_blank" rel="noopener noreferrer">Consultez notre guide</a>
-        </div>
+      <div class="fr-col-2 fr-px-1w">
+        <img class="fr-responsive-img" src="/dist/light.svg" alt="" />
+      </div>
+      <div class="fr-col">
+        <p class="fr-mb-1w">
+          <b>Trouvez la meilleure option selon votre appareil</b> (smartphone,
+          gestionnaire de mot de passe, ordinateur, etc.)
+        </p>
+        <a
+          class="fr-text-action-high--blue-france"
+          href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Consultez notre guide</a
+        >
+      </div>
     </div>
     <%- include('../partials/go-back.ejs'); %>
-    <form id="webauthn-registration-response-form" action="/passkeys/verify-registration" method="post" hidden>
-      <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-      <input type="hidden" name="webauthn_registration_response_string">
+    <form
+      id="webauthn-registration-response-form"
+      action="/passkeys/verify-registration"
+      method="post"
+      hidden
+    >
+      <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+      <input type="hidden" name="webauthn_registration_response_string" />
       <button type="submit" class="fr-btn"></button>
     </form>
   </div>
-  <script type="module" src="<%= js('enable-2fa-for-all-services.js') %>"></script>
+  <script
+    type="module"
+    src="<%= js('enable-2fa-for-all-services.js') %>"
+  ></script>
   <script type="module" src="<%= js('webauthn-registration.js') %>"></script>
 </div>
