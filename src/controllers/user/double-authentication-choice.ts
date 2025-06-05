@@ -63,3 +63,27 @@ export const getAuthenticatorAppConfigurationController = async (
     next(error);
   }
 };
+
+export const get2faSuccessfullyConfiguredController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/2fa-successfully-configured", {
+      pageTitle: "Votre double authentification est bien configurée",
+      csrfToken: csrfToken(req),
+      illustration: "illu-ok.svg",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const post2faSuccessfullyConfiguredMiddleware = async (
+  _req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  return next();
+};

@@ -1,0 +1,10 @@
+<div>
+  <div class="fr-mb-2w fr-mt-7w">
+    <img src="/dist/check-green.svg" alt="" class="limited-width" />
+  </div>
+  <p class="fr-h1">Votre double authentification est bien configurée</p>
+  <form action="/users/2fa-successfully-configured" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+    <button class="fr-btn" type="submit">Continuer</button>
+  </form>
+</div>
