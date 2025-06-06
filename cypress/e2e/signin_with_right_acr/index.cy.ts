@@ -113,7 +113,7 @@ describe("sign-in with a client requiring 2fa identity", () => {
     );
   });
 
-  it("should follow first authentication when mfa asked", function () {
+  it("should trigger mfa enrollment with ial1", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial2-aal1@yopmail.com");
