@@ -1,5 +1,11 @@
 # @gouvfr-lasuite/proconnect.identite
 
+## 0.6.0
+
+### Minor Changes
+
+- [#1251](https://github.com/numerique-gouv/proconnect-identite/pull/1251) [`2bd56c8`](https://github.com/numerique-gouv/proconnect-identite/commit/2bd56c8c857fd7a819cbc787faf030547e18023c) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - Centralize handling of email domains verification (addition, deletion, update for a specific domain)
+
 ## 0.5.3
 
 ### Patch Changes
