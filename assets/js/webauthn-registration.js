@@ -4,13 +4,13 @@ import {
 } from "@simplewebauthn/browser";
 
 const notSupportedElement = document.getElementById("webauthn-not-supported");
-const submitButton = document.getElementById("submit-button");
+const submitButton = document.querySelector('button[type="submit"]');
 const errorAlertElement = document.getElementById("webauthn-alert-error");
 
 document.addEventListener(
   "DOMContentLoaded",
   async function () {
-    const passKeyOption = document.getElementById("radio-hint-2");
+    const passKeyOption = document.getElementById("radio-hint-passkey");
 
     // Start registration when the user clicks a button
 

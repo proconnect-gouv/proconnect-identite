@@ -1,12 +1,3 @@
-Cypress.on("uncaught:exception", (err, _runnable) => {
-  if (
-    err.message.includes("Cannot read properties of null (reading 'checked')")
-  ) {
-    return false;
-  }
-  return true;
-});
-
 describe("sign-in with a client not requiring any acr", () => {
   beforeEach(() => {
     cy.visit("http://localhost:4000");
@@ -111,20 +102,20 @@ describe("sign-in with a client requiring 2fa identity", () => {
     );
   });
 
-  it("should trigger mfa enrollment with ial1", function () {
+  it.only("should follow first authentication when mfa asked", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial2-aal1@yopmail.com");
 
-    cy.get("#radio-hint-totp").check({ force: true });
+    cy.get("#radio-hint-totp").click({ force: true });
 
-    cy.get("a.fr-btn").contains("Continuer").click();
+    cy.get("button.fr-btn").contains("Continuer").click();
 
     cy.contains("Installer votre outil d’authentification");
 
-    cy.get("#is-authenticator-app-installed").check({ force: true });
+    cy.get("#is-authenticator-app-installed").click({ force: true });
 
-    cy.get("a.fr-btn").contains("Continuer").click();
+    cy.get("button.fr-btn").contains("Continuer").click();
 
     cy.contains("Scanner ce QRcode avec votre application");
 

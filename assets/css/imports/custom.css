@@ -35,14 +35,6 @@
   justify-content: center !important;
 }
 
-.disabled-button {
-  background-color: #e0e0e0 !important;
-  color: #a0a0a0 !important;
-  cursor: not-allowed;
-  opacity: 0.7;
-  pointer-events: none;
-}
-
 /* display a loading bar on page load */
 #loader-bar {
   transition: width 150ms ease-in-out;
@@ -64,4 +56,19 @@ input[readonly] {
 .limited-width {
   max-width: 80px;
   height: auto;
+}
+
+.checkbox-container:not(:has(input:checked)) .fr-btn {
+  background-color: #e0e0e0 !important;
+  color: #a0a0a0 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+#radio-hint-2fa {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
