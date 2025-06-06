@@ -21,6 +21,7 @@ declare global {
       getDescribed: typeof getDescribedCommand;
       getByLabel: typeof getByLabelCommand;
       updateCustomParams: typeof updateCustomParams;
+      getTotpSecret: typeof getTotpSecretCommand;
     }
   }
 }
@@ -138,3 +139,19 @@ function getByLabelCommand(text: string) {
   return cy.get(`[aria-label="${text}"]`);
 }
 Cypress.Commands.add("getByLabel", getByLabelCommand);
+
+function getTotpSecretCommand() {
+  return cy
+    .get("#humanReadableTotpKey")
+    .invoke("text")
+    .then((text) => {
+      const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
+      const totp = generateToken(humanReadableTotpKey);
+      cy.get("[name=totpToken]").type(totp);
+      cy.get(
+        '[action="/users/authenticator-app-configuration"] [type="submit"]',
+      ).click();
+    });
+}
+
+Cypress.Commands.add("getTotpSecret", getTotpSecretCommand);

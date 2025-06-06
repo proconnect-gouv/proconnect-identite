@@ -1,5 +1,3 @@
-import { generateToken } from "@sunknudsen/totp";
-
 describe("add 2fa authentication", () => {
   it("should add 2fa authentication on account user", function () {
     cy.visit("/connection-and-account");
@@ -31,16 +29,7 @@ describe("add 2fa authentication", () => {
       .click();
 
     // Extract the code from the front to generate the TOTP key
-    cy.get("#humanReadableTotpKey")
-      .invoke("text")
-      .then((text) => {
-        const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
-        const totp = generateToken(humanReadableTotpKey);
-        cy.get("[name=totpToken]").type(totp);
-        cy.get(
-          '[action="/authenticator-app-configuration"] [type="submit"]',
-        ).click();
-      });
+    cy.getTotpSecret();
 
     cy.contains("L’application d’authentification a été configurée.");
 
