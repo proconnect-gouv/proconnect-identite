@@ -140,7 +140,7 @@ function getByLabelCommand(text: string) {
 }
 Cypress.Commands.add("getByLabel", getByLabelCommand);
 
-function getTotpSecretCommand() {
+function getTotpSecretCommand(action: string) {
   return cy
     .get("#humanReadableTotpKey")
     .invoke("text")
@@ -148,9 +148,7 @@ function getTotpSecretCommand() {
       const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
       const totp = generateToken(humanReadableTotpKey);
       cy.get("[name=totpToken]").type(totp);
-      cy.get(
-        '[action="/users/authenticator-app-configuration"] [type="submit"]',
-      ).click();
+      cy.get(`[action="${action}"] [type="submit"]`).click();
     });
 }
 

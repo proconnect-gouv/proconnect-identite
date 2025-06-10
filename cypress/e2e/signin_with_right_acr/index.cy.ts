@@ -102,7 +102,7 @@ describe("sign-in with a client requiring 2fa identity", () => {
     );
   });
 
-  it.only("should follow first authentication when mfa asked", function () {
+  it("should follow first authentication when mfa asked", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial2-aal1@yopmail.com");
@@ -130,7 +130,7 @@ describe("sign-in with a client requiring 2fa identity", () => {
       "Erreur : le code que vous avez utilisé est invalide. Merci de recommencer.",
     );
 
-    cy.getTotpSecret();
+    cy.getTotpSecret("/users/authenticator-app-configuration");
 
     cy.contains("Votre double authentification est bien configurée");
     cy.get("button.fr-btn").contains("Continuer").click();
