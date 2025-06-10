@@ -26,11 +26,6 @@ export const getDoubleAuthenticationController = async (
       isAuthenticatorConfigured:
         await isAuthenticatorAppConfiguredForUser(user_id),
       csrfToken: csrfToken(req),
-      breadcrumbs: [
-        { label: "Tableau de bord", href: "/" },
-        { label: "Compte et connexion", href: "/connection-and-account" },
-        { label: "Double authentification" },
-      ],
     });
   } catch (error) {
     next(error);
@@ -46,12 +41,6 @@ export const getConfiguringSingleUseCodeController = async (
     return res.render("configuring-single-use-code", {
       pageTitle: "Configurer un code à usage unique",
       notifications: await getNotificationsFromRequest(req),
-      breadcrumbs: [
-        { label: "Tableau de bord", href: "/" },
-        { label: "Compte et connexion", href: "/connection-and-account" },
-        { label: "Double authentification", href: "/double-authentication" },
-        { label: "Code à usage unique" },
-      ],
     });
   } catch (error) {
     next(error);

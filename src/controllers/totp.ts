@@ -59,12 +59,6 @@ export const getAuthenticatorAppConfigurationController = async (
         await isAuthenticatorAppConfiguredForUser(user_id),
       humanReadableTotpKey,
       qrCodeDataUrl,
-      breadcrumbs: [
-        { label: "Tableau de bord", href: "/" },
-        { label: "Compte et connexion", href: "/connection-and-account" },
-        { label: "Double authentification", href: "/double-authentication" },
-        { label: "Code à usage unique" },
-      ],
     });
   } catch (error) {
     next(error);
