@@ -266,7 +266,7 @@ export async function getAccessRestrictedToPublicSectorEmailController(
 ) {
   return res.render("user/access-restricted-to-public-sector-email", {
     csrfToken: csrfToken(req),
-    illustration: "error.svg",
+    illustration: "connection-lost.svg",
     pageTitle: "Email non autorisé",
   });
 }
