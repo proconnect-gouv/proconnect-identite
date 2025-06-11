@@ -11,6 +11,7 @@ export default [
   "free.fr",
   "yahoo.com",
   "live.fr",
+  "numericable.fr",
   "sfr.fr",
   "9business.fr",
   "laposte.fr",
