@@ -22,7 +22,7 @@ import getNotificationsFromRequest, {
   getNotificationLabelFromRequest,
 } from "../../services/get-notifications-from-request";
 
-export const getDoubleAuthenticationChoiceController = async (
+export const getTwoFactorsAuthenticationChoiceController = async (
   req: Request,
   res: Response,
   next: NextFunction,

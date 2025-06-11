@@ -16,14 +16,6 @@ import { get2faSignInController } from "../controllers/user/2fa-sign-in";
 import { getCertificationDirigeantController } from "../controllers/user/certification-dirigeant";
 import { postDeleteUserController } from "../controllers/user/delete";
 
-import {
-  get2faSuccessfullyConfiguredController,
-  getAuthenticatorAppConfigurationController,
-  getConfiguringSingleUseCodeController,
-  getDoubleAuthenticationChoiceController,
-  post2faSuccessfullyConfiguredMiddleware,
-  postAuthenticatorAppConfigurationController,
-} from "../controllers/user/double-authentication-choice";
 import { postCancelModerationAndRedirectControllerFactory } from "../controllers/user/edit-moderation";
 import {
   getFranceConnectLoginCallbackMiddleware,
@@ -56,6 +48,14 @@ import {
   postSignUpController,
   postStartSignInController,
 } from "../controllers/user/signin-signup";
+import {
+  get2faSuccessfullyConfiguredController,
+  getAuthenticatorAppConfigurationController,
+  getConfiguringSingleUseCodeController,
+  getTwoFactorsAuthenticationChoiceController,
+  post2faSuccessfullyConfiguredMiddleware,
+  postAuthenticatorAppConfigurationController,
+} from "../controllers/user/two-factors-authentication-configuration";
 import {
   getChangePasswordController,
   getResetPasswordController,
@@ -178,7 +178,7 @@ export const userRouter = () => {
     "/double-authentication-choice",
     checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
-    getDoubleAuthenticationChoiceController,
+    getTwoFactorsAuthenticationChoiceController,
   );
 
   userRouter.get(
@@ -197,10 +197,8 @@ export const userRouter = () => {
 
   userRouter.post(
     "/authenticator-app-configuration",
-    nocache(),
-    urlencoded({ extended: false }),
-    rateLimiterMiddleware,
-    checkUserCanAccessAdminMiddleware,
+    checkUserIsConnectedMiddleware,
+    authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
     postAuthenticatorAppConfigurationController,
   );
@@ -519,7 +517,6 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant",
-    rateLimiterMiddleware,
     checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantController,
@@ -527,7 +524,6 @@ export const userRouter = () => {
 
   userRouter.post(
     "/certification-dirigeant/franceconnect/login",
-    rateLimiterMiddleware,
     checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
@@ -537,7 +533,6 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/login/callback",
-    rateLimiterMiddleware,
     checkUserIsVerifiedMiddleware,
     getFranceConnectLoginCallbackMiddleware,
     useFranceConnectLogoutMiddlewareFactory(
@@ -547,7 +542,6 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/logout/callback",
-    rateLimiterMiddleware,
     checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackControllerFactory(

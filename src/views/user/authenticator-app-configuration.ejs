@@ -1,6 +1,6 @@
 <div>
     <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
-    <%- include('../partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre code à usage unique", nextStepTitle:"Sauvegarder les clés de récupération" }); %>
+    <%- include('../partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre code à usage unique", nextStepTitle:"Vous pouvez dès à présent vous ProConnecter" }); %>
     <h2 class="fr-h5">Scanner ce QRcode avec votre application</h2>
     <img src="<%= locals.qrCodeDataUrl; %>" alt="Code QR à utiliser dans l’appli FreeOTP">
     <div class="fr-accordion fr-mb-3w">
@@ -57,7 +57,7 @@
         <div class="card-button-container">
             <a
                 class="fr-btn fr-btn--tertiary"
-                href="/connection-and-account"
+                href="/users/double-authentication-choice"
             >
             Annuler</a>
             <button class="fr-btn" type="submit">Valider le code</button>

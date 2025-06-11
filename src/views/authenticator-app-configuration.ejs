@@ -1,7 +1,7 @@
 <div class="dashboard-container">
     <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
-        <%- include('./partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre code à usage unique", nextStepTitle:"Sauvegarder les clés de récupération" }); %>
+        <%- include('./partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre code à usage unique", nextStepTitle:"Votre double authentification est bien configurée" }); %>
         <%- include('./partials/notifications.ejs', {notifications: notifications}) %>
         <% if (isAuthenticatorAlreadyConfigured) { %>
             <h2>Changer d’application d’authentification</h2>

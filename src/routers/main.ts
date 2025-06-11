@@ -22,7 +22,10 @@ import {
   postVerifyRegistrationController,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
-import { rateLimiterMiddleware } from "../middlewares/rate-limiter";
+import {
+  authenticatorRateLimiterMiddleware,
+  rateLimiterMiddleware,
+} from "../middlewares/rate-limiter";
 import {
   checkUserCanAccessAdminMiddleware,
   checkUserCanAccessAppMiddleware,
@@ -82,6 +85,7 @@ export const mainRouter = (app: Express) => {
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
+    authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
     postAuthenticatorAppConfigurationController,
   );
