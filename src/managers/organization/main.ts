@@ -4,7 +4,7 @@ import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import {
   addDomain,
-  findEmailDomainsByOrganizationId,
+  deleteEmailDomainsByVerificationTypes,
 } from "../../repositories/email-domain";
 import {
   findByUserId,
@@ -52,7 +52,7 @@ export const quitOrganization = async ({
 
 export const markDomainAsVerified = markDomainAsVerifiedFactory({
   addDomain,
-  findEmailDomainsByOrganizationId,
+  deleteEmailDomainsByVerificationTypes,
   findOrganizationById,
   getUsers,
   updateUserOrganizationLink,

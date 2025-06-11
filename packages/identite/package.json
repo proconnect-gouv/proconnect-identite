@@ -1,6 +1,6 @@
 {
   "name": "@gouvfr-lasuite/proconnect.identite",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/identite#readme",
   "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
   "repository": {
@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "leven": "^4.0.0",
-    "openid-client": "^6.4.2",
+    "openid-client": "^6.5.1",
     "sql-template-tag": "^5.2.1",
     "zod": "^3.25.28"
   },

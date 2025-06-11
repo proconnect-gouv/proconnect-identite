@@ -24,6 +24,7 @@ import {
   MAX_SUGGESTED_ORGANIZATIONS,
 } from "../../config/env";
 import {
+  AccessRestrictedToPublicServiceEmailError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -61,6 +62,7 @@ import {
   isEducationNationaleDomain,
   isEntrepriseUnipersonnelle,
   isEtablissementScolaireDuPremierEtSecondDegre,
+  isPublicService,
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
@@ -200,6 +202,14 @@ export const joinOrganization = async ({
       user_id,
       verification_type: "no_verification_means_for_small_association",
     });
+  }
+
+  if (
+    !isCommune(organization) &&
+    isAFreeEmailProvider(email) &&
+    isPublicService(organization)
+  ) {
+    throw new AccessRestrictedToPublicServiceEmailError();
   }
 
   if (

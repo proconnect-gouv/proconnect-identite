@@ -26,7 +26,7 @@ export const entrepriseOpenApiClient: EntrepriseOpenApiClient =
   createEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
     baseUrl: ENTREPRISE_API_URL,
     fetch:
-      DEPLOY_ENV === "localhost" || DEPLOY_ENV === "preview"
+      DEPLOY_ENV === "localhost"
         ? (input: Request) =>
             Promise.resolve(TestingEntrepriseApiRouter.fetch(input))
         : undefined,

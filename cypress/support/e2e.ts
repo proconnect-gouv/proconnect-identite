@@ -28,3 +28,7 @@ if (RECORD_FOR_HUMANS) {
   Cypress.config("viewportWidth", 1920);
   Cypress.config("viewportHeight", 1080);
 }
+
+before(() => {
+  cy.maildevDeleteAllMessages();
+});

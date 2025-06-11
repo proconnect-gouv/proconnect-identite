@@ -11,6 +11,7 @@ import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { z, ZodError } from "zod";
 import {
+  AccessRestrictedToPublicServiceEmailError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -139,6 +140,10 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
+    if (error instanceof AccessRestrictedToPublicServiceEmailError) {
+      return res.redirect(`/users/access-restricted-to-public-sector-email`);
+    }
+
     if (
       error instanceof InvalidSiretError ||
       error instanceof OrganizationNotActiveError ||
@@ -252,6 +257,18 @@ export function getUnableToCertifyUserAsExecutiveController(
   } catch (e) {
     next(e);
   }
+}
+
+export async function getAccessRestrictedToPublicSectorEmailController(
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  return res.render("user/access-restricted-to-public-sector-email", {
+    csrfToken: csrfToken(req),
+    illustration: "connection-lost.svg",
+    pageTitle: "Email non autorisé",
+  });
 }
 
 export const postQuitUserOrganizationController = async (

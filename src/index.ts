@@ -187,7 +187,7 @@ app.use(
 );
 app.use("/oauth", oidcProvider.callback());
 
-if (DEPLOY_ENV === "localhost" || DEPLOY_ENV === "preview") {
+if (DEPLOY_ENV === "localhost") {
   app.use(
     createTestingHandler("/___testing___", {
       ISSUER: FRANCECONNECT_ISSUER,
