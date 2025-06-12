@@ -78,6 +78,7 @@ import {
 import {
   getSignInWithPasskeyController,
   postVerifyFirstFactorAuthenticationController,
+  postVerifyRegistrationControllerFactory,
   postVerifySecondFactorAuthenticationController,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
@@ -299,11 +300,22 @@ export const userRouter = () => {
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,
   );
+
+  userRouter.post(
+    "/passkeys/verify-registration",
+    checkUserIsConnectedMiddleware,
+    csrfProtectionMiddleware,
+    postVerifyRegistrationControllerFactory(
+      "/users/2fa-successfully-configured",
+    ),
+  );
+
   userRouter.get(
     "/reset-password",
     csrfProtectionMiddleware,
     getResetPasswordController,
   );
+
   userRouter.post(
     "/reset-password",
     csrfProtectionMiddleware,

@@ -19,7 +19,7 @@ import {
 } from "../controllers/totp";
 import {
   deletePasskeyController,
-  postVerifyRegistrationController,
+  postVerifyRegistrationControllerFactory,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
@@ -29,6 +29,7 @@ import {
 import {
   checkUserCanAccessAdminMiddleware,
   checkUserCanAccessAppMiddleware,
+  checkUserIsConnectedMiddleware,
 } from "../middlewares/user";
 import { ejsLayoutMiddlewareFactory } from "../services/renderer";
 
@@ -107,9 +108,11 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    checkUserCanAccessAdminMiddleware,
+    checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
-    postVerifyRegistrationController,
+    postVerifyRegistrationControllerFactory(
+      "/connection-and-account?notification=passkey_successfully_created",
+    ),
   );
 
   mainRouter.post(
