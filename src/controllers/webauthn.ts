@@ -80,7 +80,7 @@ export const getGenerateRegistrationOptionsController = async (
 };
 
 export const postVerifyRegistrationControllerFactory =
-  (redirectUrl: string) =>
+  (redirectUrl: string, errorRedirectUrl: string) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const schema = z.object({
@@ -118,9 +118,7 @@ export const postVerifyRegistrationControllerFactory =
         e instanceof ZodError ||
         e instanceof WebauthnRegistrationFailedError
       ) {
-        return res.redirect(
-          `/connection-and-account?notification=invalid_passkey`,
-        );
+        return res.redirect(errorRedirectUrl);
       }
 
       next(e);

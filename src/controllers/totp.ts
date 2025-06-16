@@ -13,11 +13,11 @@ import {
   setTemporaryTotpKey,
 } from "../managers/session/temporary-totp-key";
 import {
-  authenticateWithAuthenticatorApp,
-  confirmAuthenticatorAppRegistration,
-  deleteAuthenticatorAppConfiguration,
-  generateAuthenticatorAppRegistrationOptions,
-  isAuthenticatorAppConfiguredForUser,
+  authenticateWithTotp,
+  confirmTotpRegistration,
+  deleteTotpConfiguration,
+  generateTotpRegistrationOptions,
+  isTotpConfiguredForUser,
 } from "../managers/totp";
 import {
   sendAddFreeTOTPEmail,
@@ -29,7 +29,7 @@ import getNotificationsFromRequest, {
   getNotificationLabelFromRequest,
 } from "../services/get-notifications-from-request";
 
-export const getAuthenticatorAppConfigurationController = async (
+export const getTotpConfigurationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -40,23 +40,19 @@ export const getAuthenticatorAppConfigurationController = async (
     const existingTemporaryTotpKey = getTemporaryTotpKey(req);
 
     const { totpKey, humanReadableTotpKey, qrCodeDataUrl } =
-      await generateAuthenticatorAppRegistrationOptions(
-        email,
-        existingTemporaryTotpKey,
-      );
+      await generateTotpRegistrationOptions(email, existingTemporaryTotpKey);
 
     setTemporaryTotpKey(req, totpKey);
 
     const notificationLabel = await getNotificationLabelFromRequest(req);
     const hasCodeError = notificationLabel === "invalid_totp_token";
 
-    return res.render("authenticator-app-configuration", {
+    return res.render("totp-configuration", {
       pageTitle: "Configuration TOTP",
       notifications: await getNotificationsFromRequest(req),
       hasCodeError,
       csrfToken: csrfToken(req),
-      isAuthenticatorAlreadyConfigured:
-        await isAuthenticatorAppConfiguredForUser(user_id),
+      isAuthenticatorAlreadyConfigured: await isTotpConfiguredForUser(user_id),
       humanReadableTotpKey,
       qrCodeDataUrl,
     });
@@ -65,7 +61,7 @@ export const getAuthenticatorAppConfigurationController = async (
   }
 };
 
-export const postAuthenticatorAppConfigurationController = async (
+export const postTotpConfigurationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -83,7 +79,7 @@ export const postAuthenticatorAppConfigurationController = async (
       throw new NotFoundError();
     }
 
-    const updatedUser = await confirmAuthenticatorAppRegistration(
+    const updatedUser = await confirmTotpRegistration(
       user_id,
       temporaryTotpKey,
       totpToken,
@@ -100,7 +96,7 @@ export const postAuthenticatorAppConfigurationController = async (
   } catch (error) {
     if (error instanceof InvalidTotpTokenError) {
       return res.redirect(
-        "/authenticator-app-configuration?notification=invalid_totp_token",
+        "/totp-configuration?notification=invalid_totp_token",
       );
     }
 
@@ -108,7 +104,7 @@ export const postAuthenticatorAppConfigurationController = async (
   }
 };
 
-export const postDeleteAuthenticatorAppConfigurationController = async (
+export const postDeleteTotpConfigurationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -116,7 +112,7 @@ export const postDeleteAuthenticatorAppConfigurationController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await deleteAuthenticatorAppConfiguration(user_id);
+    const updatedUser = await deleteTotpConfiguration(user_id);
 
     updateUserInAuthenticatedSession(req, updatedUser);
 
@@ -130,7 +126,7 @@ export const postDeleteAuthenticatorAppConfigurationController = async (
   }
 };
 
-export const postSignInWithAuthenticatorAppController = async (
+export const postSignInWithTotpController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -144,7 +140,7 @@ export const postSignInWithAuthenticatorAppController = async (
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const user = await authenticateWithAuthenticatorApp(user_id, totpToken);
+    const user = await authenticateWithTotp(user_id, totpToken);
 
     addAuthenticationMethodReferenceInSession(req, res, user, "totp");
 

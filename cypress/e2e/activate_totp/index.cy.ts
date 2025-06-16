@@ -12,27 +12,27 @@ describe("add 2fa authentication", () => {
 
     cy.contains("Choisir votre méthode de double authentification");
 
-    cy.get("button#2fa-configuration").click({ force: true });
+    cy.get("#radio-totp").click({ force: true });
+
+    cy.get("#webauthn-submit-button").contains("Continuer").click();
 
     cy.contains("Installer votre outil d’authentification");
 
-    cy.get('label[for="is-authenticator-app-installed"]').click();
+    cy.get('label[for="is-totp-installed"]').click();
 
-    cy.get("#is-authenticator-app-installed").should("be.checked");
+    cy.get("#is-totp-installed").should("be.checked");
 
     cy.get("#continue-button")
       .should("not.have.attr", "aria-disabled", "true")
       .click();
 
     cy.get("[name=totpToken]").type("123456");
-    cy.get(
-      '[action="/authenticator-app-configuration"] [type="submit"]',
-    ).click();
+    cy.get('[action="/totp-configuration"] [type="submit"]').click();
 
     cy.contains("Code invalide.");
 
     // Extract the code from the front to generate the TOTP key
-    cy.getTotpSecret("/authenticator-app-configuration");
+    cy.getTotpSecret("/totp-configuration");
 
     cy.contains("L’application d’authentification a été configurée.");
 

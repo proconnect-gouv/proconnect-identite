@@ -29,7 +29,7 @@
             </div>
         </div>
         <h3 class="fr-h5">Insérez le code généré par votre application</h3>
-        <form action="/authenticator-app-configuration" method="post">
+        <form action="/totp-configuration" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
             <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
                 <label class="fr-label" for="totpToken">

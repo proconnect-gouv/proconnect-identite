@@ -1,14 +1,14 @@
 <div>
   <%- include('../partials/stepper.ejs', {currentStep: "1", stepsTitle: "Installer votre outil d’authentification", nextStepTitle:"Configurer votre code à usage unique" }); %>
   <p>Pour utiliser un code à usage unique, vous pouvez utiliser l’application d’authentification de votre choix ou un gestionnaire de mot de passe compatible.</p>
-  <form action="/users/authenticator-app-configuration" class="checkbox-container" method="get">
+  <form action="/users/totp-configuration" class="checkbox-container" method="get">
     <div class="fr-checkbox-group">
-      <input name="is-authenticator-app-installed" id="is-authenticator-app-installed" type="checkbox" aria-describedby="is-authenticator-app-installed">
-      <label class="fr-label" for="is-authenticator-app-installed">
+      <input name="is-totp-installed" id="is-totp-installed" type="checkbox" aria-describedby="is-totp-installed" required>
+      <label class="fr-label" for="is-totp-installed">
           J'ai installé une application d'authentification
       </label>
     </div>
-    <button type="submit" class="fr-btn fr-my-3w" id="continue-button" href="/users/authenticator-app-configuration" role="button" aria-disabled="true">
+    <button type="submit" class="fr-btn fr-my-3w" id="continue-button" href="/users/totp-configuration" role="button" aria-disabled="true">
       Continuer
     </button>
   </form>

@@ -20,33 +20,32 @@
             hidden
         ></div>
         <form
-            action="/configuring-single-use-code"
+            action="/is-totp-app-installed"
             class="checkbox-container"
             method="get"
         >
             <fieldset
             class="fr-fieldset fr-mb-0"
-            id="radio-hint-2fa"
-            aria-labelledby="radio-hint-legend radio-hint-messages"
+            aria-labelledby="radio-legend radio-messages"
             >
             <div id="totp-option" class="fr-fieldset__element">
                 <div class="fr-radio-group">
-                <input type="radio" id="radio-hint-totp" name="radio-hint-2fa" />
-                <label class="fr-label" for="radio-hint-totp">
+                <input type="radio" id="radio-totp" name="radio-2fa" required />
+                <label class="fr-label" for="radio-totp">
                     Code à usage unique (TOTP)
                 </label>
                 </div>
             </div>
             <div id="webauthn-btn-begin-registration" class="fr-fieldset__element">
                 <div class="fr-radio-group">
-                <input type="radio" id="radio-hint-passkey" name="radio-hint-2fa" />
-                <label class="fr-label" for="radio-hint-passkey">
+                <input type="radio" id="radio-passkey" name="radio-2fa" required />
+                <label class="fr-label" for="radio-passkey">
                     Clé d'accès (passkey)
                 </label>
                 </div>
             </div>
-            <button class="fr-btn btn--fullwidth" type="submit" id="2fa-configuration">Continuer</button>
-            </fieldset>
+        </fieldset>
+        <button class="fr-btn btn--fullwidth" type="submit" id="webauthn-submit-button">Continuer</button>
         </form>
         <div class="fr-p-2w fr-mt-2w fr-grid-row fr-background-alt--blue-france">
             <div class="fr-col-1 fr-px-1w">

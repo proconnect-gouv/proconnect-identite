@@ -11,7 +11,7 @@ import {
   postJoinOrganizationMiddleware,
   postQuitUserOrganizationController,
 } from "../controllers/organization";
-import { postSignInWithAuthenticatorAppController } from "../controllers/totp";
+import { postSignInWithTotpController } from "../controllers/totp";
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
 import { getCertificationDirigeantController } from "../controllers/user/certification-dirigeant";
 import { postDeleteUserController } from "../controllers/user/delete";
@@ -50,11 +50,11 @@ import {
 } from "../controllers/user/signin-signup";
 import {
   get2faSuccessfullyConfiguredController,
-  getAuthenticatorAppConfigurationController,
-  getConfiguringSingleUseCodeController,
+  getIsTotpAppInstalledController,
+  getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
-  postAuthenticatorAppConfigurationController,
+  postTotpConfigurationController,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
   getChangePasswordController,
@@ -183,25 +183,25 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/configuring-single-use-code",
+    "/is-totp-app-installed",
     checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
-    getConfiguringSingleUseCodeController,
+    getIsTotpAppInstalledController,
   );
 
   userRouter.get(
-    "/authenticator-app-configuration",
+    "/totp-configuration",
     checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
-    getAuthenticatorAppConfigurationController,
+    getTotpConfigurationController,
   );
 
   userRouter.post(
-    "/authenticator-app-configuration",
+    "/totp-configuration",
     checkUserIsConnectedMiddleware,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
-    postAuthenticatorAppConfigurationController,
+    postTotpConfigurationController,
   );
 
   userRouter.get(
@@ -221,11 +221,11 @@ export const userRouter = () => {
   );
 
   userRouter.post(
-    "/2fa-sign-in-with-authenticator-app",
+    "/2fa-sign-in-with-totp",
     checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
     authenticatorRateLimiterMiddleware,
-    postSignInWithAuthenticatorAppController,
+    postSignInWithTotpController,
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,
   );
@@ -307,6 +307,7 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
       "/users/2fa-successfully-configured",
+      "users/double-authentication-choice?notification=invalid_passkey",
     ),
   );
 

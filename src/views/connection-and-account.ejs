@@ -31,7 +31,7 @@
                             <div class="fr-card__desc">
                                 <p class="fr-mb-2w">Création : <%= totpKeyVerifiedAt; %>
                                 </p>
-                                <form action="/delete-authenticator-app-configuration" method="post">
+                                <form action="/delete-totp-configuration" method="post">
                                     <input
                                         type="hidden"
                                         name="_csrf"
@@ -130,8 +130,8 @@
             <form id="2fa-form" method="post" action="/set-force-2fa">
                 <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 
-                <fieldset class="fr-fieldset fr-mb-0" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
-                    <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-hint-legend">
+                <fieldset class="fr-fieldset fr-mb-0" id="radio" aria-labelledby="radio-legend radio-messages">
+                    <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-legend">
                         Où voulez-vous activer la double authentification ?
                     </legend>
 

@@ -1,8 +1,8 @@
 import { type Express, Router, urlencoded } from "express";
 import nocache from "nocache";
 import {
-  getConfiguringSingleUseCodeController,
   getDoubleAuthenticationController,
+  getIsTotpAppInstalledController,
   postSetForce2faController,
 } from "../controllers/2fa";
 import {
@@ -13,9 +13,9 @@ import {
   postPersonalInformationsController,
 } from "../controllers/main";
 import {
-  getAuthenticatorAppConfigurationController,
-  postAuthenticatorAppConfigurationController,
-  postDeleteAuthenticatorAppConfigurationController,
+  getTotpConfigurationController,
+  postDeleteTotpConfigurationController,
+  postTotpConfigurationController,
 } from "../controllers/totp";
 import {
   deletePasskeyController,
@@ -29,7 +29,6 @@ import {
 import {
   checkUserCanAccessAdminMiddleware,
   checkUserCanAccessAppMiddleware,
-  checkUserIsConnectedMiddleware,
 } from "../middlewares/user";
 import { ejsLayoutMiddlewareFactory } from "../services/renderer";
 
@@ -59,28 +58,28 @@ export const mainRouter = (app: Express) => {
   );
 
   mainRouter.get(
-    "/configuring-single-use-code",
+    "/is-totp-app-installed",
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
-    getConfiguringSingleUseCodeController,
+    getIsTotpAppInstalledController,
   );
 
   mainRouter.get(
-    "/authenticator-app-configuration",
+    "/totp-configuration",
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
-    getAuthenticatorAppConfigurationController,
+    getTotpConfigurationController,
   );
 
   mainRouter.post(
-    "/authenticator-app-configuration",
+    "/totp-configuration",
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
@@ -88,18 +87,18 @@ export const mainRouter = (app: Express) => {
     checkUserCanAccessAdminMiddleware,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
-    postAuthenticatorAppConfigurationController,
+    postTotpConfigurationController,
   );
 
   mainRouter.post(
-    "/delete-authenticator-app-configuration",
+    "/delete-totp-configuration",
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
-    postDeleteAuthenticatorAppConfigurationController,
+    postDeleteTotpConfigurationController,
   );
 
   mainRouter.post(
@@ -108,10 +107,11 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    checkUserIsConnectedMiddleware,
+    checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
       "/connection-and-account?notification=passkey_successfully_created",
+      "/connection-and-account?notification=invalid_passkey",
     ),
   );
 

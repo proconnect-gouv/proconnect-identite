@@ -12,8 +12,8 @@ import {
   setTemporaryTotpKey,
 } from "../../managers/session/temporary-totp-key";
 import {
-  confirmAuthenticatorAppRegistration,
-  generateAuthenticatorAppRegistrationOptions,
+  confirmTotpRegistration,
+  generateTotpRegistrationOptions,
 } from "../../managers/totp";
 import { sendAddFreeTOTPEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
@@ -32,19 +32,20 @@ export const getTwoFactorsAuthenticationChoiceController = async (
       pageTitle: "Choisir un mode de double authentification",
       csrfToken: csrfToken(req),
       illustration: "illu-2FA.svg",
+      notifications: await getNotificationsFromRequest(req),
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const getConfiguringSingleUseCodeController = async (
+export const getIsTotpAppInstalledController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    return res.render("user/configuring-single-use-code", {
+    return res.render("user/is-totp-app-installed", {
       pageTitle: "Installer votre outil d'authentification",
       csrfToken: csrfToken(req),
       illustration: "illu-2FA.svg",
@@ -54,7 +55,7 @@ export const getConfiguringSingleUseCodeController = async (
   }
 };
 
-export const getAuthenticatorAppConfigurationController = async (
+export const getTotpConfigurationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -63,16 +64,13 @@ export const getAuthenticatorAppConfigurationController = async (
     const { email } = getUserFromAuthenticatedSession(req);
     const existingTemporaryTotpKey = getTemporaryTotpKey(req);
     const { totpKey, humanReadableTotpKey, qrCodeDataUrl } =
-      await generateAuthenticatorAppRegistrationOptions(
-        email,
-        existingTemporaryTotpKey,
-      );
+      await generateTotpRegistrationOptions(email, existingTemporaryTotpKey);
     setTemporaryTotpKey(req, totpKey);
 
     const notificationLabel = await getNotificationLabelFromRequest(req);
     const hasCodeError = notificationLabel === "invalid_totp_token";
 
-    return res.render("user/authenticator-app-configuration", {
+    return res.render("user/totp-configuration", {
       pageTitle: "Configurer un code à usage unique",
       notifications: await getNotificationsFromRequest(req),
       hasCodeError,
@@ -86,7 +84,7 @@ export const getAuthenticatorAppConfigurationController = async (
   }
 };
 
-export const postAuthenticatorAppConfigurationController = async (
+export const postTotpConfigurationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -103,7 +101,7 @@ export const postAuthenticatorAppConfigurationController = async (
     if (!temporaryTotpKey) {
       throw new NotFoundError();
     }
-    const updatedUser = await confirmAuthenticatorAppRegistration(
+    const updatedUser = await confirmTotpRegistration(
       user_id,
       temporaryTotpKey,
       totpToken,
@@ -118,7 +116,7 @@ export const postAuthenticatorAppConfigurationController = async (
   } catch (error) {
     if (error instanceof InvalidTotpTokenError) {
       return res.redirect(
-        "/users/authenticator-app-configuration?notification=invalid_totp_token",
+        "/users/totp-configuration?notification=invalid_totp_token",
       );
     }
 

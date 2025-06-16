@@ -20,7 +20,7 @@
         </div>
     </div>
     <h3 class="fr-h5">Insérez le code généré par votre application</h3>
-    <form action="/users/authenticator-app-configuration" method="post">
+    <form action="/users/totp-configuration" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
         <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
             <label class="fr-label" for="totpToken">
@@ -30,10 +30,10 @@
                     class="fr-input"
                     type="text"
                     name="totpToken"
-                    required
                     pattern="^(\s*\d){6}$"
                     title="code composé de 6 chiffres"
                     autocomplete="off"
+                    required
                     <% if (locals.hasCodeError) { %>
                     autofocus
                     aria-describedby="email-error"
