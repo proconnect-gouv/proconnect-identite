@@ -1,5 +1,14 @@
 # @gouvfr-lasuite/proconnect.identite
 
+## 0.7.0
+
+### Minor Changes
+
+- [#1282](https://github.com/numerique-gouv/proconnect-identite/pull/1282) [`a3b52c3`](https://github.com/numerique-gouv/proconnect-identite/commit/a3b52c33470f24bbe164d2435c717cb1f2f0a932) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Ajoute deux nouveaux types de vérification
+
+  - in_liste_dirigeants_rne : Liste des dirigeants RNE
+  - receipt_sent : Justificatif transmis
+
 ## 0.6.0
 
 ### Minor Changes
