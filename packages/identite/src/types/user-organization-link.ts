@@ -6,11 +6,13 @@ export const UserOrganizationLinkVerificationTypeSchema = z.enum([
   "imported_from_coop_mediation_numerique",
   "imported_from_inclusion_connect",
   "in_liste_dirigeants_rna",
+  "in_liste_dirigeants_rne",
   "no_validation_means_available",
   "no_verification_means_for_entreprise_unipersonnelle",
   "no_verification_means_for_small_association",
   "official_contact_email",
   "organization_dirigeant",
+  "receipt_sent",
   // Used in the sandbox environment to bypass the verification process
   "bypassed",
 ]);
