@@ -12,7 +12,7 @@ export const UserOrganizationLinkVerificationTypeSchema = z.enum([
   "no_verification_means_for_small_association",
   "official_contact_email",
   "organization_dirigeant",
-  "receipt_sent",
+  "proof_received",
   // Used in the sandbox environment to bypass the verification process
   "bypassed",
 ]);
