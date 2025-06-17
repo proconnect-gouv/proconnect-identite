@@ -133,7 +133,6 @@ export const TestingOidcFranceConnectRouter = new Hono<{
     zValidator("form", CodeParamSchema),
     async ({ env: { ISSUER }, json, req }) => {
       const form = req.valid("form");
-      console.warn({ form });
       const { code } = form;
 
       const codeObj = CODE_MAP.get(code);

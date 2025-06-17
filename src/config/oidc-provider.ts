@@ -1,17 +1,88 @@
+//
+
+import * as Sentry from "@sentry/node";
 import type { Request } from "express";
-import type { Configuration } from "oidc-provider";
+import Provider, { errors, type Configuration } from "oidc-provider";
 import { destroyAuthenticatedSession } from "../managers/session/authenticated";
 import epochTime from "../services/epoch-time";
+import { logger } from "../services/log";
 import { findAccount } from "../services/oidc-account-adapter";
 import policy from "../services/oidc-policy";
+import { oidcProviderAdapterFactory } from "../services/oidc-provider-adapter";
 import { renderWithEjsLayout } from "../services/renderer";
+import { connectionCountMiddleware } from "./../middlewares/connection-count";
 import {
   ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
   ACR_VALUE_FOR_IAL1_AAL1,
   ACR_VALUE_FOR_IAL1_AAL2,
   ACR_VALUE_FOR_IAL2_AAL1,
   ACR_VALUE_FOR_IAL2_AAL2,
+  FEATURE_USE_SECURE_COOKIES,
+  HOST,
+  JWKS,
+  SESSION_COOKIE_SECRET,
+  SESSION_MAX_AGE_IN_SECONDS,
 } from "./env";
+
+//
+
+export async function createOidcProvider() {
+  const oidcProvider = new Provider(`${HOST}`, {
+    adapter: oidcProviderAdapterFactory,
+    jwks: JWKS,
+    async renderError(ctx, { error, error_description }, err) {
+      logger.error(err);
+      if (
+        !(
+          err instanceof errors.InvalidClient ||
+          err instanceof errors.InvalidRedirectUri ||
+          err instanceof errors.InvalidRequest ||
+          err instanceof errors.InvalidRequestUri
+        )
+      ) {
+        Sentry.withScope((scope) => {
+          scope.setSDKProcessingMetadata({ request: ctx.request });
+          scope.captureException(err);
+        });
+      }
+
+      ctx.type = "html";
+      ctx.body = await renderWithEjsLayout("error", {
+        error_code:
+          err instanceof errors.OIDCProviderError ? err.statusCode : err,
+        error_message: `${error}: ${error_description}`,
+      });
+    },
+    cookies: {
+      names: {
+        session: "oidc.session",
+        interaction: "oidc.interaction",
+        resume: "oidc.interaction_resume",
+        state: "oidc.state",
+      },
+      long: {
+        overwrite: true,
+        signed: true,
+        secure: FEATURE_USE_SECURE_COOKIES,
+        sameSite: "lax",
+      },
+      short: {
+        overwrite: true,
+        signed: true,
+        secure: FEATURE_USE_SECURE_COOKIES,
+        sameSite: "lax",
+      },
+      keys: SESSION_COOKIE_SECRET,
+    },
+    ...oidcProviderConfiguration({
+      sessionTtlInSeconds: SESSION_MAX_AGE_IN_SECONDS,
+    }),
+  });
+  oidcProvider.proxy = true;
+  oidcProvider.use(connectionCountMiddleware);
+
+  return oidcProvider;
+}
 
 //
 
@@ -96,7 +167,6 @@ export const oidcProviderConfiguration = ({
     // inspired from https://github.com/panva/node-oidc-provider/blob/main/recipes/skip_consent.md
     // We updated the function to ensure it always return a grant.
     // As a consequence, the consent prompt should never be requested afterward.
-
     // The grant id never comes from consent results, so we simplified this line
     if (!ctx.oidc.session || !ctx.oidc.client || !ctx.oidc.params) {
       return undefined;

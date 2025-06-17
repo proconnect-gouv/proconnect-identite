@@ -1,4 +1,8 @@
 describe("delete TOTP connexion", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should delete TOTP application", function () {
     cy.visit("/connection-and-account");
 
