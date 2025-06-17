@@ -316,7 +316,7 @@ VALUES
   (53, 1, 'proton.me', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   (54, 3, 'proton.me', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   (55, 44, 'proton.me', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (56, 53, 'yopmail.com', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (56, 53, 'yopmail.com', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
   ON CONFLICT (id)
   DO UPDATE
   SET (organization_id, domain, verification_type, created_at, updated_at, verified_at)
