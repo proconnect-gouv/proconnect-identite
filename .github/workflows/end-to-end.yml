@@ -22,6 +22,7 @@ jobs:
       matrix:
         e2e_test:
           - activate_totp
+          - broken_standard_client
           - check_email_deliverability
           - connect_franceconnect_account
           - delete_account
@@ -66,8 +67,6 @@ jobs:
       - run: npm ci
       - run: npm run build:workspaces
       - run: npm run migrate up
-      - run: npm run fixtures:load-ci -- cypress/e2e/${{ matrix.e2e_test }}/fixtures.sql
-      - run: npm run update-organization-info -- 0
       - name: Cypress run
         uses: cypress-io/github-action@v6.10.1
         with:

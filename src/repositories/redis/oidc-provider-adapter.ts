@@ -1,6 +1,10 @@
 // source https://github.com/panva/node-oidc-provider/blob/6fbcd71b08b8b8f381a97a82809de42c75904c6b/example/adapters/redis.js
+
 import { isEmpty } from "lodash-es";
+import type { Adapter, AdapterPayload } from "oidc-provider";
 import { getNewRedisClient } from "../../connectors/redis";
+
+//
 
 const getClient = () =>
   getNewRedisClient({
@@ -34,20 +38,15 @@ function uidKeyFor(uid: any) {
   return `uid:${uid}`;
 }
 
-class RedisAdapter {
-  name: any;
-  constructor(name: any) {
-    this.name = name;
-  }
+type Store = { payload: string };
 
-  async upsert(
-    id: any,
-    payload: { grantId: any; userCode: any; uid: any },
-    expiresIn: number,
-  ) {
+export class OidcProviderAdapter implements Adapter {
+  constructor(public name: string) {}
+
+  async upsert(id: string, payload: AdapterPayload, expiresIn: number) {
     const key = this.key(id);
     const store = consumable.has(this.name)
-      ? { payload: JSON.stringify(payload) }
+      ? ({ payload: JSON.stringify(payload) } as Store)
       : JSON.stringify(payload);
 
     const multi = getClient().multi();
@@ -84,7 +83,7 @@ class RedisAdapter {
     await multi.exec();
   }
 
-  async find(id: any) {
+  async find(id: string): Promise<AdapterPayload | undefined | void> {
     const data = consumable.has(this.name)
       ? await getClient().hgetall(this.key(id))
       : await getClient().get(this.key(id));
@@ -96,30 +95,32 @@ class RedisAdapter {
     if (typeof data === "string") {
       return JSON.parse(data);
     }
-    // @ts-ignore
-    const { payload, ...rest } = data;
+
+    const { payload, ...rest } = data as AdapterPayload & Store;
     return {
       ...rest,
       ...JSON.parse(payload),
     };
   }
 
-  async findByUid(uid: any) {
+  async findByUid(uid: string) {
     const id = await getClient().get(uidKeyFor(uid));
+    if (!id) return undefined;
     return this.find(id);
   }
 
-  async findByUserCode(userCode: any) {
+  async findByUserCode(userCode: string) {
     const id = await getClient().get(userCodeKeyFor(userCode));
+    if (!id) return undefined;
     return this.find(id);
   }
 
-  async destroy(id: any) {
+  async destroy(id: string) {
     const key = this.key(id);
     await getClient().del(key);
   }
 
-  async revokeByGrantId(grantId: any) {
+  async revokeByGrantId(grantId: string) {
     const multi = getClient().multi();
     const tokens = await getClient().lrange(grantKeyFor(grantId), 0, -1);
     tokens.forEach((token: any) => multi.del(token));
@@ -127,7 +128,7 @@ class RedisAdapter {
     await multi.exec();
   }
 
-  async consume(id: any) {
+  async consume(id: string) {
     await getClient().hset(
       this.key(id),
       "consumed",
@@ -135,9 +136,7 @@ class RedisAdapter {
     );
   }
 
-  key(id: any) {
+  key(id: string) {
     return `${this.name}:${id}`;
   }
 }
-
-export default RedisAdapter;

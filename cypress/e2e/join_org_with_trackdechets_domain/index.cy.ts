@@ -1,8 +1,10 @@
 //
 
-//
-
 describe("join organizations", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("join suggested organisation", function () {
     cy.visit("/");
     cy.login("lion.eljonson@darkangels.world");

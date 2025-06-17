@@ -4,6 +4,10 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Forcer une connexion par certification dirigeant").click();
   });
 
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in as the executive of an organization", function () {
     cy.login("certified-franceconnected+dirigeant@yopmail.com");
 

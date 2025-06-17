@@ -1,4 +1,8 @@
 describe("trigger rate limit by email", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should trigger totp rate limiting", function () {
     cy.visit("/users/start-sign-in");
 

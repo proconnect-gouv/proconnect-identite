@@ -1,6 +1,10 @@
 //
 
 describe("sign-in with magic link", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-up with magic link", function () {
     cy.visit("/users/start-sign-in");
 

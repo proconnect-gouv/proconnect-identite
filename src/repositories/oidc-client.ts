@@ -1,18 +1,6 @@
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../connectors/postgres";
 
-export const getClients = async () => {
-  const connection = getDatabaseConnection();
-
-  const { rows }: QueryResult<OidcClient> = await connection.query(`
-SELECT
-    *
-FROM oidc_clients
-`);
-
-  return rows;
-};
-
 export const findByClientId = async (client_id: string) => {
   const connection = getDatabaseConnection();
 

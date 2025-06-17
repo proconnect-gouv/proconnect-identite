@@ -1,5 +1,9 @@
 //
 
+it("should seed the database once", function () {
+  cy.seed();
+});
+
 describe("join with free email domain", () => {
   beforeEach(() => {
     cy.visit("/");

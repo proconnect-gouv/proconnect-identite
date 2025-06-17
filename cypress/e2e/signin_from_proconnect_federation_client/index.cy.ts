@@ -1,6 +1,10 @@
 //
 
 describe("sign-in from proconnect federation client", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in", () => {
     cy.visit("http://localhost:4001");
     cy.get("button.proconnect-button").click();
