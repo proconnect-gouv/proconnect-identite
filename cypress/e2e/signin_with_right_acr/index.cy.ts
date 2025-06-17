@@ -102,12 +102,40 @@ describe("sign-in with a client requiring 2fa identity", () => {
     );
   });
 
-  it("should return an error with ial1", function () {
+  it("should follow first authentication when mfa asked", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial2-aal1@yopmail.com");
 
-    cy.contains("Attention : le site que vous voulez utiliser requiert la 2FA");
+    cy.get("#radio-totp").click({ force: true });
+
+    cy.get("button.fr-btn").contains("Continuer").click();
+
+    cy.contains("Installer votre outil d’authentification");
+
+    cy.get("#is-totp-installed").click({ force: true });
+
+    cy.get("button.fr-btn").contains("Continuer").click();
+
+    cy.contains("Scanner ce QRcode avec votre application");
+
+    const invalidTotpCode = "123456";
+
+    cy.get("[name=totpToken]").type(invalidTotpCode);
+    cy.get('[action="/users/totp-configuration"] [type="submit"]').click();
+
+    cy.contains(
+      "Erreur : le code que vous avez utilisé est invalide. Merci de recommencer.",
+    );
+
+    cy.getTotpSecret("/users/totp-configuration");
+
+    cy.contains("Votre double authentification est bien configurée");
+    cy.get("button.fr-btn").contains("Continuer").click();
+
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
+    );
   });
 });
 
@@ -151,16 +179,6 @@ describe("sign-in with a client requiring certification dirigeant and 2fa identi
 
     cy.contains(
       '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa"',
-    );
-  });
-
-  it("should warn the user that 2fa is required", function () {
-    cy.get("button#custom-connection").click({ force: true });
-
-    cy.login("certification-dirigeant@yopmail.com");
-
-    cy.contains(
-      "Attention : le site que vous voulez utiliser requiert la 2FA, qui réduit les risques de piratage.",
     );
   });
 });

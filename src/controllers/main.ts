@@ -17,7 +17,7 @@ import {
   getNeedsDirtyDSRedirect,
   setNeedsDirtyDSRedirect,
 } from "../managers/session/dirty-ds-redirect";
-import { isAuthenticatorAppConfiguredForUser } from "../managers/totp";
+import { isTotpConfiguredForUser } from "../managers/totp";
 import {
   getUserVerificationLabel,
   isUserVerifiedWithFranceconnect,
@@ -178,8 +178,7 @@ export const getConnectionAndAccountController = async (
       pageTitle: "Compte et connexion",
       notifications: await getNotificationsFromRequest(req),
       email: email,
-      isAuthenticatorConfigured:
-        await isAuthenticatorAppConfiguredForUser(user_id),
+      isAuthenticatorConfigured: await isTotpConfiguredForUser(user_id),
       isVerifiedWithFranceConnect,
       passkeys,
       totpKeyVerifiedAt: totp_key_verified_at

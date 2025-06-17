@@ -32,7 +32,6 @@ import {
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
-import { clearInteractionSession } from "../managers/session/interaction";
 import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
@@ -177,16 +176,10 @@ export const checkUserTwoFactorAuthMiddleware = async (
           req.session.twoFactorsAuthRequested) &&
         !isWithinTwoFactorAuthenticatedSession(req)
       ) {
-        if (!(await is2FACapable(user_id))) {
-          // We break the connexion flow
-
-          clearInteractionSession(req);
-
-          return res.redirect(
-            "/connection-and-account?notification=2fa_not_configured",
-          );
-        } else {
+        if (await is2FACapable(user_id)) {
           return res.redirect("/users/2fa-sign-in");
+        } else {
+          return res.redirect("/users/double-authentication-choice");
         }
       }
       return next();

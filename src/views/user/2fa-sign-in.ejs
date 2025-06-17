@@ -26,7 +26,7 @@
         ProConnect veut s’assurer que c’est bien vous qui essayez de vous connecter
     </p>
     <% if (showsTotpSection) { %>
-        <form action="/users/2fa-sign-in-with-authenticator-app" method="post" class="fr-mb-5w">
+        <form action="/users/2fa-sign-in-with-totp" method="post" class="fr-mb-5w">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
 
             <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">

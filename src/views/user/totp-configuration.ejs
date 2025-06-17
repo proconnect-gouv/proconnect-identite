@@ -1,0 +1,66 @@
+<div>
+    <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
+    <%- include('../partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre code à usage unique", nextStepTitle:"Vous pouvez dès à présent vous ProConnecter" }); %>
+    <h2 class="fr-h5">Scanner ce QRcode avec votre application</h2>
+    <img src="<%= locals.qrCodeDataUrl; %>" alt="Code QR à utiliser dans l’appli FreeOTP">
+    <div class="fr-accordion fr-mb-3w">
+        <h3 class="fr-accordion__title">
+            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="vous-ne-pouvez-pas-scanner">
+                Vous ne pouvez pas scanner le code ?
+            </button>
+        </h3>
+        <div class="fr-collapse" id="vous-ne-pouvez-pas-scanner">
+            <b>
+                <p>Pour configurer manuellement votre application d’authentification mobile :</p>
+                <p>Clé/secret : <span id="humanReadableTotpKey"><%= locals.humanReadableTotpKey; %></span></p>
+                <p>Type : TOTP</p>
+                <p>Algorithme : SHA1</p>
+            </b>
+            <a href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-icon-question-fill fr-btn--icon-left" target="_blank" rel="noopener noreferrer">Consulter notre page d'aide sur la double authentification</a>
+        </div>
+    </div>
+    <h3 class="fr-h5">Insérez le code généré par votre application</h3>
+    <form action="/users/totp-configuration" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
+        <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
+            <label class="fr-label" for="totpToken">
+                Entrez le code à usage unique
+            </label>
+            <input
+                    class="fr-input"
+                    type="text"
+                    name="totpToken"
+                    pattern="^(\s*\d){6}$"
+                    title="code composé de 6 chiffres"
+                    autocomplete="off"
+                    required
+                    <% if (locals.hasCodeError) { %>
+                    autofocus
+                    aria-describedby="email-error"
+                    <% } %>
+            >
+            <% if (locals.hasCodeError) { %>
+                <p class="fr-error-text" id="email-error">
+                    Code invalide. 
+                    <a href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/#2-comment-faire-si-le-code-a-usage-unique-ne-fonctionne-pas"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Page d'aide"
+                    >
+                        Consultez notre page d’aide.
+                    </a>
+                </p>
+            <% } %>
+        </div>
+
+
+        <div class="card-button-container">
+            <a
+                class="fr-btn fr-btn--tertiary"
+                href="/users/double-authentication-choice"
+            >
+            Annuler</a>
+            <button class="fr-btn" type="submit">Valider le code</button>
+        </div>
+    </form>
+</div>

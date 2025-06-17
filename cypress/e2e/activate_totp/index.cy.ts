@@ -1,5 +1,3 @@
-import { generateToken } from "@sunknudsen/totp";
-
 describe("add 2fa authentication", () => {
   it("should add 2fa authentication on account user", function () {
     cy.visit("/connection-and-account");
@@ -9,38 +7,32 @@ describe("add 2fa authentication", () => {
     cy.contains("Double authentification");
 
     cy.get('[href="/double-authentication"]')
-      .contains("Configurer la 2FA")
+      .contains("Configurer la double authentification")
       .click();
 
-    cy.contains(
-      "Choisissez une de ces deux méthodes de validation supplémentaire",
-    );
+    cy.contains("Choisir votre méthode de double authentification");
 
-    cy.get('[href="/configuring-single-use-code"]')
-      .contains("Code à usage unique")
-      .click();
+    cy.get("#radio-totp").click({ force: true });
 
-    cy.contains("Configurer un code à usage unique (OTP)");
+    cy.get("#webauthn-submit-button").contains("Continuer").click();
 
-    cy.get('label[for="is-authenticator-app-installed"]').click();
+    cy.contains("Installer votre outil d’authentification");
 
-    cy.get("#is-authenticator-app-installed").should("be.checked");
+    cy.get('label[for="is-totp-installed"]').click();
+
+    cy.get("#is-totp-installed").should("be.checked");
 
     cy.get("#continue-button")
       .should("not.have.attr", "aria-disabled", "true")
       .click();
 
+    cy.get("[name=totpToken]").type("123456");
+    cy.get('[action="/totp-configuration"] [type="submit"]').click();
+
+    cy.contains("Code invalide.");
+
     // Extract the code from the front to generate the TOTP key
-    cy.get("#humanReadableTotpKey")
-      .invoke("text")
-      .then((text) => {
-        const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
-        const totp = generateToken(humanReadableTotpKey);
-        cy.get("[name=totpToken]").type(totp);
-        cy.get(
-          '[action="/authenticator-app-configuration"] [type="submit"]',
-        ).click();
-      });
+    cy.getTotpSecret("/totp-configuration");
 
     cy.contains("L’application d’authentification a été configurée.");
 
@@ -53,42 +45,5 @@ describe("add 2fa authentication", () => {
         cy.maildevDeleteMessageById(email.id);
       },
     );
-  });
-
-  it("should see an help link on third failed attempt", function () {
-    cy.visit("/connection-and-account");
-
-    cy.login("unused1@yopmail.com");
-
-    cy.contains("Double authentification");
-
-    cy.get('[href="/double-authentication"]')
-      .contains("Configurer la 2FA")
-      .click();
-
-    cy.contains(
-      "Choisissez une de ces deux méthodes de validation supplémentaire",
-    );
-
-    cy.get('[href="/configuring-single-use-code"]')
-      .contains("Code à usage unique")
-      .click();
-
-    cy.contains("Configurer un code à usage unique (OTP)");
-
-    cy.get('label[for="is-authenticator-app-installed"]').click();
-
-    cy.get("#is-authenticator-app-installed").should("be.checked");
-
-    cy.get("#continue-button")
-      .should("not.have.attr", "aria-disabled", "true")
-      .click();
-
-    cy.get("[name=totpToken]").type("123456");
-    cy.get(
-      '[action="/authenticator-app-configuration"] [type="submit"]',
-    ).click();
-
-    cy.contains("Code invalide.");
   });
 });

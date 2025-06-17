@@ -21,6 +21,7 @@ declare global {
       getDescribed: typeof getDescribedCommand;
       getByLabel: typeof getByLabelCommand;
       updateCustomParams: typeof updateCustomParams;
+      getTotpSecret: typeof getTotpSecretCommand;
     }
   }
 }
@@ -35,9 +36,7 @@ const defaultPassword = "password123";
 Cypress.Commands.add("fillTotpFields", (totpSecret = defaultTotpSecret) => {
   const totp = generateToken(totpSecret);
   cy.get("[name=totpToken]").type(totp);
-  cy.get(
-    '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
-  ).click();
+  cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
 });
 
 Cypress.Commands.add(
@@ -138,3 +137,17 @@ function getByLabelCommand(text: string) {
   return cy.get(`[aria-label="${text}"]`);
 }
 Cypress.Commands.add("getByLabel", getByLabelCommand);
+
+function getTotpSecretCommand(action: string) {
+  return cy
+    .get("#humanReadableTotpKey")
+    .invoke("text")
+    .then((text) => {
+      const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
+      const totp = generateToken(humanReadableTotpKey);
+      cy.get("[name=totpToken]").type(totp);
+      cy.get(`[action="${action}"] [type="submit"]`).click();
+    });
+}
+
+Cypress.Commands.add("getTotpSecret", getTotpSecretCommand);

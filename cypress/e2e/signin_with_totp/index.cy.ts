@@ -77,9 +77,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
     cy.login("unused3@yopmail.com");
 
     cy.get("[name=totpToken]").type("123456");
-    cy.get(
-      '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
-    ).click();
+    cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
     cy.contains("Code invalide.");
   });
 });
