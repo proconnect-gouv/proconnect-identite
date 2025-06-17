@@ -4,7 +4,6 @@ import { describe, it } from "node:test";
 import {
   isCommune,
   isEducationNationaleDomain,
-  isEntrepriseUnipersonnelle,
   isEtablissementScolaireDuPremierEtSecondDegre,
   isPublicService,
   isSmallAssociation,
@@ -46,27 +45,6 @@ const entreprise_unipersonnelle_org_info = {
   cached_categorie_juridique: "1000",
   cached_libelle_categorie_juridique: "Entrepreneur individuel",
 } as Organization;
-
-describe("isEntrepriseUnipersonnelle", () => {
-  it("should return false for bad call", () => {
-    assert.equal(isEntrepriseUnipersonnelle({} as Organization), false);
-  });
-
-  it("should return true for unipersonnelle organization", () => {
-    assert.equal(
-      isEntrepriseUnipersonnelle(entreprise_unipersonnelle_org_info),
-      true,
-    );
-  });
-
-  it("should return false for association", () => {
-    assert.equal(isEntrepriseUnipersonnelle(association_org_info), false);
-  });
-
-  it("should return false for small association", () => {
-    assert.equal(isEntrepriseUnipersonnelle(small_association_org_info), false);
-  });
-});
 
 describe("isSmallAssociation", () => {
   it("should return false for bad call", () => {

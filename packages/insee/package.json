@@ -1,0 +1,53 @@
+{
+  "name": "@gouvfr-lasuite/proconnect.insee",
+  "version": "0.0.0",
+  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/insee#readme",
+  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
+    "directory": "packages/insee"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "imports": {
+    "#openapi": "./openapi/index.d.ts",
+    "#openapi/auth": "./openapi/auth.d.ts",
+    "#src/*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    },
+    "#testing": "./src/testing/index.ts"
+  },
+  "exports": {
+    "./*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.lib.json",
+    "check": "npm run build -- --noEmit",
+    "dev": "npm run build -- --watch --preserveWatchOutput",
+    "build:openapi": "npm run build:openapi:auth && npm run build:openapi:index",
+    "build:openapi:auth": "openapi-typescript openapi/auth.yaml -o openapi/auth.d.ts",
+    "build:openapi:index": "openapi-typescript openapi/index.yaml -o openapi/index.d.ts",
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "postbuild:openapi": "prettier --write openapi/*.d.ts",
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.14.0"
+  },
+  "devDependencies": {
+    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@types/node": "^22.14.1",
+    "openapi-typescript": "^7.8.0",
+    "tsx": "^4.19.4"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

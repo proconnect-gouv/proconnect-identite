@@ -1,5 +1,6 @@
 //
 
+import { PEOPLE } from "#src/api/data/entreprise";
 import { findBySiretFactory } from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
 import {
   createEntrepriseOpenApiClient,
@@ -11,7 +12,6 @@ import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { format } from "prettier";
 import type { CommandModule } from "yargs";
-import { PEOPLE } from "../../../api/data/people.js";
 import type { EntrepriseCommandOptions } from "../options.js";
 
 //

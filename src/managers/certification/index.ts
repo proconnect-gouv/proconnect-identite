@@ -2,8 +2,9 @@
 
 import { isOrganizationDirigeantFactory } from "@gouvfr-lasuite/proconnect.identite/managers/certification";
 import {
-  findBySiret,
-  findMandatairesSociauxBySiren,
+  EntrepriseApiInfogreffeRepository,
+  EntrepriseApiInseeRepository,
+  InseeApiRepository,
 } from "../../connectors/api-sirene";
 import { getFranceConnectUserInfo } from "../../repositories/user";
 import { logger } from "../../services/log";
@@ -11,8 +12,9 @@ import { logger } from "../../services/log";
 //
 
 export const isOrganizationDirigeant = isOrganizationDirigeantFactory({
-  findBySiret,
-  findMandatairesSociauxBySiren,
+  EntrepriseApiInfogreffeRepository,
+  EntrepriseApiInseeRepository,
+  InseeApiRepository,
   getFranceConnectUserInfo,
   log: logger.info,
 });

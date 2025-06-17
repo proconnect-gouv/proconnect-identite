@@ -1,6 +1,6 @@
 //
 
-import { hashToPostgresParams } from "#src/services";
+import { hashToPostgresParams } from "#src/services/postgres";
 import type { DatabaseContext, EmailDomain } from "#src/types";
 import type { QueryResult } from "pg";
 

@@ -10,7 +10,8 @@
   "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
   "references": [
     { "path": "../core/tsconfig.lib.json" },
-    { "path": "../entreprise/tsconfig.lib.json" }
+    { "path": "../entreprise/tsconfig.lib.json" },
+    { "path": "../insee/tsconfig.lib.json" }
   ],
   "include": ["./src/**/*", "./src/**/*.json", "testing"]
 }

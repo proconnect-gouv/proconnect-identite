@@ -1,4 +1,6 @@
 //
+
+import { FRANCECONNECT_CITIZENS } from "#src/api/data/franceconnect";
 import {
   FranceConnectUserInfoResponseSchema,
   type FranceConnectUserInfoResponse,
@@ -9,7 +11,6 @@ import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { CompactSign, generateKeyPair } from "jose";
 import { z } from "zod";
-import { FRANCECONNECT_CITIZENS } from "../../data/people.js";
 import LogoutPage from "./logout.page.js";
 import SelectPage from "./select.page.js";
 import wellKnown from "./well-known.js";

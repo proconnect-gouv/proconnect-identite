@@ -1,3 +1,5 @@
+//
+
 import { findBySiretFactory } from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
 import {
   createEntrepriseOpenApiClient,
@@ -16,6 +18,7 @@ import {
   humanReadableDuration,
   isOrganizationInfo,
 } from "../src/services/script-helpers";
+
 //
 
 export const entrepriseOpenApiClient: EntrepriseOpenApiClient =

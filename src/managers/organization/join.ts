@@ -9,6 +9,7 @@ import {
   OrganizationNotFoundError,
 } from "@gouvfr-lasuite/proconnect.identite/errors";
 import { forceJoinOrganizationFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
+import { isEntrepriseUnipersonnelle } from "@gouvfr-lasuite/proconnect.identite/services/organization";
 import type {
   Organization,
   OrganizationInfo,
@@ -60,7 +61,6 @@ import {
   hasLessThanFiftyEmployees,
   isCommune,
   isEducationNationaleDomain,
-  isEntrepriseUnipersonnelle,
   isEtablissementScolaireDuPremierEtSecondDegre,
   isPublicService,
   isSmallAssociation,

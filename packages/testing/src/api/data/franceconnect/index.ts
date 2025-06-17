@@ -1,68 +1,48 @@
-import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import type { FranceConnectUserInfoResponse } from "@gouvfr-lasuite/proconnect.identite/types";
 
-export const PEOPLE = new Map<
-  string,
-  {
-    readonly adresse: InseeSireneEstablishmentSiretResponseData["adresse"];
-    readonly personne_physique_attributs: InseeSireneEstablishmentSiretResponseData["unite_legale"]["personne_physique_attributs"];
-  }
->([
-  [
-    "94957325700019",
-    {
-      adresse: {
-        acheminement_postal: {
-          l1: "ROGAL DORN",
-          l2: "PHALANX",
-          l3: "7 IMPERIAL PALACE",
-          l4: "IMPERIAL FISTS CHAPTER",
-          l5: "00007 TERRA",
-          l6: "TER07 SEGMENTUM SOLAR",
-          l7: "IMPERIUM OF MAN",
-        },
-        code_cedex: "TER07",
-        code_commune: "00007",
-        code_pays_etranger: null,
-        code_postal: "00007",
-        complement_adresse: "PHALANX",
-        distribution_speciale: "IMPERIAL FISTS CHAPTER",
-        indice_repetition_voie: null,
-        libelle_cedex: "SEGMENTUM SOLAR",
-        libelle_commune_etranger: null,
-        libelle_commune: "TERRA",
-        libelle_pays_etranger: null,
-        libelle_voie: "IMPERIAL PALACE",
-        numero_voie: "7",
-        status_diffusion: "partiellement_diffusible",
-        type_voie: "PLACE",
-      },
-      personne_physique_attributs: {
-        nom_naissance: "DORN",
-        nom_usage: "DORN",
-        prenom_1: "ROGAL",
-        prenom_2: "AURELIUS",
-        prenom_3: "IMPERIUS",
-        prenom_4: null,
-        prenom_usuel: "ROGAL",
-        pseudonyme: "PRAETORIAN",
-        sexe: "M",
-      },
-    },
-  ],
-]);
+//
 
 export interface Citizen {
   user_info: FranceConnectUserInfoResponse;
   avataaars: string;
 }
+
+//
+
 export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
+  [
+    "Angela Claire Louise DUBOIS",
+    {
+      user_info: {
+        birthdate: new Date("1962-08-24"),
+        birthplace: "75107",
+        family_name: "DUBOIS",
+        gender: "female",
+        given_name: "Angela Claire Louise",
+        preferred_username: "",
+        sub: "🎭 FranceConnect Sub",
+      },
+      avataaars: `https://avataaars.io/?${new URLSearchParams({
+        accessoriesType: "Blank",
+        avatarStyle: "Circle",
+        clotheColor: "PastelBlue",
+        clotheType: "Hoodie",
+        eyebrowType: "RaisedExcitedNatural",
+        eyeType: "Hearts",
+        facialHairType: "Blank",
+        hairColor: "Auburn",
+        mouthType: "Smile",
+        skinColor: "DarkBrown",
+        topType: "LongHairBigHair",
+      })}`,
+    },
+  ],
   [
     "Elia Alvernhe",
     {
       user_info: {
         birthdate: new Date("1993-03-12"),
-        birthplace: "Internet",
+        birthplace: "86070",
         family_name: "Alvernhe",
         gender: "male",
         given_name: "Elia",
@@ -284,14 +264,14 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     },
   ],
   [
-    "Douglas Le Gris Duteil",
+    "Douglas Duteil",
     {
       user_info: {
         birthdate: new Date("1980-06-01"),
         birthplace: "75000",
         family_name: "Duteil",
         gender: "male",
-        given_name: "Douglas Le Gris",
+        given_name: "Douglas",
         preferred_username: "Dulac",
         sub: "🎭 FranceConnect Sub",
       },
