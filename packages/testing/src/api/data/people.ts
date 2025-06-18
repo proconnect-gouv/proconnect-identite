@@ -1,11 +1,11 @@
-import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import type { FranceConnectUserInfoResponse } from "@gouvfr-lasuite/proconnect.identite/types";
 
 export const PEOPLE = new Map<
   string,
   {
-    readonly adresse: InseeSiretEstablishment["adresse"];
-    readonly personne_physique_attributs: InseeSiretEstablishment["unite_legale"]["personne_physique_attributs"];
+    readonly adresse: InseeSireneEstablishmentSiretResponseData["adresse"];
+    readonly personne_physique_attributs: InseeSireneEstablishmentSiretResponseData["unite_legale"]["personne_physique_attributs"];
   }
 >([
   [

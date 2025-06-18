@@ -1,4 +1,4 @@
-import type { InseeSiretEstablishment } from "#src/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "#src/types";
 
 export default {
   siret: "21920023500014",
@@ -90,4 +90,4 @@ export default {
       l7: "FRANCE",
     },
   },
-} as InseeSiretEstablishment;
+} as InseeSireneEstablishmentSiretResponseData;

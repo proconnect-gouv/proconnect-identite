@@ -1,6 +1,6 @@
 //
 
-import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import { zValidator } from "@hono/zod-validator";
 import { readdir, readFile } from "fs/promises";
 import { Hono } from "hono";
@@ -46,8 +46,9 @@ export default new Hono()
               join(import.meta.dirname, filename),
               "utf8",
             );
-            const response: { data: InseeSiretEstablishment } =
-              JSON.parse(text);
+            const response: {
+              data: InseeSireneEstablishmentSiretResponseData;
+            } = JSON.parse(text);
             return { establishment: response.data, siren: basename(filename) };
           }),
       );
