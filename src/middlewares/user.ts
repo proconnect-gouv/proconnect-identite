@@ -160,12 +160,50 @@ export const checkUserIsConnectedMiddleware = async (
   });
 };
 
-export const checkUserTwoFactorAuthMiddleware = async (
+export const checkUserIsVerifiedMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) =>
+  await checkUserIsConnectedMiddleware(req, res, async (error) => {
+    try {
+      if (error) return next(error);
+
+      const { email, email_verified } = getUserFromAuthenticatedSession(req);
+
+      const needs_email_verification_renewal =
+        await needsEmailVerificationRenewal(email);
+
+      if (!email_verified || needs_email_verification_renewal) {
+        let notification_param = "";
+
+        if (!email_verified) {
+          notification_param = "";
+        } else if (needs_email_verification_renewal) {
+          notification_param = "?notification=email_verification_renewal";
+        }
+
+        return res.redirect(`/users/verify-email${notification_param}`);
+      }
+
+      return next();
+    } catch (error) {
+      if (error instanceof UserNotFoundError) {
+        // The user has an active session but is not in the database anymore
+        await destroyAuthenticatedSession(req);
+        next(new HttpErrors.Unauthorized());
+      }
+
+      next(error);
+    }
+  });
+
+export const checkUserTwoFactorAuthMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  await checkUserIsConnectedMiddleware(req, res, async (error) => {
+  checkUserIsVerifiedMiddleware(req, res, async (error) => {
     try {
       if (error) next(error);
 
@@ -194,48 +232,25 @@ export const checkUserTwoFactorAuthMiddleware = async (
   });
 };
 
-export const checkUserIsVerifiedMiddleware = (
+export const checkBrowserIsTrustedMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
+  await checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
 
-      const { email, email_verified } = getUserFromAuthenticatedSession(req);
-
-      const needs_email_verification_renewal =
-        await needsEmailVerificationRenewal(email);
-
       const is_browser_trusted = isBrowserTrustedForUser(req);
 
-      if (
-        !email_verified ||
-        needs_email_verification_renewal ||
-        !is_browser_trusted
-      ) {
-        let notification_param = "";
-
-        if (!email_verified) {
-          notification_param = "";
-        } else if (needs_email_verification_renewal) {
-          notification_param = "?notification=email_verification_renewal";
-        } else if (!is_browser_trusted) {
-          notification_param = "?notification=browser_not_trusted";
-        }
-
-        return res.redirect(`/users/verify-email${notification_param}`);
+      if (!is_browser_trusted) {
+        return res.redirect(
+          `/users/verify-email?notification=browser_not_trusted`,
+        );
       }
 
       return next();
     } catch (error) {
-      if (error instanceof UserNotFoundError) {
-        // The user has an active session but is not in the database anymore
-        await destroyAuthenticatedSession(req);
-        next(new HttpErrors.Unauthorized());
-      }
-
       next(error);
     }
   });
@@ -245,7 +260,7 @@ export const checkUserNeedCertificationDirigeantMiddleware = (
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserIsVerifiedMiddleware(req, res, async (error) => {
+  checkBrowserIsTrustedMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
       if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
