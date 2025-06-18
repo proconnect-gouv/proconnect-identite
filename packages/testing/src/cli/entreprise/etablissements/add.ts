@@ -5,7 +5,7 @@ import {
   createEntrepriseOpenApiClient,
   type EntrepriseOpenApiClient,
 } from "@gouvfr-lasuite/proconnect.entreprise/client";
-import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -35,7 +35,7 @@ export const AddEstablishmentCommand: CommandModule<
       const response = await fetch(input);
       if (!response.ok) throw new Error(await response.text());
       const content = (await response.json()) as {
-        data: InseeSiretEstablishment;
+        data: InseeSireneEstablishmentSiretResponseData;
       };
       // NOTE(douglasduteil): ensure the siret is the same as the one we got
       // Protection against some staging endpoint magic
@@ -64,7 +64,9 @@ export const AddEstablishmentCommand: CommandModule<
   },
 };
 
-function anonymize(content: { data: InseeSiretEstablishment }) {
+function anonymize(content: {
+  data: InseeSireneEstablishmentSiretResponseData;
+}) {
   if (content.data.unite_legale.status_diffusion === "diffusible") {
     return JSON.stringify(content);
   }
