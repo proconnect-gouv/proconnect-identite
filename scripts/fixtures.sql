@@ -164,8 +164,11 @@ VALUES
   (78, 'karima.aknine@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Karima', 'Aknine', '0123456789', 'Grande cheffe de BATI-SEREIN', null, null, false, false, false),
   (79, 'ulysse.tosi@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Ulysse', 'Tosi', '0123456789', 'Grand chef de DANONE et PAPILLON', null, null, false, false, false),
   (80, 'stevens.cheron@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Ulysse', 'Tosi', '0123456789', 'Grand chef de HERISSON et SURICATE', null, null, false, false, false),
-  (81, 'user-mfa-proconnect-ci@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false),
-  (82, 'user-proconnect-ci@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire',null,null, false, false, false)
+  (81, 'user-proconnect-ci@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire',null,null, false, false, false),
+  (82, 'user-mfa-proconnect-ci1@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false),
+  (83, 'user-mfa-proconnect-ci2@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false),
+  (84, 'user-mfa-proconnect-ci3@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false),
+  (85, 'user-mfa-proconnect-ci4@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false)
 ON CONFLICT (id)
   DO UPDATE
   SET (email, email_verified, email_verified_at, encrypted_password, created_at, updated_at, given_name, family_name,
@@ -184,7 +187,7 @@ SELECT setval(
       )
   );
 
-DELETE FROM authenticators WHERE user_id IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82);
+DELETE FROM authenticators WHERE user_id IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85);
 
 INSERT INTO organizations
 (id, siret, created_at, updated_at)
@@ -446,8 +449,11 @@ VALUES
   (80, 54, 'organization_dirigeant', true),
   (80, 55, 'verified_email_domain', true),
   (81, 1, 'verified_email_domain', true),
+  (81, 49, 'verified_email_domain', true),
   (82, 1, 'verified_email_domain', true),
-  (82, 49, 'verified_email_domain', true)
+  (83, 1, 'verified_email_domain', true),
+  (84, 1, 'verified_email_domain', true),
+  (85, 1, 'verified_email_domain', true)
 ON CONFLICT (user_id, organization_id)
   DO UPDATE
   SET (verification_type, has_been_greeted)
