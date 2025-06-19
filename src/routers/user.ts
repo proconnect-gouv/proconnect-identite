@@ -213,7 +213,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/2fa-successfully-configured",
-    checkUserIsVerifiedMiddleware,
+    checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
     post2faSuccessfullyConfiguredMiddleware,
     checkUserSignInRequirementsMiddleware,
