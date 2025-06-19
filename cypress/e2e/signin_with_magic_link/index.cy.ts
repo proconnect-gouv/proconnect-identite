@@ -72,7 +72,7 @@ describe("sign-in with magic link", () => {
     );
     cy.get('[action="/users/sign-up"]  [type="submit"]').click();
 
-    cy.getVerificationEmail();
+    cy.verifyEmail();
 
     cy.contains("Renseigner son identité");
   });

@@ -15,7 +15,7 @@ describe("sign-in with email verification renewal", () => {
       "pour garantir la sécurité de votre compte, votre adresse email doit être vérifiée régulièrement.",
     );
 
-    cy.getVerificationEmail();
+    cy.verifyEmail();
 
     cy.contains("Votre compte ProConnect");
   });

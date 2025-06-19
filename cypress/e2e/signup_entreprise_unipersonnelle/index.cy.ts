@@ -23,7 +23,7 @@ describe("Signup into new entreprise unipersonnelle", () => {
       "lion.eljonson@darkangels.world",
     );
 
-    cy.getVerificationEmail();
+    cy.verifyEmail();
 
     // Fill the user's personal information
     cy.get('[name="given_name"]').type("Georges");

@@ -20,7 +20,7 @@ describe("sign-in with email verification renewal", () => {
       "Un code de vérification a été envoyé à lion.eljonson@darkangels.world",
     );
 
-    cy.getVerificationEmail();
+    cy.verifyEmail();
 
     cy.contains("Votre compte ProConnect");
   });
@@ -47,7 +47,7 @@ describe("sign-in with email verification renewal", () => {
       "Un nouveau code de vérification a été envoyé à rogal.dorn@imperialfists.world",
     );
 
-    cy.getVerificationEmail();
+    cy.verifyEmail();
 
     cy.contains("Votre compte ProConnect");
   });
