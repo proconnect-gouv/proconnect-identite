@@ -22,7 +22,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
       "Information : pour garantir la sécurité de votre compte, nous avons besoin d’authentifier votre navigateur.",
     );
 
-    cy.getVerificationEmail();
+    cy.verifyEmail();
 
     cy.contains("standard-client");
   });
@@ -42,7 +42,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.getVerificationEmail();
+    cy.verifyEmail();
 
     cy.contains("standard-client");
 
@@ -63,5 +63,24 @@ describe("sign-in with TOTP on untrusted browser", () => {
     cy.get("[name=totpToken]").type("123456");
     cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
     cy.contains("Code invalide.");
+  });
+
+  it("should show email verification renewal screen", function () {
+    cy.visit("http://localhost:4000");
+    cy.get("button.proconnect-button").click();
+
+    cy.login("jul.treize@marseille.world");
+
+    cy.contains(
+      "pour garantir la sécurité de votre compte, votre adresse email doit être vérifiée régulièrement.",
+    );
+
+    cy.verifyEmail();
+
+    cy.contains("Valider avec la double authentification");
+
+    cy.fillTotpFields();
+
+    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
   });
 });
