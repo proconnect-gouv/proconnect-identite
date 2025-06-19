@@ -15,22 +15,7 @@ describe("sign-in with email verification renewal", () => {
       "pour garantir la sécurité de votre compte, votre adresse email doit être vérifiée régulièrement.",
     );
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.contains(
-          "Pour vérifier votre adresse e-mail, merci de de copier-coller ou de renseigner ce code dans l’interface de connexion ProConnect.",
-        );
-        cy.go("back");
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.getVerificationEmail();
 
     cy.contains("Votre compte ProConnect");
   });

@@ -29,17 +29,7 @@ describe("set info after account provisioning", () => {
       "Pour vérifier que vous avez bien accès à votre email, nous utilisons un code de confirmation.",
     );
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.getVerificationEmail();
 
     cy.contains(
       "Nous avons pré-rempli ces informations. Vous pouvez toujours les mettre à jour.",

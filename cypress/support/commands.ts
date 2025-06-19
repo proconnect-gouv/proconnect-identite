@@ -24,6 +24,7 @@ declare global {
       getByLabel: typeof getByLabelCommand;
       updateCustomParams: typeof updateCustomParams;
       getTotpSecret: typeof getTotpSecretCommand;
+      getVerificationEmail: typeof getVerificationEmailCommand;
     }
   }
 }
@@ -152,5 +153,25 @@ function getTotpSecretCommand(action: string) {
       cy.get(`[action="${action}"] [type="submit"]`).click();
     });
 }
-
 Cypress.Commands.add("getTotpSecret", getTotpSecretCommand);
+
+function getVerificationEmailCommand() {
+  return cy
+    .maildevGetMessageBySubject("Vérification de votre adresse email")
+    .then((email) => {
+      cy.maildevVisitMessageById(email.id);
+      cy.contains(
+        "Pour vérifier votre adresse e-mail, merci de de copier-coller ou de renseigner ce code dans l’interface de connexion ProConnect.",
+      );
+      cy.go("back");
+      cy.maildevDeleteMessageById(email.id);
+      return cy.maildevGetOTPCode(email.text, 10);
+    })
+    .then((code) => {
+      if (!code)
+        throw new Error("Could not find verification code in received email");
+      cy.get('[name="verify_email_token"]').type(code);
+      cy.get('[type="submit"]').click();
+    });
+}
+Cypress.Commands.add("getVerificationEmail", getVerificationEmailCommand);
