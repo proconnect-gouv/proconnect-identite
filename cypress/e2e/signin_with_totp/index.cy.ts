@@ -22,17 +22,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
       "Information : pour garantir la sécurité de votre compte, nous avons besoin d’authentifier votre navigateur.",
     );
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.getVerificationEmail();
 
     cy.contains("standard-client");
   });
@@ -52,17 +42,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.getVerificationEmail();
 
     cy.contains("standard-client");
 

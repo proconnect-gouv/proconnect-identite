@@ -23,17 +23,7 @@ describe("Signup into new entreprise unipersonnelle", () => {
       "lion.eljonson@darkangels.world",
     );
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.getVerificationEmail();
 
     // Fill the user's personal information
     cy.get('[name="given_name"]').type("Georges");
