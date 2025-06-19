@@ -4,6 +4,12 @@
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <%- include('./partials/stepper.ejs', {currentStep: "1", stepsTitle: "Installer votre outil d’authentification", nextStepTitle:"Configurer votre code à usage unique" }); %>
         <p>Pour utiliser un code à usage unique, vous pouvez utiliser l’application d’authentification de votre choix ou un gestionnaire de mot de passe compatible.</p>
+        <p class="fr-text--xs fr-mb-1w">Exemple d'application d'authentification à télécharger sur votre téléphone :</p>
+        <ul class="fr-text--xs">
+            <li>2FAS (open source)</li>
+            <li>Google Authenticator</li>
+            <li>Microsoft Authenticator</li>
+        </ul>
         <form action="/totp-configuration" class="checkbox-container" method="get">
             <div class="fr-checkbox-group">
             <input name="is-totp-installed" id="is-totp-installed" type="checkbox" aria-describedby="is-totp-installed" required>
