@@ -232,12 +232,12 @@ export const checkUserTwoFactorAuthMiddleware = (
   });
 };
 
-export const checkBrowserIsTrustedMiddleware = async (
+export const checkBrowserIsTrustedMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  await checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
+  checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
 
