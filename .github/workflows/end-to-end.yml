@@ -51,6 +51,7 @@ jobs:
           - signin_with_magic_link
           - signin_with_right_acr
           - signin_with_totp
+          - signin_with_totp_enrollment
           - signup_entreprise_unipersonnelle
           - update_personal_information
     runs-on: ubuntu-latest
