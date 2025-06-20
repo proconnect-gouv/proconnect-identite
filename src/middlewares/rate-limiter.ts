@@ -54,7 +54,7 @@ export const rateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "rate-limiter",
-    points: 42, // 42 requests
+    points: 60, // 60 requests
     duration: 60, // per minute per IP
   }),
 );
@@ -63,7 +63,7 @@ export const apiRateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "rate-limiter-api",
-    points: 42, // 42 API requests
+    points: 60, // 60 API requests
     duration: 1, // per second per IP
   }),
 );

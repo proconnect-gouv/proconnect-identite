@@ -2,7 +2,7 @@
 
 describe("trigger rate limiting by ip", () => {
   it("should trigger ip rate limiting", function () {
-    for (let i = 0; i <= 42; i++) {
+    for (let i = 0; i <= 60; i++) {
       cy.visit("/users/start-sign-in", { failOnStatusCode: false });
     }
 
