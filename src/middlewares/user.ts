@@ -159,6 +159,29 @@ export const checkUserIsConnectedMiddleware = async (
     }
   });
 };
+export const checkUserHasConnectedRecentlyMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  await checkUserIsConnectedMiddleware(req, res, async (error) => {
+    try {
+      if (error) return next(error);
+
+      const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
+
+      if (!hasLoggedInRecently) {
+        req.session.referrerPath = getReferrerPath(req);
+
+        return res.redirect(`/users/start-sign-in?notification=login_required`);
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  });
+};
 
 export const checkUserIsVerifiedMiddleware = async (
   req: Request,
