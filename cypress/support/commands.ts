@@ -24,7 +24,7 @@ declare global {
       getByLabel: typeof getByLabelCommand;
       updateCustomParams: typeof updateCustomParams;
       getTotpSecret: typeof getTotpSecretCommand;
-      getVerificationEmail: typeof getVerificationEmailCommand;
+      verifyEmail: typeof verifyEmailCommand;
     }
   }
 }
@@ -155,7 +155,7 @@ function getTotpSecretCommand(action: string) {
 }
 Cypress.Commands.add("getTotpSecret", getTotpSecretCommand);
 
-function getVerificationEmailCommand() {
+function verifyEmailCommand() {
   return cy
     .maildevGetMessageBySubject("Vérification de votre adresse email")
     .then((email) => {
@@ -174,4 +174,4 @@ function getVerificationEmailCommand() {
       cy.get('[type="submit"]').click();
     });
 }
-Cypress.Commands.add("getVerificationEmail", getVerificationEmailCommand);
+Cypress.Commands.add("verifyEmail", verifyEmailCommand);

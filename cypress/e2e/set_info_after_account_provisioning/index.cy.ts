@@ -29,7 +29,7 @@ describe("set info after account provisioning", () => {
       "Pour vérifier que vous avez bien accès à votre email, nous utilisons un code de confirmation.",
     );
 
-    cy.getVerificationEmail();
+    cy.verifyEmail();
 
     cy.contains(
       "Nous avons pré-rempli ces informations. Vous pouvez toujours les mettre à jour.",

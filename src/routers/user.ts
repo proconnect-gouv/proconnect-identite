@@ -90,6 +90,7 @@ import {
   verifyEmailRateLimiterMiddleware,
 } from "../middlewares/rate-limiter";
 import {
+  checkBrowserIsTrustedMiddleware,
   checkCredentialPromptRequirementsMiddleware,
   checkEmailInSessionMiddleware,
   checkIsUser,
@@ -101,7 +102,6 @@ import {
   checkUserIsConnectedMiddleware,
   checkUserIsVerifiedMiddleware,
   checkUserSignInRequirementsMiddleware,
-  checkUserTwoFactorAuthMiddleware,
 } from "../middlewares/user";
 
 export const userRouter = () => {
@@ -170,35 +170,35 @@ export const userRouter = () => {
 
   userRouter.get(
     "/2fa-sign-in",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     get2faSignInController,
   );
 
   userRouter.get(
     "/double-authentication-choice",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     getTwoFactorsAuthenticationChoiceController,
   );
 
   userRouter.get(
     "/is-totp-app-installed",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     getIsTotpAppInstalledController,
   );
 
   userRouter.get(
     "/totp-configuration",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     getTotpConfigurationController,
   );
 
   userRouter.post(
     "/totp-configuration",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
     postTotpConfigurationController,
@@ -206,14 +206,14 @@ export const userRouter = () => {
 
   userRouter.get(
     "/2fa-successfully-configured",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     get2faSuccessfullyConfiguredController,
   );
 
   userRouter.post(
     "/2fa-successfully-configured",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     post2faSuccessfullyConfiguredMiddleware,
     checkUserSignInRequirementsMiddleware,
@@ -222,7 +222,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/2fa-sign-in-with-totp",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     authenticatorRateLimiterMiddleware,
     postSignInWithTotpController,
@@ -232,7 +232,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/2fa-sign-in-with-passkey",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     postVerifySecondFactorAuthenticationController,
     checkUserSignInRequirementsMiddleware,
@@ -241,13 +241,13 @@ export const userRouter = () => {
 
   userRouter.get(
     "/verify-email",
-    checkUserTwoFactorAuthMiddleware,
+    checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
     getVerifyEmailController,
   );
   userRouter.post(
     "/verify-email",
-    checkUserTwoFactorAuthMiddleware,
+    checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
     verifyEmailRateLimiterMiddleware,
     postVerifyEmailController,
@@ -257,7 +257,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/send-email-verification",
-    checkUserTwoFactorAuthMiddleware,
+    checkUserIsConnectedMiddleware,
     csrfProtectionMiddleware,
     postSendEmailVerificationController,
   );
@@ -303,7 +303,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/passkeys/verify-registration",
-    checkUserIsConnectedMiddleware,
+    checkUserIsVerifiedMiddleware,
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
       "/users/2fa-successfully-configured",
@@ -335,13 +335,13 @@ export const userRouter = () => {
 
   userRouter.get(
     "/personal-information",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
     getPersonalInformationsController,
   );
   userRouter.post(
     "/personal-information",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
     checkUserSignInRequirementsMiddleware,
@@ -349,7 +349,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/personal-information/franceconnect/login",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/personal-information/franceconnect/login/callback`,
@@ -357,7 +357,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     getFranceConnectLoginCallbackMiddleware,
     useFranceConnectLogoutMiddlewareFactory(
       `${HOST}/users/personal-information/franceconnect/logout/callback`,
@@ -365,7 +365,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/logout/callback",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackControllerFactory(
       "/personal-information?notification=personal_information_update_via_franceconnect_success",
@@ -530,14 +530,14 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantController,
   );
 
   userRouter.post(
     "/certification-dirigeant/franceconnect/login",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/certification-dirigeant/franceconnect/login/callback`,
@@ -546,7 +546,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/login/callback",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     getFranceConnectLoginCallbackMiddleware,
     useFranceConnectLogoutMiddlewareFactory(
       `${HOST}/users/certification-dirigeant/franceconnect/logout/callback`,
@@ -555,7 +555,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/logout/callback",
-    checkUserIsVerifiedMiddleware,
+    checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackControllerFactory(
       "/users/select-organization",
