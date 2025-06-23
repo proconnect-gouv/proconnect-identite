@@ -97,7 +97,7 @@
     "nocache": "^4.0.0",
     "nodemailer": "^7.0.3",
     "oidc-provider": "^9.1.1",
-    "pg": "^8.16.0",
+    "pg": "^8.16.2",
     "qrcode": "^1.5.4",
     "rate-limiter-flexible": "^7.1.1",
     "ts-pattern": "^5.7.0",
