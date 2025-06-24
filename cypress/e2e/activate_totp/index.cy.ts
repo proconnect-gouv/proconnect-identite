@@ -36,7 +36,7 @@ describe("add 2fa authentication", () => {
     cy.contains("Code invalide.");
 
     // Extract the code from the front to generate the TOTP key
-    cy.getTotpSecret("/totp-configuration");
+    cy.fillAndSubmitTotpForm("/totp-configuration");
 
     cy.contains("L’application d’authentification a été configurée.");
 

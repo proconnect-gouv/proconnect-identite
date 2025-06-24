@@ -23,7 +23,7 @@ declare global {
       seed: typeof seed;
       getByLabel: typeof getByLabelCommand;
       updateCustomParams: typeof updateCustomParams;
-      getTotpSecret: typeof getTotpSecretCommand;
+      fillAndSubmitTotpForm: typeof fillAndSubmitTotpFormCommand;
       verifyEmail: typeof verifyEmailCommand;
     }
   }
@@ -142,7 +142,7 @@ function getByLabelCommand(text: string) {
 }
 Cypress.Commands.add("getByLabel", getByLabelCommand);
 
-function getTotpSecretCommand(action: string) {
+function fillAndSubmitTotpFormCommand(action: string) {
   return cy
     .get("#humanReadableTotpKey")
     .invoke("text")
@@ -153,7 +153,7 @@ function getTotpSecretCommand(action: string) {
       cy.get(`[action="${action}"] [type="submit"]`).click();
     });
 }
-Cypress.Commands.add("getTotpSecret", getTotpSecretCommand);
+Cypress.Commands.add("fillAndSubmitTotpForm", fillAndSubmitTotpFormCommand);
 
 function verifyEmailCommand() {
   return cy
