@@ -8,6 +8,7 @@ import {
   MegevandSas,
   NintendoOfEuropeSe,
   OctoTechnology,
+  Papillon,
   RogalDornEntrepreneur,
   StihleFreres,
 } from "#src/testing/seed/insee/siret";
@@ -28,6 +29,10 @@ suite("formatAddress", { concurrency: true }, () => {
     ],
     [ExpertiseRurale.adresse, "le haut jumel, 62990 Beaurainville"],
     [MarneusCalgarFEntrepreneur.adresse, "44049 Le croisic"],
+    [
+      Papillon.adresse,
+      "5-7, 5 rue du moulin aux moines, 72650 La chapelle-saint-aubin",
+    ],
     [RogalDornEntrepreneur.adresse, "06155 Vallauris"],
     [
       MegevandSas.adresse,

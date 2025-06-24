@@ -1,4 +1,5 @@
 //
+import type { TrancheEffectifs } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import { z } from "zod";
 
 //
@@ -24,7 +25,7 @@ export const OrganizationInfoSchema = z.object({
     "partiellement_diffusible",
     "non_diffusible",
   ]),
-  trancheEffectifs: z.string().nullable(),
+  trancheEffectifs: z.string().pipe(z.custom<TrancheEffectifs>()).nullable(),
   trancheEffectifsUniteLegale: z.string().nullable(),
 });
 

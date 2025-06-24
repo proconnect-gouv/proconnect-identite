@@ -6,6 +6,7 @@ export { default as MarneusCalgarFEntrepreneur } from "./00557246600026.js";
 export { default as CommunautéDeCommunes } from "./20007184300060.js";
 export { default as MaireClamart } from "./21920023500014.js";
 export { default as AppleEuropeInc } from "./32122785200019.js";
+export { default as Papillon } from "./39234600300198.js";
 export { default as OctoTechnology } from "./41816609600069.js";
 export { default as StihleFreres } from "./43841606700017.js";
 export { default as MegevandSas } from "./78824266700020.js";
