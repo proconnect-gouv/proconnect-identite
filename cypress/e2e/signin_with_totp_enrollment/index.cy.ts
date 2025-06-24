@@ -35,7 +35,7 @@ describe("sign-in with totp enrollment", () => {
       "Erreur : le code que vous avez utilisé est invalide. Merci de recommencer.",
     );
 
-    cy.getTotpSecret("/users/totp-configuration");
+    cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
     cy.contains("Votre double authentification est bien configurée");
     cy.get("button.fr-btn").contains("Continuer").click();
@@ -81,7 +81,7 @@ describe("sign-in with totp enrollment", () => {
 
     cy.contains("Scanner ce QRcode avec votre application");
 
-    cy.getTotpSecret("/users/totp-configuration");
+    cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
     cy.contains("Votre double authentification est bien configurée");
     cy.get("button.fr-btn").contains("Continuer").click();
