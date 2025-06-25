@@ -28,7 +28,15 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
    npm install
    ```
 
-2. **Database Initialization**: The database will be automatically initialized with data from `scripts/fixtures.sql`.
+2. **Build packages**:
+
+   Inside the project's root directory, run:
+
+   ```bash
+   npm run build
+   ```
+
+3. **Database Initialization**: The database will be automatically initialized with data from `scripts/fixtures.sql`.
 
    ```bash
    npm run fixtures:load
