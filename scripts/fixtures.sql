@@ -1184,7 +1184,21 @@ VALUES
    'openid email organization profile',
    'https://test-usability.identite.proconnect.gouv.fr/',
    'Application pour tests UX',
-   null, null, null, null)
+   null, null, null, null),
+  (37,
+   'ProConnect Federation - Showcase test',
+   'NHNiaHY2NjVucjJoNDVydGN1ZjdkZ3N3NmdmeWo4ejEyYjAyMHkxaWtrdzRuMG5oY3dzbmhxb2Y4cWRlOWg3a2hraGp0OWxzNG15ZnI4NDgyMHZsdWF2d2MxeGxFzsFZ',
+   'eGszbDM3cDU0d2U1aWQyN3N2MXoybm9pbHhoNG1rYzhuYWM5dWhyY3BkcDNnNjE0NmRteXJuM3dpODNzNXY1cTNqaHBhdHFldHg',
+   ARRAY [
+     'https://fca.integ01.dev-agentconnect.fr/api/v2/oidc-callback'
+     ],
+   ARRAY [
+     'https://fca.integ01.dev-agentconnect.fr/api/v2/client/logout-callback'
+     ],
+   'openid uid given_name usual_name email phone siret is_service_public is_public_service',
+   'https://www.proconnect.gouv.fr/',
+   'Dispositif d’identification des agents de la fonction publique.',
+   'ES256', 'ES256', 'ES256', 'ES256')
 ON CONFLICT (id)
   DO UPDATE
   SET (client_name, client_id, client_secret, redirect_uris, post_logout_redirect_uris, scope, client_uri,
