@@ -9,7 +9,10 @@ import {
   OrganizationNotFoundError,
 } from "@gouvfr-lasuite/proconnect.identite/errors";
 import { forceJoinOrganizationFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
-import { isEntrepriseUnipersonnelle } from "@gouvfr-lasuite/proconnect.identite/services/organization";
+import {
+  isDomainAllowedForOrganization,
+  isEntrepriseUnipersonnelle,
+} from "@gouvfr-lasuite/proconnect.identite/services/organization";
 import type {
   Organization,
   OrganizationInfo,
@@ -26,6 +29,7 @@ import {
 } from "../../config/env";
 import {
   AccessRestrictedToPublicServiceEmailError,
+  DomainRestrictedError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -175,6 +179,10 @@ export const joinOrganization = async ({
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
+
+  if (!isDomainAllowedForOrganization(siret, domain)) {
+    throw new DomainRestrictedError(organization_id);
+  }
 
   if (certificationRequested) {
     const isDirigeant = await isOrganizationDirigeant(siret, user_id);

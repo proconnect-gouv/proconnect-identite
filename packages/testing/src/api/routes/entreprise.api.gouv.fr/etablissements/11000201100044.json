@@ -1,0 +1,100 @@
+{
+  "data": {
+    "siret": "11000201100044",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": "DESTINATION ETAT VIA CHORUS PRO",
+    "activite_principale": {
+      "code": "84.11Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Administration publique générale"
+    },
+    "tranche_effectif_salarie": {
+      "de": 50,
+      "a": 99,
+      "code": "21",
+      "date_reference": "2022",
+      "intitule": "50 à 99 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 815785200,
+    "unite_legale": {
+      "siren": "110002011",
+      "rna": null,
+      "siret_siege_social": "11000201100044",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "SERVICES DE L'ETAT POUR LA FACTURATION ELECTRONIQUE",
+        "sigle": null
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "7120",
+        "libelle": "Service central d'un ministère"
+      },
+      "activite_principale": {
+        "code": "84.11Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Administration publique générale"
+      },
+      "tranche_effectif_salarie": {
+        "de": 50,
+        "a": 99,
+        "code": "21",
+        "date_reference": "2022",
+        "intitule": "50 à 99 salariés"
+      },
+      "economie_sociale_et_solidaire": false,
+      "date_creation": 362095200,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "139",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "DE BERCY",
+      "code_postal": "75012",
+      "libelle_commune": "PARIS",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "75112",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "SERVICES DE L'ETAT POUR LA FACTURATION ELECTRONIQUE",
+        "l2": "",
+        "l3": "",
+        "l4": "139 RUE DE BERCY",
+        "l5": "",
+        "l6": "75012 PARIS",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/110002011"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1737241200,
+    "redirect_from_siret": null
+  }
+}

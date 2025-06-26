@@ -37,6 +37,16 @@ export class AccessRestrictedToPublicServiceEmailError extends Error {
   }
 }
 
+export class DomainRestrictedError extends Error {
+  constructor(
+    public organizationId: number,
+    options?: ErrorOptions,
+  ) {
+    super("", options);
+    this.name = "DomainRestrictedError";
+  }
+}
+
 export class InvalidCredentialsError extends Error {}
 
 export class EmailUnavailableError extends Error {}
