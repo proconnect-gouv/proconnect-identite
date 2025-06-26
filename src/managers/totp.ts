@@ -45,6 +45,7 @@ export const confirmTotpRegistration = async (
   user_id: number,
   temporaryTotpKey: string | undefined,
   totpToken: string,
+  temporaryForce2fa: boolean,
 ) => {
   // ASSERTION: user exists
   await getById(user_id);
@@ -62,7 +63,8 @@ export const confirmTotpRegistration = async (
     encrypted_totp_key,
     totp_key_verified_at: new Date(),
   });
-  return await enableForce2fa(user_id);
+
+  return temporaryForce2fa ? enableForce2fa(user_id) : disableForce2fa(user_id);
 };
 
 export const deleteTotpConfiguration = async (user_id: number) => {

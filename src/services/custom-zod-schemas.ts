@@ -68,6 +68,12 @@ export const codeSchema = () =>
     .min(1)
     .transform((val) => val.replace(/\s+/g, ""));
 
+export const optionalCheckboxSchema = () =>
+  z
+    .string()
+    .optional()
+    .transform((val) => val === "on");
+
 export const oidcErrorSchema = () =>
   z.enum([
     // https://www.rfc-editor.org/rfc/rfc6749.html#section-4.1.2

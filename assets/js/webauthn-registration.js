@@ -73,6 +73,19 @@ const registerPassKey = async () => {
   // POST the response to the endpoint that calls
   // @simplewebauthn/server -> verifyRegistrationResponse()
   registrationResponseStringInputElement.value = JSON.stringify(attResp);
+
+  const force2FAInput = document.querySelector(
+    `form[action="/users/is-totp-app-installed"] input[name="force_2fa"]`,
+  );
+
+  const force2FAHiddenInput = registrationResponseForm.querySelector(
+    'input[name="force_2fa"]',
+  );
+
+  if (force2FAHiddenInput) {
+    force2FAHiddenInput.value = force2FAInput?.checked ? "on" : "";
+  }
+
   registrationResponseForm.requestSubmit();
 };
 

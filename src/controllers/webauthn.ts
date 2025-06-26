@@ -30,6 +30,7 @@ import {
   verifyRegistration,
 } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { optionalCheckboxSchema } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import { logger } from "../services/log";
 
@@ -85,10 +86,10 @@ export const postVerifyRegistrationControllerFactory =
     try {
       const schema = z.object({
         webauthn_registration_response_string: z.string(),
+        force_2fa: optionalCheckboxSchema(),
       });
-      const { webauthn_registration_response_string } = await schema.parseAsync(
-        req.body,
-      );
+      const { webauthn_registration_response_string, force_2fa } =
+        await schema.parseAsync(req.body);
 
       const registrationResponseJson = JSON.parse(
         webauthn_registration_response_string,
@@ -104,6 +105,7 @@ export const postVerifyRegistrationControllerFactory =
       const { userVerified, user: updatedUser } = await verifyRegistration({
         email: email,
         response,
+        force_2fa,
       });
       addAuthenticationMethodReferenceInSession(req, res, updatedUser, "pop");
       if (userVerified) {
