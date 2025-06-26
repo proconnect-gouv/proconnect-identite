@@ -7,68 +7,88 @@ describe("sign-in from standard client", () => {
 
   it("should sign-in without org selection when having only one organization", function () {
     cy.visit("http://localhost:4000");
-    cy.get("button.proconnect-button").click();
+    cy.contains("S’identifier avec ProConnect").click();
 
+    cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.login("unused1@yopmail.com");
 
+    cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("standard-client");
-    cy.contains("unused1@yopmail.com");
-    cy.contains("Commune de lamalou-les-bains - Mairie");
+    cy.contains('"email": "unused1@yopmail.com"');
+    cy.contains('"label": "Commune de lamalou-les-bains - Mairie"');
 
     // then it should prompt for organization
-    cy.get("button#select-organization").click();
+    cy.contains("button", "Changer d’organisation").click();
+
+    cy.title().should("include", "Choisir une organisation - ");
     cy.contains("Votre organisation de rattachement");
-    cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").click();
+    cy.getByLabel(
+      "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
+    ).click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("standard-client");
-    cy.contains("Commune de lamalou-les-bains - Mairie");
+    cy.contains('"label": "Commune de lamalou-les-bains - Mairie"');
 
     // then it should update userinfo
-    cy.contains("Jean Un");
-    cy.get("button#update-userinfo").click();
+    cy.contains('"family_name": "Jean Un"');
+    cy.contains("button", "Mettre à jour mes informations").click();
+
+    cy.title().should("include", "Renseigner votre identité - ");
     cy.contains("Renseigner son identité");
-    cy.get('[name="family_name"]').type("Moustaki");
-    cy.get('[type="submit"]').click();
+    cy.contains("Nom").click();
+    cy.focused().clear().type("Moustaki");
+    cy.contains("Valider").click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("standard-client");
-    cy.contains("Moustaki");
+    cy.contains('"family_name": "Moustaki"');
   });
 
   it("should sign-in with org selection when having two organization", function () {
     cy.visit("http://localhost:4000");
-    cy.get("button.proconnect-button").click();
+    cy.contains("S’identifier avec ProConnect").click();
 
+    cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.login("unused2@yopmail.com");
 
-    cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").contains(
-      "Commune de lamalou-les-bains - Mairie",
-    );
-    cy.get(".fr-grid-row .fr-col-12:last-child .fr-tile__link").contains(
-      "Commune de clamart - Mairie",
+    cy.title().should("include", "Choisir une organisation - ");
+    cy.getByLabel(
+      "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
     );
 
-    cy.get(".fr-grid-row .fr-col-12:last-child .fr-tile__link").click();
+    cy.getByLabel(
+      "Commune de clamart - Mairie (choisir cette organisation)",
+    ).click();
 
+    cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("standard-client");
-    cy.contains("unused2@yopmail.com");
-    cy.contains("Commune de clamart - Mairie");
+    cy.contains('"email": "unused2@yopmail.com"');
+    cy.contains('"label": "Commune de clamart - Mairie"');
 
     // then it should prompt for organization
-    cy.get("button#select-organization").click();
+    cy.contains("button", "Changer d’organisation").click();
+    cy.title().should("include", "Choisir une organisation - ");
     cy.contains("Votre organisation de rattachement");
-    cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").click();
+    cy.getByLabel(
+      "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
+    ).click();
 
+    cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("standard-client");
-    cy.contains("Commune de lamalou-les-bains - Mairie");
+    cy.contains('"email": "unused2@yopmail.com"');
+    cy.contains('"label": "Commune de lamalou-les-bains - Mairie"');
   });
 
   it("should not prompt for password if a session is already opened", () => {
     cy.visit("/");
+    cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.login("unused1@yopmail.com");
 
     cy.visit("http://localhost:4000");
-    cy.get("button.proconnect-button").click();
-
+    cy.contains("S’identifier avec ProConnect").click();
     cy.contains("standard-client");
-    cy.contains("unused1@yopmail.com");
+    cy.contains('"email": "unused1@yopmail.com"');
   });
 
   it("should bypass consent prompt", () => {
@@ -79,6 +99,7 @@ describe("sign-in from standard client", () => {
     }));
     cy.get("button#custom-connection").click({ force: true });
 
+    cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.login("unused1@yopmail.com");
     cy.contains("standard-client");
   });
@@ -96,6 +117,7 @@ describe("sign-in from standard client", () => {
     }));
     cy.get("button#custom-connection").click({ force: true });
 
+    cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.login("unused1@yopmail.com");
     cy.contains("standard-client");
   });
