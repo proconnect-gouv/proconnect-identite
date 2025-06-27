@@ -21,7 +21,7 @@
     "build": "tsc --build tsconfig.lib.json",
     "dev:test": "tsx --watch --test src/**/*.test.ts tests/**/*.test.ts",
     "test": "npm run test:unit",
-    "test:unit": "tsx --test --test-only --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
+    "test:unit": "tsx --test --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
   },
   "dependencies": {
     "@gouvfr-lasuite/proconnect.entreprise": "0.0.0",
