@@ -1,6 +1,12 @@
+//
+
+import {
+  UserClaimsSchema,
+  type UserClaims,
+} from "@gouvfr-lasuite/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { to } from "await-to-js";
-import { isEmpty } from "lodash-es";
+import { isEmpty, omitBy } from "lodash-es";
 import type { FindAccount } from "oidc-provider";
 import { findByUserId as getUsersOrganizations } from "../repositories/organization/getters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
@@ -30,19 +36,29 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
         job,
       } = user;
 
-      const personalClaims = {
+      const userClaims = {
+        email_verified,
+        email,
+        family_name,
+        given_name,
+        job,
+        phone_number_verified: false,
+        phone_number,
         sub: id.toString(), // it is essential to always return a sub claim
         uid: id.toString(), // for ProConnect Federation use only
-        email,
-        email_verified,
         updated_at,
-        given_name,
-        family_name,
-        usual_name: family_name, // for ProConnect Federation use only
-        phone_number,
-        phone_number_verified: false,
-        job,
+        usual_name: family_name,
       };
+      const personalClaims: UserClaims = UserClaimsSchema.parse(
+        omitBy(
+          userClaims,
+          (value) =>
+            // NOTE(douglasduteil): a Claim SHOULD NOT be present with a null or empty string value
+            // \see https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse
+            value === null || value === "",
+        ),
+      );
+
       const organizations = await getUsersOrganizations(id);
       if (mustReturnOneOrganizationInPayload(scope)) {
         const [selectedOrganizationIdErr, selectedOrganizationId] = await to(
