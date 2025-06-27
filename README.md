@@ -1,184 +1,121 @@
 # 🔑 ProConnect Identité
 
-ProConnect Identité est un fournisseur d'identité "OpenId Connect" géré par la DINUM.
+ProConnect, l'accès pour les pros, validé par l'État
 
-Pour les professionnels n’ayant pas de fournisseur d’identité attitré dans la fédération ProConnect,
-la DINUM met à disposition un compte dans ProConnect Identité.
-Ainsi, toute personne affiliée à une organisation enregistrée à l'INSEE, c'est-à-dire ayant un SIRET, peut utiliser une identité fournie par la DINUM au sein de la fédération ProConnect.
+## Why use ProConnect Identité ❓
 
-Pour vous intégrer la fédération ProConnect, merci de vous référer à [notre documentation en ligne](https://github.com/numerique-gouv/proconnect-documentation).
+ProConnect Identité is an "OpenId Connect" identity provider managed by the DINUM.
 
-⚠️ ProConnect Identité n'est plus utilisable en dehors de [la fédération ProConnect](https://www.proconnect.gouv.fr/).
+For professionals who don't have a designated identity provider in the ProConnect federation,
+the DINUM provides an account in ProConnect Identité.
+Thus, any person affiliated with an organization registered with INSEE, meaning they have a SIRET number, can use an
+identity provided by the DINUM within the ProConnect federation.
 
-## 1. 🗺️ Tester le parcours
+To integrate with the ProConnect federation, please refer
+to [our online documentation](https://github.com/numerique-gouv/proconnect-documentation).
 
-Pour tester le parcours de connexion ProConnect Identité, vous pouvez utiliser notre plateforme dédiée : https://test.identite.proconnect.gouv.fr/.
+> ⚠️ ProConnect Identité can no longer be used outside of [the ProConnect federation](https://www.proconnect.gouv.fr/).
 
-Vous pouvez utiliser le compte de test suivant :
+## Getting started 🔧
 
-- identifiant : user@yopmail.com
-- mot de passe : user@yopmail.com
+This guide provides steps to run the ProConnect Identité Node.js application locally while managing its dependencies in Docker containers.
 
-Cette plateforme utilise de vraies données ouvertes de l'INSEE pour les données des organisations.
+### Prerequisites
 
-Elle n’est cependant connectée à aucun environment de production.
+- Node.js (v22) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm))
+- Docker (>= v25) and Docker Compose (>= v2.24) installed ([doc](https://docs.docker.com/engine/install/))
+- Clone the ProConnect Identité repository
 
-Ainsi, vous pouvez vous créer n’importe quel compte utilisateur en entrant n’importe quel numéro SIRET et en utilisant des emails jetables `yopmail.com`.
+### Setting Up Dependencies with Docker
 
-À noter que les emails reçus sur les adresses en yopmail.com sont accessibles sur : http://yopmail.com/.
+1. **Start Dependencies**: Navigate to the root directory of the cloned repository and run:
 
-Voici 2 scénarios que vous pouvez tester sur cet environnement :
+   ```bash
+   docker compose up
+   ```
 
-- entreprise unipersonnelle : créer un compte avec une adresse email jetable, puis utiliser le SIRET d'une organisation unipersonnelle ;
-- [commune de Clarmart](https://annuaire-entreprises.data.gouv.fr/entreprise/commune-de-clamart-219200235) : vous pouvez directement rejoindre cette commune avec un compte utilisant un email sur le domaine `yopmail.com`.
+   This will start all required services (e.g., databases) defined in the `docker-compose.yml`.
 
-## 2. 📚 Documentation technique
+### Setting Up the Node.js Application
 
-### 2.1. 🎯 Périmètres de données disponibles (scopes)
+1. **Install Node.js Dependencies**:
 
-Afin d'effectuer les développements sur votre service en ligne, nous fournissons un environnement de test pour vous permettre d'effectuer des tests de bout en bout.
+   Inside the project’s root directory, run:
 
-Afin de configurer votre module ou votre client OpenId Connect, vous trouverez ci-dessous les paramètres de configuration spécifiques à ProConnect Identité :
+   ```bash
+   npm install
+   ```
 
-- paramètres de configuration de l’instance de test : https://identite-sandbox.proconnect.gouv.fr/.well-known/openid-configuration
-- paramètres de configuration de l’instance de production : https://identite.proconnect.gouv.fr/.well-known/openid-configuration
-- Les périmètres de données (scope) disponibles sont les suivants :
-- `openid` (données : sub)
-- `email` (données : email, email_verified)
-- `profile` (données : family_name, given_name, updated_at, job)
-- `organization` (données : label, siret, is_commune, is_external, is_public_service)
+2. **Database Initialization**: The database will be automatically initialized with data from `scripts/fixtures.sql`.
 
-### 2.2. 🔚 Exemple des données retournées par l’endpoint GET /userinfo du serveur OpenID
+   ```bash
+   npm run fixtures:load
+   ```
 
-```json
-{
-  "sub": "154",
-  "email": "jean.valjean-mairie@wanadoo.fr",
-  "email_verified": true,
-  "family_name": "Valjean",
-  "given_name": "Jean",
-  "job": "Secrétaire de mairie",
-  "updated_at": "2023-06-15T16:17:05.958Z",
-  "label": "Commune de les martres sur morge - Mairie",
-  "siret": "21630215800011",
-  "is_commune": true,
-  "is_public_service": true,
-  "is_external": true
-}
+### Running the Application
+
+After setting up the application, start the Node.js server with:
+
+```bash
+npm run dev
 ```
 
-> NB : `is_external` vaut `true` lorsque l’utilisateur est externe à l’organisation (ex : prestataire, sous-traitant, mandataire, etc.)
-> NB : si `is_commune` vaut `true` alors `is_public_service` vaut `true` également
-> NB : ProConnect Identité vérifie systématiquement les adresses emails, en conséquence `email_verified` vaut toujours `true`
+The application is now available at http://localhost:3000.
 
-### 2.3. 🔓 Déconnexion
+To log in, use the email address user@yopmail.com and the password "user@yopmail.com".
 
-Lorsqu'un utilisateur se déconnecte de votre plateforme, il se peut qu'il soit toujours connecté à ProConnect Identité. Ainsi,
-si votre utilisateur utilise un poste partagé, une autre personne pourrait utiliser la session ProConnect Identité et récupérer
-les informations de l'utilisateur initial dans votre service. Il convient d'effectuer une déconnexion simultanée sur
-ProConnect Identité et sur votre service.
+Emails are not sent but printed in the console.
 
-Vous pouvez tester la cinématique de déconnexion via le lien suivant : https://test.identite.proconnect.gouv.fr/#logout
+By default, the application will run with testing mocks for external apis.
 
-Afin d'effectuer une déconnexion simultanée, il faut rediriger l'utilisateur vers la route de déconnexion de ProConnect Identité :
+### Testing the Connection with a Test Client
 
-https://identite-sandbox.proconnect.gouv.fr/oauth/logout?post_logout_redirect_uri=https%3A%2F%2Ftest.identite.proconnect.gouv.fr%2F&client_id=client_id
+ProConnect Identité is provided with a test client: https://github.com/numerique-gouv/proconnect-test-client
 
-### 2.4. 🏛️ Permettre à l'utilisateur de sélectionner une autre organisation
+This container is launched within the ProConnect Identité `docker-compose.yml`.
 
-Les utilisateurs peuvent représenter plusieurs organisations dans ProConnect Identité.
-Au moment de se connecter à votre service, ProConnect Identité demande à l'utilisateur de choisir l'organisation qu’il souhaite représenter.
+It's available at http://localhost:3001
 
-Si vous souhaitez donner la possibilité à l’utilisateur de représenter une autre organisation sans qu’il ait besoin de
-se reconnecter, vous pouvez demander l’interface de sélection d’organisation à ProConnect Identité.
+### Testing edge cases
 
-Vous pouvez tester la cinématique via le lien suivant : https://test.identite.proconnect.gouv.fr/#select-organization
+In our OIDC provider project,
+navigating through certain paths can be particularly challenging due to the diverse range of scenarios that may arise.
 
-Pour ce faire, vous pouvez rediriger l'utilisateur sur la route authorize avec le paramètre `prompt=select_organization` comme suit :
+Recognizing this complexity,
+we provide comprehensive datasets and associated configurations
+tailored for executing specific test cases.
 
-https://identite-sandbox.proconnect.gouv.fr/oauth/authorize?client_id=client_id&scope=openid%20email%20profile%20organization&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin-callback&prompt=select_organization
+You can manually execute a Cypress end-to-end test
+to thoroughly explore these paths by following [this doc](./cypress/README.md).
 
-### 2.5. 🔎 Permettre à l'utilisateur de mettre à jour ses informations
+### Connecting to local databases
 
-Les utilisateurs peuvent avoir commis des erreurs lors de la constitution de leur identité sur ProConnect Identité.
+Docker Compose initializes both a PostgreSQL and a Redis database.
 
-Si vous souhaitez donner l’opportunité à l’utilisateur de mettre à jour ses informations utilisateurs sans qu’il ait besoin
-de se reconnecter, vous pouvez demander l’interface de mise à jour des informations personnelles à ProConnect Identité.
+To connect to these databases, use the following commands:
 
-Vous pouvez tester la cinématique via le lien suivant : https://test.identite.proconnect.gouv.fr/#update-userinfo
+```bash
+docker compose exec db psql postgres://moncomptepro:moncomptepro@db:5432/moncomptepro
+docker compose exec redis redis-cli -h redis -p 6379
+```
 
-Pour ce faire, vous pouvez rediriger l'utilisateur sur la route authorize avec le paramètre `prompt=update_userinfo` comme suit :
+### Configuring different environment variables
 
-https://identite-sandbox.proconnect.gouv.fr/oauth/authorize?client_id=client_id&scope=openid%20email%20profile%20organization&response_type=code&redirect_uri=https%3A%2F%2Ftest.identite.proconnect.gouv.fr%2Flogin-callback&prompt=update_userinfo
+The default environment variables are defined in the `.env` file, which applies to all environments. Based on the `NODE_ENV` variable, the corresponding file is selected: `.env.development` for the development environment, `.env.production` for production, or `.env.test` for testing.
 
-### 2.6. 🚪 Exiger une ré-authentification
+To customize or override these defaults, we recommend using the `.env*.local` files. The file `.env.<NODE_ENV>.local` will have higher priority over both `.env.local` and `.env.<NODE_ENV>`.
 
-Certaines fonctionnalités sensibles requièrent d’authentifier l'utilisateur à nouveau pour réduire les risques
-d’usurpations d’identités liés à la durée de session de ProConnect Identité.
+### Skipping Cypress Binary Installation for Local Setup
 
-Vous pouvez tester la cinématique via le lien suivant : https://test.identite.proconnect.gouv.fr/#force-login
+If you prefer not to run end-to-end tests locally and want to avoid downloading the large Cypress binary, you can prevent it during the installation process. To do this, run the following command:
 
-Pour ce faire, vous devez passer les paramètres `prompt=login` et `claims={"id_token":{"auth_time":{"essential":true}}}` comme suit :
+```bash
+CYPRESS_INSTALL_BINARY=0 npm install
+```
 
-https://identite-sandbox.proconnect.gouv.fr/oauth/authorize?client_id=client_id&scope=openid%20email%20profile%20organization&response_type=code&redirect_uri=https%3A%2F%2Ftest.identite.proconnect.gouv.fr%2Flogin-callback&claims=%7B%22id_token%22%3A%7B%22auth_time%22%3A%7B%22essential%22%3Atrue%7D%7D%7D&prompt=login
+This command ensures that the Cypress binary is not downloaded, saving time and disk space during the installation process.
 
-Afin de s’assurer que l’utilisateur s’est bien ré-authentifié, il est impératif que votre service vérifie la valeur `auth_time`
-retournée dans l’ID token. Si la date est supérieure à 5 minutes, l’utilisateur ne s'est pas reconnecté récemment et vous
-devez recommencer la cinématique.
-
-### 2.7. 💡 Connaître les méthodes d'authentification utilisées
-
-Pour éviter à un usager d’avoir à s’authentifier auprès de votre service avec un second facteur alors qu’il a déjà utilisé une authentification multi-facteur dans ProConnect Identité,
-il est possible de récupérer via le claim `amr` la liste des méthodes d’authentification et d’adapter votre parcours en fonction.
-
-Par défaut ce claim `amr` n’est pas retourné dans l’IdToken, il doit être demandé explicitement.
-Pour ce faire, vous devez passer les paramètres `prompt=login` et `claims={"id_token":{"auth_time":{"essential":true}}}` comme suit :
-
-https://identite-sandbox.proconnect.gouv.fr/oauth/authorize?client_id=client_id&scope=openid%20email%20profile%20organization&response_type=code&redirect_uri=https%3A%2F%2Ftest.identite.proconnect.gouv.fr%2Flogin-callback&claims=%7B%22id_token%22%3A%7B%22amr%22%3A%7B%22essential%22%3Atrue%7D%7D%7D
-
-ProConnect Identité peut renvoyer une combinaison des valeurs suivantes :
-
-| valeur amr | description                                                                                                                                |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| pwd        | Authentification par mot de passe. En complément d’un mot de passe, l’utilisateur a authentifié son navigateur avec un otp envoyé par mail |
-| mail       | Authentification par lien de connexion « lien magique ».                                                                                   |
-| totp       | Authentification avec une application « authenticator » comme FreeOTP.                                                                     |
-| pop        | Authentification avec une clé d’accès (Passkey).                                                                                           |
-| mfa        | Authentification a deux facteurs.                                                                                                          |
-
-Vous trouverez de plus amples informations sur la [documentation de FranceConnect](https://docs.partenaires.franceconnect.gouv.fr/fs/fs-technique/fs-technique-amr/#quels-sont-les-differents-methodes-d-authentification-qui-peuvent-etre-utilisees).
-
-### 2.8. 📲 Exiger une authentification double facteur
-
-Certaines fonctionnalités sensibles requièrent une authentification à double facteur pour réduire les risques
-d’usurpations d’identités liés aux attaques par _phishing_ par exemple.
-
-Vous pouvez tester la cinématique via le lien suivant : https://test.identite.proconnect.gouv.fr/#force-2fa
-
-Pour ce faire, vous devez passer les paramètres `claims={"id_token":{"acr":{"essential":true,value:"https://proconnect.gouv.fr/assurance/consistency-checked-2fa"}}}` comme suit :
-
-https://identite-sandbox.proconnect.gouv.fr/oauth/authorize?client_id=client_id&scope=openid%20email%20profile%20organization&response_type=code&redirect_uri=https%3A%2F%2Ftest.identite.proconnect.gouv.fr%2Flogin-callback&claims=%7B%22id_token%22%3A%7B%22acr%22%3A%7B%22essential%22%3Atrue%2C%22value%22%3A%22https%3A%2F%2Frefeds.org%2Fprofile%2Fmfa%22%7D%7D%7D
-
-Les valeurs `acr` utilisées par ProConnect Identité sont les suivantes :
-
-- `eidas1` niveau historique sans signification particulière qui sera remplacé par les valeurs plus détaillées qui suivent ;
-- `https://proconnect.gouv.fr/assurance/self-asserted` : identité déclarative ;
-- `https://proconnect.gouv.fr/assurance/self-asserted-2fa` : identité déclarative ;
-- `https://proconnect.gouv.fr/assurance/consistency-checked` : identité déclarative + un des tests de cohérence suivant :
-  - contrôle du référencement du nom de domaine
-  - code à usage unique envoyé par courrier postal au siège social
-  - code à usage unique envoyé par email à l'adresse de contact référencée dans un annuaire de référence
-  - identité du dirigeant d'association conforme
-- `https://proconnect.gouv.fr/assurance/consistency-checked-2fa` : `https://proconnect.gouv.fr/assurance/consistency-checked` + authentification à double facteur
-- `https://proconnect.gouv.fr/assurance/certification-dirigeant` : pour activer la certification dirigeant
-
-## 3. 👋 Contribuer à ProConnect Identité
-
-Pour contribuer à ProConnect Identité, vous pouvez installer l’application localement.
-
-Les instructions se trouvent sur [la page de doc dédiée](./installation.md).
-
-## Packages
+### Packages
 
 | Package                                                               | Version                                                                                                                                                        | Downloads                                                                                 | Changelog                                       |
 | :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- | :---------------------------------------------- |
@@ -188,3 +125,31 @@ Les instructions se trouvent sur [la page de doc dédiée](./installation.md).
 | [@gouvfr-lasuite/proconnect.email](./packages/email#readme)           | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.email.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.email)           | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.email?label=↓)      | [Changelog](./packages/email/CHANGELOG.md)      |
 | [@gouvfr-lasuite/proconnect.entreprise](./packages/entreprise#readme) | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.entreprise.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.entreprise) | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.entreprise?label=↓) | [Changelog](./packages/entreprise/CHANGELOG.md) |
 | [@gouvfr-lasuite/proconnect.identite](./packages/identite#readme)     | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.identite.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.identite)     | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.identite?label=↓)   | [Changelog](./packages/entreprise/CHANGELOG.md) |
+
+#### Document your change in packages
+
+We use changeset to manage our package changelog. You can read more about it [here](https://github.com/changesets/changesets).
+
+To create a new changeset, run the following command:
+
+```bash
+npx changeset
+```
+
+You will be prompted to select the type of change you want to make.  
+As this changelog is intended for French end users, we recommend you write your change in French :fr:.
+
+Commit your changes and push them in your branch.  
+We will merge a "Version Packages" PR when we are ready to release :wink:
+
+### Adding new data
+
+Remember to request production API credentials from a colleague.
+
+Use the testing cli to add additional data needed for dev or tests.
+
+```bash
+$ npx tsx scripts/testing.ts --help
+```
+
+Note that the ./packages/testing/src/api/data/people.ts file contains a list of people that are used to anonymize data.
