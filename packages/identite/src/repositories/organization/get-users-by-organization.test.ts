@@ -2,18 +2,18 @@
 
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
-import { before, beforeEach, suite, test } from "node:test";
+import { before, beforeEach, describe, it } from "node:test";
 import { getUsersByOrganizationFactory } from "./get-users-by-organization.js";
 
 //
 
 const getUsersByOrganization = getUsersByOrganizationFactory({ pg: pg as any });
 
-suite("getUsersByOrganizationFactory", () => {
+describe("getUsersByOrganizationFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
-  test("should find users by organization id", async () => {
+  it("should find users by organization id", async (t) => {
     await pg.sql`
       INSERT INTO organizations
         (cached_libelle, cached_nom_complet, id, siret, created_at, updated_at)
@@ -40,44 +40,10 @@ suite("getUsersByOrganizationFactory", () => {
 
     const user = await getUsersByOrganization(1);
 
-    assert.deepEqual(user, [
-      {
-        created_at: new Date("4444-04-04"),
-        current_challenge: null,
-        email_verified_at: null,
-        email_verified: false,
-        email: "lion.eljonson@darkangels.world",
-        encrypted_password: "",
-        encrypted_totp_key: null,
-        family_name: "el'jonson",
-        force_2fa: false,
-        given_name: "lion",
-        has_been_greeted: false,
-        id: 1,
-        is_external: false,
-        job: "primarque",
-        last_sign_in_at: null,
-        magic_link_sent_at: null,
-        magic_link_token: null,
-        needs_inclusionconnect_onboarding_help: false,
-        needs_inclusionconnect_welcome_page: false,
-        needs_official_contact_email_verification: false,
-        official_contact_email_verification_sent_at: null,
-        official_contact_email_verification_token: null,
-        phone_number: "i",
-        reset_password_sent_at: null,
-        reset_password_token: null,
-        sign_in_count: 0,
-        totp_key_verified_at: null,
-        updated_at: new Date("4444-04-04"),
-        verification_type: "no_verification_means_available",
-        verify_email_sent_at: null,
-        verify_email_token: null,
-      },
-    ]);
+    t.assert.snapshot(user);
   });
 
-  test("❎ fail to find users for unknown organization id", async () => {
+  it("❎ fail to find users for unknown organization id", async () => {
     const user = await getUsersByOrganization(42);
     assert.deepEqual(user, []);
   });

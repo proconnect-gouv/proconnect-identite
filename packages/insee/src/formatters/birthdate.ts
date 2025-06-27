@@ -1,6 +1,6 @@
 //
 
-const INSEE_BIRTHDATE_REGEX = /^(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})$/;
+const INSEE_BIRTHDATE_REGEX = /^(?<year>\d+)(?<month>\d{2})(?<day>\d{2})$/;
 
 /**
  * Format an INSEE birthdate to a native JS date

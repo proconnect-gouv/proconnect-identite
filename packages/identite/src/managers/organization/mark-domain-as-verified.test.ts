@@ -10,13 +10,13 @@ import type {
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import type { BaseUserOrganizationLink, Organization, User } from "#src/types";
 import assert from "node:assert/strict";
-import { mock, suite, test } from "node:test";
+import { describe, it, mock } from "node:test";
 import { markDomainAsVerifiedFactory } from "./mark-domain-as-verified.js";
 
 //
 
-suite("markDomainAsVerifiedFactory", () => {
-  test("should update organization members", async (t) => {
+describe("markDomainAsVerified", () => {
+  it("should update organization members", async (t) => {
     const addDomain = mock.fn<AddDomainHandler>(() =>
       Promise.resolve({} as any),
     );
@@ -69,7 +69,7 @@ suite("markDomainAsVerifiedFactory", () => {
     });
   });
 
-  test("❎ throws NotFoundError for unknown organization", async () => {
+  it("❎ throws NotFoundError for unknown organization", async () => {
     const markDomainAsVerified = markDomainAsVerifiedFactory({
       addDomain: () => Promise.reject(),
       deleteEmailDomainsByVerificationTypes: () => Promise.reject(),
