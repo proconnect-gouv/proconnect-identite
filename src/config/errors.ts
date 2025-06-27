@@ -51,33 +51,10 @@ export class InvalidTokenError extends Error {}
 
 export class InvalidMagicLinkError extends Error {}
 
-export class ApiAnnuaireError extends Error {}
-
-export class ApiAnnuaireNotFoundError extends Error {
+export class ApiAnnuaireError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
     super(message, options);
-    this.name = "ApiAnnuaireNotFoundError";
-  }
-}
-
-export class ApiAnnuaireTooManyResultsError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ApiAnnuaireTooManyResultsError";
-  }
-}
-
-export class ApiAnnuaireInvalidEmailError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ApiAnnuaireInvalidEmailError";
-  }
-}
-
-export class ApiAnnuaireConnectionError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ApiAnnuaireConnectionError";
+    this.name = "ApiAnnuaireError";
   }
 }
 

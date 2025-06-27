@@ -16,6 +16,7 @@
     "packages/email",
     "packages/entreprise",
     "packages/insee",
+    "packages/opendatasoft",
     "packages/identite",
     "packages/testing"
   ],
@@ -72,6 +73,7 @@
     "@gouvfr-lasuite/proconnect.entreprise": "workspace:*",
     "@gouvfr-lasuite/proconnect.identite": "workspace:*",
     "@gouvfr-lasuite/proconnect.insee": "workspace:*",
+    "@gouvfr-lasuite/proconnect.opendatasoft": "workspace:*",
     "@gouvfr-lasuite/proconnect.testing": "workspace:*",
     "@sentry/node": "^9.31.0",
     "@sentry/profiling-node": "^9.31.0",

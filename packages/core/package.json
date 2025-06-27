@@ -36,6 +36,11 @@
       "require": "./dist/services/suggestion/index.cjs",
       "import": "./dist/services/suggestion/index.js",
       "types": "./dist/services/suggestion/index.d.ts"
+    },
+    "./utils/lodash": {
+      "require": "./dist/utils/lodash/index.cjs",
+      "import": "./dist/utils/lodash/index.js",
+      "types": "./dist/utils/lodash/index.d.ts"
     }
   },
   "typesVersions": {
@@ -51,6 +56,9 @@
       ],
       "services/suggestion": [
         "./dist/services/suggestion/index.d.ts"
+      ],
+      "utils/lodash": [
+        "./dist/utils/lodash/index.d.ts"
       ]
     }
   },
