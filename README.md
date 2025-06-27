@@ -16,7 +16,49 @@ to [our online documentation](https://github.com/numerique-gouv/proconnect-docum
 
 > ⚠️ ProConnect Identité can no longer be used outside of [the ProConnect federation](https://www.proconnect.gouv.fr/).
 
-## Getting started 🔧
+## 🇫🇷 Global architecture
+
+### 📦 Monorepo package architecture
+
+The codebase employs a **monorepo structure** using npm workspaces under the `@gouvfr-lasuite` namespace.
+Each package serves distinct architectural responsibilities within the broader identity management ecosystem.
+
+### 🌳 Repository structure overview
+
+```
+proconnect-identite/
+├── 📨 assets/                        # CSS & JS files served by the app
+├── 🤖 cypress/                       # End2end testing
+├── ⬆ migrations/                    # Migration managed by node-pg-migrate
+├── 📁 packages/                      # Modular workspace packages
+│   ├── 🔧 core/                      # Shared utilities & business logic
+│   ├── 🎭 identite/                  # Main OIDC PCI logic
+│   ├── 🏢 entreprise/                # INSEE/SIRENE integration
+│   ├── ✉️ email/                     # Email templates
+│   ├── 💬 crisp/                     # Crisp API wrapper
+│   ├── ⏱️ debounce/                  # DeBounce API wrapper
+│   ├── 📊 insee/                     # INSEE API wrapper
+│   ├── 🧪 testing/                   # Test utilities & mocks
+│   └── ⚙️ devtools/                  # Development toolchain
+├── 🗞 public/                        # Images served by the app
+├── 🚀 src/                           # Main Express.js application
+│   ├── 📁 config/                    # Configuration management
+│   ├── 🔌 connectors/                # External service connectors: all external ressources are listed here
+│   ├── 🎮 controllers/               # Route handlers: 1 controller = params check + call to manager(s) + HTTP response generation
+│   ├── 👔 managers/                  # High-level business managers: they contains call to database and services
+│   ├── 🛡️ middlewares/               # Express middleware stack
+│   ├── 📊 repositories/              # Data access layer
+│   ├── 🛣️ routers/                   # API route definitions
+│   ├── ⚙️ services/                  # Core business services: stateless logic
+│   ├── 📝 types/                     # TypeScript type definitions
+│   ├── 🎨 views/                     # Template rendering & UI
+│   ├── index.ts                      # Application entry point
+│   └── instrument.ts                 # Monitoring & instrumentation
+├── 🧪 test/                          # Node unit tests 
+└── 📋 scripts/                       # Database & deployment scripts
+```
+
+## 🔧 Getting started
 
 This guide provides steps to run the ProConnect Identité Node.js application locally while managing its dependencies in Docker containers.
 
