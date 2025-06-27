@@ -2,7 +2,7 @@
 
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
-import { before, beforeEach, suite, test } from "node:test";
+import { before, beforeEach, describe, it } from "node:test";
 import { findEmailDomainsByOrganizationIdFactory } from "./find-email-domains-by-organization-id.js";
 
 //
@@ -10,11 +10,11 @@ import { findEmailDomainsByOrganizationIdFactory } from "./find-email-domains-by
 const findEmailDomainsByOrganizationId =
   findEmailDomainsByOrganizationIdFactory({ pg: pg as any });
 
-suite("findEmailDomainsByOrganizationIdFactory", () => {
+describe("findEmailDomainsByOrganizationIdFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
-  test("should find email domains by organization id", async () => {
+  it("should find email domains by organization id", async () => {
     await pg.sql`
       INSERT INTO organizations
         (id, siret, created_at, updated_at)
@@ -47,7 +47,7 @@ suite("findEmailDomainsByOrganizationIdFactory", () => {
     ]);
   });
 
-  test("❎ fail to find the organization 42", async () => {
+  it("❎ fail to find the organization 42", async () => {
     const user = await findEmailDomainsByOrganizationId(42);
 
     assert.deepEqual(user, []);

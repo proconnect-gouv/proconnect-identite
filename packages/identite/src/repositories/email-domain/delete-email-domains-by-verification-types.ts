@@ -16,21 +16,27 @@ export function deleteEmailDomainsByVerificationTypesFactory({
     domain_verification_types: EmailDomain["verification_type"][];
     domain: EmailDomain["domain"];
   }) {
-    const connection = pg;
-    const SQL_VERIFICATION_TYPES = domain_verification_types.map((type) =>
-      type === null ? "NULL" : `'${type}'`,
-    );
+    const SQL_VERIFICATION_TYPES = domain_verification_types
+      .map((type) =>
+        type === null
+          ? "verification_type IS NULL"
+          : `verification_type = '${type}'`,
+      )
+      .join(" OR ");
 
-    const { rows } = await connection.query(
+    return pg.query(
       `
       DELETE FROM email_domains
       WHERE
-        organization_id = $1
-        AND domain = $2
-        AND verification_type IN (${SQL_VERIFICATION_TYPES.join(",")});`,
+        ${[
+          "organization_id = $1",
+          "domain = $2",
+          `(${SQL_VERIFICATION_TYPES})`,
+        ].join(" AND ")}
+      ;
+      `,
       [organization_id, domain],
     );
-    return rows.length;
   };
 }
 
