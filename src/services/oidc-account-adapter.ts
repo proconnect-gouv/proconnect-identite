@@ -1,5 +1,9 @@
 //
 
+import {
+  UserClaimsSchema,
+  type UserClaims,
+} from "@gouvfr-lasuite/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { to } from "await-to-js";
 import { isEmpty, omitBy } from "lodash-es";
@@ -45,13 +49,15 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
         updated_at,
         usual_name: family_name,
       };
-      const personalClaims = omitBy(
-        userClaims,
-        (value) =>
-          // NOTE(douglasduteil): a Claim SHOULD NOT be present with a null or empty string value
-          // \see https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse
-          value === null || value === "",
-      ) as PartialNullable<typeof userClaims>;
+      const personalClaims: UserClaims = UserClaimsSchema.parse(
+        omitBy(
+          userClaims,
+          (value) =>
+            // NOTE(douglasduteil): a Claim SHOULD NOT be present with a null or empty string value
+            // \see https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse
+            value === null || value === "",
+        ),
+      );
 
       const organizations = await getUsersOrganizations(id);
       if (mustReturnOneOrganizationInPayload(scope)) {
