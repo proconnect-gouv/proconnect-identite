@@ -59,7 +59,7 @@
     "await-to-js": "^3.0.0",
     "node-pg-migrate": "^7.9.1",
     "pg": "^8.16.3",
-    "tsx": "^4.19.4"
+    "tsx": "^4.20.3"
   },
   "publishConfig": {
     "access": "public",
