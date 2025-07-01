@@ -4,9 +4,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: moncomptepro
-      POSTGRES_PASSWORD: moncomptepro
-      POSTGRES_DB: moncomptepro
+      POSTGRES_USER: proconnect-identite
+      POSTGRES_PASSWORD: proconnect-identite
+      POSTGRES_DB: proconnect-identite
     volumes:
       - db-data:/var/lib/postgresql/data
 

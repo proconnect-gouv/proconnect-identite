@@ -8,13 +8,13 @@ on:
 
 env:
   ACCESS_LOG_PATH:
-  DATABASE_URL: postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro
+  DATABASE_URL: postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite
   NODE_ENV: test
-  PGDATABASE: moncomptepro
+  PGDATABASE: proconnect-identite
   PGHOST: 127.0.0.1
-  PGPASSWORD: moncomptepro
+  PGPASSWORD: proconnect-identite
   PGPORT: 5432
-  PGUSER: moncomptepro
+  PGUSER: proconnect-identite
   SMTP_URL: smtp://localhost:1025
   SYMMETRIC_ENCRYPTION_KEY: aTrueRandom32BytesLongBase64EncodedStringAA=
 
