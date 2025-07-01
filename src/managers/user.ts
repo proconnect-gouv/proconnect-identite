@@ -28,6 +28,7 @@ import {
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import { to } from "await-to-js";
 import { isEmpty } from "lodash-es";
+import { AssertionError } from "node:assert";
 import {
   FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
   HOST,
@@ -93,7 +94,13 @@ export const startLogin = async (
       didYouMean = getDidYouMeanSuggestion(email);
     }
 
-    throw new InvalidEmailError(didYouMean);
+    throw new InvalidEmailError(didYouMean, {
+      cause: new AssertionError({
+        actual: email,
+        expected: didYouMean,
+        operator: "isEmailSafeToSendTransactional",
+      }),
+    });
   }
 
   return {
