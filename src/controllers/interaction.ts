@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import { AssertionError } from "node:assert";
 import Provider, { errors } from "oidc-provider";
 import { z } from "zod";
 import { FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR } from "../config/env";
@@ -131,6 +132,13 @@ export const interactionEndControllerFactory =
           new OidcError(
             "access_denied",
             "none of the requested ACRs could be obtained",
+            {
+              cause: new AssertionError({
+                expected: prompt,
+                actual: currentAcr,
+                operator: "isAcrSatisfied",
+              }),
+            },
           ),
         );
       }

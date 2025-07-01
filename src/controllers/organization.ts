@@ -1,5 +1,6 @@
 import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
 import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import { DOMAINS_WHITELIST } from "@gouvfr-lasuite/proconnect.identite/data/organization";
 import {
   InvalidCertificationError,
   InvalidSiretError,
@@ -12,6 +13,7 @@ import { isEmpty } from "lodash-es";
 import { z, ZodError } from "zod";
 import {
   AccessRestrictedToPublicServiceEmailError,
+  DomainRestrictedError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -144,6 +146,12 @@ export const postJoinOrganizationMiddleware = async (
       return res.redirect(`/users/access-restricted-to-public-sector-email`);
     }
 
+    if (error instanceof DomainRestrictedError) {
+      return res.redirect(
+        `/users/domains-restricted-in-organization?organization_id=${error.organizationId}`,
+      );
+    }
+
     if (
       error instanceof InvalidSiretError ||
       error instanceof OrganizationNotActiveError ||
@@ -172,6 +180,38 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
+    next(error);
+  }
+};
+
+export const getDomainsRestrictedInOrganizationController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      organization_id: idSchema(),
+    });
+
+    const { organization_id } = await schema.parseAsync(req.query);
+
+    const organization = await getOrganizationById(organization_id);
+    if (isEmpty(organization)) {
+      return next(new HttpErrors.NotFound());
+    }
+    const whitelist = DOMAINS_WHITELIST.get(organization.siret);
+    if (!whitelist) {
+      return next(new HttpErrors.NotFound());
+    }
+
+    return res.render("user/access-restricted-to-domains", {
+      pageTitle: "Domains restreintes dans l'organisation",
+      csrfToken: csrfToken(req),
+      organization_label: organization.cached_libelle,
+      organization_domains: whitelist.join(", "),
+    });
+  } catch (error) {
     next(error);
   }
 };

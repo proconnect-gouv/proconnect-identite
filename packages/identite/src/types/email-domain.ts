@@ -1,20 +1,32 @@
-export const EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES = [
+//
+
+import { z } from "zod";
+
+//
+
+export const EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES = z.enum([
   "official_contact",
   "trackdechets_postal_mail",
   "verified",
-] as const;
+]);
 
-export const EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES = [
+export type EmailDomainApprovedVerificationType = z.output<
+  typeof EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES
+>;
+
+//
+
+export const EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES = z.enum([
   "blacklisted", // unused
   "external", // domain used by external employees (eg. ext.numerique.gouv.fr)
   "refused",
-] as const;
+]);
 
-export type EmailDomainApprovedVerificationType =
-  (typeof EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES)[number];
+export type EmailDomainRejectedVerificationType = z.output<
+  typeof EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES
+>;
 
-export type EmailDomainRejectedVerificationType =
-  (typeof EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES)[number];
+//
 
 export type EmailDomainVerificationType =
   | EmailDomainApprovedVerificationType
