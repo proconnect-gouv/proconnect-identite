@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.0",
-    "@gouvfr-lasuite/proconnect.core": "^0.5.0",
+    "@gouvfr-lasuite/proconnect.core": "^0.6.0",
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@gouvfr-lasuite/proconnect.entreprise": "^0.0.0",
     "@gouvfr-lasuite/proconnect.insee": "^0.0.0",
