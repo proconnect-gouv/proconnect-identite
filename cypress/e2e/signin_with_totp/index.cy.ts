@@ -1,5 +1,5 @@
 describe("sign-in with TOTP on untrusted browser", () => {
-  it("should seed the database once", function () {
+  it.only("should seed the database once", function () {
     cy.seed();
   });
 
@@ -29,6 +29,27 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
   it("should sign-in with password and TOTP when forced by SP", function () {
     cy.visit("http://localhost:4000");
+    cy.get("button#force-2fa").click();
+
+    cy.mfaLogin("lion.eljonson@darkangels.world");
+
+    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
+  });
+
+  it.only("should sign-in with TOTP when forced by SP, password only otherwise", function () {
+    cy.visit("http://localhost:4000");
+    cy.get("button.proconnect-button").click();
+
+    cy.login("lion.eljonson@darkangels.world");
+
+    cy.verifyEmail();
+
+    cy.visit("http://localhost:3000");
+
+    cy.contains("Jean Jean").click();
+
+    cy.visit("http://localhost:4000");
+
     cy.get("button#force-2fa").click();
 
     cy.mfaLogin("lion.eljonson@darkangels.world");
