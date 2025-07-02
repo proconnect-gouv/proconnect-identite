@@ -36,6 +36,11 @@
       "require": "./dist/services/suggestion/index.cjs",
       "import": "./dist/services/suggestion/index.js",
       "types": "./dist/services/suggestion/index.d.ts"
+    },
+    "./data": {
+      "require": "./dist/data/index.cjs",
+      "import": "./dist/data/index.js",
+      "types": "./dist/data/index.d.ts"
     }
   },
   "typesVersions": {
@@ -51,6 +56,9 @@
       ],
       "services/suggestion": [
         "./dist/services/suggestion/index.d.ts"
+      ],
+      "data": [
+        "./dist/data/index.d.ts"
       ]
     }
   },
