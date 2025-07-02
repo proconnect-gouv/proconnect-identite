@@ -8,7 +8,7 @@ on:
 
 env:
   CYPRESS_RECORD: true
-  DATABASE_URL: postgres://moncomptepro:moncomptepro@localhost:5432/moncomptepro
+  DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
   FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
   SMTP_URL: smtp://localhost:1025

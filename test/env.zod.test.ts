@@ -11,7 +11,7 @@ describe("env.zod", () => {
   it("default sample env", () => {
     const sample_env = {
       DATABASE_URL:
-        "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro",
+        "postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite",
       ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
@@ -47,7 +47,7 @@ describe("env.zod", () => {
       CRISP_USER_NICKNAME: "ProConnect",
       CRISP_WEBSITE_ID: "",
       DATABASE_URL:
-        "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro",
+        "postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite",
       DEBOUNCE_API_KEY: "",
       DEPLOY_ENV: "localhost",
       DIRTY_DS_REDIRECTION_URL:

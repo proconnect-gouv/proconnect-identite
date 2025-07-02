@@ -1,4 +1,4 @@
-# @gouvfr-lasuite/moncomptepro.email
+# @gouvfr-lasuite/proconnect.email
 
 ## 0.1.2
 

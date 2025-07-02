@@ -1,4 +1,4 @@
-# @gouvfr-lasuite/moncomptepro.core
+# @gouvfr-lasuite/proconnect.core
 
 ## 0.6.0
 
