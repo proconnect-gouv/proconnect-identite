@@ -53,9 +53,7 @@ export const getIsTotpAppInstalledController = async (
   next: NextFunction,
 ) => {
   try {
-    const schema = z.object({
-      "2fa_force": optionalBooleanSchema(),
-    });
+    const schema = z.object({ "2fa_force": optionalBooleanSchema() });
 
     const { "2fa_force": temporaryForce2fa } = await schema.parseAsync(
       req.query,

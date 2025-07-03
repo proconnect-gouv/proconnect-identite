@@ -1,5 +1,5 @@
 describe("sign-in with TOTP on untrusted browser", () => {
-  it.only("should seed the database once", function () {
+  it("should seed the database once", function () {
     cy.seed();
   });
 
@@ -36,7 +36,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
     cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
   });
 
-  it.only("should sign-in with TOTP when forced by SP, password only otherwise", function () {
+  it("should sign-in with TOTP when forced by SP, password only otherwise", function () {
     cy.visit("http://localhost:4000");
     cy.get("button.proconnect-button").click();
 

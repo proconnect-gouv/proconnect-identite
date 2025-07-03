@@ -64,11 +64,7 @@ export const confirmTotpRegistration = async (
     totp_key_verified_at: new Date(),
   });
 
-  if (temporaryForce2fa) {
-    return await enableForce2fa(user_id);
-  } else {
-    return await disableForce2fa(user_id);
-  }
+  return temporaryForce2fa ? enableForce2fa(user_id) : disableForce2fa(user_id);
 };
 
 export const deleteTotpConfiguration = async (user_id: number) => {
