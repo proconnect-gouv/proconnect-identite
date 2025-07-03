@@ -49,7 +49,7 @@ export const optionalBooleanSchema = () =>
   z
     .string()
     .optional()
-    .transform((val) => val === "true");
+    .transform((val) => val === "on" || val === "true");
 
 export const notificationLabelSchema = () =>
   z.string().refine(isNotificationLabelValid).optional();
