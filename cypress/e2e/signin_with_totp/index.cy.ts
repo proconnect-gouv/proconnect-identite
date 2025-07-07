@@ -36,27 +36,6 @@ describe("sign-in with TOTP on untrusted browser", () => {
     cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
   });
 
-  it("should sign-in with TOTP when forced by SP, password only otherwise", function () {
-    cy.visit("http://localhost:4000");
-    cy.get("button.proconnect-button").click();
-
-    cy.login("lion.eljonson@darkangels.world");
-
-    cy.verifyEmail();
-
-    cy.visit("http://localhost:3000");
-
-    cy.contains("Jean Jean").click();
-
-    cy.visit("http://localhost:4000");
-
-    cy.get("button#force-2fa").click();
-
-    cy.mfaLogin("lion.eljonson@darkangels.world");
-
-    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
-  });
-
   it("should only show totp step when already logged", function () {
     cy.visit("http://localhost:4000");
     cy.get("button.proconnect-button").click();

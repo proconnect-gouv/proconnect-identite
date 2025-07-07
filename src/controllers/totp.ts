@@ -8,10 +8,6 @@ import {
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import {
-  deleteTemporaryForce2Fa,
-  getTemporaryForce2Fa,
-} from "../managers/session/temporary-force-2fa";
-import {
   deleteTemporaryTotpKey,
   getTemporaryTotpKey,
   setTemporaryTotpKey,
@@ -83,17 +79,13 @@ export const postTotpConfigurationController = async (
       throw new NotFoundError();
     }
 
-    const temporaryForce2fa = getTemporaryForce2Fa(req);
-
     const updatedUser = await confirmTotpRegistration(
       user_id,
       temporaryTotpKey,
       totpToken,
-      temporaryForce2fa,
     );
 
     deleteTemporaryTotpKey(req);
-    deleteTemporaryForce2Fa(req);
     addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
 
     await sendAddFreeTOTPEmail({ user_id });

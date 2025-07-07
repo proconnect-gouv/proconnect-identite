@@ -12,7 +12,6 @@ export interface UnauthenticatedSessionData {
   referrerPath?: string;
   authForProconnectFederation?: boolean;
   certificationDirigeantRequested?: boolean;
-  temporaryForce2fa?: boolean;
 }
 
 export type AmrValue =

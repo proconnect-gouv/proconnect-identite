@@ -61,7 +61,7 @@ describe("sign-in with totp enrollment", () => {
     // Wait for connexion to last
     cy.wait(5 * 1000);
 
-    cy.get("button.fr-btn").contains("Continuer").click();
+    cy.reload();
 
     cy.contains("merci de vous identifier à nouveau.");
 
