@@ -6,6 +6,7 @@ import {
   postSetForce2faController,
 } from "../controllers/2fa";
 import {
+  getConditionsGeneralesDUtilisationController,
   getConnectionAndAccountController,
   getHomeController,
   getManageOrganizationsController,
@@ -178,6 +179,15 @@ export const mainRouter = (app: Express) => {
     rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     getHomeController,
+  );
+
+  mainRouter.get(
+    "/conditions-generales-d-utilisation",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    getConditionsGeneralesDUtilisationController,
   );
 
   return mainRouter;

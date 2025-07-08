@@ -195,3 +195,17 @@ export const getConnectionAndAccountController = async (
     next(error);
   }
 };
+
+export const getConditionsGeneralesDUtilisationController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/cgu", {
+      pageTitle: "Conditions Générales d'Utilisation - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
