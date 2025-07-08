@@ -223,3 +223,17 @@ export const getPolitiqueDeConfidentialiteController = (
     next(error);
   }
 };
+
+export const getAccessibiliteController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/accessibility", {
+      pageTitle: "Accessibilité - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
