@@ -11,6 +11,7 @@ import {
   getHomeController,
   getManageOrganizationsController,
   getPersonalInformationsController,
+  getPolitiqueDeConfidentialiteController,
   postPersonalInformationsController,
 } from "../controllers/main";
 import {
@@ -188,6 +189,15 @@ export const mainRouter = (app: Express) => {
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
     getConditionsGeneralesDUtilisationController,
+  );
+
+  mainRouter.get(
+    "/politique-de-confidentialite",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    getPolitiqueDeConfidentialiteController,
   );
 
   return mainRouter;

@@ -209,3 +209,17 @@ export const getConditionsGeneralesDUtilisationController = (
     next(error);
   }
 };
+
+export const getPolitiqueDeConfidentialiteController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/privacy-policy", {
+      pageTitle: "Politique de confidentialité - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
