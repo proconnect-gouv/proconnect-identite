@@ -195,3 +195,45 @@ export const getConnectionAndAccountController = async (
     next(error);
   }
 };
+
+export const getConditionsGeneralesDUtilisationController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/cgu", {
+      pageTitle: "Conditions Générales d'Utilisation - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPolitiqueDeConfidentialiteController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/privacy-policy", {
+      pageTitle: "Politique de confidentialité - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAccessibiliteController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/accessibility", {
+      pageTitle: "Accessibilité - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
