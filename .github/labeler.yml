@@ -9,7 +9,7 @@
 ":traffic_light: e2e":
   - changed-files:
       - any-glob-to-any-file: "cypress/**/*"
-":file_cabinet: e2e":
+":file_cabinet: migrations":
   - changed-files:
       - any-glob-to-any-file: "migrations/**/*"
 ":test_tube: unit test":
