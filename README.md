@@ -68,6 +68,8 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
 - Docker (>= v25) and Docker Compose (>= v2.24) installed ([doc](https://docs.docker.com/engine/install/))
 - Clone the ProConnect Identité repository
 
+> On MacOS, you may need to enable host networking. Please follow these instructions: https://docs.docker.com/engine/network/drivers/host/#docker-desktop
+
 ### Setting Up Dependencies with Docker
 
 1. **Start Dependencies**: Navigate to the root directory of the cloned repository and run:
