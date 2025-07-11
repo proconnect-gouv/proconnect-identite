@@ -7,7 +7,7 @@ import {
 } from "../../managers/session/authenticated";
 import {
   getUserVerificationLabel,
-  updatePersonalInformations,
+  updatePersonalInformationsForRegistration,
 } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import {
@@ -49,39 +49,47 @@ export const getPersonalInformationsController = async (
   }
 };
 
-export const getParamsForPostPersonalInformationsController = async (
+const basePersonalInformationSchema = {
+  given_name: nameSchema(),
+  family_name: nameSchema(),
+  phone_number: phoneNumberSchema(),
+};
+export const getParamsForRegistrationPersonalInformationsController = async (
+  req: Request,
+) => {
+  const schema = z.object(basePersonalInformationSchema);
+  return await schema.parseAsync(req.body);
+};
+
+export const getParamsForDashboardPersonalInformationsController = async (
   req: Request,
 ) => {
   const schema = z.object({
-    given_name: nameSchema(),
-    family_name: nameSchema(),
-    phone_number: phoneNumberSchema(),
+    ...basePersonalInformationSchema,
     job: jobSchema(),
   });
-
   return await schema.parseAsync(req.body);
 };
+
 export const postPersonalInformationsController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { given_name, family_name, phone_number, job } =
-      await getParamsForPostPersonalInformationsController(req);
+    const { given_name, family_name, phone_number } =
+      await getParamsForRegistrationPersonalInformationsController(req);
 
-    const updatedUser = await updatePersonalInformations(
+    const updatedUser = await updatePersonalInformationsForRegistration(
       getUserFromAuthenticatedSession(req).id,
       {
         given_name,
         family_name,
         phone_number,
-        job,
       },
     );
 
     updateUserInAuthenticatedSession(req, updatedUser);
-
     next();
   } catch (error) {
     if (error instanceof ZodError) {

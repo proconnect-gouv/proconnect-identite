@@ -22,7 +22,7 @@ import {
   getUserVerificationLabel,
   isUserVerifiedWithFranceconnect,
   sendUpdatePersonalInformationEmail,
-  updatePersonalInformations,
+  updatePersonalInformationsForDashboard,
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
@@ -30,7 +30,7 @@ import {
   getNotificationLabelFromRequest,
   getNotificationsFromRequest,
 } from "../services/get-notifications-from-request";
-import { getParamsForPostPersonalInformationsController } from "./user/update-personal-informations";
+import { getParamsForDashboardPersonalInformationsController } from "./user/update-personal-informations";
 
 export const getHomeController = async (
   req: Request,
@@ -76,11 +76,11 @@ export const postPersonalInformationsController = async (
 ) => {
   try {
     const { given_name, family_name, phone_number, job } =
-      await getParamsForPostPersonalInformationsController(req);
+      await getParamsForDashboardPersonalInformationsController(req);
     const { id: userId } = getUserFromAuthenticatedSession(req);
     const verifiedBy = await getUserVerificationLabel(userId);
 
-    const updatedUser = await updatePersonalInformations(userId, {
+    const updatedUser = await updatePersonalInformationsForDashboard(userId, {
       given_name,
       family_name,
       phone_number,
