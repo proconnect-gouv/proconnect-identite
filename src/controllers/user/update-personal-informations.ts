@@ -49,7 +49,7 @@ export const getPersonalInformationsController = async (
   }
 };
 
-const basePersonalInformationSchema = {
+const personalInformationSchema = {
   given_name: nameSchema(),
   family_name: nameSchema(),
   phone_number: phoneNumberSchema(),
@@ -57,18 +57,16 @@ const basePersonalInformationSchema = {
 export const getParamsForRegistrationPersonalInformationsController = async (
   req: Request,
 ) => {
-  const schema = z.object(basePersonalInformationSchema);
-  return await schema.parseAsync(req.body);
+  return await z.object(personalInformationSchema).parseAsync(req.body);
 };
 
 export const getParamsForDashboardPersonalInformationsController = async (
   req: Request,
 ) => {
-  const schema = z.object({
-    ...basePersonalInformationSchema,
-    job: jobSchema(),
-  });
-  return await schema.parseAsync(req.body);
+  return z
+    .object(personalInformationSchema)
+    .extend({ job: jobSchema() })
+    .parseAsync(req.body);
 };
 
 export const postPersonalInformationsController = async (
