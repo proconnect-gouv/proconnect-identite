@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { z, ZodError } from "zod";
+import z, { ZodError } from "zod";
 import { FEATURE_FRANCECONNECT_CONNECTION } from "../../config/env";
 import {
   getUserFromAuthenticatedSession,
@@ -11,7 +11,6 @@ import {
 } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import {
-  jobSchema,
   nameSchema,
   phoneNumberSchema,
 } from "../../services/custom-zod-schemas";
@@ -49,34 +48,21 @@ export const getPersonalInformationsController = async (
   }
 };
 
-const personalInformationSchema = {
-  given_name: nameSchema(),
-  family_name: nameSchema(),
-  phone_number: phoneNumberSchema(),
-};
-export const getParamsForRegistrationPersonalInformationsController = async (
-  req: Request,
-) => {
-  return await z.object(personalInformationSchema).parseAsync(req.body);
-};
-
-export const getParamsForDashboardPersonalInformationsController = async (
-  req: Request,
-) => {
-  return z
-    .object(personalInformationSchema)
-    .extend({ job: jobSchema() })
-    .parseAsync(req.body);
-};
-
 export const postPersonalInformationsController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { given_name, family_name, phone_number } =
-      await getParamsForRegistrationPersonalInformationsController(req);
+    const schema = z.object({
+      given_name: nameSchema(),
+      family_name: nameSchema(),
+      phone_number: phoneNumberSchema(),
+    });
+
+    const { given_name, family_name, phone_number } = await schema.parseAsync(
+      req.body,
+    );
 
     const updatedUser = await updatePersonalInformationsForRegistration(
       getUserFromAuthenticatedSession(req).id,

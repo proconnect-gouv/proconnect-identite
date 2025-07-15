@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import moment from "moment/moment";
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
 import {
   DIRTY_DS_REDIRECTION_URL,
   FEATURE_FRANCECONNECT_CONNECTION,
@@ -27,10 +27,14 @@ import {
 import { getUserAuthenticators } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
 import {
+  jobSchema,
+  nameSchema,
+  phoneNumberSchema,
+} from "../services/custom-zod-schemas";
+import {
   getNotificationLabelFromRequest,
   getNotificationsFromRequest,
 } from "../services/get-notifications-from-request";
-import { getParamsForDashboardPersonalInformationsController } from "./user/update-personal-informations";
 
 export const getHomeController = async (
   req: Request,
@@ -75,8 +79,16 @@ export const postPersonalInformationsController = async (
   next: NextFunction,
 ) => {
   try {
+    const schema = z.object({
+      given_name: nameSchema(),
+      family_name: nameSchema(),
+      phone_number: phoneNumberSchema(),
+      job: jobSchema(),
+    });
+
     const { given_name, family_name, phone_number, job } =
-      await getParamsForDashboardPersonalInformationsController(req);
+      await schema.parseAsync(req.body);
+
     const { id: userId } = getUserFromAuthenticatedSession(req);
     const verifiedBy = await getUserVerificationLabel(userId);
 
