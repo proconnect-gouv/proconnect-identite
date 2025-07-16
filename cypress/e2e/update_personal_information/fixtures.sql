@@ -3,7 +3,7 @@ INSERT INTO users
    phone_number, job)
 VALUES
   (1, 'god-emperor@mankind.world', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'God', 'Emperor', '9999999999', 'God Emperor'),
-  (2, 'konrad.curze@nightlords.world', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Konrad', 'Curze', '0404040404', 'Primarque');
+  (2, 'konrad.curze@nightlords.world', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Konrad', 'Curze', '0404040404', null);
 
 INSERT INTO organizations
   (id, siret, created_at, updated_at)

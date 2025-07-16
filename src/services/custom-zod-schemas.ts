@@ -30,12 +30,15 @@ export const phoneNumberSchema = () =>
 
 const pattern = /^(?![\d\s]+$).*/;
 export const jobSchema = () =>
-  z
-    .string()
-    .trim()
-    .min(1)
-    .refine(isVisibleString)
-    .refine((value) => pattern.test(value));
+  z.union([
+    z.literal("").transform(() => null),
+    z
+      .string()
+      .trim()
+      .min(1)
+      .refine(isVisibleString)
+      .refine((value) => pattern.test(value)),
+  ]);
 
 export const idSchema = () =>
   z
