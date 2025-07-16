@@ -28,7 +28,6 @@ describe("Signup into new entreprise unipersonnelle", () => {
     // Fill the user's personal information
     cy.get('[name="given_name"]').type("Georges");
     cy.get('[name="family_name"]').type("Moustaki");
-    cy.get('[name="job"]').type("Chargé de relation usager");
     cy.get('[type="submit"]').click();
 
     // Fill the user's organization information

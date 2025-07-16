@@ -563,7 +563,24 @@ export const changePassword = async (
   });
 };
 
-export const updatePersonalInformations = async (
+export const updatePersonalInformationsForRegistration = async (
+  userId: number,
+  {
+    given_name,
+    family_name,
+    phone_number,
+  }: Pick<User, "given_name" | "family_name" | "phone_number">,
+): Promise<User> => {
+  const isUserVerified = await getFranceConnectUserInfo(userId);
+  const names = isUserVerified ? {} : { given_name, family_name };
+
+  return update(userId, {
+    ...names,
+    phone_number,
+  });
+};
+
+export const updatePersonalInformationsForDashboard = async (
   userId: number,
   {
     given_name,
