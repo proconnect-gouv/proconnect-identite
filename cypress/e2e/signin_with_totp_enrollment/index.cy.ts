@@ -14,13 +14,13 @@ describe("sign-in with totp enrollment", () => {
 
     cy.login("ial2-aal1@yopmail.com");
 
-    cy.get("#radio-totp").click({ force: true });
+    cy.contains("Code à usage unique (TOTP)").click();
 
     cy.contains("Continuer").click();
 
     cy.contains("Installer votre outil d’authentification");
 
-    cy.get("#is-totp-installed").click({ force: true });
+    cy.contains("J'ai installé une application d'authentification").click();
 
     cy.contains("Continuer").click();
 
@@ -68,13 +68,15 @@ describe("sign-in with totp enrollment", () => {
 
     cy.login("ial2-aal1-forced@yopmail.com");
 
-    cy.get("#radio-totp").click({ force: true });
+    cy.contains("Code à usage unique (TOTP)").click();
 
-    cy.get('input[type="checkbox"][name="force_2fa"]').click({ force: true });
+    cy.contains(
+      "Je configure la 2FA sur l'ensemble des sites que j'utilise avec ProConnect",
+    ).click();
 
     cy.contains("Continuer").click();
 
-    cy.get("#is-totp-installed").click({ force: true });
+    cy.contains("J'ai installé une application d'authentification").click();
 
     cy.contains("Continuer").click();
 
@@ -108,7 +110,7 @@ describe("sign-in with totp enrollment", () => {
 
     cy.login("ial2-aal2@yopmail.com");
 
-    cy.get("#radio-totp").click({ force: true });
+    cy.contains("Code à usage unique (TOTP)").click();
 
     // Wait for connexion to last
     cy.wait(5 * 1000);
@@ -121,13 +123,13 @@ describe("sign-in with totp enrollment", () => {
 
     cy.login("ial2-aal2@yopmail.com");
 
-    cy.get("#radio-totp").click({ force: true });
+    cy.contains("Code à usage unique (TOTP)").click();
 
     cy.contains("Continuer").click();
 
     cy.contains("Installer votre outil d’authentification");
 
-    cy.get("#is-totp-installed").click({ force: true });
+    cy.contains("J'ai installé une application d'authentification").click();
 
     cy.contains("Continuer").click();
 
