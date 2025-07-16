@@ -82,7 +82,7 @@ const registerPassKey = async () => {
     'input[name="force_2fa"]',
   );
 
-  if (force2FAHiddenInput) {
+  if (force2FAInput && force2FAHiddenInput) {
     force2FAHiddenInput.value = force2FAInput?.checked ? "on" : "";
   }
 
