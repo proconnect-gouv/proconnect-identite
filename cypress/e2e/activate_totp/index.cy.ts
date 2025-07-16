@@ -16,7 +16,7 @@ describe("add 2fa authentication", () => {
 
     cy.contains("Choisir votre méthode de double authentification");
 
-    cy.get("#radio-totp").click({ force: true });
+    cy.contains("Code à usage unique (TOTP)").click();
 
     cy.get("#webauthn-submit-button").contains("Continuer").click();
 
