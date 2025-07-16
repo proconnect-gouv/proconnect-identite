@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import z, { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import { FEATURE_FRANCECONNECT_CONNECTION } from "../../config/env";
 import {
   getUserFromAuthenticatedSession,
