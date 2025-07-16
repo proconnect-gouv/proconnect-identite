@@ -16,13 +16,13 @@ describe("sign-in with totp enrollment", () => {
 
     cy.get("#radio-totp").click({ force: true });
 
-    cy.get("button.fr-btn").contains("Continuer").click();
+    cy.contains("Continuer").click();
 
     cy.contains("Installer votre outil d’authentification");
 
     cy.get("#is-totp-installed").click({ force: true });
 
-    cy.get("button.fr-btn").contains("Continuer").click();
+    cy.contains("Continuer").click();
 
     cy.contains("Scanner ce QRcode avec votre application");
 
@@ -38,11 +38,63 @@ describe("sign-in with totp enrollment", () => {
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
     cy.contains("Votre double authentification est bien configurée");
-    cy.get("button.fr-btn").contains("Continuer").click();
+    cy.contains("Continuer").click();
 
     cy.contains(
       '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
     );
+
+    cy.contains("Se déconnecter").click();
+
+    cy.setRequestedAcrs();
+
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("ial2-aal1@yopmail.com");
+
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked"',
+    );
+  });
+
+  it("should follow first authentication when mfa asked (with mfa forced)", function () {
+    cy.visit("http://localhost:4000");
+    cy.setRequestedAcrs([
+      "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
+      "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
+    ]);
+
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("ial2-aal1-forced@yopmail.com");
+
+    cy.get("#radio-totp").click({ force: true });
+
+    cy.get('input[type="checkbox"][name="force_2fa"]').click({ force: true });
+
+    cy.contains("Continuer").click();
+
+    cy.get("#is-totp-installed").click({ force: true });
+
+    cy.contains("Continuer").click();
+
+    cy.fillAndSubmitTotpForm("/users/totp-configuration");
+
+    cy.contains("Continuer").click();
+
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
+    );
+
+    cy.contains("Se déconnecter").click();
+
+    cy.setRequestedAcrs();
+
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("ial2-aal1-forced@yopmail.com");
+
+    cy.contains("Valider avec la double authentification");
   });
 
   it("should re-authenticate after long connexion to a service provider requires mfa", function () {
@@ -61,7 +113,7 @@ describe("sign-in with totp enrollment", () => {
     // Wait for connexion to last
     cy.wait(5 * 1000);
 
-    cy.reload();
+    cy.contains("Continuer").click();
 
     cy.contains("merci de vous identifier à nouveau.");
 
@@ -71,20 +123,20 @@ describe("sign-in with totp enrollment", () => {
 
     cy.get("#radio-totp").click({ force: true });
 
-    cy.get("button.fr-btn").contains("Continuer").click();
+    cy.contains("Continuer").click();
 
     cy.contains("Installer votre outil d’authentification");
 
     cy.get("#is-totp-installed").click({ force: true });
 
-    cy.get("button.fr-btn").contains("Continuer").click();
+    cy.contains("Continuer").click();
 
     cy.contains("Scanner ce QRcode avec votre application");
 
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
     cy.contains("Votre double authentification est bien configurée");
-    cy.get("button.fr-btn").contains("Continuer").click();
+    cy.contains("Continuer").click();
 
     cy.contains(
       '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',

@@ -47,6 +47,10 @@
           </label>
         </div>
       </div>
+      <div class="fr-checkbox-group fr-pl-1w fr-pb-2w">
+        <input type="checkbox" name="force_2fa" >
+        <label class="fr-label" for="force_2fa">Je configure la 2FA sur l'ensemble des sites que j'utilise avec ProConnect<span class="fr-hint-text">Par défaut, la 2FA s'applique uniquement aux sites qui l'exigent</span></label>
+      </div>
     </fieldset>
     <button class="fr-btn btn--fullwidth" type="submit" id="webauthn-submit-button">Continuer</button>
   </form>
@@ -78,6 +82,7 @@
   >
     <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
     <input type="hidden" name="webauthn_registration_response_string" />
+    <input type="hidden" name="force_2fa" />
     <button type="submit" class="fr-btn"></button>
   </form>
   <script type="module" src="<%= js('webauthn-registration.js') %>"></script>

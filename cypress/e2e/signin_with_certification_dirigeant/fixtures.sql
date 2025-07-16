@@ -89,7 +89,7 @@ VALUES
      ],
    ARRAY [
      'http://localhost:4000/'
-    ]::varchar[],
+    ],
    'openid email profile organization',
    'http://localhost:4000/',
    'ProConnect test client. More info: https://github.com/numerique-gouv/proconnect-test-client.',
