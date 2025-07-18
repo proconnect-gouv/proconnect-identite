@@ -53,6 +53,7 @@ jobs:
           - signin_with_totp
           - signin_with_totp_enrollment
           - signup_entreprise_unipersonnelle
+          - signup_with_certification_dirigeant
           - update_personal_information
     runs-on: ubuntu-latest
     steps:
