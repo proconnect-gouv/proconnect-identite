@@ -2,45 +2,47 @@
 
 ## Usage
 
-### `docker compose up --wait`
+### Start databases and test clients
 
-Starts all the required services and waits for them to be ready.
+Start all the required services and wait for them to be ready:
 
-### `npm run e2e:dev <my_cypress_test_case>`
+```bash
+docker compose up --wait
+```
 
-> [!TIP]  
-> Running the script without argument (or with a wrong argument) will trigger a prompt to select the test case.
->
-> ```bash
-> $ npm run e2e:dev
-> Could not resolve test case "undefined"
-> They are 26 test cases in the cypress/e2e folder :
-> 0) activate_totp        1) check_email_deliverability
-> [...]
-> ```
->
-> This will allow you to quickly pick the test case you want to run.
+### Start the application
 
-This will open a server on `http://localhost:3000`
+This will open a server on `http://localhost:3000`:
 
-### `npm run e2e:studio`
+```bash
+npm run e2e:dev
+```
+
+You will be prompted to select the test case.
+
+### Open cypress
+
+Open Cypress with the configuration from `cypress.config.ts`:
+
+```bash
+npm run e2e:studio
+```
 
 > Alias for `npx cypress open`
 
-Will load the Cypress configuration from `cypress.config.ts`.
-Here we recommend to choose the `<my_cypress_test_case>` you launched to testing coerce.
+Here we recommend choosing the `<my_cypress_test_case>` you launched.
 
 ## Additional commands
 
-### `npm run e2e:run <my_cypress_test_case>`
+### Run a specific test case with Cypress
 
-On your host, run the tests
+On your host, run the tests:
 
 ```bash
 npm run e2e:run <my_cypress_test_case>
 ```
 
-### `npm run e2e:setup <my_cypress_test_case>`
+### Setup database for a specific test case
 
 > [!CAUTION]  
 > That this will delete your database.
@@ -48,16 +50,14 @@ npm run e2e:run <my_cypress_test_case>
 Load the specific fixtures in the database using
 
 ```bash
-ENABLE_DATABASE_DELETION=True npm run e2e:setup redirect_after_session_expiration
+npm run build:workspaces
+npm run migrate up
+ENABLE_DATABASE_DELETION=True npm run delete-database
+npm run fixtures:load-ci cypress/e2e/${testCase}/fixtures.sql
+npm run update-organization-info 0
 ```
 
-#### `--dev` mode (same as `npm run e2e:dev`)
-
-If you want to run the app in development mode, you can use the `--dev` flag.
-
-```bash
-NODE_ENV=development ENABLE_DATABASE_DELETION=True npm run e2e:setup --dev redirect_after_session_expiration
-```
+The output will provide the appropriate server launch command.
 
 ## About test client used in e2e test
 
