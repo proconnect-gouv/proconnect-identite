@@ -32,7 +32,8 @@ export const interactionStartControllerFactory =
         params,
         prompt,
       } = await oidcProvider.interactionDetails(req, res);
-      const { client_id, login_hint, scope } = params as OIDCContextParams;
+      const { client_id, login_hint, scope, sp_name } =
+        params as OIDCContextParams;
 
       req.session.certificationDirigeantRequested =
         certificationDirigeantRequested(prompt);
@@ -40,6 +41,7 @@ export const interactionStartControllerFactory =
       req.session.mustReturnOneOrganizationInPayload =
         mustReturnOneOrganizationInPayload(scope);
       req.session.twoFactorsAuthRequested = twoFactorsAuthRequested(prompt);
+      req.session.spName = sp_name || undefined;
 
       const oidcClient = await findByClientId(client_id);
       req.session.authForProconnectFederation =

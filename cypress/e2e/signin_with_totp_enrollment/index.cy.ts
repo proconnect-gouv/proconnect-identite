@@ -10,6 +10,11 @@ describe("sign-in with totp enrollment", () => {
 
     cy.login("ial2-aal1@yopmail.com");
 
+    // Test of the generic formula when sp_name is not returned
+    cy.contains(
+      "Le service auquel vous souhaitez accéder demande la mise en place d'une double authentification pour améliorer la sécurité de votre compte.",
+    );
+
     cy.contains("Code à usage unique (TOTP)").click();
 
     cy.contains("Continuer").click();

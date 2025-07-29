@@ -72,6 +72,7 @@ export const createAuthenticatedSession = async (
     state,
     twoFactorsAuthRequested,
     certificationDirigeantRequested,
+    spName,
   } = req.session;
 
   // as selected org is not stored in session,
@@ -103,6 +104,7 @@ export const createAuthenticatedSession = async (
         req.session.amr = [];
         req.session.nonce = nonce;
         req.session.state = state;
+        req.session.spName = spName;
 
         req.session.amr = addAuthenticationMethodReference(
           req.session.amr,

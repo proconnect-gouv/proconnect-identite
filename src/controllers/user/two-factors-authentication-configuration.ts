@@ -41,6 +41,7 @@ export const getTwoFactorsAuthenticationChoiceController = async (
       csrfToken: csrfToken(req),
       illustration: "illu-2FA.svg",
       notifications: await getNotificationsFromRequest(req),
+      spName: req.session.spName,
     });
   } catch (error) {
     next(error);
@@ -152,6 +153,7 @@ export const get2faSuccessfullyConfiguredController = async (
       pageTitle: "Votre double authentification est bien configurée",
       csrfToken: csrfToken(req),
       illustration: "illu-ok.svg",
+      spName: req.session.spName,
     });
   } catch (error) {
     next(error);
