@@ -15,7 +15,7 @@ docker compose up --wait
 This will open a server on `http://localhost:3000`:
 
 ```bash
-npm run e2e:dev
+ENABLE_DATABASE_DELETION=True npm run e2e:dev
 ```
 
 You will be prompted to select the test case.
@@ -44,9 +44,6 @@ npm run e2e:run <my_cypress_test_case>
 
 ### Setup database for a specific test case
 
-> [!CAUTION]  
-> That this will delete your database.
-
 Load the specific fixtures in the database using
 
 ```bash
@@ -56,8 +53,6 @@ ENABLE_DATABASE_DELETION=True npm run delete-database
 npm run fixtures:load-ci cypress/e2e/${testCase}/fixtures.sql
 npm run update-organization-info 0
 ```
-
-The output will provide the appropriate server launch command.
 
 ## About test client used in e2e test
 

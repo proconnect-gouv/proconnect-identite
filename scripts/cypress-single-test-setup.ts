@@ -50,10 +50,17 @@ if (!testCase || !doesExist) {
   console.log();
 }
 
-//
+console.log(`🚥 Loading fixtures in database for "${testCase}" case`);
+console.log();
+
+await $({ nothrow: true })`npm run delete-database`;
+await $`npm run migrate up`;
+await $`npm run fixtures:load-ci cypress/e2e/${testCase}/fixtures.sql`;
+await $`npm run update-organization-info 0`;
 
 console.log(`🚥 Setup test "${testCase}" case`);
 console.log();
+
 await $`npm run build:workspaces`;
 
 $`npx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev`;
