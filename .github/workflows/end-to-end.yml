@@ -55,6 +55,7 @@ jobs:
           - signup_entreprise_unipersonnelle
           - signup_with_certification_dirigeant
           - update_personal_information
+          - use_extra_param_sp_name
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

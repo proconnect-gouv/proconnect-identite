@@ -16,7 +16,7 @@ services:
       - "6379:6379"
 
   demo-test-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:08e6ec96a85caa28548220756e9753016f709cf2ef259181b0d1e9286d600505 # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:dc58af41a050a12dc4942464a4f7fe754ee91d242fc7e516eb19a7d8fe5a0c68 # latest
     environment:
       PORT: 3001
       # default env var can be found at https://github.com/numerique-gouv/proconnect-test-client/blob/master/.env
@@ -26,7 +26,7 @@ services:
     network_mode: "host"
 
   standard-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:08e6ec96a85caa28548220756e9753016f709cf2ef259181b0d1e9286d600505 # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:dc58af41a050a12dc4942464a4f7fe754ee91d242fc7e516eb19a7d8fe5a0c68 # latest
     environment:
       PORT: 4000
       SITE_TITLE: standard-client
@@ -40,7 +40,7 @@ services:
     network_mode: "host"
 
   proconnect-federation-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:08e6ec96a85caa28548220756e9753016f709cf2ef259181b0d1e9286d600505 # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:dc58af41a050a12dc4942464a4f7fe754ee91d242fc7e516eb19a7d8fe5a0c68 # latest
     environment:
       PORT: 4001
       SITE_TITLE: proconnect-federation-client
@@ -54,6 +54,7 @@ services:
       STYLESHEET_URL:
       LOGIN_HINT: unused1@yopmail.com
       ACR_VALUES: eidas1
+      EXTRA_PARAM_SP_NAME: ProConnect Test
     network_mode: "host"
 
   maildev:

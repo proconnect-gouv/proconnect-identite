@@ -13,6 +13,7 @@ export interface UnauthenticatedSessionData {
   authForProconnectFederation?: boolean;
   certificationDirigeantRequested?: boolean;
   temporaryForce2fa?: boolean;
+  spName?: string;
 }
 
 export type AmrValue =
