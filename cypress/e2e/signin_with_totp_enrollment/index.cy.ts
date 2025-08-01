@@ -5,12 +5,8 @@ describe("sign-in with totp enrollment", () => {
 
   it("should follow first authentication when mfa asked", function () {
     cy.visit("http://localhost:4000");
-    cy.setRequestedAcrs([
-      "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
-      "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-    ]);
 
-    cy.get("button#custom-connection").click({ force: true });
+    cy.contains("Forcer une connexion a deux facteurs").click();
 
     cy.login("ial2-aal1@yopmail.com");
 
@@ -59,12 +55,8 @@ describe("sign-in with totp enrollment", () => {
 
   it("should follow first authentication when mfa asked (with mfa forced)", function () {
     cy.visit("http://localhost:4000");
-    cy.setRequestedAcrs([
-      "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
-      "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-    ]);
 
-    cy.get("button#custom-connection").click({ force: true });
+    cy.contains("Forcer une connexion a deux facteurs").click();
 
     cy.login("ial2-aal1-forced@yopmail.com");
 
@@ -101,12 +93,8 @@ describe("sign-in with totp enrollment", () => {
 
   it("should re-authenticate after long connexion to a service provider requires mfa", function () {
     cy.visit("http://localhost:4000");
-    cy.setRequestedAcrs([
-      "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
-      "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-    ]);
 
-    cy.get("button#custom-connection").click({ force: true });
+    cy.contains("Forcer une connexion a deux facteurs").click();
 
     cy.login("ial2-aal2@yopmail.com");
 
