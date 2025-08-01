@@ -13,7 +13,8 @@ describe("env.zod", () => {
     const sample_env = {
       DATABASE_URL:
         "postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite",
-      ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
+      ENTREPRISE_API_URL:
+        "http://localhost:3000/___testing___/entreprise.api.gouv.fr",
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
       JWKS,
@@ -57,10 +58,11 @@ describe("env.zod", () => {
       DIRTY_DS_REDIRECTION_URL:
         "https://www.demarches-simplifiees.fr/agent_connect/logout_from_mcp",
       EMAIL_DELIVERABILITY_WHITELIST: [],
-      ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
+      ENTREPRISE_API_TOKEN: "🎭 Mocked Entreprise Api Token",
       ENTREPRISE_API_TRACKING_CONTEXT: "ProConnect Identité",
       ENTREPRISE_API_TRACKING_RECIPIENT: "13002526500013",
-      ENTREPRISE_API_URL: "https://staging.entreprise.api.gouv.fr",
+      ENTREPRISE_API_URL:
+        "http://localhost:3000/___testing___/entreprise.api.gouv.fr",
       FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: false,
       FEATURE_AUTHENTICATE_BROWSER: false,
       FEATURE_CHECK_EMAIL_DELIVERABILITY: false,
