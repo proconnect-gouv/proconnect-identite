@@ -12,10 +12,8 @@ import HttpErrors from "http-errors";
 import { inspect } from "node:util";
 import { z, ZodError } from "zod";
 import notificationMessages from "../config/notification-messages";
-import {
-  getOrganizationInfo,
-  InseeApiRepository,
-} from "../connectors/api-sirene";
+import { InseeApiRepository } from "../connectors/api-insee";
+import { getOrganizationInfo } from "../connectors/api-sirene";
 import { sendModerationProcessedEmail } from "../managers/moderation";
 import { forceJoinOrganization } from "../managers/organization/join";
 import { getUserOrganizationLink } from "../repositories/organization/getters";

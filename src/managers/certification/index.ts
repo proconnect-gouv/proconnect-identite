@@ -1,10 +1,10 @@
 //
 
 import { isOrganizationDirigeantFactory } from "@gouvfr-lasuite/proconnect.identite/managers/certification";
+import { InseeApiRepository } from "../../connectors/api-insee";
 import {
   EntrepriseApiInfogreffeRepository,
   EntrepriseApiInseeRepository,
-  InseeApiRepository,
 } from "../../connectors/api-sirene";
 import { getFranceConnectUserInfo } from "../../repositories/user";
 import { logger } from "../../services/log";
