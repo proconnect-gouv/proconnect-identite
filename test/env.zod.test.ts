@@ -69,6 +69,7 @@ describe("env.zod", () => {
       FEATURE_RATE_LIMIT_BY_EMAIL: false,
       FEATURE_RATE_LIMIT_BY_IP: false,
       FEATURE_USE_ANNUAIRE_EMAILS: false,
+      FEATURE_USE_INTERNAL_DATA_FOR_SIREN: [],
       FEATURE_USE_SECURE_COOKIES: false,
       FEATURE_USE_SECURITY_RESPONSE_HEADERS: false,
       FRANCECONNECT_CLIENT_ID: "🎭 Mocked FranceConnect Client ID",
