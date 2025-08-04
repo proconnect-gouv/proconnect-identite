@@ -33,7 +33,7 @@
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@types/oidc-provider": "^9.1.1",
     "@types/yargs": "^17.0.33",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "publishConfig": {
     "access": "public",
