@@ -277,18 +277,12 @@ export const joinOrganization = async ({
         });
       }
 
-      if (
-        (isAFreeEmailProvider(contactDomain) ||
-          hasLessThanFiftyEmployees(organization)) &&
-        isAFreeEmailProvider(domain)
-      ) {
-        return await linkUserToOrganization({
-          organization_id,
-          user_id,
-          verification_type: "code_sent_to_official_contact_email",
-          needs_official_contact_email_verification: true,
-        });
-      }
+      return await linkUserToOrganization({
+        organization_id,
+        user_id,
+        verification_type: "code_sent_to_official_contact_email",
+        needs_official_contact_email_verification: true,
+      });
     }
   }
 
