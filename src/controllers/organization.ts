@@ -289,7 +289,7 @@ export function getUnableToCertifyUserAsExecutiveController(
   try {
     return res.render("user/unable-to-certify-user-as-executive", {
       illustration: "connection-lost.svg",
-      oidcError: oidcErrorSchema().Enum.login_required,
+      oidcError: oidcErrorSchema().enum.login_required,
       interactionId: req.session.interactionId,
       pageTitle: "Certification impossible",
       use_dashboard_layout: false,

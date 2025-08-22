@@ -25,7 +25,7 @@ export const OrganizationInfoSchema = z.object({
     "partiellement_diffusible",
     "non_diffusible",
   ]),
-  trancheEffectifs: z.string().pipe(z.custom<TrancheEffectifs>()).nullable(),
+  trancheEffectifs: z.custom<TrancheEffectifs | null>().nullable(),
   trancheEffectifsUniteLegale: z.string().nullable(),
 });
 

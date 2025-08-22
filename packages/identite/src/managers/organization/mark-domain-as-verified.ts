@@ -58,6 +58,9 @@ export function markDomainAsVerifiedFactory({
 
     return match(domain_verification_type)
       .with(
+        EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.enum.official_contact,
+        EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.enum.trackdechets_postal_mail,
+        EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.enum.verified,
         ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.options,
         async (approved_verification_type) => {
           await assignUserVerificationTypeToDomain(organization_id, domain);
@@ -69,6 +72,9 @@ export function markDomainAsVerifiedFactory({
         },
       )
       .with(
+        EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.enum.blacklisted,
+        EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.enum.external,
+        EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.enum.refused,
         ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.options,
         (rejected_verification_type) =>
           markDomainAsRejected({

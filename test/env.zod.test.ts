@@ -77,7 +77,13 @@ describe("env.zod", () => {
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
       FRANCECONNECT_SCOPES: [
-        "birthplace birthdate family_name gender given_name openid preferred_username",
+        "birthplace",
+        "birthdate",
+        "family_name",
+        "gender",
+        "given_name",
+        "openid",
+        "preferred_username",
       ],
       FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES: 129600,
       HTTP_CLIENT_TIMEOUT: 55000,

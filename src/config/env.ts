@@ -8,9 +8,7 @@ dotenvFlow.config({
   default_node_env: "development",
 });
 
-const parsedEnv = envSchema.safeParse(process.env, {
-  path: ["process.env"],
-});
+const parsedEnv = envSchema.safeParse(process.env);
 
 if (!parsedEnv.success) throw fromZodError(parsedEnv.error, {});
 
