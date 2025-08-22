@@ -1,6 +1,10 @@
 //
 
 describe("sign-in with email verification renewal", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in with email verification needed", () => {
     cy.visit("/users/start-sign-in");
 
@@ -16,17 +20,7 @@ describe("sign-in with email verification renewal", () => {
       "Un code de vérification a été envoyé à lion.eljonson@darkangels.world",
     );
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.verifyEmail();
 
     cy.contains("Votre compte ProConnect");
   });
@@ -53,17 +47,7 @@ describe("sign-in with email verification renewal", () => {
       "Un nouveau code de vérification a été envoyé à rogal.dorn@imperialfists.world",
     );
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.verifyEmail();
 
     cy.contains("Votre compte ProConnect");
   });

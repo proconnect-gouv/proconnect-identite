@@ -32,7 +32,6 @@ import {
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
-import { clearInteractionSession } from "../managers/session/interaction";
 import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
@@ -160,53 +159,36 @@ export const checkUserIsConnectedMiddleware = async (
     }
   });
 };
-
-export const checkUserTwoFactorAuthMiddleware = async (
+export const checkUserHasConnectedRecentlyMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   await checkUserIsConnectedMiddleware(req, res, async (error) => {
     try {
-      if (error) next(error);
+      if (error) return next(error);
 
-      const { id: user_id } = getUserFromAuthenticatedSession(req);
+      const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
-      if (
-        ((await shouldForce2faForUser(user_id)) ||
-          req.session.twoFactorsAuthRequested) &&
-        !isWithinTwoFactorAuthenticatedSession(req)
-      ) {
-        if (!(await is2FACapable(user_id))) {
-          // We break the connexion flow
+      if (!hasLoggedInRecently) {
+        req.session.referrerPath = getReferrerPath(req);
 
-          clearInteractionSession(req);
-
-          return res.redirect(
-            "/connection-and-account?notification=2fa_not_configured",
-          );
-        } else {
-          return res.redirect("/users/2fa-sign-in");
-        }
+        return res.redirect(`/users/start-sign-in?notification=login_required`);
       }
-      return next();
+
+      next();
     } catch (error) {
-      if (error instanceof UserNotFoundError) {
-        // The user has an active session but is not in the database anymore
-        await destroyAuthenticatedSession(req);
-        next(new HttpErrors.Unauthorized());
-      }
       next(error);
     }
   });
 };
 
-export const checkUserIsVerifiedMiddleware = (
+export const checkUserIsVerifiedMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
+  await checkUserIsConnectedMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
 
@@ -215,21 +197,13 @@ export const checkUserIsVerifiedMiddleware = (
       const needs_email_verification_renewal =
         await needsEmailVerificationRenewal(email);
 
-      const is_browser_trusted = isBrowserTrustedForUser(req);
-
-      if (
-        !email_verified ||
-        needs_email_verification_renewal ||
-        !is_browser_trusted
-      ) {
+      if (!email_verified || needs_email_verification_renewal) {
         let notification_param = "";
 
         if (!email_verified) {
           notification_param = "";
         } else if (needs_email_verification_renewal) {
           notification_param = "?notification=email_verification_renewal";
-        } else if (!is_browser_trusted) {
-          notification_param = "?notification=browser_not_trusted";
         }
 
         return res.redirect(`/users/verify-email${notification_param}`);
@@ -247,12 +221,69 @@ export const checkUserIsVerifiedMiddleware = (
     }
   });
 
+export const checkUserTwoFactorAuthMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  checkUserIsVerifiedMiddleware(req, res, async (error) => {
+    try {
+      if (error) next(error);
+
+      const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+      if (
+        ((await shouldForce2faForUser(user_id)) ||
+          req.session.twoFactorsAuthRequested) &&
+        !isWithinTwoFactorAuthenticatedSession(req)
+      ) {
+        if (await is2FACapable(user_id)) {
+          return res.redirect("/users/2fa-sign-in");
+        } else {
+          return res.redirect("/users/double-authentication-choice");
+        }
+      }
+      return next();
+    } catch (error) {
+      if (error instanceof UserNotFoundError) {
+        // The user has an active session but is not in the database anymore
+        await destroyAuthenticatedSession(req);
+        next(new HttpErrors.Unauthorized());
+      }
+      next(error);
+    }
+  });
+};
+
+export const checkBrowserIsTrustedMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) =>
+  checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
+    try {
+      if (error) return next(error);
+
+      const is_browser_trusted = isBrowserTrustedForUser(req);
+
+      if (!is_browser_trusted) {
+        return res.redirect(
+          `/users/verify-email?notification=browser_not_trusted`,
+        );
+      }
+
+      return next();
+    } catch (error) {
+      next(error);
+    }
+  });
+
 export const checkUserNeedCertificationDirigeantMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserIsVerifiedMiddleware(req, res, async (error) => {
+  checkBrowserIsTrustedMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
       if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
@@ -280,9 +311,8 @@ export const checkUserHasPersonalInformationsMiddleware = (
   checkUserNeedCertificationDirigeantMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
-      const { given_name, family_name, job } =
-        getUserFromAuthenticatedSession(req);
-      if (isEmpty(given_name) || isEmpty(family_name) || isEmpty(job)) {
+      const { given_name, family_name } = getUserFromAuthenticatedSession(req);
+      if (isEmpty(given_name) || isEmpty(family_name)) {
         return res.redirect("/users/personal-information");
       }
 

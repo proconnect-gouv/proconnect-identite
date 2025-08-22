@@ -8,10 +8,8 @@ import fs from "fs";
 import helmet from "helmet";
 import { Server } from "http";
 import HttpErrors from "http-errors";
-import { isNull, omitBy } from "lodash-es";
 import morgan from "morgan";
 import { inspect } from "node:util";
-import Provider, { type ClientMetadata, errors } from "oidc-provider";
 import path from "path";
 import { ZodError } from "zod";
 import {
@@ -21,20 +19,16 @@ import {
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
   FRANCECONNECT_ISSUER,
   HOST,
-  JWKS,
   NODE_ENV,
   PORT,
   SESSION_COOKIE_SECRET,
   SESSION_MAX_AGE_IN_SECONDS,
 } from "./config/env";
 import { OidcError } from "./config/errors";
-import { oidcProviderConfiguration } from "./config/oidc-provider-configuration";
+import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
 import { useFranceConnectLogoutMiddlewareFactory } from "./controllers/user/franceconnect";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
-import { connectionCountMiddleware } from "./middlewares/connection-count";
-import { getClients } from "./repositories/oidc-client";
-import oidcProviderRepository from "./repositories/redis/oidc-provider";
 import { apiRouter } from "./routers/api";
 import { interactionRouter } from "./routers/interaction";
 import { mainRouter } from "./routers/main";
@@ -48,6 +42,7 @@ import {
 import { usesAuthHeaders } from "./services/uses-auth-headers";
 
 const app = express();
+const oidcProvider = await createOidcProvider();
 
 if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
   app.use(
@@ -136,68 +131,6 @@ app.use(trustedBrowserMiddleware);
 app.set("views", path.join(import.meta.dirname, "views"));
 app.set("view engine", "ejs");
 
-const clients = await getClients();
-
-// the oidc provider expect provided client attributes to be not null if provided
-const clientsWithoutNullProperties = clients.map(
-  (oidcClient) => omitBy(oidcClient, isNull) as ClientMetadata,
-);
-
-const oidcProvider = new Provider(`${HOST}`, {
-  clients: clientsWithoutNullProperties,
-  adapter: oidcProviderRepository,
-  jwks: JWKS,
-  async renderError(ctx, { error, error_description }, err) {
-    if (
-      !(
-        err instanceof errors.InvalidClient ||
-        err instanceof errors.InvalidRedirectUri ||
-        err instanceof errors.InvalidRequest ||
-        err instanceof errors.InvalidRequestUri
-      )
-    ) {
-      logger.error(err);
-      Sentry.withScope((scope) => {
-        scope.setSDKProcessingMetadata({ request: ctx.request });
-        scope.captureException(err);
-      });
-    }
-
-    ctx.type = "html";
-    ctx.body = await renderWithEjsLayout("error", {
-      error_code:
-        err instanceof errors.OIDCProviderError ? err.statusCode : err,
-      error_message: `${error}: ${error_description}`,
-    });
-  },
-  cookies: {
-    names: {
-      session: "oidc.session",
-      interaction: "oidc.interaction",
-      resume: "oidc.interaction_resume",
-      state: "oidc.state",
-    },
-    long: {
-      overwrite: true,
-      signed: true,
-      secure: FEATURE_USE_SECURE_COOKIES,
-      sameSite: "lax",
-    },
-    short: {
-      overwrite: true,
-      signed: true,
-      secure: FEATURE_USE_SECURE_COOKIES,
-      sameSite: "lax",
-    },
-    keys: SESSION_COOKIE_SECRET,
-  },
-  ...oidcProviderConfiguration({
-    sessionTtlInSeconds: SESSION_MAX_AGE_IN_SECONDS,
-  }),
-});
-oidcProvider.proxy = true;
-oidcProvider.use(connectionCountMiddleware);
-
 app.use(
   "/dist/mail-proconnect.png",
   (req, res, next) => {
@@ -254,7 +187,7 @@ app.use(
 );
 app.use("/oauth", oidcProvider.callback());
 
-if (DEPLOY_ENV === "localhost" || DEPLOY_ENV === "preview") {
+if (DEPLOY_ENV === "localhost") {
   app.use(
     createTestingHandler("/___testing___", {
       ISSUER: FRANCECONNECT_ISSUER,

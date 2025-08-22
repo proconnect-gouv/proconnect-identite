@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "83832482000011",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "74.10Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Activités spécialisées de design"
+    },
+    "tranche_effectif_salarie": {
+      "de": null,
+      "a": null,
+      "code": null,
+      "date_reference": null,
+      "intitule": null
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1521414000,
+    "unite_legale": {
+      "siren": "838324820",
+      "rna": null,
+      "siret_siege_social": "83832482000011",
+      "type": "personne_physique",
+      "personne_morale_attributs": { "raison_sociale": null, "sigle": null },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": "ANGELA",
+        "prenom_1": "ANGELA",
+        "prenom_2": "MARIE",
+        "prenom_3": "CLAIRE",
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": "GNESOTTO",
+        "sexe": "F"
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "1000",
+        "libelle": "Entrepreneur individuel"
+      },
+      "activite_principale": {
+        "code": "74.10Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Activités spécialisées de design"
+      },
+      "tranche_effectif_salarie": {
+        "de": null,
+        "a": null,
+        "code": null,
+        "date_reference": null,
+        "intitule": null
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 1521414000,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "9",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "SAINT-GERMAIN L'AUXERROIS",
+      "code_postal": "75001",
+      "libelle_commune": "PARIS",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "75101",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "",
+        "l2": "GNESOTTO ANGELA",
+        "l3": "",
+        "l4": "9 RUE SAINT-GERMAIN L'AUXERROIS",
+        "l5": "",
+        "l6": "75001 PARIS",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/838324820"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1737846000,
+    "redirect_from_siret": null
+  }
+}

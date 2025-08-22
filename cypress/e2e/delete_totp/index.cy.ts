@@ -1,4 +1,8 @@
 describe("delete TOTP connexion", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should delete TOTP application", function () {
     cy.visit("/connection-and-account");
 
@@ -36,7 +40,7 @@ describe("delete TOTP connexion", () => {
 
     cy.contains("Double authentification");
 
-    cy.get("form[action='/delete-authenticator-app-configuration']").submit();
+    cy.get("form[action='/delete-totp-configuration']").submit();
 
     cy.maildevGetMessageBySubject(
       "Suppression d'une application d'authentification à double facteur",

@@ -40,8 +40,8 @@
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@types/node": "^22.14.1",
-    "openapi-typescript": "^7.6.1",
-    "tsx": "^4.19.4"
+    "openapi-typescript": "^7.9.1",
+    "tsx": "^4.20.3"
   },
   "publishConfig": {
     "access": "public",

@@ -1,6 +1,6 @@
 import { UserIsNot2faCapableError } from "../config/errors";
 import { getById, update } from "../repositories/user";
-import { isAuthenticatorAppConfiguredForUser } from "./totp";
+import { isTotpConfiguredForUser } from "./totp";
 import { isWebauthnConfiguredForUser } from "./webauthn";
 
 export const shouldForce2faForUser = async (user_id: number) => {
@@ -9,7 +9,7 @@ export const shouldForce2faForUser = async (user_id: number) => {
 };
 
 export const is2FACapable = async (user_id: number) => {
-  if (await isAuthenticatorAppConfiguredForUser(user_id)) {
+  if (await isTotpConfiguredForUser(user_id)) {
     return true;
   }
 

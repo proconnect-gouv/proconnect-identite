@@ -4,7 +4,7 @@
 // @see https://annuaire-entreprises.data.gouv.fr/etablissement/00557246600026
 //
 
-import type { InseeSiretEstablishment } from "#src/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "#src/types";
 
 export default {
   siret: "00557246600026",
@@ -96,4 +96,4 @@ export default {
       l7: "FRANCE",
     },
   },
-} as InseeSiretEstablishment;
+} as InseeSireneEstablishmentSiretResponseData;

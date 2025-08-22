@@ -73,18 +73,6 @@
                 <% if (phone_number) { %> value="<%= phone_number; %>"<% } %>
                 >
             </div>
-
-            <div class="fr-input-group">
-                <label class="fr-label" for="job">
-                    Profession ou rôle au sein de votre organisation<span aria-hidden="true"> *</span>
-                </label>
-                <input
-                        class="fr-input" required type="text" name="job" id="job"
-                        pattern="^(?![\d\s]+$).*"
-                        title="Merci d’inscrire une profession existante pour que votre compte soit validé"
-                <% if (job) { %> value="<%= job; %>"<% } %>
-                >
-            </div>
             <%- include('../partials/submit-button.ejs', {label: 'Valider'}) %>
             <%- include('../partials/go-back.ejs') %>
         </form>

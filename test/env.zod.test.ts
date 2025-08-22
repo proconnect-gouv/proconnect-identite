@@ -8,10 +8,10 @@ import { envSchema } from "../src/config/env.zod";
 //
 
 describe("env.zod", () => {
-  it("default sample env with configured INSEE secrets", () => {
+  it("default sample env", () => {
     const sample_env = {
       DATABASE_URL:
-        "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro",
+        "postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite",
       ENTREPRISE_API_TOKEN: "ENTREPRISE_API_TOKEN",
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
@@ -47,7 +47,7 @@ describe("env.zod", () => {
       CRISP_USER_NICKNAME: "ProConnect",
       CRISP_WEBSITE_ID: "",
       DATABASE_URL:
-        "postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro",
+        "postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite",
       DEBOUNCE_API_KEY: "",
       DEPLOY_ENV: "localhost",
       DIRTY_DS_REDIRECTION_URL:
@@ -81,6 +81,11 @@ describe("env.zod", () => {
       ],
       FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES: 129600,
       HTTP_CLIENT_TIMEOUT: 55000,
+      INSEE_API_CLIENT_ID: "🎭 Mocked Insee API Client ID",
+      INSEE_API_CLIENT_SECRET: "🎭 Mocked Insee API Client Secret",
+      INSEE_API_PASSWORD: "🎭 Mocked Insee API Password",
+      INSEE_API_URL: "https://api.insee.fr/api-sirene/prive/3.11",
+      INSEE_API_USERNAME: "🎭 Mocked Insee API Username",
       JWKS: defaultJWKS,
       LOG_LEVEL: "info",
       MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES: 60,

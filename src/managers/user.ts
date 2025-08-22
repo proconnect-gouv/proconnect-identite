@@ -28,6 +28,7 @@ import {
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import { to } from "await-to-js";
 import { isEmpty } from "lodash-es";
+import { AssertionError } from "node:assert";
 import {
   FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
   HOST,
@@ -93,7 +94,13 @@ export const startLogin = async (
       didYouMean = getDidYouMeanSuggestion(email);
     }
 
-    throw new InvalidEmailError(didYouMean);
+    throw new InvalidEmailError(didYouMean, {
+      cause: new AssertionError({
+        actual: email,
+        expected: didYouMean,
+        operator: "isEmailSafeToSendTransactional",
+      }),
+    });
   }
 
   return {
@@ -556,7 +563,24 @@ export const changePassword = async (
   });
 };
 
-export const updatePersonalInformations = async (
+export const updatePersonalInformationsForRegistration = async (
+  userId: number,
+  {
+    given_name,
+    family_name,
+    phone_number,
+  }: Pick<User, "given_name" | "family_name" | "phone_number">,
+): Promise<User> => {
+  const isUserVerified = await getFranceConnectUserInfo(userId);
+  const names = isUserVerified ? {} : { given_name, family_name };
+
+  return update(userId, {
+    ...names,
+    phone_number,
+  });
+};
+
+export const updatePersonalInformationsForDashboard = async (
   userId: number,
   {
     given_name,

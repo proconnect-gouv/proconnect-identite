@@ -64,11 +64,11 @@
 
             <div class="fr-input-group">
                 <label class="fr-label" for="job">
-                    Profession ou rôle au sein de votre organisation<span aria-hidden="true"> *</span>
+                    Profession ou rôle au sein de votre organisation
                 </label>
                 <input
-                        class="fr-input" required type="text" name="job" id="job"
-                        pattern="^(?![\d\s]+$).*"
+                        class="fr-input" type="text" name="job" id="job"
+                        pattern="^(?![\d\s]+$).*$"
                         title="Merci d’inscrire une profession existante pour que votre compte soit validé"
                 <% if (job) { %> value="<%= job; %>"
                         <% } %>
@@ -105,7 +105,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Qu’est-ce que FranceConnect ? - nouvelle fenêtre"
-                >Qu’est-ce que FranceConnect ?</a
+                >Qu’est-ce que FranceConnect ?<span class="visually-hidden"> - nouvelle fenêtre</span></a
               >
             </p>
           </div>

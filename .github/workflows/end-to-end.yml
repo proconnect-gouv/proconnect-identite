@@ -8,7 +8,7 @@ on:
 
 env:
   CYPRESS_RECORD: true
-  DATABASE_URL: postgres://moncomptepro:moncomptepro@localhost:5432/moncomptepro
+  DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
   FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
   SMTP_URL: smtp://localhost:1025
@@ -22,6 +22,7 @@ jobs:
       matrix:
         e2e_test:
           - activate_totp
+          - broken_standard_client
           - check_email_deliverability
           - connect_franceconnect_account
           - delete_account
@@ -33,6 +34,7 @@ jobs:
           - join_org_with_verified_domain
           - join_with_code_sent_to_official_contact_email
           - join_with_code_sent_to_official_educ_nat_contact_email
+          - join_with_free_email_domain
           - join_with_official_contact_email
           - rate_limit_by_email
           - rate_limit_by_ip
@@ -49,11 +51,14 @@ jobs:
           - signin_with_magic_link
           - signin_with_right_acr
           - signin_with_totp
+          - signin_with_totp_enrollment
           - signup_entreprise_unipersonnelle
+          - signup_with_certification_dirigeant
           - update_personal_information
+          - use_extra_param_sp_name
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - run: docker compose up --build --detach
 
@@ -65,10 +70,8 @@ jobs:
       - run: npm ci
       - run: npm run build:workspaces
       - run: npm run migrate up
-      - run: npm run fixtures:load-ci -- cypress/e2e/${{ matrix.e2e_test }}/fixtures.sql
-      - run: npm run update-organization-info -- 0
       - name: Cypress run
-        uses: cypress-io/github-action@v6.9.2
+        uses: cypress-io/github-action@v6.10.2
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets

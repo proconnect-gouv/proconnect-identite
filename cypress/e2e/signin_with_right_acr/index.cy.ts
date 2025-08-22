@@ -4,6 +4,10 @@ describe("sign-in with a client not requiring any acr", () => {
     cy.setRequestedAcrs();
   });
 
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in and return the ACR_VALUE_FOR_IAL1_AAL1 acr value", function () {
     cy.get("button#custom-connection").click({ force: true });
 
@@ -101,14 +105,6 @@ describe("sign-in with a client requiring 2fa identity", () => {
       '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
     );
   });
-
-  it("should return an error with ial1", function () {
-    cy.get("button#custom-connection").click({ force: true });
-
-    cy.login("ial2-aal1@yopmail.com");
-
-    cy.contains("Attention : le site que vous voulez utiliser requiert la 2FA");
-  });
 });
 
 describe("sign-in with a client requiring certification dirigeant identity", () => {
@@ -151,16 +147,6 @@ describe("sign-in with a client requiring certification dirigeant and 2fa identi
 
     cy.contains(
       '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa"',
-    );
-  });
-
-  it("should warn the user that 2fa is required", function () {
-    cy.get("button#custom-connection").click({ force: true });
-
-    cy.login("certification-dirigeant@yopmail.com");
-
-    cy.contains(
-      "Attention : le site que vous voulez utiliser requiert la 2FA, qui réduit les risques de piratage.",
     );
   });
 });

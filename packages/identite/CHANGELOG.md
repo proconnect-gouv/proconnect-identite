@@ -1,5 +1,34 @@
 # @gouvfr-lasuite/proconnect.identite
 
+## 0.8.1
+
+### Patch Changes
+
+- [#1317](https://github.com/numerique-gouv/proconnect-identite/pull/1317) [`749329f`](https://github.com/numerique-gouv/proconnect-identite/commit/749329f4279db13151d42337e578cacbed8d2a26) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 Correction du sélecteur lors de la suppression de domaines de vérification
+
+  see [`b5893a5`](https://github.com/numerique-gouv/proconnect-identite/commit/b5893a5412faeea47afd8b4c9683bae47d389089)
+
+## 0.8.0
+
+### Minor Changes
+
+- [#1284](https://github.com/numerique-gouv/proconnect-identite/pull/1284) [`30db367`](https://github.com/numerique-gouv/proconnect-identite/commit/30db367114350ae67fbdf3a283858addfab56d26) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Renomme la vérification type "receipt_sent" en "proof_received"
+
+## 0.7.0
+
+### Minor Changes
+
+- [#1282](https://github.com/numerique-gouv/proconnect-identite/pull/1282) [`a3b52c3`](https://github.com/numerique-gouv/proconnect-identite/commit/a3b52c33470f24bbe164d2435c717cb1f2f0a932) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Ajoute deux nouveaux types de vérification
+
+  - in_liste_dirigeants_rne : Liste des dirigeants RNE
+  - receipt_sent : Justificatif transmis
+
+## 0.6.0
+
+### Minor Changes
+
+- [#1251](https://github.com/numerique-gouv/proconnect-identite/pull/1251) [`2bd56c8`](https://github.com/numerique-gouv/proconnect-identite/commit/2bd56c8c857fd7a819cbc787faf030547e18023c) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - Centralize handling of email domains verification (addition, deletion, update for a specific domain)
+
 ## 0.5.3
 
 ### Patch Changes

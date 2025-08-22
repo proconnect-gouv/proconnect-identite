@@ -4,7 +4,7 @@
 // @see https://annuaire-entreprises.data.gouv.fr/etablissement/94957325700019
 //
 
-import type { InseeSiretEstablishment } from "#src/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "#src/types";
 
 export default {
   siret: "94957325700019",
@@ -96,4 +96,4 @@ export default {
       l7: "FRANCE",
     },
   },
-} as InseeSiretEstablishment;
+} as InseeSireneEstablishmentSiretResponseData;

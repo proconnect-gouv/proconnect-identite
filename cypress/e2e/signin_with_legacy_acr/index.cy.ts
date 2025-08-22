@@ -1,3 +1,7 @@
+it("should seed the database once", function () {
+  cy.seed();
+});
+
 describe("sign-in with a client not requiring any acr", () => {
   beforeEach(() => {
     cy.visit("http://localhost:4000");

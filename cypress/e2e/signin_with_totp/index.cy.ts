@@ -1,4 +1,8 @@
 describe("sign-in with TOTP on untrusted browser", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in with password and TOTP", function () {
     cy.visit("http://localhost:4000");
     cy.get("button.proconnect-button").click();
@@ -18,17 +22,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
       "Information : pour garantir la sécurité de votre compte, nous avons besoin d’authentifier votre navigateur.",
     );
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.verifyEmail();
 
     cy.contains("standard-client");
   });
@@ -42,23 +36,34 @@ describe("sign-in with TOTP on untrusted browser", () => {
     cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
   });
 
+  it("should sign-in with TOTP when forced by SP, password only otherwise", function () {
+    cy.visit("http://localhost:4000");
+    cy.get("button.proconnect-button").click();
+
+    cy.login("lion.eljonson@darkangels.world");
+
+    cy.verifyEmail();
+
+    cy.visit("http://localhost:3000");
+
+    cy.contains("Jean Jean").click();
+
+    cy.visit("http://localhost:4000");
+
+    cy.get("button#force-2fa").click();
+
+    cy.mfaLogin("lion.eljonson@darkangels.world");
+
+    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
+  });
+
   it("should only show totp step when already logged", function () {
     cy.visit("http://localhost:4000");
     cy.get("button.proconnect-button").click();
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.verifyEmail();
 
     cy.contains("standard-client");
 
@@ -77,9 +82,26 @@ describe("sign-in with TOTP on untrusted browser", () => {
     cy.login("unused3@yopmail.com");
 
     cy.get("[name=totpToken]").type("123456");
-    cy.get(
-      '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
-    ).click();
+    cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
     cy.contains("Code invalide.");
+  });
+
+  it("should show email verification renewal screen", function () {
+    cy.visit("http://localhost:4000");
+    cy.get("button.proconnect-button").click();
+
+    cy.login("jul.treize@marseille.world");
+
+    cy.contains(
+      "pour garantir la sécurité de votre compte, votre adresse email doit être vérifiée régulièrement.",
+    );
+
+    cy.verifyEmail();
+
+    cy.contains("Valider avec la double authentification");
+
+    cy.fillTotpFields();
+
+    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
   });
 });

@@ -1,7 +1,7 @@
 //
 
+import { type Citizen } from "#src/api/data/franceconnect";
 import { type FranceConnectUserInfoResponse } from "@gouvfr-lasuite/proconnect.identite/types";
-import { type Citizen } from "../../data/people.js";
 
 //
 

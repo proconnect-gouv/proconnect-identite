@@ -3,7 +3,7 @@ import {
   CommunautéDeCommunes,
   RogalDornEntrepreneur,
 } from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/insee/siret";
-import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
 import { getOrganizationInfoFactory } from "./get-organization-info.js";
@@ -40,7 +40,7 @@ suite("getOrganizationInfo", () => {
       findBySiret: () =>
         Promise.resolve({
           status_diffusion: "non_diffusible",
-        } as InseeSiretEstablishment),
+        } as InseeSireneEstablishmentSiretResponseData),
     });
     await assert.rejects(getOrganizationInfo("53512638700013"), NotFoundError);
   });

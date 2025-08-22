@@ -1,6 +1,10 @@
 //
 
 describe("Signup into new entreprise unipersonnelle", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("creates a user", function () {
     // Visit the signup page
     cy.visit("/users/start-sign-in");
@@ -19,22 +23,11 @@ describe("Signup into new entreprise unipersonnelle", () => {
       "lion.eljonson@darkangels.world",
     );
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.verifyEmail();
 
     // Fill the user's personal information
     cy.get('[name="given_name"]').type("Georges");
     cy.get('[name="family_name"]').type("Moustaki");
-    cy.get('[name="job"]').type("Chargé de relation usager");
     cy.get('[type="submit"]').click();
 
     // Fill the user's organization information

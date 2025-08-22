@@ -12,10 +12,12 @@ import HttpErrors from "http-errors";
 import { inspect } from "node:util";
 import { z, ZodError } from "zod";
 import notificationMessages from "../config/notification-messages";
-import { getOrganizationInfo } from "../connectors/api-sirene";
+import {
+  getOrganizationInfo,
+  InseeApiRepository,
+} from "../connectors/api-sirene";
 import { sendModerationProcessedEmail } from "../managers/moderation";
 import { forceJoinOrganization } from "../managers/organization/join";
-import { markDomainAsVerified } from "../managers/organization/main";
 import { getUserOrganizationLink } from "../repositories/organization/getters";
 import {
   idSchema,
@@ -39,6 +41,21 @@ export const getPingApiSireneController = async (
     return res.status(502).json({ message: "Bad Gateway" });
   }
 };
+
+export async function getPingApiInseeController(
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  try {
+    await InseeApiRepository.findBySiret("13002526500013"); // we use DINUM siret for the ping route
+    return res.json({});
+  } catch (e) {
+    logger.error(inspect(e, { depth: 3 }));
+    Sentry.captureException(e);
+    return res.status(502).json({ message: "Bad Gateway" });
+  }
+}
 
 export const getOrganizationInfoController = async (
   req: Request,
@@ -158,36 +175,6 @@ export const postSendModerationProcessedEmail = async (
 
     if (e instanceof NotFoundError) {
       return next(new HttpErrors.NotFound());
-    }
-
-    next(e);
-  }
-};
-
-export const postMarkDomainAsVerified = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const schema = z.object({
-      organization_id: idSchema(),
-      domain: z.string().trim().min(1),
-    });
-
-    const { organization_id, domain } = await schema.parseAsync(req.query);
-
-    await markDomainAsVerified({
-      organization_id,
-      domain,
-      domain_verification_type: "verified",
-    });
-
-    return res.json({});
-  } catch (e) {
-    logger.error(e);
-    if (e instanceof ZodError) {
-      return next(new HttpErrors.BadRequest());
     }
 
     next(e);

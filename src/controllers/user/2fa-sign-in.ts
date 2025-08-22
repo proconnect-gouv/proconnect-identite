@@ -3,7 +3,7 @@ import {
   getUserFromAuthenticatedSession,
   isPasskeyAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import { isAuthenticatorAppConfiguredForUser } from "../../managers/totp";
+import { isTotpConfiguredForUser } from "../../managers/totp";
 import { isWebauthnConfiguredForUser } from "../../managers/webauthn";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import getNotificationsFromRequest, {
@@ -18,7 +18,7 @@ export const get2faSignInController = async (
   try {
     const { id, email } = getUserFromAuthenticatedSession(req);
 
-    const showsTotpSection = await isAuthenticatorAppConfiguredForUser(id);
+    const showsTotpSection = await isTotpConfiguredForUser(id);
     let hasCodeError = false;
     if (showsTotpSection) {
       const notificationLabel = await getNotificationLabelFromRequest(req);

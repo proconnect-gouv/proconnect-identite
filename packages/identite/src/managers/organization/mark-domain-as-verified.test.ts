@@ -1,7 +1,7 @@
 import { NotFoundError } from "#src/errors";
 import {
   type AddDomainHandler,
-  type FindEmailDomainsByOrganizationIdHandler,
+  type DeleteEmailDomainsByVerificationTypesHandler,
 } from "#src/repositories/email-domain";
 import type {
   FindByIdHandler,
@@ -10,16 +10,20 @@ import type {
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import type { BaseUserOrganizationLink, Organization, User } from "#src/types";
 import assert from "node:assert/strict";
-import { mock, suite, test } from "node:test";
+import { describe, it, mock } from "node:test";
 import { markDomainAsVerifiedFactory } from "./mark-domain-as-verified.js";
 
 //
 
-suite("markDomainAsVerifiedFactory", () => {
-  test("should update organization members", async (t) => {
+describe("markDomainAsVerified", () => {
+  it("should update organization members", async (t) => {
     const addDomain = mock.fn<AddDomainHandler>(() =>
       Promise.resolve({} as any),
     );
+    const deleteEmailDomainsByVerificationTypes =
+      mock.fn<DeleteEmailDomainsByVerificationTypesHandler>(() =>
+        Promise.resolve({} as any),
+      );
     const updateUserOrganizationLink =
       mock.fn<UpdateUserOrganizationLinkHandler>(() =>
         Promise.resolve({} as any),
@@ -27,8 +31,7 @@ suite("markDomainAsVerifiedFactory", () => {
 
     const markDomainAsVerified = markDomainAsVerifiedFactory({
       addDomain,
-      findEmailDomainsByOrganizationId:
-        mock.fn<FindEmailDomainsByOrganizationIdHandler>(),
+      deleteEmailDomainsByVerificationTypes,
       findOrganizationById: mock.fn<FindByIdHandler>(() =>
         Promise.resolve({ id: 42 } as Organization),
       ),
@@ -54,15 +57,22 @@ suite("markDomainAsVerifiedFactory", () => {
       t.assert.snapshot(updateUserOrganizationLink.mock.calls);
     });
 
+    await t.test(
+      "should call deleteEmailDomainsByVerificationTypes with",
+      async (t) => {
+        t.assert.snapshot(deleteEmailDomainsByVerificationTypes.mock.calls);
+      },
+    );
+
     await t.test("should call addDomain with", async (t) => {
       t.assert.snapshot(addDomain.mock.calls);
     });
   });
 
-  test("❎ throws NotFoundError for unknown organization", async () => {
+  it("❎ throws NotFoundError for unknown organization", async () => {
     const markDomainAsVerified = markDomainAsVerifiedFactory({
       addDomain: () => Promise.reject(),
-      findEmailDomainsByOrganizationId: () => Promise.reject(),
+      deleteEmailDomainsByVerificationTypes: () => Promise.reject(),
       findOrganizationById: () => Promise.resolve(undefined),
       getUsers: () => Promise.reject(),
       updateUserOrganizationLink: () => Promise.reject(),

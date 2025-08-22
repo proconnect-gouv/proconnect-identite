@@ -8,13 +8,13 @@ import {
   formatNomComplet,
   libelleFromCodeEffectif,
 } from "@gouvfr-lasuite/proconnect.entreprise/formatters";
-import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import { capitalize } from "lodash-es";
 
 //
 
 export function fromSiret(
-  siretData: InseeSiretEstablishment,
+  siretData: InseeSireneEstablishmentSiretResponseData,
 ): OrganizationInfo {
   const isPartiallyNonDiffusible =
     siretData.status_diffusion === "partiellement_diffusible";

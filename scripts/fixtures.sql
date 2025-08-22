@@ -163,7 +163,12 @@ VALUES
   (77, 'recette+playwright@immersion-facile.beta.gouv.fr', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Jean', 'Immersion', '0123456789', 'Immersion', null, null, false, false, false),
   (78, 'karima.aknine@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Karima', 'Aknine', '0123456789', 'Grande cheffe de BATI-SEREIN', null, null, false, false, false),
   (79, 'ulysse.tosi@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Ulysse', 'Tosi', '0123456789', 'Grand chef de DANONE et PAPILLON', null, null, false, false, false),
-  (80, 'stevens.cheron@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Ulysse', 'Tosi', '0123456789', 'Grand chef de HERISSON et SURICATE', null, null, false, false, false)
+  (80, 'stevens.cheron@yopmail.com', true, CURRENT_TIMESTAMP, '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Ulysse', 'Tosi', '0123456789', 'Grand chef de HERISSON et SURICATE', null, null, false, false, false),
+  (81, 'user-proconnect-ci@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire',null,null, false, false, false),
+  (82, 'user-mfa-proconnect-ci1@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false),
+  (83, 'user-mfa-proconnect-ci2@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false),
+  (84, 'user-mfa-proconnect-ci3@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false),
+  (85, 'user-mfa-proconnect-ci4@yopmail.com', true, CURRENT_TIMESTAMP,'$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'Jean', 'Jean', '0123456789', 'Sbire','kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',CURRENT_TIMESTAMP, false, false, false)
 ON CONFLICT (id)
   DO UPDATE
   SET (email, email_verified, email_verified_at, encrypted_password, created_at, updated_at, given_name, family_name,
@@ -182,7 +187,7 @@ SELECT setval(
       )
   );
 
-DELETE FROM authenticators WHERE user_id IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55);
+DELETE FROM authenticators WHERE user_id IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85);
 
 INSERT INTO organizations
 (id, siret, created_at, updated_at)
@@ -315,7 +320,8 @@ VALUES
   (52, 2, 'externe.tchap.incubateur.net', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   (53, 1, 'proton.me', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   (54, 3, 'proton.me', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (55, 44, 'proton.me', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  (55, 44, 'proton.me', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (56, 53, 'yopmail.com', 'verified', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
   ON CONFLICT (id)
   DO UPDATE
   SET (organization_id, domain, verification_type, created_at, updated_at, verified_at)
@@ -441,7 +447,13 @@ VALUES
   (1, 52, 'verified_email_domain', true),
   (79, 53, 'organization_dirigeant', true),
   (80, 54, 'organization_dirigeant', true),
-  (80, 55, 'verified_email_domain', true)
+  (80, 55, 'verified_email_domain', true),
+  (81, 1, 'verified_email_domain', true),
+  (81, 49, 'verified_email_domain', true),
+  (82, 1, 'verified_email_domain', true),
+  (83, 1, 'verified_email_domain', true),
+  (84, 1, 'verified_email_domain', true),
+  (85, 1, 'verified_email_domain', true)
 ON CONFLICT (user_id, organization_id)
   DO UPDATE
   SET (verification_type, has_been_greeted)
@@ -1172,7 +1184,21 @@ VALUES
    'openid email organization profile',
    'https://test-usability.identite.proconnect.gouv.fr/',
    'Application pour tests UX',
-   null, null, null, null)
+   null, null, null, null),
+  (37,
+   'ProConnect Federation - Showcase test',
+   'NHNiaHY2NjVucjJoNDVydGN1ZjdkZ3N3NmdmeWo4ejEyYjAyMHkxaWtrdzRuMG5oY3dzbmhxb2Y4cWRlOWg3a2hraGp0OWxzNG15ZnI4NDgyMHZsdWF2d2MxeGxFzsFZ',
+   'eGszbDM3cDU0d2U1aWQyN3N2MXoybm9pbHhoNG1rYzhuYWM5dWhyY3BkcDNnNjE0NmRteXJuM3dpODNzNXY1cTNqaHBhdHFldHg',
+   ARRAY [
+     'https://fca.integ01.dev-agentconnect.fr/api/v2/oidc-callback'
+     ],
+   ARRAY [
+     'https://fca.integ01.dev-agentconnect.fr/api/v2/client/logout-callback'
+     ],
+   'openid uid given_name usual_name email phone siret is_service_public is_public_service',
+   'https://www.proconnect.gouv.fr/',
+   'Dispositif d’identification des agents de la fonction publique.',
+   'ES256', 'ES256', 'ES256', 'ES256')
 ON CONFLICT (id)
   DO UPDATE
   SET (client_name, client_id, client_secret, redirect_uris, post_logout_redirect_uris, scope, client_uri,

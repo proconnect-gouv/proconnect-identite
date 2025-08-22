@@ -49,6 +49,16 @@ export const connectorEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(3 * 30 * 24 * 60), // 3 months in minutes
+  INSEE_API_CLIENT_ID: z.string().default("🎭 Mocked Insee API Client ID"),
+  INSEE_API_CLIENT_SECRET: z
+    .string()
+    .default("🎭 Mocked Insee API Client Secret"),
+  INSEE_API_PASSWORD: z.string().default("🎭 Mocked Insee API Password"),
+  INSEE_API_URL: z
+    .string()
+    .url()
+    .default("https://api.insee.fr/api-sirene/prive/3.11"),
+  INSEE_API_USERNAME: z.string().default("🎭 Mocked Insee API Username"),
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   SENTRY_DSN: z.string().default(""),
   SMTP_FROM: z

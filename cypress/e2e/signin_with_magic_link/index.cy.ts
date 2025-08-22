@@ -1,6 +1,10 @@
 //
 
 describe("sign-in with magic link", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-up with magic link", function () {
     cy.visit("/users/start-sign-in");
 
@@ -68,17 +72,7 @@ describe("sign-in with magic link", () => {
     );
     cy.get('[action="/users/sign-up"]  [type="submit"]').click();
 
-    cy.maildevGetMessageBySubject("Vérification de votre adresse email")
-      .then((email) => {
-        cy.maildevDeleteMessageById(email.id);
-        return cy.maildevGetOTPCode(email.text, 10);
-      })
-      .then((code) => {
-        if (!code)
-          throw new Error("Could not find verification code in received email");
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.verifyEmail();
 
     cy.contains("Renseigner son identité");
   });

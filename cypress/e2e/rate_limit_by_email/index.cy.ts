@@ -1,4 +1,8 @@
 describe("trigger rate limit by email", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should trigger totp rate limiting", function () {
     cy.visit("/users/start-sign-in");
 
@@ -9,9 +13,7 @@ describe("trigger rate limit by email", () => {
         "Obtenir un code à usage unique depuis votre application mobile.",
       ).click();
       cy.focused().type("123456");
-      cy.get(
-        '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
-      ).click();
+      cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
     }
 
     cy.contains("Too Many Requests");

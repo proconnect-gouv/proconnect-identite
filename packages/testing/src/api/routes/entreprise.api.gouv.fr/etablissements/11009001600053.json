@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "11009001600053",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "84.11Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Administration publique générale"
+    },
+    "tranche_effectif_salarie": {
+      "de": null,
+      "a": null,
+      "code": null,
+      "date_reference": null,
+      "intitule": null
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1427839200,
+    "unite_legale": {
+      "siren": "110090016",
+      "rna": null,
+      "siret_siege_social": "11009001600053",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "MINISTERE DES ARMEES ",
+        "sigle": null
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": { "code": "7113", "libelle": "Ministère" },
+      "activite_principale": {
+        "code": "84.11Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Administration publique générale"
+      },
+      "tranche_effectif_salarie": {
+        "de": null,
+        "a": null,
+        "code": null,
+        "date_reference": null,
+        "intitule": null
+      },
+      "economie_sociale_et_solidaire": false,
+      "date_creation": 141865200,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": "BALARD",
+      "numero_voie": "14",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "SAINT-DOMINIQUE",
+      "code_postal": "75007",
+      "libelle_commune": "PARIS",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "75107",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "MINISTERE DES ARMEES",
+        "l2": "",
+        "l3": "BALARD",
+        "l4": "14 RUE SAINT-DOMINIQUE",
+        "l5": "",
+        "l6": "75007 PARIS",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/110090016"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1735772400,
+    "redirect_from_siret": null
+  }
+}

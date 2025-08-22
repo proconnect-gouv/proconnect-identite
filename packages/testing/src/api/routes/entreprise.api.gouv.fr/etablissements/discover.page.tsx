@@ -1,12 +1,12 @@
 //
 
 import { formatNomComplet } from "@gouvfr-lasuite/proconnect.entreprise/formatters";
-import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
 //
 
 export default function DiscoverPage(
   establishment_siret_pair: Array<{
-    establishment: InseeSiretEstablishment;
+    establishment: InseeSireneEstablishmentSiretResponseData;
     siren: string;
   }>,
 ) {
@@ -38,7 +38,10 @@ export default function DiscoverPage(
   `;
 }
 
-function Establissment(siren: string, establishment: InseeSiretEstablishment) {
+function Establissment(
+  siren: string,
+  establishment: InseeSireneEstablishmentSiretResponseData,
+) {
   const libelle = formatNomComplet({
     denominationUniteLegale:
       establishment.unite_legale.personne_morale_attributs.raison_sociale ?? "",
