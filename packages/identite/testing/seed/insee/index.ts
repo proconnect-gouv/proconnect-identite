@@ -6,7 +6,7 @@ import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.insee/t
 export const LiElJonsonEstablishment: InseeSiretEstablishment = {
   uniteLegale: {
     codeCommuneNaissanceUniteLegale: "INW",
-    dateNaissanceUniteLegale: "28500-02-05",
+    dateNaissanceUniteLegale: "285000205",
     nomUniteLegale: "EL'JONSON",
     prenom1UniteLegale: "LION",
   },
@@ -15,7 +15,7 @@ export const LiElJonsonEstablishment: InseeSiretEstablishment = {
 export const RogalDornEstablishment: InseeSiretEstablishment = {
   uniteLegale: {
     codeCommuneNaissanceUniteLegale: "INWIT",
-    dateNaissanceUniteLegale: "29000-01-07",
+    dateNaissanceUniteLegale: "290000107",
     nomUniteLegale: "DORN",
     prenom1UniteLegale: "ROGAL",
   },

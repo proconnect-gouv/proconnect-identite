@@ -40,7 +40,9 @@ export async function getFranceConnectLoginCallbackMiddleware(
 
     if (errorQuery.success) {
       const { error, error_description } = errorQuery.data;
-      throw new OidcError(error, error_description);
+      throw new OidcError(error, error_description, {
+        cause: errorQuery.error,
+      });
     }
     const { code } = await z.object({ code: z.string() }).parseAsync(req.query);
 

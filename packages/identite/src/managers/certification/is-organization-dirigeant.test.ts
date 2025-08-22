@@ -21,7 +21,7 @@ import { isOrganizationDirigeantFactory } from "./is-organization-dirigeant.js";
 //
 
 describe("isOrganizationDirigeantFactory", () => {
-  it("should recognize a user as executive of a auto-entrepreneur found on infogreffe", async () => {
+  it("should recognize a user as executive of a auto-entrepreneur", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
       EntrepriseApiInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),

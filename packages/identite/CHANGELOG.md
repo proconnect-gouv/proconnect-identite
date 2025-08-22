@@ -1,5 +1,13 @@
 # @gouvfr-lasuite/proconnect.identite
 
+## 0.8.1
+
+### Patch Changes
+
+- [#1317](https://github.com/numerique-gouv/proconnect-identite/pull/1317) [`749329f`](https://github.com/numerique-gouv/proconnect-identite/commit/749329f4279db13151d42337e578cacbed8d2a26) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 Correction du sélecteur lors de la suppression de domaines de vérification
+
+  see [`b5893a5`](https://github.com/numerique-gouv/proconnect-identite/commit/b5893a5412faeea47afd8b4c9683bae47d389089)
+
 ## 0.8.0
 
 ### Minor Changes

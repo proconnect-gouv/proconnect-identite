@@ -9,7 +9,10 @@ import {
   OrganizationNotFoundError,
 } from "@gouvfr-lasuite/proconnect.identite/errors";
 import { forceJoinOrganizationFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
-import { isEntrepriseUnipersonnelle } from "@gouvfr-lasuite/proconnect.identite/services/organization";
+import {
+  isDomainAllowedForOrganization,
+  isEntrepriseUnipersonnelle,
+} from "@gouvfr-lasuite/proconnect.identite/services/organization";
 import type {
   Organization,
   OrganizationInfo,
@@ -17,6 +20,7 @@ import type {
 } from "@gouvfr-lasuite/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
+import { AssertionError } from "node:assert";
 import { inspect } from "node:util";
 import {
   CRISP_WEBSITE_ID,
@@ -26,6 +30,7 @@ import {
 } from "../../config/env";
 import {
   AccessRestrictedToPublicServiceEmailError,
+  DomainRestrictedError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -167,7 +172,13 @@ export const joinOrganization = async ({
   });
   if (!isEmpty(pendingModeration)) {
     const { id: moderation_id } = pendingModeration;
-    throw new UserAlreadyAskedToJoinOrganizationError(moderation_id);
+    throw new UserAlreadyAskedToJoinOrganizationError(moderation_id, {
+      cause: new AssertionError({
+        expected: undefined,
+        actual: pendingModeration,
+        operator: "findPendingModeration",
+      }),
+    });
   }
 
   const { id: organization_id, cached_libelle } = organization;
@@ -175,6 +186,10 @@ export const joinOrganization = async ({
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
+
+  if (!isDomainAllowedForOrganization(siret, domain)) {
+    throw new DomainRestrictedError(organization_id);
+  }
 
   if (certificationRequested) {
     const isDirigeant = await isOrganizationDirigeant(siret, user_id);

@@ -1,12 +1,12 @@
 services:
   db:
-    image: postgres:16.9
+    image: postgres:16.10
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: moncomptepro
-      POSTGRES_PASSWORD: moncomptepro
-      POSTGRES_DB: moncomptepro
+      POSTGRES_USER: proconnect-identite
+      POSTGRES_PASSWORD: proconnect-identite
+      POSTGRES_DB: proconnect-identite
     volumes:
       - db-data:/var/lib/postgresql/data
 
@@ -16,7 +16,7 @@ services:
       - "6379:6379"
 
   demo-test-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:12bca86f5f0270d270fc46f51b110f033fa7e7831213f671a299c06908a849ab # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:b981b56a8f09356f438731b185e57199f9b54eaae369fc32e294e745de07039e # latest
     environment:
       PORT: 3001
       # default env var can be found at https://github.com/numerique-gouv/proconnect-test-client/blob/master/.env
@@ -26,7 +26,7 @@ services:
     network_mode: "host"
 
   standard-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:12bca86f5f0270d270fc46f51b110f033fa7e7831213f671a299c06908a849ab # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:b981b56a8f09356f438731b185e57199f9b54eaae369fc32e294e745de07039e # latest
     environment:
       PORT: 4000
       SITE_TITLE: standard-client
@@ -40,7 +40,7 @@ services:
     network_mode: "host"
 
   proconnect-federation-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:12bca86f5f0270d270fc46f51b110f033fa7e7831213f671a299c06908a849ab # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:b981b56a8f09356f438731b185e57199f9b54eaae369fc32e294e745de07039e # latest
     environment:
       PORT: 4001
       SITE_TITLE: proconnect-federation-client
@@ -54,6 +54,7 @@ services:
       STYLESHEET_URL:
       LOGIN_HINT: unused1@yopmail.com
       ACR_VALUES: eidas1
+      EXTRA_PARAM_SP_NAME: ProConnect Test
     network_mode: "host"
 
   maildev:

@@ -58,7 +58,7 @@ export function markDomainAsVerifiedFactory({
 
     return match(domain_verification_type)
       .with(
-        ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
+        ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.options,
         async (approved_verification_type) => {
           await assignUserVerificationTypeToDomain(organization_id, domain);
           return markDomainAsApproved({
@@ -69,7 +69,7 @@ export function markDomainAsVerifiedFactory({
         },
       )
       .with(
-        ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
+        ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.options,
         (rejected_verification_type) =>
           markDomainAsRejected({
             organization_id,
@@ -93,7 +93,7 @@ export function markDomainAsVerifiedFactory({
       organization_id,
       domain,
       domain_verification_types: [
-        ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
+        ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.options,
         null,
       ],
     });
@@ -118,7 +118,7 @@ export function markDomainAsVerifiedFactory({
       domain,
       domain_verification_types: [
         null,
-        ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
+        ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.options,
       ],
     });
     return addDomain({

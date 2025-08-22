@@ -26,14 +26,14 @@
   "dependencies": {
     "@gouvfr-lasuite/proconnect.entreprise": "0.0.0",
     "@hono/node-server": "^1.14.4",
-    "@hono/zod-validator": "^0.5.0",
-    "hono": "^4.7.10"
+    "@hono/zod-validator": "^0.7.2",
+    "hono": "^4.8.4"
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
-    "@types/oidc-provider": "^8.8.1",
+    "@types/oidc-provider": "^9.1.1",
     "@types/yargs": "^17.0.33",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "publishConfig": {
     "access": "public",

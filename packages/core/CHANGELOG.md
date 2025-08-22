@@ -1,4 +1,24 @@
-# @gouvfr-lasuite/moncomptepro.core
+# @gouvfr-lasuite/proconnect.core
+
+## 0.6.0
+
+### Minor Changes
+
+- [#1325](https://github.com/numerique-gouv/proconnect-identite/pull/1325) [`44b039f`](https://github.com/numerique-gouv/proconnect-identite/commit/44b039fd25607b001d85d9ea5ef725a6d347cf78) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ✨ Ajouter l'export du dossier data pour permettre l'import direct des domaines d'emails gratuits les plus utilisés
+
+  Cette modification permet aux outils externes (comme hyyypertool) d'importer directement les données de domaines d'emails gratuits sans avoir besoin de dupliquer les listes.
+
+  **Nouveaux exports disponibles :**
+
+  - `@gouvfr-lasuite/proconnect.core/data` - export barrel pour toutes les données
+
+  **Utilisation :**
+
+  ```typescript
+  import { mostUsedFreeEmailDomains } from "@gouvfr-lasuite/proconnect.core/data";
+  ```
+
+  Cette amélioration résout la dette technique de migration et centralise la gestion des domaines d'emails gratuits.
 
 ## 0.5.0
 

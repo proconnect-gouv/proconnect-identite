@@ -36,14 +36,14 @@
     "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {
-    "axios": "^1.8.4",
+    "axios": "^1.11.0",
     "zod": "^3.25.28"
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
-    "@types/node": "^22.14.1",
+    "@types/node": "^24.3.0",
     "pkgroll": "^2.12.1",
-    "tsx": "^4.19.4"
+    "tsx": "^4.20.3"
   },
   "publishConfig": {
     "access": "public",

@@ -311,9 +311,8 @@ export const checkUserHasPersonalInformationsMiddleware = (
   checkUserNeedCertificationDirigeantMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
-      const { given_name, family_name, job } =
-        getUserFromAuthenticatedSession(req);
-      if (isEmpty(given_name) || isEmpty(family_name) || isEmpty(job)) {
+      const { given_name, family_name } = getUserFromAuthenticatedSession(req);
+      if (isEmpty(given_name) || isEmpty(family_name)) {
         return res.redirect("/users/personal-information");
       }
 

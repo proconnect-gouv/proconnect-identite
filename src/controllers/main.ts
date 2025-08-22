@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import moment from "moment/moment";
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
 import {
   DIRTY_DS_REDIRECTION_URL,
   FEATURE_FRANCECONNECT_CONNECTION,
@@ -22,15 +22,19 @@ import {
   getUserVerificationLabel,
   isUserVerifiedWithFranceconnect,
   sendUpdatePersonalInformationEmail,
-  updatePersonalInformations,
+  updatePersonalInformationsForDashboard,
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
 import {
+  jobSchema,
+  nameSchema,
+  phoneNumberSchema,
+} from "../services/custom-zod-schemas";
+import {
   getNotificationLabelFromRequest,
   getNotificationsFromRequest,
 } from "../services/get-notifications-from-request";
-import { getParamsForPostPersonalInformationsController } from "./user/update-personal-informations";
 
 export const getHomeController = async (
   req: Request,
@@ -75,12 +79,20 @@ export const postPersonalInformationsController = async (
   next: NextFunction,
 ) => {
   try {
+    const schema = z.object({
+      given_name: nameSchema(),
+      family_name: nameSchema(),
+      phone_number: phoneNumberSchema(),
+      job: jobSchema(),
+    });
+
     const { given_name, family_name, phone_number, job } =
-      await getParamsForPostPersonalInformationsController(req);
+      await schema.parseAsync(req.body);
+
     const { id: userId } = getUserFromAuthenticatedSession(req);
     const verifiedBy = await getUserVerificationLabel(userId);
 
-    const updatedUser = await updatePersonalInformations(userId, {
+    const updatedUser = await updatePersonalInformationsForDashboard(userId, {
       given_name,
       family_name,
       phone_number,
@@ -190,6 +202,48 @@ export const getConnectionAndAccountController = async (
       csrfToken: csrfToken(req),
       is2faCapable,
       force2fa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getConditionsGeneralesDUtilisationController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/cgu", {
+      pageTitle: "Conditions Générales d'Utilisation - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPolitiqueDeConfidentialiteController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/privacy-policy", {
+      pageTitle: "Politique de confidentialité - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAccessibiliteController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/accessibility", {
+      pageTitle: "Accessibilité - ProConnect",
     });
   } catch (error) {
     next(error);

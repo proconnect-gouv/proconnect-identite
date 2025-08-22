@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import { AssertionError } from "node:assert";
 import Provider, { errors } from "oidc-provider";
 import { z } from "zod";
 import { FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR } from "../config/env";
@@ -31,7 +32,8 @@ export const interactionStartControllerFactory =
         params,
         prompt,
       } = await oidcProvider.interactionDetails(req, res);
-      const { client_id, login_hint, scope } = params as OIDCContextParams;
+      const { client_id, login_hint, scope, sp_name } =
+        params as OIDCContextParams;
 
       req.session.certificationDirigeantRequested =
         certificationDirigeantRequested(prompt);
@@ -39,6 +41,7 @@ export const interactionStartControllerFactory =
       req.session.mustReturnOneOrganizationInPayload =
         mustReturnOneOrganizationInPayload(scope);
       req.session.twoFactorsAuthRequested = twoFactorsAuthRequested(prompt);
+      req.session.spName = sp_name || undefined;
 
       const oidcClient = await findByClientId(client_id);
       req.session.authForProconnectFederation =
@@ -131,6 +134,13 @@ export const interactionEndControllerFactory =
           new OidcError(
             "access_denied",
             "none of the requested ACRs could be obtained",
+            {
+              cause: new AssertionError({
+                expected: prompt,
+                actual: currentAcr,
+                operator: "isAcrSatisfied",
+              }),
+            },
           ),
         );
       }

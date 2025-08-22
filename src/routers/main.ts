@@ -6,10 +6,13 @@ import {
   postSetForce2faController,
 } from "../controllers/2fa";
 import {
+  getAccessibiliteController,
+  getConditionsGeneralesDUtilisationController,
   getConnectionAndAccountController,
   getHomeController,
   getManageOrganizationsController,
   getPersonalInformationsController,
+  getPolitiqueDeConfidentialiteController,
   postPersonalInformationsController,
 } from "../controllers/main";
 import {
@@ -178,6 +181,33 @@ export const mainRouter = (app: Express) => {
     rateLimiterMiddleware,
     checkUserCanAccessAppMiddleware,
     getHomeController,
+  );
+
+  mainRouter.get(
+    "/conditions-generales-d-utilisation",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    getConditionsGeneralesDUtilisationController,
+  );
+
+  mainRouter.get(
+    "/politique-de-confidentialite",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    getPolitiqueDeConfidentialiteController,
+  );
+
+  mainRouter.get(
+    "/accessibilite",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    getAccessibiliteController,
   );
 
   return mainRouter;

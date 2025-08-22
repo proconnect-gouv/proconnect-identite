@@ -11,12 +11,10 @@ $.verbose = true;
 //
 
 let testCase = argv._[0];
-const mode = argv["dev"] ? "development" : "single";
-const interactive = !process.env["CI"];
 
 const doesExist = await fs.exists(`cypress/e2e/${testCase}`);
 
-if (interactive && (!testCase || !doesExist)) {
+if (!testCase || !doesExist) {
   console.log(`Could not resolve test case "${testCase}"`);
   const availableTestCases = await readdir("cypress/e2e");
   console.log(
@@ -52,27 +50,17 @@ if (interactive && (!testCase || !doesExist)) {
   console.log();
 }
 
-//
-
-console.log(`🚥 Setup test "${testCase}" case in ${mode} mode`);
+console.log(`🚥 Loading fixtures in database for "${testCase}" case`);
 console.log();
+
+await $({ nothrow: true })`npm run delete-database`;
+await $`npm run migrate up`;
+await $`npm run fixtures:load-ci cypress/e2e/${testCase}/fixtures.sql`;
+await $`npm run update-organization-info 0`;
+
+console.log(`🚥 Setup test "${testCase}" case`);
+console.log();
+
 await $`npm run build:workspaces`;
 
-if (mode === "development") {
-  $`npx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev`;
-} else {
-  await $({ nothrow: true })`npm run delete-database`;
-  await $`npm run migrate up`;
-  await $`npm run fixtures:load-ci cypress/e2e/${testCase}/fixtures.sql`;
-  await $`npm run update-organization-info 0`;
-  console.log();
-  console.log("All set and ready !");
-
-  console.log("Run the app with the specific env vars:");
-
-  console.log(`
-  \t\`\`\`bash
-  \tnpx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev
-  \t\`\`\`
-  `);
-}
+$`npx dotenvx run -f cypress/e2e/${testCase}/env.conf -- npm run dev`;
