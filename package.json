@@ -144,7 +144,7 @@
     "nock": "^14.0.10",
     "node-pg-migrate": "^7.9.1",
     "npm-run-all2": "^8.0.4",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "tld-extract": "^2.1.0",
     "typescript": "^5.8.3",
