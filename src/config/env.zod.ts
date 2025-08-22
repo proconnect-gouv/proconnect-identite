@@ -1,4 +1,4 @@
-import { z, type ZodTypeAny } from "zod";
+import { z } from "zod";
 import { defaultJWKS } from "./default-jwks";
 
 export const connectorEnvSchema = z.object({
@@ -7,7 +7,7 @@ export const connectorEnvSchema = z.object({
   CRISP_BASE_URL: z.string().url().default("https://api.crisp.chat"),
   CRISP_IDENTIFIER: z.string().default(""),
   CRISP_KEY: z.string().default(""),
-  CRISP_MODERATION_TAG: zCoerceArray(z.string()).default("identite,moderation"),
+  CRISP_MODERATION_TAG: zCoerceArray().default(["identite", "moderation"]),
   CRISP_PLUGIN_URN: z.string().default(""),
   CRISP_RESOLVE_DELAY: z.coerce.number().int().nonnegative().default(1_000), // 1 second
   CRISP_USER_NICKNAME: z.string().default("ProConnect"),
@@ -33,17 +33,15 @@ export const connectorEnvSchema = z.object({
     .default("🎭 Mocked FranceConnect Client Secret"),
   FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("ES256"),
   FRANCECONNECT_ISSUER: z.string().url(),
-  FRANCECONNECT_SCOPES: zCoerceArray(z.string()).default(
-    [
-      "birthplace",
-      "birthdate",
-      "family_name",
-      "gender",
-      "given_name",
-      "openid",
-      "preferred_username",
-    ].join(" "),
-  ),
+  FRANCECONNECT_SCOPES: zCoerceArray().default([
+    "birthplace",
+    "birthdate",
+    "family_name",
+    "gender",
+    "given_name",
+    "openid",
+    "preferred_username",
+  ]),
   FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
@@ -68,23 +66,22 @@ export const connectorEnvSchema = z.object({
 });
 
 export const featureTogglesEnvSchema = z.object({
-  FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: zodTrueFalseBoolean().default("False"),
-  FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default("False"),
-  FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default("False"),
-  FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default("False"),
+  FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: zodTrueFalseBoolean().default(false),
+  FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default(false),
+  FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default(false),
+  FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE:
-    zodTrueFalseBoolean().default("False"),
+    zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE:
-    zodTrueFalseBoolean().default("True"),
-  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED:
-    zodTrueFalseBoolean().default("False"),
-  FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default("False"),
-  FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default("False"),
-  FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default("False"),
-  FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default("False"),
-  FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default("False"),
-  FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default("False"),
-  FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default("False"),
+    zodTrueFalseBoolean().default(true),
+  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED: zodTrueFalseBoolean().default(false),
+  FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default(false),
+  FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default(false),
+  FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
+  FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),
+  FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default(false),
+  FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default(false),
+  FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default(false),
 });
 
 export const secretEnvSchema = z.object({
@@ -95,10 +92,13 @@ export const secretEnvSchema = z.object({
         "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long! Use crypto.randomBytes(32).toString('base64') to generate one.",
     })
     .default("aTrueRandom32BytesLongBase64EncodedStringAA="),
-  SESSION_COOKIE_SECRET: zCoerceArray(z.string()).default("proconnectsecret"),
-  JWKS: zCoerceJson()
-    .default(JSON.stringify(defaultJWKS))
-    .pipe(z.object({ keys: z.array(z.any()) })),
+  SESSION_COOKIE_SECRET: zCoerceArray().default(["proconnectsecret"]),
+  JWKS: z
+    .preprocess(
+      (val) => (typeof val === "string" ? JSON.parse(val) : val),
+      z.object({ keys: z.array(z.any()) }),
+    )
+    .default(defaultJWKS),
 });
 
 export const paramsEnvSchema = z.object({
@@ -141,7 +141,7 @@ export const paramsEnvSchema = z.object({
     .default(
       "https://www.demarches-simplifiees.fr/agent_connect/logout_from_mcp",
     ),
-  EMAIL_DELIVERABILITY_WHITELIST: zCoerceArray(z.string()).default(""),
+  EMAIL_DELIVERABILITY_WHITELIST: zCoerceArray().default([]),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
@@ -213,20 +213,8 @@ export function zodTrueFalseBoolean() {
   return z.enum(["True", "False"]).transform((v: string) => v === "True");
 }
 
-export function zCoerceArray<T extends ZodTypeAny>(schema: T) {
+export function zCoerceArray() {
   return z
     .string()
-    .transform((value) => (value === "" ? [] : value.split(",")))
-    .pipe(z.array(schema));
-}
-
-export function zCoerceJson() {
-  return z.string().transform((str, ctx) => {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: "Invalid JSON" });
-      return z.NEVER;
-    }
-  });
+    .transform((value) => (value === "" ? [] : value.split(",")));
 }
