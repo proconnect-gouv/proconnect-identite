@@ -75,7 +75,7 @@
     "@sentry/node": "^9.42.1",
     "@sentry/profiling-node": "^9.42.1",
     "@simplewebauthn/browser": "^8.3.4",
-    "@simplewebauthn/server": "^8.3.5",
+    "@simplewebauthn/server": "^13.1.2",
     "@sunknudsen/totp": "^1.2.0",
     "await-to-js": "^3.0.0",
     "axios": "^1.11.0",
