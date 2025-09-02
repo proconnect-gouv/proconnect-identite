@@ -16,7 +16,7 @@ services:
       - "6379:6379"
 
   demo-test-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:b981b56a8f09356f438731b185e57199f9b54eaae369fc32e294e745de07039e # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:928c772634989db7b6b33ed21374acf5889237900a9e174b2e2ede146826fe07 # latest
     environment:
       PORT: 3001
       # default env var can be found at https://github.com/numerique-gouv/proconnect-test-client/blob/master/.env
@@ -26,7 +26,7 @@ services:
     network_mode: "host"
 
   standard-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:b981b56a8f09356f438731b185e57199f9b54eaae369fc32e294e745de07039e # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:928c772634989db7b6b33ed21374acf5889237900a9e174b2e2ede146826fe07 # latest
     environment:
       PORT: 4000
       SITE_TITLE: standard-client
@@ -40,7 +40,7 @@ services:
     network_mode: "host"
 
   proconnect-federation-client:
-    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:b981b56a8f09356f438731b185e57199f9b54eaae369fc32e294e745de07039e # latest
+    image: ghcr.io/numerique-gouv/proconnect-test-client@sha256:928c772634989db7b6b33ed21374acf5889237900a9e174b2e2ede146826fe07 # latest
     environment:
       PORT: 4001
       SITE_TITLE: proconnect-federation-client
