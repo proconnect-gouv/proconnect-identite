@@ -453,7 +453,10 @@ export const sendSendMagicLinkEmail = async (
     html: MagicLink({
       baseurl: host,
       magic_link: `${host}/users/sign-in-with-magic-link?magic_link_token=${magicLinkToken}`,
-    }).toString(),
+    })
+      .toString()
+      .replace(/<\//g, "\n</"),
+
     tag: "magic-link",
   });
 
