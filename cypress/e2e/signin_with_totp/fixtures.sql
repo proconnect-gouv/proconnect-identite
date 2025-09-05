@@ -20,7 +20,7 @@ VALUES
    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
    CURRENT_TIMESTAMP, true
   ),
-  (4, 'jul.treize@marseille.world', true, CURRENT_TIMESTAMP - INTERVAL '3 MONTHS 1 WEEK', '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 
+  (4, 'jul.treize@marseille.world', true, CURRENT_TIMESTAMP - INTERVAL '3 MONTHS 1 WEEK', '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
   'Jean', 'Jean', '0123456789', 'Sbire', 'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==', CURRENT_TIMESTAMP, true
   );
 
@@ -52,5 +52,5 @@ VALUES
    ARRAY []::varchar[],
    'openid email profile organization',
    'http://localhost:4000/',
-   'ProConnect test client. More info: https://github.com/numerique-gouv/proconnect-test-client.',
+   'ProConnect test client. More info: https://github.com/proconnect-gouv/proconnect-test-client.',
    null, null, null, null);
