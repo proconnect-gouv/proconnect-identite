@@ -12,7 +12,7 @@ Thus, any person affiliated with an organization registered with INSEE, meaning 
 identity provided by the DINUM within the ProConnect federation.
 
 To integrate with the ProConnect federation, please refer
-to [our online documentation](https://github.com/numerique-gouv/proconnect-documentation).
+to [our online documentation](https://partenaires.proconnect.gouv.fr/docs).
 
 > ⚠️ ProConnect Identité can no longer be used outside of [the ProConnect federation](https://www.proconnect.gouv.fr/).
 
@@ -114,7 +114,7 @@ By default, the application will run with testing mocks for external apis.
 
 ### Testing the Connection with a Test Client
 
-ProConnect Identité is provided with a test client: https://github.com/numerique-gouv/proconnect-test-client
+ProConnect Identité is provided with a test client: https://github.com/proconnect-gouv/proconnect-test-client
 
 This container is launched within the ProConnect Identité `docker-compose.yml`.
 
