@@ -9,11 +9,11 @@
     "api",
     "rest"
   ],
-  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/crisp#readme",
-  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/crisp#readme",
+  "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
+    "url": "git+https://github.com/proconnect-gouv/proconnect-identite.git",
     "directory": "packages/crisp"
   },
   "license": "MIT",

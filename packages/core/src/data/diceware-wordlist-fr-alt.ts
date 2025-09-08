@@ -1,4 +1,4 @@
-// source https://github.com/numerique-gouv/diceware-fr-alt
+// source https://github.com/proconnect-gouv/diceware-fr-alt
 
 export default {
   "11111": "abandon",
