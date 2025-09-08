@@ -129,7 +129,7 @@
     "@types/lodash": "^4.17.20",
     "@types/lodash-es": "^4.17.12",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^24.3.0",
+    "@types/node": "^24.3.1",
     "@types/nodemailer": "^6.4.17",
     "@types/oidc-provider": "^9.1.1",
     "@types/qrcode": "^1.5.5",
