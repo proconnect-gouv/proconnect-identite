@@ -45,7 +45,7 @@ export const isPublicService = ({
   );
 
   const siren = (siret || "").substring(0, 9);
-  const whitelist_ok = ["320252489"].includes(siren);
+  const whitelist_ok = ["320252489", "777749326"].includes(siren);
 
   return cat_jur_ok || whitelist_ok;
 };
