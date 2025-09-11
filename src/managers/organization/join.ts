@@ -34,6 +34,7 @@ import {
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
+  UserModerationRejectedError,
   UserMustConfirmToJoinOrganizationError,
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
@@ -45,6 +46,7 @@ import { findEmailDomainsByOrganizationId } from "../../repositories/email-domai
 import {
   createModeration,
   findPendingModeration,
+  findRejectedModeration,
 } from "../../repositories/moderation";
 import {
   findByUserId,
@@ -177,6 +179,22 @@ export const joinOrganization = async ({
         expected: undefined,
         actual: pendingModeration,
         operator: "findPendingModeration",
+      }),
+    });
+  }
+
+  const rejectedModeration = await findRejectedModeration({
+    user_id,
+    organization_id: organization.id,
+    type: "organization_join_block",
+  });
+  if (!isEmpty(rejectedModeration)) {
+    const { id: moderation_id } = rejectedModeration;
+    throw new UserModerationRejectedError(moderation_id, {
+      cause: new AssertionError({
+        expected: undefined,
+        actual: rejectedModeration,
+        operator: "findRejectedModeration",
       }),
     });
   }

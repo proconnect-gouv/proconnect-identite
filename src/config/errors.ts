@@ -35,6 +35,16 @@ export class UserAlreadyAskedToJoinOrganizationError extends Error {
   }
 }
 
+export class UserModerationRejectedError extends Error {
+  constructor(
+    public moderationId: number,
+    options?: ErrorOptions,
+  ) {
+    super(`Moderation ${moderationId} was rejected`, options);
+    this.name = "UserModerationRejectedError";
+  }
+}
+
 export class UserMustConfirmToJoinOrganizationError extends Error {
   constructor(
     public organizationId: number,
