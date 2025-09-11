@@ -6,6 +6,7 @@ import {
   getDomainsRestrictedInOrganizationController,
   getJoinOrganizationConfirmController,
   getJoinOrganizationController,
+  getModerationRejectedController,
   getOrganizationSuggestionsController,
   getUnableToAutoJoinOrganizationController,
   getUnableToCertifyUserAsExecutiveController,
@@ -17,7 +18,10 @@ import { getCertificationDirigeantController } from "../controllers/user/certifi
 import { postDeleteUserController } from "../controllers/user/delete";
 
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
-import { postCancelModerationAndRedirectControllerFactory } from "../controllers/user/edit-moderation";
+import {
+  postCancelModerationAndRedirectControllerFactory,
+  postReopenModerationAndRedirectControllerFactory,
+} from "../controllers/user/edit-moderation";
 import {
   getFranceConnectLoginCallbackMiddleware,
   getFranceConnectLogoutCallbackControllerFactory,
@@ -417,6 +421,12 @@ export const userRouter = () => {
     getUnableToAutoJoinOrganizationController,
   );
   userRouter.get(
+    "/moderation-rejected",
+    checkUserHasPersonalInformationsMiddleware,
+    csrfProtectionMiddleware,
+    getModerationRejectedController,
+  );
+  userRouter.get(
     "/access-restricted-to-public-sector-email",
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
@@ -444,6 +454,14 @@ export const userRouter = () => {
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
+      "/users/personal-information",
+    ),
+  );
+  userRouter.post(
+    "/reopen-moderation/:moderation_id",
+    checkUserHasPersonalInformationsMiddleware,
+    csrfProtectionMiddleware,
+    postReopenModerationAndRedirectControllerFactory(
       "/users/personal-information",
     ),
   );
