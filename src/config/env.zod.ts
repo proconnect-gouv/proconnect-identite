@@ -80,6 +80,7 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
   FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),
   FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default(false),
+  FEATURE_USE_INTERNAL_DATA_FOR_SIREN: zCoerceArray().default([]),
   FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default(false),
   FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default(false),
 });
