@@ -17,6 +17,7 @@ import {
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
+  UserModerationRejectedError,
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
 import { getOrganizationFromModeration } from "../managers/moderation";
@@ -32,6 +33,7 @@ import {
 } from "../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { getModerationById } from "../repositories/moderation";
 import {
   idSchema,
   oidcErrorSchema,
@@ -40,6 +42,10 @@ import {
 } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
+import {
+  extractRejectionReason,
+  isWarningRejection,
+} from "../services/moderation";
 
 export const getJoinOrganizationController = async (
   req: Request,
@@ -139,6 +145,12 @@ export const postJoinOrganizationMiddleware = async (
     ) {
       return res.redirect(
         `/users/unable-to-auto-join-organization?moderation_id=${error.moderationId}`,
+      );
+    }
+
+    if (error instanceof UserModerationRejectedError) {
+      return res.redirect(
+        `/users/moderation-rejected?moderation_id=${error.moderationId}`,
       );
     }
 
@@ -272,6 +284,51 @@ export const getUnableToAutoJoinOrganizationController = async (
       job: user.job,
       organization_label: cached_libelle,
       moderation_id,
+    });
+  } catch (e) {
+    if (e instanceof NotFoundError) {
+      next(new HttpErrors.NotFound());
+    }
+    next(e);
+  }
+};
+
+export const getModerationRejectedController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      moderation_id: idSchema(),
+    });
+    const { moderation_id } = await schema.parseAsync(req.query);
+    const user = getUserFromAuthenticatedSession(req);
+
+    const { comment, user_id } = await getModerationById(moderation_id);
+
+    if (user_id !== user.id) return next(new HttpErrors.NotFound());
+
+    const { cached_libelle } = await getOrganizationFromModeration({
+      user,
+      moderation_id,
+    });
+
+    const rejectionReason = extractRejectionReason(comment);
+    const isWarning = isWarningRejection(rejectionReason);
+
+    return res.render("user/moderation-rejected", {
+      csrfToken: csrfToken(req),
+      email: user.email,
+      family_name: user.family_name,
+      given_name: user.given_name,
+      rejectionReason,
+      illustration: "illu-support.svg",
+      job: user.job,
+      moderation_id,
+      organization_label: cached_libelle,
+      pageTitle: isWarning ? "Informations à corriger" : "Demande refusée",
+      isWarning,
     });
   } catch (e) {
     if (e instanceof NotFoundError) {
