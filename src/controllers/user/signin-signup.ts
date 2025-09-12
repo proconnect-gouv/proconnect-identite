@@ -6,6 +6,7 @@ import {
   InvalidCredentialsError,
   InvalidEmailError,
   LeakedPasswordError,
+  NotFoundError,
   WeakPasswordError,
 } from "../../config/errors";
 import { createAuthenticatedSession } from "../../managers/session/authenticated";
@@ -199,6 +200,9 @@ export const postSignInMiddleware = async (
 
     next();
   } catch (error) {
+    if (error instanceof NotFoundError) {
+      return res.redirect(`/users/start-sign-in?notification=login_required`);
+    }
     if (error instanceof InvalidCredentialsError || error instanceof ZodError) {
       return res.redirect(`/users/sign-in?notification=invalid_credentials`);
     }
