@@ -10,7 +10,6 @@
     "module": "Preserve",
     "moduleResolution": "Bundler",
     "outDir": "./build",
-    "resolveJsonModule": true,
     "types": ["cypress"]
   },
   "exclude": ["packages/*", "build/*", "dist/*"],

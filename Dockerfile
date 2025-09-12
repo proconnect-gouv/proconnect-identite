@@ -16,6 +16,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=packages/email/package.json,target=packages/email/package.json \
   --mount=type=bind,source=packages/entreprise/package.json,target=packages/entreprise/package.json \
   --mount=type=bind,source=packages/insee/package.json,target=packages/insee/package.json \
+  --mount=type=bind,source=packages/opendatasoft/package.json,target=packages/opendatasoft/package.json \
   --mount=type=bind,source=packages/identite/package.json,target=packages/identite/package.json \
   --mount=type=bind,source=packages/testing/package.json,target=packages/testing/package.json \
   --mount=type=cache,sharing=locked,target=/root/.npm \
@@ -32,6 +33,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=packages/email/package.json,target=packages/email/package.json \
   --mount=type=bind,source=packages/entreprise/package.json,target=packages/entreprise/package.json \
   --mount=type=bind,source=packages/insee/package.json,target=packages/insee/package.json \
+  --mount=type=bind,source=packages/opendatasoft/package.json,target=packages/opendatasoft/package.json \
   --mount=type=bind,source=packages/identite/package.json,target=packages/identite/package.json \
   --mount=type=bind,source=packages/testing/package.json,target=packages/testing/package.json \
   --mount=type=cache,sharing=locked,target=/root/.npm \

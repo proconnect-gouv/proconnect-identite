@@ -1,0 +1,50 @@
+{
+  "name": "@gouvfr-lasuite/proconnect.opendatasoft",
+  "version": "0.0.0",
+  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/opendatasoft#readme",
+  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
+    "directory": "packages/opendatasoft"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "imports": {
+    "#openapi": "./openapi/index.d.ts",
+    "#src/*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    }
+  },
+  "exports": {
+    "./*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.lib.json",
+    "check": "npm run build -- --noEmit",
+    "dev": "npm run build -- --watch --preserveWatchOutput",
+    "build:openapi": "openapi-typescript https://api-opendatasoft.service-public.fr/api/explore/v2.1/swagger.json -o openapi/index.d.ts",
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "postbuild:openapi": "prettier --write openapi/index.d.ts",
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
+  },
+  "dependencies": {
+    "@gouvfr-lasuite/proconnect.core": "^0.5.0",
+    "openapi-fetch": "^0.14.0"
+  },
+  "devDependencies": {
+    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@types/node": "^22.14.1",
+    "openapi-typescript": "^7.6.1",
+    "tsx": "^4.19.4"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

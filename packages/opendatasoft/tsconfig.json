@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "rootDir": "src",
+    "resolveJsonModule": true,
+    "types": ["node"]
+  },
+  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
+  "include": ["openapi", "src"],
+  "references": []
+}
