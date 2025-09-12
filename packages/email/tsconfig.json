@@ -14,7 +14,7 @@
     "preserveSymlinks": true,
     "resolveJsonModule": true,
     "strictNullChecks": true,
-    "types": ["vite/client"]
+    "types": ["vite/client", "node"]
   },
   "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
   "files": [],

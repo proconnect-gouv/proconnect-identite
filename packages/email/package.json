@@ -30,7 +30,9 @@
     "build": "tsc --build ./tsconfig.lib.json",
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "storybook": "vite",
-    "test": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "npm run test:unit src/**/*.test.tsx",
+    "test:unit": "tsx --test --test-reporter=spec"
   },
   "dependencies": {
     "@kitajs/html": "^4.2.9",
@@ -39,6 +41,8 @@
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@storybook/csf": "^0.1.13",
+    "@types/node": "^24.3.0",
+    "prettier": "^3.6.2",
     "vite": "^7.1.5"
   },
   "publishConfig": {
