@@ -1,5 +1,13 @@
 # @gouvfr-lasuite/proconnect.identite
 
+## 0.9.0
+
+### Minor Changes
+
+- [#1385](https://github.com/proconnect-gouv/proconnect-identite/pull/1385) [`5906294`](https://github.com/proconnect-gouv/proconnect-identite/commit/5906294b6618d0d2cc1865a836886a35d740feb4) Thanks [@dependabot](https://github.com/apps/dependabot)! - feat: migration vers Zod v4
+
+  Migration de Zod v3 vers v4 - les utilisateurs du package doivent s'assurer que leur projet est compatible avec Zod v4 si ils importent des schémas ou types depuis ce package.
+
 ## 0.8.1
 
 ### Patch Changes
@@ -19,7 +27,6 @@
 ### Minor Changes
 
 - [#1282](https://github.com/proconnect-gouv/proconnect-identite/pull/1282) [`a3b52c3`](https://github.com/proconnect-gouv/proconnect-identite/commit/a3b52c33470f24bbe164d2435c717cb1f2f0a932) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Ajoute deux nouveaux types de vérification
-
   - in_liste_dirigeants_rne : Liste des dirigeants RNE
   - receipt_sent : Justificatif transmis
 
@@ -46,7 +53,6 @@
 ### Patch Changes
 
 - [#990](https://github.com/proconnect-gouv/proconnect-identite/pull/990) [`5ad2bd9`](https://github.com/proconnect-gouv/proconnect-identite/commit/5ad2bd9031d9b01902401990ba79affb0082eb43) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 Correction d'un code d'erreur
-
   - si l'organisation est introuvable, `markDomainAsVerifiedFactory` retourne une erreur `NotFoundError` au lieu de `InseeNotFoundError`
 
 ## 0.5.0
