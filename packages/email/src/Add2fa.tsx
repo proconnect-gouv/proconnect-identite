@@ -13,7 +13,7 @@ export default function Add2fa(props: Props) {
         Bonjour {given_name} {family_name},
       </Text>
       <br />
-      <Text>
+      <Text safe>
         Votre compte ProConnect {email} est à présent protégé par la double
         authentification. Lorsque vous vous connectez sur un nouvel appareil ou
         sur un appareil qui n'est pas fiable, vous devez utiliser votre deuxième
