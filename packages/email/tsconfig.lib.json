@@ -8,5 +8,10 @@
     "types": []
   },
   "include": ["src"],
-  "exclude": ["src/**/*.stories.tsx", "./.storybook"]
+  "exclude": [
+    ".storybook",
+    "src/**/*.stories.tsx",
+    "src/**/*.test.tsx",
+    "src/test-utils.ts"
+  ]
 }

@@ -1,11 +1,19 @@
-# @gouvfr-lasuite/proconnect.email
+# 📧 ProConnect Email Templates
 
-## Usage
+> Email templates for the ProConnect identity platform.
 
-```ts
+## 📦 Installation
+
+```bash
+npm install @gouvfr-lasuite/proconnect.email
+```
+
+## 📧 Usage
+
+```typescript
 import { DeleteFreeTotpMail } from "@gouvfr-lasuite/proconnect.email";
 
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransporter({
   host: "smtp.example.com",
   port: 587,
   secure: false,
@@ -15,36 +23,38 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// [...]
-
+// Send email with template
 const info = await transporter.sendMail({
   from: "user@example.com",
   to: "user@example.com",
   subject: "[ProConnect] Delete free TOTP",
   html: DeleteFreeTotpMail({
-    baseurl: my_host_name,
-    email: user.email,
-    userId: user.id,
+    baseurl: "https://identite.proconnect.gouv.fr",
+    given_name: "Marie",
+    family_name: "Dupont",
+    support_email: "support@example.com",
   }),
 });
 ```
 
-## Development
+## 📦 Available Templates
 
-```
-# In this directory launch the dev server
-$ npm run storybook
+| Template                           | Purpose                            |
+| ---------------------------------- | ---------------------------------- |
+| `Add2fa`                           | 2FA activation confirmation        |
+| `AddAccessKey`                     | API key creation notification      |
+| `Delete2faProtection`              | 2FA removal warning                |
+| `DeleteAccessKey`                  | API key deletion notice            |
+| `DeleteAccount`                    | Account deletion confirmation      |
+| `DeleteFreeTotpMail`               | TOTP removal notification          |
+| `MagicLink`                        | Passwordless login link            |
+| `ModerationProcessed`              | Organization moderation completion |
+| `OfficialContactEmailVerification` | Official contact verification      |
+| `ResetPassword`                    | Password reset instructions        |
+| `UpdatePersonalDataMail`           | Profile update summary             |
+| `VerifyEmail`                      | Email address verification         |
+| `Welcome`                          | New user onboarding                |
 
-  VITE vX.Y.Z  ready in X ms
+## 🤝 Contributing
 
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: use --host to expose
-  ➜  press h + enter to show help
-
-```
-
-If you want to test with a real email service, you can use the `VITE_BREVO_API_KEY` environment variable:
-
-```
-$ VITE_BREVO_API_KEY=xxx npm run storybook
-```
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
