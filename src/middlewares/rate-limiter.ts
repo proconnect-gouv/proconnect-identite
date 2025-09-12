@@ -21,7 +21,7 @@ const ipRateLimiterMiddlewareFactory =
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
       if (FEATURE_RATE_LIMIT_BY_IP) {
-        await rateLimiter.consume(req.ip);
+        await rateLimiter.consume(req.ip || "unknown");
       }
       next();
     } catch (e) {
