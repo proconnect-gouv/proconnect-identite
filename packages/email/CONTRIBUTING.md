@@ -161,7 +161,3 @@ For testing with real email service, use:
 ```bash
 VITE_BREVO_API_KEY=xxx npm run storybook
 ```
-
----
-
-**Questions?** Check the main [README.md](./README.md) for additional documentation and usage examples.
