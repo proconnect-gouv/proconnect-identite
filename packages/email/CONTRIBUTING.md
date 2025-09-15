@@ -116,33 +116,6 @@ npm run type-check
 npm run build
 ```
 
-## 📐 Code Style Guidelines
-
-### Component Structure
-
-- **Components**: PascalCase (e.g., `MyNewTemplate.tsx`)
-- **Props**: TypeScript interfaces with full typing
-- **Stories**: Include all required props with realistic data
-- **Tests**: One test per component with descriptive names
-- **HTML**: Use semantic elements and email-safe practices
-
-### Template Props Pattern
-
-All templates extend `LayoutProps`:
-
-```typescript
-interface LayoutProps {
-  baseurl: string; // ProConnect instance URL
-}
-
-// Example: Custom template
-interface Props extends LayoutProps {
-  email: string;
-  given_name: string;
-  family_name: string;
-}
-```
-
 ## 🧪 Testing Philosophy
 
 Our testing approach prioritizes:
