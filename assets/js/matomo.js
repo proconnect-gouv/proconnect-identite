@@ -1,5 +1,6 @@
 var _mtm = (window._mtm = window._mtm || []);
 _mtm.push({ "mtm.startTime": new Date().getTime(), event: "mtm.Start" });
+_mtm.push(["setDownloadExtensions", "jpg|png|gif"]);
 (function () {
   var d = document,
     g = d.createElement("script"),
