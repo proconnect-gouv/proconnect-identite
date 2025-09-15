@@ -14,13 +14,14 @@ import * as InseeApi from "@gouvfr-lasuite/proconnect.insee/api";
 import { createInseeSirenePrivateOpenApiClient } from "@gouvfr-lasuite/proconnect.insee/client";
 import { TestingInseeApiRouter } from "@gouvfr-lasuite/proconnect.testing/api/routes/api.insee.fr";
 import { TestingEntrepriseApiRouter } from "@gouvfr-lasuite/proconnect.testing/api/routes/entreprise.api.gouv.fr";
+import { TESTING_ENTREPRISE_API_SIRETS } from "@gouvfr-lasuite/proconnect.testing/api/routes/entreprise.api.gouv.fr/etablissements";
+import { TESTING_ENTREPRISE_API_MANDATAIRES_SIREN } from "@gouvfr-lasuite/proconnect.testing/api/routes/entreprise.api.gouv.fr/mandataires_sociaux";
 import {
   DEPLOY_ENV,
   ENTREPRISE_API_TOKEN,
   ENTREPRISE_API_TRACKING_CONTEXT,
   ENTREPRISE_API_TRACKING_RECIPIENT,
   ENTREPRISE_API_URL,
-  FEATURE_USE_INTERNAL_DATA_FOR_SIREN,
   HTTP_CLIENT_TIMEOUT,
   INSEE_API_CLIENT_ID,
   INSEE_API_CLIENT_SECRET,
@@ -37,22 +38,21 @@ export const entrepriseOpenApiClient: EntrepriseOpenApiClient =
   });
 
 export const entrepriseOpenApiTestClient: EntrepriseOpenApiClient =
-  createEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
+  createEntrepriseOpenApiClient("__ENTREPRISE_API_TOKEN__", {
     fetch: (input: Request) =>
       Promise.resolve(TestingEntrepriseApiRouter.fetch(input)),
   });
 
-function getEntrepriseOpenApiClient(siren: string) {
-  if (DEPLOY_ENV === "localhost") return entrepriseOpenApiTestClient;
-  if (FEATURE_USE_INTERNAL_DATA_FOR_SIREN.includes(siren))
-    return entrepriseOpenApiTestClient;
-  return entrepriseOpenApiClient;
-}
-
 export const EntrepriseApiInfogreffeRepository = {
   findMandatairesSociauxBySiren(siren: string) {
+    const client =
+      DEPLOY_ENV !== "production" &&
+      TESTING_ENTREPRISE_API_MANDATAIRES_SIREN.includes(siren)
+        ? entrepriseOpenApiTestClient
+        : entrepriseOpenApiClient;
+
     return findMandatairesSociauxBySirenFactory(
-      getEntrepriseOpenApiClient(siren),
+      client,
       {
         context: ENTREPRISE_API_TRACKING_CONTEXT,
         object: "findMandatairesSociauxBySiren",
@@ -67,8 +67,16 @@ export const EntrepriseApiInfogreffeRepository = {
 
 export const EntrepriseApiInseeRepository = {
   findBySiren(siren: string) {
+    const client =
+      DEPLOY_ENV !== "production" &&
+      TESTING_ENTREPRISE_API_SIRETS.map((siret) =>
+        siret.substring(0, 9),
+      ).includes(siren)
+        ? entrepriseOpenApiTestClient
+        : entrepriseOpenApiClient;
+
     return findBySirenFactory(
-      getEntrepriseOpenApiClient(siren),
+      client,
       {
         context: ENTREPRISE_API_TRACKING_CONTEXT,
         object: "findEstablishmentBySiren",
@@ -80,8 +88,14 @@ export const EntrepriseApiInseeRepository = {
     )(siren);
   },
   findBySiret(siret: string) {
+    const client =
+      DEPLOY_ENV !== "production" &&
+      TESTING_ENTREPRISE_API_SIRETS.includes(siret)
+        ? entrepriseOpenApiTestClient
+        : entrepriseOpenApiClient;
+
     return findBySiretFactory(
-      getEntrepriseOpenApiClient(siret.substring(0, 9)),
+      client,
       {
         context: ENTREPRISE_API_TRACKING_CONTEXT,
         object: "findEstablishmentBySiret",
