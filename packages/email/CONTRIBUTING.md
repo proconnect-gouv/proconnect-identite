@@ -116,16 +116,6 @@ npm run type-check
 npm run build
 ```
 
-### 4. Quality Checklist
-
-- ✅ Component uses semantic HTML
-- ✅ Props are fully typed
-- ✅ Story includes realistic test data
-- ✅ Snapshot test passes
-- ✅ HTML renders correctly in email clients
-- ✅ Follows accessibility best practices
-- ✅ Updated exports in `index.ts`
-
 ## 📐 Code Style Guidelines
 
 ### Component Structure
