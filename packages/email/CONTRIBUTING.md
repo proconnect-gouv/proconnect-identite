@@ -154,33 +154,7 @@ npm run type-check
 npm run storybook
 ```
 
-## 🎯 Email Client Best Practices
-
-- Use table-based layouts for maximum compatibility
-- Inline CSS styles where possible
-- Test across major email clients
-- Include alt text for images
-- Use web-safe fonts with fallbacks
-- Optimize for mobile viewing
-
-## 🔧 Development Environment
-
-### Storybook Integration
-
-Launch the interactive component library:
-
-```bash
-npm run storybook
-```
-
-Storybook provides:
-
-- 🎨 Visual testing environment
-- 📱 Responsive preview
-- 🎛️ Interactive controls
-- 📸 Component documentation
-
-### Email Service Testing
+## 🎨 Email Service Testing
 
 For testing with real email service, use:
 
