@@ -141,48 +141,6 @@ npm run test:unit -- --test-update-snapshots src/MyNewTemplate.test.tsx
 - 🔍 Ensure accessibility is maintained
 - 🔍 Confirm no unintended side effects
 
-## 🔍 Quality Assurance
-
-### Automated Checks
-
-- TypeScript compilation
-- Test suite execution
-- Build verification
-- Prettier formatting
-
-### Manual Review
-
-- Template visual appearance
-- Email client compatibility
-- Accessibility compliance
-
-## 🎨 Component Architecture
-
-### Base Components
-
-- **`<Layout>`** - Email wrapper with ProConnect branding
-- **`<Text>`** - Styled text with consistent typography
-- **`<Section>`** - Email layout sections
-- **`<Button>`** - Call-to-action buttons
-- **`<Html>`** - Base HTML document structure
-
-### Email Template Structure
-
-```
-src/
-├── components/          # Reusable email components
-│   ├── Html.tsx        # Base HTML wrapper
-│   ├── Section.tsx     # Email section container
-│   ├── Text.tsx        # Styled text component
-│   └── ...
-├── *.tsx               # Email template components
-├── *.stories.tsx       # Storybook stories (test data)
-├── *.test.tsx          # Snapshot tests
-├── *.test.tsx.snapshot # Pretty HTML snapshots
-├── test-utils.ts       # Shared testing utilities
-└── index.ts            # Public API exports
-```
-
 ## 🚢 Testing Commands
 
 ```bash
