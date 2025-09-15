@@ -116,35 +116,7 @@ npm run type-check
 npm run build
 ```
 
-## 🧪 Testing Philosophy
-
-Our testing approach prioritizes:
-
-- **Visual Regression Prevention** - Snapshot testing catches unintended changes
-- **Real Data Usage** - Tests use actual Storybook story data
-- **Human-Readable Diffs** - Prettier-formatted HTML for easy review
-- **Type Safety** - Props validation prevents runtime errors
-
-### Test Structure
-
-```typescript
-import { describe, it } from "node:test";
-import { format } from "prettier";
-import MyNewTemplate, { type Props } from "./MyNewTemplate.js";
-import storyConfig from "./MyNewTemplate.stories.js";
-import "./test-utils.js";
-
-describe("MyNewTemplate", () => {
-  it("should render", async (t) => {
-    const props = storyConfig.args as Props;
-    const rendered = (<MyNewTemplate {...props} />).toString();
-    const formatted = await format(rendered, { parser: "html" });
-    t.assert.snapshot(formatted);
-  });
-});
-```
-
-### Updating Snapshots
+## 🧪 Updating Snapshots
 
 When you modify a template component, the snapshot test will fail showing the differences. To update snapshots:
 
