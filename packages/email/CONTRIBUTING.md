@@ -9,18 +9,6 @@
 ```bash
 # Start Storybook (uses Vite)
 npm run storybook
-
-# Build with watch mode
-npm run dev
-
-# Run tests
-npm test
-
-# Type check
-npm run type-check
-
-# Build library
-npm run build
 ```
 
 ## 📦 Package Architecture
