@@ -74,5 +74,5 @@ export const deleteModeration = async (id: number) => {
     [id],
   );
 
-  return rowCount > 0;
+  return (rowCount ?? 0) > 0;
 };
