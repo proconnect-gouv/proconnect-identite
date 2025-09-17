@@ -1,5 +1,13 @@
 # @gouvfr-lasuite/proconnect.debounce
 
+## 0.5.0
+
+### Minor Changes
+
+- [#1385](https://github.com/proconnect-gouv/proconnect-identite/pull/1385) [`5906294`](https://github.com/proconnect-gouv/proconnect-identite/commit/5906294b6618d0d2cc1865a836886a35d740feb4) Thanks [@dependabot](https://github.com/apps/dependabot)! - feat: migration vers Zod v4
+
+  Migration de Zod v3 vers v4 - les utilisateurs du package doivent s'assurer que leur projet est compatible avec Zod v4 si ils importent des schémas ou types depuis ce package.
+
 ## 0.4.3
 
 ### Patch Changes

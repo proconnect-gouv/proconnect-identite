@@ -1,6 +1,6 @@
 {
   "name": "@gouvfr-lasuite/proconnect.debounce",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/debounce#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
