@@ -138,5 +138,5 @@ export const deleteAuthenticator = async (
     [user_id, credential_id],
   );
 
-  return rowCount > 0;
+  return (rowCount ?? 0) > 0;
 };

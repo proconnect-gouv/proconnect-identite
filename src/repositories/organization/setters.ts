@@ -31,5 +31,5 @@ WHERE user_id = $1 AND organization_id = $2`,
     [user_id, organization_id],
   );
 
-  return rowCount > 0;
+  return (rowCount ?? 0) > 0;
 };
