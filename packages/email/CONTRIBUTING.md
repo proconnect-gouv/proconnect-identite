@@ -93,15 +93,6 @@ describe("MyNewTemplate", () => {
 ```bash
 # Start Storybook for visual development
 npm run storybook
-
-# Run snapshot tests
-npm test
-
-# Type checking
-npm run type-check
-
-# Build library
-npm run build
 ```
 
 ## 🧪 Updating Snapshots
