@@ -305,15 +305,12 @@ export const getModerationRejectedController = async (
     const { moderation_id } = await schema.parseAsync(req.query);
     const user = getUserFromAuthenticatedSession(req);
 
-    const { comment, user_id } = await getModerationById(moderation_id);
-
-    if (user_id !== user.id) return next(new HttpErrors.NotFound());
-
     const { cached_libelle } = await getOrganizationFromModeration({
       user,
       moderation_id,
     });
 
+    const { comment } = await getModerationById(moderation_id);
     const rejectionReason = extractRejectionReason(comment);
     const allowEditing = allowsPersonalInfoEditing(rejectionReason);
 
