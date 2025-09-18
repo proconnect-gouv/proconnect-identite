@@ -38,6 +38,7 @@ jobs:
           - join_with_code_sent_to_official_educ_nat_contact_email
           - join_with_free_email_domain
           - join_with_official_contact_email
+          - quit-organization
           - rate_limit_by_email
           - rate_limit_by_ip
           - reauthenticate_on_admin_page
