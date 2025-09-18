@@ -132,15 +132,42 @@ exports[`ModerationProcessed > should render 1`] = `
                                       margin: 0;
                                     "
                                   >
-                                    Bonjour, &lt;br/>&lt;br/>Votre demande pour
-                                    rejoindre l’organisation « Ministère de
-                                    l&#39;Éducation nationale » a été débloquée
-                                    sur
-                                    http://localhost:3000.&lt;br/>&lt;br/>Vous
-                                    pouvez à présent retourner sur votre
-                                    démarche ou demande.&lt;br/>&lt;br/>Nous
-                                    restons à votre disposition pour toute
-                                    information complémentaire.
+                                    Bonjour,
+                                  </p>
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Votre demande pour rejoindre l’organisation
+                                    « Ministère de l&#39;Éducation nationale » a
+                                    été débloquée sur http://localhost:3000.
+                                  </p>
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Vous allez recevoir un email de
+                                    confirmation.<br /><br />Vous pouvez à
+                                    présent retourner sur votre démarche ou
+                                    demande.<br /><br />Nous restons à votre
+                                    disposition pour toute information
+                                    complémentaire.
                                   </p>
                                   <p
                                     style="
