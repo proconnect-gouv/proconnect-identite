@@ -37,6 +37,11 @@
       "import": "./dist/services/suggestion/index.js",
       "types": "./dist/services/suggestion/index.d.ts"
     },
+    "./utils/lodash": {
+      "require": "./dist/utils/lodash/index.cjs",
+      "import": "./dist/utils/lodash/index.js",
+      "types": "./dist/utils/lodash/index.d.ts"
+    },
     "./data": {
       "require": "./dist/data/index.cjs",
       "import": "./dist/data/index.js",
@@ -56,6 +61,9 @@
       ],
       "services/suggestion": [
         "./dist/services/suggestion/index.d.ts"
+      ],
+      "utils/lodash": [
+        "./dist/utils/lodash/index.d.ts"
       ],
       "data": [
         "./dist/data/index.d.ts"

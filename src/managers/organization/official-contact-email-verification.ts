@@ -77,7 +77,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
       contactEmail = await getAnnuaireEducationNationaleContactEmail(siret);
     }
   } catch (error) {
-    throw new ApiAnnuaireError();
+    throw new ApiAnnuaireError("", { cause: error });
   }
 
   if (!contactEmail) {
