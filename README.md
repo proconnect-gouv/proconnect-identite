@@ -74,9 +74,9 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
 
 1. **Start Dependencies**: Navigate to the root directory of the cloned repository and run:
 
-   ```bash
-   docker compose up
-   ```
+```bash
+docker compose up
+```
 
    This will start all required services (e.g., databases) defined in the `docker-compose.yml`.
 
@@ -86,15 +86,16 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
 
    Inside the project’s root directory, run:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+npm run build
+```
 
 2. **Database Initialization**: The database will be automatically initialized with data from `scripts/fixtures.sql`.
 
-   ```bash
-   npm run fixtures:load
-   ```
+```bash
+npm run fixtures:load
+```
 
 ### Running the Application
 
