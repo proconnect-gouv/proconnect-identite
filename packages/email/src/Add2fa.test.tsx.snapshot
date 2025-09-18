@@ -151,9 +151,10 @@ exports[`Add2fa > should render 1`] = `
                                     marie.dupont@example.com est à présent
                                     protégé par la double authentification.
                                     Lorsque vous vous connectez sur un nouvel
-                                    appareil ou sur un appareil qui n'est pas
-                                    fiable, vous devez utiliser votre deuxième
-                                    facteur pour confirmer votre identité.
+                                    appareil ou sur un appareil qui n&#39;est
+                                    pas fiable, vous devez utiliser votre
+                                    deuxième facteur pour confirmer votre
+                                    identité.
                                   </p>
                                   <p
                                     style="
