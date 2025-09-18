@@ -18,6 +18,11 @@ updates:
     schedule:
       interval: "weekly"
     versioning-strategy: increase
+    ignore:
+      - dependency-name: "@types/node"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
   - package-ecosystem: "docker"
     directory: "/"
     labels:
