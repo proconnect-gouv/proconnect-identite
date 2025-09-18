@@ -44,5 +44,5 @@ export const isWarningRejection = (reason: string): boolean => {
     "Profession mal renseignée",
   ];
 
-  return warningReasons.some((warningReason) => reason === warningReason);
+  return warningReasons.includes(reason);
 };
