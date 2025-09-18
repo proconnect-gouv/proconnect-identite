@@ -322,7 +322,6 @@ export const getModerationRejectedController = async (
       given_name: user.given_name,
       rejectionReason,
       illustration: "illu-user.svg",
-      job: user.job,
       moderation_id,
       organization_label: cached_libelle,
       pageTitle: allowEditing ? "Informations à corriger" : "Demande refusée",

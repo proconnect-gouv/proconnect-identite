@@ -40,8 +40,6 @@ export const allowsPersonalInfoEditing = (reason: string): boolean => {
     "Inversion Nom et Prénom",
     "Nom et/ou Prénom manquants",
     "Nom et/ou prénom mal renseignés - Modération non-bloquante",
-    "Profession mal renseignée - Modération non-bloquante",
-    "Profession mal renseignée",
   ];
 
   return warningReasons.includes(reason);
