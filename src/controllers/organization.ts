@@ -43,8 +43,8 @@ import {
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
 import {
+  allowsPersonalInfoEditing,
   extractRejectionReason,
-  isWarningRejection,
 } from "../services/moderation";
 
 export const getJoinOrganizationController = async (
@@ -315,9 +315,10 @@ export const getModerationRejectedController = async (
     });
 
     const rejectionReason = extractRejectionReason(comment);
-    const isWarning = isWarningRejection(rejectionReason);
+    const allowEditing = allowsPersonalInfoEditing(rejectionReason);
 
     return res.render("user/moderation-rejected", {
+      allowEditing,
       csrfToken: csrfToken(req),
       email: user.email,
       family_name: user.family_name,
@@ -327,8 +328,7 @@ export const getModerationRejectedController = async (
       job: user.job,
       moderation_id,
       organization_label: cached_libelle,
-      pageTitle: isWarning ? "Informations à corriger" : "Demande refusée",
-      isWarning,
+      pageTitle: allowEditing ? "Informations à corriger" : "Demande refusée",
     });
   } catch (e) {
     if (e instanceof NotFoundError) {

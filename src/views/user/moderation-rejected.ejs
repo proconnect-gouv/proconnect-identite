@@ -2,18 +2,18 @@
   <div class="fr-mb-2w">
     <img src="/dist/warning.svg" alt="" class="limited-width" />
   </div>
-  <h1 class="fr-h2"><%= isWarning ? "Modifications demandées" : "Demande refusée" %></h1>
+  <h1 class="fr-h2"><%= allowEditing ? "Modifications demandées" : "Demande refusée" %></h1>
   <div>
     <p>
       <b> Motif : <%= rejectionReason %> <br /> </b>
-      <% if (isWarning) { %>
+      <% if (allowEditing) { %>
         Corrigez l'information pour que votre demande soit de nouveau étudiée.
       <% } else { %>
         Nous n'avons pu établir aucun lien entre votre profil et l'organisation
         que vous souhaitez rejoindre.
       <% } %>
     </p>
-    <% if (!isWarning) { %>
+    <% if (!allowEditing) { %>
       <p>
         <i>
           Si vous avez d'autres documents à nous fournir, n'hésitez pas à nous
@@ -23,12 +23,12 @@
     <% } %>
   </div>
   <div class="border-shadow fr-p-2w">
-    <h2 class="fr-h4"><%= isWarning ? "Informations à vérifier" : "Informations de votre demande refusée" %></h2>
+    <h2 class="fr-h4"><%= allowEditing ? "Informations à vérifier" : "Informations de votre demande refusée" %></h2>
     <div class="fr-grid-row centered-container-mobile">
       <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--no-icon fr-col-4 centered-content">Prénom</p>
       <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
         <span id="prenom-display"><b><%= given_name; %></b></span>
-        <% if (isWarning) { %>
+        <% if (allowEditing) { %>
           <%- include('../partials/icon-edit-personal-info-form.ejs', { actionForUpdateModeration: `/users/reopen-moderation/${moderation_id}`, messageToDisplay: "Corriger le prénom" }) %>
         <% } %>
       </div>
@@ -37,14 +37,14 @@
         <span>
           <b><%= family_name; %></b>
         </span>
-        <% if (isWarning) { %>
+        <% if (allowEditing) { %>
           <%- include('../partials/icon-edit-personal-info-form.ejs', { actionForUpdateModeration: `/users/reopen-moderation/${moderation_id}`, messageToDisplay: "Corriger le nom" }) %>
         <% } %>
       </div>
       <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--no-icon fr-col-4 centered-content">Email</p>
       <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
         <span><b><%= email; %></b></span>
-        <% if (isWarning) { %>
+        <% if (allowEditing) { %>
           <%- include('../partials/icon-edit-personal-info-form.ejs', { actionForUpdateModeration: `/users/reopen-moderation/${moderation_id}`, messageToDisplay: "Corriger l'adresse email" }) %>
         <% } %>
       </div>

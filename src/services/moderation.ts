@@ -35,7 +35,7 @@ export const extractRejectionReason = (comment: string | null): string => {
  * @param reason The rejection reason extracted from moderation comment
  * @returns True if this is a warning-type rejection that allows editing personal info
  */
-export const isWarningRejection = (reason: string): boolean => {
+export const allowsPersonalInfoEditing = (reason: string): boolean => {
   const warningReasons = [
     "Inversion Nom et Prénom",
     "Nom et/ou Prénom manquants",

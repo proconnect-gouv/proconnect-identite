@@ -1,6 +1,9 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { extractRejectionReason, isWarningRejection } from "./moderation";
+import {
+  allowsPersonalInfoEditing,
+  extractRejectionReason,
+} from "./moderation";
 
 describe("extractRejectionReason", () => {
   it("should extract reason from standard format", () => {
@@ -87,7 +90,7 @@ describe("isWarningRejection", () => {
     ];
 
     warningReasons.forEach((reason) => {
-      const result = isWarningRejection(reason);
+      const result = allowsPersonalInfoEditing(reason);
       assert.strictEqual(result, true, `Expected true for: ${reason}`);
     });
   });
@@ -102,7 +105,7 @@ describe("isWarningRejection", () => {
     ];
 
     blockingReasons.forEach((reason) => {
-      const result = isWarningRejection(reason);
+      const result = allowsPersonalInfoEditing(reason);
       assert.strictEqual(result, false, `Expected false for: ${reason}`);
     });
   });
