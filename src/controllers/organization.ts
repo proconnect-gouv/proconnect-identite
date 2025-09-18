@@ -324,7 +324,7 @@ export const getModerationRejectedController = async (
       family_name: user.family_name,
       given_name: user.given_name,
       rejectionReason,
-      illustration: "illu-support.svg",
+      illustration: "illu-user.svg",
       job: user.job,
       moderation_id,
       organization_label: cached_libelle,
