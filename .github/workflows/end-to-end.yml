@@ -2,9 +2,6 @@ name: End-to-end tests
 
 on:
   push:
-    branches:
-      - "**"
-      - "!master"
 
 env:
   CYPRESS_RECORD: true
