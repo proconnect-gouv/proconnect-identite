@@ -2,13 +2,23 @@
 
 import type { InfogreffeSirenMandatairesSociaux } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import { zValidator } from "@hono/zod-validator";
-import { readdir, readFile } from "fs/promises";
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
+import { glob, readdir, readFile } from "node:fs/promises";
 import { basename, join } from "path";
 import { z } from "zod";
 import errorHandler from "./_error.js";
 import DiscoverPage from "./discover.page.js";
+
+//
+
+export const TESTING_ENTREPRISE_API_MANDATAIRES_SIREN = (
+  await Array.fromAsync(
+    await glob("*.json", {
+      cwd: import.meta.dirname,
+    }),
+  )
+).map((filename) => basename(filename, ".json"));
 
 //
 

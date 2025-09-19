@@ -1,15 +1,11 @@
 //
 
 import { findBySiretFactory } from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
-import {
-  createEntrepriseOpenApiClient,
-  type EntrepriseOpenApiClient,
-} from "@gouvfr-lasuite/proconnect.entreprise/client";
 import { getOrganizationInfoFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
-import { TestingEntrepriseApiRouter } from "@gouvfr-lasuite/proconnect.testing/api/routes/entreprise.api.gouv.fr";
 import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
+import { entrepriseOpenApiTestClient } from "../src/connectors/api-sirene";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { upsert } from "../src/repositories/organization/setters";
 import { logger } from "../src/services/log";
@@ -21,14 +17,7 @@ import {
 
 //
 
-export const entrepriseOpenApiClient: EntrepriseOpenApiClient =
-  createEntrepriseOpenApiClient("__TOKEN__", {
-    baseUrl: "https://entreprise.api.localhsot/",
-    fetch: (input: Request) =>
-      Promise.resolve(TestingEntrepriseApiRouter.fetch(input)),
-  });
-
-const findBySiret = findBySiretFactory(entrepriseOpenApiClient, {
+const findBySiret = findBySiretFactory(entrepriseOpenApiTestClient, {
   context: "🎭 Organization info script 🎭",
   object: "findEstablishmentBySiret",
   recipient: "13002526500013",

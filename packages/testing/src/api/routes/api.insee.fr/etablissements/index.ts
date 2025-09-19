@@ -2,11 +2,19 @@
 
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { glob, readFile } from "node:fs/promises";
+import { basename, join } from "node:path";
 import z from "zod";
 
 //
+
+export const TESTING_INSEE_API_SIRETS = (
+  await Array.fromAsync(
+    await glob("*.json", {
+      cwd: import.meta.dirname,
+    }),
+  )
+).map((filename) => basename(filename, ".json"));
 
 export default new Hono().get(
   "/api-sirene/prive/3.11/siret/:siret",
