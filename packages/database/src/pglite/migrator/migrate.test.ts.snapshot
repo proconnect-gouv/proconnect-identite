@@ -1,0 +1,31 @@
+exports[`Database migration with in-memory PostgreSQL > bootstraps schema from scratch on clean database 1`] = `
+[
+  {
+    "table_name": "authenticators"
+  },
+  {
+    "table_name": "email_domains"
+  },
+  {
+    "table_name": "franceconnect_userinfo"
+  },
+  {
+    "table_name": "moderations"
+  },
+  {
+    "table_name": "oidc_clients"
+  },
+  {
+    "table_name": "organizations"
+  },
+  {
+    "table_name": "users"
+  },
+  {
+    "table_name": "users_oidc_clients"
+  },
+  {
+    "table_name": "users_organizations"
+  }
+]
+`;
