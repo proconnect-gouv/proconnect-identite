@@ -1,7 +1,7 @@
 {
   "name": "@gouvfr-lasuite/proconnect.testing",
   "version": "0.5.2",
-  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/testing#readme",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/testing#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",

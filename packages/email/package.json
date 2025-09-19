@@ -2,7 +2,7 @@
   "name": "@gouvfr-lasuite/proconnect.email",
   "version": "0.1.2",
   "private": true,
-  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/email#readme",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/email#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",

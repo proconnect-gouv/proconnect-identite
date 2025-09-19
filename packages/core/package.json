@@ -1,7 +1,7 @@
 {
   "name": "@gouvfr-lasuite/proconnect.core",
   "version": "0.6.0",
-  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/core#readme",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/core#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",
