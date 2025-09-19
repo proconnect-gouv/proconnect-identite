@@ -3,10 +3,7 @@ name: 🚢 Release It !
 on:
   push:
     branches:
-      - master
-      - alpha
-      - beta
-      - next
+      - main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
