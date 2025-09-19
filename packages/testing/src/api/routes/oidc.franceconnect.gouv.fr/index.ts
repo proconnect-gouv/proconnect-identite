@@ -108,7 +108,7 @@ export const TestingOidcFranceConnectRouter = new Hono<{
 
       const html = new TextEncoder().encode(
         LogoutPage({
-          redirect_url: post_logout_redirect_uri,
+          redirect_url: redirect_url.href,
         }),
       );
 

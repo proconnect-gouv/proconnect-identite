@@ -534,19 +534,11 @@ export const userRouter = () => {
     ),
   );
 
-  userRouter.get(
+  userRouter.post(
     "/delete",
     checkUserCanAccessAdminMiddleware,
     csrfProtectionMiddleware,
-    useFranceConnectLogoutMiddlewareFactory(
-      `${HOST}/users/delete/franceconnect/logout/callback`,
-    ),
     postDeleteUserController,
-  );
-  userRouter.get(
-    "/delete/franceconnect/logout/callback",
-    checkUserCanAccessAdminMiddleware,
-    getFranceConnectLogoutCallbackControllerFactory(`${HOST}/users/delete`),
   );
 
   userRouter.get(
