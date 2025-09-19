@@ -40,6 +40,7 @@ describe("join collectivité territoriale with code send to official contact ema
       });
 
     cy.go("back");
+    cy.title().should("include", "Vérifier votre email -");
 
     cy.get<string>("@code").then((code) => {
       cy.contains("Insérer le code reçu").click();
@@ -83,6 +84,7 @@ describe("join collectivité territoriale with code send to official contact ema
       });
 
     cy.go("back");
+    cy.title().should("include", "Vérifier votre email -");
 
     cy.get<string>("@code").then((code) => {
       cy.contains("Insérer le code reçu").click();
