@@ -12,12 +12,13 @@ RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=packages/annuaire_entreprises/package.json,target=packages/annuaire_entreprises/package.json \
   --mount=type=bind,source=packages/core/package.json,target=packages/core/package.json \
   --mount=type=bind,source=packages/crisp/package.json,target=packages/crisp/package.json \
+  --mount=type=bind,source=packages/database/package.json,target=packages/database/package.json \
   --mount=type=bind,source=packages/debounce/package.json,target=packages/debounce/package.json \
   --mount=type=bind,source=packages/devtools/typescript/package.json,target=packages/devtools/typescript/package.json \
   --mount=type=bind,source=packages/email/package.json,target=packages/email/package.json \
   --mount=type=bind,source=packages/entreprise/package.json,target=packages/entreprise/package.json \
-  --mount=type=bind,source=packages/insee/package.json,target=packages/insee/package.json \
   --mount=type=bind,source=packages/identite/package.json,target=packages/identite/package.json \
+  --mount=type=bind,source=packages/insee/package.json,target=packages/insee/package.json \
   --mount=type=bind,source=packages/testing/package.json,target=packages/testing/package.json \
   --mount=type=cache,sharing=locked,target=/root/.npm \
   corepack npm ci --omit=dev
@@ -29,12 +30,13 @@ RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=packages/annuaire_entreprises/package.json,target=packages/annuaire_entreprises/package.json \
   --mount=type=bind,source=packages/core/package.json,target=packages/core/package.json \
   --mount=type=bind,source=packages/crisp/package.json,target=packages/crisp/package.json \
+  --mount=type=bind,source=packages/database/package.json,target=packages/database/package.json \
   --mount=type=bind,source=packages/debounce/package.json,target=packages/debounce/package.json \
   --mount=type=bind,source=packages/devtools/typescript/package.json,target=packages/devtools/typescript/package.json \
   --mount=type=bind,source=packages/email/package.json,target=packages/email/package.json \
   --mount=type=bind,source=packages/entreprise/package.json,target=packages/entreprise/package.json \
-  --mount=type=bind,source=packages/insee/package.json,target=packages/insee/package.json \
   --mount=type=bind,source=packages/identite/package.json,target=packages/identite/package.json \
+  --mount=type=bind,source=packages/insee/package.json,target=packages/insee/package.json \
   --mount=type=bind,source=packages/testing/package.json,target=packages/testing/package.json \
   --mount=type=cache,sharing=locked,target=/root/.npm \
   corepack npm ci

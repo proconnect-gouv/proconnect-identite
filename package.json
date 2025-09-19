@@ -11,6 +11,7 @@
   "workspaces": [
     "packages/annuaire_entreprises",
     "packages/core",
+    "packages/database",
     "packages/crisp",
     "packages/debounce",
     "packages/devtools/typescript",
@@ -64,8 +65,7 @@
     "plugins": [
       "prettier-plugin-organize-imports",
       "prettier-plugin-sql"
-    ],
-    "language": "postgresql"
+    ]
   },
   "dependencies": {
     "@proconnect-gouv/proconnect.core": "workspace:*",
