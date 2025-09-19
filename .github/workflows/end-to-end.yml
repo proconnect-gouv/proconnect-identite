@@ -31,6 +31,7 @@ jobs:
           - join_collectivite_territoriale_free_contact_domain
           - join_collectivite_territoriale_official_contact_domain
           - join_must_confirm
+          - join_org_with_rejected_moderation
           - join_org_with_trackdechets_domain
           - join_org_with_verified_domain
           - join_with_code_sent_to_official_contact_email
