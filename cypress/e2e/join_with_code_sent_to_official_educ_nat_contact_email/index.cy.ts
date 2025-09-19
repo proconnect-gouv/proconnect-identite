@@ -7,11 +7,16 @@ describe("join organizations", () => {
 
   it("join collectivité territoriale with code send to official contact email", function () {
     cy.visit("/users/join-organization");
+
+    cy.title().should("include", "S'inscrire ou se connecter -");
     cy.login("konrad.curze@nightlords.world");
 
-    cy.get('[name="siret"]').type("19750663700010");
-    cy.get('[type="submit"]').click();
+    cy.title().should("include", "Rejoindre une organisation -");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("19750663700010");
+    cy.contains("Enregistrer").click();
 
+    cy.title().should("include", "Vérifier votre email -");
     // Check that the website is waiting for the user to verify their email
     cy.contains(
       "nous avons envoyé un code à l’adresse email officielle de votre établissement scolaire",
@@ -34,13 +39,16 @@ describe("join organizations", () => {
       });
 
     cy.go("back");
+    cy.title().should("include", "Vérifier votre email -");
 
     cy.get<string>("@code").then((code) => {
       cy.log(code);
-      cy.get('[name="official_contact_email_verification_token"]').type(code);
-      cy.get('[type="submit"]').click();
+      cy.contains("Insérer le code reçu").click();
+      cy.focused().clear().type(code);
+      cy.contains("Valider").click();
     });
 
+    cy.title().should("include", "Compte créé -");
     cy.contains("Votre compte est créé !");
   });
 });
