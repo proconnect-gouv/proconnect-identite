@@ -1,0 +1,63 @@
+exports[`external > should handle empty database migration 1`] = `
+[
+  {
+    "table_name": "organizations"
+  },
+  {
+    "table_name": "franceconnect_userinfo"
+  },
+  {
+    "table_name": "moderations"
+  },
+  {
+    "table_name": "oidc_clients"
+  },
+  {
+    "table_name": "users_organizations"
+  },
+  {
+    "table_name": "users_oidc_clients"
+  },
+  {
+    "table_name": "email_domains"
+  },
+  {
+    "table_name": "users"
+  },
+  {
+    "table_name": "authenticators"
+  }
+]
+`;
+
+exports[`migrate > should handle empty database migration 1`] = `
+[
+  {
+    "table_name": "authenticators"
+  },
+  {
+    "table_name": "email_domains"
+  },
+  {
+    "table_name": "franceconnect_userinfo"
+  },
+  {
+    "table_name": "moderations"
+  },
+  {
+    "table_name": "oidc_clients"
+  },
+  {
+    "table_name": "organizations"
+  },
+  {
+    "table_name": "users"
+  },
+  {
+    "table_name": "users_oidc_clients"
+  },
+  {
+    "table_name": "users_organizations"
+  }
+]
+`;
