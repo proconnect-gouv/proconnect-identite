@@ -41,3 +41,4 @@ jobs:
       - run: npm run migrate up
       - run: npm run fixtures:load-ci -- scripts/fixtures.sql
       - run: npm run update-organization-info -- 0
+      - run: npm --workspace=@proconnect-gouv/proconnect.identite.database run test
