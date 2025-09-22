@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { defaultJWKS } from "./default-jwks";
+import { create_jwks } from "./jwks";
 
 export const connectorEnvSchema = z.object({
   API_AUTH_PASSWORD: z.string().default("admin"),
@@ -98,7 +98,7 @@ export const secretEnvSchema = z.object({
       (val) => (typeof val === "string" ? JSON.parse(val) : val),
       z.object({ keys: z.array(z.any()) }),
     )
-    .default(defaultJWKS),
+    .default(await create_jwks()),
 });
 
 export const paramsEnvSchema = z.object({
