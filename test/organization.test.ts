@@ -5,7 +5,6 @@ import {
   isCommune,
   isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
-  isPublicService,
   isSmallAssociation,
   isWasteManagementOrganization,
 } from "../src/services/organization";
@@ -139,39 +138,6 @@ const trackdechets_public_org_info = {
   cached_libelle_categorie_juridique: "Syndicat mixte fermé",
 } as Organization;
 
-describe("isPublicService", () => {
-  it("should return false for bad call", () => {
-    assert.equal(isPublicService({} as Organization), false);
-  });
-
-  it("should return true for collectivite territoriale", () => {
-    assert.equal(isPublicService(lamalou_org_info), true);
-  });
-
-  it("should return true for administration centrale", () => {
-    assert.equal(isPublicService(dinum_org_info), true);
-  });
-
-  it("should return false for unipersonnelle organization", () => {
-    assert.equal(isPublicService(entreprise_unipersonnelle_org_info), false);
-  });
-
-  it("should return false for association", () => {
-    assert.equal(isPublicService(association_org_info), false);
-  });
-
-  it("should return true for établissement public à caractère industriel et commercial", () => {
-    assert.equal(isPublicService(onf_org_info), true);
-  });
-
-  it("should return true for whitelisted établissement", () => {
-    assert.equal(isPublicService(whitelisted_org_info), true);
-  });
-
-  it("should return true for public etablissement", () => {
-    assert.equal(isPublicService(trackdechets_public_org_info), true);
-  });
-});
 
 describe("isWasteManagementOrganization", () => {
   it("should return false for collectivité territoriale", () => {

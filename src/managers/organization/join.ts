@@ -64,12 +64,12 @@ import {
   usesAFreeEmailProvider,
 } from "../../services/email";
 import { logger } from "../../services/log";
+import { isPublicService } from "@gouvfr-lasuite/proconnect.identite/services/organization";
 import {
   hasLessThanFiftyEmployees,
   isCommune,
   isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
-  isPublicService,
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
