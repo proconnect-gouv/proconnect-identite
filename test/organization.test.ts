@@ -138,7 +138,6 @@ const trackdechets_public_org_info = {
   cached_libelle_categorie_juridique: "Syndicat mixte fermé",
 } as Organization;
 
-
 describe("isWasteManagementOrganization", () => {
   it("should return false for collectivité territoriale", () => {
     assert.equal(isWasteManagementOrganization(lamalou_org_info), false);

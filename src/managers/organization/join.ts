@@ -12,6 +12,7 @@ import { forceJoinOrganizationFactory } from "@proconnect-gouv/proconnect.identi
 import {
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
+  isPublicService,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import type {
   Organization,
@@ -64,7 +65,6 @@ import {
   usesAFreeEmailProvider,
 } from "../../services/email";
 import { logger } from "../../services/log";
-import { isPublicService } from "@gouvfr-lasuite/proconnect.identite/services/organization";
 import {
   hasLessThanFiftyEmployees,
   isCommune,

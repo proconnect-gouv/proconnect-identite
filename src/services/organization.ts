@@ -1,5 +1,8 @@
 import { isDomainValid } from "@proconnect-gouv/proconnect.core/security";
-import { isEntrepriseUnipersonnelle } from "@proconnect-gouv/proconnect.identite/services/organization";
+import {
+  isEntrepriseUnipersonnelle,
+  isPublicService,
+} from "@proconnect-gouv/proconnect.identite/services/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 
 export const isSmallAssociation = ({
@@ -34,7 +37,6 @@ export const isCommune = (
 
   return cat_jur.includes(cached_libelle_categorie_juridique || "");
 };
-
 
 export const hasLessThanFiftyEmployees = ({
   cached_tranche_effectifs,

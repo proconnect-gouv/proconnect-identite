@@ -1,6 +1,6 @@
 //
 
-import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
+import type { Organization } from "#src/types";
 import {
   association_org_info,
   dinum_org_info,
@@ -45,5 +45,51 @@ describe("isPublicService", () => {
 
   it("should return true for public etablissement", () => {
     assert.equal(isPublicService(trackdechets_public_org_info), true);
+  });
+
+  // Tests for new comprehensive implementation
+  it("should return false for blacklisted SIREN", () => {
+    const blacklisted_org = {
+      siret: "34867901000123",
+      cached_categorie_juridique: "7120",
+      cached_etat_administratif: "A",
+    } as Organization;
+    assert.equal(isPublicService(blacklisted_org), false);
+  });
+
+  it("should return false for closed entities", () => {
+    const closed_org = {
+      siret: "12345678900123",
+      cached_categorie_juridique: "7120",
+      cached_etat_administratif: "C",
+    } as Organization;
+    assert.equal(isPublicService(closed_org), false);
+  });
+
+  it("should return true for entities with exact nature juridique codes", () => {
+    const exact_nature_org = {
+      siret: "12345678900123",
+      cached_categorie_juridique: "7111",
+      cached_etat_administratif: "A",
+    } as Organization;
+    assert.equal(isPublicService(exact_nature_org), true);
+  });
+
+  it("should return true for whitelisted SIREN even with non-public nature juridique", () => {
+    const whitelisted_siren_org = {
+      siret: "13003013300123",
+      cached_categorie_juridique: "5599", // Non-public nature juridique
+      cached_etat_administratif: "A",
+    } as Organization;
+    assert.equal(isPublicService(whitelisted_siren_org), true);
+  });
+
+  it("should return true for CARSAT BRETAGNE (service public whitelist)", () => {
+    const carsat_bretagne_org = {
+      siret: "77774932600123",
+      cached_categorie_juridique: "5599", // Non-public nature juridique
+      cached_etat_administratif: "A",
+    } as Organization;
+    assert.equal(isPublicService(carsat_bretagne_org), true);
   });
 });
