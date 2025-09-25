@@ -16,6 +16,7 @@ describe("env.zod", () => {
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
       SMTP_URL: "smtp://localhost:1025",
+      SESSION_COOKIE_SECRET: "proconnectsecret,identitesecret",
     };
 
     const env = envSchema.parse(sample_env);
@@ -107,7 +108,7 @@ describe("env.zod", () => {
       REDIS_URL: "redis://:@127.0.0.1:6379",
       RESET_PASSWORD_TOKEN_EXPIRATION_DURATION_IN_MINUTES: 60,
       SENTRY_DSN: "",
-      SESSION_COOKIE_SECRET: ["proconnectsecret"],
+      SESSION_COOKIE_SECRET: ["proconnectsecret", "identitesecret"],
       SESSION_MAX_AGE_IN_SECONDS: 86400,
       SMTP_FROM: "nepasrepondre@email.moncomptepro.beta.gouv.fr",
       SMTP_URL: "smtp://localhost:1025",

@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { defaultJWKS } from "./default-jwks";
 
@@ -93,7 +94,9 @@ export const secretEnvSchema = z.object({
         "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long! Use crypto.randomBytes(32).toString('base64') to generate one.",
     })
     .default("aTrueRandom32BytesLongBase64EncodedStringAA="),
-  SESSION_COOKIE_SECRET: zCoerceArray().default(["proconnectsecret"]),
+  SESSION_COOKIE_SECRET: zCoerceArray().default([
+    randomBytes(32).toString("base64"),
+  ]),
   JWKS: z
     .preprocess(
       (val) => (typeof val === "string" ? JSON.parse(val) : val),
