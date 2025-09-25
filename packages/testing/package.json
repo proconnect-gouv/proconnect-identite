@@ -1,7 +1,7 @@
 {
   "name": "@gouvfr-lasuite/proconnect.testing",
   "version": "0.5.2",
-  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/testing#readme",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/testing#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@gouvfr-lasuite/proconnect.entreprise": "0.0.0",
-    "@hono/node-server": "^1.14.4",
+    "@hono/node-server": "^1.19.4",
     "@hono/zod-validator": "^0.7.2",
     "hono": "^4.9.7"
   },

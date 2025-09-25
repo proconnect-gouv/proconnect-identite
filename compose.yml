@@ -19,7 +19,7 @@ services:
     image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:3353ab82e80d955ef3d5bb016b658fb84eb2a32eefeb29a2bac5067563ac1c2a # latest
     environment:
       PORT: 3001
-      # default env var can be found at https://github.com/proconnect-gouv/proconnect-test-client/blob/master/.env
+      # default env var can be found at https://github.com/proconnect-gouv/proconnect-test-client/blob/main/.env
       HOST: http://localhost:3001
       PC_CLIENT_ID: client_id
       PC_PROVIDER: http://localhost:3000/

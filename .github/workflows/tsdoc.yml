@@ -2,9 +2,6 @@ name: 📖 tsdoc-markdown
 
 on:
   push:
-    branches:
-      - "**"
-      - "!master"
 
 jobs:
   docs:

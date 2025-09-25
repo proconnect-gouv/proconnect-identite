@@ -9,7 +9,7 @@
     "api",
     "rest"
   ],
-  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/crisp#readme",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/crisp#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",

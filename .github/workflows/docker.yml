@@ -31,7 +31,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
           flavor: |
-            latest=${{ github.ref == 'refs/heads/master' }}
+            latest=${{ github.ref == 'refs/heads/main' }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

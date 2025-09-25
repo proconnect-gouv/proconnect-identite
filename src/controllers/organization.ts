@@ -14,6 +14,7 @@ import { z, ZodError } from "zod";
 import {
   AccessRestrictedToPublicServiceEmailError,
   DomainRestrictedError,
+  ForbiddenError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -288,8 +289,11 @@ export const getUnableToAutoJoinOrganizationController = async (
   } catch (e) {
     if (e instanceof NotFoundError) {
       next(new HttpErrors.NotFound());
+    } else if (e instanceof ForbiddenError) {
+      next(new HttpErrors.Forbidden());
+    } else {
+      next(e);
     }
-    next(e);
   }
 };
 
