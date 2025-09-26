@@ -12,6 +12,7 @@ import { forceJoinOrganizationFactory } from "@gouvfr-lasuite/proconnect.identit
 import {
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
+  isPublicService,
 } from "@gouvfr-lasuite/proconnect.identite/services/organization";
 import type {
   Organization,
@@ -69,7 +70,6 @@ import {
   isCommune,
   isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
-  isPublicService,
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
