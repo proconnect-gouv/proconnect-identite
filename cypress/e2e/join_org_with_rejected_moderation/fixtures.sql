@@ -41,6 +41,12 @@ VALUES
     '66204244914742',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
+  ),
+  (
+    3,
+    '66204244905476',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO
@@ -75,6 +81,17 @@ VALUES
     CURRENT_TIMESTAMP - INTERVAL '2 days',
     CURRENT_TIMESTAMP - INTERVAL '1 day',
     'Rejeté par moderator@yopmail.com | Raison : "Inversion Nom et Prénom"',
+    'moderator@yopmail.com',
+    NULL
+  ),
+  (
+    3,
+    1,
+    3,
+    'organization_join_block',
+    CURRENT_TIMESTAMP - INTERVAL '2 days',
+    CURRENT_TIMESTAMP - INTERVAL '1 day',
+    'Rejeté par moderator@yopmail.com | Documents insuffisants',
     'moderator@yopmail.com',
     NULL
   );

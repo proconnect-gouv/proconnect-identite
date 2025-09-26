@@ -118,7 +118,7 @@
     "@gouvfr/dsfr": "^1.14.0",
     "@kitajs/html": "^4.2.9",
     "@kitajs/ts-html-plugin": "^4.1.1",
-    "@panva/jose": "^1.9.3",
+    "jose": "^6.0.11",
     "@simplewebauthn/types": "^10.0.0",
     "@simplewebauthn/typescript-types": "^8.3.4",
     "@types/console-log-level": "^1.4.5",
