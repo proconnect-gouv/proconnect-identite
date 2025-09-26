@@ -135,3 +135,27 @@ RETURNING *;`,
 
   return rows.shift();
 };
+
+export const deletePendingModeration = async ({
+  user_id,
+  organization_id,
+}: {
+  user_id: number;
+  organization_id: number;
+}) => {
+  const connection = getDatabaseConnection();
+
+  const { rows }: QueryResult<Moderation> = await connection.query(
+    `
+DELETE FROM
+  moderations
+WHERE
+  user_id = $1
+  AND organization_id = $2
+  AND moderated_at IS NULL;
+`,
+    [user_id, organization_id],
+  );
+
+  return rows.shift();
+};

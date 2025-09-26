@@ -6,6 +6,7 @@ import {
   addDomain,
   deleteEmailDomainsByVerificationTypes,
 } from "../../repositories/email-domain";
+import { deletePendingModeration } from "../../repositories/moderation";
 import {
   findByUserId,
   findById as findOrganizationById,
@@ -46,6 +47,8 @@ export const quitOrganization = async ({
   if (!hasBeenRemoved) {
     throw new NotFoundError();
   }
+
+  await deletePendingModeration({ user_id, organization_id });
 
   return true;
 };
