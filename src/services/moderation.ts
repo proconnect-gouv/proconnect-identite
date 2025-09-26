@@ -25,8 +25,8 @@ export const extractRejectionReason = (comment: string | null): string => {
     }
   }
 
-  // Last fallback: return the original comment
-  return comment;
+  // Last fallback: return default reason (never expose moderator identity)
+  return "Raison non spécifiée";
 };
 
 /**
