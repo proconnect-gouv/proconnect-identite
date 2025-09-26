@@ -17,8 +17,9 @@ describe("env.zod", () => {
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
       JWKS,
-      SMTP_URL: "smtp://localhost:1025",
       SESSION_COOKIE_SECRET: "proconnectsecret,identitesecret",
+      SMTP_URL: "smtp://localhost:1025",
+      SYMMETRIC_ENCRYPTION_KEY: "aTrueRandom32BytesLongBase64EncodedStringAA=",
     };
 
     const env = envSchema.parse(sample_env);

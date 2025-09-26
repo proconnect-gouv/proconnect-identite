@@ -1,7 +1,9 @@
 // from https://medium.com/@tony.infisical/guide-to-nodes-crypto-module-for-encryption-decryption-65c077176980
 
-import crypto from "crypto";
 import { isString } from "lodash-es";
+import { AssertionError } from "node:assert";
+import crypto from "node:crypto";
+import { SymmetricEncryptionError } from "../config/errors";
 
 export const encryptSymmetric = (key: string, plaintext: string) => {
   // create a random initialization vector
@@ -28,7 +30,19 @@ export const encryptSymmetric = (key: string, plaintext: string) => {
 
 export const decryptSymmetric = (key: string, encryptedText: any) => {
   if (!isString(encryptedText) || encryptedText.split(".").length !== 3) {
-    throw new Error("Invalid encrypted text");
+    throw new SymmetricEncryptionError("Invalid encrypted text format", {
+      cause: isString(encryptedText)
+        ? new AssertionError({
+            expected: "An array of 3 strings",
+            actual: encryptedText.split(".").length,
+            operator: "!==",
+          })
+        : new AssertionError({
+            expected: "A string",
+            actual: encryptedText,
+            operator: "isString",
+          }),
+    });
   }
 
   const [ciphertext, iv, tag] = encryptedText.split(".");
