@@ -33,22 +33,16 @@ describe("extractRejectionReason", () => {
     assert.strictEqual(result, "Profil incomplet");
   });
 
-  it("should fallback to original comment when no quoted reason pattern", () => {
+  it("should fallback to default reason when no quoted reason pattern", () => {
     const comment = "Rejeté par moderator@yopmail.com | Documents insuffisants";
     const result = extractRejectionReason(comment);
-    assert.strictEqual(
-      result,
-      "Rejeté par moderator@yopmail.com | Documents insuffisants",
-    );
+    assert.strictEqual(result, "Raison non spécifiée");
   });
 
-  it("should return original comment when no standard format", () => {
+  it("should return default reason when no standard format", () => {
     const comment = "Demande rejetée pour cause de données manquantes";
     const result = extractRejectionReason(comment);
-    assert.strictEqual(
-      result,
-      "Demande rejetée pour cause de données manquantes",
-    );
+    assert.strictEqual(result, "Raison non spécifiée");
   });
 
   it("should handle null comment", () => {
