@@ -8,7 +8,7 @@
             <form id="verify-email" action="/users/official-contact-email-verification/<%= organization_id %>" method="post" autocomplete="off">
                 <p>
                     Pour vérifier votre appartenance à l’organisation <%= libelle %>,
-                    nous avons envoyé un <% if (newCodeSent) { %>nouveau <% } %>code à l’adresse email officielle de votre <%= organization_type_label; %> :
+                    nous avons envoyé un <% if (newCodeSent) { %>nouveau <% } %> code à l’adresse email officielle de votre <%= organization_type_label; %> :
                     <span class="fr-badge fr-badge--info fr-badge--no-icon email-badge-lowercase">
                         <%= contactEmail; %>
                     </span>.
@@ -38,8 +38,8 @@
                         </a>
                     </p>
                 </div>
-                <%- include('../partials/go-back.ejs') %>
             </form>
+            <%- include('../partials/go-back.ejs') %>
         </div>
     </div>
 </div>
