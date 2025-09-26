@@ -35,7 +35,7 @@
     "e2e:studio": "npx cypress open",
     "fixtures:load": "npm run --silent build:db:migrate && tsx scripts/run-sql-script.ts scripts/fixtures.sql && npm run update-organization-info 0",
     "fixtures:load-ci": "tsx scripts/run-sql-script.ts",
-    "lint": "prettier --write '**/*.ts'",
+    "lint": "prettier --write '**/*.{ts,sql}'",
     "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate",
     "start": "tsx --import ./src/instrument.ts src/index.ts",
     "test": "run-s test:*",
@@ -60,8 +60,10 @@
   },
   "prettier": {
     "plugins": [
-      "prettier-plugin-organize-imports"
-    ]
+      "prettier-plugin-organize-imports",
+      "prettier-plugin-sql"
+    ],
+    "language": "postgresql"
   },
   "dependencies": {
     "@gouvfr-lasuite/proconnect.core": "workspace:*",
@@ -147,6 +149,7 @@
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-sql": "^0.19.2",
     "tld-extract": "^2.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.1.5",
