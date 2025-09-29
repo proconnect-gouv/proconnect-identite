@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.identite",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/identite#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -50,10 +50,10 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.8",
-    "@proconnect-gouv/proconnect.core": "^0.6.0",
-    "@proconnect-gouv/proconnect.devtools.typescript": "0.0.0",
-    "@proconnect-gouv/proconnect.entreprise": "^0.0.0",
-    "@proconnect-gouv/proconnect.insee": "^0.0.0",
+    "@proconnect-gouv/proconnect.core": "^1.0.0",
+    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
+    "@proconnect-gouv/proconnect.entreprise": "^1.0.0",
+    "@proconnect-gouv/proconnect.insee": "^1.0.0",
     "@sinonjs/fake-timers": "^14.0.0",
     "@types/node": "^22.18.6",
     "await-to-js": "^3.0.0",
