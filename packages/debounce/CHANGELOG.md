@@ -1,4 +1,4 @@
-# @gouvfr-lasuite/proconnect.debounce
+# @proconnect-gouv/proconnect.debounce
 
 ## 0.5.0
 

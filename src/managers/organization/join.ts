@@ -1,23 +1,23 @@
-import { isEmailValid } from "@gouvfr-lasuite/proconnect.core/security";
-import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
-import { Welcome } from "@gouvfr-lasuite/proconnect.email";
-import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
+import { Welcome } from "@proconnect-gouv/proconnect.email";
+import { EntrepriseApiError } from "@proconnect-gouv/proconnect.entreprise/types";
 import {
   InvalidCertificationError,
   InvalidSiretError,
   OrganizationNotActiveError,
   OrganizationNotFoundError,
-} from "@gouvfr-lasuite/proconnect.identite/errors";
-import { forceJoinOrganizationFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
+} from "@proconnect-gouv/proconnect.identite/errors";
+import { forceJoinOrganizationFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import {
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
-} from "@gouvfr-lasuite/proconnect.identite/services/organization";
+} from "@proconnect-gouv/proconnect.identite/services/organization";
 import type {
   Organization,
   OrganizationInfo,
   UserOrganizationLink,
-} from "@gouvfr-lasuite/proconnect.identite/types";
+} from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";

@@ -3,7 +3,7 @@ import {
   isEmailValid,
   isNameValid,
   isSiretValid,
-} from "@gouvfr-lasuite/proconnect.core/security";
+} from "@proconnect-gouv/proconnect.core/security";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";

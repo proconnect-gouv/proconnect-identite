@@ -1,6 +1,6 @@
 //
 
-import { isOrganizationDirigeantFactory } from "@gouvfr-lasuite/proconnect.identite/managers/certification";
+import { isOrganizationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import {
   EntrepriseApiInfogreffeRepository,
   EntrepriseApiInseeRepository,

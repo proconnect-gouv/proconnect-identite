@@ -1,6 +1,6 @@
 //
 
-import type { InseeSiretEstablishment } from "@gouvfr-lasuite/proconnect.insee/types";
+import type { InseeSiretEstablishment } from "@proconnect-gouv/proconnect.insee/types";
 
 //
 export const LiElJonsonEstablishment: InseeSiretEstablishment = {

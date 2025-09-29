@@ -4,7 +4,7 @@ import {
   AppleEuropeInc,
   MaireClamart,
   RogalDornEntrepreneur,
-} from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/insee/siret";
+} from "@proconnect-gouv/proconnect.entreprise/testing/seed/insee/siret";
 import { suite, test } from "node:test";
 import { fromSiret } from "./from-siret.js";
 

@@ -1,4 +1,4 @@
-import { DOMAINS_WHITELIST } from "@gouvfr-lasuite/proconnect.identite/data/organization";
+import { DOMAINS_WHITELIST } from "@proconnect-gouv/proconnect.identite/data/organization";
 
 export function isDomainAllowedForOrganization(siret: string, domain: string) {
   const whitelist = DOMAINS_WHITELIST.get(siret);

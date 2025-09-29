@@ -1,4 +1,4 @@
-import type { FranceConnectUserInfoResponse } from "@gouvfr-lasuite/proconnect.identite/types";
+import type { FranceConnectUserInfoResponse } from "@proconnect-gouv/proconnect.identite/types";
 
 //
 

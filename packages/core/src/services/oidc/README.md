@@ -1,4 +1,4 @@
-# `import "@gouvfr-lasuite/proconnect.core/services/oidc"`
+# `import "@proconnect-gouv/proconnect.core/services/oidc"`
 
 <!-- TSDOC_START -->
 
@@ -10,15 +10,12 @@
 
 Check if a prompt contains essential acrs
 
-| Function | Type |
-| ---------- | ---------- |
+| Function                | Type                                                           |
+| ----------------------- | -------------------------------------------------------------- |
 | `containsEssentialAcrs` | `(prompt: PromptDetail) => prompt is EssentialAcrPromptDetail` |
 
 Parameters:
 
-* `prompt`: the oidc-provider 
-
-
-
+- `prompt`: the oidc-provider
 
 <!-- TSDOC_END -->

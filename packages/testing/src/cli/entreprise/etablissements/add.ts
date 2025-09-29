@@ -1,12 +1,12 @@
 //
 
 import { PEOPLE } from "#src/api/data/entreprise";
-import { findBySiretFactory } from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
+import { findBySiretFactory } from "@proconnect-gouv/proconnect.entreprise/api/insee";
 import {
   createEntrepriseOpenApiClient,
   type EntrepriseOpenApiClient,
-} from "@gouvfr-lasuite/proconnect.entreprise/client";
-import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
+} from "@proconnect-gouv/proconnect.entreprise/client";
+import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.entreprise/types";
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";

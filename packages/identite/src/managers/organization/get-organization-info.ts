@@ -3,11 +3,11 @@
 import { InvalidSiretError, NotFoundError } from "#src/errors";
 import { OrganizationInfoMapper } from "#src/mappers";
 import { type OrganizationInfo } from "#src/types";
-import type { EntrepriseApiInseeRepository } from "@gouvfr-lasuite/proconnect.entreprise/api";
+import type { EntrepriseApiInseeRepository } from "@proconnect-gouv/proconnect.entreprise/api";
 import {
   EntrepriseApiConnectionError,
   EntrepriseApiInvalidSiret,
-} from "@gouvfr-lasuite/proconnect.entreprise/types";
+} from "@proconnect-gouv/proconnect.entreprise/types";
 
 //
 

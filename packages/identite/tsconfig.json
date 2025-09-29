@@ -7,7 +7,7 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
+  "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
   "references": [
     { "path": "../core/tsconfig.lib.json" },
     { "path": "../entreprise/tsconfig.lib.json" },

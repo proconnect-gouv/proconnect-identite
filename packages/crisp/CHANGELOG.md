@@ -1,4 +1,4 @@
-# @gouvfr-lasuite/proconnect.crisp
+# @proconnect-gouv/proconnect.crisp
 
 ## 0.5.0
 

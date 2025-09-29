@@ -1,7 +1,7 @@
 //
 
 import type { IdentityVector } from "#src/types";
-import type { InfogreffeSirenMandatairesSociaux } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { InfogreffeSirenMandatairesSociaux } from "@proconnect-gouv/proconnect.entreprise/types";
 
 //
 

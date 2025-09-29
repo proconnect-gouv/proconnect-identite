@@ -1,4 +1,4 @@
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,

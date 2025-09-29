@@ -1,4 +1,4 @@
-# @gouvfr-lasuite/proconnect.testing
+# @proconnect-gouv/proconnect.testing
 
 Mock server and CLI tools for testing ProConnect integrations with external APIs.
 
@@ -26,7 +26,7 @@ This package provides:
 Create a testing handler and mount it in your application:
 
 ```typescript
-import { createTestingHandler } from "@gouvfr-lasuite/proconnect.testing/api";
+import { createTestingHandler } from "@proconnect-gouv/proconnect.testing/api";
 import { createServer } from "http";
 
 const handler = createTestingHandler("/testing", {
