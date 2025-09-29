@@ -1,11 +1,11 @@
 {
   "name": "@gouvfr-lasuite/proconnect.core",
-  "version": "0.5.0",
-  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/core#readme",
-  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
+  "version": "0.6.0",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/core#readme",
+  "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
+    "url": "git+https://github.com/proconnect-gouv/proconnect-identite.git",
     "directory": "packages/core"
   },
   "license": "MIT",
@@ -36,6 +36,11 @@
       "require": "./dist/services/suggestion/index.cjs",
       "import": "./dist/services/suggestion/index.js",
       "types": "./dist/services/suggestion/index.d.ts"
+    },
+    "./data": {
+      "require": "./dist/data/index.cjs",
+      "import": "./dist/data/index.js",
+      "types": "./dist/data/index.d.ts"
     }
   },
   "typesVersions": {
@@ -51,6 +56,9 @@
       ],
       "services/suggestion": [
         "./dist/services/suggestion/index.d.ts"
+      ],
+      "data": [
+        "./dist/data/index.d.ts"
       ]
     }
   },
@@ -66,7 +74,7 @@
   },
   "dependencies": {
     "@types/lodash-es": "^4.17.12",
-    "@types/oidc-provider": "^8.8.1",
+    "@types/oidc-provider": "^9.1.1",
     "@zootools/email-spell-checker": "^1.12.0",
     "bcryptjs": "^3.0.2",
     "is-disposable-email-domain": "^1.0.7",
@@ -76,9 +84,9 @@
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.18.6",
     "pkgroll": "^2.12.1",
-    "tsx": "^4.19.4"
+    "tsx": "^4.20.3"
   },
   "publishConfig": {
     "access": "public",

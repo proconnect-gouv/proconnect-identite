@@ -28,8 +28,12 @@ import getNotificationsFromRequest, {
   getNotificationLabelFromRequest,
 } from "../../services/get-notifications-from-request";
 
+const QuerySchema = z.object({
+  did_you_mean: z.string().trim().min(1).optional(),
+});
+
 export const getStartSignInController = async (
-  req: Request,
+  req: Request<{}, {}, any, z.input<typeof QuerySchema>>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -39,15 +43,14 @@ export const getStartSignInController = async (
       getAndRemoveLoginHintFromUnauthenticatedSession(req);
     if (hintFromOidcInteraction) {
       setEmailInUnauthenticatedSession(req, hintFromOidcInteraction);
+      req.body = req.body || {};
       req.body.login = hintFromOidcInteraction;
       return postStartSignInController(req, res, next);
     }
 
-    const schema = z.object({
-      did_you_mean: z.string().trim().min(1).optional(),
-    });
-
-    const { did_you_mean: didYouMean } = await schema.parseAsync(req.query);
+    const { did_you_mean: didYouMean } = await QuerySchema.parseAsync(
+      req.query,
+    );
 
     const hintFromSession = getEmailFromUnauthenticatedSession(req);
 

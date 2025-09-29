@@ -2,6 +2,7 @@
 
 import { generateToken } from "@sunknudsen/totp";
 import { checkA11y } from "./a11y/checkA11y";
+import { seed } from "./commands/seed";
 
 //
 
@@ -17,10 +18,13 @@ declare global {
       login(email: string): Chainable<void>;
       mfaLogin(email: string): Chainable<void>;
       seeInField: typeof seeInFieldCommand;
-      setCustomParams(customParams: any): Chainable<void>;
       setRequestedAcrs(requestedAcrs?: string[]): Chainable<void>;
       getDescribed: typeof getDescribedCommand;
+      seed: typeof seed;
       getByLabel: typeof getByLabelCommand;
+      updateCustomParams: typeof updateCustomParams;
+      fillAndSubmitTotpForm: typeof fillAndSubmitTotpFormCommand;
+      verifyEmail: typeof verifyEmailCommand;
     }
   }
 }
@@ -35,9 +39,7 @@ const defaultPassword = "password123";
 Cypress.Commands.add("fillTotpFields", (totpSecret = defaultTotpSecret) => {
   const totp = generateToken(totpSecret);
   cy.get("[name=totpToken]").type(totp);
-  cy.get(
-    '[action="/users/2fa-sign-in-with-authenticator-app"] [type="submit"]',
-  ).click();
+  cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
 });
 
 Cypress.Commands.add(
@@ -83,32 +85,44 @@ function seeInFieldCommand(field: string, value: string) {
 }
 Cypress.Commands.add("seeInField", seeInFieldCommand);
 
-Cypress.Commands.add("setCustomParams", (customParams) => {
+const updateCustomParams = (updater: (customParams: any) => any): void => {
   cy.get('[name="custom-params"]')
-    .clear({ force: true })
-    .type(JSON.stringify(customParams), {
-      delay: 0,
-      parseSpecialCharSequences: false,
-      force: true,
+    .invoke("val")
+    .then((customParamsAsText) => {
+      const customParams = JSON.parse(customParamsAsText as string);
+
+      const newCustomParams = updater(customParams);
+      // note that null property should be set to a falsy
+      const newCustomParamsAsText = JSON.stringify(newCustomParams, null, 2);
+
+      cy.get('[name="custom-params"]').clear({ force: true });
+      cy.get('[name="custom-params"]').type(newCustomParamsAsText, {
+        delay: 0,
+        force: true,
+        parseSpecialCharSequences: false,
+      });
     });
-});
+};
+
+Cypress.Commands.add("updateCustomParams", updateCustomParams);
 
 Cypress.Commands.add("setRequestedAcrs", (requestedAcrs) => {
-  const customParams = {
-    claims: {
-      id_token: {
-        amr: { essential: true },
-        acr: { essential: true },
-      },
+  const newClaims = {
+    id_token: {
+      amr: { essential: true },
+      acr: { essential: true },
     },
   };
 
   if (requestedAcrs) {
     // @ts-ignore
-    customParams.claims.id_token.acr["values"] = requestedAcrs;
+    newClaims.id_token.acr["values"] = requestedAcrs;
   }
 
-  cy.setCustomParams(customParams);
+  cy.updateCustomParams((customParams) => ({
+    ...customParams,
+    claims: newClaims,
+  }));
 });
 
 function getDescribedCommand(text: string) {
@@ -121,8 +135,43 @@ function getDescribedCommand(text: string) {
     });
 }
 Cypress.Commands.add("getDescribed", getDescribedCommand);
+Cypress.Commands.add("seed", seed);
 
 function getByLabelCommand(text: string) {
   return cy.get(`[aria-label="${text}"]`);
 }
 Cypress.Commands.add("getByLabel", getByLabelCommand);
+
+function fillAndSubmitTotpFormCommand(action: string) {
+  return cy
+    .get("#humanReadableTotpKey")
+    .invoke("text")
+    .then((text) => {
+      const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
+      const totp = generateToken(humanReadableTotpKey);
+      cy.get("[name=totpToken]").type(totp);
+      cy.get(`[action="${action}"] [type="submit"]`).click();
+    });
+}
+Cypress.Commands.add("fillAndSubmitTotpForm", fillAndSubmitTotpFormCommand);
+
+function verifyEmailCommand() {
+  return cy
+    .maildevGetMessageBySubject("Vérification de votre adresse email")
+    .then((email) => {
+      cy.maildevVisitMessageById(email.id);
+      cy.contains(
+        "Pour vérifier votre adresse e-mail, merci de de copier-coller ou de renseigner ce code dans l’interface de connexion ProConnect.",
+      );
+      cy.go("back");
+      cy.maildevDeleteMessageById(email.id);
+      return cy.maildevGetOTPCode(email.text, 10);
+    })
+    .then((code) => {
+      if (!code)
+        throw new Error("Could not find verification code in received email");
+      cy.get('[name="verify_email_token"]').type(code);
+      cy.get('[type="submit"]').click();
+    });
+}
+Cypress.Commands.add("verifyEmail", verifyEmailCommand);

@@ -1,4 +1,8 @@
 describe("Signup into new entreprise unipersonnelle", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("Should send email when user updates personal information", function () {
     cy.visit("/personal-information");
 

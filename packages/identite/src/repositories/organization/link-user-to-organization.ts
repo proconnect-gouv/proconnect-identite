@@ -1,4 +1,4 @@
-import { hashToPostgresParams } from "#src/services";
+import { hashToPostgresParams } from "#src/services/postgres";
 import type {
   DatabaseContext,
   InsertUserOrganizationLink,
@@ -8,7 +8,6 @@ import type { QueryResult } from "pg";
 
 export function linkUserToOrganizationFactory({ pg }: DatabaseContext) {
   return async function linkUserToOrganization({
-    is_executive = false,
     is_external = false,
     needs_official_contact_email_verification = false,
     organization_id,
@@ -18,14 +17,13 @@ export function linkUserToOrganizationFactory({ pg }: DatabaseContext) {
     const { paramsString, valuesString, values } =
       hashToPostgresParams<UserOrganizationLink>({
         created_at: new Date(),
-        is_executive_verified_at: is_executive ? new Date() : undefined,
-        is_executive,
         is_external,
         needs_official_contact_email_verification,
         organization_id,
         updated_at: new Date(),
         user_id,
         verification_type,
+        verified_at: verification_type ? new Date() : undefined,
       });
 
     const { rows }: QueryResult<UserOrganizationLink> = await pg.query(

@@ -19,6 +19,7 @@ declare global {
     login_hint: string;
     prompt: "select_organization" | "update_userinfo";
     scope: string;
+    sp_name?: string;
   }
 
   /**

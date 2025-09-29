@@ -20,32 +20,25 @@
                 </button>
             </form>
         </section>
-
-        <section aria-describedby="two-factor-authentication" class="fr-mb-6w">
+        <hr>
+        <section aria-describedby="two-factor-authentication" class="fr-mb-4w">
             <h3 id="two-factor-authentication">Double authentification</h3>
-            <% if (isAuthenticatorConfigured || passkeys.length > 0){ %>
-                <div class="fr-alert fr-alert--info fr-mb-3w">
-                    <p>La double authentification (2FA) protège mieux vos informations personnelles et réduit les risques de piratage.</p>
-                </div>
-            <% }; %>
-
             <% if (isAuthenticatorConfigured){ %>
-                <p id="one-time-password"><b>Code à usage unique</b></p>
-                <div aria-describedby="one-time-password"  class="fr-card fr-card--horizontal fr-mb-3w">
+                <div class="fr-card fr-card--horizontal fr-mb-3w fr-col-8">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
                             <h3 class="fr-card__title blue-france">FreeOTP Authenticator</h3>
                             <div class="fr-card__desc">
                                 <p class="fr-mb-2w">Création : <%= totpKeyVerifiedAt; %>
                                 </p>
-                                <form action="/delete-authenticator-app-configuration" method="post">
+                                <form action="/delete-totp-configuration" method="post">
                                     <input
-                                            type="hidden"
-                                            name="_csrf"
-                                            value="<%= csrfToken; %>"
+                                        type="hidden"
+                                        name="_csrf"
+                                        value="<%= csrfToken; %>"
                                     >
                                     <button
-                                        class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line"
+                                        class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line js-confirm"
                                         data-confirm="Cette action est irreversible."
                                         type="submit"
                                     >
@@ -54,13 +47,8 @@
                                 </form>
                             </div>
                             <div class="fr-card__start">
-                                <p class="fr-card__detail">Code à usage unique</p>
+                                <p class="fr-tag fr-mb-2w">Code à usage unique</p>
                             </div>
-                        </div>
-                    </div>
-                    <div class="fr-card__header grey-background fr-hidden fr-unhidden-md">
-                        <div class="fr-card__img">
-                            <img class="fr-responsive-img" src="/dist/single-use-code.svg" alt="" />
                         </div>
                     </div>
                 </div>
@@ -76,7 +64,7 @@
                     last_used_at,
                     shows_second_factor_only_label
                 }) => { %>
-                    <div class="fr-card fr-card--horizontal fr-mb-3w">
+                    <div class="fr-card fr-card--horizontal fr-mb-3w fr-col-8">
                         <div class="fr-card__body">
                             <div class="fr-card__content">
                                 <% if (shows_second_factor_only_label) { %>
@@ -102,7 +90,7 @@
                                         >
                                         <button
                                                 aria-label="Supprimer la clé d'accès <%= display_name; %>"
-                                                class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line"
+                                                class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line js-confirm"
                                                 data-confirm="Cette action est irreversible."
                                                 type="submit"
                                         >
@@ -111,13 +99,8 @@
                                     </form>
                                 </div>
                                 <div class="fr-card__start">
-                                    <p class="fr-card__detail">Clé d'authentification</p>
+                                    <p class="fr-tag fr-my-2w">Clé d'authentification</p>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="fr-card__header grey-background fr-hidden fr-unhidden-md">
-                            <div class="fr-card__img">
-                                <img class="fr-responsive-img" src="/dist/padlock.svg" alt="" />
                             </div>
                         </div>
                     </div>
@@ -125,7 +108,6 @@
             <% }; %>
 
             <% if (isAuthenticatorConfigured || passkeys.length > 0){ %>
-                <p>Vous pouvez configurer plusieurs méthodes de double authentification si vous le souhaitez.</p>
                 <a
                     class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
                     href="/double-authentication"
@@ -139,17 +121,17 @@
                     Vous n'avez pas encore configuré la double authentification (2FA).
                 </p>
                 <a class="fr-btn fr-btn--secondary" href="/double-authentication">
-                    Configurer la 2FA
+                    Configurer la double authentification
                 </a>
             <% } %>
         </section>
 
         <% if (locals.is2faCapable) { %>
-            <form class="fr-mt-4w" id="2fa-form" method="post" action="/set-force-2fa">
+            <form id="2fa-form" method="post" action="/set-force-2fa">
                 <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 
-                <fieldset class="fr-fieldset fr-mb-0" id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
-                    <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-hint-legend">
+                <fieldset class="fr-fieldset fr-mb-0" id="radio" aria-labelledby="radio-legend radio-messages">
+                    <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-legend">
                         Où voulez-vous activer la double authentification ?
                     </legend>
 
@@ -179,13 +161,14 @@
                 </button>
             </form>
         <% } %>
-
+        <hr>
         <section class="fr-mb-6w">
-            <h3>Suppression de mon compte</h3>
+            <h3>Suppression du compte</h3>
             <p>
                 Pour des raisons légales, vos données sont sauvegardées pendant 3 ans après la suppression de votre compte.
             </p>
-            <form class="fr-mt-4w" action="/users/delete">
+            <form class="fr-mt-4w" action="/users/delete" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
                 <button
                         class="fr-btn btn--danger js-confirm"
                         data-confirm="Si vous avez changé d’organisation, vous pouvez les modifier sur votre espace personnel.&#10;&#10;Si vous n’utilisez plus ProConnect avec cette adresse email, vous pouvez supprimer ce compte.&#10;&#10;Voulez vous continuer ?"

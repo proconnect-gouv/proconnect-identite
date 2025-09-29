@@ -1,5 +1,6 @@
-import { z, type ZodTypeAny } from "zod";
-import { defaultJWKS } from "./default-jwks";
+import { randomBytes } from "node:crypto";
+import { z } from "zod";
+import { create_jwks } from "./jwks";
 
 export const connectorEnvSchema = z.object({
   API_AUTH_PASSWORD: z.string().default("admin"),
@@ -7,7 +8,7 @@ export const connectorEnvSchema = z.object({
   CRISP_BASE_URL: z.string().url().default("https://api.crisp.chat"),
   CRISP_IDENTIFIER: z.string().default(""),
   CRISP_KEY: z.string().default(""),
-  CRISP_MODERATION_TAG: zCoerceArray(z.string()).default("identite,moderation"),
+  CRISP_MODERATION_TAG: zCoerceArray().default(["identite", "moderation"]),
   CRISP_PLUGIN_URN: z.string().default(""),
   CRISP_RESOLVE_DELAY: z.coerce.number().int().nonnegative().default(1_000), // 1 second
   CRISP_USER_NICKNAME: z.string().default("ProConnect"),
@@ -32,54 +33,57 @@ export const connectorEnvSchema = z.object({
     .string()
     .default("🎭 Mocked FranceConnect Client Secret"),
   FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("ES256"),
-  FRANCECONNECT_ISSUER: z
-    .string()
-    .url()
-    .default(
-      "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
-    ),
-  FRANCECONNECT_SCOPES: zCoerceArray(z.string()).default(
-    [
-      "birthplace",
-      "birthdate",
-      "family_name",
-      "gender",
-      "given_name",
-      "openid",
-      "preferred_username",
-    ].join(" "),
-  ),
+  FRANCECONNECT_ISSUER: z.string().url(),
+  FRANCECONNECT_SCOPES: zCoerceArray().default([
+    "birthplace",
+    "birthdate",
+    "family_name",
+    "gender",
+    "given_name",
+    "openid",
+    "preferred_username",
+  ]),
   FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
     .default(3 * 30 * 24 * 60), // 3 months in minutes
+  INSEE_API_CLIENT_ID: z.string().default("🎭 Mocked Insee API Client ID"),
+  INSEE_API_CLIENT_SECRET: z
+    .string()
+    .default("🎭 Mocked Insee API Client Secret"),
+  INSEE_API_PASSWORD: z.string().default("🎭 Mocked Insee API Password"),
+  INSEE_API_URL: z
+    .string()
+    .url()
+    .default("https://api.insee.fr/api-sirene/prive/3.11"),
+  INSEE_API_USERNAME: z.string().default("🎭 Mocked Insee API Username"),
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   SENTRY_DSN: z.string().default(""),
   SMTP_FROM: z
     .string()
     .default("nepasrepondre@email.moncomptepro.beta.gouv.fr"),
-  SMTP_URL: z.string().default("smtp://localhost:1025"),
+  SMTP_URL: z.string(),
 });
 
 export const featureTogglesEnvSchema = z.object({
-  FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: zodTrueFalseBoolean().default("False"),
-  FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default("False"),
-  FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default("False"),
-  FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default("False"),
+  FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: zodTrueFalseBoolean().default(false),
+  FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default(false),
+  FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default(false),
+  FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE:
-    zodTrueFalseBoolean().default("False"),
+    zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE:
-    zodTrueFalseBoolean().default("True"),
-  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED:
-    zodTrueFalseBoolean().default("False"),
-  FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default("False"),
-  FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default("False"),
-  FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default("False"),
-  FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default("False"),
-  FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default("False"),
-  FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default("False"),
-  FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default("False"),
+    zodTrueFalseBoolean().default(true),
+  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED: zodTrueFalseBoolean().default(false),
+  FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default(false),
+  FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default(false),
+  FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),
+  FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
+  FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),
+  FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default(false),
+  FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default(false),
+  FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default(false),
 });
 
 export const secretEnvSchema = z.object({
@@ -90,14 +94,22 @@ export const secretEnvSchema = z.object({
         "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long! Use crypto.randomBytes(32).toString('base64') to generate one.",
     })
     .default("aTrueRandom32BytesLongBase64EncodedStringAA="),
-  SESSION_COOKIE_SECRET: zCoerceArray(z.string()).default("proconnectsecret"),
-  JWKS: zCoerceJson()
-    .default(JSON.stringify(defaultJWKS))
-    .pipe(z.object({ keys: z.array(z.any()) })),
+  SESSION_COOKIE_SECRET: zCoerceArray().default([
+    randomBytes(32).toString("base64"),
+  ]),
+  JWKS: z
+    .preprocess(
+      (val) => (typeof val === "string" ? JSON.parse(val) : val),
+      z.object({ keys: z.array(z.any()) }),
+    )
+    .default(await create_jwks()),
 });
 
 export const paramsEnvSchema = z.object({
   ACCESS_LOG_PATH: z.string().optional(),
+  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: z
+    .string()
+    .default("https://proconnect.gouv.fr/assurance/certification-dirigeant"),
   ACR_VALUE_FOR_IAL1_AAL1: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/self-asserted"),
@@ -110,9 +122,19 @@ export const paramsEnvSchema = z.object({
   ACR_VALUE_FOR_IAL2_AAL2: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/consistency-checked-2fa"),
-  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: z
+  ACR_VALUE_FOR_IAL3_AAL1: z
     .string()
     .default("https://proconnect.gouv.fr/assurance/certification-dirigeant"),
+  ACR_VALUE_FOR_IAL3_AAL2: z
+    .string()
+    .default(
+      "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
+    ),
+  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(1 * 24 * 60), // 1 day in minutes
   DEPLOY_ENV: z
     .enum(["localhost", "preview", "production", "sandbox"])
     .default("localhost"),
@@ -123,7 +145,7 @@ export const paramsEnvSchema = z.object({
     .default(
       "https://www.demarches-simplifiees.fr/agent_connect/logout_from_mcp",
     ),
-  EMAIL_DELIVERABILITY_WHITELIST: zCoerceArray(z.string()).default(""),
+  EMAIL_DELIVERABILITY_WHITELIST: zCoerceArray().default([]),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
@@ -195,20 +217,8 @@ export function zodTrueFalseBoolean() {
   return z.enum(["True", "False"]).transform((v: string) => v === "True");
 }
 
-export function zCoerceArray<T extends ZodTypeAny>(schema: T) {
+export function zCoerceArray() {
   return z
     .string()
-    .transform((value) => (value === "" ? [] : value.split(",")))
-    .pipe(z.array(schema));
-}
-
-export function zCoerceJson() {
-  return z.string().transform((str, ctx) => {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      ctx.addIssue({ code: "custom", message: "Invalid JSON" });
-      return z.NEVER;
-    }
-  });
+    .transform((value) => (value === "" ? [] : value.split(",")));
 }

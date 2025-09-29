@@ -7,7 +7,7 @@ import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
-import { isAuthenticatorAppConfiguredForUser } from "../managers/totp";
+import { isTotpConfiguredForUser } from "../managers/totp";
 import { sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
@@ -23,35 +23,23 @@ export const getDoubleAuthenticationController = async (
     return res.render("double-authentication", {
       pageTitle: "Double authentification",
       notifications: await getNotificationsFromRequest(req),
-      isAuthenticatorConfigured:
-        await isAuthenticatorAppConfiguredForUser(user_id),
+      isAuthenticatorConfigured: await isTotpConfiguredForUser(user_id),
       csrfToken: csrfToken(req),
-      breadcrumbs: [
-        { label: "Tableau de bord", href: "/" },
-        { label: "Compte et connexion", href: "/connection-and-account" },
-        { label: "Double authentification" },
-      ],
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const getConfiguringSingleUseCodeController = async (
+export const getIsTotpAppInstalledController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    return res.render("configuring-single-use-code", {
+    return res.render("is-totp-app-installed", {
       pageTitle: "Configurer un code à usage unique",
       notifications: await getNotificationsFromRequest(req),
-      breadcrumbs: [
-        { label: "Tableau de bord", href: "/" },
-        { label: "Compte et connexion", href: "/connection-and-account" },
-        { label: "Double authentification", href: "/double-authentication" },
-        { label: "Code à usage unique" },
-      ],
     });
   } catch (error) {
     next(error);

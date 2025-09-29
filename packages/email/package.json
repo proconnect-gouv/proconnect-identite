@@ -2,11 +2,11 @@
   "name": "@gouvfr-lasuite/proconnect.email",
   "version": "0.1.2",
   "private": true,
-  "homepage": "https://github.com/numerique-gouv/proconnect-identite/tree/master/packages/email#readme",
-  "bugs": "https://github.com/numerique-gouv/proconnect-identite/issues",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/email#readme",
+  "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/numerique-gouv/proconnect-identite.git",
+    "url": "git+https://github.com/proconnect-gouv/proconnect-identite.git",
     "directory": "packages/email"
   },
   "license": "MIT",
@@ -30,16 +30,19 @@
     "build": "tsc --build ./tsconfig.lib.json",
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "storybook": "vite",
-    "test": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "npm run test:unit src/**/*.test.tsx",
+    "test:unit": "tsx --test --test-reporter=spec"
   },
   "dependencies": {
-    "@kitajs/html": "^4.2.7",
+    "@kitajs/html": "^4.2.9",
     "@kitajs/ts-html-plugin": "^4.1.1"
   },
   "devDependencies": {
     "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
     "@storybook/csf": "^0.1.13",
-    "vite": "^6.3.4"
+    "prettier": "^3.6.2",
+    "vite": "^7.1.5"
   },
   "publishConfig": {
     "access": "public",

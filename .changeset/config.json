@@ -2,13 +2,13 @@
   "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
   "changelog": [
     "@changesets/changelog-github",
-    { "repo": "numerique-gouv/proconnect-identite" }
+    { "repo": "proconnect-gouv/proconnect-identite" }
   ],
   "commit": false,
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "master",
+  "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": []
 }

@@ -9,8 +9,9 @@ export default {
   title: "Add 2FA",
   render: Add2fa,
   args: {
-    given_name: "Marie",
-    family_name: "Dupont",
     baseurl: "http://localhost:3000",
-  } as Props,
+    email: "marie.dupont@example.com",
+    family_name: "Dupont",
+    given_name: "Marie",
+  } satisfies Props,
 } as ComponentAnnotations<Renderer, Props>;

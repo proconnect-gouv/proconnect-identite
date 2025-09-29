@@ -1,15 +1,21 @@
 //
 
 describe("delete account", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should delete account", function () {
     cy.visit("/connection-and-account");
 
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.login("lion.eljonson@darkangels.world");
 
+    cy.title().should("include", "Compte et connexion");
     cy.contains("Suppression");
-
     cy.contains("Supprimer mon compte").click();
 
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Votre compte a bien été supprimé.");
 
     cy.maildevGetMessageBySubject("Suppression de compte").then((email) => {
@@ -19,28 +25,5 @@ describe("delete account", () => {
       );
       cy.maildevDeleteMessageById(email.id);
     });
-  });
-
-  it("should logout from FranceConnect and delete account", function () {
-    cy.visit("/personal-information");
-    cy.login("franceconnected+jean@bon.com");
-
-    cy.title().should("include", "Informations personnelles -");
-    cy.contains("S’identifier avec").click();
-    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
-    cy.contains("Je suis Jean De La Rose").click();
-
-    // WARNING(douglasduteil): auto logout post FranceConnect connexion bypass
-    // We are trying to come back to the our app with an open FranceConnect session here
-    cy.visit("/connection-and-account");
-
-    cy.contains("Suppression");
-
-    cy.contains("Supprimer mon compte").click();
-
-    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-    cy.contains("Déconnexion en cours...");
-
-    cy.contains("Votre compte a bien été supprimé.");
   });
 });

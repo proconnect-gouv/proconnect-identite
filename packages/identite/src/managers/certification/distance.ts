@@ -14,13 +14,15 @@ export function distance(
 ): number {
   const sameGivenName = () =>
     leven(
-      franceconnectUserInfo.given_name || Math.random().toString(36),
-      sourceDirigeant.given_name || Math.random().toString(36),
+      franceconnectUserInfo.given_name?.toUpperCase() ||
+        Math.random().toString(36),
+      sourceDirigeant.given_name?.toUpperCase() || Math.random().toString(36),
     );
   const sameFamilyName = () =>
     leven(
-      franceconnectUserInfo.family_name || Math.random().toString(36),
-      sourceDirigeant.family_name || Math.random().toString(36),
+      franceconnectUserInfo.family_name?.toUpperCase() ||
+        Math.random().toString(36),
+      sourceDirigeant.family_name?.toUpperCase() || Math.random().toString(36),
     );
   const sameBirthDay = () =>
     (Number(sourceDirigeant.birthdate) -

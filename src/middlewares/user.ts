@@ -1,13 +1,26 @@
 import { getTrustedReferrerPath } from "@gouvfr-lasuite/proconnect.core/security";
-import { UserNotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
+import {
+  InvalidCertificationError,
+  NotFoundError,
+  UserNotFoundError,
+} from "@gouvfr-lasuite/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
-import { HOST } from "../config/env";
+import {
+  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
+  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
+  HOST,
+} from "../config/env";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
-import { greetForJoiningOrganization } from "../managers/organization/join";
+import { isOrganizationDirigeant } from "../managers/certification";
 import {
+  greetForCertification,
+  greetForJoiningOrganization,
+} from "../managers/organization/join";
+import {
+  getOrganizationById,
   getOrganizationsByUserId,
   selectOrganization,
 } from "../managers/organization/main";
@@ -18,12 +31,20 @@ import {
   isWithinAuthenticatedSession,
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
+import { CertificationSessionSchema } from "../managers/session/certification";
 import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
-import { needsEmailVerificationRenewal } from "../managers/user";
+import {
+  isUserVerifiedWithFranceconnect,
+  needsEmailVerificationRenewal,
+} from "../managers/user";
+import { getUserOrganizationLink } from "../repositories/organization/getters";
+import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
+import { getFranceConnectUserInfo } from "../repositories/user";
+import { isExpired } from "../services/is-expired";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 const getReferrerPath = (req: Request) => {
@@ -138,55 +159,36 @@ export const checkUserIsConnectedMiddleware = async (
     }
   });
 };
-
-export const checkUserTwoFactorAuthMiddleware = async (
+export const checkUserHasConnectedRecentlyMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   await checkUserIsConnectedMiddleware(req, res, async (error) => {
     try {
-      if (error) next(error);
+      if (error) return next(error);
 
-      const { id: user_id } = getUserFromAuthenticatedSession(req);
+      const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
-      if (
-        ((await shouldForce2faForUser(user_id)) ||
-          req.session.twoFactorsAuthRequested) &&
-        !isWithinTwoFactorAuthenticatedSession(req)
-      ) {
-        if (!(await is2FACapable(user_id))) {
-          // We break the connexion flow
+      if (!hasLoggedInRecently) {
+        req.session.referrerPath = getReferrerPath(req);
 
-          req.session.interactionId = undefined;
-          req.session.mustReturnOneOrganizationInPayload = undefined;
-          req.session.twoFactorsAuthRequested = undefined;
-          req.session.authForProconnectFederation = undefined;
-          return res.redirect(
-            "/connection-and-account?notification=2fa_not_configured",
-          );
-        } else {
-          return res.redirect("/users/2fa-sign-in");
-        }
+        return res.redirect(`/users/start-sign-in?notification=login_required`);
       }
-      return next();
+
+      next();
     } catch (error) {
-      if (error instanceof UserNotFoundError) {
-        // The user has an active session but is not in the database anymore
-        await destroyAuthenticatedSession(req);
-        next(new HttpErrors.Unauthorized());
-      }
       next(error);
     }
   });
 };
 
-export const checkUserIsVerifiedMiddleware = (
+export const checkUserIsVerifiedMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
+  await checkUserIsConnectedMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
 
@@ -195,21 +197,13 @@ export const checkUserIsVerifiedMiddleware = (
       const needs_email_verification_renewal =
         await needsEmailVerificationRenewal(email);
 
-      const is_browser_trusted = isBrowserTrustedForUser(req);
-
-      if (
-        !email_verified ||
-        needs_email_verification_renewal ||
-        !is_browser_trusted
-      ) {
+      if (!email_verified || needs_email_verification_renewal) {
         let notification_param = "";
 
         if (!email_verified) {
           notification_param = "";
         } else if (needs_email_verification_renewal) {
           notification_param = "?notification=email_verification_renewal";
-        } else if (!is_browser_trusted) {
-          notification_param = "?notification=browser_not_trusted";
         }
 
         return res.redirect(`/users/verify-email${notification_param}`);
@@ -227,18 +221,98 @@ export const checkUserIsVerifiedMiddleware = (
     }
   });
 
+export const checkUserTwoFactorAuthMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  checkUserIsVerifiedMiddleware(req, res, async (error) => {
+    try {
+      if (error) next(error);
+
+      const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+      if (
+        ((await shouldForce2faForUser(user_id)) ||
+          req.session.twoFactorsAuthRequested) &&
+        !isWithinTwoFactorAuthenticatedSession(req)
+      ) {
+        if (await is2FACapable(user_id)) {
+          return res.redirect("/users/2fa-sign-in");
+        } else {
+          return res.redirect("/users/double-authentication-choice");
+        }
+      }
+      return next();
+    } catch (error) {
+      if (error instanceof UserNotFoundError) {
+        // The user has an active session but is not in the database anymore
+        await destroyAuthenticatedSession(req);
+        next(new HttpErrors.Unauthorized());
+      }
+      next(error);
+    }
+  });
+};
+
+export const checkBrowserIsTrustedMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) =>
+  checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
+    try {
+      if (error) return next(error);
+
+      const is_browser_trusted = isBrowserTrustedForUser(req);
+
+      if (!is_browser_trusted) {
+        return res.redirect(
+          `/users/verify-email?notification=browser_not_trusted`,
+        );
+      }
+
+      return next();
+    } catch (error) {
+      next(error);
+    }
+  });
+
+export const checkUserNeedCertificationDirigeantMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) =>
+  checkBrowserIsTrustedMiddleware(req, res, async (error) => {
+    try {
+      if (error) return next(error);
+      if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
+
+      const { certificationDirigeantRequested: isRequested } =
+        await CertificationSessionSchema.parseAsync(req.session);
+      if (!isRequested) return next();
+
+      const { id: userId } = getUserFromAuthenticatedSession(req);
+      const isVerified = await isUserVerifiedWithFranceconnect(userId);
+
+      if (isVerified) return next();
+
+      return res.redirect("/users/certification-dirigeant");
+    } catch (error) {
+      next(error);
+    }
+  });
+
 export const checkUserHasPersonalInformationsMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserIsVerifiedMiddleware(req, res, async (error) => {
+  checkUserNeedCertificationDirigeantMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
-
-      const { given_name, family_name, job } =
-        getUserFromAuthenticatedSession(req);
-      if (isEmpty(given_name) || isEmpty(family_name) || isEmpty(job)) {
+      const { given_name, family_name } = getUserFromAuthenticatedSession(req);
+      if (isEmpty(given_name) || isEmpty(family_name)) {
         return res.redirect("/users/personal-information");
       }
 
@@ -340,11 +414,13 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
       const selectedOrganizationId = await getSelectedOrganizationId(
         getUserFromAuthenticatedSession(req).id,
       );
+      if (selectedOrganizationId) return next();
 
-      if (
-        req.session.mustReturnOneOrganizationInPayload &&
-        !selectedOrganizationId
-      ) {
+      if (req.session.certificationDirigeantRequested) {
+        return res.redirect("/users/select-organization");
+      }
+
+      if (req.session.mustReturnOneOrganizationInPayload) {
         const userOrganisations = await getOrganizationsByUserId(
           getUserFromAuthenticatedSession(req).id,
         );
@@ -365,12 +441,94 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
     }
   });
 
+export function checkUserWantToRepresentAnOrganization(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  return checkUserHasSelectedAnOrganizationMiddleware(
+    req,
+    res,
+    async (error) => {
+      try {
+        if (error) return next(error);
+        if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
+        if (!req.session.certificationDirigeantRequested) return next();
+
+        const { id: user_id } = getUserFromAuthenticatedSession(req);
+        const selectedOrganizationId = await getSelectedOrganizationId(user_id);
+        if (selectedOrganizationId === null) return next();
+
+        const organization = await getOrganizationById(selectedOrganizationId);
+        if (isEmpty(organization)) {
+          throw new NotFoundError("Organization not found");
+        }
+
+        const userOrganizationLink = await getUserOrganizationLink(
+          selectedOrganizationId,
+          user_id,
+        );
+        if (isEmpty(userOrganizationLink)) {
+          throw new NotFoundError("User in organization not found");
+        }
+
+        const franceconnectUserInfo = await getFranceConnectUserInfo(user_id);
+        if (isEmpty(franceconnectUserInfo)) {
+          throw new NotFoundError("FranceConnect user info not found");
+        }
+
+        const expiredCertification = isExpired(
+          userOrganizationLink.verified_at,
+          CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
+        );
+        const expiredVerification =
+          Number(franceconnectUserInfo.updated_at) >
+          Number(userOrganizationLink.verified_at);
+
+        const renewalNeeded = expiredCertification || expiredVerification;
+
+        if (
+          userOrganizationLink.verification_type === "organization_dirigeant" &&
+          !renewalNeeded
+        ) {
+          return next();
+        }
+
+        const isDirigeant = await isOrganizationDirigeant(
+          organization.siret,
+          user_id,
+        );
+        if (!isDirigeant) throw new InvalidCertificationError();
+
+        // user is already in the organization
+        // we override the previous verification_type
+        await updateUserOrganizationLink(
+          userOrganizationLink.organization_id,
+          userOrganizationLink.user_id,
+          {
+            verification_type: "organization_dirigeant",
+            verified_at: new Date(),
+            has_been_greeted: false,
+          },
+        );
+
+        next();
+      } catch (error) {
+        if (error instanceof InvalidCertificationError) {
+          return res.redirect("/users/unable-to-certify-user-as-executive");
+        }
+        next(error);
+      }
+    },
+  );
+}
+
 export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserHasSelectedAnOrganizationMiddleware(req, res, async (error) => {
+  checkUserWantToRepresentAnOrganization(req, res, async (error) => {
     try {
       if (error) return next(error);
 
@@ -429,6 +587,7 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = (
         );
 
         let organizationThatNeedsGreetings;
+
         if (req.session.mustReturnOneOrganizationInPayload) {
           const selectedOrganizationId = await getSelectedOrganizationId(
             getUserFromAuthenticatedSession(req).id,
@@ -445,6 +604,17 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = (
         }
 
         if (!isEmpty(organizationThatNeedsGreetings)) {
+          if (
+            organizationThatNeedsGreetings.verification_type ===
+            "organization_dirigeant"
+          ) {
+            await greetForCertification({
+              user_id: getUserFromAuthenticatedSession(req).id,
+              organization_id: organizationThatNeedsGreetings.id,
+            });
+            return res.redirect(`/users/welcome/dirigeant`);
+          }
+
           await greetForJoiningOrganization({
             user_id: getUserFromAuthenticatedSession(req).id,
             organization_id: organizationThatNeedsGreetings.id,

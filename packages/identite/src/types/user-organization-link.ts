@@ -3,13 +3,16 @@ import { z } from "zod";
 export const UserOrganizationLinkVerificationTypeSchema = z.enum([
   "code_sent_to_official_contact_email",
   "domain",
-  "imported_from_inclusion_connect",
   "imported_from_coop_mediation_numerique",
+  "imported_from_inclusion_connect",
   "in_liste_dirigeants_rna",
+  "in_liste_dirigeants_rne",
   "no_validation_means_available",
   "no_verification_means_for_entreprise_unipersonnelle",
   "no_verification_means_for_small_association",
   "official_contact_email",
+  "organization_dirigeant",
+  "proof_received",
   // Used in the sandbox environment to bypass the verification process
   "bypassed",
 ]);
@@ -21,9 +24,7 @@ export type UserOrganizationLinkVerificationType = z.output<
 //
 
 export const BaseUserOrganizationLinkSchema = z.object({
-  is_executive: z.boolean(),
   is_external: z.boolean(),
-  is_executive_verified_at: z.date().nullable(),
   verification_type: UserOrganizationLinkVerificationTypeSchema.nullable(),
   // updated when verification_type is changed
   verified_at: z.date().or(z.literal(null)),
@@ -61,7 +62,6 @@ export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
 ).merge(
   UserOrganizationLinkSchema.pick({
     is_external: true,
-    is_executive: true,
     needs_official_contact_email_verification: true,
   }).partial(),
 );

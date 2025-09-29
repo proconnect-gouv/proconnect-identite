@@ -21,7 +21,7 @@ const ipRateLimiterMiddlewareFactory =
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
       if (FEATURE_RATE_LIMIT_BY_IP) {
-        await rateLimiter.consume(req.ip);
+        await rateLimiter.consume(req.ip || "unknown");
       }
       next();
     } catch (e) {
@@ -54,7 +54,7 @@ export const rateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "rate-limiter",
-    points: 42, // 42 requests
+    points: 60, // 60 requests
     duration: 60, // per minute per IP
   }),
 );
@@ -63,7 +63,7 @@ export const apiRateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "rate-limiter-api",
-    points: 42, // 42 API requests
+    points: 60, // 60 API requests
     duration: 1, // per second per IP
   }),
 );
@@ -97,15 +97,12 @@ export const authenticatorRateLimiterMiddleware =
     }),
   );
 
-export const resetPasswordRateLimiterMiddleware =
-  emailRateLimiterMiddlewareFactory(
-    new RateLimiterRedis({
-      storeClient: redisClient,
-      keyPrefix: "rate-limiter-reset-password",
-      points: 5, // 5 requests
-      duration: 15 * 60, // per 15 minutes per email
-    }),
-  );
+export const resetPasswordRateLimiter = new RateLimiterRedis({
+  storeClient: redisClient,
+  keyPrefix: "rate-limiter-reset-password",
+  points: 5, // 5 requests
+  duration: 15 * 60, // per 15 minutes per email
+});
 
 export const sendMagicLinkRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(

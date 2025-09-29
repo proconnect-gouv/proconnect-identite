@@ -1,4 +1,6 @@
 //
+
+import { FRANCECONNECT_CITIZENS } from "#src/api/data/franceconnect";
 import {
   FranceConnectUserInfoResponseSchema,
   type FranceConnectUserInfoResponse,
@@ -9,7 +11,6 @@ import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { CompactSign, generateKeyPair } from "jose";
 import { z } from "zod";
-import { FRANCECONNECT_CITIZENS } from "../../data/people.js";
 import LogoutPage from "./logout.page.js";
 import SelectPage from "./select.page.js";
 import wellKnown from "./well-known.js";
@@ -69,7 +70,7 @@ export const TestingOidcFranceConnectRouter = new Hono<{
     console.error("[🎭] ", error);
     return text(error.toString());
   })
-  .get("/", ({ text }) => text("🎭 FranceConnect theater"))
+  .get("/healthz", ({ text }) => text("ok"))
   .get(
     "/api/v2/.well-known/openid-configuration",
     ({ json, env: { ISSUER } }) => json(wellKnown(ISSUER)),
@@ -107,7 +108,7 @@ export const TestingOidcFranceConnectRouter = new Hono<{
 
       const html = new TextEncoder().encode(
         LogoutPage({
-          redirect_url: post_logout_redirect_uri,
+          redirect_url: redirect_url.href,
         }),
       );
 
@@ -133,7 +134,6 @@ export const TestingOidcFranceConnectRouter = new Hono<{
     zValidator("form", CodeParamSchema),
     async ({ env: { ISSUER }, json, req }) => {
       const form = req.valid("form");
-      console.warn({ form });
       const { code } = form;
 
       const codeObj = CODE_MAP.get(code);

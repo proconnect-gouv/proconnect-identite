@@ -2,24 +2,22 @@ name: Fixtures tests
 
 on:
   push:
-    branches:
-      - "**"
-      - "!master"
 
 env:
   ACCESS_LOG_PATH:
-  PGUSER: moncomptepro
-  PGPASSWORD: moncomptepro
-  PGDATABASE: moncomptepro
-  PGHOST: 127.0.0.1
-  PGPORT: 5432
-  DATABASE_URL: postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro
+  DATABASE_URL: postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite
   NODE_ENV: test
+  PGDATABASE: proconnect-identite
+  PGHOST: 127.0.0.1
+  PGPASSWORD: proconnect-identite
+  PGPORT: 5432
+  PGUSER: proconnect-identite
+  SMTP_URL: smtp://localhost:1025
   SYMMETRIC_ENCRYPTION_KEY: aTrueRandom32BytesLongBase64EncodedStringAA=
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:16.9
@@ -30,9 +28,9 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: corepack enable
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           cache: "npm"
           node-version-file: package.json

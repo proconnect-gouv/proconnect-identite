@@ -3,10 +3,7 @@ name: 🚢 Release It !
 on:
   push:
     branches:
-      - master
-      - alpha
-      - beta
-      - next
+      - main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -21,10 +18,10 @@ jobs:
     name: 🚢 Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - run: corepack enable
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           cache: "npm"
           node-version-file: package.json

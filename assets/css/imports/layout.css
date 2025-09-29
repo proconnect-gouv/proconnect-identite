@@ -71,12 +71,12 @@ main {
 
 .onboarding-container > *:last-child {
   grid-area: illu;
-  background: #f6f6f6;
+  background: #f9f9fe;
 }
 
 .onboarding-container > *:last-child img {
   height: 20rem;
-  margin: 1.5rem 0 1.5rem ;
+  margin: 1.5rem 0 1.5rem;
 }
 
 .onboarding-container {

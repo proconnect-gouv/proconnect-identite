@@ -2,15 +2,15 @@ name: End-to-end tests
 
 on:
   push:
-    branches:
-      - "**"
-      - "!master"
 
 env:
   CYPRESS_RECORD: true
-  DATABASE_URL: postgres://moncomptepro:moncomptepro@localhost:5432/moncomptepro
+  DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
+  FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
+  SMTP_URL: smtp://localhost:1025
   ZAMMAD_TOKEN: ${{ secrets.ZAMMAD_TOKEN }}
+
 jobs:
   test:
     strategy:
@@ -19,18 +19,23 @@ jobs:
       matrix:
         e2e_test:
           - activate_totp
+          - broken_standard_client
           - check_email_deliverability
           - connect_franceconnect_account
           - delete_account
           - delete_totp
           - join_and_moderation
+          - join_collectivite_territoriale_free_contact_domain
           - join_collectivite_territoriale_official_contact_domain
           - join_must_confirm
+          - join_org_with_rejected_moderation
           - join_org_with_trackdechets_domain
           - join_org_with_verified_domain
           - join_with_code_sent_to_official_contact_email
           - join_with_code_sent_to_official_educ_nat_contact_email
+          - join_with_free_email_domain
           - join_with_official_contact_email
+          - quit-organization
           - rate_limit_by_email
           - rate_limit_by_ip
           - reauthenticate_on_admin_page
@@ -39,32 +44,34 @@ jobs:
           - set_info_after_account_provisioning
           - signin_from_proconnect_federation_client
           - signin_from_standard_client
+          - signin_with_certification_dirigeant
           - signin_with_email_verification
           - signin_with_email_verification_renewal
           - signin_with_legacy_scope
           - signin_with_magic_link
           - signin_with_right_acr
           - signin_with_totp
+          - signin_with_totp_enrollment
           - signup_entreprise_unipersonnelle
+          - signup_with_certification_dirigeant
           - update_personal_information
-    runs-on: ubuntu-22.04
+          - use_extra_param_sp_name
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - run: docker compose up --build --detach
 
       - run: corepack enable
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           cache: "npm"
           node-version-file: package.json
       - run: npm ci
       - run: npm run build:workspaces
       - run: npm run migrate up
-      - run: npm run fixtures:load-ci -- cypress/e2e/${{ matrix.e2e_test }}/fixtures.sql
-      - run: npm run update-organization-info -- 0
       - name: Cypress run
-        uses: cypress-io/github-action@v6.9.0
+        uses: cypress-io/github-action@v6.10.2
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets

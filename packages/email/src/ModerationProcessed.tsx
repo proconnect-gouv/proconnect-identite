@@ -9,11 +9,13 @@ export default function ModerationProcessed(props: Props) {
   const { baseurl, libelle } = props;
   return (
     <Layout baseurl={baseurl}>
+      <Text>Bonjour,</Text>
       <Text safe>
-        Bonjour, <br />
-        <br />
         Votre demande pour rejoindre l’organisation « {libelle} » a été
         débloquée sur {baseurl}.
+      </Text>
+      <Text>
+        Vous allez recevoir un email de confirmation.
         <br />
         <br />
         Vous pouvez à présent retourner sur votre démarche ou demande.

@@ -1,30 +1,7 @@
 import { isDomainValid } from "@gouvfr-lasuite/proconnect.core/security";
+import { isEntrepriseUnipersonnelle } from "@gouvfr-lasuite/proconnect.identite/services/organization";
 import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
 
-/**
- * These fonctions return approximate results. As the data tranche effectifs is
- * two years old. Consequently, an organization that growths quickly within the
- * first two years of his existence can be miss-identified as unipersonnelle by
- * this fonction.
- */
-export const isEntrepriseUnipersonnelle = ({
-  cached_libelle_categorie_juridique,
-  cached_tranche_effectifs,
-}: Organization): boolean => {
-  // check that the organization has the right catégorie juridique
-  const cat_jur_ok = [
-    "Entrepreneur individuel",
-    "Société à responsabilité limitée (sans autre indication)",
-    "SAS, société par actions simplifiée",
-  ].includes(cached_libelle_categorie_juridique || "");
-
-  // check that the organization has the right tranche effectifs
-  const tra_eff_ok = [null, "NN", "00", "01"].includes(
-    cached_tranche_effectifs,
-  );
-
-  return cat_jur_ok && tra_eff_ok;
-};
 export const isSmallAssociation = ({
   cached_libelle_categorie_juridique,
   cached_tranche_effectifs,
@@ -68,7 +45,7 @@ export const isPublicService = ({
   );
 
   const siren = (siret || "").substring(0, 9);
-  const whitelist_ok = ["320252489"].includes(siren);
+  const whitelist_ok = ["320252489", "777749326"].includes(siren);
 
   return cat_jur_ok || whitelist_ok;
 };

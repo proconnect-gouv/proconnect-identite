@@ -7,9 +7,9 @@ import { inspect } from "node:util";
 import { API_AUTH_PASSWORD, API_AUTH_USERNAME } from "../config/env";
 import {
   getOrganizationInfoController,
+  getPingApiInseeController,
   getPingApiSireneController,
   postForceJoinOrganizationController,
-  postMarkDomainAsVerified,
   postSendModerationProcessedEmail,
 } from "../controllers/api";
 import {
@@ -30,6 +30,7 @@ export const apiRouter = () => {
   apiRouter.use(apiRateLimiterMiddleware);
 
   apiRouter.get("/sirene/ping", getPingApiSireneController);
+  apiRouter.get("/insee/ping", getPingApiInseeController);
 
   apiRouter.get(
     "/sirene/organization-info/:siret",
@@ -68,8 +69,6 @@ export const apiRouter = () => {
     "/send-moderation-processed-email",
     postSendModerationProcessedEmail,
   );
-
-  apiAdminRouter.post("/mark-domain-as-verified", postMarkDomainAsVerified);
 
   apiRouter.use("/admin", apiAdminRouter);
 
