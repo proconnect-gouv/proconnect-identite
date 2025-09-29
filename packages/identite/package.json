@@ -56,6 +56,7 @@
     "@gouvfr-lasuite/proconnect.insee": "^0.0.0",
     "@sinonjs/fake-timers": "^14.0.0",
     "@types/node": "^22.18.6",
+    "@types/pg": "^8.15.5",
     "await-to-js": "^3.0.0",
     "node-pg-migrate": "^7.9.1",
     "pg": "^8.16.3",

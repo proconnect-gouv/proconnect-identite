@@ -10,6 +10,7 @@
   "main": "src/index.js",
   "workspaces": [
     "packages/core",
+    "packages/database",
     "packages/crisp",
     "packages/debounce",
     "packages/devtools/typescript",
