@@ -2,7 +2,7 @@
 
 import type { GetUsersByOrganizationHandler } from "#src/repositories/organization";
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
-import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 
 //
 

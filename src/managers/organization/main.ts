@@ -1,6 +1,6 @@
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
-import { markDomainAsVerifiedFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
-import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import { markDomainAsVerifiedFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
+import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import {
   addDomain,

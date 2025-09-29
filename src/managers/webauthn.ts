@@ -1,7 +1,7 @@
 import {
   NotFoundError,
   UserNotFoundError,
-} from "@gouvfr-lasuite/proconnect.identite/errors";
+} from "@proconnect-gouv/proconnect.identite/errors";
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,

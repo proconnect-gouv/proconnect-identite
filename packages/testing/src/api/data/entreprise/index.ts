@@ -1,4 +1,4 @@
-import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.entreprise/types";
 
 export const PEOPLE = new Map<
   string,

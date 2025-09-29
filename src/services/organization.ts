@@ -1,6 +1,6 @@
-import { isDomainValid } from "@gouvfr-lasuite/proconnect.core/security";
-import { isEntrepriseUnipersonnelle } from "@gouvfr-lasuite/proconnect.identite/services/organization";
-import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
+import { isDomainValid } from "@proconnect-gouv/proconnect.core/security";
+import { isEntrepriseUnipersonnelle } from "@proconnect-gouv/proconnect.identite/services/organization";
+import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 
 export const isSmallAssociation = ({
   cached_libelle_categorie_juridique,

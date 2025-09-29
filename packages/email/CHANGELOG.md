@@ -1,4 +1,4 @@
-# @gouvfr-lasuite/proconnect.email
+# @proconnect-gouv/proconnect.email
 
 ## 0.1.2
 

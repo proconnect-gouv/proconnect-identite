@@ -1,5 +1,5 @@
 {
-  "name": "@gouvfr-lasuite/proconnect.email",
+  "name": "@proconnect-gouv/proconnect.email",
   "version": "0.1.2",
   "private": true,
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/email#readme",
@@ -39,7 +39,7 @@
     "@kitajs/ts-html-plugin": "^4.1.1"
   },
   "devDependencies": {
-    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@proconnect-gouv/proconnect.devtools.typescript": "0.0.0",
     "@storybook/csf": "^0.1.13",
     "prettier": "^3.6.2",
     "vite": "^7.1.5"

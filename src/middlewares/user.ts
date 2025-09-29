@@ -1,9 +1,9 @@
-import { getTrustedReferrerPath } from "@gouvfr-lasuite/proconnect.core/security";
+import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import {
   InvalidCertificationError,
   NotFoundError,
   UserNotFoundError,
-} from "@gouvfr-lasuite/proconnect.identite/errors";
+} from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";

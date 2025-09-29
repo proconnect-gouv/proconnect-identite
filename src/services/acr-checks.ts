@@ -1,4 +1,4 @@
-import { containsEssentialAcrs } from "@gouvfr-lasuite/proconnect.core/services/oidc";
+import { containsEssentialAcrs } from "@proconnect-gouv/proconnect.core/services/oidc";
 import { get, intersection, isArray, isEmpty } from "lodash-es";
 import type { PromptDetail } from "oidc-provider";
 import {

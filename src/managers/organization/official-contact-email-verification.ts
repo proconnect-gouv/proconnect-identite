@@ -1,7 +1,7 @@
-import { generateDicewarePassword } from "@gouvfr-lasuite/proconnect.core/security";
-import { OfficialContactEmailVerification } from "@gouvfr-lasuite/proconnect.email";
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
-import type { UserOrganizationLink } from "@gouvfr-lasuite/proconnect.identite/types";
+import { generateDicewarePassword } from "@proconnect-gouv/proconnect.core/security";
+import { OfficialContactEmailVerification } from "@proconnect-gouv/proconnect.email";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import type { UserOrganizationLink } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { HOST } from "../../config/env";
 import {

@@ -1,4 +1,4 @@
-# @gouvfr-lasuite/proconnect.identite
+# @proconnect-gouv/proconnect.identite
 
 ## 0.9.0
 

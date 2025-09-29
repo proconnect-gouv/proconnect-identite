@@ -1,4 +1,4 @@
-# @gouvfr-lasuite/proconnect.core
+# @proconnect-gouv/proconnect.core
 
 ## 0.6.0
 
