@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.testing",
-  "version": "0.5.2",
+  "version": "1.0.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/testing#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -24,13 +24,13 @@
     "test:unit": "tsx --test --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
   },
   "dependencies": {
-    "@proconnect-gouv/proconnect.entreprise": "0.0.0",
+    "@proconnect-gouv/proconnect.entreprise": "1.0.0",
     "@hono/node-server": "^1.19.4",
     "@hono/zod-validator": "^0.7.2",
     "hono": "^4.9.7"
   },
   "devDependencies": {
-    "@proconnect-gouv/proconnect.devtools.typescript": "0.0.0",
+    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/oidc-provider": "^9.1.1",
     "@types/yargs": "^17.0.33",
     "yargs": "^18.0.0"
