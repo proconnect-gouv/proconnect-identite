@@ -115,7 +115,7 @@
     "@dotenvx/dotenvx": "^1.47.3",
     "@fullhuman/postcss-purgecss": "^7.0.2",
     "@proconnect-gouv/proconnect.devtools.typescript": "workspace:*",
-    "@gouvfr/dsfr": "^1.14.0",
+    "@gouvfr/dsfr": "^1.14.2",
     "@kitajs/html": "^4.2.9",
     "@kitajs/ts-html-plugin": "^4.1.1",
     "jose": "^6.0.11",
