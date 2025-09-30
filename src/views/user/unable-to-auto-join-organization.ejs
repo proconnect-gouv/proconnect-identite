@@ -57,18 +57,6 @@
                 ) %>
 
             </div>
-            <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Profession</p>
-            <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
-                <span ><b><%= job; %></b></span>
-                <%- include(
-                  '../partials/icon-edit-personal-info-form.ejs',
-                  {
-                    actionForUpdateModeration: `/users/cancel-moderation-and-redirect-to-personal-information/${moderation_id}`,
-                    messageToDisplay: "Corriger ses informations personnelles",
-                    confirmMessage: "Cette action annulera votre demande en cours. Voulez vous continuer ?"
-                  }
-                ) %>
-            </div>
             <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Organisation</p>
             <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
                 <span ><b><%= organization_label; %></b></span>
