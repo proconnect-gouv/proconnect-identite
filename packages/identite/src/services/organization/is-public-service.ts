@@ -5,7 +5,7 @@ import {
   SERVICE_PUBLIC_BLACKLIST,
   SERVICE_PUBLIC_WHITELIST,
 } from "#src/data/organization";
-import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
+import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 
 // inspired from https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/blob/f1e56ac476b0b1730115f7b1f0667e8509ee5379/workflows/data_pipelines/elasticsearch/data_enrichment.py#L155-L189
 export const isPublicService = ({
