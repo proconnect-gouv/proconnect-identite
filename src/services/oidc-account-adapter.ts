@@ -1,6 +1,6 @@
 //
 
-import { isPublicService } from "@gouvfr-lasuite/proconnect.identite/services/organization";
+import { isPublicService } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
   UserClaimsSchema,
   type UserClaims,
