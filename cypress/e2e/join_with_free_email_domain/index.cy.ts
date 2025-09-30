@@ -83,18 +83,6 @@ describe("restrict access for", () => {
     );
   });
 
-  it("Établissement d'hospitalisation", function () {
-    cy.focused().clear().type("26910001200013");
-
-    cy.contains("Enregistrer").click();
-
-    cy.title().should("include", "Email non autorisé -");
-    cy.contains("Email non autorisé");
-    cy.contains(
-      "L’accès à ce site est limité aux agentes et agents possédant une adresse email d’une administration publique.",
-    );
-  });
-
   it("Ministère (7113)", function () {
     cy.focused().clear().type("11009001600053");
 

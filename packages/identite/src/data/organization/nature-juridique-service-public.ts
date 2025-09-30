@@ -1,67 +1,90 @@
 //
 
 // Nature juridique codes for public services
-// Source: https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/blob/f1e56ac476b0b1730115f7b1f0667e8509ee5379/helpers/labels/administration_nature_juridique.json
+// Source: https://raw.githubusercontent.com/annuaire-entreprises-data-gouv-fr/search-infra/92fc7fd4d2b3fd0e1e1dd2dd8420f87288e1a5b9/helpers/labels/administration_nature_juridique.json (2025-09-30)
 export const NATURE_JURIDIQUE_SERVICE_PUBLIC = [
   // Autorités constitutionnelles et administratives
   "7111", // Autorité constitutionnelle
   "7112", // Autorité administrative ou publique indépendante
   "7113", // Ministère
-  "7120", // Service central d'un ministère
-  "7150", // Service du ministère de la Défense
-  "7160", // Service déconcentré à compétence nationale
+  "7120", // Service central d'un Ministère
+  "7150", // Service du Ministère de la Défense
+  "7160", // Service déconcentré à compétence nationale d'un Ministère (hors Défense)
 
   // Services déconcentrés de l'État
-  "7171", // Service déconcentré de l'État à compétence régionale
-  "7172", // Service déconcentré de l'État à compétence départementale
-  "7179", // Autre service déconcentré de l'État
-  "7190", // École nationale sans personnalité morale
+  "7171", // Service déconcentré de l'État à compétence (inter) régionale
+  "7172", // Service déconcentré de l'État à compétence (inter) départementale
+  "7179", // (Autre) Service déconcentré de l'État à compétence territoriale
+  "7190", // Ecole nationale non dotée de la personnalité morale
 
   // Collectivités territoriales
   "7210", // Commune et commune nouvelle
   "7220", // Département
-  "7225", // Collectivité territoriale à statut particulier
-  "7229", // Autre collectivité territoriale
+  "7225", // Collectivité et territoire d'Outre-Mer
+  "7229", // (Autre) Collectivité territoriale
   "7230", // Région
+
+  // Structures intercommunales et communes associées
+  "7312", // Commune associée et commune déléguée
+  "7313", // Section de commune
+  "7314", // Ensemble urbain
+  "7340", // Pôle métropolitain
+  "7341", // Secteur de commune
+  "7342", // District urbain
+  "7343", // Communauté urbaine
+  "7344", // Métropole
+  "7345", // Syndicat intercommunal à vocation multiple (SIVOM)
+  "7346", // Communauté de communes
+  "7347", // Communauté de villes
+  "7348", // Communauté d'agglomération
+  "7351", // Institution interdépartementale ou entente
+  "7352", // Institution interrégionale ou entente
+  "7353", // Syndicat intercommunal à vocation unique (SIVU)
+  "7354", // Syndicat mixte fermé
+  "7355", // Syndicat mixte ouvert
+  "7356", // Commission syndicale pour la gestion des biens indivis des communes
+  "7357", // Pôle d'équilibre territorial et rural (PETR)
 
   // Établissements publics locaux d'enseignement et culturels
   "7331", // Établissement public local d'enseignement
-  "7354", // Syndicat mixte fermé
-  "7361", // Établissement public local d'action sociale et médico-sociale
-  "7362", // Établissement public local culturel
-  "7363", // Établissement public local sportif
-  "7364", // Établissement public local de tourisme et de loisirs
-  "7365", // Établissement public local de protection de l'environnement
-  "7366", // Établissement public local de coopération
-  "7367", // Établissement public local administratif
-  "7372", // Service départemental d'incendie et de secours
+  "7361", // Centre communal d'action sociale
+  "7362", // Caisse des écoles
+  "7363", // Caisse de crédit municipal
+  "7365", // Syndicat inter hospitalier
+  "7366", // Établissement public local social et médico-social
+  "7367", // Centre Intercommunal daction sociale (CIAS)
+  "7371", // Office public d'habitation à loyer modéré (OPHLM)
+  "7372", // Service départemental d'incendie et de secours (SDIS)
   "7373", // Établissement public local culturel
+  "7378", // Régie dune collectivité locale à caractère administratif
+  "7379", // (Autre) Établissement public administratif local
 
   // Établissements publics nationaux administratifs
-  "7382", // Établissement public national administratif
-  "7383", // Établissement public national scientifique et technique
-  "7384", // Établissement public national scientifique, culturel et professionnel
-  "7385", // Autre établissement public national administratif
-  "7389", // Groupement d'intérêt public
+  "7381", // Organisme consulaire
+  "7382", // Établissement public national ayant fonction d'administration centrale
+  "7383", // Établissement public national à caractère scientifique culturel et professionnel
+  "7384", // Autre établissement public national d'enseignement
+  "7385", // Autre établissement public national administratif à compétence territoriale limitée
+  "7389", // Établissement public national à caractère administratif
+
+  // Groupements d'intérêt public et établissements spéciaux
+  "7410", // Groupement d'intérêt public (GIP)
+  "7430", // Établissement public des cultes d'Alsace-Lorraine
+  "7450", // Etablissement public administratif, cercle et foyer dans les armées
+  "7470", // Groupement de coopération sanitaire à gestion publique
 
   // Établissements publics industriels et commerciaux
   "4110", // Établissement public national à caractère industriel ou commercial doté d'un comptable public
-  "4120", // Établissement public national à caractère industriel ou commercial doté d'un comptable privé
-  "4130", // Établissement public local à caractère industriel ou commercial doté d'un comptable public
-  "4140", // Établissement public local à caractère industriel ou commercial doté d'un comptable privé
-  "4150", // Service public industriel et commercial
-  "4160", // Service public industriel et commercial
-
-  // Groupements d'intérêt public
-  "7410", // Groupement d'intérêt public
-  "7470", // Groupement de coopération sanitaire à gestion publique
+  "4120", // Établissement public national à caractère industriel ou commercial non doté d'un comptable public
+  "4140", // Établissement public local à caractère industriel ou commercial
+  "4150", // Régie d'une collectivité locale à caractère industriel ou commercial
+  "4160", // Institution Banque de France
 
   // Sécurité sociale et assurance
-  "8110", // Régime général de la sécurité sociale
-  "8120", // Régime spécial de sécurité sociale
-  "8130", // Institution de retraite complémentaire
+  "8110", // Régime général de la Sécurité Sociale
+  "8120", // Régime spécial de Sécurité Sociale
   "8140", // Mutualité sociale agricole
   "8150", // Régime maladie des non-salariés non agricoles
-  "8160", // Régime vieillesse ne dépendant pas du régime général de la sécurité sociale
+  "8160", // Régime vieillesse ne dépendant pas du régime général de la Sécurité Sociale
   "8170", // Régime d'assurance chômage
 ];
