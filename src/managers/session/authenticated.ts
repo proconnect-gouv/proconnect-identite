@@ -1,5 +1,5 @@
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
-import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import type { Request, Response } from "express";
 import { Session, type SessionData } from "express-session";

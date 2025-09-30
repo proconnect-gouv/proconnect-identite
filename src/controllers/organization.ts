@@ -1,12 +1,12 @@
-import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
-import { EntrepriseApiError } from "@gouvfr-lasuite/proconnect.entreprise/types";
-import { DOMAINS_WHITELIST } from "@gouvfr-lasuite/proconnect.identite/data/organization";
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
+import { EntrepriseApiError } from "@proconnect-gouv/proconnect.entreprise/types";
+import { DOMAINS_WHITELIST } from "@proconnect-gouv/proconnect.identite/data/organization";
 import {
   InvalidCertificationError,
   InvalidSiretError,
   NotFoundError,
   OrganizationNotActiveError,
-} from "@gouvfr-lasuite/proconnect.identite/errors";
+} from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";

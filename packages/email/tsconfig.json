@@ -16,7 +16,7 @@
     "strictNullChecks": true,
     "types": ["vite/client", "node"]
   },
-  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
+  "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
   "files": [],
   "include": ["src/**/*.ts", "src/**/*.tsx", ".storybook/**/*.tsx"],
   "references": []

@@ -5,13 +5,13 @@
 ## 📦 Installation
 
 ```bash
-npm install @gouvfr-lasuite/proconnect.email
+npm install @proconnect-gouv/proconnect.email
 ```
 
 ## 📧 Usage
 
 ```typescript
-import { DeleteFreeTotpMail } from "@gouvfr-lasuite/proconnect.email";
+import { DeleteFreeTotpMail } from "@proconnect-gouv/proconnect.email";
 
 const transporter = nodemailer.createTransporter({
   host: "smtp.example.com",

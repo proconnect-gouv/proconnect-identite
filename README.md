@@ -54,7 +54,7 @@ proconnect-identite/
 │   ├── 🎨 views/                     # Template rendering & UI
 │   ├── index.ts                      # Application entry point
 │   └── instrument.ts                 # Monitoring & instrumentation
-├── 🧪 test/                          # Node unit tests 
+├── 🧪 test/                          # Node unit tests
 └── 📋 scripts/                       # Database & deployment scripts
 ```
 
@@ -78,7 +78,7 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
 docker compose up
 ```
 
-   This will start all required services (e.g., databases) defined in the `docker-compose.yml`.
+This will start all required services (e.g., databases) defined in the `docker-compose.yml`.
 
 ### Setting Up the Node.js Application
 
@@ -162,14 +162,14 @@ This command ensures that the Cypress binary is not downloaded, saving time and 
 
 ### Packages
 
-| Package                                                               | Version                                                                                                                                                        | Downloads                                                                                 | Changelog                                       |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- | :---------------------------------------------- |
-| [@gouvfr-lasuite/proconnect.core](./packages/core#readme)             | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.core.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.core)             | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.core?label=↓)       | [Changelog](./packages/core/CHANGELOG.md)       |
-| [@gouvfr-lasuite/proconnect.crisp](./packages/crisp#readme)           | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.crisp.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.crisp)           | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.crisp?label=↓)      | [Changelog](./packages/crisp/CHANGELOG.md)      |
-| [@gouvfr-lasuite/proconnect.debounce](./packages/debounce#readme)     | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.debounce.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.debounce)     | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.debounce?label=↓)   | [Changelog](./packages/debounce/CHANGELOG.md)   |
-| [@gouvfr-lasuite/proconnect.email](./packages/email#readme)           | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.email.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.email)           | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.email?label=↓)      | [Changelog](./packages/email/CHANGELOG.md)      |
-| [@gouvfr-lasuite/proconnect.entreprise](./packages/entreprise#readme) | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.entreprise.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.entreprise) | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.entreprise?label=↓) | [Changelog](./packages/entreprise/CHANGELOG.md) |
-| [@gouvfr-lasuite/proconnect.identite](./packages/identite#readme)     | [![npm](https://img.shields.io/npm/v/@gouvfr-lasuite/proconnect.identite.svg?logo=npm)](https://www.npmjs.com/package/@gouvfr-lasuite/proconnect.identite)     | ![Downloads](https://img.shields.io/npm/dw/@gouvfr-lasuite/proconnect.identite?label=↓)   | [Changelog](./packages/entreprise/CHANGELOG.md) |
+| Package                                                                | Version                                                                                                                                                          | Downloads                                                                                  | Changelog                                       |
+| :--------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- | :---------------------------------------------- |
+| [@proconnect-gouv/proconnect.core](./packages/core#readme)             | [![npm](https://img.shields.io/npm/v/@proconnect-gouv/proconnect.core.svg?logo=npm)](https://www.npmjs.com/package/@proconnect-gouv/proconnect.core)             | ![Downloads](https://img.shields.io/npm/dw/@proconnect-gouv/proconnect.core?label=↓)       | [Changelog](./packages/core/CHANGELOG.md)       |
+| [@proconnect-gouv/proconnect.crisp](./packages/crisp#readme)           | [![npm](https://img.shields.io/npm/v/@proconnect-gouv/proconnect.crisp.svg?logo=npm)](https://www.npmjs.com/package/@proconnect-gouv/proconnect.crisp)           | ![Downloads](https://img.shields.io/npm/dw/@proconnect-gouv/proconnect.crisp?label=↓)      | [Changelog](./packages/crisp/CHANGELOG.md)      |
+| [@proconnect-gouv/proconnect.debounce](./packages/debounce#readme)     | [![npm](https://img.shields.io/npm/v/@proconnect-gouv/proconnect.debounce.svg?logo=npm)](https://www.npmjs.com/package/@proconnect-gouv/proconnect.debounce)     | ![Downloads](https://img.shields.io/npm/dw/@proconnect-gouv/proconnect.debounce?label=↓)   | [Changelog](./packages/debounce/CHANGELOG.md)   |
+| [@proconnect-gouv/proconnect.email](./packages/email#readme)           | [![npm](https://img.shields.io/npm/v/@proconnect-gouv/proconnect.email.svg?logo=npm)](https://www.npmjs.com/package/@proconnect-gouv/proconnect.email)           | ![Downloads](https://img.shields.io/npm/dw/@proconnect-gouv/proconnect.email?label=↓)      | [Changelog](./packages/email/CHANGELOG.md)      |
+| [@proconnect-gouv/proconnect.entreprise](./packages/entreprise#readme) | [![npm](https://img.shields.io/npm/v/@proconnect-gouv/proconnect.entreprise.svg?logo=npm)](https://www.npmjs.com/package/@proconnect-gouv/proconnect.entreprise) | ![Downloads](https://img.shields.io/npm/dw/@proconnect-gouv/proconnect.entreprise?label=↓) | [Changelog](./packages/entreprise/CHANGELOG.md) |
+| [@proconnect-gouv/proconnect.identite](./packages/identite#readme)     | [![npm](https://img.shields.io/npm/v/@proconnect-gouv/proconnect.identite.svg?logo=npm)](https://www.npmjs.com/package/@proconnect-gouv/proconnect.identite)     | ![Downloads](https://img.shields.io/npm/dw/@proconnect-gouv/proconnect.identite?label=↓)   | [Changelog](./packages/entreprise/CHANGELOG.md) |
 
 #### Document your change in packages
 

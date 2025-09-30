@@ -1,6 +1,6 @@
 {
-  "name": "@gouvfr-lasuite/proconnect.debounce",
-  "version": "0.5.0",
+  "name": "@proconnect-gouv/proconnect.debounce",
+  "version": "1.0.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/debounce#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -40,7 +40,7 @@
     "zod": "^4.0.17"
   },
   "devDependencies": {
-    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/node": "^22.18.6",
     "pkgroll": "^2.12.1",
     "tsx": "^4.20.3"

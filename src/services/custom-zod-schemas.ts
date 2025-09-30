@@ -4,7 +4,7 @@ import {
   isPhoneNumberValid,
   isSiretValid,
   isVisibleString,
-} from "@gouvfr-lasuite/proconnect.core/security";
+} from "@proconnect-gouv/proconnect.core/security";
 import { z } from "zod";
 import { normalizeOfficialContactEmailVerificationToken } from "./normalize-official-contact-email-verification-token";
 import { isNotificationLabelValid } from "./security";

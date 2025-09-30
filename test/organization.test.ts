@@ -1,4 +1,4 @@
-import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
+import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {

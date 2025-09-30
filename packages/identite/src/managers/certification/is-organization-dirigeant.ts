@@ -9,10 +9,10 @@ import type { IdentityVector } from "#src/types";
 import type {
   EntrepriseApiInfogreffeRepository,
   EntrepriseApiInseeRepository,
-} from "@gouvfr-lasuite/proconnect.entreprise/api";
-import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
-import type { InseeApiRepository } from "@gouvfr-lasuite/proconnect.insee/api";
-import { formatBirthdate } from "@gouvfr-lasuite/proconnect.insee/formatters";
+} from "@proconnect-gouv/proconnect.entreprise/api";
+import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.entreprise/types";
+import type { InseeApiRepository } from "@proconnect-gouv/proconnect.insee/api";
+import { formatBirthdate } from "@proconnect-gouv/proconnect.insee/formatters";
 import { distance } from "./distance.js";
 
 //

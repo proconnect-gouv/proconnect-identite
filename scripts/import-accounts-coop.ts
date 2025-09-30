@@ -4,12 +4,12 @@ import {
   isNameValid,
   isPhoneNumberValid,
   isSiretValid,
-} from "@gouvfr-lasuite/proconnect.core/security";
+} from "@proconnect-gouv/proconnect.core/security";
 import {
   createUserFactory,
   findByEmailFactory,
   updateUserFactory,
-} from "@gouvfr-lasuite/proconnect.identite/repositories/user";
+} from "@proconnect-gouv/proconnect.identite/repositories/user";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";

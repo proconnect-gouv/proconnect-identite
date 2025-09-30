@@ -4,8 +4,8 @@ import {
   hashPassword,
   isPasswordSecure,
   validatePassword,
-} from "@gouvfr-lasuite/proconnect.core/security";
-import { getDidYouMeanSuggestion } from "@gouvfr-lasuite/proconnect.core/services/suggestion";
+} from "@proconnect-gouv/proconnect.core/security";
+import { getDidYouMeanSuggestion } from "@proconnect-gouv/proconnect.core/services/suggestion";
 import {
   Add2fa,
   AddAccessKey,
@@ -17,15 +17,15 @@ import {
   ResetPassword,
   UpdatePersonalDataMail,
   VerifyEmail,
-} from "@gouvfr-lasuite/proconnect.email";
+} from "@proconnect-gouv/proconnect.email";
 import {
   NotFoundError,
   UserNotFoundError,
-} from "@gouvfr-lasuite/proconnect.identite/errors";
+} from "@proconnect-gouv/proconnect.identite/errors";
 import {
   type FranceConnectUserInfoResponse,
   type User,
-} from "@gouvfr-lasuite/proconnect.identite/types";
+} from "@proconnect-gouv/proconnect.identite/types";
 import { to } from "await-to-js";
 import { isEmpty } from "lodash-es";
 import { AssertionError } from "node:assert";

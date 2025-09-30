@@ -3,7 +3,7 @@
 import {
   UserClaimsSchema,
   type UserClaims,
-} from "@gouvfr-lasuite/proconnect.identite/types";
+} from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { to } from "await-to-js";
 import { isEmpty, omitBy } from "lodash-es";

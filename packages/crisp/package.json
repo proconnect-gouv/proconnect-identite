@@ -1,6 +1,6 @@
 {
-  "name": "@gouvfr-lasuite/proconnect.crisp",
-  "version": "0.5.0",
+  "name": "@proconnect-gouv/proconnect.crisp",
+  "version": "1.0.0",
   "description": "⚡ Typed Crisp API",
   "keywords": [
     "crisp",
@@ -48,7 +48,7 @@
     "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "devDependencies": {
-    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "dotenv": "^17.2.1",
     "tsx": "^4.20.3"
   },

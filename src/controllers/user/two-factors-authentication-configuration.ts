@@ -1,4 +1,4 @@
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { InvalidTotpTokenError } from "../../config/errors";
