@@ -42,7 +42,7 @@
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@storybook/csf": "^0.1.13",
     "prettier": "^3.6.2",
-    "vite": "^7.1.5"
+    "vite": "^7.1.7"
   },
   "publishConfig": {
     "access": "public",
