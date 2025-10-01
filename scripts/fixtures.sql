@@ -3398,7 +3398,7 @@ VALUES
     'client_id_mss_dev',
     'client_secret_mss_dev',
     ARRAY['http://localhost:3000/api/proconnect/login-callback'],
-    ARRAY['http://localhost:3000/api/proconnect/logout'],
+    ARRAY['http://localhost:3000/auth/logout'],
     'openid email siret custom',
     'http://dev.mon-suivi-social.local',
     'Dev local de Mon Suivi Social',
