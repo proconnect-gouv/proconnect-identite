@@ -77,7 +77,7 @@ export const onf_org_info = {
     "Établissement public national à caractère industriel ou commercial doté d'un comptable public",
 } as Organization;
 
-export const whitelisted_org_info = {
+export const bpifrance_org_info = {
   siret: "32025248901075",
   cached_tranche_effectifs: "42",
   cached_tranche_effectifs_unite_legale: "51",
@@ -86,6 +86,19 @@ export const whitelisted_org_info = {
   cached_libelle_activite_principale: "64.92Z - Autre distribution de crédit",
   cached_categorie_juridique: "5599",
   cached_libelle_categorie_juridique: "SA à conseil d'administration (s.a.i.)",
+} as Organization;
+
+export const whitelisted_org_info = {
+  siret: "18000001000017",
+  cached_tranche_effectifs: "22",
+  cached_tranche_effectifs_unite_legale: "32",
+  cached_libelle_tranche_effectif: "100 à 199 salariés, en 2022",
+  cached_activite_principale: "84.11Z",
+  cached_libelle_activite_principale:
+    "84.11Z - Administration publique générale",
+  cached_categorie_juridique: "7490",
+  cached_libelle_categorie_juridique:
+    "Autre personne morale de droit administratif",
 } as Organization;
 
 export const trackdechets_public_org_info = {

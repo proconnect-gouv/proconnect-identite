@@ -71,7 +71,7 @@ describe("restrict access for", () => {
     );
   });
 
-  it("Établissement d'hospitalisation", function () {
+  it("Établissement d'hospitalisation (26910001200013)", function () {
     cy.focused().clear().type("26910001200013");
 
     cy.contains("Enregistrer").click();

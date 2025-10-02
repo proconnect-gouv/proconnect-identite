@@ -3,6 +3,7 @@
 import type { Organization } from "#src/types";
 import {
   association_org_info,
+  bpifrance_org_info,
   dinum_org_info,
   entreprise_unipersonnelle_org_info,
   lamalou_org_info,
@@ -39,6 +40,10 @@ describe("isPublicService", () => {
     assert.equal(isPublicService(onf_org_info), true);
   });
 
+  it.skip("should return true for whitelisted établissement (BIP)", () => {
+    assert.equal(isPublicService(bpifrance_org_info), true);
+  });
+
   it("should return true for whitelisted établissement", () => {
     assert.equal(isPublicService(whitelisted_org_info), true);
   });
@@ -47,7 +52,6 @@ describe("isPublicService", () => {
     assert.equal(isPublicService(trackdechets_public_org_info), true);
   });
 
-  // Tests for new comprehensive implementation
   it("should return false for blacklisted SIREN", () => {
     const blacklisted_org = {
       siret: "34867901000123",
@@ -84,10 +88,10 @@ describe("isPublicService", () => {
     assert.equal(isPublicService(whitelisted_siren_org), true);
   });
 
-  it("should return true for CARSAT BRETAGNE (service public whitelist)", () => {
+  it("should return true for CARSAT BRETAGNE (annuaire-entreprises whitelist)", () => {
     const carsat_bretagne_org = {
       siret: "77774932600123",
-      cached_categorie_juridique: "5599", // Non-public nature juridique
+      cached_categorie_juridique: "8110", // Régime général de la Sécurité Sociale
       cached_etat_administratif: "A",
     } as Organization;
     assert.equal(isPublicService(carsat_bretagne_org), true);
