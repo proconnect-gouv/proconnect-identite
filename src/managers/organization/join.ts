@@ -53,6 +53,7 @@ import {
   findByUserId,
   findByVerifiedEmailDomain,
   getById,
+  getBySiret,
 } from "../../repositories/organization/getters";
 import {
   linkUserToOrganization,
@@ -67,6 +68,7 @@ import {
 import { logger } from "../../services/log";
 import {
   hasLessThanFiftyEmployees,
+  isArmeeDomain,
   isCommune,
   isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
@@ -108,6 +110,13 @@ export const getOrganizationSuggestions = async ({
 
   if (isEducationNationaleDomain(domain)) {
     return [];
+  }
+
+  if (isArmeeDomain(domain)) {
+    const armeeOrganization = await getBySiret("11009001600053");
+    if (armeeOrganization) {
+      return [armeeOrganization];
+    }
   }
 
   const organizationsSuggestions = await findByVerifiedEmailDomain(domain);
