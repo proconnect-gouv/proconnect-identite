@@ -17,6 +17,21 @@ export const findByUserId = findByUserIdFactory({
   pg: getDatabaseConnection(),
 });
 
+export const getBySiret = async (siret: string) => {
+  const connection = getDatabaseConnection();
+
+  const { rows }: QueryResult<Organization> = await connection.query(
+    `
+SELECT id, siret
+FROM organizations
+WHERE siret = $1
+`,
+    [siret],
+  );
+
+  return rows.shift();
+};
+
 export const findPendingByUserId = async (user_id: number) => {
   const connection = getDatabaseConnection();
 
