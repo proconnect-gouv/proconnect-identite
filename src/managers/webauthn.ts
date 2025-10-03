@@ -18,12 +18,7 @@ import { isEmpty } from "lodash-es";
 import moment from "moment";
 import "moment-timezone";
 import { AssertionError } from "node:assert";
-import {
-  APPLICATION_NAME,
-  DEPLOY_ENV,
-  HOST,
-  WEBSITE_IDENTIFIER,
-} from "../config/env";
+import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
 import {
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
@@ -320,15 +315,11 @@ export const verifyAuthentication = async ({
   let verification: VerifiedAuthenticationResponse;
   try {
     // In development/test, also accept Cypress runner origin
-    const expectedOrigins = [origin];
-    if (DEPLOY_ENV === "localhost") {
-      expectedOrigins.push("http://localhost:4000"); // Cypress runner
-    }
 
     verification = await verifyAuthenticationResponse({
       response,
       expectedChallenge: current_challenge,
-      expectedOrigin: expectedOrigins,
+      expectedOrigin: origin,
       expectedRPID: rpID,
       authenticator: {
         credentialPublicKey,
@@ -342,13 +333,33 @@ export const verifyAuthentication = async ({
     });
   } catch (error) {
     logger.error(error);
-    throw new WebauthnAuthenticationFailedError();
+    throw new WebauthnAuthenticationFailedError(
+      "Response verification failed",
+      {
+        cause: error,
+      },
+    );
   }
 
   const { verified, authenticationInfo } = verification;
 
   if (!verified || isEmpty(authenticationInfo)) {
-    throw new WebauthnAuthenticationFailedError();
+    throw new WebauthnAuthenticationFailedError(
+      "Response verification failed",
+      {
+        cause: verified
+          ? new AssertionError({
+              actual: authenticationInfo,
+              expected: true,
+              operator: "isEmpty",
+            })
+          : new AssertionError({
+              actual: verified,
+              expected: true,
+              operator: "isEmpty",
+            }),
+      },
+    );
   }
 
   const {

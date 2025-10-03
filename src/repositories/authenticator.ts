@@ -36,17 +36,6 @@ export const findAuthenticator = async (
 ) => {
   const connection = getDatabaseConnection();
 
-  // Convert base64url to base64 if needed (for Cypress tests with virtual authenticator)
-  // The database stores base64 format with + / and = padding
-  let base64CredentialId = serialized_credential_id
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
-
-  // Add padding if needed
-  while (base64CredentialId.length % 4) {
-    base64CredentialId += "=";
-  }
-
   const { rows }: QueryResult<SerializedAuthenticator> = await connection.query(
     `
         SELECT *
@@ -54,7 +43,7 @@ export const findAuthenticator = async (
         WHERE user_id = $1
           and credential_id = $2
     `,
-    [user_id, base64CredentialId],
+    [user_id, serialized_credential_id],
   );
 
   return deserializeAuthenticator(rows).shift();

@@ -15,14 +15,6 @@ export default defineConfig({
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      on("before:browser:launch", (browser, launchOptions) => {
-        if (browser.family === "chromium" && browser.name !== "electron") {
-          launchOptions.args.push(
-            "--disable-features=WebAuthenticationEnforcePermissionsPolicy",
-          );
-        }
-        return launchOptions;
-      });
       on("task", {
         log(message) {
           console.log(message);

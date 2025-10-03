@@ -45,57 +45,64 @@ describe("sign-in with webauthn on untrusted browser", () => {
         },
       },
     });
-    cy.intercept("http://localhost:3000/**", (req) => {
-      req.continue((res) => {
-        if (res.headers["content-type"]?.includes("text/html")) {
+    cy.intercept(
+      "GET",
+      "http://localhost:3000/users/sign-in-with-passkey",
+      (req) => {
+        req.continue((res) => {
           res.body = res.body.replace(
             "<head>",
             `<head><script>
+              // Mock navigator.credentials to bypass Cypress iframe Permissions Policy
               Object.defineProperty(navigator, "credentials", {
                 configurable: true,
                 value: {
-                  create: async (options) => window.top.navigator.credentials.create(options),
-                  get: async (options) => {
+                  create: (options) => window.top.navigator.credentials.create(options),
+                  get: (options) => {
+                    // Block Conditional UI to prevent duplicate WebAuthn challenges
                     if (options?.mediation === "conditional") return null;
-                    const serialized = JSON.parse(
-                      JSON.stringify(options, (k, v) =>
-                        k === "signal" || v instanceof AbortSignal
-                          ? undefined
-                          : ArrayBuffer.isView(v) || v instanceof ArrayBuffer
-                            ? Array.from(new Uint8Array(v))
-                            : v,
-                      ),
-                    );
-                    if (serialized.publicKey) {
-                      if (serialized.publicKey.challenge) {
-                        serialized.publicKey.challenge = new Uint8Array(
-                          serialized.publicKey.challenge,
-                        );
-                      }
-                      if (serialized.publicKey.allowCredentials) {
-                        serialized.publicKey.allowCredentials =
-                          serialized.publicKey.allowCredentials.map((c) => ({
-                            ...c,
-                            id: new Uint8Array(c.id),
-                          }));
-                      }
-                    }
-                    return await window.top.navigator.credentials.get(serialized);
+                    // Delegate to Cypress top window where CDP virtual authenticator works
+                    return window.top.navigator.credentials.get(options);
                   },
                 },
               });
-
             </script>`,
           );
+        });
+      },
+    );
+
+    cy.intercept(
+      "POST",
+      "http://localhost:3000/users/sign-in-with-passkey",
+      (req) => {
+        const params = new URLSearchParams(req.body);
+        const responseJson = params.get(
+          "webauthn_authentication_response_string",
+        );
+        if (responseJson) {
+          const response = JSON.parse(responseJson);
+          if (response.id) {
+            const base64 = response.id.replace(/-/g, "+").replace(/_/g, "/");
+            const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+            response.id = base64 + padding;
+            response.rawId = base64 + padding;
+            params.set(
+              "webauthn_authentication_response_string",
+              JSON.stringify(response),
+            );
+            req.body = params.toString();
+          }
         }
-      });
+      },
+    );
+
+    cy.visit("/");
+    cy.origin("http://localhost:4000", () => {
+      cy.visit("/");
+      cy.title().should("include", "standard-client - ProConnect");
+      cy.contains("S’identifier avec ProConnect").click();
     });
-
-    cy.visit("http://localhost:4000");
-
-    cy.title().should("include", "standard-client - ProConnect");
-    cy.contains("S’identifier avec ProConnect").click();
-
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
     cy.focused().type("unused1@yopmail.com");
@@ -109,7 +116,8 @@ describe("sign-in with webauthn on untrusted browser", () => {
       "Se connecter avec une clé d’accès - ProConnect",
     );
     cy.contains("Continuer").click();
-
-    cy.contains('"amr": [\n    "pop",\n    "mfa"\n  ],');
+    cy.origin("http://localhost:4000", () => {
+      cy.contains('"amr": [\n    "pop",\n    "mfa"\n  ],');
+    });
   });
 });
