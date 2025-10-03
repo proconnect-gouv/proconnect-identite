@@ -9,6 +9,7 @@
   },
   "main": "src/index.js",
   "workspaces": [
+    "packages/annuaire_entreprises",
     "packages/core",
     "packages/crisp",
     "packages/debounce",

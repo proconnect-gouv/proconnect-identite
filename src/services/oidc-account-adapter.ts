@@ -1,5 +1,6 @@
 //
 
+import { isPublicService } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
   UserClaimsSchema,
   type UserClaims,
@@ -13,7 +14,7 @@ import { getSelectedOrganizationId } from "../repositories/redis/selected-organi
 import { findById as findUserById } from "../repositories/user";
 import { logger } from "./log";
 import { mustReturnOneOrganizationInPayload } from "./must-return-one-organization-in-payload";
-import { isCommune, isPublicService } from "./organization";
+import { isCommune } from "./organization";
 
 export const findAccount: FindAccount = async (_ctx, sub) => {
   const user = await findUserById(parseInt(sub, 10));
