@@ -17,7 +17,13 @@ import type {
 import { isEmpty } from "lodash-es";
 import moment from "moment";
 import "moment-timezone";
-import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
+import { AssertionError } from "node:assert";
+import {
+  APPLICATION_NAME,
+  DEPLOY_ENV,
+  HOST,
+  WEBSITE_IDENTIFIER,
+} from "../config/env";
 import {
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
@@ -294,7 +300,14 @@ export const verifyAuthentication = async ({
   const authenticator = await findAuthenticator(user.id, response.id);
 
   if (isEmpty(authenticator)) {
-    throw new NotFoundError();
+    throw new NotFoundError("Authenticator not found", {
+      cause: new AssertionError({
+        message: `Authenticator not found for credential ID ${response.id}`,
+        actual: authenticator,
+        expected: true,
+        operator: "isEmpty",
+      }),
+    });
   }
 
   const {
@@ -306,10 +319,16 @@ export const verifyAuthentication = async ({
 
   let verification: VerifiedAuthenticationResponse;
   try {
+    // In development/test, also accept Cypress runner origin
+    const expectedOrigins = [origin];
+    if (DEPLOY_ENV === "localhost") {
+      expectedOrigins.push("http://localhost:4000"); // Cypress runner
+    }
+
     verification = await verifyAuthenticationResponse({
       response,
       expectedChallenge: current_challenge,
-      expectedOrigin: origin,
+      expectedOrigin: expectedOrigins,
       expectedRPID: rpID,
       authenticator: {
         credentialPublicKey,

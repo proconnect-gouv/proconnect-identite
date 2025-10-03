@@ -24,7 +24,7 @@ VALUES
    '\xa401010327200621582015a9f4727d84c47413e94c4b5109aee81a0ec9d1e610ff5d522eb9f8e2af927a',
 --    '\x3059301306072a8648ce3d020106082a8648ce3d0301070342000495886e1804854510af5d8cb4943c0caa1ae25eef46226258e9175eb461783e000f67da1363dab497ea492d7fd5ffd855f5d34158d02c89999dce353dcd1b1dcd',
 --    '\xa50102032620012158203644bd38776918bb7d83059369ddbb634bd207df223153674c20994f91ca97bf2258203d6bd21d1da555db3eb6590a34e003642c9602670203d451b2adb9302ab1325a',
-   0, 'singleDevice', false, ARRAY ['internal'], 1, null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, true);
+   0, 'singleDevice', false, ARRAY ['internal'], 1, 'null', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, true);
 
 INSERT INTO oidc_clients
 (client_name, client_id, client_secret, redirect_uris,
@@ -36,6 +36,7 @@ VALUES
    'standard_client_id',
    'standard_client_secret',
    ARRAY [
+
      'http://localhost:4000/login-callback'
      ],
    ARRAY []::varchar[],
