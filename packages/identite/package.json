@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.8",
+    "@proconnect-gouv/proconnect.annuaire_entreprises": "^1.0.0",
     "@proconnect-gouv/proconnect.core": "^1.0.0",
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@proconnect-gouv/proconnect.entreprise": "^1.0.0",

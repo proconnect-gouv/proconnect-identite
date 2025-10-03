@@ -71,20 +71,8 @@ describe("restrict access for", () => {
     );
   });
 
-  it("Établissement d'hospitalisation", function () {
-    cy.focused().clear().type("26910001200013");
-
-    cy.contains("Enregistrer").click();
-
-    cy.title().should("include", "Email non autorisé -");
-    cy.contains("Email non autorisé");
-    cy.contains(
-      "L’accès à ce site est limité aux agentes et agents possédant une adresse email d’une administration publique.",
-    );
-  });
-
-  it("Établissement d'hospitalisation", function () {
-    cy.focused().clear().type("26910001200013");
+  it("Samu-social de paris (18750901300012)", function () {
+    cy.focused().clear().type("18750901300012");
 
     cy.contains("Enregistrer").click();
 
