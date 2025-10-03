@@ -8,6 +8,7 @@ const RECORD = process.env["CYPRESS_RECORD"] === "true";
 export default defineConfig({
   chromeWebSecurity: false,
   defaultCommandTimeout: 60000,
+  experimentalModifyObstructiveThirdPartyCode: true,
   pageLoadTimeout: 60000,
   e2e: {
     baseUrl: "http://localhost:3000",

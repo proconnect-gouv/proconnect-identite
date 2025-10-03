@@ -120,7 +120,12 @@ export class OfficialContactEmailVerificationNotNeededError extends Error {}
 
 export class WebauthnRegistrationFailedError extends Error {}
 
-export class WebauthnAuthenticationFailedError extends Error {}
+export class WebauthnAuthenticationFailedError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "WebauthnAuthenticationFailedError";
+  }
+}
 
 export class UserNotLoggedInError extends Error {}
 
