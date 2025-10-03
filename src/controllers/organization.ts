@@ -63,10 +63,12 @@ export const getJoinOrganizationController = async (
     const { notification, siret_hint, do_not_propose_suggestions } =
       await schema.parseAsync(req.query);
 
+    let siretHint = siret_hint;
+
     const { id: user_id, email } = getUserFromAuthenticatedSession(req);
 
     if (
-      !siret_hint &&
+      !siretHint &&
       !notification &&
       !do_not_propose_suggestions &&
       (await doSuggestOrganizations({ user_id, email }))
@@ -74,13 +76,21 @@ export const getJoinOrganizationController = async (
       return res.redirect("/users/organization-suggestions");
     }
 
+    const emailDomain = getEmailDomain(email);
+
+    if (!siretHint) {
+      if (emailDomain === "intradef.gouv.fr") {
+        const MINISTERE_DES_ARMEES_SIRET = "11009001600053";
+        siretHint = MINISTERE_DES_ARMEES_SIRET;
+      }
+    }
+
     return res.render("user/join-organization", {
       pageTitle: "Rejoindre une organisation",
       notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
-      siretHint: siret_hint,
-      useGendarmerieSearchHint:
-        getEmailDomain(email) === "gendarmerie.interieur.gouv.fr",
+      siretHint,
+      useGendarmerieSearchHint: emailDomain === "gendarmerie.interieur.gouv.fr",
     });
   } catch (error) {
     next(error);
