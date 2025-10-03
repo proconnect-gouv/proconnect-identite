@@ -16,4 +16,5 @@ interface OidcClient {
   id_token_signed_response_alg: string | null;
   authorization_signed_response_alg: string | null;
   introspection_signed_response_alg: string | null;
+  is_proconnect_federation: boolean;
 }

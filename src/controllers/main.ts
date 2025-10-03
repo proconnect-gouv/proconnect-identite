@@ -1,22 +1,15 @@
 import type { NextFunction, Request, Response } from "express";
-import HttpErrors from "http-errors";
-import { isEmpty } from "lodash-es";
 import moment from "moment/moment";
-import { z, ZodError } from "zod";
-import { DIRTY_DS_REDIRECTION_URL } from "../config/env";
+import z, { ZodError } from "zod";
 import {
-  ForbiddenError,
-  NotFoundError,
-  UserIsNot2faCapableError,
-} from "../config/errors";
+  DIRTY_DS_REDIRECTION_URL,
+  FEATURE_FRANCECONNECT_CONNECTION,
+} from "../config/env";
 import notificationMessages from "../config/notification-messages";
-import { disableForce2fa, enableForce2fa, is2FACapable } from "../managers/2fa";
-import { getOrganizationFromModeration } from "../managers/moderation";
-import { getClientsOrderedByConnectionCount } from "../managers/oidc-client";
+import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
 import {
   getUserFromAuthenticatedSession,
-  isWithinAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import {
@@ -24,34 +17,33 @@ import {
   getNeedsDirtyDSRedirect,
   setNeedsDirtyDSRedirect,
 } from "../managers/session/dirty-ds-redirect";
-import { isAuthenticatorAppConfiguredForUser } from "../managers/totp";
+import { isTotpConfiguredForUser } from "../managers/totp";
 import {
-  sendDisable2faMail,
+  getUserVerificationLabel,
+  isUserVerifiedWithFranceconnect,
   sendUpdatePersonalInformationEmail,
-  updatePersonalInformations,
+  updatePersonalInformationsForDashboard,
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { idSchema } from "../services/custom-zod-schemas";
+import {
+  jobSchema,
+  nameSchema,
+  phoneNumberSchema,
+} from "../services/custom-zod-schemas";
 import {
   getNotificationLabelFromRequest,
   getNotificationsFromRequest,
 } from "../services/get-notifications-from-request";
-import { getParamsForPostPersonalInformationsController } from "./user/update-personal-informations";
 
 export const getHomeController = async (
   req: Request,
   res: Response,
   _next: NextFunction,
 ) => {
-  const oidc_clients = await getClientsOrderedByConnectionCount(
-    getUserFromAuthenticatedSession(req).id,
-  );
-
   return res.render("home", {
-    pageTitle: "Services connectés",
+    pageTitle: "Accueil",
     notifications: await getNotificationsFromRequest(req),
-    oidc_clients,
   });
 };
 
@@ -62,15 +54,19 @@ export const getPersonalInformationsController = async (
 ) => {
   try {
     const user = getUserFromAuthenticatedSession(req);
+    const verifiedBy = await getUserVerificationLabel(user.id);
+
     return res.render("personal-information", {
-      pageTitle: "Informations personnelles",
+      canUseFranceConnect: FEATURE_FRANCECONNECT_CONNECTION,
+      csrfToken: csrfToken(req),
       email: user.email,
-      given_name: user.given_name,
       family_name: user.family_name,
-      phone_number: user.phone_number,
+      given_name: user.given_name,
       job: user.job,
       notifications: await getNotificationsFromRequest(req),
-      csrfToken: csrfToken(req),
+      pageTitle: "Informations personnelles",
+      phone_number: user.phone_number,
+      verifiedBy,
     });
   } catch (error) {
     next(error);
@@ -83,20 +79,27 @@ export const postPersonalInformationsController = async (
   next: NextFunction,
 ) => {
   try {
+    const schema = z.object({
+      given_name: nameSchema(),
+      family_name: nameSchema(),
+      phone_number: phoneNumberSchema(),
+      job: jobSchema(),
+    });
+
     const { given_name, family_name, phone_number, job } =
-      await getParamsForPostPersonalInformationsController(req);
+      await schema.parseAsync(req.body);
 
-    const updatedUser = await updatePersonalInformations(
-      getUserFromAuthenticatedSession(req).id,
-      {
-        given_name,
-        family_name,
-        phone_number,
-        job,
-      },
-    );
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const verifiedBy = await getUserVerificationLabel(userId);
 
-    sendUpdatePersonalInformationEmail({
+    const updatedUser = await updatePersonalInformationsForDashboard(userId, {
+      given_name,
+      family_name,
+      phone_number,
+      job,
+    });
+
+    await sendUpdatePersonalInformationEmail({
       previousInformations: getUserFromAuthenticatedSession(req),
       newInformation: updatedUser,
     });
@@ -104,16 +107,18 @@ export const postPersonalInformationsController = async (
     updateUserInAuthenticatedSession(req, updatedUser);
 
     return res.render("personal-information", {
-      pageTitle: "Vos informations personnelles",
+      canUseFranceConnect: FEATURE_FRANCECONNECT_CONNECTION,
+      csrfToken: csrfToken(req),
       email: updatedUser.email,
-      given_name: updatedUser.given_name,
       family_name: updatedUser.family_name,
-      phone_number: updatedUser.phone_number,
+      given_name: updatedUser.given_name,
       job: updatedUser.job,
       notifications: [
         notificationMessages["personal_information_update_success"],
       ],
-      csrfToken: csrfToken(req),
+      pageTitle: "Informations personnelles",
+      phone_number: updatedUser.phone_number,
+      verifiedBy,
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -133,9 +138,7 @@ export const getManageOrganizationsController = async (
 ) => {
   try {
     const { userOrganizations, pendingUserOrganizations } =
-      await getUserOrganizations({
-        user_id: getUserFromAuthenticatedSession(req).id,
-      });
+      await getUserOrganizations(getUserFromAuthenticatedSession(req).id);
 
     return res.render("manage-organizations", {
       pageTitle: "Organisations",
@@ -164,6 +167,8 @@ export const getConnectionAndAccountController = async (
 
     const passkeys = await getUserAuthenticators(email);
     const is2faCapable = await is2FACapable(user_id);
+    const isVerifiedWithFranceConnect =
+      await isUserVerifiedWithFranceconnect(user_id);
 
     // Dirty ad hoc implementation waiting for complete acr support on ProConnect
     const notificationLabel = await getNotificationLabelFromRequest(req);
@@ -181,14 +186,13 @@ export const getConnectionAndAccountController = async (
 
       return res.redirect(DIRTY_DS_REDIRECTION_URL);
     }
-
     return res.render("connection-and-account", {
-      pageTitle: "Connexion et compte",
+      pageTitle: "Compte et connexion",
       notifications: await getNotificationsFromRequest(req),
       email: email,
+      isAuthenticatorConfigured: await isTotpConfiguredForUser(user_id),
+      isVerifiedWithFranceConnect,
       passkeys,
-      isAuthenticatorConfigured:
-        await isAuthenticatorAppConfiguredForUser(user_id),
       totpKeyVerifiedAt: totp_key_verified_at
         ? moment(totp_key_verified_at)
             .tz("Europe/Paris")
@@ -204,93 +208,42 @@ export const getConnectionAndAccountController = async (
   }
 };
 
-export const postDisableForce2faController = async (
-  req: Request,
+export const getConditionsGeneralesDUtilisationController = (
+  _req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-    const updatedUser = await disableForce2fa(user_id);
-
-    updateUserInAuthenticatedSession(req, updatedUser);
-    sendDisable2faMail({ user_id });
-
-    return res.redirect(
-      `/connection-and-account?notification=2fa_successfully_disabled`,
-    );
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const postEnableForce2faController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-    const updatedUser = await enableForce2fa(user_id);
-
-    updateUserInAuthenticatedSession(req, updatedUser);
-
-    return res.redirect(
-      `/connection-and-account?notification=2fa_successfully_enabled`,
-    );
-  } catch (error) {
-    if (error instanceof UserIsNot2faCapableError) {
-      next(new HttpErrors.UnprocessableEntity());
-    }
-
-    next(error);
-  }
-};
-
-export const getHelpController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    let email: string | undefined;
-    let user: User | undefined;
-    let cached_libelle: string | null | undefined;
-
-    if (isWithinAuthenticatedSession(req.session)) {
-      user = getUserFromAuthenticatedSession(req);
-      email = user.email;
-    }
-
-    const schema = z.object({
-      moderation_id: z.union([idSchema(), z.undefined()]),
+    return res.render("legal-proconnect/cgu", {
+      pageTitle: "Conditions Générales d'Utilisation - ProConnect",
     });
-    let { moderation_id } = await schema.parseAsync(req.query);
+  } catch (error) {
+    next(error);
+  }
+};
 
-    if (!isEmpty(user) && moderation_id) {
-      try {
-        const organization = await getOrganizationFromModeration({
-          user,
-          moderation_id,
-        });
-        cached_libelle = organization.cached_libelle;
-      } catch (e) {
-        if (!(e instanceof NotFoundError || e instanceof ForbiddenError)) {
-          return next(e);
-        }
+export const getPolitiqueDeConfidentialiteController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/privacy-policy", {
+      pageTitle: "Politique de confidentialité - ProConnect",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-        moderation_id = undefined;
-      }
-    }
-
-    return res.render("help", {
-      pageTitle: "Aide",
-      email,
-      csrfToken: email && csrfToken(req),
-      organization_label: cached_libelle,
-      moderation_id,
+export const getAccessibiliteController = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("legal-proconnect/accessibility", {
+      pageTitle: "Accessibilité - ProConnect",
     });
   } catch (error) {
     next(error);

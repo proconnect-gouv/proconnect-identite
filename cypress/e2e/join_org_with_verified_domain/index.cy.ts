@@ -1,23 +1,22 @@
 //
 
-//
-
 describe("join organizations", () => {
-  before(() => {
-    return cy.mailslurp().then((mailslurp) =>
-      Promise.all([
-        mailslurp.inboxController.deleteAllInboxEmails({
-          inboxId: "c6c64542-5601-43e0-b320-b20da72f6edc",
-        }),
-      ]),
-    );
+  it("should seed the database once", function () {
+    cy.seed();
   });
 
   it("join suggested organisation", function () {
     cy.visit("/");
-    cy.login("c6c64542-5601-43e0-b320-b20da72f6edc@mailslurp.com");
 
-    // The user gets this suggestion because it as mailslurp.com as verified domain
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("lion.eljonson@darkangels.world");
+
+    cy.title().should(
+      "include",
+      "Votre organisation de rattachement - ProConnect",
+    );
+
+    // The user gets this suggestion because it as darkangels.world as verified domain
     cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").contains(
       "Commune de clamart - Mairie",
     );
@@ -27,51 +26,48 @@ describe("join organizations", () => {
       "Commune de clamart - Service assainissement",
     );
 
-    // Click on the suggested organization
-    cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").click();
+    cy.getByLabel(
+      "Sélectionner l'organisation Commune de clamart - Mairie",
+    ).click();
 
-    // Click on "continue" on the welcome page
-    cy.get('[type="submit"]').click();
+    cy.title().should("include", "Compte créé - ProConnect");
+    cy.contains("Continue").click();
 
-    // Check redirection to home page
-    cy.contains("Votre compte est créé");
+    cy.title().should("include", "Accueil - ProConnect");
+    cy.contains("Votre compte ProConnect");
   });
 
   it("join another organisation", function () {
     cy.visit("/users/join-organization");
-    cy.login("c6c64542-5601-43e0-b320-b20da72f6edc@mailslurp.com");
 
-    cy.get('[name="siret"]').type("13002526500013");
-    cy.get('[type="submit"]').click();
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("lion.eljonson@darkangels.world");
 
-    // Check redirection to moderation block page
+    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("13002526500013");
+    cy.contains("Enregistrer").click();
+
+    cy.title().should("include", "Rattachement en cours - ProConnect");
     cy.contains(
-      "Notre équipe étudie votre demande de rattachement à l’organisation Direction interministerielle du numerique (DINUM) avec l’adresse email c6c64542-5601-43e0-b320-b20da72f6edc@mailslurp.com",
+      "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
     );
 
     // Try to change org
-    cy.get('a[href^="/help"]')
-      .contains("J’ai fait une erreur dans ma demande")
-      .click();
-    cy.get('[action^="/users/cancel-moderation-and-redirect-to-join-org/"]')
-      .contains(
-        "Annuler la demande en cours et sélectionner une organisation différente",
-      )
-      .click();
+    cy.getByLabel("Corriger l'organisation de rattachement").click();
 
-    cy.get('[name="siret"]').type("13002526500013");
-    cy.get('[type="submit"]').click();
-    cy.contains("Notre équipe étudie votre demande");
+    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("13002526500013");
+    cy.contains("Enregistrer").click();
+
+    cy.title().should("include", "Rattachement en cours - ProConnect");
+    cy.contains("Demande en cours");
 
     // Try to change email
-    cy.get('a[href^="/help"]')
-      .contains("J’ai fait une erreur dans ma demande")
-      .click();
-    cy.get('[action^="/users/cancel-moderation-and-redirect-to-sign-in/"]')
-      .contains(
-        "Annuler la demande en cours et utiliser une autre adresse email",
-      )
-      .click();
+    cy.getByLabel("Corriger l'adresse email").click();
+
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("S’inscrire ou se connecter");
   });
 });

@@ -1,5 +1,5 @@
 /**
- * this is basically the document-title rule, except with a custom check that verifies we don't just have "MonComptePro" as title
+ * this is basically the document-title rule, except with a custom check that verifies we don't just have "ProConnect" as title
  *
  * @link https://github.com/dequelabs/axe-core/blob/develop/lib/rules/document-title.json
  */

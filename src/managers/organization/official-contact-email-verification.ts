@@ -1,13 +1,17 @@
+import { generateDicewarePassword } from "@proconnect-gouv/proconnect.core/security";
+import { OfficialContactEmailVerification } from "@proconnect-gouv/proconnect.email";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import type { UserOrganizationLink } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
+import { HOST } from "../../config/env";
 import {
   ApiAnnuaireError,
   InvalidTokenError,
-  NotFoundError,
   OfficialContactEmailVerificationNotNeededError,
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmail } from "../../connectors/api-annuaire-service-public";
-import { sendMail } from "../../connectors/brevo";
+import { sendMail } from "../../connectors/mail";
 import {
   findById as findOrganizationById,
   getUsers,
@@ -18,7 +22,6 @@ import {
   isCommune,
   isEtablissementScolaireDuPremierEtSecondDegre,
 } from "../../services/organization";
-import { generateDicewarePassword } from "../../services/security";
 
 const OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES = 60;
 
@@ -92,8 +95,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     return { codeSent: false, contactEmail, libelle };
   }
 
-  const official_contact_email_verification_token =
-    await generateDicewarePassword();
+  const official_contact_email_verification_token = generateDicewarePassword();
 
   await updateUserOrganizationLink(organization_id, user_id, {
     official_contact_email_verification_token,
@@ -104,15 +106,16 @@ export const sendOfficialContactEmailVerificationEmail = async ({
 
   await sendMail({
     to: [contactEmail],
-    subject: `[MonComptePro] Authentifier un email sur MonComptePro`,
-    template: "official-contact-email-verification",
-    params: {
-      given_name,
-      family_name,
+    subject: `[ProConnect] Authentifier un email sur ProConnect`,
+    html: OfficialContactEmailVerification({
+      baseurl: HOST,
+      given_name: given_name ?? "",
+      family_name: family_name ?? "",
       email,
-      libelle,
-      official_contact_email_verification_token,
-    },
+      libelle: libelle ?? "",
+      token: official_contact_email_verification_token,
+    }).toString(),
+    tag: "official-contact-email-verification",
   });
 
   return { codeSent: true, contactEmail, libelle };

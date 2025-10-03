@@ -1,0 +1,85 @@
+{
+  "data": [
+    {
+      "data": {
+        "fonction": "PRESIDENT",
+        "nom": "▪︎ ▪︎ ▪︎",
+        "type": "personne_physique",
+        "prenom": "▪︎ ▪︎ ▪︎",
+        "date_naissance": "1234-56-78",
+        "date_naissance_timestamp": 0,
+        "lieu_naissance": "▪︎ ▪︎ ▪︎",
+        "pays_naissance": "FRANCE",
+        "code_pays_naissance": "FR",
+        "nationalite": "FRANCAISE",
+        "code_nationalite": "FR"
+      },
+      "links": {},
+      "meta": {}
+    },
+    {
+      "data": {
+        "fonction": "DIRECTEUR GENERAL",
+        "nom": "▪︎ ▪︎ ▪︎",
+        "type": "personne_physique",
+        "prenom": "▪︎ ▪︎ ▪︎",
+        "date_naissance": "1234-56-78",
+        "date_naissance_timestamp": 0,
+        "lieu_naissance": "▪︎ ▪︎ ▪︎",
+        "pays_naissance": "FRANCE",
+        "code_pays_naissance": "FR",
+        "nationalite": "FRANCAISE",
+        "code_nationalite": "FR"
+      },
+      "links": {},
+      "meta": {}
+    },
+    {
+      "data": {
+        "numero_identification": "▪︎ ▪︎ ▪︎",
+        "type": "personne_morale",
+        "fonction": "COMMISSAIRE AUX COMPTES TITULAIRE",
+        "raison_sociale": "▪︎ ▪︎ ▪︎ - SOCIETE ANONYME",
+        "code_greffe": "9201",
+        "libelle_greffe": "NANTERRE"
+      },
+      "links": {},
+      "meta": {}
+    },
+    {
+      "data": {
+        "numero_identification": "▪︎ ▪︎ ▪︎",
+        "type": "personne_morale",
+        "fonction": "COMMISSAIRE AUX COMPTES TITULAIRE",
+        "raison_sociale": "▪︎ ▪︎ ▪︎ - SOCIETE ANONYME A DIRECTOIRE ET CONSEIL DE SURVEILLANCE",
+        "code_greffe": "9201",
+        "libelle_greffe": "NANTERRE"
+      },
+      "links": {},
+      "meta": {}
+    },
+    {
+      "data": {
+        "fonction": "COMMISSAIRE AUX COMPTES SUPPLEANT",
+        "nom": "▪︎ ▪︎ ▪︎",
+        "type": "personne_physique",
+        "prenom": "▪︎ ▪︎ ▪︎",
+        "date_naissance": "1234-56-78",
+        "date_naissance_timestamp": 0,
+        "lieu_naissance": "▪︎ ▪︎ ▪︎",
+        "pays_naissance": "FRANCE",
+        "code_pays_naissance": "FR",
+        "nationalite": "FRANCAISE",
+        "code_nationalite": "FR"
+      },
+      "links": {},
+      "meta": {}
+    }
+  ],
+  "meta": {
+    "personnes_physiques_count": 3,
+    "personnes_morales_count": 2,
+    "count": 5
+  },
+  "links": {}
+}

@@ -1,5 +1,6 @@
-import { assert } from "chai";
 import nock from "nock";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { ApiAnnuaireNotFoundError } from "../src/config/errors";
 import { getAnnuaireServicePublicContactEmail } from "../src/connectors/api-annuaire-service-public";
 import invalidCogData from "./api-annuaire-service-public-data/invalid-cog.json";
@@ -13,7 +14,7 @@ describe("getAnnuaireServicePublicContactEmail", () => {
         `/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "00000" and pivot LIKE "mairie"`,
       )
       .reply(200, invalidCogData);
-    await assert.isRejected(
+    await assert.rejects(
       getAnnuaireServicePublicContactEmail("00000", "00000"),
       ApiAnnuaireNotFoundError,
     );
@@ -24,8 +25,8 @@ describe("getAnnuaireServicePublicContactEmail", () => {
         `/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "15014" and pivot LIKE "mairie"`,
       )
       .reply(200, oneMairieData);
-    await assert.eventually.equal(
-      getAnnuaireServicePublicContactEmail("15014", "15000"),
+    assert.equal(
+      await getAnnuaireServicePublicContactEmail("15014", "15000"),
       "administration@aurillac.fr",
     );
   });
@@ -35,8 +36,8 @@ describe("getAnnuaireServicePublicContactEmail", () => {
         `/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "38253" and pivot LIKE "mairie"`,
       )
       .reply(200, twoMairiesData);
-    await assert.eventually.equal(
-      getAnnuaireServicePublicContactEmail("38253", "38860"),
+    assert.equal(
+      await getAnnuaireServicePublicContactEmail("38253", "38860"),
       "accueil@mairie2alpes.fr",
     );
   });

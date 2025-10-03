@@ -14,6 +14,18 @@ document.addEventListener(
     );
     const errorElement = document.getElementById("webauthn-alert-error");
 
+    const actionAttribute = authenticationResponseForm.getAttribute("action");
+    let authOptionsUrl;
+    if (actionAttribute === "/users/2fa-sign-in-with-passkey") {
+      authOptionsUrl =
+        "/api/webauthn/generate-authentication-options-for-second-factor";
+    } else if (actionAttribute === "/users/sign-in-with-passkey") {
+      authOptionsUrl =
+        "/api/webauthn/generate-authentication-options-for-first-factor";
+    } else {
+      throw new Error("Webauthn page miss-configured!");
+    }
+
     // Start registration when the user clicks a button
     const onAuthenticateClick = async () => {
       // Reset success/error messages
@@ -21,24 +33,13 @@ document.addEventListener(
       errorElement.innerText = "";
       beginElement.disabled = true;
 
-      const actionAttribute = authenticationResponseForm.getAttribute("action");
-      let authOptionsUrl;
-      if (actionAttribute === "/users/2fa-sign-in-with-passkey") {
-        authOptionsUrl =
-          "/api/webauthn/generate-authentication-options-for-second-factor";
-      } else if (actionAttribute === "/users/sign-in-with-passkey") {
-        authOptionsUrl =
-          "/api/webauthn/generate-authentication-options-for-first-factor";
-      } else {
-        throw new Error("Webauthn page miss-configured!");
-      }
-
-      // GET registration options from the endpoint that calls
-      // @simplewebauthn/server -> generateRegistrationOptions()
-      const authOptions = await fetch(authOptionsUrl);
-
       let asseResp;
+
       try {
+        // GET registration options from the endpoint that calls
+        // @simplewebauthn/server -> generateRegistrationOptions()
+        const authOptions = await fetch(authOptionsUrl);
+
         // Pass the options to the authenticator and wait for a response
         asseResp = await startAuthentication(await authOptions.json());
       } catch (error) {
@@ -66,10 +67,9 @@ document.addEventListener(
       const hasNotification = urlParams.get("notification") !== null;
 
       if (!hasNotification) {
-        const authOptions = await fetch(
-          "/api/webauthn/generate-authentication-options",
-        );
         try {
+          const authOptions = await fetch(authOptionsUrl);
+
           let asseResp = await startAuthentication(
             await authOptions.json(),
             true,
@@ -80,6 +80,7 @@ document.addEventListener(
           authenticationResponseForm.requestSubmit();
         } catch (e) {
           // fail silently
+          console.error(e);
         }
       }
     };

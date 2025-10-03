@@ -34,6 +34,7 @@ export const getPartialUserFromUnauthenticatedSession = (req: Request) => {
     email: req.session.email,
     needsInclusionconnectWelcomePage:
       req.session.needsInclusionconnectWelcomePage,
+    hasWebauthnConfigured: req.session.hasWebauthnConfigured,
   };
 };
 export const setPartialUserFromUnauthenticatedSession = (
@@ -41,11 +42,17 @@ export const setPartialUserFromUnauthenticatedSession = (
   {
     email,
     needsInclusionconnectWelcomePage,
-  }: { email: string; needsInclusionconnectWelcomePage: boolean },
+    hasWebauthnConfigured,
+  }: {
+    email: string;
+    needsInclusionconnectWelcomePage: boolean;
+    hasWebauthnConfigured: boolean;
+  },
 ) => {
   req.session.email = email;
   req.session.needsInclusionconnectWelcomePage =
     needsInclusionconnectWelcomePage;
+  req.session.hasWebauthnConfigured = hasWebauthnConfigured;
 };
 export const updatePartialUserFromUnauthenticatedSession = async (
   req: Request,

@@ -1,5 +1,5 @@
 import { promises as fs } from "fs";
-import { Pool } from "pg";
+import type { Pool } from "pg";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 
 const runScript = async (filePath: string): Promise<void> => {

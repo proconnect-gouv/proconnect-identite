@@ -1,12 +1,8 @@
 //
 
-describe("sign-in with magic link", () => {
-  before(() => {
-    cy.mailslurp().then((mailslurp) =>
-      mailslurp.inboxController.deleteAllInboxEmails({
-        inboxId: "8e79c68c-9ce1-4dfe-8e58-fa3763d4cff7",
-      }),
-    );
+describe("reset password", () => {
+  it("should seed the database once", function () {
+    cy.seed();
   });
 
   it("should reset password then sign-in", function () {
@@ -14,9 +10,7 @@ describe("sign-in with magic link", () => {
     cy.visit("/users/start-sign-in");
 
     // Sign in with the wrong password
-    cy.get('[name="login"]').type(
-      "8e79c68c-9ce1-4dfe-8e58-fa3763d4cff7@mailslurp.com",
-    );
+    cy.get('[name="login"]').type("lion.eljonson@darkangels.world");
     cy.get('[type="submit"]').click();
 
     cy.get('[action="/users/sign-in"] [name="password"]').type(
@@ -37,29 +31,16 @@ describe("sign-in with magic link", () => {
 
     cy.contains("vous allez recevoir un lien de réinitialisation par e-mail.");
 
-    cy.mailslurp()
-      // use inbox id and a timeout of 30 seconds
-      .then((mailslurp) =>
-        mailslurp.waitForLatestEmail(
-          "8e79c68c-9ce1-4dfe-8e58-fa3763d4cff7",
-          60000,
-          true,
-        ),
-      )
-      // extract the connection link from the email subject
-      .then((email) => {
-        const matches =
-          /.*<a href="([^"]+)" class="r13-r default-button".*/.exec(
-            email.body ?? "",
-          );
-        if (matches && matches.length > 0) {
-          return matches[1];
-        }
-        throw new Error("Could not find connection link in received email");
-      })
-      .then((link) => {
-        cy.visit(link);
-      });
+    cy.maildevGetMessageBySubject(
+      "Instructions pour la réinitialisation du mot de passe",
+    ).then((email) => {
+      cy.maildevVisitMessageById(email.id);
+      cy.contains(
+        "Nous avons reçu une demande de réinitialisation de votre mot de passe.",
+      );
+      cy.contains("Réinitialiser le mot de passe").click();
+      cy.maildevDeleteMessageById(email.id);
+    });
 
     cy.contains("Changer votre mot de passe");
 
@@ -80,6 +61,15 @@ describe("sign-in with magic link", () => {
     );
     cy.get('[action="/users/sign-in"] [type="submit"]').click();
 
-    cy.contains("Votre compte est créé !");
+    cy.contains("Votre compte ProConnect");
+  });
+
+  it("user should be able to reset password via direct access to the page ", () => {
+    cy.visit("/users/reset-password");
+
+    cy.get('[name="login"]').type("keeper-of-secrets@darkangels.world");
+    cy.get('[type="submit"]').click();
+
+    cy.contains("vous allez recevoir un lien de réinitialisation par e-mail.");
   });
 });

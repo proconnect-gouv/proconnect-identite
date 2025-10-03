@@ -1,0 +1,85 @@
+openapi: 3.1.0
+info:
+  title: Sirene Auth API
+  description: Documentation de l'API Auth Sirene
+servers:
+  - url: https://auth.insee.net/auth
+paths:
+  /realms/apim-gravitee/protocol/openid-connect/token:
+    post:
+      summary: Obtenir le jeton JWT indispensable pour pouvoir interroger l'API Sirene.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+                grant_type:
+                  enum:
+                    - password
+                  type: string
+                password:
+                  type: string
+                username:
+                  type: string
+              required:
+                - client_id
+                - client_secret
+                - grant_type
+                - password
+                - username
+      responses:
+        "200":
+          description: Requête traitée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseToken"
+        "401":
+          description: Requête invalide
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+      required:
+        - error
+        - error_description
+    ResponseToken:
+      type: object
+      description: Objet renvoyé en cas de succès sur une requête de type token
+      properties:
+        access_token:
+          type: string
+          description: Jeton d'accès
+        expires_in:
+          type: integer
+          description: Durée avant expiration du jeton d'accès en secondes
+        refresh_expires_in:
+          type: integer
+          description: Durée avant expiration du jeton de rafraîchissement en secondes
+        token_type:
+          type: string
+          description: Type de jeton d'accès
+        not-before-policy:
+          type: integer
+          description: Durée avant la date de fin de validité du jeton d'accès en secondes
+        session_state:
+          type: string
+          description: État de la session
+        scope:
+          type: string
+          description: Liste des scopes autorisés

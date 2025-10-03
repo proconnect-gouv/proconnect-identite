@@ -1,13 +1,13 @@
-import { z } from "zod";
-import { normalizeOfficialContactEmailVerificationToken } from "./normalize-official-contact-email-verification-token";
 import {
   isEmailValid,
   isNameValid,
-  isNotificationLabelValid,
   isPhoneNumberValid,
   isSiretValid,
   isVisibleString,
-} from "./security";
+} from "@proconnect-gouv/proconnect.core/security";
+import { z } from "zod";
+import { normalizeOfficialContactEmailVerificationToken } from "./normalize-official-contact-email-verification-token";
+import { isNotificationLabelValid } from "./security";
 
 export const siretSchema = () =>
   z
@@ -30,12 +30,15 @@ export const phoneNumberSchema = () =>
 
 const pattern = /^(?![\d\s]+$).*/;
 export const jobSchema = () =>
-  z
-    .string()
-    .trim()
-    .min(1)
-    .refine(isVisibleString)
-    .refine((value) => pattern.test(value));
+  z.union([
+    z.literal("").transform(() => null),
+    z
+      .string()
+      .trim()
+      .min(1)
+      .refine(isVisibleString)
+      .refine((value) => pattern.test(value)),
+  ]);
 
 export const idSchema = () =>
   z
@@ -67,3 +70,31 @@ export const codeSchema = () =>
     .trim()
     .min(1)
     .transform((val) => val.replace(/\s+/g, ""));
+
+export const optionalCheckboxSchema = () =>
+  z
+    .string()
+    .optional()
+    .transform((val) => val === "on");
+
+export const oidcErrorSchema = () =>
+  z.enum([
+    // https://www.rfc-editor.org/rfc/rfc6749.html#section-4.1.2
+    "invalid_request",
+    "unauthorized_client",
+    "access_denied",
+    "unsupported_response_type",
+    "invalid_scope",
+    "server_error",
+    "temporarily_unavailable",
+    // https://openid.net/specs/openid-connect-core-1_0.html#AuthError
+    "interaction_required",
+    "login_required",
+    "account_selection_required",
+    "consent_required",
+    "invalid_request_uri",
+    "invalid_request_object",
+    "request_not_supported",
+    "request_uri_not_supported",
+    "registration_not_supported",
+  ]);

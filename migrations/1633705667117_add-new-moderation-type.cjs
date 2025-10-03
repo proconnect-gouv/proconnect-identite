@@ -4,6 +4,8 @@ exports.up = async (pgm) => {
   await pgm.db.query(`
 ALTER TABLE moderations
 ALTER COLUMN type TYPE character varying;
+  `);
+  await pgm.db.query(`
 DROP TYPE moderation_type;
 `);
 };

@@ -10,10 +10,6 @@ exports.up = async (pgm) => {
       ALTER TABLE users_oidc_clients
           ADD COLUMN id SERIAL PRIMARY KEY;
   `);
-
-  console.log(
-    "Start duplicating users_oidc_clients entry with connection_count...",
-  );
   let i = 0;
 
   while (true) {
@@ -53,8 +49,6 @@ VALUES ($1, $2, $3, $4)`,
 
     i++;
   }
-
-  console.log("Duplication completed!");
 
   await pgm.db.query(`
       ALTER TABLE users_oidc_clients

@@ -1,13 +1,15 @@
 document.addEventListener(
   "DOMContentLoaded",
   function () {
-    var goBackLink = document.getElementById("go-back-link");
+    var goBackLinks = document.querySelectorAll(".go-back-link");
 
     function goBack() {
       history.back();
     }
 
-    goBackLink.addEventListener("click", goBack);
+    goBackLinks.forEach(function (goBackLink) {
+      goBackLink.addEventListener("click", goBack);
+    });
   },
   false,
 );

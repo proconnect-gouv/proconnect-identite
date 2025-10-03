@@ -1,21 +1,11 @@
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import * as Sentry from "@sentry/node";
 import { isEmpty, isString } from "lodash-es";
 import type { KoaContextWithOIDC } from "oidc-provider";
-import { NotFoundError } from "../config/errors";
-import {
-  addConnection,
-  findByClientId,
-  getByUserIdOrderedByConnectionCount,
-} from "../repositories/oidc-client";
+import { addConnection, findByClientId } from "../repositories/oidc-client";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { logger } from "../services/log";
 import { mustReturnOneOrganizationInPayload } from "../services/must-return-one-organization-in-payload";
-
-export const getClientsOrderedByConnectionCount = async (
-  user_id: number,
-): Promise<OidcClient[]> => {
-  return await getByUserIdOrderedByConnectionCount(user_id);
-};
 
 export const recordNewConnection = async ({
   accountId,

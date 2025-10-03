@@ -1,4 +1,8 @@
 import {
+  NotFoundError,
+  UserNotFoundError,
+} from "@proconnect-gouv/proconnect.identite/errors";
+import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
   type VerifiedAuthenticationResponse,
@@ -13,14 +17,8 @@ import type {
 import { isEmpty } from "lodash-es";
 import moment from "moment";
 import "moment-timezone";
+import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
 import {
-  MONCOMPTEPRO_HOST,
-  MONCOMPTEPRO_IDENTIFIER,
-  MONCOMPTEPRO_LABEL,
-} from "../config/env";
-import {
-  NotFoundError,
-  UserNotFoundError,
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
@@ -33,8 +31,8 @@ import {
   updateAuthenticator,
 } from "../repositories/authenticator";
 import {
-  findById,
   findByEmail as findUserByEmail,
+  getById,
   update,
 } from "../repositories/user";
 import { encodeBase64URL } from "../services/base64";
@@ -42,21 +40,17 @@ import { logger } from "../services/log";
 import { disableForce2fa, enableForce2fa, is2FACapable } from "./2fa";
 
 // Human-readable title for your website
-const rpName = MONCOMPTEPRO_LABEL;
+const rpName = APPLICATION_NAME;
 // A unique identifier for your website
-const rpID = MONCOMPTEPRO_IDENTIFIER;
+const rpID = WEBSITE_IDENTIFIER;
 // The URL at which registrations and authentications should occur
-const origin = MONCOMPTEPRO_HOST;
+const origin = HOST;
 
 export const isWebauthnConfiguredForUser = async (user_id: number) => {
-  const user = await findById(user_id);
-
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
+  // ASSERTION: user exists
+  await getById(user_id);
 
   const authenticators = await getAuthenticatorsByUserId(user_id);
-
   return !isEmpty(authenticators);
 };
 
@@ -162,9 +156,11 @@ export const getRegistrationOptions = async (email: string) => {
 export const verifyRegistration = async ({
   email,
   response,
+  force_2fa,
 }: {
   email: string;
   response: RegistrationResponseJSON;
+  force_2fa: boolean;
 }) => {
   const user = await findUserByEmail(email);
 
@@ -228,8 +224,11 @@ export const verifyRegistration = async ({
       user_verified,
     },
   });
+  const updatedUser = force_2fa
+    ? await enableForce2fa(user.id)
+    : await disableForce2fa(user.id);
 
-  return { userVerified: user_verified, user: await enableForce2fa(user.id) };
+  return { userVerified: user_verified, user: updatedUser };
 };
 
 export const getAuthenticationOptions = async (

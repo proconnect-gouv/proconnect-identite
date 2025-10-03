@@ -1,0 +1,31 @@
+<div>
+  <div class="fr-mb-2w">
+    <img src="/dist/alert.svg" alt="" />
+  </div>
+  <h1 class="fr-h2">Nous n’arrivons pas à certifier votre compte.</h1>
+
+  <div>
+    <div class="fr-alert fr-alert--error fr-mb-2w">
+      <p class="fr-alert__title">
+        La catégorie juridique de votre entreprise n’appartient pas au champ
+        ProConnect
+      </p>
+
+      <p>
+        Actuellement le service ProConnect ne couvre pas l’intégralité des
+        entreprises.
+      </p>
+      <p>
+        Nous vous invitons à utiliser un autre moyen de certification proposé
+        par le portail de services publics.
+      </p>
+    </div>
+
+    <% if (locals.interactionId && locals.oidcError) { %>
+    <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--secondary">Continuer</a>
+    <% } else { %>
+    <a href="/" class="fr-btn fr-btn--secondary">Retour à l’accueil</a>
+    <% } %>
+
+  </div>
+</div>

@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": []
+  },
+  "include": ["src"],
+  "exclude": [
+    ".storybook",
+    "src/**/*.stories.tsx",
+    "src/**/*.test.tsx",
+    "src/test-utils.ts"
+  ]
+}

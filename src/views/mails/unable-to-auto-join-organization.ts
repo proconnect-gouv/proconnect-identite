@@ -1,24 +1,19 @@
 //
 
-import { MONCOMPTEPRO_HOST } from "../../config/env";
+import { HOST } from "../../config/env";
 
 //
 
-export function unableToAutoJoinOrganizationMd({
-  libelle,
-}: {
-  libelle: string;
-}) {
+export function unableToAutoJoinOrganizationMd() {
   return `
-![MonComptePro](${MONCOMPTEPRO_HOST}/dist/mail-banner.png)
+![ProConnect](${HOST}/dist/mail-proconnect.png)
 
 Bonjour,
 
-⏱️ Notre équipe est en train de vous rattacher à l’organisation **${libelle}**.
-Vous recevrez un email pour accéder à votre démarche dès que nous aurons terminé.
+Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.
 (délai moyen : 1 jour ouvré)
 
 Cordialement,
-L’équipe MonComptePro
+L’équipe ProConnect
 `.trim();
 }

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "types": ["node"],
+    "paths": {
+      "#src/*": ["./src/*"]
+    }
+  },
+  "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
+  "include": ["src", "testing"],
+  "references": []
+}

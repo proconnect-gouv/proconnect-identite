@@ -1,7 +1,11 @@
+//
+
+import { findBySiretFactory } from "@proconnect-gouv/proconnect.entreprise/api/insee";
+import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
-import { Pool } from "pg";
-import { getOrganizationInfo } from "../src/connectors/api-sirene";
+import type { Pool } from "pg";
+import { entrepriseOpenApiTestClient } from "../src/connectors/api-sirene";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { upsert } from "../src/repositories/organization/setters";
 import { logger } from "../src/services/log";
@@ -10,6 +14,19 @@ import {
   humanReadableDuration,
   isOrganizationInfo,
 } from "../src/services/script-helpers";
+
+//
+
+const findBySiret = findBySiretFactory(entrepriseOpenApiTestClient, {
+  context: "🎭 Organization info script 🎭",
+  object: "findEstablishmentBySiret",
+  recipient: "13002526500013",
+});
+
+export const getOrganizationInfo = getOrganizationInfoFactory({
+  findBySiren: () => Promise.reject(new Error("💣")),
+  findBySiret,
+});
 
 // ex: for public insee subscription the script can be run like so:
 // npm run update-organization-info 2000
@@ -52,9 +69,9 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 250;
       // 1. get an organization
       const { rows: results } = await connection.query(
         `
-SELECT id, siret, organization_info_fetched_at
-FROM organizations
-ORDER BY id LIMIT 1 OFFSET $1`,
+          SELECT id, siret, organization_info_fetched_at
+          FROM organizations
+          ORDER BY id LIMIT 1 OFFSET $1`,
         [i],
       );
       if (isEmpty(results)) {
@@ -72,7 +89,6 @@ ORDER BY id LIMIT 1 OFFSET $1`,
       let organizationInfo: any = {};
       try {
         organizationInfo = await getOrganizationInfo(siret);
-
         if (!isOrganizationInfo(organizationInfo)) {
           throw new Error("not found");
         }

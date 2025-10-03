@@ -16,6 +16,9 @@ exports.up = async (pgm) => {
               REFERENCES users (id)
               ON DELETE CASCADE
       );
+  `);
+
+  await pgm.db.query(`
       CREATE UNIQUE INDEX index_authenticators_on_credential_id ON authenticators USING btree (credential_id);
   `);
 

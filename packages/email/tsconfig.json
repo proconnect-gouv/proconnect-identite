@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "composite": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@kitajs/html",
+    "lib": ["ES2023", "DOM"],
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "noEmitOnError": true,
+    "plugins": [{ "name": "@kitajs/ts-html-plugin" }],
+    "preserveSymlinks": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "types": ["vite/client", "node"]
+  },
+  "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
+  "files": [],
+  "include": ["src/**/*.ts", "src/**/*.tsx", ".storybook/**/*.tsx"],
+  "references": []
+}

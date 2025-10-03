@@ -1,43 +1,65 @@
+import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
+import { Welcome } from "@proconnect-gouv/proconnect.email";
+import { EntrepriseApiError } from "@proconnect-gouv/proconnect.entreprise/types";
+import {
+  InvalidCertificationError,
+  InvalidSiretError,
+  OrganizationNotActiveError,
+  OrganizationNotFoundError,
+} from "@proconnect-gouv/proconnect.identite/errors";
+import { forceJoinOrganizationFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
+import {
+  isDomainAllowedForOrganization,
+  isEntrepriseUnipersonnelle,
+} from "@proconnect-gouv/proconnect.identite/services/organization";
+import type {
+  Organization,
+  OrganizationInfo,
+  UserOrganizationLink,
+} from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
+import { AssertionError } from "node:assert";
+import { inspect } from "node:util";
 import {
   CRISP_WEBSITE_ID,
+  FEATURE_BYPASS_MODERATION,
+  HOST,
   MAX_SUGGESTED_ORGANIZATIONS,
 } from "../../config/env";
 import {
-  InseeConnectionError,
-  InseeNotActiveError,
-  InvalidSiretError,
-  NotFoundError,
+  AccessRestrictedToPublicServiceEmailError,
+  DomainRestrictedError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
+  UserModerationRejectedError,
   UserMustConfirmToJoinOrganizationError,
-  UserNotFoundError,
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmail } from "../../connectors/api-annuaire-service-public";
 import { getOrganizationInfo } from "../../connectors/api-sirene";
-import { sendMail } from "../../connectors/brevo";
 import { startCripsConversation } from "../../connectors/crisp";
+import { sendMail } from "../../connectors/mail";
 import { findEmailDomainsByOrganizationId } from "../../repositories/email-domain";
 import {
   createModeration,
   findPendingModeration,
+  findRejectedModeration,
 } from "../../repositories/moderation";
 import {
-  findById,
   findByUserId,
   findByVerifiedEmailDomain,
+  getById,
 } from "../../repositories/organization/getters";
 import {
   linkUserToOrganization,
   updateUserOrganizationLink,
   upsert,
 } from "../../repositories/organization/setters";
-import { findById as findUserById } from "../../repositories/user";
+import { getById as getUserById } from "../../repositories/user";
 import {
-  getEmailDomain,
   isAFreeEmailProvider,
   usesAFreeEmailProvider,
 } from "../../services/email";
@@ -46,11 +68,12 @@ import {
   hasLessThanFiftyEmployees,
   isCommune,
   isEducationNationaleDomain,
-  isEntrepriseUnipersonnelle,
   isEtablissementScolaireDuPremierEtSecondDegre,
+  isPublicService,
+  isSmallAssociation,
 } from "../../services/organization";
-import { isEmailValid } from "../../services/security";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
+import { isOrganizationDirigeant } from "../certification";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
 
 export const doSuggestOrganizations = async ({
@@ -108,21 +131,23 @@ export const joinOrganization = async ({
   siret,
   user_id,
   confirmed = false,
+  certificationRequested = false,
 }: {
   siret: string;
   user_id: number;
   confirmed: boolean;
+  certificationRequested?: boolean;
 }): Promise<UserOrganizationLink> => {
   // Update organizationInfo
   let organizationInfo: OrganizationInfo;
   try {
     organizationInfo = await getOrganizationInfo(siret);
   } catch (error) {
-    if (error instanceof InseeConnectionError) {
+    if (error instanceof EntrepriseApiError) {
       throw error;
     }
 
-    throw new InvalidSiretError();
+    throw new InvalidSiretError("", { cause: error });
   }
   let organization = await upsert({
     siret,
@@ -131,14 +156,11 @@ export const joinOrganization = async ({
 
   // Ensure the organization is active
   if (!organization.cached_est_active) {
-    throw new InseeNotActiveError();
+    throw new OrganizationNotActiveError();
   }
 
   // Ensure user_id is valid
-  const user = await findUserById(user_id);
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
+  const user = await getUserById(user_id);
 
   const usersOrganizations = await findByUserId(user_id);
   if (some(usersOrganizations, ["id", organization.id])) {
@@ -152,7 +174,29 @@ export const joinOrganization = async ({
   });
   if (!isEmpty(pendingModeration)) {
     const { id: moderation_id } = pendingModeration;
-    throw new UserAlreadyAskedToJoinOrganizationError(moderation_id);
+    throw new UserAlreadyAskedToJoinOrganizationError(moderation_id, {
+      cause: new AssertionError({
+        expected: undefined,
+        actual: pendingModeration,
+        operator: "findPendingModeration",
+      }),
+    });
+  }
+
+  const rejectedModeration = await findRejectedModeration({
+    user_id,
+    organization_id: organization.id,
+    type: "organization_join_block",
+  });
+  if (!isEmpty(rejectedModeration)) {
+    const { id: moderation_id } = rejectedModeration;
+    throw new UserModerationRejectedError(moderation_id, {
+      cause: new AssertionError({
+        expected: undefined,
+        actual: rejectedModeration,
+        operator: "findRejectedModeration",
+      }),
+    });
   }
 
   const { id: organization_id, cached_libelle } = organization;
@@ -161,12 +205,44 @@ export const joinOrganization = async ({
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
 
+  if (!isDomainAllowedForOrganization(siret, domain)) {
+    throw new DomainRestrictedError(organization_id);
+  }
+
+  if (certificationRequested) {
+    const isDirigeant = await isOrganizationDirigeant(siret, user_id);
+
+    if (!isDirigeant) throw new InvalidCertificationError();
+
+    return await linkUserToOrganization({
+      organization_id,
+      user_id,
+      verification_type: "organization_dirigeant",
+    });
+  }
+
   if (isEntrepriseUnipersonnelle(organization)) {
     return await linkUserToOrganization({
       organization_id,
       user_id,
       verification_type: "no_verification_means_for_entreprise_unipersonnelle",
     });
+  }
+
+  if (isSmallAssociation(organization)) {
+    return await linkUserToOrganization({
+      organization_id,
+      user_id,
+      verification_type: "no_verification_means_for_small_association",
+    });
+  }
+
+  if (
+    !isCommune(organization) &&
+    isAFreeEmailProvider(email) &&
+    isPublicService(organization)
+  ) {
+    throw new AccessRestrictedToPublicServiceEmailError();
   }
 
   if (
@@ -188,7 +264,7 @@ export const joinOrganization = async ({
         organization.cached_code_postal,
       );
     } catch (err) {
-      logger.error(err);
+      logger.error(inspect(err, { depth: 3 }));
       Sentry.captureException(err);
     }
 
@@ -219,18 +295,12 @@ export const joinOrganization = async ({
         });
       }
 
-      if (
-        (isAFreeEmailProvider(contactDomain) ||
-          hasLessThanFiftyEmployees(organization)) &&
-        isAFreeEmailProvider(domain)
-      ) {
-        return await linkUserToOrganization({
-          organization_id,
-          user_id,
-          verification_type: "code_sent_to_official_contact_email",
-          needs_official_contact_email_verification: true,
-        });
-      }
+      return await linkUserToOrganization({
+        organization_id,
+        user_id,
+        verification_type: "code_sent_to_official_contact_email",
+        needs_official_contact_email_verification: true,
+      });
     }
   }
 
@@ -295,6 +365,14 @@ export const joinOrganization = async ({
     });
   }
 
+  if (FEATURE_BYPASS_MODERATION) {
+    return await linkUserToOrganization({
+      organization_id,
+      user_id,
+      verification_type: "bypassed",
+    });
+  }
+
   if (some(organizationEmailDomains, { domain, verification_type: null })) {
     await createModeration({
       user_id,
@@ -312,12 +390,10 @@ export const joinOrganization = async ({
   let ticket_id = null;
   if (CRISP_WEBSITE_ID) {
     ticket_id = await startCripsConversation({
-      content: unableToAutoJoinOrganizationMd({
-        libelle: cached_libelle || siret,
-      }),
+      content: unableToAutoJoinOrganizationMd(),
       email,
       nickname: `${given_name} ${family_name}`,
-      subject: `[MonComptePro] Demande pour rejoindre ${cached_libelle || siret}`,
+      subject: `[ProConnect] Demande pour rejoindre ${cached_libelle || siret}`,
     });
   } else {
     logger.info(
@@ -337,46 +413,13 @@ export const joinOrganization = async ({
 
   throw new UnableToAutoJoinOrganizationError(moderation_id);
 };
-export const forceJoinOrganization = async ({
-  organization_id,
-  user_id,
-  is_external = false,
-}: {
-  organization_id: number;
-  user_id: number;
-  is_external?: boolean;
-}) => {
-  const user = await findUserById(user_id);
-  const organization = await findById(organization_id);
-  if (isEmpty(user) || isEmpty(organization)) {
-    throw new NotFoundError();
-  }
-  const { email } = user;
-  const domain = getEmailDomain(email);
-  const organizationEmailDomains =
-    await findEmailDomainsByOrganizationId(organization_id);
 
-  let link_verification_type: BaseUserOrganizationLink["verification_type"];
-  if (
-    some(organizationEmailDomains, { domain, verification_type: "verified" }) ||
-    some(organizationEmailDomains, {
-      domain,
-      verification_type: "trackdechets_postal_mail",
-    }) ||
-    some(organizationEmailDomains, { domain, verification_type: "external" })
-  ) {
-    link_verification_type = "domain";
-  } else {
-    link_verification_type = "no_validation_means_available";
-  }
-
-  return await linkUserToOrganization({
-    organization_id,
-    user_id,
-    is_external,
-    verification_type: link_verification_type,
-  });
-};
+export const forceJoinOrganization = forceJoinOrganizationFactory({
+  findEmailDomainsByOrganizationId,
+  getUserById,
+  getById,
+  linkUserToOrganization,
+});
 
 export const greetForJoiningOrganization = async ({
   user_id,
@@ -390,19 +433,40 @@ export const greetForJoiningOrganization = async ({
     ({ id }) => id === organization_id,
   );
 
-  if (isEmpty(organization)) {
-    throw new NotFoundError();
-  }
+  if (isEmpty(organization)) throw new OrganizationNotFoundError();
 
-  const { given_name, family_name, email } = (await findUserById(user_id))!;
+  const { given_name, family_name, email } = await getUserById(user_id);
 
   // Welcome the user when he joins is first organization as he may now be able to connect
   await sendMail({
     to: [email],
-    subject: "Votre compte MonComptePro a bien été créé",
-    template: "welcome",
-    params: { given_name, family_name, email },
+    subject: "Votre compte ProConnect a bien été créé",
+    html: Welcome({
+      baseurl: HOST,
+      family_name: family_name ?? "",
+      given_name: given_name ?? "",
+    }).toString(),
+    tag: "welcome",
   });
+
+  return await updateUserOrganizationLink(organization_id, user_id, {
+    has_been_greeted: true,
+  });
+};
+
+export const greetForCertification = async ({
+  user_id,
+  organization_id,
+}: {
+  user_id: number;
+  organization_id: number;
+}) => {
+  const userOrganisations = await getOrganizationsByUserId(user_id);
+  const organization = userOrganisations.find(
+    ({ id }) => id === organization_id,
+  );
+
+  if (isEmpty(organization)) throw new OrganizationNotFoundError();
 
   return await updateUserOrganizationLink(organization_id, user_id, {
     has_been_greeted: true,

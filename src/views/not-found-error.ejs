@@ -1,4 +1,9 @@
-<div class="centered-container">
-    <h1 class="fr-h3">Oups, nous n'avons pas trouvé la page que vous recherchez.</h1>
-    <a href="/" class="fr-btn">Retour à l’accueil</a>
+<div>
+    <h1 class="fr-h3">Page non trouvée</h1>
+    <p>Nous n’arrivons pas à trouver la page que vous souhaitez afficher.</p>
+    <% if (locals.interactionId && locals.oidcError) { %>
+        <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn">Continuer</a>
+    <% } else { %>
+        <a href="/" class="fr-btn">Retour à l’accueil</a>
+    <% } %>
 </div>

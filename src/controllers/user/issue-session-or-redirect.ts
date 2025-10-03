@@ -1,5 +1,6 @@
+import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
-import { getTrustedReferrerPath } from "../../services/security";
+import { HOST } from "../../config/env";
 
 export const issueSessionOrRedirectController = async (
   req: Request,
@@ -13,7 +14,7 @@ export const issueSessionOrRedirectController = async (
 
     if (
       req.session.referrerPath &&
-      getTrustedReferrerPath(req.session.referrerPath)
+      getTrustedReferrerPath(req.session.referrerPath, HOST)
     ) {
       // copy string by value
       const referrerPath = `${req.session.referrerPath}`;

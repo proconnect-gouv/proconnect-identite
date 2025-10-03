@@ -9,23 +9,35 @@
                 <p class="fr-notice__body">
                     <span class="fr-sr-only">Votre email :</span>
                     <strong><%= email; %></strong>
-                    <a
-                            class="fr-btn fr-btn--close"
-                            title="Changer d’adresse email"
-                            href="/users/start-sign-in"
-                    >
-                        Changer d’adresse email
-                    </a>
+                    <% if (changeEmailButtonMustReturnToPCF) { %>
+                        <button
+                                class="fr-btn fr-btn--close go-back-link"
+                                title="Changer d’adresse email"
+                                id="change-email-address"
+                        >
+                            Changer d’adresse email
+                        </button>
+                    <% } else { %>
+                        <a
+                                class="fr-btn fr-btn--close"
+                                title="Changer d’adresse email"
+                                href="/users/start-sign-in"
+                                id="change-email-address"
+                        >
+                            Changer d’adresse email
+                        </a>
+                    <% } %>
                 </p>
             </div>
         </div>
 
         <form action="/users/sign-up" method="post" class="fr-mb-2w">
-            <input type="hidden" name="_csrf" value="<%= csrfToken; %>" autocomplete="off">
+            <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 
             <div class="fr-input-group fr-password js-password-container">
                 <label class="fr-label" for="password-input">
                     Mot de passe
+                    <span class="fr-hint-text">Choisissez un mot de passe sécurisé</span>
                 </label>
                 <div class="fr-input-wrap">
                     <input
@@ -54,26 +66,14 @@
                 <%- include('../partials/password-input-messages.ejs') %>
             </div>
 
-            <%- include('../partials/card-button-container.ejs', {label: 'Valider', ariaLabel: 'Valider le mot de passe', showGoBackButton: true}) %>
+            <%- include('../partials/submit-button.ejs', {label: 'Valider', ariaLabel: 'Valider le mot de passe'}) %>
         </form>
-
-        <p class="fr-hr-or">ou</p>
-
-        <div>
-            <p class="fr-text--sm">
-                <b>Connectez-vous sans mot de passe</b> en recevant <b>un lien par email.</b>
-            </p>
-            <div class="card-button-container">
-                <div id="magic-link-icon-inline">
-                    <img src="/dist/magic-link.svg" alt="">
-                </div>
-                <form action="/users/send-magic-link" method="post">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken; %>" autocomplete="off">
-
-                    <%- include('../partials/card-button-container.ejs', {label: 'Envoyer le lien'}) %>
-                </form>
-            </div>
-        </div>
+        <p class="fr-hr-or fr-mb-2w">ou</p>
+        <form action="/users/send-magic-link" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
+            <%- include('../partials/submit-button.ejs', {label: 'Recevoir un lien d’identification', additionnalClass: 'fr-btn--secondary'}) %>
+        </form>
+        <%- include('../partials/go-back.ejs') %>
     </div>
 </div>
 <script type="module" src="<%= js('show-password.js') %>"></script>

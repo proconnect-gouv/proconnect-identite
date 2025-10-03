@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "82869625200018",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "62.01Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Programmation informatique"
+    },
+    "tranche_effectif_salarie": {
+      "de": null,
+      "a": null,
+      "code": null,
+      "date_reference": null,
+      "intitule": null
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1490997600,
+    "unite_legale": {
+      "siren": "828696252",
+      "rna": null,
+      "siret_siege_social": "82869625200018",
+      "type": "personne_physique",
+      "personne_morale_attributs": { "raison_sociale": null, "sigle": null },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": "DOUGLAS",
+        "prenom_1": "DOUGLAS",
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": "DUTEIL",
+        "sexe": "M"
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "1000",
+        "libelle": "Entrepreneur individuel"
+      },
+      "activite_principale": {
+        "code": "62.01Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Programmation informatique"
+      },
+      "tranche_effectif_salarie": {
+        "de": null,
+        "a": null,
+        "code": null,
+        "date_reference": null,
+        "intitule": null
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 1490997600,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "7",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "EMILE ZOLA",
+      "code_postal": "93130",
+      "libelle_commune": "NOISY-LE-SEC",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "93053",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "",
+        "l2": "DUTEIL DOUGLAS",
+        "l3": "",
+        "l4": "7 RUE EMILE ZOLA",
+        "l5": "",
+        "l6": "93130 NOISY-LE-SEC",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/828696252"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1738882800,
+    "redirect_from_siret": null
+  }
+}

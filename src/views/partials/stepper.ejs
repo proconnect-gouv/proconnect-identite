@@ -1,0 +1,14 @@
+<div class="fr-stepper">
+  <h2 class="fr-stepper__title">
+    <%= stepsTitle %>
+    <span class="fr-stepper__state">Étape <%= currentStep %> sur 3</span>
+  </h2>
+  <div
+    class="fr-stepper__steps"
+    data-fr-current-step="<%= currentStep %>"
+    data-fr-steps="3"
+  ></div>
+  <p class="fr-stepper__details">
+    <span class="fr-text--bold">Étape suivante :</span> <%= nextStepTitle %>
+  </p>
+</div>

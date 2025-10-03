@@ -1,14 +1,8 @@
 //
 
-import { getVerificationCodeFromEmail } from "#cypress/support/get-from-email";
-
 describe("set info after account provisioning", () => {
-  before(() => {
-    cy.mailslurp().then((mailslurp) =>
-      mailslurp.inboxController.deleteAllInboxEmails({
-        inboxId: "ea2f1539-9675-4384-ab28-4dcecd0bd411",
-      }),
-    );
+  it("should seed the database once", function () {
+    cy.seed();
   });
 
   it("should show InclusionConnect welcome page on first visit", function () {
@@ -16,9 +10,7 @@ describe("set info after account provisioning", () => {
     cy.visit("/users/start-sign-in");
 
     // Sign in with the wrong password
-    cy.get('[name="login"]').type(
-      "ea2f1539-9675-4384-ab28-4dcecd0bd411@mailslurp.com",
-    );
+    cy.get('[name="login"]').type("lion.eljonson@darkangels.world");
     cy.get('[type="submit"]').click();
 
     cy.contains("C’est votre première connexion avec ProConnect");
@@ -36,28 +28,10 @@ describe("set info after account provisioning", () => {
     cy.contains(
       "Pour vérifier que vous avez bien accès à votre email, nous utilisons un code de confirmation.",
     );
-    cy.mailslurp()
-      .then((mailslurp) =>
-        mailslurp.waitForLatestEmail(
-          "ea2f1539-9675-4384-ab28-4dcecd0bd411",
-          60000,
-          true,
-        ),
-      )
-      .then(getVerificationCodeFromEmail)
-      .then((code) => {
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
 
-    cy.contains(
-      "Nous avons pré-rempli ces informations. Vous pouvez toujours les mettre à jour.",
-    );
+    cy.verifyEmail();
 
-    cy.get('[name="job"]').type("Petit chef");
-    cy.get('[type="submit"]').click();
-
-    cy.contains("Votre compte MonComptePro est à jour.");
+    cy.contains("Votre compte ProConnect est à jour.");
     cy.get('[type="submit"]').click();
   });
 
@@ -66,9 +40,7 @@ describe("set info after account provisioning", () => {
     cy.visit("/users/start-sign-in");
 
     // Sign in with the wrong password
-    cy.get('[name="login"]').type(
-      "ea2f1539-9675-4384-ab28-4dcecd0bd411@mailslurp.com",
-    );
+    cy.get('[name="login"]').type("lion.eljonson@darkangels.world");
     cy.get('[type="submit"]').click();
 
     cy.contains("Accéder au compte");

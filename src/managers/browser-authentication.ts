@@ -1,8 +1,8 @@
 import cookieParser from "cookie-parser";
 import type { NextFunction, Request, Response } from "express";
 import {
-  DO_NOT_AUTHENTICATE_BROWSER,
-  SECURE_COOKIES,
+  FEATURE_AUTHENTICATE_BROWSER,
+  FEATURE_USE_SECURE_COOKIES,
   SESSION_COOKIE_SECRET,
   TRUSTED_BROWSER_COOKIE_MAX_AGE_IN_SECONDS,
 } from "../config/env";
@@ -38,7 +38,7 @@ export const trustedBrowserMiddleware = (
 };
 
 export const isBrowserTrustedForUser = (req: Request): boolean => {
-  return DO_NOT_AUTHENTICATE_BROWSER || req.isTrustedBrowser;
+  return !FEATURE_AUTHENTICATE_BROWSER || req.isTrustedBrowser;
 };
 
 export const setBrowserAsTrustedForUser = (
@@ -49,7 +49,7 @@ export const setBrowserAsTrustedForUser = (
   req.isTrustedBrowser = true;
   res.cookie("trusted-browser", user_id, {
     maxAge: TRUSTED_BROWSER_COOKIE_MAX_AGE_IN_SECONDS * 1000,
-    secure: SECURE_COOKIES,
+    secure: FEATURE_USE_SECURE_COOKIES,
     signed: true,
     sameSite: "lax",
     httpOnly: true,

@@ -11,15 +11,15 @@
                 <div id="submit-join-organization-<%= id %>" class="fr-tile fr-enlarge-link fr-tile--horizontal">
                     <div class="fr-tile__body">
                         <h2 class="fr-tile__title">
-                            <a class="fr-tile__link" href aria-label="Sélectionner l'organisation <%= cached_libelle; %>"><%= cached_libelle; %></a>
+                            <a class="fr-tile__link" href role="button" aria-label="Sélectionner l'organisation <%= cached_libelle; %>"><%= cached_libelle; %></a>
                         </h2>
                         <p class="fr-tile__desc fr-pb-0"><%= cached_adresse; %></p>
                         <p class="fr-tile__desc"><%= cached_libelle_activite_principale; %></p>
                     </div>
                 </div>
                 <form id="form-join-organization-<%= id %>" hidden action="/users/join-organization" method="post">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" autocomplete="off">
-                    <input type="hidden" name="siret" value="<%= siret %>" autocomplete="off">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="siret" value="<%= siret %>">
                 </form>
             </div>
             <% }); %>

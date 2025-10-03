@@ -1,6 +1,6 @@
-import { defineConfig } from "vite";
 import { readdirSync } from "fs";
 import { resolve } from "path";
+import { defineConfig } from "vite";
 
 const cssFiles = readdirSync(resolve(__dirname, "assets", "css"))
   .filter((file) => file.endsWith(".css"))

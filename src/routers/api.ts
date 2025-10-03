@@ -3,12 +3,13 @@ import { Router, urlencoded } from "express";
 import expressBasicAuth from "express-basic-auth";
 import { HttpError } from "http-errors";
 import nocache from "nocache";
+import { inspect } from "node:util";
 import { API_AUTH_PASSWORD, API_AUTH_USERNAME } from "../config/env";
 import {
   getOrganizationInfoController,
+  getPingApiInseeController,
   getPingApiSireneController,
   postForceJoinOrganizationController,
-  postMarkDomainAsVerified,
   postSendModerationProcessedEmail,
 } from "../controllers/api";
 import {
@@ -26,40 +27,34 @@ export const apiRouter = () => {
 
   apiRouter.use(urlencoded({ extended: false }));
 
-  apiRouter.get(
-    "/sirene/ping",
-    apiRateLimiterMiddleware,
-    getPingApiSireneController,
-  );
+  apiRouter.use(apiRateLimiterMiddleware);
+
+  apiRouter.get("/sirene/ping", getPingApiSireneController);
+  apiRouter.get("/insee/ping", getPingApiInseeController);
 
   apiRouter.get(
     "/sirene/organization-info/:siret",
-    apiRateLimiterMiddleware,
     getOrganizationInfoController,
   );
 
   apiRouter.get(
     "/webauthn/generate-registration-options",
-    apiRateLimiterMiddleware,
     getGenerateRegistrationOptionsController,
   );
 
   apiRouter.get(
     "/webauthn/generate-authentication-options-for-first-factor",
-    apiRateLimiterMiddleware,
     getGenerateAuthenticationOptionsForFirstFactorController,
   );
 
   apiRouter.get(
     "/webauthn/generate-authentication-options-for-second-factor",
-    apiRateLimiterMiddleware,
     getGenerateAuthenticationOptionsForSecondFactorController,
   );
 
   const apiAdminRouter = Router();
 
   apiAdminRouter.use(
-    apiRateLimiterMiddleware,
     expressBasicAuth({
       users: { [API_AUTH_USERNAME]: API_AUTH_PASSWORD },
     }),
@@ -75,8 +70,6 @@ export const apiRouter = () => {
     postSendModerationProcessedEmail,
   );
 
-  apiAdminRouter.post("/mark-domain-as-verified", postMarkDomainAsVerified);
-
   apiRouter.use("/admin", apiAdminRouter);
 
   apiRouter.use(
@@ -86,7 +79,7 @@ export const apiRouter = () => {
       res: Response,
       _next: NextFunction,
     ) => {
-      logger.error(err);
+      logger.error(inspect(err, { depth: 3 }));
 
       const statusCode = err.statusCode || 500;
 

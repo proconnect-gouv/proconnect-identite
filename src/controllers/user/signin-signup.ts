@@ -1,7 +1,6 @@
-import * as Sentry from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
-import { DISPLAY_TEST_ENV_WARNING } from "../../config/env";
+import { FEATURE_DISPLAY_TEST_ENV_WARNING } from "../../config/env";
 import {
   EmailUnavailableError,
   InvalidCredentialsError,
@@ -13,6 +12,7 @@ import { createAuthenticatedSession } from "../../managers/session/authenticated
 import {
   getAndRemoveLoginHintFromUnauthenticatedSession,
   getEmailFromUnauthenticatedSession,
+  getPartialUserFromUnauthenticatedSession,
   setEmailInUnauthenticatedSession,
   setPartialUserFromUnauthenticatedSession,
   updatePartialUserFromUnauthenticatedSession,
@@ -28,8 +28,12 @@ import getNotificationsFromRequest, {
   getNotificationLabelFromRequest,
 } from "../../services/get-notifications-from-request";
 
+const QuerySchema = z.object({
+  did_you_mean: z.string().trim().min(1).optional(),
+});
+
 export const getStartSignInController = async (
-  req: Request,
+  req: Request<{}, {}, any, z.input<typeof QuerySchema>>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -39,15 +43,14 @@ export const getStartSignInController = async (
       getAndRemoveLoginHintFromUnauthenticatedSession(req);
     if (hintFromOidcInteraction) {
       setEmailInUnauthenticatedSession(req, hintFromOidcInteraction);
+      req.body = req.body || {};
       req.body.login = hintFromOidcInteraction;
       return postStartSignInController(req, res, next);
     }
 
-    const schema = z.object({
-      did_you_mean: z.string().trim().min(1).optional(),
-    });
-
-    const { did_you_mean: didYouMean } = await schema.parseAsync(req.query);
+    const { did_you_mean: didYouMean } = await QuerySchema.parseAsync(
+      req.query,
+    );
 
     const hintFromSession = getEmailFromUnauthenticatedSession(req);
 
@@ -61,7 +64,8 @@ export const getStartSignInController = async (
       didYouMean,
       loginHint: hintFromSession,
       csrfToken: csrfToken(req),
-      displayTestEnvWarning: DISPLAY_TEST_ENV_WARNING,
+      displayTestEnvWarning: FEATURE_DISPLAY_TEST_ENV_WARNING,
+      illustration: "illu-password.svg",
     });
   } catch (error) {
     next(error);
@@ -84,11 +88,13 @@ export const postStartSignInController = async (
       email,
       userExists,
       hasAPassword,
+      hasWebauthnConfigured,
       needsInclusionconnectWelcomePage,
     } = await startLogin(login);
     setPartialUserFromUnauthenticatedSession(req, {
       email,
       needsInclusionconnectWelcomePage,
+      hasWebauthnConfigured,
     });
 
     if (needsInclusionconnectWelcomePage) {
@@ -158,11 +164,17 @@ export const getSignInController = async (
   next: NextFunction,
 ) => {
   try {
+    const { email, hasWebauthnConfigured } =
+      getPartialUserFromUnauthenticatedSession(req);
+
     return res.render("user/sign-in", {
       pageTitle: "Accéder au compte",
       notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
-      email: getEmailFromUnauthenticatedSession(req),
+      email,
+      showPasskeySection: hasWebauthnConfigured,
+      changeEmailButtonMustReturnToPCF: req.session.authForProconnectFederation,
+      illustration: "illu-password.svg",
     });
   } catch (error) {
     next(error);
@@ -211,10 +223,12 @@ export const getSignUpController = async (
     const { login_hint } = await schema.parseAsync(req.query);
 
     return res.render("user/sign-up", {
+      pageTitle: "Choisir votre mot de passe",
       notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
       loginHint: login_hint,
       email: getEmailFromUnauthenticatedSession(req),
+      changeEmailButtonMustReturnToPCF: req.session.authForProconnectFederation,
     });
   } catch (error) {
     next(error);
@@ -254,7 +268,6 @@ export const postSignUpController = async (
       );
     }
     if (error instanceof WeakPasswordError) {
-      Sentry.captureException(error);
       return res.redirect(`/users/sign-up?notification=weak_password`);
     }
     if (error instanceof LeakedPasswordError) {

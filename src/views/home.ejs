@@ -2,41 +2,14 @@
     <%- include('partials/sidemenu.ejs', {activeLink: 'home'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <%- include('partials/notifications.ejs', {notifications: notifications}) %>
-        <h2>Services connectés</h2>
-        <% if (oidc_clients.length > 0) { %>
-            <p>MonComptePro vous permet de vous connecter à :</p>
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <% oidc_clients.forEach(({ client_name, client_uri, client_description }) => { %>
-                    <div class="fr-col-12 fr-col-lg-6">
-                        <div class="fr-card fr-enlarge-link fr-card--lg">
-                            <div class="fr-card__body">
-                                <div class="fr-card__content">
-                                    <h3 class="fr-card__title">
-                                        <a href="<%= client_uri; %>">
-                                            <%= client_name; %>
-                                        </a>
-                                    </h3>
-                                    <p class="fr-card__desc">
-                                        <%= client_description; %>
-                                    </p>
-                                    <ul class="fr-badges-group">
-                                        <li>
-                                            <p class="fr-badge fr-badge--purple-glycine">état</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <% }); %>
-            </div>
-        <% } else { %>
-            <div class="fr-alert fr-alert--success">
-                <h3 class="fr-alert__title">Votre compte est créé !</h3>
-                <p>
-                    Merci de retourner sur votre démarche ou demande pour y avoir accès.
-                </p>
-            </div>
-        <% } %>
-    </main>
+        <h2>Votre compte ProConnect</h2>
+        <div class="home-tile fr-p-2w">
+            <img src="/dist/illu-account.svg" alt="" />
+            <p>
+                Avec le compte ProConnect, nous vérifions votre identité pour vous donner accès à de nombreux sites et
+                outils de l’administration !
+            </p>
+        </div>
+    </div>
 </div>
+<link rel="stylesheet" href="<%= css("home-tile.css"); %>">

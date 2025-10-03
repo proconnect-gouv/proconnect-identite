@@ -1,4 +1,5 @@
 // from https://ipirozhenko.com/blog/measuring-requests-duration-nodejs-express/
+import type { OrganizationInfo } from "@proconnect-gouv/proconnect.identite/types";
 import fs from "fs";
 import { isEmpty } from "lodash-es";
 

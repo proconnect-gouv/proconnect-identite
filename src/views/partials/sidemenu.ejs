@@ -1,4 +1,4 @@
-<nav class="fr-sidemenu">
+<nav class="fr-sidemenu" role="navigation" aria-label="Menu">
     <div class="fr-sidemenu__inner">
         <button
                 id="fr-sidemenu-btn"
@@ -11,12 +11,19 @@
         </button>
         <div class="fr-collapse" id="fr-sidemenu-wrapper">
             <ul class="fr-sidemenu__list">
+                <li class="fr-sidemenu__item <% if (activeLink === "home") { %>fr-sidemenu__item--active<% } %>">
+                    <a
+                            class="fr-sidemenu__link" href="/"
+                            <% if (activeLink === "home") { %>aria-current="page"
+                            <% } %>
+                    >Accueil</a>
+                </li>
                 <li class="fr-sidemenu__item <% if (activeLink === "connection-and-account") { %>fr-sidemenu__item--active<% } %>">
                     <a
                             class="fr-sidemenu__link" href="/connection-and-account"
                             <% if (activeLink === "connection-and-account") { %>aria-current="page"
                             <% } %>
-                    >Connexion et compte</a>
+                    >Compte et connexion</a>
                 </li>
                 <li class="fr-sidemenu__item <% if (activeLink === "personal-information") { %>fr-sidemenu__item--active<% } %>">
                     <a
@@ -25,7 +32,7 @@
                             <% if (activeLink === "personal-information") { %>aria-current="page"
                             <% } %>
                     >
-                        Informations personnelles
+                        Info personnelles
                     </a>
                 </li>
                 <li class="fr-sidemenu__item <% if (activeLink === "manage-organizations") { %>fr-sidemenu__item--active<% } %>">
@@ -34,13 +41,6 @@
                             <% if (activeLink === "manage-organizations") { %>aria-current="page"
                             <% } %>
                     >Organisations</a>
-                </li>
-                <li class="fr-sidemenu__item <% if (activeLink === "home") { %>fr-sidemenu__item--active<% } %>">
-                    <a
-                            class="fr-sidemenu__link" href="/"
-                            <% if (activeLink === "home") { %>aria-current="page"
-                            <% } %>
-                    >Services connectés</a>
                 </li>
             </ul>
         </div>

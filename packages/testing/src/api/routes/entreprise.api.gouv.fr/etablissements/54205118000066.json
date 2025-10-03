@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "54205118000066",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "70.10Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Activités des sièges sociaux"
+    },
+    "tranche_effectif_salarie": {
+      "de": 2000,
+      "a": 4999,
+      "code": "51",
+      "date_reference": "2022",
+      "intitule": "2 000 à 4 999 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 953679600,
+    "unite_legale": {
+      "siren": "542051180",
+      "rna": null,
+      "siret_siege_social": "54205118000066",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "TOTALENERGIES SE",
+        "sigle": null
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "GE",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": { "code": "5800", "libelle": "Société européenne" },
+      "activite_principale": {
+        "code": "70.10Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Activités des sièges sociaux"
+      },
+      "tranche_effectif_salarie": {
+        "de": 2000,
+        "a": 4999,
+        "code": "51",
+        "date_reference": "2022",
+        "intitule": "2 000 à 4 999 salariés"
+      },
+      "economie_sociale_et_solidaire": false,
+      "date_creation": -504925200,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": "LA DEFENSE 6",
+      "numero_voie": "2",
+      "indice_repetition_voie": null,
+      "type_voie": "PLACE",
+      "libelle_voie": "JEAN MILLIER",
+      "code_postal": "92400",
+      "libelle_commune": "COURBEVOIE",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "92026",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "TOTALENERGIES SE",
+        "l2": "",
+        "l3": "LA DEFENSE 6",
+        "l4": "2 PLACE JEAN MILLIER",
+        "l5": "",
+        "l6": "92400 COURBEVOIE",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/542051180"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1739401200,
+    "redirect_from_siret": null
+  }
+}

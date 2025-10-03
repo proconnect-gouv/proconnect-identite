@@ -3,8 +3,10 @@ import nocache from "nocache";
 import Provider from "oidc-provider";
 import {
   interactionEndControllerFactory,
+  interactionErrorControllerFactory,
   interactionStartControllerFactory,
 } from "../controllers/interaction";
+import { rateLimiterMiddleware } from "../middlewares/rate-limiter";
 import { checkUserSignInRequirementsMiddleware } from "../middlewares/user";
 
 export const interactionRouter = (oidcProvider: Provider) => {
@@ -14,6 +16,8 @@ export const interactionRouter = (oidcProvider: Provider) => {
 
   interactionRouter.use(urlencoded({ extended: false }));
 
+  interactionRouter.use(rateLimiterMiddleware);
+
   interactionRouter.get(
     "/:grant",
     interactionStartControllerFactory(oidcProvider),
@@ -22,6 +26,10 @@ export const interactionRouter = (oidcProvider: Provider) => {
     "/:grant/login",
     checkUserSignInRequirementsMiddleware,
     interactionEndControllerFactory(oidcProvider),
+  );
+  interactionRouter.get(
+    "/:grant/error",
+    interactionErrorControllerFactory(oidcProvider),
   );
 
   return interactionRouter;

@@ -2,25 +2,22 @@ name: Tests
 
 on:
   push:
-    branches:
-      - "**"
-      - "!master"
-
-env:
-  DATABASE_URL: postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro
-  INSEE_CONSUMER_KEY: ${{ secrets.INSEE_CONSUMER_KEY }}
-  INSEE_CONSUMER_SECRET: ${{ secrets.INSEE_CONSUMER_SECRET }}
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           cache: "npm"
           node-version-file: package.json
-      - run: CYPRESS_INSTALL_BINARY=0 npm ci --include=dev
+      - run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+      - run: npm run build:workspaces
       - run: npm run test:lint
+      - run: npm run test:workspaces
       - run: npm run test:type-check
       - run: npm run test:unit

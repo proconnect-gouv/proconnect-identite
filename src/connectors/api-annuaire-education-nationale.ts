@@ -1,7 +1,8 @@
+import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import { isEmpty, isString } from "lodash-es";
 import {
-  DO_NOT_USE_ANNUAIRE_EMAILS,
+  FEATURE_USE_ANNUAIRE_EMAILS,
   HTTP_CLIENT_TIMEOUT,
   TEST_CONTACT_EMAIL,
 } from "../config/env";
@@ -11,7 +12,6 @@ import {
   ApiAnnuaireNotFoundError,
 } from "../config/errors";
 import { logger } from "../services/log";
-import { isEmailValid } from "../services/security";
 
 type ApiAnnuaireEducationNationaleReponse = {
   total_count: number;
@@ -238,7 +238,7 @@ export const getAnnuaireEducationNationaleContactEmail = async (
     throw new ApiAnnuaireInvalidEmailError();
   }
 
-  if (DO_NOT_USE_ANNUAIRE_EMAILS) {
+  if (!FEATURE_USE_ANNUAIRE_EMAILS) {
     logger.info(
       `Test email address ${TEST_CONTACT_EMAIL} was used instead of the real one ${formattedEmail}.`,
     );

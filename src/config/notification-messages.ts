@@ -115,6 +115,10 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     type: "success",
     description: "Vos informations ont été mises à jour.",
   },
+  personal_information_update_via_franceconnect_success: {
+    type: "success",
+    description: "Nous avons bien récupéré vos données via FranceConnect.",
+  },
   official_contact_email_verification_not_needed: {
     type: "error",
     description:
@@ -164,27 +168,24 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     type: "success",
     description: "L’application d’authentification a bien été supprimée.",
   },
-  authenticator_updated: {
-    type: "success",
-    description: "L’application d’authentification a été modifiée.",
-  },
   "2fa_successfully_enabled": {
     type: "success",
-    description: "La validation en deux étapes a bien été activée.",
+    description: "La double authentification a été activée sur tous les sites.",
   },
   "2fa_successfully_disabled": {
     type: "success",
-    description: "La validation en deux étapes a bien été désactivée.",
+    description:
+      "La double authentification a été activée uniquement sur les sites qui l'exigent.",
   },
   "2fa_not_configured": {
     type: "warning",
     description:
-      "Attention : le service auquel vous souhaitez accéder requiert une validation en deux étapes. Merci de configurer soit une clé d’accès soit l’application FreeOTP Authenticator.",
+      "Attention : le site que vous voulez utiliser requiert la 2FA, qui réduit les risques de piratage. En plus de votre mot de passe, nous vous demanderons un code à usage unique ou une clé d’accès.",
   },
   "2fa_not_configured_for_ds": {
     type: "warning",
     description:
-      "Attention : pour accéder à Démarches Simplifiées vous devez configurer soit une clé d’accès soit l’application FreeOTP Authenticator.",
+      "Attention : en plus de votre mot de passe, vous devez configurer un code à usage unique ou une clé d’accès pour accéder à Démarches Simplifiées.",
   },
 };
 

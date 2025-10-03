@@ -1,11 +1,16 @@
 // src https://stackoverflow.com/questions/40994095/pipe-streams-to-edit-csv-file-in-node-js
-import { AxiosError } from "axios";
-import fs from "fs";
-import { isEmpty, some, toInteger } from "lodash-es";
 import {
-  getInseeAccessToken,
-  getOrganizationInfo,
-} from "../src/connectors/api-sirene";
+  isEmailValid,
+  isNameValid,
+  isSiretValid,
+} from "@proconnect-gouv/proconnect.core/security";
+import { AxiosError } from "axios";
+import { parse, stringify, transform } from "csv";
+import fs from "fs";
+import { isEmpty, isString, some, toInteger } from "lodash-es";
+import { z } from "zod";
+import { getOrganizationInfo } from "../src/connectors/api-sirene";
+import { findByUserId } from "../src/repositories/organization/getters";
 import {
   linkUserToOrganization,
   upsert,
@@ -19,17 +24,13 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
-import {
-  isEmailValid,
-  isNameValid,
-  isSiretValid,
-} from "../src/services/security";
 
-import { parse, stringify, transform } from "csv";
-import { findByUserId } from "../src/repositories/organization/getters";
-
-const INPUT_FILE = process.env.INPUT_FILE ?? "./input.csv";
-const OUTPUT_FILE = process.env.OUTPUT_FILE ?? "./output.csv";
+const { INPUT_FILE, OUTPUT_FILE } = z
+  .object({
+    INPUT_FILE: z.string().default("./input.csv"),
+    OUTPUT_FILE: z.string().default("./output.csv"),
+  })
+  .parse(process.env);
 
 // ex: for public insee subscription the script can be run like so:
 // npm run update-organization-info 2000
@@ -40,8 +41,6 @@ const rateInMsFromArgs = toInteger(process.argv[2]);
 const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
 
 (async () => {
-  const access_token = await getInseeAccessToken();
-
   const readStream = fs.createReadStream(INPUT_FILE); // readStream is a read-only stream wit raw text content of the CSV file
   const writeStream = fs.createWriteStream(OUTPUT_FILE); // writeStream is a write-only stream to write on the disk
 
@@ -93,15 +92,29 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
   logger.info("");
 
   const transformStream = transform(
+    { parallel: 1 }, // avoid messing with line orders
     async function (
       data: InputCsvData,
       done: (err: null | Error, data?: OutputCsvData) => void,
     ) {
       const start = startDurationMesure();
       try {
-        const { first_name, last_name, sub, email, siret: rawSirets } = data;
-        logger.info(`${i}: processing ${email}...`);
+        const {
+          first_name,
+          last_name,
+          sub,
+          email: rawEmail,
+          siret: rawSirets,
+        } = data;
+        logger.info(`${i}: processing ${rawEmail}...`);
         // 0. params validation
+        if (!isString(rawEmail)) {
+          i++;
+          rejected_invalid_email_address_count++;
+          logger.error(`invalid email address ${rawEmail}`);
+          return done(null);
+        }
+        const email = rawEmail.toLowerCase();
         if (!isEmailValid(email)) {
           i++;
           rejected_invalid_email_address_count++;
@@ -114,7 +127,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
           logger.error(`invalid name ${first_name} ${last_name}`);
           return done(null);
         }
-        if (isEmpty(sub) && sub.length === 36) {
+        if (isEmpty(sub)) {
           i++;
           rejected_invalid_sub_count++;
           logger.error(`invalid sub ${sub}`);
@@ -134,7 +147,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         }
 
         const sirets: string[] = rawSirets
-          .split(",")
+          .split(" ")
           .filter((s: string) => !!s)
           .map((s: string) => s.trim());
         if (sirets.length > 0 && sirets.some((s) => !isSiretValid(s))) {
@@ -147,10 +160,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         for (let siret of sirets) {
           // 2. get organizationInfo
           try {
-            const organizationInfo = await getOrganizationInfo(
-              siret,
-              access_token,
-            );
+            const organizationInfo = await getOrganizationInfo(siret);
             if (!isOrganizationInfo(organizationInfo)) {
               throw Error("empty organization info");
             }
@@ -184,7 +194,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         return done(null, {
           email,
           inclusionconnect_sub: sub,
-          moncomptepro_sub: user.id,
+          moncomptepro_sub: String(user.id),
         });
       } catch (error) {
         logger.error("unexpected error");
@@ -203,7 +213,6 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         return done(null);
       }
     },
-    { parallel: 1 }, // avoid messing with line orders
   ).on("end", () => {
     logger.info(`Import done! Import logs are recorded in ${OUTPUT_FILE}.`);
     logger.info("");

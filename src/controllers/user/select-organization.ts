@@ -22,6 +22,7 @@ export const getSelectOrganizationController = async (
       pageTitle: "Choisir une organisation",
       userOrganizations,
       csrfToken: csrfToken(req),
+      illustration: "illu-password.svg",
     });
   } catch (error) {
     next(error);

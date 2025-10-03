@@ -1,51 +1,53 @@
-import { generateToken } from "@sunknudsen/totp";
-
 describe("add 2fa authentication", () => {
-  before(() => {
-    cy.mailslurp().then((mailslurp) =>
-      mailslurp.inboxController.deleteAllInboxEmails({
-        inboxId: "64d9024b-d389-4b9d-948d-a504082c14fa",
-      }),
-    );
+  it("should seed the database once", function () {
+    cy.seed();
   });
 
   it("should add 2fa authentication on account user", function () {
     cy.visit("/connection-and-account");
 
-    cy.login("64d9024b-d389-4b9d-948d-a504082c14fa@mailslurp.com");
+    cy.login("lion.eljonson@darkangels.world");
 
-    cy.contains("Application FreeOTP Authenticator");
+    cy.contains("Double authentification");
 
-    cy.contains("Configurer une application d’authentification").click();
+    cy.get('[href="/double-authentication"]')
+      .contains("Configurer la double authentification")
+      .click();
 
-    cy.contains("Configurer une application d’authentification");
+    cy.contains("Choisir votre méthode de double authentification");
+
+    cy.contains("Code à usage unique (TOTP)").click();
+
+    cy.get("#webauthn-submit-button").contains("Continuer").click();
+
+    cy.contains("Installer votre outil d’authentification");
+
+    cy.get('label[for="is-totp-installed"]').click();
+
+    cy.get("#is-totp-installed").should("be.checked");
+
+    cy.get("#continue-button")
+      .should("not.have.attr", "aria-disabled", "true")
+      .click();
+
+    cy.get("[name=totpToken]").type("123456");
+    cy.get('[action="/totp-configuration"] [type="submit"]').click();
+
+    cy.contains("Code invalide.");
 
     // Extract the code from the front to generate the TOTP key
-    cy.get("#humanReadableTotpKey")
-      .invoke("text")
-      .then((text) => {
-        const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
-        const totp = generateToken(humanReadableTotpKey, Date.now());
-        cy.get("[name=totpToken]").type(totp);
-        cy.get(
-          '[action="/authenticator-app-configuration"] [type="submit"]',
-        ).click();
-      });
+    cy.fillAndSubmitTotpForm("/totp-configuration");
 
     cy.contains("L’application d’authentification a été configurée.");
 
-    cy.mailslurp()
-      // use inbox id and a timeout of 30 seconds
-      .then((mailslurp) =>
-        mailslurp.waitForLatestEmail(
-          "64d9024b-d389-4b9d-948d-a504082c14fa",
-          60000,
-          true,
-        ),
-      )
-      // check subject of deletion email
-      .then((email) => {
-        expect(email.subject).to.include("Validation en deux étapes activée");
-      });
+    cy.maildevGetMessageBySubject("Double authentification activée").then(
+      (email) => {
+        cy.maildevVisitMessageById(email.id);
+        cy.contains(
+          "Votre compte ProConnect lion.eljonson@darkangels.world est à présent protégé par la double authentification.",
+        );
+        cy.maildevDeleteMessageById(email.id);
+      },
+    );
   });
 });

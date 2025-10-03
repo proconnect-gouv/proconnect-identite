@@ -11,10 +11,6 @@ ORDER BY id`,
 
   const ids = rows.map(({ id }) => id);
 
-  console.log(
-    "Start adding verified domains not present in authorized domains...",
-  );
-
   for (const id of ids) {
     // get organizations which have verified domains not included in authorized domain
     const { rows: results } = await pgm.db.query(
@@ -41,8 +37,6 @@ WHERE id = $1`,
       );
     }
   }
-
-  console.log("Addition completed!");
 };
 
 exports.down = async (pgm) => {};

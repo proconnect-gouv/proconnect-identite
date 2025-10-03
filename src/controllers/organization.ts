@@ -1,21 +1,27 @@
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
+import { EntrepriseApiError } from "@proconnect-gouv/proconnect.entreprise/types";
+import { DOMAINS_WHITELIST } from "@proconnect-gouv/proconnect.identite/data/organization";
+import {
+  InvalidCertificationError,
+  InvalidSiretError,
+  NotFoundError,
+  OrganizationNotActiveError,
+} from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { z, ZodError } from "zod";
 import {
-  InseeConnectionError,
-  InseeNotActiveError,
-  InvalidSiretError,
-  NotFoundError,
+  AccessRestrictedToPublicServiceEmailError,
+  DomainRestrictedError,
+  ForbiddenError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
+  UserModerationRejectedError,
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
-import {
-  cancelModeration,
-  getOrganizationFromModeration,
-} from "../managers/moderation";
+import { getOrganizationFromModeration } from "../managers/moderation";
 import {
   doSuggestOrganizations,
   getOrganizationSuggestions,
@@ -28,14 +34,19 @@ import {
 } from "../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { getModerationById } from "../repositories/moderation";
 import {
   idSchema,
+  oidcErrorSchema,
   optionalBooleanSchema,
   siretSchema,
 } from "../services/custom-zod-schemas";
-import { getEmailDomain } from "../services/email";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
+import {
+  allowsPersonalInfoEditing,
+  extractRejectionReason,
+} from "../services/moderation";
 
 export const getJoinOrganizationController = async (
   req: Request,
@@ -107,22 +118,28 @@ export const postJoinOrganizationMiddleware = async (
     });
 
     const { confirmed, siret } = await schema.parseAsync(req.body);
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     const userOrganizationLink = await joinOrganization({
       siret,
-      user_id: getUserFromAuthenticatedSession(req).id,
+      user_id,
       confirmed,
+      certificationRequested: req.session.certificationDirigeantRequested,
     });
 
     if (req.session.mustReturnOneOrganizationInPayload) {
       await selectOrganization({
-        user_id: getUserFromAuthenticatedSession(req).id,
+        user_id,
         organization_id: userOrganizationLink.organization_id,
       });
     }
 
     next();
   } catch (error) {
+    if (error instanceof InvalidCertificationError) {
+      return res.redirect("/users/unable-to-certify-user-as-executive");
+    }
+
     if (
       error instanceof UnableToAutoJoinOrganizationError ||
       error instanceof UserAlreadyAskedToJoinOrganizationError
@@ -132,9 +149,25 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
+    if (error instanceof UserModerationRejectedError) {
+      return res.redirect(
+        `/users/moderation-rejected?moderation_id=${error.moderationId}`,
+      );
+    }
+
+    if (error instanceof AccessRestrictedToPublicServiceEmailError) {
+      return res.redirect(`/users/access-restricted-to-public-sector-email`);
+    }
+
+    if (error instanceof DomainRestrictedError) {
+      return res.redirect(
+        `/users/domains-restricted-in-organization?organization_id=${error.organizationId}`,
+      );
+    }
+
     if (
       error instanceof InvalidSiretError ||
-      error instanceof InseeNotActiveError ||
+      error instanceof OrganizationNotActiveError ||
       (error instanceof ZodError && hasErrorFromField(error, "siret"))
     ) {
       return res.redirect(
@@ -142,7 +175,7 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
-    if (error instanceof InseeConnectionError) {
+    if (error instanceof EntrepriseApiError) {
       return res.redirect(
         `/users/join-organization?notification=insee_unexpected_error&siret_hint=${req.body.siret}`,
       );
@@ -160,6 +193,38 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
+    next(error);
+  }
+};
+
+export const getDomainsRestrictedInOrganizationController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      organization_id: idSchema(),
+    });
+
+    const { organization_id } = await schema.parseAsync(req.query);
+
+    const organization = await getOrganizationById(organization_id);
+    if (isEmpty(organization)) {
+      return next(new HttpErrors.NotFound());
+    }
+    const whitelist = DOMAINS_WHITELIST.get(organization.siret);
+    if (!whitelist) {
+      return next(new HttpErrors.NotFound());
+    }
+
+    return res.render("user/access-restricted-to-domains", {
+      pageTitle: "Domains restreintes dans l'organisation",
+      csrfToken: csrfToken(req),
+      organization_label: organization.cached_libelle,
+      organization_domains: whitelist.join(", "),
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -215,35 +280,92 @@ export const getUnableToAutoJoinOrganizationController = async (
       pageTitle: "Rattachement en cours",
       csrfToken: csrfToken(req),
       email: user.email,
+      given_name: user.given_name,
+      family_name: user.family_name,
       organization_label: cached_libelle,
       moderation_id,
     });
   } catch (e) {
     if (e instanceof NotFoundError) {
       next(new HttpErrors.NotFound());
+    } else if (e instanceof ForbiddenError) {
+      next(new HttpErrors.Forbidden());
+    } else {
+      next(e);
     }
+  }
+};
 
+export const getModerationRejectedController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      moderation_id: idSchema(),
+    });
+    const { moderation_id } = await schema.parseAsync(req.query);
+    const user = getUserFromAuthenticatedSession(req);
+
+    const { cached_libelle } = await getOrganizationFromModeration({
+      user,
+      moderation_id,
+    });
+
+    const { comment } = await getModerationById(moderation_id);
+    const rejectionReason = extractRejectionReason(comment);
+    const allowEditing = allowsPersonalInfoEditing(rejectionReason);
+
+    return res.render("user/moderation-rejected", {
+      allowEditing,
+      csrfToken: csrfToken(req),
+      email: user.email,
+      family_name: user.family_name,
+      given_name: user.given_name,
+      rejectionReason,
+      illustration: "illu-user.svg",
+      moderation_id,
+      organization_label: cached_libelle,
+      pageTitle: allowEditing ? "Informations à corriger" : "Demande refusée",
+    });
+  } catch (e) {
+    if (e instanceof NotFoundError) {
+      next(new HttpErrors.NotFound());
+    }
     next(e);
   }
 };
 
-export const postCancelModerationAndRedirectControllerFactory =
-  (redirectUrl: string) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const schema = z.object({
-        moderation_id: idSchema(),
-      });
-      const { moderation_id } = await schema.parseAsync(req.params);
-      const user = getUserFromAuthenticatedSession(req);
+export function getUnableToCertifyUserAsExecutiveController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    return res.render("user/unable-to-certify-user-as-executive", {
+      illustration: "connection-lost.svg",
+      oidcError: oidcErrorSchema().enum.login_required,
+      interactionId: req.session.interactionId,
+      pageTitle: "Certification impossible",
+      use_dashboard_layout: false,
+    });
+  } catch (e) {
+    next(e);
+  }
+}
 
-      await cancelModeration({ user, moderation_id });
-
-      return res.redirect(redirectUrl);
-    } catch (e) {
-      next(e);
-    }
-  };
+export async function getAccessRestrictedToPublicSectorEmailController(
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  return res.render("user/access-restricted-to-public-sector-email", {
+    csrfToken: csrfToken(req),
+    illustration: "connection-lost.svg",
+    pageTitle: "Email non autorisé",
+  });
+}
 
 export const postQuitUserOrganizationController = async (
   req: Request,

@@ -1,6 +1,10 @@
 //
 
 describe("join organizations", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("join big company with free email provider", function () {
     cy.visit("/users/start-sign-in");
 
@@ -30,7 +34,7 @@ describe("join organizations", () => {
     cy.get('[type="submit"]').contains("Continuer avec cet email").click();
 
     cy.contains(
-      "Notre équipe étudie votre demande de rattachement à l’organisation Totalenergies se avec l’adresse email unused2@yopmail.com.",
+      "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
     );
   });
 });

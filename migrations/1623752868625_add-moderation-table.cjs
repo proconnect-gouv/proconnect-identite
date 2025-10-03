@@ -3,6 +3,8 @@ exports.shorthands = undefined;
 exports.up = async (pgm) => {
   await pgm.db.query(`
 CREATE TYPE moderation_type AS ENUM('organization_join_block');
+  `);
+  await pgm.db.query(`
 CREATE TABLE moderations (
     id serial,
     user_id int NOT NULL,

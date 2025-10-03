@@ -1,3 +1,4 @@
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,
@@ -6,7 +7,6 @@ import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z, ZodError } from "zod";
 import {
-  NotFoundError,
   UserNotLoggedInError,
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
@@ -30,6 +30,7 @@ import {
   verifyRegistration,
 } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { optionalCheckboxSchema } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import { logger } from "../services/log";
 
@@ -48,7 +49,7 @@ export const deletePasskeyController = async (
 
     await deleteUserAuthenticator(email, credential_id);
 
-    sendDeleteAccessKeyMail({ user_id });
+    await sendDeleteAccessKeyMail({ user_id });
 
     return res.redirect(
       `/connection-and-account?notification=passkey_successfully_deleted`,
@@ -79,54 +80,52 @@ export const getGenerateRegistrationOptionsController = async (
   }
 };
 
-export const postVerifyRegistrationController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const schema = z.object({
-      webauthn_registration_response_string: z.string(),
-    });
-    const { webauthn_registration_response_string } = await schema.parseAsync(
-      req.body,
-    );
+export const postVerifyRegistrationControllerFactory =
+  (redirectUrl: string, errorRedirectUrl: string) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const schema = z.object({
+        webauthn_registration_response_string: z.string(),
+        force_2fa: optionalCheckboxSchema(),
+      });
+      const { webauthn_registration_response_string, force_2fa } =
+        await schema.parseAsync(req.body);
 
-    const registrationResponseJson = JSON.parse(
-      webauthn_registration_response_string,
-    );
-    const registrationResponseSchema = z.custom<RegistrationResponseJSON>();
-
-    const response = await registrationResponseSchema.parseAsync(
-      registrationResponseJson,
-    );
-
-    const { email, id: user_id } = getUserFromAuthenticatedSession(req);
-
-    const { userVerified, user: updatedUser } = await verifyRegistration({
-      email: email,
-      response,
-    });
-    addAuthenticationMethodReferenceInSession(req, res, updatedUser, "pop");
-    if (userVerified) {
-      addAuthenticationMethodReferenceInSession(req, res, updatedUser, "uv");
-    }
-    sendActivateAccessKeyMail({ user_id });
-
-    return res.redirect(
-      `/connection-and-account?notification=passkey_successfully_created`,
-    );
-  } catch (e) {
-    logger.error(e);
-    if (e instanceof ZodError || e instanceof WebauthnRegistrationFailedError) {
-      return res.redirect(
-        `/connection-and-account?notification=invalid_passkey`,
+      const registrationResponseJson = JSON.parse(
+        webauthn_registration_response_string,
       );
-    }
+      const registrationResponseSchema = z.custom<RegistrationResponseJSON>();
 
-    next(e);
-  }
-};
+      const response = await registrationResponseSchema.parseAsync(
+        registrationResponseJson,
+      );
+
+      const { email, id: user_id } = getUserFromAuthenticatedSession(req);
+
+      const { userVerified, user: updatedUser } = await verifyRegistration({
+        email: email,
+        response,
+        force_2fa,
+      });
+      addAuthenticationMethodReferenceInSession(req, res, updatedUser, "pop");
+      if (userVerified) {
+        addAuthenticationMethodReferenceInSession(req, res, updatedUser, "uv");
+      }
+      await sendActivateAccessKeyMail({ user_id });
+
+      return res.redirect(redirectUrl);
+    } catch (e) {
+      logger.error(e);
+      if (
+        e instanceof ZodError ||
+        e instanceof WebauthnRegistrationFailedError
+      ) {
+        return res.redirect(errorRedirectUrl);
+      }
+
+      next(e);
+    }
+  };
 
 export const getSignInWithPasskeyController = async (
   req: Request,
@@ -144,7 +143,7 @@ export const getSignInWithPasskeyController = async (
   }
 };
 
-export const getGenerateAuthenticationOptions =
+export const getGenerateAuthenticationOptionsControllerFactory =
   (isSecondFactorAuthentication: boolean) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -168,10 +167,10 @@ export const getGenerateAuthenticationOptions =
   };
 
 export const getGenerateAuthenticationOptionsForFirstFactorController =
-  getGenerateAuthenticationOptions(false);
+  getGenerateAuthenticationOptionsControllerFactory(false);
 
 export const getGenerateAuthenticationOptionsForSecondFactorController =
-  getGenerateAuthenticationOptions(true);
+  getGenerateAuthenticationOptionsControllerFactory(true);
 
 export const postVerifyAuthenticationController =
   (isSecondFactorVerification: boolean) =>
@@ -197,7 +196,7 @@ export const postVerifyAuthenticationController =
         ? getUserFromAuthenticatedSession(req).email
         : getEmailFromUnauthenticatedSession(req);
 
-      const { user, userVerified } = await verifyAuthentication({
+      let { user, userVerified } = await verifyAuthentication({
         email,
         response,
         isSecondFactorVerification,
@@ -206,7 +205,7 @@ export const postVerifyAuthenticationController =
       if (isSecondFactorVerification) {
         addAuthenticationMethodReferenceInSession(req, res, user, "pop");
       } else {
-        await createAuthenticatedSession(req, res, user, "pop");
+        user = await createAuthenticatedSession(req, res, user, "pop");
       }
 
       if (userVerified) {

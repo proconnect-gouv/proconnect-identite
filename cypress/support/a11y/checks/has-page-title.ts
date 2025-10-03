@@ -1,7 +1,16 @@
 /**
  * check the page title is not the default website's one
  */
-const hasPageTitle = (ruleNode, { defaultTitle, win }) => {
+const hasPageTitle = (
+  _ruleNode: any,
+  {
+    defaultTitle,
+    win,
+  }: {
+    defaultTitle: string;
+    win: Window;
+  },
+) => {
   /**
    * so, to get the document title, we rely on the passed `window` object given when we instantiate axe-core.
    * It's a bit hacky, on paper we should just use `cy.title()` but the axe-core way of handling

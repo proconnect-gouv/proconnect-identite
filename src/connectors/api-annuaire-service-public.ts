@@ -1,7 +1,8 @@
+import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import { isEmpty, isString } from "lodash-es";
 import {
-  DO_NOT_USE_ANNUAIRE_EMAILS,
+  FEATURE_USE_ANNUAIRE_EMAILS,
   HTTP_CLIENT_TIMEOUT,
   TEST_CONTACT_EMAIL,
 } from "../config/env";
@@ -12,7 +13,6 @@ import {
   ApiAnnuaireTooManyResultsError,
 } from "../config/errors";
 import { logger } from "../services/log";
-import { isEmailValid } from "../services/security";
 
 // more info at https://api-lannuaire.service-public.fr/api/explore/v2.1/console
 
@@ -64,7 +64,11 @@ export const getAnnuaireServicePublicContactEmail = async (
         timeout: HTTP_CLIENT_TIMEOUT,
       });
 
-    features = data.results;
+    features = data.results.map((feature) => ({
+      ...feature,
+      // HACK(douglasduteil): the API returns a string instead of a JSON object in the adresse field
+      adresse: JSON.parse(feature.adresse as any),
+    }));
   } catch (e) {
     if (
       e instanceof AxiosError &&
@@ -72,7 +76,7 @@ export const getAnnuaireServicePublicContactEmail = async (
         e.code === "ERR_BAD_RESPONSE" ||
         e.code === "EAI_AGAIN")
     ) {
-      throw new ApiAnnuaireConnectionError();
+      throw new ApiAnnuaireConnectionError(undefined, { cause: e });
     }
 
     throw e;
@@ -86,8 +90,9 @@ export const getAnnuaireServicePublicContactEmail = async (
 
   if (features.length > 1) {
     if (isEmpty(codePostal)) {
-      // without postal code we cannot choose a mairie
-      throw new ApiAnnuaireTooManyResultsError();
+      throw new ApiAnnuaireTooManyResultsError(
+        `Without postal code, we cannot choose a mairie between ${features.length} results.`,
+      );
     }
 
     // Take the first match
@@ -98,22 +103,28 @@ export const getAnnuaireServicePublicContactEmail = async (
   }
 
   if (isEmpty(feature)) {
-    throw new ApiAnnuaireNotFoundError();
+    throw new ApiAnnuaireNotFoundError(
+      `No pair found for (codeOfficielGeographique: ${codeOfficielGeographique}, codePostal: ${codePostal}).`,
+    );
   }
 
   const { adresse_courriel } = feature;
 
   if (!isString(adresse_courriel)) {
-    throw new ApiAnnuaireInvalidEmailError();
+    throw new ApiAnnuaireInvalidEmailError(
+      `${adresse_courriel} is not a string.`,
+    );
   }
 
   const formattedEmail = adresse_courriel.toLowerCase().trim();
 
   if (!isEmailValid(formattedEmail)) {
-    throw new ApiAnnuaireInvalidEmailError();
+    throw new ApiAnnuaireInvalidEmailError(
+      `${formattedEmail} is not a valid email address.`,
+    );
   }
 
-  if (DO_NOT_USE_ANNUAIRE_EMAILS) {
+  if (!FEATURE_USE_ANNUAIRE_EMAILS) {
     logger.info(
       `Test email address ${TEST_CONTACT_EMAIL} was used instead of the real one ${formattedEmail}.`,
     );

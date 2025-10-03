@@ -1,33 +1,51 @@
 import type { NextFunction, Request, Response } from "express";
+import { AssertionError } from "node:assert";
 import Provider, { errors } from "oidc-provider";
-import { ENABLE_FIXED_ACR } from "../config/env";
+import { z } from "zod";
+import { FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR } from "../config/env";
+import { OidcError } from "../config/errors";
 import {
+  getCurrentAcr,
   getSessionStandardizedAuthenticationMethodsReferences,
   getUserFromAuthenticatedSession,
   isWithinAuthenticatedSession,
-  isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
+import { clearInteractionSession } from "../managers/session/interaction";
 import { setLoginHintInUnauthenticatedSession } from "../managers/session/unauthenticated";
+import { findByClientId } from "../repositories/oidc-client";
+import {
+  certificationDirigeantRequested,
+  isAcrSatisfied,
+  isThereAnyRequestedAcr,
+  twoFactorsAuthRequested,
+} from "../services/acr-checks";
+import { oidcErrorSchema } from "../services/custom-zod-schemas";
 import epochTime from "../services/epoch-time";
 import { mustReturnOneOrganizationInPayload } from "../services/must-return-one-organization-in-payload";
-import { shouldTrigger2fa } from "../services/should-trigger-2fa";
 
 export const interactionStartControllerFactory =
-  (oidcProvider: any) =>
+  (oidcProvider: Provider) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const {
         uid: interactionId,
-        params: { login_hint, scope },
+        params,
         prompt,
       } = await oidcProvider.interactionDetails(req, res);
+      const { client_id, login_hint, scope, sp_name } =
+        params as OIDCContextParams;
 
+      req.session.certificationDirigeantRequested =
+        certificationDirigeantRequested(prompt);
       req.session.interactionId = interactionId;
       req.session.mustReturnOneOrganizationInPayload =
         mustReturnOneOrganizationInPayload(scope);
-      if (shouldTrigger2fa(prompt)) {
-        req.session.mustUse2FA = true;
-      }
+      req.session.twoFactorsAuthRequested = twoFactorsAuthRequested(prompt);
+      req.session.spName = sp_name || undefined;
+
+      const oidcClient = await findByClientId(client_id);
+      req.session.authForProconnectFederation =
+        oidcClient?.is_proconnect_federation;
 
       if (login_hint) {
         setLoginHintInUnauthenticatedSession(req, login_hint);
@@ -46,6 +64,12 @@ export const interactionStartControllerFactory =
           return res.redirect(`/users/start-sign-in`);
         }
 
+        return res.redirect(`/interaction/${interactionId}/login`);
+      }
+
+      // Skip consent interaction since application consent is always granted
+      // Support for prompt=consent is still required by the spec.
+      if (prompt.name === "consent") {
         return res.redirect(`/interaction/${interactionId}/login`);
       }
 
@@ -69,28 +93,34 @@ export const interactionEndControllerFactory =
     try {
       const user = getUserFromAuthenticatedSession(req);
 
-      const acr =
-        (!ENABLE_FIXED_ACR && isWithinTwoFactorAuthenticatedSession(req)) ||
-        (ENABLE_FIXED_ACR && req.session.mustUse2FA)
-          ? "https://refeds.org/profile/mfa"
-          : "eidas1";
+      let currentAcr = await getCurrentAcr(req);
+
       const amr = getSessionStandardizedAuthenticationMethodsReferences(req);
       const ts = user.last_sign_in_at
         ? epochTime(user.last_sign_in_at)
         : undefined;
 
-      const result: OidcInteractionResults = {
+      const { prompt } = await oidcProvider.interactionDetails(req, res);
+
+      if (
+        FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR &&
+        !isThereAnyRequestedAcr(prompt)
+      ) {
+        currentAcr = "eidas1";
+      }
+
+      let result: OidcInteractionResults = {
         login: {
           accountId: user.id.toString(),
-          acr,
+          acr: currentAcr,
           amr,
           ts,
         },
         select_organization: false,
         update_userinfo: false,
+        // skip the consent
+        consent: {},
       };
-
-      const { prompt } = await oidcProvider.interactionDetails(req, res);
       if (prompt.name === "select_organization") {
         result.select_organization = true;
       }
@@ -99,9 +129,23 @@ export const interactionEndControllerFactory =
         result.update_userinfo = true;
       }
 
-      req.session.interactionId = undefined;
-      req.session.mustReturnOneOrganizationInPayload = undefined;
-      req.session.mustUse2FA = undefined;
+      if (!isAcrSatisfied(prompt, currentAcr)) {
+        return next(
+          new OidcError(
+            "access_denied",
+            "none of the requested ACRs could be obtained",
+            {
+              cause: new AssertionError({
+                expected: prompt,
+                actual: currentAcr,
+                operator: "isAcrSatisfied",
+              }),
+            },
+          ),
+        );
+      }
+
+      clearInteractionSession(req);
 
       await oidcProvider.interactionFinished(req, res, result);
     } catch (error) {
@@ -111,6 +155,24 @@ export const interactionEndControllerFactory =
         return res.redirect("/");
       }
 
+      next(error);
+    }
+  };
+
+export const interactionErrorControllerFactory =
+  (oidcProvider: Provider) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      clearInteractionSession(req);
+
+      const schema = z.object({
+        error: oidcErrorSchema(),
+      });
+
+      const { error } = await schema.parseAsync(req.query);
+
+      await oidcProvider.interactionFinished(req, res, { error });
+    } catch (error) {
       next(error);
     }
   };

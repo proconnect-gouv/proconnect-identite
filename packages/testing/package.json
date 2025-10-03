@@ -1,0 +1,42 @@
+{
+  "name": "@proconnect-gouv/proconnect.testing",
+  "version": "1.0.0",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/testing#readme",
+  "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proconnect-gouv/proconnect-identite.git",
+    "directory": "packages/testing"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*/index.ts"
+  },
+  "exports": {
+    "./*": "./src/*/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.lib.json",
+    "dev:test": "tsx --watch --test src/**/*.test.ts tests/**/*.test.ts",
+    "test": "npm run test:unit",
+    "test:unit": "tsx --test --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
+  },
+  "dependencies": {
+    "@proconnect-gouv/proconnect.entreprise": "1.0.0",
+    "@hono/node-server": "^1.19.4",
+    "@hono/zod-validator": "^0.7.2",
+    "hono": "^4.9.7"
+  },
+  "devDependencies": {
+    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
+    "@types/oidc-provider": "^9.1.1",
+    "@types/yargs": "^17.0.33",
+    "yargs": "^18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

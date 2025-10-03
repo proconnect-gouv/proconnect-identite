@@ -20,36 +20,29 @@ export const connectionCountMiddleware = async (
   // We retro-engineered the oidcProvider behavior by logging variables as follows:
   // logger.info('pre middleware', ctx.method, ctx.path);
   await next();
+
   // logger.info('post middleware', ctx.method, ctx.oidc.route);
   // logger.info(ctx.oidc.client?.clientId, 'ctx.oidc.client.clientId');
   // logger.info(ctx.oidc.session?.accountId, 'ctx.oidc.session.accountId');
 
   if (
-    (ctx.oidc.route === "authorization" && ctx.oidc.session?.accountId) ||
-    ctx.oidc.route === "resume"
+    (ctx.oidc?.route === "authorization" && ctx.oidc?.session?.accountId) ||
+    ctx.oidc?.route === "resume"
   ) {
     // we log a connection in 2 cases:
     // 1. a client ask for a connection and the oidcProvider answer back with an accountId
-    // this happens when users is already logged in MonComptePro but not on the client
-    // 2. a client ask for a connection but is not logged in MonComptePro
+    // this happens when users is already logged in ProConnect Identité but not on the client
+    // 2. a client ask for a connection but is not logged in ProConnect Identité
     // There is no accountId in the session, we wait for a session to be open.
     // This happens when hitting the resume route.
     try {
+      // if the interaction resulted in a success accountId and clientId should be set
       if (ctx.oidc.session?.accountId && ctx.oidc.client?.clientId) {
         await recordNewConnection({
           accountId: ctx.oidc.session.accountId,
           client: ctx.oidc.client,
           params: ctx.oidc.params as OIDCContextParams,
         });
-      } else {
-        // This is unexpected, we log it in sentry
-        const err = new Error(
-          `Connection ignored in count! session: ${JSON.stringify(
-            ctx.oidc.session,
-          )}; client: ${JSON.stringify(ctx.oidc.client)}`,
-        );
-        logger.error(err);
-        Sentry.captureException(err);
       }
     } catch (err) {
       logger.error(err);

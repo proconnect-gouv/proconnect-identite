@@ -2,26 +2,15 @@ name: End-to-end tests
 
 on:
   push:
-    branches:
-      - "**"
-      - "!master"
 
 env:
-  PGUSER: moncomptepro
-  PGPASSWORD: moncomptepro
-  PGDATABASE: moncomptepro
-  PGHOST: 127.0.0.1
-  PGPORT: 5432
-  BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
-  CYPRESS_BASE_URL: http://172.18.0.1:3000
-  CYPRESS_MAILSLURP_API_KEY: ${{ secrets.MAILSLURP_API_KEY }}
-  DATABASE_URL: postgres://moncomptepro:moncomptepro@127.0.0.1:5432/moncomptepro
+  CYPRESS_RECORD: true
+  DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
-  DO_NOT_SEND_MAIL: "False"
-  INSEE_CONSUMER_KEY: ${{ secrets.INSEE_CONSUMER_KEY }}
-  INSEE_CONSUMER_SECRET: ${{ secrets.INSEE_CONSUMER_SECRET }}
-  MONCOMPTEPRO_HOST: http://172.18.0.1:3000
+  FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
+  SMTP_URL: smtp://localhost:1025
   ZAMMAD_TOKEN: ${{ secrets.ZAMMAD_TOKEN }}
+
 jobs:
   test:
     strategy:
@@ -30,100 +19,64 @@ jobs:
       matrix:
         e2e_test:
           - activate_totp
+          - broken_standard_client
           - check_email_deliverability
+          - connect_franceconnect_account
           - delete_account
           - delete_totp
           - join_and_moderation
+          - join_collectivite_territoriale_free_contact_domain
           - join_collectivite_territoriale_official_contact_domain
           - join_must_confirm
+          - join_org_with_rejected_moderation
           - join_org_with_trackdechets_domain
           - join_org_with_verified_domain
           - join_with_code_sent_to_official_contact_email
           - join_with_code_sent_to_official_educ_nat_contact_email
+          - join_with_free_email_domain
           - join_with_official_contact_email
+          - quit-organization
+          - rate_limit_by_email
+          - rate_limit_by_ip
           - reauthenticate_on_admin_page
           - redirect_after_session_expiration
           - reset_password
           - set_info_after_account_provisioning
-          - signin_from_agentconnect_client
-          - signin_from_legacy_client
+          - signin_from_proconnect_federation_client
           - signin_from_standard_client
+          - signin_with_certification_dirigeant
+          - signin_with_email_verification
           - signin_with_email_verification_renewal
+          - signin_with_legacy_scope
           - signin_with_magic_link
+          - signin_with_right_acr
           - signin_with_totp
+          - signin_with_totp_enrollment
           - signin_with_webauthn
           - signup_entreprise_unipersonnelle
+          - signup_with_certification_dirigeant
           - update_personal_information
-          - update_totp_application
-    runs-on: ubuntu-22.04
-    services:
-      moncomptepro-standard-client:
-        image: ghcr.io/numerique-gouv/moncomptepro-test-client
-        ports:
-          - 4000:3000
-        env:
-          SITE_TITLE: moncomptepro-standard-client
-          HOST: http://localhost:4000
-          MCP_CLIENT_ID: standard_client_id
-          MCP_CLIENT_SECRET: standard_client_secret
-          MCP_PROVIDER: ${{ env.MONCOMPTEPRO_HOST }}
-          MCP_SCOPES: openid email profile organization
-          STYLESHEET_URL: ""
-      moncomptepro-agentconnect-client:
-        image: ghcr.io/numerique-gouv/moncomptepro-test-client
-        ports:
-          - 4001:3000
-        env:
-          SITE_TITLE: moncomptepro-agentconnect-client
-          HOST: http://localhost:4001
-          MCP_CLIENT_ID: agentconnect_client_id
-          MCP_CLIENT_SECRET: agentconnect_client_secret
-          MCP_PROVIDER: ${{ env.MONCOMPTEPRO_HOST }}
-          MCP_SCOPES: openid uid given_name usual_name email siren siret organizational_unit belonging_population phone chorusdt is_service_public is_public_service
-          MCP_ID_TOKEN_SIGNED_RESPONSE_ALG: ES256
-          MCP_USERINFO_SIGNED_RESPONSE_ALG: ES256
-          STYLESHEET_URL: ""
-          LOGIN_HINT: unused1@yopmail.com
-      moncomptepro-legacy-client:
-        image: ghcr.io/numerique-gouv/moncomptepro-test-client
-        ports:
-          - 4002:3000
-        env:
-          SITE_TITLE: moncomptepro-legacy-client
-          HOST: http://localhost:4002
-          MCP_CLIENT_ID: legacy_client_id
-          MCP_CLIENT_SECRET: legacy_client_secret
-          MCP_PROVIDER: ${{ env.MONCOMPTEPRO_HOST }}
-          MCP_SCOPES: openid email profile phone organizations
-          STYLESHEET_URL: ""
-      redis:
-        image: redis:7.0
-        ports:
-          - 6379:6379
-      postgres:
-        image: postgres:14.1
-        env:
-          POSTGRES_USER: ${{ env.PGUSER }}
-          POSTGRES_PASSWORD: ${{ env.PGPASSWORD }}
-          POSTGRES_DB: ${{ env.PGDATABASE }}
-        ports:
-          - 5432:5432
+          - use_extra_param_sp_name
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+
+      - run: docker compose up --build --detach
+
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           cache: "npm"
           node-version-file: package.json
-      - run: npm ci --include=dev
+      - run: npm ci
+      - run: npm run build:workspaces
       - run: npm run migrate up
-      - run: npm run fixtures:load-ci -- cypress/e2e/${{ matrix.e2e_test }}/fixtures.sql
-      - run: npm run update-organization-info -- 500
       - name: Cypress run
-        uses: cypress-io/github-action@v6.7.6
+        uses: cypress-io/github-action@v6.10.2
         with:
-          wait-on: ${{ env.MONCOMPTEPRO_HOST }}/users/start-sign-in
+          wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets
-          start: npx dotenvx run -f cypress/e2e/${{ matrix.e2e_test }}/env.conf --overload -- npm start
+          start: npx dotenvx run -f cypress/e2e/${{ matrix.e2e_test }}/env.conf --overload -- npm run start
           install: false
           spec: cypress/e2e/${{ matrix.e2e_test }}/index.cy.ts
         env:

@@ -1,7 +1,8 @@
-import * as Sentry from "@sentry/node";
+import { to } from "await-to-js";
 import type { NextFunction, Request, Response } from "express";
+import HttpErrors from "http-errors";
 import { z, ZodError } from "zod";
-import { MONCOMPTEPRO_HOST } from "../../config/env";
+import { HOST } from "../../config/env";
 import {
   InvalidTokenError,
   LeakedPasswordError,
@@ -12,9 +13,13 @@ import {
   getUserFromAuthenticatedSession,
   isWithinAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import { getEmailFromUnauthenticatedSession } from "../../managers/session/unauthenticated";
+import {
+  getEmailFromUnauthenticatedSession,
+  setEmailInUnauthenticatedSession,
+} from "../../managers/session/unauthenticated";
 import { changePassword, sendResetPasswordEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
+import { resetPasswordRateLimiter } from "../../middlewares/rate-limiter";
 import { emailSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 import hasErrorFromField from "../../services/has-error-from-field";
@@ -28,11 +33,9 @@ export const getResetPasswordController = async (
     return res.render("user/reset-password", {
       pageTitle: "Réinitialiser mon mot de passe",
       notifications: await getNotificationsFromRequest(req),
-      loginHint:
-        getEmailFromUnauthenticatedSession(req) ||
-        (isWithinAuthenticatedSession(req.session)
-          ? getUserFromAuthenticatedSession(req).email
-          : null),
+      loginHint: isWithinAuthenticatedSession(req.session)
+        ? getUserFromAuthenticatedSession(req).email
+        : getEmailFromUnauthenticatedSession(req) || null,
       csrfToken: csrfToken(req),
     });
   } catch (error) {
@@ -59,9 +62,21 @@ export const postResetPasswordController = async (
       const parsedBody = await schema.parseAsync(req.body);
 
       email = parsedBody.login;
+
+      // When the user is redirected to start of the sign-in process, the email value will be updated accordingly.
+      // The email rate limiter will rely on the email value set in the session here.
+      setEmailInUnauthenticatedSession(req, email);
     }
 
-    await sendResetPasswordEmail(email, MONCOMPTEPRO_HOST);
+    const [rateLimiterError] = await to(
+      resetPasswordRateLimiter.consume(email),
+    );
+
+    if (rateLimiterError) {
+      return next(new HttpErrors.TooManyRequests());
+    }
+
+    await sendResetPasswordEmail(email, HOST);
 
     return res.redirect(
       "/users/start-sign-in?notification=reset_password_email_sent",
@@ -144,7 +159,6 @@ export const postChangePasswordController = async (
 
     if (error instanceof LeakedPasswordError) {
       const resetPasswordToken = req.body.reset_password_token;
-      Sentry.captureException(error);
       return res.redirect(
         `/users/change-password?reset_password_token=${resetPasswordToken}&notification=leaked_password`,
       );

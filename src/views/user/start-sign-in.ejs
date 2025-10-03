@@ -5,27 +5,27 @@
     </h1>
     <div>
         <% if(locals.displayTestEnvWarning) { %>
-        <div class="fr-alert fr-alert--warning">
+        <div class="fr-alert fr-alert--warning fr-mb-3w">
             <h2 class="fr-alert__title">Vous êtes sur une instance de test</h2>
             <p>
                 Afin de limiter le risque de divulguer vos informations personnelles,
                 merci de ne pas utiliser votre adresse email.
-                Pour vos tests, utilisez des adresses <a target="_blank" rel="noopener noreferrer" href="https://yopmail.com/">yopmail</a>.
+                Pour vos tests, utilisez des adresses <a target="_blank" rel="noopener noreferrer" href="https://yopmail.com/">yopmail<span class="visually-hidden"> - nouvelle fenêtre</span></a>.
             </p>
         </div>
-        <br>
         <% } %>
         <form action="/users/start-sign-in" method="post">
-            <input type="hidden" name="_csrf" value="<%= csrfToken; %>" autocomplete="off">
+            <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 
-            <div class="fr-input-group<% if (locals.hasEmailError) { %>  fr-input-group--error<% } %>">
-                <label class="fr-label" for="did-you-mean-input">Email
-                    <span class="fr-hint-text">Celui que vous utilisez dans le cadre de votre travail</span>
+            <div class="fr-input-group <% if (locals.hasEmailError) { %>  fr-input-group--error<% } %>">
+                <label class="fr-label" for="did-you-mean-input">Email professionnel
+                    <span class="fr-hint-text">Format attendu : nom@domaine.fr</span>
                 </label>
                 <input
                         id="did-you-mean-input"
                         class="fr-input"
                         required type="email" name="login"
+                        autocomplete="on"
                 <% if (!locals.loginHint) { %>
                         autofocus
                 <% } else { %>
@@ -50,8 +50,8 @@
                     <script type="module" src="<%= js('did-you-mean.js') %>"></script>
                 <% } %>
             </div>
-
-            <%- include('../partials/card-button-container.ejs', {label: 'Valider', showGoBackButton: true}) %>
+            <%- include('../partials/submit-button.ejs', {label: 'Valider'}) %>
         </form>
+        <%- include('../partials/go-back.ejs') %>
     </div>
 </div>

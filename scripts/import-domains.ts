@@ -1,13 +1,16 @@
 // src https://stackoverflow.com/questions/40994095/pipe-streams-to-edit-csv-file-in-node-js
+import {
+  isDomainValid,
+  isSiretValid,
+} from "@proconnect-gouv/proconnect.core/security";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, some, toInteger } from "lodash-es";
-import { InseeNotFoundError } from "../src/config/errors";
-import {
-  getInseeAccessToken,
-  getOrganizationInfo,
-} from "../src/connectors/api-sirene";
+import { z } from "zod";
+import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import {
   addDomain,
   findEmailDomainsByOrganizationId,
@@ -22,10 +25,13 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
-import { isDomainValid, isSiretValid } from "../src/services/security";
 
-const INPUT_FILE = process.env.INPUT_FILE ?? "./input.csv";
-const OUTPUT_FILE = process.env.OUTPUT_FILE ?? "./output.csv";
+const { INPUT_FILE, OUTPUT_FILE } = z
+  .object({
+    INPUT_FILE: z.string().default("./input.csv"),
+    OUTPUT_FILE: z.string().default("./output.csv"),
+  })
+  .parse(process.env);
 
 // ex: for public insee subscription the script can be run like so:
 // npm run update-organization-info 2000
@@ -36,8 +42,6 @@ const rateInMsFromArgs = toInteger(process.argv[2]);
 const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
 
 (async () => {
-  const access_token = await getInseeAccessToken();
-
   const readStream = fs.createReadStream(INPUT_FILE); // readStream is a read-only stream wit raw text content of the CSV file
   const writeStream = fs.createWriteStream(OUTPUT_FILE); // writeStream is a write-only stream to write on the disk
 
@@ -76,6 +80,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
   logger.info("");
 
   const transformStream = transform(
+    { parallel: 1 }, // avoid messing with line orders
     async function (
       data: InputCsvData,
       done: (err: null | Error, data: OutputCsvData) => void,
@@ -122,10 +127,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
           const start = startDurationMesure();
           try {
             // 2. get organizationInfo
-            const organizationInfo = await getOrganizationInfo(
-              siret,
-              access_token,
-            );
+            const organizationInfo = await getOrganizationInfo(siret);
             await throttleApiCall(start, maxInseeCallRateInMs);
 
             // 3. check organization status
@@ -171,7 +173,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             success_count++;
             rowResults.push("success");
           } catch (error) {
-            if (error instanceof InseeNotFoundError) {
+            if (error instanceof NotFoundError) {
               i++;
               rejected_invalid_siret_count++;
               rowResults.push("rejected_invalid_siret");
@@ -200,7 +202,6 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         return done(null, { ...data, result: "unexpected_error" });
       }
     },
-    { parallel: 1 }, // avoid messing with line orders
   ).on("end", () => {
     logger.info(`Import done! Import logs are recorded in ${OUTPUT_FILE}.`);
     logger.info("");

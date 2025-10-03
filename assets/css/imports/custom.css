@@ -1,5 +1,9 @@
-#email-badge-lowercase {
-  text-transform: lowercase;
+.email-badge-lowercase {
+  text-transform: lowercase !important;
+}
+
+.float-right {
+  float: right;
 }
 
 .inline-form {
@@ -14,63 +18,21 @@
   white-space: break-spaces;
 }
 
-/* magic link icon */
-#magic-link-icon-inline {
-  padding: 0 1.5rem;
+.border-shadow {
+  border-radius: 4px;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1);
 }
 
-#magic-link-icon-block {
-  text-align: center;
-  margin: 3rem 0;
+.blue-france {
+  color: #00008f !important;
 }
 
-#magic-link-icon-block > img {
-  height: 46px;
+.grey-background {
+  background-color: #f6f6f6 !important;
 }
 
-/* moncomptepro-header */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* DELETE WHEN HEADER FROM DSFR WILL REPLACE MCP HEADER */
-  border-bottom: solid 1px #ddd;
-  /* DELETE WHEN WE'LL FOUND BEST SOLUTION TO MASK GREY */
-  background-color: white;
-}
-
-.header > img {
-  height: 4.5rem;
-  margin: 2.5rem 0 1.5rem;
-}
-
-@media all and (max-width: 576px) {
-  .header > img {
-    height: 3.5rem;
-    margin: 1.5rem 0 0.5rem;
-  }
-}
-
-/*
- * anchors are meant to be second in the DOM (for better screen reader support)
- * but we want to display them first visually
- */
-.title-with-anchor {
-  display: flex;
-}
-
-.title-with-anchor > a {
-  order: -1;
-  align-self: center;
-  opacity: 0;
-  transform: translateX(-28px);
-  margin-right: -32px;
-  background-color: transparent !important;
-}
-
-.title-with-anchor:hover > a,
-.title-with-anchor > a:focus-visible {
-  opacity: 1;
+.centered-content {
+  justify-content: center !important;
 }
 
 /* display a loading bar on page load */
@@ -82,4 +44,49 @@
   left: 0;
   z-index: 1000;
   position: absolute;
+}
+
+/* Inspied by `.fr-input:disabled` from the dsfr */
+input[readonly] {
+  color: var(--text-disabled-grey);
+  box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
+}
+
+/* Limited width */
+.limited-width {
+  max-width: 80px;
+  height: auto;
+}
+
+form:invalid button.fr-btn {
+  background-color: #e0e0e0;
+  color: #a0a0a0;
+  cursor: not-allowed;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* For links accessibility */
+/* https://www.ffoodd.fr/masquage-accessible-de-pointe/index.html */
+
+.visually-hidden,
+.visually-hidden-focusable:not(:focus, :focus-within) {
+  border: 0 !important;
+  clip-path: inset(50%) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  width: 1px !important;
+  white-space: nowrap !important;
+}
+
+.visually-hidden:not(caption),
+.visually-hidden-focusable:not(caption):not(:focus, :focus-within) {
+  position: absolute !important;
+}
+
+.visually-hidden *,
+.visually-hidden-focusable:not(:focus, :focus-within) * {
+  overflow: hidden !important;
 }

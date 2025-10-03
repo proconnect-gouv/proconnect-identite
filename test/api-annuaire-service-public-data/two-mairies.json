@@ -76,23 +76,7 @@
       "type_organisme": null,
       "code_insee_commune": "38253",
       "statut_de_diffusion": "true",
-      "adresse": [
-        {
-          "type_adresse": "Adresse",
-          "complement1": "",
-          "complement2": "",
-          "numero_voie": "48 avenue de la Muzelle",
-          "service_distribution": "BP 12",
-          "code_postal": "38860",
-          "nom_commune": "Les Deux Alpes",
-          "pays": "France",
-          "continent": "Europe",
-          "longitude": "6.12974023819",
-          "latitude": "45.0360565186",
-          "accessibilite": "ACC",
-          "note_accessibilite": "rampe, ascenseur"
-        }
-      ],
+      "adresse": "[{\"type_adresse\":\"Adresse\",\"complement1\":\"\",\"complement2\":\"\",\"numero_voie\":\"48 avenue de la Muzelle\",\"service_distribution\":\"BP 12\",\"code_postal\":\"38860\",\"nom_commune\":\"Les Deux Alpes\",\"pays\":\"France\",\"continent\":\"Europe\",\"longitude\":\"6.12974023819\",\"latitude\":\"45.0360565186\",\"accessibilite\":\"ACC\",\"note_accessibilite\":\"rampe, ascenseur\"}]",
       "url_service_public": "https://lannuaire.service-public.fr/auvergne-rhone-alpes/isere/b6947613-6ec3-4986-b27a-4137ae96425c",
       "information_complementaire": null,
       "date_diffusion": null
@@ -172,23 +156,7 @@
       "type_organisme": null,
       "code_insee_commune": "38253",
       "statut_de_diffusion": "true",
-      "adresse": [
-        {
-          "type_adresse": "Adresse",
-          "complement1": "Venosc",
-          "complement2": "",
-          "numero_voie": "5 rue du Câble",
-          "service_distribution": "",
-          "code_postal": "38520",
-          "nom_commune": "Les Deux Alpes",
-          "pays": "France",
-          "continent": "Europe",
-          "longitude": "6.116463",
-          "latitude": "44.989936",
-          "accessibilite": "ACC",
-          "note_accessibilite": ""
-        }
-      ],
+      "adresse": "[{\"type_adresse\":\"Adresse\",\"complement1\":\"Venosc\",\"complement2\":\"\",\"numero_voie\":\"5 rue du Câble\",\"service_distribution\":\"\",\"code_postal\":\"38520\",\"nom_commune\":\"Les Deux Alpes\",\"pays\":\"France\",\"continent\":\"Europe\",\"longitude\":\"6.116463\",\"latitude\":\"44.989936\",\"accessibilite\":\"ACC\",\"note_accessibilite\":\"\"}]",
       "url_service_public": "https://lannuaire.service-public.fr/auvergne-rhone-alpes/isere/c93cb8a9-7535-44d6-bf28-36cc3f5fbc74",
       "information_complementaire": null,
       "date_diffusion": null

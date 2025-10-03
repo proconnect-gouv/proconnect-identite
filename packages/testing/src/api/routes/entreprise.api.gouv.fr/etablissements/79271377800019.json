@@ -1,0 +1,100 @@
+{
+  "data": {
+    "siret": "79271377800019",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "68.20B",
+      "nomenclature": "NAFRev2",
+      "libelle": "Location de terrains et d'autres biens immobiliers"
+    },
+    "tranche_effectif_salarie": {
+      "de": null,
+      "a": null,
+      "code": null,
+      "date_reference": null,
+      "intitule": null
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1358463600,
+    "unite_legale": {
+      "siren": "792713778",
+      "rna": null,
+      "siret_siege_social": "79271377800019",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "HERISSON",
+        "sigle": null
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": null,
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "6540",
+        "libelle": "Société civile immobilière"
+      },
+      "activite_principale": {
+        "code": "68.20B",
+        "nomenclature": "NAFRev2",
+        "libelle": "Location de terrains et d'autres biens immobiliers"
+      },
+      "tranche_effectif_salarie": {
+        "de": null,
+        "a": null,
+        "code": null,
+        "date_reference": null,
+        "intitule": null
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 1358463600,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "6",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "DE LA VIGNE CHEVREAU",
+      "code_postal": "37270",
+      "libelle_commune": "ATHEE-SUR-CHER",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "37008",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "HERISSON",
+        "l2": "",
+        "l3": "",
+        "l4": "6 RUE DE LA VIGNE CHEVREAU",
+        "l5": "",
+        "l6": "37270 ATHEE-SUR-CHER",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/792713778"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1711753200,
+    "redirect_from_siret": null
+  }
+}

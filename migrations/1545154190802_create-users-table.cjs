@@ -1,7 +1,7 @@
 exports.shorthands = undefined;
 
 exports.up = async (pgm) => {
-  await pgm.db.query(`    
+  await pgm.db.query(`
 CREATE TABLE users (
     id serial NOT NULL,
     email character varying DEFAULT ''::character varying NOT NULL,
@@ -21,16 +21,16 @@ CREATE TABLE users (
     type character varying
 );`);
 
-  await pgm.db.query(` 
+  await pgm.db.query(`
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 `);
 
   await pgm.db.query(`
-CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email); 
+CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
 `);
 
-  await pgm.db.query(` 
+  await pgm.db.query(`
 CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (reset_password_token);
 `);
 

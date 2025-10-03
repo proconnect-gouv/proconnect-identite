@@ -1,10 +1,14 @@
 describe("force recent connexion + 2FA on admin pages", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should be redirected after long connexion", function () {
     cy.visit("/");
 
     cy.login("unused1@yopmail.com");
 
-    cy.contains("Votre compte est créé");
+    cy.contains("Votre compte ProConnect");
 
     cy.visit("/connection-and-account");
 
@@ -12,21 +16,21 @@ describe("force recent connexion + 2FA on admin pages", () => {
 
     cy.fillTotpFields();
 
-    cy.contains("Connexion et compte");
+    cy.contains("Compte et connexion");
 
     // Wait for connexion to last
     cy.wait(5 * 1000);
 
-    cy.get(
-      '[action="/delete-authenticator-app-configuration"]  [type="submit"]',
-    )
-      .contains("Supprimer l’application d’authentification")
-      .click();
+    cy.contains("Code à usage unique")
+      .closest(".fr-card")
+      .within(() => {
+        cy.contains("Supprimer").click();
+      });
 
     cy.contains("merci de vous identifier à nouveau");
 
     cy.mfaLogin("unused1@yopmail.com");
 
-    cy.contains("Connexion et compte");
+    cy.contains("Compte et connexion");
   });
 });

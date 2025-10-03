@@ -13,10 +13,10 @@ import { config as pageTitleRule } from "./rules/page-title";
  *
  * @param win window object of the current page
  */
-const configureAxe = (win) => {
+const configureAxe = (win: Window) => {
   cy.configureAxe({
-    checks: [hasPageTitleCheck("MonComptePro", win)],
-    rules: [pageTitleRule("MonComptePro")],
+    checks: [hasPageTitleCheck("ProConnect", win)],
+    rules: [pageTitleRule("ProConnect")],
   });
 };
 
@@ -106,7 +106,7 @@ const cypressLog = (violations: Result[]) => {
       name: `${impact} a11y issue`,
     });
 
-    targets.forEach((target, i) => {
+    targets.forEach((target) => {
       const el = Cypress.$(target.join(","));
       Cypress.log({
         $el: el,

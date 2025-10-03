@@ -1,3 +1,4 @@
+import { to } from "await-to-js";
 import { interactionPolicy } from "oidc-provider";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { mustReturnOneOrganizationInPayload } from "./must-return-one-organization-in-payload";
@@ -20,7 +21,9 @@ policy.add(
         // existence of oidc.session.accountId is ensured by previous prompt
         const user_id = parseInt(oidc.session!.accountId!, 10);
 
-        const selectedOrganizationId = await getSelectedOrganizationId(user_id);
+        const [, selectedOrganizationId] = await to(
+          getSelectedOrganizationId(user_id),
+        );
 
         if (
           mustReturnOneOrganizationInPayload(

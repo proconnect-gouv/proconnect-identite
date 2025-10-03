@@ -1,0 +1,10 @@
+{
+  "name": "@proconnect-gouv/proconnect.devtools.typescript",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "files": [],
+  "dependencies": {
+    "@tsconfig/strictest": "2.0.5"
+  }
+}

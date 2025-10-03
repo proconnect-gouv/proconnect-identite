@@ -9,19 +9,30 @@
                 <p class="fr-notice__body">
                     <span class="fr-sr-only">Votre email :</span>
                     <strong><%= email; %></strong>
-                    <a
-                            class="fr-btn fr-btn--close"
-                            title="Changer d’adresse email"
-                            href="/users/start-sign-in"
-                    >
-                        Changer d’adresse email
-                    </a>
+                    <% if (changeEmailButtonMustReturnToPCF) { %>
+                        <button
+                                class="fr-btn fr-btn--close go-back-link"
+                                title="Changer d’adresse email"
+                                id="change-email-address"
+                        >
+                            Changer d’adresse email
+                        </button>
+                    <% } else { %>
+                        <a
+                                class="fr-btn fr-btn--close"
+                                title="Changer d’adresse email"
+                                href="/users/start-sign-in"
+                                id="change-email-address"
+                        >
+                            Changer d’adresse email
+                        </a>
+                    <% } %>
                 </p>
             </div>
         </div>
 
         <form action="/users/sign-in" method="post">
-            <input type="hidden" name="_csrf" value="<%= csrfToken; %>" autocomplete="off">
+            <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
             <div class="fr-input-group fr-password js-password-container">
                 <label class="fr-label" for="password-input">
                     Renseignez votre mot de passe
@@ -57,19 +68,7 @@
                 <a href="/users/reset-password" class="fr-link">Mot de passe oublié ?</a>
             </p>
         </form>
-
-        <p class="fr-hr-or">ou</p>
-
-        <form action="/users/send-magic-link" method="post">
-            <input type="hidden" name="_csrf" value="<%= csrfToken; %>" autocomplete="off">
-
-            <button
-                class="fr-btn fr-mb-2w btn--fullwidth fr-btn--secondary fr-btn--icon-left fr-icon-mail-open-line"
-                type="submit"
-            >
-                Recevoir un lien d’identification
-            </button>
-        </form>
+        <% if (showPasskeySection) { %>
 
         <p class="fr-hr-or">ou</p>
 
@@ -79,19 +78,21 @@
         >
             Se connecter avec une clé d’accès
         </a>
+        <% } %>
 
-        <div class="card-button-container fr-mt-2w">
-            <span>
-                    <button
-                            id="go-back-link"
-                            class="fr-btn fr-btn--tertiary fr-icon-arrow-go-back-line fr-btn--icon-left"
-                    >
-                        retour
-                    </button>
-            </span>
-            <span></span>
-        </div>
+        <p class="fr-hr-or">ou</p>
+
+        <form action="/users/send-magic-link" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
+
+            <button
+                class="fr-btn fr-mb-2w btn--fullwidth fr-btn--secondary fr-btn--icon-left fr-icon-mail-open-line"
+                type="submit"
+            >
+                Recevoir un lien d’identification
+            </button>
+        </form>
+        <%- include('../partials/go-back.ejs') %>
     </div>
 </div>
 <script type="module" src="<%= js('show-password.js') %>"></script>
-<script type="module" src="<%= js('go-back.js') %>"></script>

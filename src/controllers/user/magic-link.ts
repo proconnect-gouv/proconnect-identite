@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
-import { MONCOMPTEPRO_HOST } from "../../config/env";
+import { HOST } from "../../config/env";
 import { InvalidEmailError, InvalidMagicLinkError } from "../../config/errors";
 import { createAuthenticatedSession } from "../../managers/session/authenticated";
 import { getEmailFromUnauthenticatedSession } from "../../managers/session/unauthenticated";
@@ -18,7 +18,7 @@ export const postSendMagicLinkController = async (
   try {
     await sendSendMagicLinkEmail(
       getEmailFromUnauthenticatedSession(req)!,
-      MONCOMPTEPRO_HOST,
+      HOST,
     );
 
     return res.redirect(`/users/magic-link-sent`);
@@ -41,6 +41,7 @@ export const getMagicLinkSentController = async (
     return res.render("user/magic-link-sent", {
       pageTitle: "Recevoir un lien d'identification",
       email,
+      illustration: "illu-magic-link-sent.svg",
     });
   } catch (error) {
     next(error);
@@ -73,6 +74,7 @@ export const getSignInWithMagicLinkController = async (
         pageTitle: "Connexion avec un lien",
         csrfToken: csrfToken(req),
         magicLinkToken: magic_link_token,
+        illustration: "illu-password.svg",
       });
     }
 

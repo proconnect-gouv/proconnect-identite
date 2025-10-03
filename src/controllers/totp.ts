@@ -1,6 +1,7 @@
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
-import { InvalidTotpTokenError, NotFoundError } from "../config/errors";
+import { InvalidTotpTokenError } from "../config/errors";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
@@ -12,22 +13,23 @@ import {
   setTemporaryTotpKey,
 } from "../managers/session/temporary-totp-key";
 import {
-  authenticateWithAuthenticatorApp,
-  confirmAuthenticatorAppRegistration,
-  deleteAuthenticatorAppConfiguration,
-  generateAuthenticatorAppRegistrationOptions,
-  isAuthenticatorAppConfiguredForUser,
+  authenticateWithTotp,
+  confirmTotpRegistration,
+  deleteTotpConfiguration,
+  generateTotpRegistrationOptions,
+  isTotpConfiguredForUser,
 } from "../managers/totp";
 import {
   sendAddFreeTOTPEmail,
-  sendChangeAppliTotpEmail,
   sendDeleteFreeTOTPApplicationEmail,
 } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
 import { codeSchema } from "../services/custom-zod-schemas";
-import getNotificationsFromRequest from "../services/get-notifications-from-request";
+import getNotificationsFromRequest, {
+  getNotificationLabelFromRequest,
+} from "../services/get-notifications-from-request";
 
-export const getAuthenticatorAppConfigurationController = async (
+export const getTotpConfigurationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -38,19 +40,19 @@ export const getAuthenticatorAppConfigurationController = async (
     const existingTemporaryTotpKey = getTemporaryTotpKey(req);
 
     const { totpKey, humanReadableTotpKey, qrCodeDataUrl } =
-      await generateAuthenticatorAppRegistrationOptions(
-        email,
-        existingTemporaryTotpKey,
-      );
+      await generateTotpRegistrationOptions(email, existingTemporaryTotpKey);
 
     setTemporaryTotpKey(req, totpKey);
 
-    return res.render("authenticator-app-configuration", {
+    const notificationLabel = await getNotificationLabelFromRequest(req);
+    const hasCodeError = notificationLabel === "invalid_totp_token";
+
+    return res.render("totp-configuration", {
       pageTitle: "Configuration TOTP",
       notifications: await getNotificationsFromRequest(req),
+      hasCodeError,
       csrfToken: csrfToken(req),
-      isAuthenticatorAlreadyConfigured:
-        await isAuthenticatorAppConfiguredForUser(user_id),
+      isAuthenticatorAlreadyConfigured: await isTotpConfiguredForUser(user_id),
       humanReadableTotpKey,
       qrCodeDataUrl,
     });
@@ -59,7 +61,7 @@ export const getAuthenticatorAppConfigurationController = async (
   }
 };
 
-export const postAuthenticatorAppConfigurationController = async (
+export const postTotpConfigurationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -71,39 +73,31 @@ export const postAuthenticatorAppConfigurationController = async (
     const { totpToken } = await schema.parseAsync(req.body);
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
-    const isAuthenticatorAlreadyConfigured =
-      await isAuthenticatorAppConfiguredForUser(user_id);
     const temporaryTotpKey = getTemporaryTotpKey(req);
 
     if (!temporaryTotpKey) {
       throw new NotFoundError();
     }
 
-    const updatedUser = await confirmAuthenticatorAppRegistration(
+    const updatedUser = await confirmTotpRegistration(
       user_id,
       temporaryTotpKey,
       totpToken,
+      true,
     );
 
     deleteTemporaryTotpKey(req);
     addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
 
-    if (!isAuthenticatorAlreadyConfigured) {
-      sendAddFreeTOTPEmail({ user_id });
-    } else {
-      sendChangeAppliTotpEmail({ user_id });
-    }
+    await sendAddFreeTOTPEmail({ user_id });
+
     return res.redirect(
-      `/connection-and-account?notification=${
-        isAuthenticatorAlreadyConfigured
-          ? "authenticator_updated"
-          : "authenticator_added"
-      }`,
+      "/connection-and-account?notification=authenticator_added",
     );
   } catch (error) {
     if (error instanceof InvalidTotpTokenError) {
       return res.redirect(
-        "/authenticator-app-configuration?notification=invalid_totp_token",
+        "/totp-configuration?notification=invalid_totp_token",
       );
     }
 
@@ -111,7 +105,7 @@ export const postAuthenticatorAppConfigurationController = async (
   }
 };
 
-export const postDeleteAuthenticatorAppConfigurationController = async (
+export const postDeleteTotpConfigurationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -119,11 +113,11 @@ export const postDeleteAuthenticatorAppConfigurationController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await deleteAuthenticatorAppConfiguration(user_id);
+    const updatedUser = await deleteTotpConfiguration(user_id);
 
     updateUserInAuthenticatedSession(req, updatedUser);
 
-    sendDeleteFreeTOTPApplicationEmail({ user_id });
+    await sendDeleteFreeTOTPApplicationEmail({ user_id });
 
     return res.redirect(
       `/connection-and-account?notification=authenticator_successfully_deleted`,
@@ -133,7 +127,7 @@ export const postDeleteAuthenticatorAppConfigurationController = async (
   }
 };
 
-export const postSignInWithAuthenticatorAppController = async (
+export const postSignInWithTotpController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -147,7 +141,7 @@ export const postSignInWithAuthenticatorAppController = async (
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const user = await authenticateWithAuthenticatorApp(user_id, totpToken);
+    const user = await authenticateWithTotp(user_id, totpToken);
 
     addAuthenticationMethodReferenceInSession(req, res, user, "totp");
 

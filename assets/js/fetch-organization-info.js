@@ -18,9 +18,7 @@ document.addEventListener(
     var organizationAlertContentElement =
       organizationAlertElement.querySelector(".alert--content");
     var siretSelectorElement = document.getElementById("siret-selector");
-    var submitElement = document.querySelector(
-      '.card-button-container button[type="submit"]',
-    );
+    var submitElement = document.querySelector('button[type="submit"]');
 
     function clearOrganizationInfo() {
       organizationInfoElement.style.display = "none";
@@ -81,6 +79,9 @@ document.addEventListener(
                 organizationAlertElement.id,
               );
             }
+          } else if (xmlhttp.status === 400) {
+            organizationAlertElement.style.display = "block";
+            organizationAlertContentElement.innerHTML = "SIRET invalide.";
           } else if (xmlhttp.status === 404) {
             organizationAlertElement.style.display = "block";
             organizationAlertContentElement.innerHTML =
@@ -92,7 +93,7 @@ document.addEventListener(
             organizationAlertContentElement.innerHTML =
               "Erreur inconnue lors de la récupération des informations de cet établissement. " +
               "Merci de réessayer ultérieurement. " +
-              "Vous pouvez également nous signaler cette erreur par mail à contact@moncomptepro.beta.gouv.fr.";
+              "Vous pouvez également nous signaler cette erreur par mail à support+identite@proconnect.gouv.fr.";
           }
           if (xmlhttp.status !== 200) {
             submitElement.removeAttribute("aria-label");

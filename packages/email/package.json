@@ -1,0 +1,51 @@
+{
+  "name": "@proconnect-gouv/proconnect.email",
+  "version": "1.0.0",
+  "private": true,
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/email#readme",
+  "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proconnect-gouv/proconnect-identite.git",
+    "directory": "packages/email"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build ./tsconfig.lib.json",
+    "dev": "npm run build -- --watch --preserveWatchOutput",
+    "storybook": "vite",
+    "type-check": "tsc --noEmit",
+    "test": "npm run test:unit src/**/*.test.tsx",
+    "test:unit": "tsx --test --test-reporter=spec"
+  },
+  "dependencies": {
+    "@kitajs/html": "^4.2.9",
+    "@kitajs/ts-html-plugin": "^4.1.1"
+  },
+  "devDependencies": {
+    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
+    "@storybook/csf": "^0.1.13",
+    "prettier": "^3.6.2",
+    "vite": "^7.1.5"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

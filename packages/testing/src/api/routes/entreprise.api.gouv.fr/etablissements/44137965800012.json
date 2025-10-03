@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "44137965800012",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "94.99Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Autres organisations fonctionnant par adhésion volontaire"
+    },
+    "tranche_effectif_salarie": {
+      "de": null,
+      "a": null,
+      "code": null,
+      "date_reference": null,
+      "intitule": null
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 501289200,
+    "unite_legale": {
+      "siren": "441379658",
+      "rna": "W953001460",
+      "siret_siege_social": "44137965800012",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "ATD QUART MONDE TERRE HOMME DE DEMAIN",
+        "sigle": null
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": null,
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": { "code": "9220", "libelle": "Association déclarée" },
+      "activite_principale": {
+        "code": "94.99Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Autres organisations fonctionnant par adhésion volontaire"
+      },
+      "tranche_effectif_salarie": {
+        "de": null,
+        "a": null,
+        "code": null,
+        "date_reference": null,
+        "intitule": null
+      },
+      "economie_sociale_et_solidaire": true,
+      "date_creation": 501289200,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "12",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "PASTEUR",
+      "code_postal": "95480",
+      "libelle_commune": "PIERRELAYE",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "95488",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "ATD QUART MONDE TERRE HOMME DE DEMAIN",
+        "l2": "",
+        "l3": "",
+        "l4": "12 RUE PASTEUR",
+        "l5": "",
+        "l6": "95480 PIERRELAYE",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/441379658"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1737846000,
+    "redirect_from_siret": null
+  }
+}

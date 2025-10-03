@@ -1,4 +1,5 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import { mustReturnOneOrganizationInPayload } from "../src/services/must-return-one-organization-in-payload";
 
 describe("mustReturnOneOrganizationInPayload", () => {
@@ -16,7 +17,7 @@ describe("mustReturnOneOrganizationInPayload", () => {
     );
   });
 
-  it("should return true for AgentConnect required scopes", () => {
+  it("should return true for ProConnect Federation required scopes", () => {
     assert.equal(
       mustReturnOneOrganizationInPayload(
         "openid uid given_name usual_name email siren siret organizational_unit belonging_population phone chorusdt idp_id idp_acr",

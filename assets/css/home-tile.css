@@ -1,0 +1,34 @@
+.home-tile {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "illu content";
+  align-items: center;
+  justify-items: center;
+}
+
+.home-tile > img {
+  grid-area: illu;
+}
+
+.home-tile > p {
+  grid-area: content;
+  max-width: 35rem;
+  width: 100%;
+  padding: 2.5rem 2rem;
+}
+
+@media all and (min-width: 768px) and (max-width: 992px),
+  all and (max-width: 576px) {
+  .home-tile {
+    grid-template-columns: 100%;
+    grid-template-areas: "content";
+  }
+
+  .home-tile > img {
+    display: none;
+  }
+
+  .home-tile > p {
+    padding: 2.5rem 1rem;
+  }
+}

@@ -2,12 +2,11 @@ const { isFree } = require("is-disposable-email-domain");
 const { isEmpty } = require("lodash");
 
 const doNotValidateMail =
-  process.env.DO_NOT_CHECK_EMAIL_DELIVERABILITY === "True";
+  process.env.FEATURE_CHECK_EMAIL_DELIVERABILITY === "False";
 
 exports.shorthands = undefined;
 
 exports.up = async (pgm) => {
-  console.log("Start removing free email provider domains...");
   let i = 0;
 
   while (true) {
@@ -73,8 +72,6 @@ WHERE id = $1`,
 
     i++;
   }
-
-  console.log("Free email provider domains removed!");
 };
 
 exports.down = () => {};

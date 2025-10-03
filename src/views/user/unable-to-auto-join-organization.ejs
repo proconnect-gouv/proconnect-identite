@@ -1,30 +1,75 @@
 <div>
-    <h1 class="fr-h3">Rattachement en cours</h1>
+    <div class="fr-mb-2w">
+        <img src="/dist/timer.svg" alt="" class="limited-width" />
+    </div>
+    <h1 class="fr-h2">Demande en cours</h1>
     <div>
-        <p class="fr-mt-2w">
-            ⏱️ Notre équipe étudie votre demande de rattachement à l’organisation <%=
-            organization_label; %> avec l’adresse email <%= email; %>.
+        <p class="fr-bold">
+            <b>
+                Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.
+            </b>
         </p>
         <p>
-            Vous recevrez un email pour accéder à votre démarche dès que nous aurons
-            terminé.
-        </p>
-        <p>
-            <i>(délai moyen : 1 jour ouvré)</i>
+            <i>
+                (temps de traitement moyen : 1 jour ouvré)
+            </i>
         </p>
     </div>
-    <div class="fr-card">
-        <div class="fr-card__body">
-            <div class="fr-card__content">
-                <div>
-                    <a
-                        class="fr-link fr-icon-question-line fr-link--icon-left"
-                        href="/help?moderation_id=<%= moderation_id; %>#modifier-moderation"
-                    >
-                        J’ai fait une erreur dans ma demande
-                    </a>
-                </div>
+    <div class="border-shadow fr-p-2w">
+        <h2 class="fr-h4">Récapitulatif de votre demande</h2>
+        <div class="fr-grid-row centered-container-mobile">
+            <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Prénom</p>
+            <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
+                <span id="prenom-display"><b><%= given_name; %></b></span>
+                <%- include(
+                  '../partials/icon-edit-personal-info-form.ejs',
+                  {
+                    actionForUpdateModeration: `/users/cancel-moderation-and-redirect-to-personal-information/${moderation_id}`,
+                    messageToDisplay: "Corriger ses informations personnelles",
+                    confirmMessage: "Cette action annulera votre demande en cours. Voulez vous continuer ?"
+                  }
+                ) %>
+            </div>
+            <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Nom</p>
+            <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
+                <span >
+                    <b><%= family_name; %></b>
+                </span>
+                <%- include(
+                  '../partials/icon-edit-personal-info-form.ejs',
+                  {
+                    actionForUpdateModeration: `/users/cancel-moderation-and-redirect-to-personal-information/${moderation_id}`,
+                    messageToDisplay: "Corriger ses informations personnelles",
+                    confirmMessage: "Cette action annulera votre demande en cours. Voulez vous continuer ?"
+                  }
+                ) %>
+            </div>
+            <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Email</p>
+            <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
+                <span ><b><%= email; %></b></span>
+                <%- include(
+                  '../partials/icon-edit-personal-info-form.ejs',
+                  {
+                    actionForUpdateModeration: `/users/cancel-moderation-and-redirect-to-sign-in/${moderation_id}`,
+                    messageToDisplay: "Corriger l'adresse email",
+                    confirmMessage: "Cette action annulera votre demande en cours. Voulez vous continuer ?"
+                  }
+                ) %>
+
+            </div>
+            <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Organisation</p>
+            <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
+                <span ><b><%= organization_label; %></b></span>
+                <%- include(
+                  '../partials/icon-edit-personal-info-form.ejs',
+                  {
+                    actionForUpdateModeration: `/users/cancel-moderation-and-redirect-to-join-org/${moderation_id}`,
+                    messageToDisplay: "Corriger l'organisation de rattachement",
+                    confirmMessage: "Cette action annulera votre demande en cours. Voulez vous continuer ?"
+                  }
+                ) %>
             </div>
         </div>
     </div>
 </div>
+<script type="module" src="<%= js('confirm.js') %>"></script>

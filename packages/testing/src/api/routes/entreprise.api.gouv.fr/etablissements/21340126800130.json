@@ -1,0 +1,100 @@
+{
+  "data": {
+    "siret": "21340126800130",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": "MAIRIE",
+    "activite_principale": {
+      "code": "84.11Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Administration publique générale"
+    },
+    "tranche_effectif_salarie": {
+      "de": 50,
+      "a": 99,
+      "code": "21",
+      "date_reference": "2022",
+      "intitule": "50 à 99 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1322694000,
+    "unite_legale": {
+      "siren": "213401268",
+      "rna": null,
+      "siret_siege_social": "21340126800130",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "COMMUNE DE LAMALOU-LES-BAINS",
+        "sigle": null
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "7210",
+        "libelle": "Commune et commune nouvelle"
+      },
+      "activite_principale": {
+        "code": "84.11Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Administration publique générale"
+      },
+      "tranche_effectif_salarie": {
+        "de": 50,
+        "a": 99,
+        "code": "21",
+        "date_reference": "2022",
+        "intitule": "50 à 99 salariés"
+      },
+      "economie_sociale_et_solidaire": false,
+      "date_creation": 378687600,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "3",
+      "indice_repetition_voie": null,
+      "type_voie": "AVENUE",
+      "libelle_voie": "GEORGES CLEMENCEAU",
+      "code_postal": "34240",
+      "libelle_commune": "LAMALOU-LES-BAINS",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "34126",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "COMMUNE DE LAMALOU-LES-BAINS",
+        "l2": "",
+        "l3": "",
+        "l4": "3 AVENUE GEORGES CLEMENCEAU",
+        "l5": "",
+        "l6": "34240 LAMALOU-LES-BAINS",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/213401268"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1711062000,
+    "redirect_from_siret": null
+  }
+}

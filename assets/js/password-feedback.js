@@ -1,5 +1,5 @@
 import { debounce } from "./modules/debounce";
-import { notifyScreenReader } from "./modules/notify-screen-reader";
+import { announce } from "./modules/screen-reader";
 
 document.addEventListener(
   "DOMContentLoaded",
@@ -84,7 +84,7 @@ document.addEventListener(
     }
 
     // wait a little before notifying sr users of their input to prevent spam
-    const debouncedNotifyScreenReader = debounce(notifyScreenReader, 2000);
+    const debouncedAnnounce = debounce(announce, 2000);
 
     function clearPasswordMessages() {
       passphraseInputMessageElement.style.display = "block";
@@ -158,7 +158,8 @@ document.addEventListener(
         "mon compte pro",
         "agentconnect",
         "agent connect",
-        "cheval exact agrafe pile",
+        "proconnect",
+        "pro connect",
       ].forEach((blacklistedWord) => {
         if (inputValue.toLowerCase().includes(blacklistedWord)) {
           setError(passwordInputMessageBlacklistedWordElement);
@@ -178,7 +179,7 @@ document.addEventListener(
 
       if (!conditions.length) {
         passwordInput.setCustomValidity("");
-        debouncedNotifyScreenReader.cancel();
+        debouncedAnnounce.cancel();
         return;
       }
 
@@ -193,7 +194,7 @@ document.addEventListener(
       if (conditionsString.slice(-1) === ",") {
         conditionsString = conditionsString.slice(0, -1);
       }
-      debouncedNotifyScreenReader(conditionsString);
+      debouncedAnnounce(conditionsString);
       passwordInput.setCustomValidity(conditionsString);
     }
 
@@ -213,7 +214,7 @@ document.addEventListener(
       .closest("form")
       .querySelector('button[type="submit"]')
       .addEventListener("click", () => {
-        debouncedNotifyScreenReader.cancel();
+        debouncedAnnounce.cancel();
       });
   },
   false,

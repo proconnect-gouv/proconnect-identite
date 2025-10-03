@@ -1,13 +1,12 @@
-/node_modules
+node_modules
 *.swp
 *.swo
 *.orig
-.env
-.env*.local
+# https://www.npmjs.com/package/dotenv-flow?activeTab=readme#files-under-version-control
+.env.local
+.env.*.local
 jwks.json
 *.log
-
-moncomptepro.conf
 
 .idea
 .vscode
@@ -20,5 +19,6 @@ cypress/videos
 /build/*
 !/build/.keep
 
-/dist/*
+dist
+tsconfig*.tsbuildinfo
 !/dist/.keep

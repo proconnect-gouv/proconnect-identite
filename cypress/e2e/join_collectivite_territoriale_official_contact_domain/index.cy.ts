@@ -1,21 +1,22 @@
 //
 
-describe("join organizations", () => {
-  before(() => {
-    cy.mailslurp().then((mailslurp) =>
-      mailslurp.inboxController.deleteAllInboxEmails({
-        inboxId: "435f6a4d-df7d-4840-be7b-bc4851b64e91",
-      }),
-    );
+describe("join collectivité territoriale with official contact domain", () => {
+  it("should seed the database once", function () {
+    cy.seed();
   });
 
-  it("join collectivité territoriale with official contact domain", function () {
+  it("should directly accept the same domain address", function () {
     cy.visit("/users/join-organization");
-    cy.login("76450610-4dcc-4664-b9ab-1cea869b62b1@mailslurp.com");
 
-    cy.get('[name="siret"]').type("21740056300011");
-    cy.get('[type="submit"]').click();
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("lion.eljonson@darkangels.world");
 
-    cy.contains("Votre compte est créé");
+    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("21740056300011");
+    cy.contains("Enregistrer").click();
+
+    cy.title().should("include", "Compte créé - ProConnect");
+    cy.contains("Votre compte est créé !");
   });
 });

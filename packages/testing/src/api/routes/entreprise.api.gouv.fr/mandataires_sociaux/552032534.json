@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "data": {
+        "fonction": "DIRIGEANT",
+        "nom": "TOSI",
+        "type": "personne_physique",
+        "prenom": "Ulysse",
+        "date_naissance": "1992-09-07",
+        "date_naissance_timestamp": 715824000000,
+        "lieu_naissance": "Internet",
+        "pays_naissance": "FRANCE",
+        "code_pays_naissance": "FR",
+        "nationalite": "Française",
+        "code_nationalite": "FR"
+      },
+      "links": {},
+      "meta": {}
+    }
+  ],
+  "meta": {
+    "personnes_physiques_count": 2,
+    "personnes_morales_count": 0,
+    "count": 2
+  },
+  "links": {}
+}

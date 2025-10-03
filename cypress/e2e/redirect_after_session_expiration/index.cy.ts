@@ -1,4 +1,8 @@
 describe("redirect after session expiration", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should be redirected to organization management page", function () {
     cy.visit("/manage-organizations");
 

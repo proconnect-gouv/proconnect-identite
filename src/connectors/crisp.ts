@@ -1,20 +1,23 @@
 //
 
-import { fetch_crisp, type Config } from "@numerique-gouv/crisp";
+import { fetch_crisp } from "@proconnect-gouv/proconnect.crisp/client";
 import type {
   CreateConversationRoute,
   SendMessageInAConversationRoute,
   UpdateConversationMetaRoute,
   UpdateConversationStateRoute,
-} from "@numerique-gouv/crisp/router/conversation";
+} from "@proconnect-gouv/proconnect.crisp/router";
+import type { Config } from "@proconnect-gouv/proconnect.crisp/types";
 import {
   CRISP_BASE_URL,
   CRISP_IDENTIFIER,
   CRISP_KEY,
+  CRISP_MODERATION_TAG,
   CRISP_PLUGIN_URN,
   CRISP_RESOLVE_DELAY,
   CRISP_USER_NICKNAME,
   CRISP_WEBSITE_ID,
+  WEBSITE_IDENTIFIER,
 } from "../config/env";
 
 //
@@ -54,7 +57,7 @@ export async function startCripsConversation({
     body: {
       email,
       nickname,
-      segments: ["email", "moderation"],
+      segments: ["email", ...CRISP_MODERATION_TAG, WEBSITE_IDENTIFIER],
       subject,
     },
   });

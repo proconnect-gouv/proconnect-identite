@@ -1,7 +1,11 @@
 describe("should suggest valid email address", () => {
+  it("should seed the database once", function () {
+    cy.seed();
+  });
+
   it("should sign-in", function () {
     cy.visit("http://localhost:4001");
-    cy.get("button.moncomptepro-button").click();
+    cy.get("button.proconnect-button").click();
 
     cy.get('[name="login"]').should("have.value", "unused1@yopmail.com");
     cy.contains("Adresse email invalide.");

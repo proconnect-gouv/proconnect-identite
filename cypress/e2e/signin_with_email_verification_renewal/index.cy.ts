@@ -1,42 +1,23 @@
 //
 
-import { getVerificationCodeFromEmail } from "#cypress/support/get-from-email";
-
 describe("sign-in with email verification renewal", () => {
-  before(() => {
-    cy.mailslurp().then((mailslurp) =>
-      mailslurp.inboxController.deleteAllInboxEmails({
-        inboxId: "bad1b70d-e5cb-436c-9ff3-f83d4af5d198",
-      }),
-    );
+  it("should seed the database once", function () {
+    cy.seed();
   });
 
   it("should sign-in with email verification needed", () => {
     // Visit the signup page
     cy.visit("/users/start-sign-in");
 
-    cy.login("bad1b70d-e5cb-436c-9ff3-f83d4af5d198@mailslurp.com");
+    cy.login("lion.eljonson@darkangels.world");
 
     cy.contains(
       "pour garantir la sécurité de votre compte, votre adresse email doit être vérifiée régulièrement.",
     );
 
-    cy.mailslurp()
-      .then((mailslurp) =>
-        mailslurp.waitForLatestEmail(
-          "bad1b70d-e5cb-436c-9ff3-f83d4af5d198",
-          60000,
-          true,
-        ),
-      )
-      .then(getVerificationCodeFromEmail)
-      // fill out the verification form and submit
-      .then((code) => {
-        cy.get('[name="verify_email_token"]').type(code);
-        cy.get('[type="submit"]').click();
-      });
+    cy.verifyEmail();
 
-    cy.contains("Votre compte est créé");
+    cy.contains("Votre compte ProConnect");
   });
 
   it("should not show renewal notification for account creation", () => {

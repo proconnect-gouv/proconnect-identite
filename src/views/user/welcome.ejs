@@ -1,10 +1,10 @@
 <div>
     <div class="fr-mb-2w">
-        <img src="/dist/check.svg" alt="" />
+        <img src="/dist/check.svg" alt="" class="limited-width"/>
     </div>
     <h1 class="fr-h3">
         <% if (locals.showInclusionConnectOnboardingHelp) { %>
-            Votre compte MonComptePro est à jour.
+            Votre compte ProConnect est à jour.
         <% } else { %>
             Votre compte est créé !
         <% } %>
@@ -14,9 +14,9 @@
             Vous avez reçu un email de confirmation.
         </p>
         <form action="/users/welcome" method="post">
-            <input type="hidden" name="_csrf" value="<%= csrfToken; %>" autocomplete="off">
+            <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 
-            <%- include('../partials/card-button-container.ejs', {label: 'Continuer'}) %>
+            <%- include('../partials/submit-button.ejs', {label: 'Continuer'}) %>
         </form>
     </div>
 </div>
