@@ -126,7 +126,7 @@
     "@types/cookie-parser": "^1.4.9",
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.3",
-    "@types/express-session": "^1.18.1",
+    "@types/express-session": "^1.18.2",
     "@types/html-to-text": "^9.0.4",
     "@types/http-errors": "^2.0.4",
     "@types/lodash": "^4.17.20",
