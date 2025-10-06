@@ -3,11 +3,11 @@ import {
   findByUserIdFactory,
   getByIdFactory,
   getUsersByOrganizationFactory,
-} from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
+} from "@proconnect-gouv/proconnect.identite/repositories/organization";
 import type {
   Organization,
   UserOrganizationLink,
-} from "@gouvfr-lasuite/proconnect.identite/types";
+} from "@proconnect-gouv/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../../connectors/postgres";
 

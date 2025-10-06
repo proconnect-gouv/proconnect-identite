@@ -42,4 +42,4 @@ jobs:
       - run: npm run fixtures:load-ci -- scripts/fixtures.sql
       - run: npm run update-organization-info -- 0
 
-      - run: npm run test --workspace=@gouvfr-lasuite/proconnect.identite.database
+      - run: npm run test --workspace=@proconnect-gouv/proconnect.identite.database

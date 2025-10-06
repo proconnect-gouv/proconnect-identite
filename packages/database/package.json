@@ -1,5 +1,5 @@
 {
-  "name": "@gouvfr-lasuite/proconnect.identite.database",
+  "name": "@proconnect-gouv/proconnect.identite.database",
   "version": "0.0.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/database#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.8",
-    "@gouvfr-lasuite/proconnect.devtools.typescript": "0.0.0",
+    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/pg": "^8.15.5",
     "drizzle-kit": "^0.31.4",
     "pg": "^8.16.3",

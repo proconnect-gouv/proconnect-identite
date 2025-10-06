@@ -3,7 +3,7 @@
 import {
   getEmailDomain,
   isAFreeDomain,
-} from "@gouvfr-lasuite/proconnect.core/services/email";
+} from "@proconnect-gouv/proconnect.core/services/email";
 import {
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE,
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE,

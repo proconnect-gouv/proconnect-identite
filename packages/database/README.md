@@ -1,11 +1,11 @@
-# 📦 @gouvfr-lasuite/proconnect.identite.database
+# 📦 @proconnect-gouv/proconnect.identite.database
 
 > 🗄️ Database schema package for ProConnect Identité
 
 ## ⚙️ Installation
 
 ```bash
-npm install @gouvfr-lasuite/proconnect.identite.database
+npm install @proconnect-gouv/proconnect.identite.database
 ```
 
 ## 📖 Usage
@@ -15,7 +15,7 @@ npm install @gouvfr-lasuite/proconnect.identite.database
 Apply the ProConnect Identité database schema to your PostgreSQL or PGlite instance using the provided `migrate` function:
 
 ```ts
-import { migrate } from "@gouvfr-lasuite/proconnect.identite.database";
+import { migrate } from "@proconnect-gouv/proconnect.identite.database";
 import { Client } from "pg";
 
 // With PostgreSQL client
@@ -33,7 +33,7 @@ await client.end();
 ```
 
 ```ts
-import { migrate } from "@gouvfr-lasuite/proconnect.identite.database";
+import { migrate } from "@proconnect-gouv/proconnect.identite.database";
 import { PGlite } from "@electric-sql/pglite";
 
 // With PGlite (in-memory or file-based)

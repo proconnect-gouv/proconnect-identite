@@ -1,11 +1,11 @@
 //
 
 import { FRANCECONNECT_CITIZENS } from "#src/api/data/franceconnect";
+import { zValidator } from "@hono/zod-validator";
 import {
   FranceConnectUserInfoResponseSchema,
   type FranceConnectUserInfoResponse,
-} from "@gouvfr-lasuite/proconnect.identite/types";
-import { zValidator } from "@hono/zod-validator";
+} from "@proconnect-gouv/proconnect.identite/types";
 import assert from "assert/strict";
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";

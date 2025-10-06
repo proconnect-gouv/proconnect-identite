@@ -7,7 +7,7 @@ import type {
 } from "#src/repositories/organization";
 import type { GetByIdHandler as GetUserByIdHandler } from "#src/repositories/user";
 import type { BaseUserOrganizationLink } from "#src/types";
-import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { match } from "ts-pattern";
 import { UserOrganizationLinkVerificationTypeSchema } from "../../types/index.js";
 

@@ -9,6 +9,7 @@ WORKDIR /app
 FROM base AS prod-deps
 RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=package-lock.json,target=package-lock.json \
+  --mount=type=bind,source=packages/annuaire_entreprises/package.json,target=packages/annuaire_entreprises/package.json \
   --mount=type=bind,source=packages/core/package.json,target=packages/core/package.json \
   --mount=type=bind,source=packages/crisp/package.json,target=packages/crisp/package.json \
   --mount=type=bind,source=packages/debounce/package.json,target=packages/debounce/package.json \
@@ -25,6 +26,7 @@ FROM base AS build
 ENV CYPRESS_INSTALL_BINARY=0
 RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=package-lock.json,target=package-lock.json \
+  --mount=type=bind,source=packages/annuaire_entreprises/package.json,target=packages/annuaire_entreprises/package.json \
   --mount=type=bind,source=packages/core/package.json,target=packages/core/package.json \
   --mount=type=bind,source=packages/crisp/package.json,target=packages/crisp/package.json \
   --mount=type=bind,source=packages/debounce/package.json,target=packages/debounce/package.json \

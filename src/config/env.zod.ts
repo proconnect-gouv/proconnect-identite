@@ -88,12 +88,13 @@ export const featureTogglesEnvSchema = z.object({
 
 export const secretEnvSchema = z.object({
   SYMMETRIC_ENCRYPTION_KEY: z
-    .string()
     .base64({
-      message:
-        "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long! Use crypto.randomBytes(32).toString('base64') to generate one.",
+      error: [
+        "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long!",
+        "Use crypto.randomBytes(32).toString('base64') to generate one.",
+      ].join(" "),
     })
-    .default("aTrueRandom32BytesLongBase64EncodedStringAA="),
+    .default(randomBytes(32).toString("base64")),
   SESSION_COOKIE_SECRET: zCoerceArray().default([
     randomBytes(32).toString("base64"),
   ]),

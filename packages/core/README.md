@@ -1,11 +1,11 @@
-# 🪙 @gouvfr-lasuite/proconnect.core
+# 🪙 @proconnect-gouv/proconnect.core
 
 > 🪙 The core of ProConnect Apps
 
 ## ⚙️ Installation
 
 ```bash
-npm install @gouvfr-lasuite/proconnect.core
+npm install @proconnect-gouv/proconnect.core
 ```
 
 ## 📖 Usage
@@ -13,33 +13,39 @@ npm install @gouvfr-lasuite/proconnect.core
 ### Security Utilities
 
 ```typescript
-import { hashPassword, isPasswordSecure } from "@gouvfr-lasuite/proconnect.core/security";
+import {
+  hashPassword,
+  isPasswordSecure,
+} from "@proconnect-gouv/proconnect.core/security";
 ```
 
 ### Email Services
 
 ```typescript
-import { getEmailDomain, isAFreeDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
+import {
+  getEmailDomain,
+  isAFreeDomain,
+} from "@proconnect-gouv/proconnect.core/services/email";
 ```
 
 ### Data Access
 
 ```typescript
-import { 
-  mostUsedFreeEmailDomains, 
-  gouvfrDomains, 
-  otherGouvDomains 
-} from "@gouvfr-lasuite/proconnect.core/data";
+import {
+  mostUsedFreeEmailDomains,
+  gouvfrDomains,
+  otherGouvDomains,
+} from "@proconnect-gouv/proconnect.core/data";
 ```
 
 ### OIDC Provider
 
-[@gouvfr-lasuite/proconnect.core/service/oidc](./src/services/oidc#readme)
+[@proconnect-gouv/proconnect.core/service/oidc](./src/services/oidc#readme)
 
 ### Suggestion Services
 
 ```typescript
-import { didYouMean } from "@gouvfr-lasuite/proconnect.core/services/suggestion";
+import { didYouMean } from "@proconnect-gouv/proconnect.core/services/suggestion";
 ```
 
 ## 📊 Available Exports

@@ -1,5 +1,5 @@
-import { getEmailDomain } from "@gouvfr-lasuite/proconnect.core/services/email";
-import { singleValidationFactory } from "@gouvfr-lasuite/proconnect.debounce/api";
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
+import { singleValidationFactory } from "@proconnect-gouv/proconnect.debounce/api";
 import {
   DEBOUNCE_API_KEY,
   EMAIL_DELIVERABILITY_WHITELIST,

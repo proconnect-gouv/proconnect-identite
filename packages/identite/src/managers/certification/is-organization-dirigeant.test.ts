@@ -13,7 +13,7 @@ import { UlysseToriMandataire } from "#testing/seed/mandataires";
 import {
   Papillon,
   RogalDornEntrepreneur as RogalDornSireneEntrepreneur,
-} from "@gouvfr-lasuite/proconnect.entreprise/testing/seed/insee/siret";
+} from "@proconnect-gouv/proconnect.entreprise/testing/seed/insee/siret";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { isOrganizationDirigeantFactory } from "./is-organization-dirigeant.js";

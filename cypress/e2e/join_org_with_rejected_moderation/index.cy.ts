@@ -22,7 +22,7 @@ describe("join organization with rejected moderation", () => {
     cy.contains(
       "Nous n'avons pu établir aucun lien entre votre profil et l'organisation",
     );
-    cy.contains("Rechercher une autre organisation").click();
+    cy.getByLabel("Changer d’organisation").click();
 
     cy.title().should("include", "Rejoindre une organisation - ProConnect");
   });
@@ -41,7 +41,6 @@ describe("join organization with rejected moderation", () => {
     cy.title().should("include", "Informations à corriger - ProConnect");
     cy.contains("Modifications demandées");
     cy.contains("Motif : Inversion Nom et Prénom");
-    cy.contains("Rechercher une autre organisation");
     cy.getByLabel("Corriger le nom").click();
 
     cy.title().should("include", "Renseigner votre identité - ProConnect");
@@ -77,8 +76,8 @@ describe("join organization with rejected moderation", () => {
     cy.contains(
       "Nous n'avons pu établir aucun lien entre votre profil et l'organisation",
     );
-    cy.contains("Rechercher une autre organisation").click();
+    cy.getByLabel("Changer d’adresse email").click();
 
-    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
   });
 });

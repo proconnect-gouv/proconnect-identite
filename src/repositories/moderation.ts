@@ -1,4 +1,4 @@
-import { ModerationNotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
+import { ModerationNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../connectors/postgres";
 

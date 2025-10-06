@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { SymmetricEncryptionError } from "../src/config/errors";
 import {
   decryptSymmetric,
   encryptSymmetric,
-} from "../src/services/symmetric-encryption"; // Replace with the actual path of your module
+} from "../src/services/symmetric-encryption";
 
 const key = "aTrueRandom32BytesLongBase64EncodedStringAA=";
 
@@ -14,17 +15,28 @@ describe("Symmetric encryption with aes-128-ccm", () => {
     assert.equal(decryptSymmetric(key, encryptedText), plain);
   });
 
-  it("should throw when encrypted string is null", () => {
+  it("should throw SymmetricEncryptionError when encrypted text is null", () => {
     assert.throws(
       () => decryptSymmetric(key, null),
-      new Error("Invalid encrypted text"),
+      new SymmetricEncryptionError("Invalid encrypted text format"),
     );
   });
 
-  it("should throw when encrypted string is invalid", () => {
+  it("should throw SymmetricEncryptionError when encrypted string has invalid format", () => {
     assert.throws(
-      () => decryptSymmetric(key, "null"),
-      new Error("Invalid encrypted text"),
+      () => decryptSymmetric(key, "invalid.format"),
+      new SymmetricEncryptionError("Invalid encrypted text format"),
+    );
+  });
+
+  it("should throw SymmetricEncryptionError when decrypting with wrong key", () => {
+    const plain = "Bonjour monde !";
+    const encryptedText = encryptSymmetric(key, plain);
+    const wrongKey = "bTrueRandom32BytesLongBase64EncodedStringBB=";
+
+    assert.throws(
+      () => decryptSymmetric(wrongKey, encryptedText),
+      new Error("Unsupported state or unable to authenticate data"),
     );
   });
 });

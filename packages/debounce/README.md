@@ -1,11 +1,11 @@
-# 📦 @gouvfr-lasuite/proconnect.debounce
+# 📦 @proconnect-gouv/proconnect.debounce
 
 > ⚡ Typed Debounce API for ProConnect
 
 ## ⚙️ Installation
 
 ```bash
-npm install @gouvfr-lasuite/proconnect.debounce
+npm install @proconnect-gouv/proconnect.debounce
 ```
 
 ## 📖 Usage
@@ -13,7 +13,7 @@ npm install @gouvfr-lasuite/proconnect.debounce
 ### [Single Validation](https://developers.debounce.io/reference/single-validation)
 
 ```ts
-import { singleValidationFactory } from "@gouvfr-lasuite/proconnect.debounce/api";
+import { singleValidationFactory } from "@proconnect-gouv/proconnect.debounce/api";
 
 const singleValidation = singleValidationFactory(DEBOUNCE_API_KEY);
 

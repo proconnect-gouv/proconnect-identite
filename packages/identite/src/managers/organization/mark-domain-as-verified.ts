@@ -7,15 +7,15 @@ import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import type {
   AddDomainHandler,
   DeleteEmailDomainsByVerificationTypesHandler,
-} from "@gouvfr-lasuite/proconnect.identite/repositories/email-domain";
-import type { FindByIdHandler } from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
+} from "@proconnect-gouv/proconnect.identite/repositories/email-domain";
+import type { FindByIdHandler } from "@proconnect-gouv/proconnect.identite/repositories/organization";
 import {
   EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
   EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
   type EmailDomainApprovedVerificationType,
   type EmailDomainRejectedVerificationType,
   type EmailDomainVerificationType,
-} from "@gouvfr-lasuite/proconnect.identite/types";
+} from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { match } from "ts-pattern";
 

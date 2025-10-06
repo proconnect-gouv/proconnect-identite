@@ -56,21 +56,23 @@
       <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Email</p>
       <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
         <span><b><%= email; %></b></span>
+        <a
+          href="/users/start-sign-in"
+          class="fr-icon-edit-fill blue-france"
+          aria-label="Changer d’adresse email"
+          title="Changer d’adresse email"
+        ></a>
       </div>
       <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Organisation</p>
       <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
         <span><b><%= organization_label; %></b></span>
+        <a
+          href="/users/join-organization"
+          class="fr-icon-edit-fill blue-france"
+          aria-label="Changer d’organisation"
+          title="Changer d’organisation"
+        ></a>
       </div>
-    </div>
-  </div>
-  <div class="fr-mt-4w fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-col-md-6">
-      <a
-        href="/users/join-organization"
-        class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-      >
-        Rechercher une autre organisation
-      </a>
     </div>
   </div>
 </div>

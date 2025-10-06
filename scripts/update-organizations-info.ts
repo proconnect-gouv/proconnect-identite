@@ -1,7 +1,7 @@
 //
 
-import { findBySiretFactory } from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
-import { getOrganizationInfoFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
+import { findBySiretFactory } from "@proconnect-gouv/proconnect.entreprise/api/insee";
+import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";

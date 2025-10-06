@@ -5,7 +5,7 @@ import {
   getFranceConnectLogoutRedirectUrlFactory,
   getFranceConnectRedirectUrlFactory,
   getFranceConnectUserFactory,
-} from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
+} from "@proconnect-gouv/proconnect.identite/managers/franceconnect";
 import {
   DEPLOY_ENV,
   FRANCECONNECT_CLIENT_ID,

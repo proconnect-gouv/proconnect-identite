@@ -2,9 +2,9 @@
 import {
   isDomainValid,
   isSiretValid,
-} from "@gouvfr-lasuite/proconnect.core/security";
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
-import type { Organization } from "@gouvfr-lasuite/proconnect.identite/types";
+} from "@proconnect-gouv/proconnect.core/security";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";

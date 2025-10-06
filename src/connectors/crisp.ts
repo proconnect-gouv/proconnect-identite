@@ -1,13 +1,13 @@
 //
 
-import { fetch_crisp } from "@gouvfr-lasuite/proconnect.crisp/client";
+import { fetch_crisp } from "@proconnect-gouv/proconnect.crisp/client";
 import type {
   CreateConversationRoute,
   SendMessageInAConversationRoute,
   UpdateConversationMetaRoute,
   UpdateConversationStateRoute,
-} from "@gouvfr-lasuite/proconnect.crisp/router";
-import type { Config } from "@gouvfr-lasuite/proconnect.crisp/types";
+} from "@proconnect-gouv/proconnect.crisp/router";
+import type { Config } from "@proconnect-gouv/proconnect.crisp/types";
 import {
   CRISP_BASE_URL,
   CRISP_IDENTIFIER,

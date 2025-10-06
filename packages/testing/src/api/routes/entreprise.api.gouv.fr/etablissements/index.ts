@@ -1,7 +1,7 @@
 //
 
-import type { InseeSireneEstablishmentSiretResponseData } from "@gouvfr-lasuite/proconnect.entreprise/types";
 import { zValidator } from "@hono/zod-validator";
+import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.entreprise/types";
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { glob, readdir, readFile } from "node:fs/promises";

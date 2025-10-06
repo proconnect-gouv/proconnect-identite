@@ -1,4 +1,4 @@
-import { createTestingHandler } from "@gouvfr-lasuite/proconnect.testing/api";
+import { createTestingHandler } from "@proconnect-gouv/proconnect.testing/api";
 import * as Sentry from "@sentry/node";
 import { RedisStore } from "connect-redis";
 import type { NextFunction, Request, Response } from "express";

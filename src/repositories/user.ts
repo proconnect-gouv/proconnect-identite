@@ -6,8 +6,8 @@ import {
   getFranceConnectUserInfoFactory,
   updateUserFactory,
   upsertFranceconnectUserinfoFactory,
-} from "@gouvfr-lasuite/proconnect.identite/repositories/user";
-import type { User } from "@gouvfr-lasuite/proconnect.identite/types";
+} from "@proconnect-gouv/proconnect.identite/repositories/user";
+import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../connectors/postgres";
 

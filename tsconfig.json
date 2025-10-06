@@ -29,5 +29,5 @@
     { "path": "./packages/identite/tsconfig.lib.json" },
     { "path": "./packages/testing/tsconfig.lib.json" }
   ],
-  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json"
+  "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json"
 }

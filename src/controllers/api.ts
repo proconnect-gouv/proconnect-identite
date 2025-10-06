@@ -1,11 +1,11 @@
 import {
   EntrepriseApiConnectionError,
   EntrepriseApiError,
-} from "@gouvfr-lasuite/proconnect.entreprise/types";
+} from "@proconnect-gouv/proconnect.entreprise/types";
 import {
   InvalidSiretError,
   NotFoundError,
-} from "@gouvfr-lasuite/proconnect.identite/errors";
+} from "@proconnect-gouv/proconnect.identite/errors";
 import * as Sentry from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";

@@ -6,7 +6,7 @@
     "rootDir": "src",
     "types": ["node"]
   },
-  "extends": "@gouvfr-lasuite/proconnect.devtools.typescript/base/tsconfig.json",
+  "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
   "include": ["src", "openapi"],
   "references": []
 }

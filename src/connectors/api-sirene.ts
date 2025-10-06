@@ -1,25 +1,25 @@
 //
 
-import { findMandatairesSociauxBySirenFactory } from "@gouvfr-lasuite/proconnect.entreprise/api/infogreffe";
+import { findMandatairesSociauxBySirenFactory } from "@proconnect-gouv/proconnect.entreprise/api/infogreffe";
 import {
   findBySirenFactory,
   findBySiretFactory,
-} from "@gouvfr-lasuite/proconnect.entreprise/api/insee";
+} from "@proconnect-gouv/proconnect.entreprise/api/insee";
 import {
   createEntrepriseOpenApiClient,
   type EntrepriseOpenApiClient,
-} from "@gouvfr-lasuite/proconnect.entreprise/client";
-import { getOrganizationInfoFactory } from "@gouvfr-lasuite/proconnect.identite/managers/organization";
-import * as InseeApi from "@gouvfr-lasuite/proconnect.insee/api";
+} from "@proconnect-gouv/proconnect.entreprise/client";
+import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
+import * as InseeApi from "@proconnect-gouv/proconnect.insee/api";
 import {
   createInseeSirenePrivateOpenApiClient,
   type InseeSirenePrivateOpenApiClient,
-} from "@gouvfr-lasuite/proconnect.insee/client";
-import { TestingInseeApiRouter } from "@gouvfr-lasuite/proconnect.testing/api/routes/api.insee.fr";
-import { TESTING_INSEE_API_SIRETS } from "@gouvfr-lasuite/proconnect.testing/api/routes/api.insee.fr/etablissements";
-import { TestingEntrepriseApiRouter } from "@gouvfr-lasuite/proconnect.testing/api/routes/entreprise.api.gouv.fr";
-import { TESTING_ENTREPRISE_API_SIRETS } from "@gouvfr-lasuite/proconnect.testing/api/routes/entreprise.api.gouv.fr/etablissements";
-import { TESTING_ENTREPRISE_API_MANDATAIRES_SIREN } from "@gouvfr-lasuite/proconnect.testing/api/routes/entreprise.api.gouv.fr/mandataires_sociaux";
+} from "@proconnect-gouv/proconnect.insee/client";
+import { TestingInseeApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/api.insee.fr";
+import { TESTING_INSEE_API_SIRETS } from "@proconnect-gouv/proconnect.testing/api/routes/api.insee.fr/etablissements";
+import { TestingEntrepriseApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/entreprise.api.gouv.fr";
+import { TESTING_ENTREPRISE_API_SIRETS } from "@proconnect-gouv/proconnect.testing/api/routes/entreprise.api.gouv.fr/etablissements";
+import { TESTING_ENTREPRISE_API_MANDATAIRES_SIREN } from "@proconnect-gouv/proconnect.testing/api/routes/entreprise.api.gouv.fr/mandataires_sociaux";
 import {
   ENTREPRISE_API_TOKEN,
   ENTREPRISE_API_TRACKING_CONTEXT,

@@ -1,4 +1,4 @@
-import { NotFoundError } from "@gouvfr-lasuite/proconnect.identite/errors";
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import * as Sentry from "@sentry/node";
 import { isEmpty, isString } from "lodash-es";
 import type { KoaContextWithOIDC } from "oidc-provider";

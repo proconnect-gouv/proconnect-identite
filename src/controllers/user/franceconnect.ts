@@ -3,7 +3,7 @@
 import {
   createOidcChecks,
   getFranceConnectRedirectUrlFactory,
-} from "@gouvfr-lasuite/proconnect.identite/managers/franceconnect";
+} from "@proconnect-gouv/proconnect.identite/managers/franceconnect";
 import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { AssertionError } from "node:assert";

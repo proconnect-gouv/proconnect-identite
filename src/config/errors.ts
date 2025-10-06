@@ -147,3 +147,10 @@ export class OidcFranceConnectBackChannelError extends Error {
     this.name = "OidcFranceConnectError";
   }
 }
+
+export class SymmetricEncryptionError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "SymmetricEncryptionError";
+  }
+}

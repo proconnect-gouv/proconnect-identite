@@ -1,4 +1,4 @@
-import { isEmailValid } from "@gouvfr-lasuite/proconnect.core/security";
+import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import { isEmpty, isString } from "lodash-es";
 import {

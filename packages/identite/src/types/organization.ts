@@ -1,6 +1,6 @@
 //
 
-import type { TrancheEffectifs } from "@gouvfr-lasuite/proconnect.entreprise/types";
+import type { TrancheEffectifs } from "@proconnect-gouv/proconnect.entreprise/types";
 
 //
 

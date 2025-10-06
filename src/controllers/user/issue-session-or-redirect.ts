@@ -1,4 +1,4 @@
-import { getTrustedReferrerPath } from "@gouvfr-lasuite/proconnect.core/security";
+import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
 import { HOST } from "../../config/env";
 

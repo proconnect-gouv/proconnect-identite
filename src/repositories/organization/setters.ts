@@ -1,8 +1,8 @@
 import {
   linkUserToOrganizationFactory,
   upsertFactory,
-} from "@gouvfr-lasuite/proconnect.identite/repositories/organization";
-import { updateUserOrganizationLinkFactory } from "@gouvfr-lasuite/proconnect.identite/repositories/user";
+} from "@proconnect-gouv/proconnect.identite/repositories/organization";
+import { updateUserOrganizationLinkFactory } from "@proconnect-gouv/proconnect.identite/repositories/user";
 import { getDatabaseConnection } from "../../connectors/postgres";
 
 export const upsert = upsertFactory({ pg: getDatabaseConnection() });
