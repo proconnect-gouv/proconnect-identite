@@ -24,8 +24,9 @@ describe(
       await migrate(pg.client);
 
       await pg.client.query(`
-        DROP TABLE IF EXISTS "pgmigrations";
+        DROP TABLE IF EXISTS public.pgmigrations;
       `);
+
       // Verify migration completed successfully
       const result = await pg.client.query(`
       SELECT table_name
