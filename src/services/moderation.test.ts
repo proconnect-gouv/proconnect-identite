@@ -79,8 +79,6 @@ describe("isWarningRejection", () => {
       "Inversion Nom et Prénom",
       "Nom et/ou Prénom manquants",
       "Nom et/ou prénom mal renseignés - Modération non-bloquante",
-      "Profession mal renseignée - Modération non-bloquante",
-      "Profession mal renseignée",
     ];
 
     warningReasons.forEach((reason) => {
@@ -96,6 +94,8 @@ describe("isWarningRejection", () => {
       "Organisation non éligible",
       "",
       "Inversion Nom",
+      "Profession mal renseignée - Modération non-bloquante",
+      "Profession mal renseignée",
     ];
 
     blockingReasons.forEach((reason) => {
