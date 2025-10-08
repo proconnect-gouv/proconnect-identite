@@ -82,7 +82,7 @@
   "devDependencies": {
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/node": "^22.18.6",
-    "pkgroll": "^2.12.1",
+    "pkgroll": "^2.18.0",
     "tsx": "^4.20.3"
   },
   "publishConfig": {
