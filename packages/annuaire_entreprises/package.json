@@ -50,6 +50,14 @@
     "npm-run-all2": "^8.0.4",
     "tsx": "^4.20.3"
   },
+  "peerDependencies": {
+    "@annuaire-entreprises-data-gouv-fr/search-infra": "annuaire-entreprises-data-gouv-fr/search-infra#3c339c4f4e0367eddb24c827667d7db64623f43d"
+  },
+  "peerDependenciesMeta": {
+    "@annuaire-entreprises-data-gouv-fr/search-infra": {
+      "optional": true
+    }
+  },
   "publishConfig": {
     "access": "public",
     "provenance": true
