@@ -39,10 +39,16 @@ const isWhitelisted = SERVICE_PUBLIC_WHITELIST.includes("987654321");
 
 ## 🔄 Data Updates
 
-Data is synced from the [Annuaire des Entreprises search infrastructure](https://github.com/annuaire-entreprises-data-gouv-fr/search-infra) using:
+Data is sourced directly from the [Annuaire des Entreprises search infrastructure](https://github.com/annuaire-entreprises-data-gouv-fr/search-infra).
+
+The package imports JSON files directly from `vendor/search-infra/helpers/labels/` at runtime - no build step required.
+
+Dependabot should automatically update the submodule reference but to update manually:
 
 ```bash
-npm run build:data
+cd vendor/search-infra
+git fetch origin
+git checkout <new-commit-hash>
 ```
 
 ## 📖 License

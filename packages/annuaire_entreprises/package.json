@@ -12,8 +12,12 @@
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
+  "files": [
+    "dist",
+    "vendor/search-infra/helpers/labels/*.json"
+  ],
   "imports": {
-    "#data/*": "./data/*.json",
+    "#labels/*": "./vendor/search-infra/helpers/labels/*.json",
     "#src/*": {
       "types": "./dist/*/index.d.ts",
       "default": "./dist/*/index.js"
@@ -31,12 +35,6 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.lib.json",
-    "prebuild:data": "rm -rf data",
-    "build:data": "run-p build:degit:*",
-    "postbuild:data": "prettier --write data",
-    "build:degit:administration_nature_juridique": "degit annuaire-entreprises-data-gouv-fr/search-infra/helpers/labels/administration_nature_juridique.json data/administration_nature_juridique.json",
-    "build:degit:administration_siren_blacklist": "degit annuaire-entreprises-data-gouv-fr/search-infra/helpers/labels/administration_siren_blacklist.json data/administration_siren_blacklist.json",
-    "build:degit:administration_siren_whitelist": "degit annuaire-entreprises-data-gouv-fr/search-infra/helpers/labels/administration_siren_whitelist.json data/administration_siren_whitelist.json",
     "check": "npm run build -- --noEmit",
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
@@ -46,17 +44,7 @@
   "devDependencies": {
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/node": "^22.18.6",
-    "degit": "^2.8.4",
-    "npm-run-all2": "^8.0.4",
     "tsx": "^4.20.3"
-  },
-  "peerDependencies": {
-    "@annuaire-entreprises-data-gouv-fr/search-infra": "annuaire-entreprises-data-gouv-fr/search-infra#3c339c4f4e0367eddb24c827667d7db64623f43d"
-  },
-  "peerDependenciesMeta": {
-    "@annuaire-entreprises-data-gouv-fr/search-infra": {
-      "optional": true
-    }
   },
   "publishConfig": {
     "access": "public",

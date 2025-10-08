@@ -1,8 +1,8 @@
 //
 
-import administration_nature_juridique from "#data/administration_nature_juridique" with { type: "json" };
-import administration_siren_blacklist from "#data/administration_siren_blacklist" with { type: "json" };
-import administration_siren_whitelist from "#data/administration_siren_whitelist" with { type: "json" };
+import administration_nature_juridique from "#labels/administration_nature_juridique" with { type: "json" };
+import administration_siren_blacklist from "#labels/administration_siren_blacklist" with { type: "json" };
+import administration_siren_whitelist from "#labels/administration_siren_whitelist" with { type: "json" };
 
 //
 

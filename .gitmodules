@@ -1,0 +1,3 @@
+[submodule "packages/annuaire_entreprises/vendor/search-infra"]
+	path = packages/annuaire_entreprises/vendor/search-infra
+	url = https://github.com/annuaire-entreprises-data-gouv-fr/search-infra.git
