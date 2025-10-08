@@ -37,17 +37,23 @@
     "test": "npm run test:unit src/**/*.test.ts",
     "test:unit": "tsx --test --test-reporter=spec"
   },
-  "dependencies": {
-    "drizzle-orm": "^0.44.5"
-  },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.8",
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/pg": "^8.15.5",
     "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.6",
     "pg": "^8.16.3",
     "tsx": "^4.20.3",
     "zx": "^8.5.5"
+  },
+  "peerDependencies": {
+    "drizzle-orm": ">=0.44"
+  },
+  "peerDependenciesMeta": {
+    "drizzle-orm": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public",

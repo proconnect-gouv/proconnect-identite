@@ -5,7 +5,7 @@
 ## ⚙️ Installation
 
 ```bash
-npm install @proconnect-gouv/proconnect.identite.database
+npm install @proconnect-gouv/proconnect.identite.database drizzle-orm
 ```
 
 ## 📖 Usage
