@@ -30,7 +30,7 @@
     "predev": "npm run build:workspaces",
     "dev": "NODE_ENV=development concurrently \"npm:watch:*(!node)\" \"npm:watch:node\"",
     "dev:test": "npm run test:unit:runner --watch test/**/*.test.ts",
-    "clean": "npx -y del-cli build dist packages/*/dist packages/*/tsconfig*.tsbuildinfo",
+    "clean": "npx -y del-cli build dist node_modules packages/*/dist packages/*/node_modules packages/*/tsconfig*.tsbuildinfo",
     "e2e:dev": "tsx scripts/cypress-single-test-setup.ts",
     "e2e:run": "tsx scripts/cypress-single-test-run.ts",
     "e2e:studio": "npx cypress open",
