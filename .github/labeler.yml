@@ -20,6 +20,9 @@
 
 # Scopes
 
+"scope: annuaire_entreprises":
+  - changed-files:
+      - any-glob-to-any-file: "packages/annuaire_entreprises/**/*"
 "scope: core":
   - changed-files:
       - any-glob-to-any-file: "packages/core/**/*"
