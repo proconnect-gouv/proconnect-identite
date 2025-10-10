@@ -198,3 +198,15 @@ $ npx tsx scripts/testing.ts --help
 ```
 
 Note that the ./packages/testing/src/api/data/people.ts file contains a list of people that are used to anonymize data.
+
+## Troubleshooting
+
+### I can access the core service (on port 3000), but all the other services are unavailable (maildev, test client, etc.)
+
+If you're using Docker Desktop, you might have not enabled the [host networking](https://docs.docker.com/engine/network/drivers/host/). Your version of Docker Desktop must be 4.34 or later, and you can enable it by following these steps:
+
+- Open Docker Desktop
+- Navigate to Settings.
+- Under the Resources tab, select Network.
+- Check the Enable host networking option.
+- Select Apply and restart.
