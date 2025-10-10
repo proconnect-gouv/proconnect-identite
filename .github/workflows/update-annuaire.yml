@@ -1,4 +1,4 @@
-name: Update Annuaire Entreprises
+name: 🏢 Update Annuaire Entreprises
 
 on:
   schedule:
@@ -9,11 +9,14 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v5
 
-      - run: corepack enable
+      - name: ⚙️ Enable corepack
+        run: corepack enable
 
-      - uses: actions/setup-node@v5
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v5
         with:
           cache: "npm"
           node-version-file: package.json
@@ -60,7 +63,7 @@ jobs:
           "@proconnect-gouv/proconnect.annuaire_entreprises": patch
           ---
 
-          Update annuaire entreprises data from search-infra@${{ steps.latest.outputs.short_commit }}
+          ⬆️ Mise à jour des données annuaire entreprises depuis search-infra@${{ steps.latest.outputs.short_commit }}
           EOF
 
       - name: 🔀 Create Pull Request
