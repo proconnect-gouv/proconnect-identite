@@ -1,0 +1,71 @@
+name: Update Annuaire Entreprises
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Daily at 2 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - run: corepack enable
+
+      - uses: actions/setup-node@v5
+        with:
+          cache: "npm"
+          node-version-file: package.json
+
+      - name: 🔍 Get latest commit from search-infra
+        id: latest
+        run: |
+          LATEST_COMMIT=$(git ls-remote https://github.com/annuaire-entreprises-data-gouv-fr/search-infra.git HEAD | cut -f1)
+          echo "commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
+          echo "short_commit=${LATEST_COMMIT:0:7}" >> $GITHUB_OUTPUT
+
+      - name: 📋 Get current commit
+        id: current
+        run: |
+          CURRENT=$(cat packages/annuaire_entreprises/data/.commit)
+          echo "commit=$CURRENT" >> $GITHUB_OUTPUT
+          echo "short_commit=${CURRENT:0:7}" >> $GITHUB_OUTPUT
+
+      - name: ✅ Check if update needed
+        id: check
+        run: |
+          if [ "${{ steps.latest.outputs.commit }}" != "${{ steps.current.outputs.commit }}" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📦 Update commit reference
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          echo "${{ steps.latest.outputs.commit }}" > packages/annuaire_entreprises/data/.commit
+
+      - name: 🔄 Rebuild data files
+        if: steps.check.outputs.needs_update == 'true'
+        run: npm run build:data
+        working-directory: packages/annuaire_entreprises
+
+      - name: 🔀 Create Pull Request
+        if: steps.check.outputs.needs_update == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: |
+            packages/annuaire_entreprises/data/.commit
+            packages/annuaire_entreprises/data/*.json
+          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          branch: github-actions/update-annuaire-${{ steps.latest.outputs.short_commit }}
+          commit-message: "⬆️ bump annuaire-entreprises-data-gouv-fr/search-infra@${{ steps.latest.outputs.short_commit }}"
+          delete-branch: true
+          title: "⬆️ bump annuaire-entreprises-data-gouv-fr/search-infra@${{ steps.latest.outputs.short_commit }}"
+          body: |
+            <div align=center><img src="https://annuaire-entreprises.data.gouv.fr/images/linkedin.jpg" /></div>
+
+            ---
+
+            Automated update of `@annuaire-entreprises-data-gouv-fr/search-infra` from ${{ steps.current.outputs.short_commit }} to ${{ steps.latest.outputs.short_commit }}.
