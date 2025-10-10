@@ -50,10 +50,10 @@ import {
   findRejectedModeration,
 } from "../../repositories/moderation";
 import {
+  findBySiret,
   findByUserId,
   findByVerifiedEmailDomain,
   getById,
-  getBySiret,
 } from "../../repositories/organization/getters";
 import {
   linkUserToOrganization,
@@ -113,7 +113,7 @@ export const getOrganizationSuggestions = async ({
   }
 
   if (isArmeeDomain(domain)) {
-    const armeeOrganization = await getBySiret("11009001600053");
+    const armeeOrganization = await findBySiret("11009001600053");
     if (armeeOrganization) {
       return [armeeOrganization];
     }
