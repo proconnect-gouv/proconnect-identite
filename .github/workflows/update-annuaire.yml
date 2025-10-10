@@ -79,6 +79,15 @@ jobs:
           echo "  Latest:  ${{ steps.latest.outputs.short_commit }}"
           echo "  Dry run: ${{ env.DRY_RUN }}"
 
+      - name: 📋 Show data diff
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          echo "::group::📊 Data changes"
+          git diff --stat packages/annuaire_entreprises/data/
+          echo ""
+          git diff packages/annuaire_entreprises/data/
+          echo "::endgroup::"
+
       - name: 📝 Create changeset
         if: steps.check.outputs.needs_update == 'true'
         run: |
