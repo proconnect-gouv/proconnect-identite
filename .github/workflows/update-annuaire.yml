@@ -51,11 +51,24 @@ jobs:
         run: npm run build:data
         working-directory: packages/annuaire_entreprises
 
+      - name: 📝 Create changeset
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          mkdir -p .changeset
+          cat << EOF > .changeset/update-annuaire-${{ steps.latest.outputs.short_commit }}.md
+          ---
+          "@proconnect-gouv/proconnect.annuaire_entreprises": patch
+          ---
+
+          Update annuaire entreprises data from search-infra@${{ steps.latest.outputs.short_commit }}
+          EOF
+
       - name: 🔀 Create Pull Request
         if: steps.check.outputs.needs_update == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           add-paths: |
+            .changeset/*.md
             packages/annuaire_entreprises/data/.commit
             packages/annuaire_entreprises/data/*.json
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
