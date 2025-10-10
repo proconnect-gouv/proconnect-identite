@@ -3,6 +3,7 @@
 import { generateToken } from "@sunknudsen/totp";
 import { checkA11y } from "./a11y/checkA11y";
 import { seed } from "./commands/seed";
+import "./webauthn";
 
 //
 
