@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -21,8 +21,6 @@ const files = [
 ];
 
 const baseUrl = `https://raw.githubusercontent.com/annuaire-entreprises-data-gouv-fr/search-infra/${commit}/helpers/labels`;
-
-await mkdir(dataDir, { recursive: true });
 
 for (const file of files) {
   const url = `${baseUrl}/${file}`;
