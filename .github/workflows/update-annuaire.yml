@@ -6,7 +6,6 @@ on:
   pull_request:
     paths:
       - "packages/annuaire_entreprises/scripts/build-data.ts"
-      - "packages/annuaire_entreprises/data/.commit"
       - ".github/workflows/update-annuaire.yml"
   workflow_dispatch:
 
