@@ -9,19 +9,13 @@ on:
       - "packages/annuaire_entreprises/data/.commit"
       - ".github/workflows/update-annuaire.yml"
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: "Dry run mode (skip PR creation)"
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   update:
     name: 🔄 Update data files
     runs-on: ubuntu-latest
     env:
-      DRY_RUN: ${{ github.event_name == 'pull_request' || inputs.dry_run }}
+      DRY_RUN: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v5
