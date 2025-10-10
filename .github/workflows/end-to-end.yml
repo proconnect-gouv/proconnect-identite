@@ -52,6 +52,7 @@ jobs:
           - signin_with_right_acr
           - signin_with_totp
           - signin_with_totp_enrollment
+          - signin_with_webauthn
           - signup_entreprise_unipersonnelle
           - signup_with_certification_dirigeant
           - update_personal_information

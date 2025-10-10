@@ -17,6 +17,7 @@ import type {
 import { isEmpty } from "lodash-es";
 import moment from "moment";
 import "moment-timezone";
+import { AssertionError } from "node:assert";
 import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
 import {
   WebauthnAuthenticationFailedError,
@@ -294,7 +295,14 @@ export const verifyAuthentication = async ({
   const authenticator = await findAuthenticator(user.id, response.id);
 
   if (isEmpty(authenticator)) {
-    throw new NotFoundError();
+    throw new NotFoundError("Authenticator not found", {
+      cause: new AssertionError({
+        message: `Authenticator not found for credential ID ${response.id}`,
+        actual: authenticator,
+        expected: true,
+        operator: "isEmpty",
+      }),
+    });
   }
 
   const {
@@ -323,13 +331,33 @@ export const verifyAuthentication = async ({
     });
   } catch (error) {
     logger.error(error);
-    throw new WebauthnAuthenticationFailedError();
+    throw new WebauthnAuthenticationFailedError(
+      "Response verification failed",
+      {
+        cause: error,
+      },
+    );
   }
 
   const { verified, authenticationInfo } = verification;
 
   if (!verified || isEmpty(authenticationInfo)) {
-    throw new WebauthnAuthenticationFailedError();
+    throw new WebauthnAuthenticationFailedError(
+      "Response verification failed",
+      {
+        cause: verified
+          ? new AssertionError({
+              actual: authenticationInfo,
+              expected: true,
+              operator: "isEmpty",
+            })
+          : new AssertionError({
+              actual: verified,
+              expected: true,
+              operator: "isEmpty",
+            }),
+      },
+    );
   }
 
   const {

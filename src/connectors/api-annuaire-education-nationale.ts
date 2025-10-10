@@ -1,6 +1,7 @@
 import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import { isEmpty, isString } from "lodash-es";
+import { AssertionError } from "node:assert";
 import {
   FEATURE_USE_ANNUAIRE_EMAILS,
   HTTP_CLIENT_TIMEOUT,
@@ -183,7 +184,14 @@ export const getAnnuaireEducationNationaleContactEmail = async (
   siret: string | null,
 ): Promise<string> => {
   if (isEmpty(siret)) {
-    throw new ApiAnnuaireNotFoundError();
+    throw new ApiAnnuaireNotFoundError("siret is empty", {
+      cause: new AssertionError({
+        actual: siret,
+        expected: "non-empty siret",
+        message: "siret parameter must not be empty",
+        operator: "isEmpty",
+      }),
+    });
   }
 
   let records: ApiAnnuaireEducationNationaleReponse["records"] = [];
@@ -206,7 +214,7 @@ export const getAnnuaireEducationNationaleContactEmail = async (
         e.code === "ERR_BAD_RESPONSE" ||
         e.code === "EAI_AGAIN")
     ) {
-      throw new ApiAnnuaireConnectionError();
+      throw new ApiAnnuaireConnectionError(e.code, { cause: e });
     }
 
     throw e;
@@ -219,7 +227,14 @@ export const getAnnuaireEducationNationaleContactEmail = async (
   record = records[0];
 
   if (isEmpty(record)) {
-    throw new ApiAnnuaireNotFoundError();
+    throw new ApiAnnuaireNotFoundError("No record found for siret", {
+      cause: new AssertionError({
+        actual: siret,
+        expected: "siret matching an établissement",
+        message: "No établissement found in annuaire for the provided siret",
+        operator: "isEmpty",
+      }),
+    });
   }
 
   const {
@@ -229,13 +244,27 @@ export const getAnnuaireEducationNationaleContactEmail = async (
   } = record;
 
   if (!isString(mail)) {
-    throw new ApiAnnuaireInvalidEmailError();
+    throw new ApiAnnuaireInvalidEmailError("Mail field is not a string", {
+      cause: new AssertionError({
+        actual: typeof mail,
+        expected: "string",
+        message: "Mail field must be a string",
+        operator: "isString",
+      }),
+    });
   }
 
   const formattedEmail = mail.toLowerCase().trim();
 
   if (!isEmailValid(formattedEmail)) {
-    throw new ApiAnnuaireInvalidEmailError();
+    throw new ApiAnnuaireInvalidEmailError("Email format is invalid", {
+      cause: new AssertionError({
+        actual: formattedEmail,
+        expected: "valid email format",
+        message: "Email must be in valid format",
+        operator: "isEmailValid",
+      }),
+    });
   }
 
   if (!FEATURE_USE_ANNUAIRE_EMAILS) {

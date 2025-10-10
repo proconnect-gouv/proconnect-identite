@@ -7,10 +7,9 @@
       "#data/*": ["./data/*"]
     },
     "resolveJsonModule": true,
-    "rootDir": "src",
     "types": ["node"]
   },
   "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
-  "include": ["src"],
+  "include": ["scripts", "src"],
   "references": []
 }
