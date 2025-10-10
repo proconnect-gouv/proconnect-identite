@@ -71,8 +71,18 @@ jobs:
         run: npm run build:data
         working-directory: packages/annuaire_entreprises
 
-      - name: 🏷️ Show update summary
+      - name: 🔍 Check for data changes
         if: steps.check.outputs.needs_update == 'true'
+        id: data_check
+        run: |
+          if git diff --quiet packages/annuaire_entreprises/data/*.json; then
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🏷️ Show update summary
+        if: steps.data_check.outputs.needs_update == 'true'
         run: |
           echo "📊 Update Summary:"
           echo "  Current: ${{ steps.current.outputs.short_commit }}"
@@ -80,7 +90,7 @@ jobs:
           echo "  Dry run: ${{ env.DRY_RUN }}"
 
       - name: 📋 Show data diff
-        if: steps.check.outputs.needs_update == 'true'
+        if: steps.data_check.outputs.needs_update == 'true'
         run: |
           echo "::group::📊 Data changes"
           git diff --stat packages/annuaire_entreprises/data/
@@ -89,7 +99,7 @@ jobs:
           echo "::endgroup::"
 
       - name: 📝 Create changeset
-        if: steps.check.outputs.needs_update == 'true'
+        if: steps.data_check.outputs.needs_update == 'true'
         run: |
           mkdir -p .changeset
           cat << EOF > .changeset/update-annuaire-${{ steps.latest.outputs.short_commit }}.md
@@ -101,7 +111,7 @@ jobs:
           EOF
 
       - name: 🔀 Create Pull Request
-        if: steps.check.outputs.needs_update == 'true' && env.DRY_RUN != 'true'
+        if: steps.data_check.outputs.needs_update == 'true' && env.DRY_RUN != 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           add-paths: |
