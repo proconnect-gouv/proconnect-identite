@@ -3,6 +3,11 @@ name: 🏢 Update Annuaire Entreprises
 on:
   schedule:
     - cron: "0 2 * * *" # Daily at 2 AM UTC
+  pull_request:
+    paths:
+      - "packages/annuaire_entreprises/scripts/build-data.ts"
+      - "packages/annuaire_entreprises/data/.commit"
+      - ".github/workflows/update-annuaire.yml"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -14,6 +19,8 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      DRY_RUN: ${{ github.event_name == 'pull_request' || inputs.dry_run }}
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v5
@@ -69,7 +76,7 @@ jobs:
           echo "📊 Update Summary:"
           echo "  Current: ${{ steps.current.outputs.short_commit }}"
           echo "  Latest:  ${{ steps.latest.outputs.short_commit }}"
-          echo "  Dry run: ${{ inputs.dry_run }}"
+          echo "  Dry run: ${{ env.DRY_RUN }}"
 
       - name: 📝 Create changeset
         if: steps.check.outputs.needs_update == 'true'
@@ -84,7 +91,7 @@ jobs:
           EOF
 
       - name: 🔀 Create Pull Request
-        if: steps.check.outputs.needs_update == 'true' && !inputs.dry_run
+        if: steps.check.outputs.needs_update == 'true' && env.DRY_RUN != 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           add-paths: |
