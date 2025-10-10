@@ -1,0 +1,124 @@
+name: 🏢 Update Annuaire Entreprises
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Daily at 2 AM UTC
+  pull_request:
+    paths:
+      - "packages/annuaire_entreprises/scripts/build-data.ts"
+      - ".github/workflows/update-annuaire.yml"
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: 🔄 Update data files
+    runs-on: ubuntu-latest
+    env:
+      DRY_RUN: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v5
+
+      - name: ⚙️ Enable corepack
+        run: corepack enable
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          cache: "npm"
+          node-version-file: package.json
+
+      - name: 📥 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Get latest commit from search-infra
+        id: latest
+        run: |
+          LATEST_COMMIT=$(git ls-remote https://github.com/annuaire-entreprises-data-gouv-fr/search-infra.git HEAD | cut -f1)
+          echo "commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
+          echo "short_commit=${LATEST_COMMIT:0:7}" >> $GITHUB_OUTPUT
+
+      - name: 📋 Get current commit
+        id: current
+        run: |
+          CURRENT=$(cat packages/annuaire_entreprises/data/.commit)
+          echo "commit=$CURRENT" >> $GITHUB_OUTPUT
+          echo "short_commit=${CURRENT:0:7}" >> $GITHUB_OUTPUT
+
+      - name: ✅ Check if update needed
+        id: check
+        run: |
+          if [ "${{ steps.latest.outputs.commit }}" != "${{ steps.current.outputs.commit }}" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📦 Update commit reference
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          echo "${{ steps.latest.outputs.commit }}" > packages/annuaire_entreprises/data/.commit
+
+      - name: 🔄 Rebuild data files
+        if: steps.check.outputs.needs_update == 'true'
+        run: npm run build:data
+        working-directory: packages/annuaire_entreprises
+
+      - name: 🔍 Check for data changes
+        if: steps.check.outputs.needs_update == 'true'
+        id: data_check
+        run: |
+          if git diff --quiet packages/annuaire_entreprises/data/*.json; then
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🏷️ Show update summary
+        if: steps.data_check.outputs.needs_update == 'true'
+        run: |
+          echo "📊 Update Summary:"
+          echo "  Current: ${{ steps.current.outputs.short_commit }}"
+          echo "  Latest:  ${{ steps.latest.outputs.short_commit }}"
+          echo "  Dry run: ${{ env.DRY_RUN }}"
+
+      - name: 📋 Show data diff
+        if: steps.data_check.outputs.needs_update == 'true'
+        run: |
+          echo "::group::📊 Data changes"
+          git diff --stat packages/annuaire_entreprises/data/
+          echo ""
+          git diff packages/annuaire_entreprises/data/
+          echo "::endgroup::"
+
+      - name: 📝 Create changeset
+        if: steps.data_check.outputs.needs_update == 'true'
+        run: |
+          mkdir -p .changeset
+          cat << EOF > .changeset/update-annuaire-${{ steps.latest.outputs.short_commit }}.md
+          ---
+          "@proconnect-gouv/proconnect.annuaire_entreprises": patch
+          ---
+
+          ⬆️ Mise à jour des données annuaire entreprises depuis search-infra@${{ steps.latest.outputs.short_commit }}
+          EOF
+
+      - name: 🔀 Create Pull Request
+        if: steps.data_check.outputs.needs_update == 'true' && env.DRY_RUN != 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: |
+            .changeset/*.md
+            packages/annuaire_entreprises/data/.commit
+            packages/annuaire_entreprises/data/*.json
+          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          branch: github-actions/update-annuaire-${{ steps.latest.outputs.short_commit }}
+          commit-message: "⬆️ bump annuaire-entreprises-data-gouv-fr/search-infra@${{ steps.latest.outputs.short_commit }}"
+          delete-branch: true
+          title: "⬆️ bump annuaire-entreprises-data-gouv-fr/search-infra@${{ steps.latest.outputs.short_commit }}"
+          body: |
+            <div align=center><img src="https://annuaire-entreprises.data.gouv.fr/images/linkedin.jpg" /></div>
+
+            ---
+
+            Automated update of `@annuaire-entreprises-data-gouv-fr/search-infra` from ${{ steps.current.outputs.short_commit }} to ${{ steps.latest.outputs.short_commit }}.
