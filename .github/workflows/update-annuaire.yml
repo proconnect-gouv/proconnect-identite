@@ -3,7 +3,13 @@ name: 🏢 Update Annuaire Entreprises
 on:
   schedule:
     - cron: "0 2 * * *" # Daily at 2 AM UTC
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run mode (skip PR creation)"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   update:
@@ -57,6 +63,14 @@ jobs:
         run: npm run build:data
         working-directory: packages/annuaire_entreprises
 
+      - name: 🏷️ Show update summary
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          echo "📊 Update Summary:"
+          echo "  Current: ${{ steps.current.outputs.short_commit }}"
+          echo "  Latest:  ${{ steps.latest.outputs.short_commit }}"
+          echo "  Dry run: ${{ inputs.dry_run }}"
+
       - name: 📝 Create changeset
         if: steps.check.outputs.needs_update == 'true'
         run: |
@@ -70,7 +84,7 @@ jobs:
           EOF
 
       - name: 🔀 Create Pull Request
-        if: steps.check.outputs.needs_update == 'true'
+        if: steps.check.outputs.needs_update == 'true' && !inputs.dry_run
         uses: peter-evans/create-pull-request@v7
         with:
           add-paths: |
