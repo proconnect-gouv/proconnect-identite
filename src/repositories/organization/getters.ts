@@ -17,12 +17,12 @@ export const findByUserId = findByUserIdFactory({
   pg: getDatabaseConnection(),
 });
 
-export const getBySiret = async (siret: string) => {
+export const findBySiret = async (siret: string) => {
   const connection = getDatabaseConnection();
 
   const { rows }: QueryResult<Organization> = await connection.query(
     `
-SELECT id, siret
+SELECT *
 FROM organizations
 WHERE siret = $1
 `,
