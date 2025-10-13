@@ -60,7 +60,7 @@ export const getJoinOrganizationController = async (
       do_not_propose_suggestions: optionalBooleanSchema(),
     });
 
-    let { notification, siret_hint, do_not_propose_suggestions } =
+    const { notification, siret_hint, do_not_propose_suggestions } =
       await schema.parseAsync(req.query);
 
     const { id: user_id, email } = getUserFromAuthenticatedSession(req);

@@ -27,7 +27,7 @@ describe("sign-up with suggestion", () => {
     cy.get('[name="family_name"]').type("Lane");
     cy.get('[type="submit"]').click();
 
-    // Check that the ministere des armees is preselected
+    // Check that the ministere des armees is suggested
     cy.url().should("include", "users/organization-suggestions");
     cy.get("#submit-join-organization-1").contains("Ministere des armees");
   });
