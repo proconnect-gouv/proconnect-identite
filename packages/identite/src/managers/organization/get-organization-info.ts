@@ -3,16 +3,16 @@
 import { InvalidSiretError, NotFoundError } from "#src/errors";
 import { OrganizationInfoMapper } from "#src/mappers";
 import { type OrganizationInfo } from "#src/types";
-import type { EntrepriseApiInseeRepository } from "@proconnect-gouv/proconnect.entreprise/api";
+import type { ApiEntrepriseInseeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import {
-  EntrepriseApiConnectionError,
-  EntrepriseApiInvalidSiret,
-} from "@proconnect-gouv/proconnect.entreprise/types";
+  ApiEntrepriseConnectionError,
+  ApiEntrepriseInvalidSiret,
+} from "@proconnect-gouv/proconnect.api_entreprise/types";
 
 //
 
 export function getOrganizationInfoFactory(
-  config: EntrepriseApiInseeRepository,
+  config: ApiEntrepriseInseeRepository,
 ) {
   const { findBySiren, findBySiret } = config;
 
@@ -42,10 +42,10 @@ export function getOrganizationInfoFactory(
 
       return establishment;
     } catch (e) {
-      if (EntrepriseApiInvalidSiret.isInvalidSiret(e))
+      if (ApiEntrepriseInvalidSiret.isInvalidSiret(e))
         throw new InvalidSiretError();
 
-      throw new EntrepriseApiConnectionError(
+      throw new ApiEntrepriseConnectionError(
         "unknown error while fetching entreprise.api.gouv.fr",
         { cause: e },
       );

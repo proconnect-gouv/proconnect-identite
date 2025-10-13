@@ -7,8 +7,8 @@ import {
   formatMainActivity,
   formatNomComplet,
   libelleFromCodeEffectif,
-} from "@proconnect-gouv/proconnect.entreprise/formatters";
-import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.entreprise/types";
+} from "@proconnect-gouv/proconnect.api_entreprise/formatters";
+import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import { capitalize } from "lodash-es";
 
 //

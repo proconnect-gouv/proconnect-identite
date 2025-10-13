@@ -1,7 +1,7 @@
+import { ApiEntrepriseError } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { Welcome } from "@proconnect-gouv/proconnect.email";
-import { EntrepriseApiError } from "@proconnect-gouv/proconnect.entreprise/types";
 import {
   InvalidCertificationError,
   InvalidSiretError,
@@ -143,7 +143,7 @@ export const joinOrganization = async ({
   try {
     organizationInfo = await getOrganizationInfo(siret);
   } catch (error) {
-    if (error instanceof EntrepriseApiError) {
+    if (error instanceof ApiEntrepriseError) {
       throw error;
     }
 

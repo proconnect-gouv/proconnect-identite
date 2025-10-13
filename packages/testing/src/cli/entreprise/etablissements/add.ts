@@ -1,12 +1,12 @@
 //
 
 import { PEOPLE } from "#src/api/data/entreprise";
-import { findBySiretFactory } from "@proconnect-gouv/proconnect.entreprise/api/insee";
+import { findBySiretFactory } from "@proconnect-gouv/proconnect.api_entreprise/api/insee";
 import {
-  createEntrepriseOpenApiClient,
-  type EntrepriseOpenApiClient,
-} from "@proconnect-gouv/proconnect.entreprise/client";
-import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.entreprise/types";
+  createApiEntrepriseOpenApiClient,
+  type ApiEntrepriseOpenApiClient,
+} from "@proconnect-gouv/proconnect.api_entreprise/client";
+import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -48,13 +48,13 @@ export const AddEstablishmentCommand: CommandModule<
       return new Response(safeContent);
     }
 
-    const entrepriseOpenApiClient: EntrepriseOpenApiClient =
-      createEntrepriseOpenApiClient(token, {
+    const apiEntrepriseOpenApiClient: ApiEntrepriseOpenApiClient =
+      createApiEntrepriseOpenApiClient(token, {
         baseUrl: url,
         fetch: intercepter,
       });
 
-    const findBySiret = findBySiretFactory(entrepriseOpenApiClient, {
+    const findBySiret = findBySiretFactory(apiEntrepriseOpenApiClient, {
       context,
       object: "findEstablishmentBySiret",
       recipient,

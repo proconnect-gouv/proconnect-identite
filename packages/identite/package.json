@@ -53,7 +53,7 @@
     "@proconnect-gouv/proconnect.annuaire_entreprises": "^1.0.0",
     "@proconnect-gouv/proconnect.core": "^1.0.0",
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
-    "@proconnect-gouv/proconnect.entreprise": "^1.0.0",
+    "@proconnect-gouv/proconnect.api_entreprise": "^1.0.0",
     "@proconnect-gouv/proconnect.insee": "^1.0.0",
     "@sinonjs/fake-timers": "^14.0.0",
     "@types/node": "^22.18.6",

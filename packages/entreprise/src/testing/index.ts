@@ -1,10 +1,10 @@
 //
 
-import type { EntrepriseApiTrackingParams } from "#src/client";
+import type { ApiEntrepriseTrackingParams } from "#src/client";
 
 //
 
-export const coolTrackingParams: EntrepriseApiTrackingParams = {
+export const coolTrackingParams: ApiEntrepriseTrackingParams = {
   context: "🎛️",
   recipient: "🏢",
   object: "📦",

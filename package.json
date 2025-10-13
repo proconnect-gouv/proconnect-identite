@@ -56,7 +56,7 @@
     "watch:workspaces:crisp": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.crisp",
     "watch:workspaces:debounce": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.debounce",
     "watch:workspaces:email": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.email",
-    "watch:workspaces:entreprise": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.entreprise",
+    "watch:workspaces:entreprise": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.api_entreprise",
     "watch:workspaces:insee": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.insee",
     "watch:workspaces:identite": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.identite"
   },
@@ -72,7 +72,7 @@
     "@proconnect-gouv/proconnect.crisp": "workspace:*",
     "@proconnect-gouv/proconnect.debounce": "workspace:*",
     "@proconnect-gouv/proconnect.email": "workspace:*",
-    "@proconnect-gouv/proconnect.entreprise": "workspace:*",
+    "@proconnect-gouv/proconnect.api_entreprise": "workspace:*",
     "@proconnect-gouv/proconnect.identite": "workspace:*",
     "@proconnect-gouv/proconnect.insee": "workspace:*",
     "@proconnect-gouv/proconnect.testing": "workspace:*",

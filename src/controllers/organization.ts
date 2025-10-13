@@ -1,5 +1,5 @@
+import { ApiEntrepriseError } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
-import { EntrepriseApiError } from "@proconnect-gouv/proconnect.entreprise/types";
 import { DOMAINS_WHITELIST } from "@proconnect-gouv/proconnect.identite/data/organization";
 import {
   InvalidCertificationError,
@@ -175,7 +175,7 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
-    if (error instanceof EntrepriseApiError) {
+    if (error instanceof ApiEntrepriseError) {
       return res.redirect(
         `/users/join-organization?notification=insee_unexpected_error&siret_hint=${req.body.siret}`,
       );

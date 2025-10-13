@@ -1,6 +1,6 @@
 //
 
-import { createEntrepriseOpenApiClient } from "#src/client";
+import { createApiEntrepriseOpenApiClient } from "#src/client";
 import { coolTrackingParams } from "#testing";
 import { mock, suite, test } from "node:test";
 import { findBySiretFactory } from "./find-by-siret.js";
@@ -14,7 +14,7 @@ suite(findBySiretFactory.name, () => {
         new Response(JSON.stringify({ data: { siret: "🦄" } })),
       );
     });
-    const client = createEntrepriseOpenApiClient("SECRET_INSEE_TOKEN", {
+    const client = createApiEntrepriseOpenApiClient("SECRET_INSEE_TOKEN", {
       fetch,
     });
     const findBySiret = findBySiretFactory(client, coolTrackingParams);
