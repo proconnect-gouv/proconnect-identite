@@ -55,7 +55,7 @@
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@proconnect-gouv/proconnect.entreprise": "^1.0.0",
     "@proconnect-gouv/proconnect.insee": "^1.0.0",
-    "@sinonjs/fake-timers": "^14.0.0",
+    "@sinonjs/fake-timers": "^15.0.0",
     "@types/node": "^22.18.6",
     "await-to-js": "^3.0.0",
     "node-pg-migrate": "^7.9.1",
