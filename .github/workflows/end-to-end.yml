@@ -63,7 +63,6 @@ jobs:
 
       - run: docker compose up --build --detach
 
-      - run: corepack enable
       - uses: actions/setup-node@v5
         with:
           cache: "npm"

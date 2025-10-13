@@ -22,9 +22,6 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v5
 
-      - name: ⚙️ Enable corepack
-        run: corepack enable
-
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v5
         with:
