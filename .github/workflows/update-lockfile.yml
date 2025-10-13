@@ -1,0 +1,49 @@
+name: 📦 Update package-lock.json
+
+on:
+  schedule:
+    - cron: "0 3 * * 1" # Weekly on Monday at 3 AM UTC
+  pull_request:
+    paths:
+      - ".github/workflows/update-lockfile.yml"
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: 🔄 Update lockfile
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      DRY_RUN: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v5
+
+      - name: ⚙️ Enable corepack
+        run: corepack enable
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          cache: "npm"
+          node-version-file: package.json
+
+      - name: 🔄 Update lockfile
+        run: npm update --package-lock-only
+
+      - name: 🔀 Create Pull Request
+        if: env.DRY_RUN != 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: package-lock.json
+          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          branch: github-actions/update-lockfile
+          commit-message: "🔒 chore: update package-lock.json"
+          delete-branch: true
+          title: "🔒 chore: update package-lock.json"
+          body: |
+            Automated weekly refresh of `package-lock.json` to update transitive dependencies within their semver ranges.
+
+            This ensures the lockfile stays up-to-date with the latest compatible versions of all dependencies.
