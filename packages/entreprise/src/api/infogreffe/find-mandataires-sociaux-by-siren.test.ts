@@ -2,7 +2,7 @@
 
 import { createEntrepriseOpenApiClient } from "#src/client";
 import { coolTrackingParams } from "#src/testing";
-import { EntrepriseApiError } from "#src/types";
+import { ApiEntrepriseError } from "#src/types";
 import assert from "node:assert/strict";
 import { mock, suite, test } from "node:test";
 import { findMandatairesSociauxBySirenFactory } from "./find-mandataires-sociaux-by-siren.js";
@@ -123,7 +123,7 @@ suite("findMandatairesSociauxBySirenFactory", () => {
     assert.equal(mandataires.at(0)?.prenom, "IMOTEKH");
   });
 
-  test("fail with an EntrepriseApiError", async () => {
+  test("fail with an ApiEntrepriseError", async () => {
     const fetch = mock.fn(() => {
       return Promise.resolve(
         new Response(
@@ -156,6 +156,6 @@ suite("findMandatairesSociauxBySirenFactory", () => {
       coolTrackingParams,
     );
 
-    await assert.rejects(findBySiren("791088917"), EntrepriseApiError);
+    await assert.rejects(findBySiren("791088917"), ApiEntrepriseError);
   });
 });

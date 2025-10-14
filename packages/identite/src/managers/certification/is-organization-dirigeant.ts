@@ -7,10 +7,10 @@ import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
 import { isEntrepriseUnipersonnelle } from "#src/services/organization";
 import type { IdentityVector } from "#src/types";
 import type {
-  EntrepriseApiInfogreffeRepository,
-  EntrepriseApiInseeRepository,
-} from "@proconnect-gouv/proconnect.entreprise/api";
-import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.entreprise/types";
+  ApiEntrepriseInfogreffeRepository,
+  ApiEntrepriseInseeRepository,
+} from "@proconnect-gouv/proconnect.api_entreprise/api";
+import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import type { InseeApiRepository } from "@proconnect-gouv/proconnect.insee/api";
 import { formatBirthdate } from "@proconnect-gouv/proconnect.insee/formatters";
 import { distance } from "./distance.js";
@@ -18,9 +18,9 @@ import { distance } from "./distance.js";
 //
 
 type IsOrganizationExecutiveFactoryFactoryConfig = {
-  EntrepriseApiInfogreffeRepository: EntrepriseApiInfogreffeRepository;
-  EntrepriseApiInseeRepository: Pick<
-    EntrepriseApiInseeRepository,
+  ApiEntrepriseInfogreffeRepository: ApiEntrepriseInfogreffeRepository;
+  ApiEntrepriseInseeRepository: Pick<
+    ApiEntrepriseInseeRepository,
     "findBySiret"
   >;
   EQUALITY_THRESHOLD?: number;
@@ -36,8 +36,8 @@ export function isOrganizationDirigeantFactory(
 ) {
   const {
     EQUALITY_THRESHOLD = 0,
-    EntrepriseApiInseeRepository,
-    EntrepriseApiInfogreffeRepository,
+    ApiEntrepriseInseeRepository,
+    ApiEntrepriseInfogreffeRepository,
     InseeApiRepository,
     getFranceConnectUserInfo,
     log = () => {},
@@ -47,7 +47,7 @@ export function isOrganizationDirigeantFactory(
     siret: string,
     user_id: number,
   ) {
-    const establishment = await EntrepriseApiInseeRepository.findBySiret(siret);
+    const establishment = await ApiEntrepriseInseeRepository.findBySiret(siret);
     const franceconnectUserInfo = await getFranceConnectUserInfo(user_id);
     if (!franceconnectUserInfo) {
       throw new NotFoundError("FranceConnect UserInfo not found");
@@ -93,7 +93,7 @@ export function isOrganizationDirigeantFactory(
     ) {
       return getSourceDirigeantsFromInsseApi(establishment.siret);
     }
-    return getSourceDirigeantsFromEntrepriseApi(
+    return getSourceDirigeantsFromApiEntreprise(
       establishment.unite_legale.siren,
     );
   }
@@ -121,9 +121,9 @@ export function isOrganizationDirigeantFactory(
     ];
   }
 
-  async function getSourceDirigeantsFromEntrepriseApi(siren: string) {
+  async function getSourceDirigeantsFromApiEntreprise(siren: string) {
     const mandataires =
-      await EntrepriseApiInfogreffeRepository.findMandatairesSociauxBySiren(
+      await ApiEntrepriseInfogreffeRepository.findMandatairesSociauxBySiren(
         siren,
       );
 

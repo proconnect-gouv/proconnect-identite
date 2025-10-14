@@ -3,11 +3,11 @@
 import type { FindMandatairesSociauxBySirenHandler } from "./infogreffe/index.js";
 import type { FindBySirenHandler, FindBySiretHandler } from "./insee/index.js";
 
-export interface EntrepriseApiInseeRepository {
+export interface ApiEntrepriseInseeRepository {
   findBySiren: FindBySirenHandler;
   findBySiret: FindBySiretHandler;
 }
 
-export interface EntrepriseApiInfogreffeRepository {
+export interface ApiEntrepriseInfogreffeRepository {
   findMandatairesSociauxBySiren: FindMandatairesSociauxBySirenHandler;
 }

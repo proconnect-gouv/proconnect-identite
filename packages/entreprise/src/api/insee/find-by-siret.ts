@@ -1,17 +1,17 @@
 //
 
 import type {
-  EntrepriseApiTrackingParams,
-  EntrepriseOpenApiClient,
+  ApiEntrepriseOpenApiClient,
+  ApiEntrepriseTrackingParams,
 } from "#src/client";
-import { EntrepriseApiError } from "#src/types";
+import { ApiEntrepriseError } from "#src/types";
 import type { FetchOptions } from "openapi-fetch";
 
 //
 
 export function findBySiretFactory(
-  client: EntrepriseOpenApiClient,
-  trackingParams: EntrepriseApiTrackingParams,
+  client: ApiEntrepriseOpenApiClient,
+  trackingParams: ApiEntrepriseTrackingParams,
   optionsFn: () => FetchOptions<unknown> = () => ({}),
 ) {
   return async function findBySiret(siret: string) {
@@ -28,7 +28,7 @@ export function findBySiretFactory(
       },
     );
 
-    if (error) throw new EntrepriseApiError(error);
+    if (error) throw new ApiEntrepriseError(error);
 
     const { data: establishment } = data;
     return establishment;

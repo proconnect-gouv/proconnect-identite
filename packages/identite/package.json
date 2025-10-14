@@ -53,7 +53,7 @@
     "@proconnect-gouv/proconnect.annuaire_entreprises": "^1.0.0",
     "@proconnect-gouv/proconnect.core": "^1.0.0",
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
-    "@proconnect-gouv/proconnect.entreprise": "^1.0.0",
+    "@proconnect-gouv/proconnect.api_entreprise": "^1.0.0",
     "@proconnect-gouv/proconnect.insee": "^1.0.0",
     "@types/node": "^22.18.6",
     "await-to-js": "^3.0.0",

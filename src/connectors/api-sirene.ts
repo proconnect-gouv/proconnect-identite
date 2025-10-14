@@ -1,14 +1,14 @@
 //
 
-import { findMandatairesSociauxBySirenFactory } from "@proconnect-gouv/proconnect.entreprise/api/infogreffe";
+import { findMandatairesSociauxBySirenFactory } from "@proconnect-gouv/proconnect.api_entreprise/api/infogreffe";
 import {
   findBySirenFactory,
   findBySiretFactory,
-} from "@proconnect-gouv/proconnect.entreprise/api/insee";
+} from "@proconnect-gouv/proconnect.api_entreprise/api/insee";
 import {
-  createEntrepriseOpenApiClient,
-  type EntrepriseOpenApiClient,
-} from "@proconnect-gouv/proconnect.entreprise/client";
+  createApiEntrepriseOpenApiClient,
+  type ApiEntrepriseOpenApiClient,
+} from "@proconnect-gouv/proconnect.api_entreprise/client";
 import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import * as InseeApi from "@proconnect-gouv/proconnect.insee/api";
 import {
@@ -17,7 +17,7 @@ import {
 } from "@proconnect-gouv/proconnect.insee/client";
 import { TestingInseeApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/api.insee.fr";
 import { TESTING_INSEE_API_SIRETS } from "@proconnect-gouv/proconnect.testing/api/routes/api.insee.fr/etablissements";
-import { TestingEntrepriseApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/entreprise.api.gouv.fr";
+import { TestingApiEntrepriseRouter } from "@proconnect-gouv/proconnect.testing/api/routes/entreprise.api.gouv.fr";
 import { TESTING_ENTREPRISE_API_SIRETS } from "@proconnect-gouv/proconnect.testing/api/routes/entreprise.api.gouv.fr/etablissements";
 import { TESTING_ENTREPRISE_API_MANDATAIRES_SIREN } from "@proconnect-gouv/proconnect.testing/api/routes/entreprise.api.gouv.fr/mandataires_sociaux";
 import {
@@ -36,24 +36,24 @@ import {
 
 //
 
-export const entrepriseOpenApiClient: EntrepriseOpenApiClient =
-  createEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
+export const apiEntrepriseOpenApiClient: ApiEntrepriseOpenApiClient =
+  createApiEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
     baseUrl: ENTREPRISE_API_URL,
   });
 
-export const entrepriseOpenApiTestClient: EntrepriseOpenApiClient =
-  createEntrepriseOpenApiClient("__ENTREPRISE_API_TOKEN__", {
+export const apiEntrepriseOpenApiTestClient: ApiEntrepriseOpenApiClient =
+  createApiEntrepriseOpenApiClient("__ENTREPRISE_API_TOKEN__", {
     fetch: (input: Request) =>
-      Promise.resolve(TestingEntrepriseApiRouter.fetch(input)),
+      Promise.resolve(TestingApiEntrepriseRouter.fetch(input)),
   });
 
-export const EntrepriseApiInfogreffeRepository = {
+export const ApiEntrepriseInfogreffeRepository = {
   findMandatairesSociauxBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_ENTREPRISE_API_MANDATAIRES_SIREN.includes(siren)
-        ? entrepriseOpenApiTestClient
-        : entrepriseOpenApiClient;
+        ? apiEntrepriseOpenApiTestClient
+        : apiEntrepriseOpenApiClient;
 
     return findMandatairesSociauxBySirenFactory(
       client,
@@ -69,15 +69,15 @@ export const EntrepriseApiInfogreffeRepository = {
   },
 };
 
-export const EntrepriseApiInseeRepository = {
+export const ApiEntrepriseInseeRepository = {
   findBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_ENTREPRISE_API_SIRETS.map((siret) =>
         siret.substring(0, 9),
       ).includes(siren)
-        ? entrepriseOpenApiTestClient
-        : entrepriseOpenApiClient;
+        ? apiEntrepriseOpenApiTestClient
+        : apiEntrepriseOpenApiClient;
 
     return findBySirenFactory(
       client,
@@ -95,8 +95,8 @@ export const EntrepriseApiInseeRepository = {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_ENTREPRISE_API_SIRETS.includes(siret)
-        ? entrepriseOpenApiTestClient
-        : entrepriseOpenApiClient;
+        ? apiEntrepriseOpenApiTestClient
+        : apiEntrepriseOpenApiClient;
 
     return findBySiretFactory(
       client,
@@ -148,6 +148,6 @@ export const InseeApiRepository = {
 };
 
 export const getOrganizationInfo = getOrganizationInfoFactory({
-  findBySiren: EntrepriseApiInseeRepository.findBySiren,
-  findBySiret: EntrepriseApiInseeRepository.findBySiret,
+  findBySiren: ApiEntrepriseInseeRepository.findBySiren,
+  findBySiret: ApiEntrepriseInseeRepository.findBySiret,
 });
