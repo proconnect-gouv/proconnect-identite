@@ -74,13 +74,14 @@ export const getJoinOrganizationController = async (
       return res.redirect("/users/organization-suggestions");
     }
 
+    const emailDomain = getEmailDomain(email);
+
     return res.render("user/join-organization", {
       pageTitle: "Rejoindre une organisation",
       notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
       siretHint: siret_hint,
-      useGendarmerieSearchHint:
-        getEmailDomain(email) === "gendarmerie.interieur.gouv.fr",
+      useGendarmerieSearchHint: emailDomain === "gendarmerie.interieur.gouv.fr",
     });
   } catch (error) {
     next(error);

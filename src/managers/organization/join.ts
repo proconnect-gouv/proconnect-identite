@@ -50,6 +50,7 @@ import {
   findRejectedModeration,
 } from "../../repositories/moderation";
 import {
+  findBySiret,
   findByUserId,
   findByVerifiedEmailDomain,
   getById,
@@ -67,6 +68,7 @@ import {
 import { logger } from "../../services/log";
 import {
   hasLessThanFiftyEmployees,
+  isArmeeDomain,
   isCommune,
   isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
@@ -83,19 +85,11 @@ export const doSuggestOrganizations = async ({
   user_id: number;
   email: string;
 }): Promise<boolean> => {
-  if (usesAFreeEmailProvider(email)) {
-    return false;
-  }
-
-  const domain = getEmailDomain(email);
-  const organizationsSuggestions = await findByVerifiedEmailDomain(domain);
-  const userOrganizations = await findByUserId(user_id);
-
-  return (
-    isEmpty(userOrganizations) &&
-    !isEmpty(organizationsSuggestions) &&
-    organizationsSuggestions.length <= MAX_SUGGESTED_ORGANIZATIONS
-  );
+  const suggestedOrganizations = await getOrganizationSuggestions({
+    user_id,
+    email,
+  });
+  return suggestedOrganizations.length > 0;
 };
 export const getOrganizationSuggestions = async ({
   user_id,
@@ -107,11 +101,22 @@ export const getOrganizationSuggestions = async ({
   if (usesAFreeEmailProvider(email)) {
     return [];
   }
+  const userOrganizations = await findByUserId(user_id);
+  if (!isEmpty(userOrganizations)) {
+    return [];
+  }
 
   const domain = getEmailDomain(email);
 
   if (isEducationNationaleDomain(domain)) {
     return [];
+  }
+
+  if (isArmeeDomain(domain)) {
+    const armeeOrganization = await findBySiret("11009001600053");
+    if (armeeOrganization) {
+      return [armeeOrganization];
+    }
   }
 
   const organizationsSuggestions = await findByVerifiedEmailDomain(domain);
@@ -120,7 +125,6 @@ export const getOrganizationSuggestions = async ({
     return [];
   }
 
-  const userOrganizations = await findByUserId(user_id);
   const userOrganizationsIds = userOrganizations.map(({ id }) => id);
 
   return organizationsSuggestions.filter(

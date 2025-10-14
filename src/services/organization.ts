@@ -115,6 +115,13 @@ export const isEducationNationaleDomain = (domain: string) => {
   return domain.match(/^ac-[a-zA-Z0-9-]*\.fr$/) !== null;
 };
 
+export const isArmeeDomain = (domain: string) => {
+  if (!isDomainValid(domain)) {
+    return false;
+  }
+  return domain === "intradef.gouv.fr";
+};
+
 export const getOrganizationTypeLabel = (organization: Organization) => {
   if (isEtablissementScolaireDuPremierEtSecondDegre(organization)) {
     return "établissement scolaire";
