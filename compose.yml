@@ -58,7 +58,7 @@ services:
     network_mode: "host"
 
   maildev:
-    image: soulteary/maildev
+    image: maildev/maildev:2.2.0
     healthcheck:
       test:
         [
