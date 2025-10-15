@@ -161,9 +161,11 @@ function verifyEmailCommand() {
     .maildevGetMessageBySubject("Vérification de votre adresse email")
     .then((email) => {
       cy.maildevVisitMessageById(email.id);
-      cy.contains(
-        "Pour vérifier votre adresse e-mail, merci de de copier-coller ou de renseigner ce code dans l’interface de connexion ProConnect.",
-      );
+      cy.origin("http://localhost:1080", () => {
+        cy.contains(
+          "Pour vérifier votre adresse e-mail, merci de de copier-coller ou de renseigner ce code dans l’interface de connexion ProConnect.",
+        );
+      });
       cy.go("back");
       cy.maildevDeleteMessageById(email.id);
       return cy.maildevGetOTPCode(email.text, 10);

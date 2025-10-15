@@ -23,10 +23,15 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
-        cy.contains(
-          "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-        );
-        cy.contains("Se connecter").click();
+        cy.origin("http://localhost:1080", () => {
+          cy.contains(
+            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+          );
+          cy.contains("Se connecter")
+            .get("a")
+            .invoke("attr", "target", "")
+            .click();
+        });
         cy.maildevDeleteMessageById(email.id);
       },
     );
@@ -79,10 +84,15 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
-        cy.contains(
-          "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-        );
-        cy.contains("Se connecter").click();
+        cy.origin("http://localhost:1080", () => {
+          cy.contains(
+            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+          );
+          cy.contains("Se connecter")
+            .get("a")
+            .invoke("attr", "target", "")
+            .click();
+        });
         cy.maildevDeleteMessageById(email.id);
       },
     );
@@ -124,10 +134,15 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
-        cy.contains(
-          "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-        );
-        cy.contains("Se connecter").click();
+        cy.origin("http://localhost:1080", () => {
+          cy.contains(
+            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+          );
+          cy.contains("Se connecter")
+            .get("a")
+            .invoke("attr", "target", "")
+            .click();
+        });
         cy.maildevDeleteMessageById(email.id);
       },
     );
