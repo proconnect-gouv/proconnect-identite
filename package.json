@@ -80,7 +80,7 @@
     "@sentry/profiling-node": "^10.18.0",
     "@simplewebauthn/browser": "^8.3.4",
     "@simplewebauthn/server": "^8.3.5",
-    "@sunknudsen/totp": "^1.2.0",
+    "otpauth": "^9.4.1",
     "await-to-js": "^3.0.0",
     "axios": "^1.12.2",
     "connect-redis": "^8.1.0",
