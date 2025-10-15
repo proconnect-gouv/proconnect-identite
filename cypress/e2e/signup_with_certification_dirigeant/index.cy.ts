@@ -179,4 +179,44 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains('"siret": "83832482000011",');
     cy.contains('"label": "Angela Gnesotto",');
   });
+
+  it("should come back to the certification dirigeant page if FranceConnect access denied", function () {
+    cy.visit("http://localhost:4000");
+    cy.contains("Forcer une connexion par certification dirigeant").click();
+
+    cy.title().should("include", "S'inscrire ou se connecter - ");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("jean.michel@yopmail.com");
+    cy.contains("Valider").click();
+
+    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.contains("Mot de passe").click();
+    cy.contains("Recevoir un lien d’identification").click();
+    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
+      (email) => {
+        cy.maildevVisitMessageById(email.id);
+        cy.origin("http://localhost:1080", () => {
+          cy.contains(
+            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+          );
+          cy.contains("Se connecter")
+            .get("a")
+            .invoke("attr", "target", "")
+            .click();
+        });
+        cy.maildevDeleteMessageById(email.id);
+      },
+    );
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Revenir sur votre fournisseur de service").click();
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.contains(
+      "L'authentification FranceConnect a échoué. Veuillez réessayer.",
+    );
+  });
 });
