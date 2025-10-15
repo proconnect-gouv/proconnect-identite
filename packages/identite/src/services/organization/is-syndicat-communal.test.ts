@@ -4,33 +4,27 @@ import { describe, it } from "node:test";
 import { isSyndicatCommunal } from "./is-syndicat-communal.js";
 
 describe("isSyndicatCommunal", () => {
-  it("should return false when cached_activite_principale is undefined", () => {
+  it("should return false when cached_libelle_categorie_juridique is undefined", () => {
     const org = {} as Organization;
     assert.equal(isSyndicatCommunal(org), false);
   });
 
-  it("should return false when cached_activite_principale is null", () => {
+  it("should return false when cached_libelle_categorie_juridique is null", () => {
     const org = { cached_activite_principale: null } as Organization;
     assert.equal(isSyndicatCommunal(org), false);
   });
 
-  it("should return false for a code NAF not in the list", () => {
+  it("should return false for a categorie juridique not in the list", () => {
     const org = {
-      cached_activite_principale: "47.11F",
+      cached_libelle_categorie_juridique:
+        "cette catégorie juridique n'existe pas",
     } as Organization;
     assert.equal(isSyndicatCommunal(org), false);
   });
 
-  it("should return true for code 84.11Z (Administration publique générale)", () => {
+  it("should return true for categorie juridique 'Syndicat mixte fermé' ", () => {
     const org = {
-      cached_activite_principale: "84.11Z",
-    } as Organization;
-    assert.equal(isSyndicatCommunal(org), true);
-  });
-
-  it("should be case insensitive", () => {
-    const org = {
-      cached_activite_principale: "84.11z",
+      cached_libelle_categorie_juridique: "Syndicat mixte fermé",
     } as Organization;
     assert.equal(isSyndicatCommunal(org), true);
   });
