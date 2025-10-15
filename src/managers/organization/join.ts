@@ -13,6 +13,7 @@ import {
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
   isPublicService,
+  isSyndicatCommunal,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import type {
   Organization,
@@ -244,7 +245,8 @@ export const joinOrganization = async ({
   if (
     !isCommune(organization) &&
     isAFreeEmailProvider(email) &&
-    isPublicService(organization)
+    isPublicService(organization) &&
+    !isSyndicatCommunal(organization)
   ) {
     throw new AccessRestrictedToPublicServiceEmailError();
   }
