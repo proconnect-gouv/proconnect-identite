@@ -59,6 +59,8 @@ services:
 
   maildev:
     image: maildev/maildev@sha256:f7429227b8f471b3fe761767d86a8794a2fc7488bccdcda46ea6d5ba5c2c7bf5 # latest
+    environment:
+      MAILDEV_IP: "::"
     healthcheck:
       test:
         [
