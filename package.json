@@ -116,6 +116,7 @@
     "@changesets/cli": "^2.29.6",
     "@dotenvx/dotenvx": "^1.47.3",
     "@fullhuman/postcss-purgecss": "^7.0.2",
+    "@proconnect-gouv/proconnect.testing": "workspace:*",
     "@proconnect-gouv/proconnect.devtools.typescript": "workspace:*",
     "@gouvfr/dsfr": "^1.14.2",
     "@kitajs/html": "^4.2.9",
