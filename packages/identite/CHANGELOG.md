@@ -1,5 +1,21 @@
 # @proconnect-gouv/proconnect.identite
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1449](https://github.com/proconnect-gouv/proconnect-identite/pull/1449) [`a12697c`](https://github.com/proconnect-gouv/proconnect-identite/commit/a12697c3785aea1bb737afec8ce52111132ec807) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ✨ Ajout de la fonction `isPublicService` pour identifier les services publics
+
+  Nouvelle fonction exportée permettant de déterminer si une organisation est un service public en fonction de sa nature juridique, son statut administratif et des listes de référence officielles.
+
+  Inspirée par https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/blob/f1e56ac476b0b1730115f7b1f0667e8509ee5379/workflows/data_pipelines/elasticsearch/data_enrichment.py#L155-L189
+
+  ```
+  import { isPublicService } from "@proconnect-gouv/proconnect.identite/services/organization";
+
+  isPublicService(my_oganization) =>> true/false
+  ```
+
 ## 1.0.0
 
 ### Major Changes
