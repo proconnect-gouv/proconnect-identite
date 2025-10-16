@@ -1,0 +1,27 @@
+<div>
+    <%- include('../partials/stepper.ejs', {currentStep: "3", stepsTitle: "Sauvergarder les clés de récupération", nextStepTitle:"" }); %>
+    <p>Ces clés sont le seul et unique moyen de récupérer votre compte si vous perdez votre téléphone. Nous vous conseillons fortement de les sauvegarder dans un document ou de les imprimer.</p>
+    <p class="fr-h5 grey-color recovery-key" id="textToCopy">VJFR JSYY 1IIN OTRM YWUV 7HM5</p>
+    <button class="download-pdf-btn fr-btn fr-btn--tertiary fr-icon-download-fill fr-btn--icon-left">
+    Télécharger en pdf
+    </button>
+    <button class="fr-btn fr-btn--tertiary fr-icon-clipboard-line fr-btn--icon-left copy-btn">
+    Copier
+    </button>
+    <div class="fr-checkbox-group fr-my-3w" aria-labelledby="checkboxes-legend checkboxes-messages">
+        <input name="is-recovery-key-registered" id="is-recovery-key-registered" type="checkbox" aria-describedby="checkboxes-1-messages">
+        <label class="fr-label" for="is-recovery-key-registered">
+            J'ai sauvegardé mes clés de récupération
+        </label>
+        <div class="fr-messages-group" id="checkboxes-1-messages" aria-live="assertive">
+        </div>
+    </div>
+    <a class="fr-btn" href="/users/2fa-successfully-configured" id="continue-button">
+        Continuer
+    </a>
+</div>
+
+<script type="module" src="<%= js('copy.js') %>"></script>
+<script type="module" src="<%= js('generate-recovery-key-pdf.js') %>"></script>
+<script type="module" src="<%= js('recovery-key-registered.js') %>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
