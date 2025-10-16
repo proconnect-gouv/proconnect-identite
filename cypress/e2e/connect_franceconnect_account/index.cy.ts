@@ -34,4 +34,22 @@ describe("Connect FranceConnect account", () => {
     cy.title().should("include", "S'inscrire ou se connecter -");
     cy.contains("Information : vous êtes maintenant déconnecté.");
   });
+
+  it("should come back to personal information page if FranceConnect access denied", function () {
+    cy.visit("/");
+    cy.login("god-emperor@mankind.world");
+
+    cy.visit("/personal-information");
+
+    cy.title().should("include", "Informations personnelles -");
+    cy.contains("S’identifier avec").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Revenir sur votre fournisseur de service").click();
+
+    cy.title().should("include", "Informations personnelles -");
+    cy.contains(
+      "L'authentification FranceConnect a échoué. Veuillez réessayer.",
+    );
+  });
 });

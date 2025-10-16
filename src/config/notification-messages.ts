@@ -6,6 +6,11 @@ interface NotificationMessages {
 }
 
 const notificationMessages: NotificationMessages = {
+  franceconnect_oidc_error: {
+    type: "error",
+    description:
+      "L'authentification FranceConnect a échoué. Veuillez réessayer.",
+  },
   invalid_credentials: {
     type: "error",
     description: "Erreur : mot de passe incorrect.",
