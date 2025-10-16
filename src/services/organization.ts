@@ -119,7 +119,8 @@ export const isArmeeDomain = (domain: string) => {
   if (!isDomainValid(domain)) {
     return false;
   }
-  return domain === "intradef.gouv.fr";
+  const ARMEE_DOMAINS = ["intradef.gouv.fr", "def.gouv.fr"];
+  return ARMEE_DOMAINS.includes(domain);
 };
 
 export const getOrganizationTypeLabel = (organization: Organization) => {
