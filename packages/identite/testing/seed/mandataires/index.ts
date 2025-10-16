@@ -1,6 +1,6 @@
 //
 
-import type { InfogreffeSirenMandatairesSociaux } from "@proconnect-gouv/proconnect.entreprise/types";
+import type { InfogreffeSirenMandatairesSociaux } from "@proconnect-gouv/proconnect.api_entreprise/types";
 
 //
 

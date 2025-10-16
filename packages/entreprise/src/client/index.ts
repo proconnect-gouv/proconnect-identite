@@ -8,7 +8,7 @@ import createClient, { type ClientOptions } from "openapi-fetch";
 /**
  * @see https://entreprise.api.gouv.fr/developpeurs#renseigner-les-param%C3%A8tres-dappel-et-de-tra%C3%A7abilit%C3%A9
  */
-export interface EntrepriseApiTrackingParams {
+export interface ApiEntrepriseTrackingParams {
   recipient: string;
   context: string;
   object: string;
@@ -24,7 +24,7 @@ export interface EntrepriseApiTrackingParams {
  * @note `options.baseUrl` is "https://entreprise.api.gouv.fr/" by default
  * @returns the client
  */
-export function createEntrepriseOpenApiClient(
+export function createApiEntrepriseOpenApiClient(
   token: string,
   options: ClientOptions = {},
 ) {
@@ -38,6 +38,6 @@ export function createEntrepriseOpenApiClient(
   });
 }
 
-export type EntrepriseOpenApiClient = ReturnType<
-  typeof createEntrepriseOpenApiClient
+export type ApiEntrepriseOpenApiClient = ReturnType<
+  typeof createApiEntrepriseOpenApiClient
 >;

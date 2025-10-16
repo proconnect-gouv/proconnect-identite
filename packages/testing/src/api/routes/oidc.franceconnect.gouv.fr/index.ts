@@ -183,10 +183,25 @@ export const TestingOidcFranceConnectRouter = new Hono<{
       },
     }),
     zValidator("param", z.object({ code: z.string() })),
-    async ({ html }) =>
-      html(
-        SelectPage({ citizens: Array.from(FRANCECONNECT_CITIZENS.values()) }),
-      ),
+    async ({ env: { ISSUER }, html, req }) => {
+      const { code } = req.valid("param");
+      const codeObj = CODE_MAP.get(code);
+      if (!codeObj) throw new Error("Invalid authorization code");
+
+      const { redirect_uri } = codeObj;
+      const redirect_to_sp_params = new URLSearchParams({
+        error: "access_denied",
+        error_description: "User auth aborted",
+        iss: ISSUER,
+        state: codeObj.state,
+      });
+      return html(
+        SelectPage({
+          citizens: Array.from(FRANCECONNECT_CITIZENS.values()),
+          redirect_to_sp_url: `${redirect_uri}?${redirect_to_sp_params}`,
+        }),
+      );
+    },
   )
   .post(
     "/interaction/:code/login",

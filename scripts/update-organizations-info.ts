@@ -1,11 +1,11 @@
 //
 
-import { findBySiretFactory } from "@proconnect-gouv/proconnect.entreprise/api/insee";
+import { findBySiretFactory } from "@proconnect-gouv/proconnect.api_entreprise/api/insee";
 import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
-import { entrepriseOpenApiTestClient } from "../src/connectors/api-sirene";
+import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-sirene";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { upsert } from "../src/repositories/organization/setters";
 import { logger } from "../src/services/log";
@@ -17,7 +17,7 @@ import {
 
 //
 
-const findBySiret = findBySiretFactory(entrepriseOpenApiTestClient, {
+const findBySiret = findBySiretFactory(apiEntrepriseOpenApiTestClient, {
   context: "🎭 Organization info script 🎭",
   object: "findEstablishmentBySiret",
   recipient: "13002526500013",

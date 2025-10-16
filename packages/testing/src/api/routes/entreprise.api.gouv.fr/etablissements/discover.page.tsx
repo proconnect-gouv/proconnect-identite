@@ -1,7 +1,7 @@
 //
 
-import { formatNomComplet } from "@proconnect-gouv/proconnect.entreprise/formatters";
-import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.entreprise/types";
+import { formatNomComplet } from "@proconnect-gouv/proconnect.api_entreprise/formatters";
+import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.api_entreprise/types";
 //
 
 export default function DiscoverPage(

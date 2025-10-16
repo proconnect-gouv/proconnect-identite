@@ -1,7 +1,7 @@
 import {
-  EntrepriseApiConnectionError,
-  EntrepriseApiError,
-} from "@proconnect-gouv/proconnect.entreprise/types";
+  ApiEntrepriseConnectionError,
+  ApiEntrepriseError,
+} from "@proconnect-gouv/proconnect.api_entreprise/types";
 import {
   InvalidSiretError,
   NotFoundError,
@@ -85,7 +85,7 @@ export const getOrganizationInfoController = async (
       return next(new HttpErrors.NotFound());
     }
 
-    if (e instanceof EntrepriseApiConnectionError) {
+    if (e instanceof ApiEntrepriseConnectionError) {
       return next(
         new HttpErrors.GatewayTimeout(
           notificationMessages["insee_unexpected_error"].description,
@@ -93,7 +93,7 @@ export const getOrganizationInfoController = async (
       );
     }
 
-    if (e instanceof EntrepriseApiError) {
+    if (e instanceof ApiEntrepriseError) {
       return next(
         new HttpErrors.BadRequest(
           notificationMessages["invalid_siret"].description,

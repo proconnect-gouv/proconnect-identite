@@ -4,6 +4,7 @@ import {
   createOidcChecks,
   getFranceConnectRedirectUrlFactory,
 } from "@proconnect-gouv/proconnect.identite/managers/franceconnect";
+import { captureException } from "@sentry/node";
 import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { AssertionError } from "node:assert";
@@ -26,72 +27,91 @@ import {
 import { FranceConnectOidcSessionSchema } from "../../managers/session/franceconnect";
 import { updateFranceConnectUserInfo } from "../../managers/user";
 import { updateUserOrganizationLink } from "../../repositories/organization/setters";
+import { logger } from "../../services/log";
 
 //
 
-export async function getFranceConnectLoginCallbackMiddleware(
-  req: Request,
-  _res: Response,
-  next: NextFunction,
+export function getFranceConnectLoginCallbackMiddlewareFactory(
+  exception_redirect_uri: string,
 ) {
-  try {
-    const errorQuery = await z
-      .object({ error: z.string(), error_description: z.string() })
-      .safeParseAsync(req.query);
+  return async function getFranceConnectLoginCallbackMiddleware(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const errorQuery = await z
+        .object({
+          error: z.string(),
+          error_description: z.string(),
+          state: z.string(),
+          iss: z.string(),
+        })
+        .safeParseAsync(req.query);
 
-    if (errorQuery.success) {
-      const { error, error_description } = errorQuery.data;
-      throw new OidcError(error, error_description, {
-        cause: errorQuery.error,
-      });
-    }
-    const { code } = await z.object({ code: z.string() }).parseAsync(req.query);
+      if (errorQuery.success) {
+        const { error, error_description } = errorQuery.data;
+        throw new OidcError(error, error_description, {
+          cause: errorQuery.error,
+        });
+      }
+      const { code } = await z
+        .object({ code: z.string() })
+        .parseAsync(req.query);
 
-    const { nonce, state } = await FranceConnectOidcSessionSchema.parseAsync(
-      req.session,
-    );
+      const { nonce, state } = await FranceConnectOidcSessionSchema.parseAsync(
+        req.session,
+      );
 
-    const currentUrl = new URL(
-      `${HOST ?? `${req.protocol}://${req.hostname}`}${req.originalUrl ?? req.url}`,
-    );
-    const [franceconnect_error, franceconnect_response] = await to(
-      getFranceConnectUser({
-        code,
-        currentUrl,
-        expectedNonce: nonce,
-        expectedState: state,
-      }),
-    );
-    if (franceconnect_error)
-      throw new OidcFranceConnectBackChannelError(franceconnect_error.name, {
-        cause: franceconnect_error,
-      });
-
-    const { user_info, id_token } = franceconnect_response;
-    req.session.id_token_hint = id_token;
-    req.session.nonce = undefined;
-    req.session.state = undefined;
-
-    const { id: userId } = getUserFromAuthenticatedSession(req);
-
-    const updatedUser = await updateFranceConnectUserInfo(userId, user_info);
-    updateUserInAuthenticatedSession(req, updatedUser);
-
-    const userOrganizations = await getOrganizationsByUserId(userId);
-
-    await Promise.all(
-      userOrganizations.map(({ id }) =>
-        updateUserOrganizationLink(id, userId, {
-          verification_type: null,
-          verified_at: null,
+      const currentUrl = new URL(
+        `${HOST ?? `${req.protocol}://${req.hostname}`}${req.originalUrl ?? req.url}`,
+      );
+      const [franceconnect_error, franceconnect_response] = await to(
+        getFranceConnectUser({
+          code,
+          currentUrl,
+          expectedNonce: nonce,
+          expectedState: state,
         }),
-      ),
-    );
+      );
+      if (franceconnect_error)
+        throw new OidcFranceConnectBackChannelError(franceconnect_error.name, {
+          cause: franceconnect_error,
+        });
 
-    next();
-  } catch (error) {
-    next(error);
-  }
+      const { user_info, id_token } = franceconnect_response;
+      req.session.id_token_hint = id_token;
+      req.session.nonce = undefined;
+      req.session.state = undefined;
+
+      const { id: userId } = getUserFromAuthenticatedSession(req);
+
+      const updatedUser = await updateFranceConnectUserInfo(userId, user_info);
+      updateUserInAuthenticatedSession(req, updatedUser);
+
+      const userOrganizations = await getOrganizationsByUserId(userId);
+
+      await Promise.all(
+        userOrganizations.map(({ id }) =>
+          updateUserOrganizationLink(id, userId, {
+            verification_type: null,
+            verified_at: null,
+          }),
+        ),
+      );
+
+      next();
+    } catch (error) {
+      if (error instanceof OidcError) {
+        logger.error(error);
+        captureException(error);
+        return res.redirect(
+          `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
+        );
+      }
+      next(error);
+    }
+  };
 }
 
 export function postFranceConnectLoginRedirectControllerFactory(

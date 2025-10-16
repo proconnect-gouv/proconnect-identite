@@ -23,7 +23,7 @@ import {
   postReopenModerationAndRedirectControllerFactory,
 } from "../controllers/user/edit-moderation";
 import {
-  getFranceConnectLoginCallbackMiddleware,
+  getFranceConnectLoginCallbackMiddlewareFactory,
   getFranceConnectLogoutCallbackControllerFactory,
   postFranceConnectLoginRedirectControllerFactory,
   useFranceConnectLogoutMiddlewareFactory,
@@ -364,7 +364,9 @@ export const userRouter = () => {
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
     checkBrowserIsTrustedMiddleware,
-    getFranceConnectLoginCallbackMiddleware,
+    getFranceConnectLoginCallbackMiddlewareFactory(
+      `${HOST}/personal-information`,
+    ),
     useFranceConnectLogoutMiddlewareFactory(
       `${HOST}/users/personal-information/franceconnect/logout/callback`,
     ),
@@ -566,7 +568,9 @@ export const userRouter = () => {
   userRouter.get(
     "/certification-dirigeant/franceconnect/login/callback",
     checkBrowserIsTrustedMiddleware,
-    getFranceConnectLoginCallbackMiddleware,
+    getFranceConnectLoginCallbackMiddlewareFactory(
+      `${HOST}/users/certification-dirigeant`,
+    ),
     useFranceConnectLogoutMiddlewareFactory(
       `${HOST}/users/certification-dirigeant/franceconnect/logout/callback`,
     ),

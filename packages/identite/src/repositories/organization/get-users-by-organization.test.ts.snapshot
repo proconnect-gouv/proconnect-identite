@@ -3,7 +3,7 @@ exports[`getUsersByOrganizationFactory > should find users by organization id 1`
   {
     "id": 1,
     "email": "lion.eljonson@darkangels.world",
-    "encrypted_password": "",
+    "encrypted_password": null,
     "reset_password_token": null,
     "reset_password_sent_at": null,
     "sign_in_count": 0,

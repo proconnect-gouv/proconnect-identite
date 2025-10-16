@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 
 export type OpenApiError = components["schemas"]["Error"];
 
-export class EntrepriseApiError extends Error {
+export class ApiEntrepriseError extends Error {
   constructor(
     public issues: OpenApiError = { errors: [] },
     options?: { cause?: Error } | undefined,
@@ -16,30 +16,30 @@ export class EntrepriseApiError extends Error {
       (issues?.errors ?? []).map((issue) => issue.title).join(","),
       options,
     );
-    this.name = "EntrepriseApiError";
+    this.name = "ApiEntrepriseError";
   }
 
-  static assert(value: unknown): asserts value is EntrepriseApiError {
-    assert.ok(value instanceof EntrepriseApiError);
+  static assert(value: unknown): asserts value is ApiEntrepriseError {
+    assert.ok(value instanceof ApiEntrepriseError);
   }
 }
-export class EntrepriseApiConnectionError extends Error {
+export class ApiEntrepriseConnectionError extends Error {
   constructor(...params: ConstructorParameters<typeof Error>) {
     super(...params);
-    this.name = "EntrepriseApiConnectionError";
+    this.name = "ApiEntrepriseConnectionError";
   }
 }
-export class EntrepriseApiInvalidSiret extends Error {
-  static assert(error: unknown): asserts error is EntrepriseApiInvalidSiret {
-    EntrepriseApiError.assert(error);
+export class ApiEntrepriseInvalidSiret extends Error {
+  static assert(error: unknown): asserts error is ApiEntrepriseInvalidSiret {
+    ApiEntrepriseError.assert(error);
     const [{ code, detail, title }] = error.issues.errors;
     assert.equal(code, "00302");
     assert.equal(title, "Entité non traitable");
     assert.equal(detail, "Le numéro de siret n'est pas correctement formatté");
   }
-  static isInvalidSiret(value: unknown): value is EntrepriseApiError {
+  static isInvalidSiret(value: unknown): value is ApiEntrepriseError {
     try {
-      EntrepriseApiInvalidSiret.assert(value);
+      ApiEntrepriseInvalidSiret.assert(value);
       return true;
     } catch {
       return false;

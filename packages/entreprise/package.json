@@ -1,5 +1,5 @@
 {
-  "name": "@proconnect-gouv/proconnect.entreprise",
+  "name": "@proconnect-gouv/proconnect.api_entreprise",
   "version": "1.0.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/entreprise#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",

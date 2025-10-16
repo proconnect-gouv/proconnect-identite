@@ -13,7 +13,7 @@ import { UlysseToriMandataire } from "#testing/seed/mandataires";
 import {
   Papillon,
   RogalDornEntrepreneur as RogalDornSireneEntrepreneur,
-} from "@proconnect-gouv/proconnect.entreprise/testing/seed/insee/siret";
+} from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/insee/siret";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { isOrganizationDirigeantFactory } from "./is-organization-dirigeant.js";
@@ -23,10 +23,10 @@ import { isOrganizationDirigeantFactory } from "./is-organization-dirigeant.js";
 describe("isOrganizationDirigeantFactory", () => {
   it("should recognize a user as executive of a auto-entrepreneur", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
-      EntrepriseApiInfogreffeRepository: {
+      ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      EntrepriseApiInseeRepository: {
+      ApiEntrepriseInseeRepository: {
         findBySiret: () => Promise.resolve(RogalDornSireneEntrepreneur),
       },
       InseeApiRepository: {
@@ -44,10 +44,10 @@ describe("isOrganizationDirigeantFactory", () => {
 
   it("should not match another mandataire", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
-      EntrepriseApiInfogreffeRepository: {
+      ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      EntrepriseApiInseeRepository: {
+      ApiEntrepriseInseeRepository: {
         findBySiret: () => Promise.resolve(RogalDornSireneEntrepreneur),
       },
       InseeApiRepository: {
@@ -65,11 +65,11 @@ describe("isOrganizationDirigeantFactory", () => {
 
   it("should match Ulysse Tori as an executive of Papillon", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
-      EntrepriseApiInfogreffeRepository: {
+      ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () =>
           Promise.resolve([UlysseToriMandataire]),
       },
-      EntrepriseApiInseeRepository: {
+      ApiEntrepriseInseeRepository: {
         findBySiret: () => Promise.resolve(Papillon),
       },
       InseeApiRepository: {
@@ -84,10 +84,10 @@ describe("isOrganizationDirigeantFactory", () => {
 
   it("❎ fail with no franceconnect user info", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
-      EntrepriseApiInfogreffeRepository: {
+      ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      EntrepriseApiInseeRepository: {
+      ApiEntrepriseInseeRepository: {
         findBySiret: () => Promise.resolve(RogalDornSireneEntrepreneur),
       },
       InseeApiRepository: {
@@ -104,10 +104,10 @@ describe("isOrganizationDirigeantFactory", () => {
 
   it("❎ fail with no mandataires", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
-      EntrepriseApiInfogreffeRepository: {
+      ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.resolve([]),
       },
-      EntrepriseApiInseeRepository: {
+      ApiEntrepriseInseeRepository: {
         findBySiret: () => Promise.resolve(Papillon),
       },
       InseeApiRepository: {
