@@ -26,6 +26,9 @@
 "scope: crisp":
   - changed-files:
       - any-glob-to-any-file: "packages/crisp/**/*"
+"scope: database":
+  - changed-files:
+      - any-glob-to-any-file: "packages/database/**/*"
 "scope: debounce":
   - changed-files:
       - any-glob-to-any-file: "packages/debounce/**/*"
