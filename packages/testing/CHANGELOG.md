@@ -1,5 +1,12 @@
 # @proconnect-gouv/proconnect.testing
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`7d78714`](https://github.com/proconnect-gouv/proconnect-identite/commit/7d787149db88e8fcfeaeb840c8d6c15db72834b1)]:
+  - @proconnect-gouv/proconnect.api_entreprise@1.1.0
+
 ## 1.0.0
 
 ### Major Changes
