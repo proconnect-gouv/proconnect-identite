@@ -38,7 +38,7 @@
     "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {
-    "openapi-fetch": "^0.14.0"
+    "openapi-fetch": "^0.15.0"
   },
   "devDependencies": {
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
