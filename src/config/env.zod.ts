@@ -59,6 +59,8 @@ export const connectorEnvSchema = z.object({
     .default("https://api.insee.fr/api-sirene/prive/3.11"),
   INSEE_API_USERNAME: z.string().default("🎭 Mocked Insee API Username"),
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
+  RNE_API_PASSWORD: z.string().default("🎭 Mocked RNE API Password"),
+  RNE_API_USERNAME: z.string().default("🎭 Mocked RNE API Username"),
   SENTRY_DSN: z.string().default(""),
   SMTP_FROM: z
     .string()

@@ -1,0 +1,187 @@
+openapi: 3.1.0
+info:
+  title: Registre national des entreprises API
+  description: Documentation de l'API du RNE
+  version: "2.0"
+servers:
+  - url: https://registre-national-entreprises.inpi.fr/api
+paths:
+  /sso/login:
+    post:
+      summary: Obtenir le token à envoyer dans le Headers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        "200":
+          description: Requête traitée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseToken"
+        "401":
+          description: Requête invalide
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Requête interdite
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /companies/{siren}:
+    get:
+      summary: Recherche d'une entreprise par son numéro Siren
+      description: Recherche d'une entreprise par son numéro Siren (9 chiffres)
+      operationId: findBySiren
+      parameters:
+        - name: siren
+          in: path
+          description: Identifiant de l'entreprise (9 chiffres)
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Companie trouvée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReponseCompany"
+components:
+  schemas:
+    Beneficiaire:
+      type: object
+      properties:
+        descriptionPersonne:
+          type: object
+          properties:
+            dateDeNaissance:
+              type: string
+              format: AAAA-MM-JJ
+            nom:
+              type: string
+              description: Nom de naissance
+            prenoms:
+              type: array
+              items:
+                type: string
+                description: Prénoms
+            genre:
+              type: string
+              description: Genre
+              enum:
+                - "1"
+                - "2"
+            paysNaissance:
+              type: string
+              description: Pays de naissance
+            lieuDeNaissance:
+              type: string
+              description: Lieu de naissance
+            codePostalNaissance:
+              type: string
+              description: Code postal de naissance
+            codeInseeGeographique:
+              type: string
+              description: Code insee de la commune de naissance
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code de l'erreur
+          example: "401"
+          enum:
+            - "401"
+            - "403"
+            - "404"
+            - "500"
+        errorCode:
+          type: string
+          description: Code d'erreur
+          example: "connection_type_not_allowed"
+        message:
+          type: string
+          description: Message d'erreur
+          example: "Accès impossible"
+        type:
+          type: string
+          description: Type d'erreur
+          example: "access_forbidden"
+        webserviceCode:
+          type: string
+          description: Code du service web
+          example: "api_sso_post_login_password"
+      required:
+        - error
+        - error_description
+    ReponseCompany:
+      type: object
+      description: Objet renvoyé en cas de succès sur une requête de type entreprise
+      properties:
+        id:
+          type: string
+          description: Identifiant de l'entreprise
+        formality:
+          type: object
+          properties:
+            content:
+              type: object
+              properties:
+            diffusionINSEE:
+              type: string
+              description: Diffusion dans l'INSEE
+            personneMorale:
+              type: object
+              properties:
+                beneficiairesEffectifs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      actif:
+                        type: boolean
+                        description: Actif ou non
+                      beneficiaireId:
+                        type: string
+                        description: Identifiant du bénéficiaire
+                      beneficiaire:
+                        $ref: "#/components/schemas/Beneficiaire"
+        siren:
+          type: string
+          description: Numéro Siren de l'entreprise
+    ResponseToken:
+      type: object
+      description: Objet renvoyé en cas de succès sur une requête de type token
+      properties:
+        token:
+          type: string
+          description: Jeton d'accès
+        user:
+          type: object
+          properties:
+            email:
+              type: string
+              description: Email de l'utilisateur

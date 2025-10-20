@@ -12,6 +12,7 @@ import HttpErrors from "http-errors";
 import { inspect } from "node:util";
 import { z, ZodError } from "zod";
 import notificationMessages from "../config/notification-messages";
+import { RegistreNationalEntreprisesApiRepository } from "../connectors/api-rne";
 import {
   getOrganizationInfo,
   InseeApiRepository,
@@ -48,7 +49,24 @@ export async function getPingApiInseeController(
   _next: NextFunction,
 ) {
   try {
-    await InseeApiRepository.findBySiret("13002526500013"); // we use DINUM siret for the ping route
+    await InseeApiRepository.findBySiret("130025265"); // we use DINUM siret for the ping route
+    return res.json({});
+  } catch (e) {
+    logger.error(inspect(e, { depth: 3 }));
+    Sentry.captureException(e);
+    return res.status(502).json({ message: "Bad Gateway" });
+  }
+}
+
+export async function getPingApiRegistreNationalEntreprisesController(
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  try {
+    await RegistreNationalEntreprisesApiRepository.findBySiren(
+      "13002526500013",
+    ); // we use DINUM siret for the ping route
     return res.json({});
   } catch (e) {
     logger.error(inspect(e, { depth: 3 }));

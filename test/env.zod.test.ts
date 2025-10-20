@@ -110,6 +110,8 @@ describe("env.zod", () => {
       RECENT_LOGIN_INTERVAL_IN_SECONDS: 900,
       REDIS_URL: "redis://:@127.0.0.1:6379",
       RESET_PASSWORD_TOKEN_EXPIRATION_DURATION_IN_MINUTES: 60,
+      RNE_API_PASSWORD: "🎭 Mocked RNE API Password",
+      RNE_API_USERNAME: "🎭 Mocked RNE API Username",
       SENTRY_DSN: "",
       SESSION_COOKIE_SECRET: ["proconnectsecret", "identitesecret"],
       SESSION_MAX_AGE_IN_SECONDS: 86400,
