@@ -1,9 +1,5 @@
 FROM node:22-slim AS base
-RUN corepack enable
-
-RUN --mount=type=bind,source=package.json,target=package.json \
-  corepack prepare --activate
-
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 WORKDIR /app
 
 FROM base AS prod-deps
@@ -20,7 +16,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=packages/identite/package.json,target=packages/identite/package.json \
   --mount=type=bind,source=packages/testing/package.json,target=packages/testing/package.json \
   --mount=type=cache,sharing=locked,target=/root/.npm \
-  corepack npm ci --omit=dev
+  npm ci --omit=dev
 
 FROM base AS build
 ENV CYPRESS_INSTALL_BINARY=0
@@ -37,14 +33,14 @@ RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=packages/identite/package.json,target=packages/identite/package.json \
   --mount=type=bind,source=packages/testing/package.json,target=packages/testing/package.json \
   --mount=type=cache,sharing=locked,target=/root/.npm \
-  corepack npm ci
+  npm ci
 COPY tsconfig.json vite.config.mjs ./
 COPY assets/ ./assets/
 COPY public/ ./public/
 COPY src/ ./src/
 COPY packages/ ./packages/
 COPY package*.json ./
-RUN corepack npx run-s build:*
+RUN npx run-s build:*
 
 FROM base
 COPY package.json ./
@@ -53,4 +49,4 @@ COPY --from=build /app/dist /app/dist
 COPY --from=build /app/src /app/src
 COPY --from=build /app/packages /app/packages
 
-CMD [ "corepack", "npm", "start" ]
+CMD [ "npm", "start" ]
