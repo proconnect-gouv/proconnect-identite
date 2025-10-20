@@ -21,9 +21,6 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v5
 
-      - name: ⚙️ Enable corepack
-        run: corepack enable
-
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v5
         with:
@@ -32,6 +29,11 @@ jobs:
 
       - name: 🔄 Update lockfile
         run: npm update --package-lock-only
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+          NPM_CONFIG_AUDIT: false
+          NPM_CONFIG_FUND: false
+          NPM_CONFIG_UPDATE_NOTIFIER: false
 
       - name: 🔀 Create Pull Request
         if: env.DRY_RUN != 'true'
