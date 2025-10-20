@@ -11,6 +11,7 @@
   "workspaces": [
     "packages/annuaire_entreprises",
     "packages/core",
+    "packages/database",
     "packages/crisp",
     "packages/debounce",
     "packages/devtools/typescript",
