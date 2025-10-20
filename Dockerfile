@@ -1,4 +1,4 @@
-FROM node:22-slim AS base
+FROM node:25-slim AS base
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 WORKDIR /app
 
