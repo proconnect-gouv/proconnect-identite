@@ -116,7 +116,7 @@ export const getAnnuaireServicePublicContactEmail = async (
     );
   }
 
-  const formattedEmail = adresse_courriel.toLowerCase().trim();
+  const [formattedEmail] = adresse_courriel.toLowerCase().trim().split(";");
 
   if (!isEmailValid(formattedEmail)) {
     throw new ApiAnnuaireInvalidEmailError(
