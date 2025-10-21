@@ -1,0 +1,100 @@
+{
+  "data": {
+    "siret": "25280033900019",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "84.12Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Administration publique (tutelle) de la santé, de la formation, de la culture et des services sociaux, autre que sécurité sociale"
+    },
+    "tranche_effectif_salarie": {
+      "de": 6,
+      "a": 9,
+      "code": "03",
+      "date_reference": "2023",
+      "intitule": "6 à 9 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 415321200,
+    "unite_legale": {
+      "siren": "252800339",
+      "rna": null,
+      "siret_siege_social": "25280033900019",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "SI REGPT PEDAGOGIQUE BOUVILLE SAUMERAY",
+        "sigle": "SIRP"
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "7345",
+        "libelle": "Syndicat intercommunal à vocation multiple (SIVOM)"
+      },
+      "activite_principale": {
+        "code": "84.12Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Administration publique (tutelle) de la santé, de la formation, de la culture et des services sociaux, autre que sécurité sociale"
+      },
+      "tranche_effectif_salarie": {
+        "de": 6,
+        "a": 9,
+        "code": "03",
+        "date_reference": "2023",
+        "intitule": "6 à 9 salariés"
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 252457200,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": "",
+      "numero_voie": "20",
+      "indice_repetition_voie": "",
+      "type_voie": "RUE",
+      "libelle_voie": "DE LA MAIRIE",
+      "code_postal": "28800",
+      "libelle_commune": "BOUVILLE",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "28057",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "SI REGPT PEDAGOGIQUE BOUVILLE SAUMERAY",
+        "l2": "",
+        "l3": "",
+        "l4": "20 RUE DE LA MAIRIE",
+        "l5": "",
+        "l6": "28800 BOUVILLE",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/252800339"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1742770800,
+    "redirect_from_siret": null
+  }
+}

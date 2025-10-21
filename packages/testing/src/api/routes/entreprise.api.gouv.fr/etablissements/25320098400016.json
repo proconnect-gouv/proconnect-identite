@@ -1,0 +1,97 @@
+{
+  "data": {
+    "siret": "25320098400016",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "38.11Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Collecte des déchets non dangereux"
+    },
+    "tranche_effectif_salarie": {
+      "de": 20,
+      "a": 49,
+      "code": "12",
+      "date_reference": "2023",
+      "intitule": "20 à 49 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 435884400,
+    "unite_legale": {
+      "siren": "253200984",
+      "rna": null,
+      "siret_siege_social": "25320098400016",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "SYNDICAT MIXTE DE COLLECTE DES DECHETS DU SECTEUR SUD",
+        "sigle": "SICTOM"
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": { "code": "7354", "libelle": "Syndicat mixte fermé" },
+      "activite_principale": {
+        "code": "38.11Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Collecte des déchets non dangereux"
+      },
+      "tranche_effectif_salarie": {
+        "de": 20,
+        "a": 49,
+        "code": "12",
+        "date_reference": "2023",
+        "intitule": "20 à 49 salariés"
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 402274800,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": "ZONE ARTISANALE DU POUNTET",
+      "numero_voie": null,
+      "indice_repetition_voie": null,
+      "type_voie": "ROUTE",
+      "libelle_voie": "DE TARBES",
+      "code_postal": "32300",
+      "libelle_commune": "MIRANDE",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "32256",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "SYNDICAT MIXTE DE COLLECTE DES DECHETS DU SECTEUR SUD",
+        "l2": "",
+        "l3": "ZONE ARTISANALE DU POUNTET",
+        "l4": "ROUTE DE TARBES",
+        "l5": "",
+        "l6": "32300 MIRANDE",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/253200984"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1737586800,
+    "redirect_from_siret": null
+  }
+}
