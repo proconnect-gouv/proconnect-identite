@@ -49,7 +49,7 @@ export async function getPingApiInseeController(
   _next: NextFunction,
 ) {
   try {
-    await InseeApiRepository.findBySiret("130025265"); // we use DINUM siret for the ping route
+    await InseeApiRepository.findBySiret("13002526500013"); // we use DINUM siret for the ping route
     return res.json({});
   } catch (e) {
     logger.error(inspect(e, { depth: 3 }));
