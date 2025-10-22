@@ -158,3 +158,49 @@ describe("restrict access for", () => {
     );
   });
 });
+
+describe("join syndicat communal", () => {
+  const sirets = [
+    {
+      code: "20000713600019",
+      type: "Syndicat intercommunal à vocation unique (SIVU)",
+    },
+    {
+      code: "20008142000024",
+      type: "Syndicat intercommunal à vocation multiple (SIVOM)",
+    },
+    {
+      code: "24590007100029",
+      type: "Syndicat intercommunal à vocation multiple (SIVOM)",
+    },
+    {
+      code: "25280033900019",
+      type: "Syndicat intercommunal à vocation multiple (SIVOM)",
+    },
+    { code: "25320098400016", type: "Syndicat mixte fermé" },
+    {
+      code: "25800404300026",
+      type: "Syndicat intercommunal à vocation unique (SIVU)",
+    },
+  ];
+
+  beforeEach(() => {
+    cy.visit("/");
+    cy.login("lion.eljonson@yopmail.com");
+    cy.visit("/users/join-organization");
+
+    cy.title().should("include", "Rejoindre une organisation -");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+  });
+
+  sirets.forEach(({ code, type }) => {
+    it(type, function () {
+      cy.focused().clear().type(code);
+      cy.contains("Enregistrer").click();
+      cy.contains("Demande en cours");
+      cy.contains(
+        "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
+      );
+    });
+  });
+});
