@@ -41,7 +41,7 @@
     "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate",
     "start": "tsx --import ./src/instrument.ts src/index.ts",
     "test": "run-s test:*",
-    "test:lint": "prettier '**/*.ts' --list-different",
+    "test:lint": "prettier '**/*.{ts,sql}' --list-different",
     "test:type-check": "tsc --noEmit",
     "test:unit": "npm run test:unit:runner src/**/*.test.ts test/**/*.test.ts",
     "test:unit:runner": "tsx --env-file=.env.test --test --test-reporter=spec",
