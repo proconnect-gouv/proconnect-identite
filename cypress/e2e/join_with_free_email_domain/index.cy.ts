@@ -182,6 +182,10 @@ describe("join syndicat communal", () => {
       code: "25800404300026",
       type: "Syndicat intercommunal à vocation unique (SIVU)",
     },
+    {
+      code: "26090012100013",
+      type: "Établissement public local social et médico-social",
+    },
   ];
 
   beforeEach(() => {
