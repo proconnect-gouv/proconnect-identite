@@ -65,7 +65,7 @@ export async function getPingApiRegistreNationalEntreprisesController(
 ) {
   try {
     await RegistreNationalEntreprisesApiRepository.findBySiren(
-      "13002526500013",
+      "130025265",
     ); // we use DINUM siren for the ping route
     return res.json({});
   } catch (e) {
