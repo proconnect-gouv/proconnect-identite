@@ -64,7 +64,9 @@ export async function getPingApiRegistreNationalEntreprisesController(
   _next: NextFunction,
 ) {
   try {
-    await RegistreNationalEntreprisesApiRepository.findBySiren("130025265"); // we use DINUM siren for the ping route
+    // we use Douglas DUTEIL (ONEDOES.DRAW.DOUBLEACE) siren for the ping route
+    // because DINUM siren is returned as 404 by the RNE API
+    await RegistreNationalEntreprisesApiRepository.findBySiren("828696252");
     return res.json({});
   } catch (e) {
     logger.error(inspect(e, { depth: 3 }));
