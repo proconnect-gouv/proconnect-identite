@@ -1,11 +1,7 @@
 import { isEmpty } from "lodash-es";
 import { Secret, TOTP } from "otpauth";
 import qrcode from "qrcode";
-import {
-  APPLICATION_NAME,
-  SYMMETRIC_ENCRYPTION_KEY,
-  WEBSITE_IDENTIFIER,
-} from "../config/env";
+import { APPLICATION_NAME, SYMMETRIC_ENCRYPTION_KEY } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
 import { getById, update } from "../repositories/user";
 import {
@@ -18,7 +14,7 @@ export const generateTotpRegistrationOptions = async (
   email: string,
   existingTotpKey: string | null,
 ) => {
-  let totpKey = existingTotpKey ?? new Secret({ size: 20 }).base32;
+  const totpKey = existingTotpKey ?? new Secret({ size: 32 }).base32;
 
   const totp = new TOTP({
     issuer: APPLICATION_NAME,
