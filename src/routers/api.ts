@@ -8,6 +8,7 @@ import { API_AUTH_PASSWORD, API_AUTH_USERNAME } from "../config/env";
 import {
   getOrganizationInfoController,
   getPingApiInseeController,
+  getPingApiRegistreNationalEntreprisesController,
   getPingApiSireneController,
   postForceJoinOrganizationController,
   postSendModerationProcessedEmail,
@@ -29,8 +30,9 @@ export const apiRouter = () => {
 
   apiRouter.use(apiRateLimiterMiddleware);
 
-  apiRouter.get("/sirene/ping", getPingApiSireneController);
   apiRouter.get("/insee/ping", getPingApiInseeController);
+  apiRouter.get("/rne/ping", getPingApiRegistreNationalEntreprisesController);
+  apiRouter.get("/sirene/ping", getPingApiSireneController);
 
   apiRouter.get(
     "/sirene/organization-info/:siret",

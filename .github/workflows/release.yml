@@ -20,8 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - run: corepack enable
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           cache: "npm"
           node-version-file: package.json
@@ -29,6 +28,9 @@ jobs:
       - run: npm ci
         env:
           CYPRESS_INSTALL_BINARY: 0
+          NPM_CONFIG_AUDIT: false
+          NPM_CONFIG_FUND: false
+          NPM_CONFIG_UPDATE_NOTIFIER: false
 
       - run: npm run build:workspaces
 

@@ -1,0 +1,100 @@
+{
+  "data": {
+    "siret": "20000713600019",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "84.12Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Administration publique (tutelle) de la santé, de la formation, de la culture et des services sociaux, autre que sécurité sociale"
+    },
+    "tranche_effectif_salarie": {
+      "de": 10,
+      "a": 19,
+      "code": "11",
+      "date_reference": "2023",
+      "intitule": "10 à 19 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1166655600,
+    "unite_legale": {
+      "siren": "200007136",
+      "rna": null,
+      "siret_siege_social": "20000713600019",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "SI SCOLAIRE ORX SAUBRIGUES",
+        "sigle": "SIVOS"
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "7353",
+        "libelle": "Syndicat intercommunal à vocation unique (SIVU)"
+      },
+      "activite_principale": {
+        "code": "84.12Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Administration publique (tutelle) de la santé, de la formation, de la culture et des services sociaux, autre que sécurité sociale"
+      },
+      "tranche_effectif_salarie": {
+        "de": 10,
+        "a": 19,
+        "code": "11",
+        "date_reference": "2023",
+        "intitule": "10 à 19 salariés"
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 1166655600,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": "MAIRIE",
+      "numero_voie": "1",
+      "indice_repetition_voie": null,
+      "type_voie": "ROUTE",
+      "libelle_voie": "DE LABENNE",
+      "code_postal": "40230",
+      "libelle_commune": "ORX",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "40213",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "SI SCOLAIRE ORX SAUBRIGUES",
+        "l2": "",
+        "l3": "MAIRIE",
+        "l4": "1 ROUTE DE LABENNE",
+        "l5": "",
+        "l6": "40230 ORX",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/200007136"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1711753200,
+    "redirect_from_siret": null
+  }
+}

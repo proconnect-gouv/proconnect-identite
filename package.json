@@ -11,12 +11,14 @@
   "workspaces": [
     "packages/annuaire_entreprises",
     "packages/core",
+    "packages/database",
     "packages/crisp",
     "packages/debounce",
     "packages/devtools/typescript",
     "packages/email",
     "packages/entreprise",
     "packages/insee",
+    "packages/registre_national_entreprises",
     "packages/identite",
     "packages/testing"
   ],
@@ -40,7 +42,7 @@
     "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate",
     "start": "tsx --import ./src/instrument.ts src/index.ts",
     "test": "run-s test:*",
-    "test:lint": "prettier '**/*.ts' --list-different",
+    "test:lint": "prettier '**/*.{ts,sql}' --list-different",
     "test:type-check": "tsc --noEmit",
     "test:unit": "npm run test:unit:runner src/**/*.test.ts test/**/*.test.ts",
     "test:unit:runner": "tsx --env-file=.env.test --test --test-reporter=spec",
@@ -75,6 +77,7 @@
     "@proconnect-gouv/proconnect.api_entreprise": "workspace:*",
     "@proconnect-gouv/proconnect.identite": "workspace:*",
     "@proconnect-gouv/proconnect.insee": "workspace:*",
+    "@proconnect-gouv/proconnect.registre_national_entreprises": "workspace:*",
     "@proconnect-gouv/proconnect.testing": "workspace:*",
     "@sentry/node": "^10.18.0",
     "@sentry/profiling-node": "^10.18.0",
@@ -116,6 +119,7 @@
     "@changesets/cli": "^2.29.6",
     "@dotenvx/dotenvx": "^1.47.3",
     "@fullhuman/postcss-purgecss": "^7.0.2",
+    "@proconnect-gouv/proconnect.testing": "workspace:*",
     "@proconnect-gouv/proconnect.devtools.typescript": "workspace:*",
     "@gouvfr/dsfr": "^1.14.2",
     "@kitajs/html": "^4.2.9",
@@ -157,9 +161,7 @@
     "vite": "^7.1.9",
     "zx": "^8.8.4"
   },
-  "packageManager": "npm@11.6.2+sha512.ee22b335fcbc95662cdf3ab8a053daf045d9cf9c6df6040d28965abb707512b2c16fa6c5eec049d34c74f78f390cebd14f697919eadb97756564d4f9eccc4954",
   "engines": {
-    "node": "^22.20.0",
-    "npm": "11.6.2"
+    "node": "^22.20.0"
   }
 }

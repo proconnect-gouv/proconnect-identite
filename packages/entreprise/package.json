@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.api_entreprise",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/entreprise#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -35,7 +35,7 @@
     "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {
-    "openapi-fetch": "^0.14.0"
+    "openapi-fetch": "^0.15.0"
   },
   "devDependencies": {
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",

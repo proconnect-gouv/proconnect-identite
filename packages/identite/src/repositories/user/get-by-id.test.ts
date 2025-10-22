@@ -34,7 +34,7 @@ suite("getByIdFactory", () => {
       email: "lion.eljonson@darkangels.world",
       email_verified: false,
       email_verified_at: null,
-      encrypted_password: "",
+      encrypted_password: null,
       encrypted_totp_key: null,
       family_name: "el'jonson",
       force_2fa: false,

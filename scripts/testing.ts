@@ -1,7 +1,7 @@
 //
 
+import { EntrepriseCommandFactory } from "@proconnect-gouv/proconnect.testing/cli/entreprise";
 import yargs from "yargs";
-import { EntrepriseCommandFactory } from "../packages/testing/src/cli/entreprise";
 import {
   ENTREPRISE_API_TOKEN,
   ENTREPRISE_API_TRACKING_CONTEXT,
