@@ -7,21 +7,21 @@ import { getRegistreNationalEntreprisesAccessTokenFactory } from "./get-rne-acce
 
 //
 
-const { RNE_CLIENT_USERNAME, RNE_CLIENT_PASSWORD } = process.env;
+const { RNE_API_USERNAME, RNE_API_PASSWORD } = process.env;
 
 //
 
 describe(
   "getInseeAccessTokenFactory",
   {
-    skip: ![RNE_CLIENT_USERNAME, RNE_CLIENT_PASSWORD].every(Boolean),
+    skip: ![RNE_API_USERNAME, RNE_API_PASSWORD].every(Boolean),
   },
   function () {
     it("should return an access token", async () => {
       const get_access_token = getRegistreNationalEntreprisesAccessTokenFactory(
         {
-          username: RNE_CLIENT_USERNAME!,
-          password: RNE_CLIENT_PASSWORD!,
+          username: RNE_API_USERNAME!,
+          password: RNE_API_PASSWORD!,
         },
       );
 
@@ -34,7 +34,7 @@ describe(
       const get_access_token = getRegistreNationalEntreprisesAccessTokenFactory(
         {
           username: "invalid-username",
-          password: RNE_CLIENT_PASSWORD!,
+          password: RNE_API_PASSWORD!,
         },
       );
 
@@ -47,8 +47,8 @@ describe(
     it("❎ fails with token not found", async () => {
       const get_access_token = getRegistreNationalEntreprisesAccessTokenFactory(
         {
-          username: RNE_CLIENT_USERNAME!,
-          password: RNE_CLIENT_PASSWORD!,
+          username: RNE_API_USERNAME!,
+          password: RNE_API_PASSWORD!,
         },
         {
           fetch: async () => Promise.resolve(new Response(JSON.stringify({}))),
