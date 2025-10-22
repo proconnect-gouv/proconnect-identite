@@ -22,7 +22,7 @@ export const generateTotpRegistrationOptions = async (
 
   const totp = new TOTP({
     issuer: APPLICATION_NAME,
-    label: `${WEBSITE_IDENTIFIER}:${email}`,
+    label: email,
     algorithm: "SHA1",
     digits: 6,
     period: 30,
