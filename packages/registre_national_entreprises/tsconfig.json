@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "types": ["node"]
+  },
+  "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
+  "include": ["src", "openapi"],
+  "references": []
+}

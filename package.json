@@ -18,6 +18,7 @@
     "packages/email",
     "packages/entreprise",
     "packages/insee",
+    "packages/registre_national_entreprises",
     "packages/identite",
     "packages/testing"
   ],
@@ -76,6 +77,7 @@
     "@proconnect-gouv/proconnect.api_entreprise": "workspace:*",
     "@proconnect-gouv/proconnect.identite": "workspace:*",
     "@proconnect-gouv/proconnect.insee": "workspace:*",
+    "@proconnect-gouv/proconnect.registre_national_entreprises": "workspace:*",
     "@proconnect-gouv/proconnect.testing": "workspace:*",
     "@sentry/node": "^10.18.0",
     "@sentry/profiling-node": "^10.18.0",

@@ -1,0 +1,50 @@
+{
+  "name": "@proconnect-gouv/proconnect.registre_national_entreprises",
+  "version": "1.0.0",
+  "private": true,
+  "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/registre_national_entreprises#readme",
+  "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proconnect-gouv/proconnect-identite.git",
+    "directory": "packages/registre_national_entreprises"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "imports": {
+    "#openapi": "./openapi/index.d.ts",
+    "#src/*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    }
+  },
+  "exports": {
+    "./*": {
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.lib.json",
+    "check": "npm run build -- --noEmit",
+    "build:openapi": "openapi-typescript openapi/index.yaml -o openapi/index.d.ts",
+    "dev": "npm run build -- --watch --preserveWatchOutput",
+    "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "postbuild:openapi": "prettier --write openapi/*.d.ts",
+    "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.14.0"
+  },
+  "devDependencies": {
+    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
+    "@types/node": "^22.18.6",
+    "openapi-typescript": "^7.9.1",
+    "tsx": "^4.20.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

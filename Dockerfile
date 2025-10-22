@@ -15,6 +15,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=packages/entreprise/package.json,target=packages/entreprise/package.json \
   --mount=type=bind,source=packages/identite/package.json,target=packages/identite/package.json \
   --mount=type=bind,source=packages/insee/package.json,target=packages/insee/package.json \
+  --mount=type=bind,source=packages/registre_national_entreprises/package.json,target=packages/registre_national_entreprises/package.json \
   --mount=type=bind,source=packages/testing/package.json,target=packages/testing/package.json \
   --mount=type=cache,sharing=locked,target=/root/.npm \
   npm ci --omit=dev
@@ -33,6 +34,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=packages/entreprise/package.json,target=packages/entreprise/package.json \
   --mount=type=bind,source=packages/identite/package.json,target=packages/identite/package.json \
   --mount=type=bind,source=packages/insee/package.json,target=packages/insee/package.json \
+  --mount=type=bind,source=packages/registre_national_entreprises/package.json,target=packages/registre_national_entreprises/package.json \
   --mount=type=bind,source=packages/testing/package.json,target=packages/testing/package.json \
   --mount=type=cache,sharing=locked,target=/root/.npm \
   npm ci
