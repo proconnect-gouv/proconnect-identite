@@ -1,11 +1,7 @@
-import { generateSecret, generateUri, validateToken } from "@sunknudsen/totp";
 import { isEmpty } from "lodash-es";
+import { Secret, TOTP } from "otpauth";
 import qrcode from "qrcode";
-import {
-  APPLICATION_NAME,
-  SYMMETRIC_ENCRYPTION_KEY,
-  WEBSITE_IDENTIFIER,
-} from "../config/env";
+import { APPLICATION_NAME, SYMMETRIC_ENCRYPTION_KEY } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
 import { getById, update } from "../repositories/user";
 import {
@@ -18,9 +14,18 @@ export const generateTotpRegistrationOptions = async (
   email: string,
   existingTotpKey: string | null,
 ) => {
-  let totpKey = existingTotpKey ?? generateSecret(32);
+  const totpKey = existingTotpKey ?? new Secret({ size: 32 }).base32;
 
-  const uri = generateUri(APPLICATION_NAME, email, totpKey, WEBSITE_IDENTIFIER);
+  const totp = new TOTP({
+    issuer: APPLICATION_NAME,
+    label: email,
+    algorithm: "SHA1",
+    digits: 6,
+    period: 30,
+    secret: totpKey,
+  });
+
+  const uri = totp.toString();
 
   // lower case for easier usage (no caps lock required)
   // add a space every 4 char for better readability
@@ -50,7 +55,19 @@ export const confirmTotpRegistration = async (
   // ASSERTION: user exists
   await getById(user_id);
 
-  if (!temporaryTotpKey || !validateToken(temporaryTotpKey, totpToken, 2)) {
+  if (!temporaryTotpKey) {
+    throw new InvalidTotpTokenError();
+  }
+
+  const totp = new TOTP({
+    algorithm: "SHA1",
+    digits: 6,
+    period: 30,
+    secret: temporaryTotpKey,
+  });
+
+  const delta = totp.validate({ token: totpToken, window: 2 });
+  if (delta === null) {
     throw new InvalidTotpTokenError();
   }
 
@@ -94,7 +111,15 @@ export const authenticateWithTotp = async (user_id: number, token: string) => {
     user.encrypted_totp_key,
   );
 
-  if (!validateToken(decryptedTotpKey, token, 2)) {
+  const totp = new TOTP({
+    algorithm: "SHA1",
+    digits: 6,
+    period: 30,
+    secret: decryptedTotpKey,
+  });
+
+  const delta = totp.validate({ token, window: 2 });
+  if (delta === null) {
     throw new InvalidTotpTokenError();
   }
 

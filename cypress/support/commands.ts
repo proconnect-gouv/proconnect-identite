@@ -1,6 +1,6 @@
 //
 
-import { generateToken } from "@sunknudsen/totp";
+import { TOTP } from "otpauth";
 import { checkA11y } from "./a11y/checkA11y";
 import { seed } from "./commands/seed";
 import "./webauthn";
@@ -38,8 +38,14 @@ const defaultTotpSecret = "din5ncvbluqpx7xfzqcybmibmtjocnsf";
 const defaultPassword = "password123";
 
 Cypress.Commands.add("fillTotpFields", (totpSecret = defaultTotpSecret) => {
-  const totp = generateToken(totpSecret);
-  cy.get("[name=totpToken]").type(totp);
+  const totp = new TOTP({
+    algorithm: "SHA1",
+    digits: 6,
+    period: 30,
+    secret: totpSecret,
+  });
+  const token = totp.generate();
+  cy.get("[name=totpToken]").type(token);
   cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
 });
 
@@ -149,8 +155,14 @@ function fillAndSubmitTotpFormCommand(action: string) {
     .invoke("text")
     .then((text) => {
       const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
-      const totp = generateToken(humanReadableTotpKey);
-      cy.get("[name=totpToken]").type(totp);
+      const totp = new TOTP({
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: humanReadableTotpKey,
+      });
+      const token = totp.generate();
+      cy.get("[name=totpToken]").type(token);
       cy.get(`[action="${action}"] [type="submit"]`).click();
     });
 }
