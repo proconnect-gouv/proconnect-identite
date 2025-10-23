@@ -13,7 +13,7 @@ import { capitalize } from "lodash-es";
 
 //
 
-export function fromSiret(
+export function toOrganizationInfo(
   siretData: InseeSireneEstablishmentSiretResponseData,
 ): OrganizationInfo {
   const isPartiallyNonDiffusible =
@@ -71,5 +71,5 @@ export function fromSiret(
     statutDiffusion: siretData.status_diffusion,
     trancheEffectifs,
     trancheEffectifsUniteLegale,
-  } satisfies OrganizationInfo);
+  });
 }

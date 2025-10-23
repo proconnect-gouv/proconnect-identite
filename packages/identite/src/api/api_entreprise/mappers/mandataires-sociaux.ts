@@ -5,7 +5,7 @@ import type { InfogreffeSirenMandatairesSociaux } from "@proconnect-gouv/proconn
 
 //
 
-export function fromInfogreffe(
+export function toIdentityVector(
   mandataire: InfogreffeSirenMandatairesSociaux,
 ): IdentityVector {
   const birthdate = new Date(mandataire.date_naissance_timestamp || NaN);

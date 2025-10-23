@@ -1,19 +1,22 @@
 //
 
-import { NotFoundError } from "#src/errors";
+import { InvalidCertificationError, NotFoundError } from "#src/errors";
 import {
   LiElJonsonFranceConnectUserInfo,
   RogalDornFranceConnectUserInfo,
 } from "#testing/seed/franceconnect";
 import {
-  LiElJonsonEstablishment,
-  RogalDornEstablishment,
-} from "#testing/seed/insee";
-import { UlysseToriMandataire } from "#testing/seed/mandataires";
+  RogalDornMandataire,
+  UlysseToriMandataire,
+} from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-infogreffe-rcs-unites_legales-siren-mandataires_sociaux";
 import {
   Papillon,
   RogalDornEntrepreneur as RogalDornSireneEntrepreneur,
-} from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/insee/siret";
+} from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-insee-sirene-etablissements-siret";
+import {
+  LiElJonsonEstablishment,
+  RogalDornEstablishment,
+} from "@proconnect-gouv/proconnect.insee/testing/seed/establishments";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { isOrganizationDirigeantFactory } from "./is-organization-dirigeant.js";
@@ -39,7 +42,21 @@ describe("isOrganizationDirigeantFactory", () => {
       RogalDornSireneEntrepreneur.siret,
       1,
     );
-    assert.equal(isDirigeant, true);
+    assert.deepEqual(isDirigeant, {
+      cause: "exact_match",
+      details: {
+        dirigeant: {
+          birthdate: RogalDornFranceConnectUserInfo.birthdate,
+          birthplace: "INWIT",
+          family_name: "DORN",
+          given_name: "ROGAL",
+        },
+        distance: 0,
+        identity: RogalDornFranceConnectUserInfo,
+        source: "api.insee.fr/api-sirene/private",
+      },
+      ok: true,
+    });
   });
 
   it("should not match another mandataire", async () => {
@@ -60,14 +77,28 @@ describe("isOrganizationDirigeantFactory", () => {
       RogalDornSireneEntrepreneur.siret,
       1,
     );
-    assert.equal(isDirigeant, false);
+    assert.deepEqual(isDirigeant, {
+      cause: "below_threshold",
+      details: {
+        dirigeant: {
+          birthdate: new Date(Date.UTC(28500, 1, 5)),
+          birthplace: "INW",
+          family_name: "EL'JONSON",
+          given_name: "LION",
+        },
+        distance: 182578,
+        identity: RogalDornFranceConnectUserInfo,
+        source: "api.insee.fr/api-sirene/private",
+      },
+      ok: false,
+    });
   });
 
-  it("should match Ulysse Tori as an executive of Papillon", async () => {
+  it("should match Rogal Dorn among the executive of Papillon", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () =>
-          Promise.resolve([UlysseToriMandataire]),
+          Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
       },
       ApiEntrepriseInseeRepository: {
         findBySiret: () => Promise.resolve(Papillon),
@@ -79,7 +110,22 @@ describe("isOrganizationDirigeantFactory", () => {
         Promise.resolve(RogalDornFranceConnectUserInfo),
     });
     const isDirigeant = await isOrganizationDirigeant(Papillon.siret, 1);
-    assert.equal(isDirigeant, false);
+    assert.deepEqual(isDirigeant, {
+      cause: "exact_match",
+      details: {
+        dirigeant: {
+          birthdate: RogalDornFranceConnectUserInfo.birthdate,
+          birthplace: "INWIT",
+          family_name: "DORN",
+          given_name: "ROGAL",
+        },
+        distance: 0,
+        identity: RogalDornFranceConnectUserInfo,
+        source:
+          "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
+      },
+      ok: true,
+    });
   });
 
   it("❎ fail with no franceconnect user info", async () => {
@@ -119,7 +165,7 @@ describe("isOrganizationDirigeantFactory", () => {
 
     await assert.rejects(
       isOrganizationDirigeant(Papillon.siret, 1),
-      new NotFoundError("No mandataires found"),
+      new InvalidCertificationError("No candidates found"),
     );
   });
 });

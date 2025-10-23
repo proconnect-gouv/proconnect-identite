@@ -1,18 +1,18 @@
 //
 
-import { NotFoundError } from "#src/errors";
-import { fromInfogreffe } from "#src/mappers/certification";
-import { fromSiret } from "#src/mappers/organization";
+import * as ApiEntrepriseMap from "#src/api/api_entreprise/mappers";
+import * as InseeMap from "#src/api/insee/mappers";
+import { InvalidCertificationError, NotFoundError } from "#src/errors";
 import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
 import { isEntrepriseUnipersonnelle } from "#src/services/organization";
-import type { IdentityVector } from "#src/types";
+import type { IdentityVector, Organization } from "#src/types";
 import type {
   ApiEntrepriseInfogreffeRepository,
   ApiEntrepriseInseeRepository,
 } from "@proconnect-gouv/proconnect.api_entreprise/api";
-import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import type { InseeApiRepository } from "@proconnect-gouv/proconnect.insee/api";
-import { formatBirthdate } from "@proconnect-gouv/proconnect.insee/formatters";
+import { match } from "ts-pattern";
+import z from "zod/v4";
 import { distance } from "./distance.js";
 
 //
@@ -26,7 +26,6 @@ type IsOrganizationExecutiveFactoryFactoryConfig = {
   EQUALITY_THRESHOLD?: number;
   getFranceConnectUserInfo: GetFranceConnectUserInfoHandler;
   InseeApiRepository: Pick<InseeApiRepository, "findBySiret">;
-  log?: typeof console.log;
 };
 
 //
@@ -35,102 +34,111 @@ export function isOrganizationDirigeantFactory(
   config: IsOrganizationExecutiveFactoryFactoryConfig,
 ) {
   const {
-    EQUALITY_THRESHOLD = 0,
     ApiEntrepriseInseeRepository,
     ApiEntrepriseInfogreffeRepository,
     InseeApiRepository,
     getFranceConnectUserInfo,
-    log = () => {},
   } = config;
 
   return async function isOrganizationDirigeant(
     siret: string,
     user_id: number,
   ) {
-    const establishment = await ApiEntrepriseInseeRepository.findBySiret(siret);
+    const organization = await ApiEntrepriseInseeRepository.findBySiret(
+      siret,
+    ).then(ApiEntrepriseMap.toOrganizationInfo);
+
     const franceconnectUserInfo = await getFranceConnectUserInfo(user_id);
     if (!franceconnectUserInfo) {
       throw new NotFoundError("FranceConnect UserInfo not found");
     }
 
-    const sourceDirigeants =
-      await getSourceDirigeantsFromEstablishment(establishment);
+    const source = determine_source_dirigeant_source({
+      cached_libelle_categorie_juridique:
+        organization.libelleCategorieJuridique,
+      cached_tranche_effectifs: organization.trancheEffectifs,
+    });
 
-    if (sourceDirigeants.length === 0) {
-      throw new NotFoundError("No mandataires found");
-    }
+    const sourceDirigeants = await match(source)
+      .with("api.insee.fr/api-sirene/private", () =>
+        InseeApiRepository.findBySiret(siret)
+          .then(InseeMap.toIdentityVector)
+          .then((vector) => [vector]),
+      )
+      .with(
+        "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
+        () =>
+          ApiEntrepriseInfogreffeRepository.findMandatairesSociauxBySiren(
+            siret.substring(0, 9),
+          ).then((mandataires) =>
+            mandataires.map(ApiEntrepriseMap.toIdentityVector),
+          ),
+      )
+      .exhaustive();
 
-    const distances = sourceDirigeants.map((sourceDirigeant) =>
-      Math.abs(distance(franceconnectUserInfo, sourceDirigeant)),
-    );
-
-    const closestSourceDirigeantDistance = Math.min(...distances);
-    const closestSourceDirigeant =
-      sourceDirigeants[distances.indexOf(closestSourceDirigeantDistance)];
-
-    log(
-      closestSourceDirigeant,
-      " is the closest source dirigeant to ",
+    const result = match_identity_to_dirigeant(
       franceconnectUserInfo,
-      " with a distance of ",
-      closestSourceDirigeantDistance,
+      sourceDirigeants,
     );
 
-    return closestSourceDirigeantDistance === EQUALITY_THRESHOLD;
+    if (result.kind === "no_candidates")
+      throw new InvalidCertificationError("No candidates found");
+    return {
+      details: {
+        ...result.closest,
+        identity: franceconnectUserInfo,
+        source,
+      },
+      cause: result.kind,
+      ok: result.kind === "exact_match",
+    };
   };
-
-  async function getSourceDirigeantsFromEstablishment(
-    establishment: InseeSireneEstablishmentSiretResponseData,
-  ): Promise<IdentityVector[]> {
-    const organization = fromSiret(establishment);
-
-    if (
-      isEntrepriseUnipersonnelle({
-        cached_libelle_categorie_juridique:
-          organization.libelleCategorieJuridique,
-        cached_tranche_effectifs: organization.trancheEffectifs,
-      })
-    ) {
-      return getSourceDirigeantsFromInsseApi(establishment.siret);
-    }
-    return getSourceDirigeantsFromApiEntreprise(
-      establishment.unite_legale.siren,
-    );
-  }
-
-  async function getSourceDirigeantsFromInsseApi(siret: string) {
-    const { uniteLegale } = await InseeApiRepository.findBySiret(siret);
-    const birthdate = formatBirthdate(
-      String(uniteLegale?.dateNaissanceUniteLegale),
-    );
-
-    return [
-      {
-        birthplace: uniteLegale?.codeCommuneNaissanceUniteLegale ?? null,
-        birthdate: isNaN(birthdate.getTime()) ? null : birthdate,
-        family_name: uniteLegale?.nomUniteLegale ?? null,
-        given_name: [
-          uniteLegale?.prenom1UniteLegale,
-          uniteLegale?.prenom2UniteLegale,
-          uniteLegale?.prenom3UniteLegale,
-          uniteLegale?.prenom4UniteLegale,
-        ]
-          .filter(Boolean)
-          .join(" "),
-      } satisfies IdentityVector,
-    ];
-  }
-
-  async function getSourceDirigeantsFromApiEntreprise(siren: string) {
-    const mandataires =
-      await ApiEntrepriseInfogreffeRepository.findMandatairesSociauxBySiren(
-        siren,
-      );
-
-    return mandataires.map((mandataire) => fromInfogreffe(mandataire));
-  }
 }
 
 export type IsOrganizationDirigeantHandler = ReturnType<
   typeof isOrganizationDirigeantFactory
 >;
+
+const SourceDirigeant = z.enum([
+  "api.insee.fr/api-sirene/private",
+  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
+  "registre-national-entreprises.inpi.fr/api",
+]);
+
+function determine_source_dirigeant_source(
+  organization: Pick<
+    Organization,
+    "cached_libelle_categorie_juridique" | "cached_tranche_effectifs"
+  >,
+) {
+  return isEntrepriseUnipersonnelle(organization)
+    ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
+    : SourceDirigeant.enum[
+        "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux"
+      ];
+}
+
+function match_identity_to_dirigeant(
+  identity: IdentityVector,
+  dirigeants: IdentityVector[],
+) {
+  if (dirigeants.length === 0) return { kind: "no_candidates" as const };
+
+  const [closest] = dirigeants
+    .map((dirigeant) => ({
+      dirigeant,
+      distance: Math.abs(distance(identity, dirigeant)),
+    }))
+    .toSorted((a, b) => a.distance - b.distance);
+
+  if (closest.distance > 0)
+    return {
+      kind: "below_threshold" as const,
+      closest,
+    };
+
+  return {
+    kind: "exact_match" as const,
+    closest,
+  };
+}

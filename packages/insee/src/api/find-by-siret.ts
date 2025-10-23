@@ -6,11 +6,11 @@ import type { FetchOptions } from "openapi-fetch";
 
 //
 
-export function findBySiretFactory(
+export function findUniteLegaleBySiretFactory(
   client: InseeSirenePrivateOpenApiClient,
   optionsFn: () => FetchOptions<unknown> = () => ({}),
 ) {
-  return async function findBySiret(siret: string) {
+  return async function findUniteLegaleBySiret(siret: string) {
     const { data, error } = await client.GET("/siret/{siret}", {
       ...optionsFn(),
       params: {
@@ -29,8 +29,15 @@ export function findBySiretFactory(
     if (data.header?.statut !== 200 || !data.etablissement)
       throw new InseeApiError(data);
 
-    return data.etablissement;
+    if (!data.etablissement.uniteLegale)
+      throw new InseeApiError({
+        header: { statut: 404, message: "Not unite legale" },
+      });
+
+    return data.etablissement.uniteLegale;
   };
 }
 
-export type FindBySiretHandler = ReturnType<typeof findBySiretFactory>;
+export type FindUniteLegaleBySiretHandler = ReturnType<
+  typeof findUniteLegaleBySiretFactory
+>;

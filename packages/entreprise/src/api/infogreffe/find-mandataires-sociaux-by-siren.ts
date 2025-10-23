@@ -32,7 +32,10 @@ export function findMandatairesSociauxBySirenFactory(
 
     const { data: peoples } = data;
 
-    return peoples.map(({ data }) => data).filter((data) => !!data);
+    return peoples
+      .map(({ data }) => data)
+      .filter((data) => !!data)
+      .filter((data) => data.type === "personne_physique");
   };
 }
 

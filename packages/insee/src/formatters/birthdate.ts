@@ -15,7 +15,9 @@ export function formatBirthdate(value: string) {
   }
 
   const { year, month, day } = match.groups;
-  const date = new Date(`${year}-${month}-${day}`);
+  // Use Date.UTC to ensure timezone-independent date creation
+  // Month is 0-indexed in Date.UTC
+  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
   if (isNaN(date.getTime())) {
     throw new Error(`Invalid date format. ${year}-${month}-${day}`);
   }

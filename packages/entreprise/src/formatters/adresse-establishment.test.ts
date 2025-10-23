@@ -11,7 +11,7 @@ import {
   Papillon,
   RogalDornEntrepreneur,
   StihleFreres,
-} from "#src/testing/seed/insee/siret";
+} from "#src/testing/seed/v3-insee-sirene-etablissements-siret";
 import type { InseeAddressEstablishment } from "#src/types";
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";

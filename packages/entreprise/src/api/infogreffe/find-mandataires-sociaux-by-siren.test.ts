@@ -1,6 +1,6 @@
 //
 
-import { createEntrepriseOpenApiClient } from "#src/client";
+import { createApiEntrepriseOpenApiClient } from "#src/client";
 import { coolTrackingParams } from "#src/testing";
 import { ApiEntrepriseError } from "#src/types";
 import assert from "node:assert/strict";
@@ -109,7 +109,7 @@ suite("findMandatairesSociauxBySirenFactory", () => {
         ),
       );
     });
-    const client = createEntrepriseOpenApiClient("SECRET_INSEE_TOKEN", {
+    const client = createApiEntrepriseOpenApiClient("SECRET_INSEE_TOKEN", {
       fetch,
     });
     const findBySiren = findMandatairesSociauxBySirenFactory(
@@ -148,7 +148,7 @@ suite("findMandatairesSociauxBySirenFactory", () => {
         ),
       );
     });
-    const client = createEntrepriseOpenApiClient("SECRET_INSEE_TOKEN", {
+    const client = createApiEntrepriseOpenApiClient("SECRET_INSEE_TOKEN", {
       fetch,
     });
     const findBySiren = findMandatairesSociauxBySirenFactory(

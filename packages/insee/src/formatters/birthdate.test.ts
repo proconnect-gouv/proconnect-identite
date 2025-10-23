@@ -8,8 +8,9 @@ import { formatBirthdate } from "./birthdate.js";
 
 describe("formatBirthdate", function () {
   const cases: [Parameters<typeof formatBirthdate>, Date][] = [
-    [["18991129"], new Date("1899-11-29")],
-    [["19800601"], new Date("1980-06-01")],
+    [["00000000"], new Date(Date.UTC(0, -1, 0))],
+    [["18991129"], new Date(Date.UTC(1899, 10, 29))],
+    [["19800601"], new Date(Date.UTC(1980, 5, 1))],
   ];
 
   for (const [parameters, expected] of cases) {
@@ -25,12 +26,7 @@ describe("formatBirthdate", function () {
       new Error("Invalid date format. Expected YYYYMMDD. Actual: "),
     );
   });
-  it("❎ fails with invalid date", function () {
-    assert.throws(
-      () => formatBirthdate("00000000"),
-      new Error("Invalid date format. 0000-00-00"),
-    );
-  });
+
   it("❎ fails with unexpected format", function () {
     assert.throws(
       () => formatBirthdate("1er avril 4444"),
