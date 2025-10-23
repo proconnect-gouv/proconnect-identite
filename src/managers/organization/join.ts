@@ -254,7 +254,8 @@ export const joinOrganization = async ({
   if (
     isAFreeEmailProvider(email) &&
     !hasLessThanFiftyEmployees(organization) &&
-    !confirmed
+    !confirmed &&
+    !isSyndicatCommunal(organization)
   ) {
     throw new UserMustConfirmToJoinOrganizationError(organization_id);
   }

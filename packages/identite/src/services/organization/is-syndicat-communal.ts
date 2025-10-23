@@ -1,6 +1,7 @@
 import type { Organization } from "#src/types";
 
 const cat_jur = [
+  "Établissement public local social et médico-social",
   "Syndicat intercommunal à vocation multiple (SIVOM)",
   "Syndicat intercommunal à vocation unique (SIVU)",
   "Syndicat mixte fermé",
