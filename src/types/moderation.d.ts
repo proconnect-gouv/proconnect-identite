@@ -8,4 +8,5 @@ interface Moderation {
   moderated_at: Date | null;
   comment: string | null;
   moderated_by: string | null;
+  status: "pending" | "accepted" | "rejected" | "unknown";
 }
