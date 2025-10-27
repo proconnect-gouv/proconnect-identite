@@ -238,7 +238,8 @@ CREATE TABLE "public"."moderations" (
   "moderated_at" timestamp with time zone,
   "comment" character varying,
   "moderated_by" character varying,
-  "ticket_id" "text"
+  "ticket_id" "text",
+  "status" "text" DEFAULT 'unknown'::"text" NOT NULL
 );
 
 --
