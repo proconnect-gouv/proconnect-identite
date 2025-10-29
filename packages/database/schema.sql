@@ -98,6 +98,9 @@ DROP CONSTRAINT IF EXISTS "franceconnect_userinfo_pkey";
 ALTER TABLE IF EXISTS ONLY "public"."email_domains"
 DROP CONSTRAINT IF EXISTS "email_domains_pkey";
 
+ALTER TABLE IF EXISTS ONLY "public"."email_deliverability_whitelist"
+DROP CONSTRAINT IF EXISTS "email_deliverability_whitelist_pkey";
+
 ALTER TABLE IF EXISTS ONLY "public"."authenticators"
 DROP CONSTRAINT IF EXISTS "authenticators_pkey";
 
@@ -153,6 +156,8 @@ DROP SEQUENCE IF EXISTS "public"."email_domains_id_seq";
 
 DROP TABLE IF EXISTS "public"."email_domains";
 
+DROP TABLE IF EXISTS "public"."email_deliverability_whitelist";
+
 DROP TABLE IF EXISTS "public"."authenticators";
 
 --
@@ -182,6 +187,16 @@ CREATE TABLE "public"."authenticators" (
   "last_used_at" timestamp with time zone,
   "usage_count" integer DEFAULT 0 NOT NULL,
   "user_verified" boolean DEFAULT true NOT NULL
+);
+
+--
+-- Name: email_deliverability_whitelist; Type: TABLE; Schema: public; Owner: -
+--
+CREATE TABLE "public"."email_deliverability_whitelist" (
+  "problematic_email" character varying NOT NULL,
+  "email_domain" character varying NOT NULL,
+  "verified_at" timestamp with time zone DEFAULT "now" () NOT NULL,
+  "verified_by" character varying
 );
 
 --
@@ -461,6 +476,12 @@ SET DEFAULT "nextval" (
 --
 ALTER TABLE ONLY "public"."authenticators"
 ADD CONSTRAINT "authenticators_pkey" PRIMARY KEY ("credential_id");
+
+--
+-- Name: email_deliverability_whitelist email_deliverability_whitelist_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."email_deliverability_whitelist"
+ADD CONSTRAINT "email_deliverability_whitelist_pkey" PRIMARY KEY ("email_domain");
 
 --
 -- Name: email_domains email_domains_pkey; Type: CONSTRAINT; Schema: public; Owner: -
