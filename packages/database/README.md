@@ -97,6 +97,12 @@ npm run dev
 
 Watches for changes and rebuilds automatically.
 
+For update db snapshots :
+
+```bash
+DATABASE_URL=postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite npm run test:unit --workspace=@proconnect-gouv/proconnect.identite.database -- --test-update-snapshots
+```
+
 ## 🔄 Schema Updates
 
 The `schema.sql` file contains the complete database schema for ProConnect Identité. This schema is generated from the main application's migrations and should not be edited manually.
