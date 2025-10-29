@@ -4,6 +4,9 @@ exports[`Database migration with in-memory PostgreSQL > bootstraps schema from s
     "table_name": "authenticators"
   },
   {
+    "table_name": "email_deliverability_whitelist"
+  },
+  {
     "table_name": "email_domains"
   },
   {
