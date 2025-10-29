@@ -274,6 +274,18 @@ export const moderations = pgTable(
   ],
 );
 
+export const email_deliverability_whitelist = pgTable(
+  "email_deliverability_whitelist",
+  {
+    problematic_email: varchar().notNull(),
+    email_domain: varchar().primaryKey().notNull(),
+    verified_at: timestamp({ withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+    verified_by: varchar(),
+  },
+);
+
 export const users_organizations = pgTable(
   "users_organizations",
   {

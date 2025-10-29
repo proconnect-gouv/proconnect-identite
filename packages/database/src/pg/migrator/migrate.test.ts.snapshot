@@ -4,6 +4,9 @@ exports[`Database migration with external PostgreSQL > applies complete schema t
     "table_name": "authenticators"
   },
   {
+    "table_name": "email_deliverability_whitelist"
+  },
+  {
     "table_name": "email_domains"
   },
   {
