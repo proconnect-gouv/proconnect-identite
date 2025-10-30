@@ -4,7 +4,11 @@
     "declarationMap": true,
     "outDir": "./dist",
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "#src/*": ["./src/*/index.ts"],
+      "#testing/*": ["./testing/*/index.ts"]
+    }
   },
   "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
   "references": [
