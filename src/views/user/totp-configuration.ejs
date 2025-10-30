@@ -32,7 +32,7 @@
                     name="totpToken"
                     pattern="^(\s*\d){6}$"
                     title="code composé de 6 chiffres"
-                    autocomplete="off"
+                    autocomplete="one-time-code"
                     required
                     <% if (locals.hasCodeError) { %>
                     autofocus

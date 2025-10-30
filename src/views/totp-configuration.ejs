@@ -44,7 +44,7 @@
                         required
                         pattern="^(\s*\d){6}$"
                         title="code composé de 6 chiffres"
-                        autocomplete="off"
+                        autocomplete="one-time-code"
                         <% if (locals.hasCodeError) { %>
                         autofocus
                         aria-describedby="email-error"
