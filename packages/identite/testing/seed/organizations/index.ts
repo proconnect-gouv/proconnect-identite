@@ -113,3 +113,37 @@ export const trackdechets_public_org_info = {
   cached_categorie_juridique: "7354",
   cached_libelle_categorie_juridique: "Syndicat mixte fermé",
 } as Organization;
+
+export const rogal_dorn_org_info = {
+  siret: "94957325700019",
+  cached_tranche_effectifs: null,
+  cached_tranche_effectifs_unite_legale: null,
+  cached_libelle_tranche_effectif: "",
+  cached_activite_principale: "62.02A",
+  cached_libelle_activite_principale:
+    "62.02A - Conseil en systèmes et logiciels informatiques",
+  cached_categorie_juridique: "1000",
+  cached_libelle_categorie_juridique: "Entrepreneur individuel",
+} as Organization;
+
+export const papillon_org_info = {
+  cached_activite_principale: "47.59A",
+  cached_adresse:
+    "5-7, 5 rue du moulin aux moines, 72650 La chapelle-saint-aubin",
+  cached_categorie_juridique: "5710",
+  cached_code_officiel_geographique: "72065",
+  cached_code_postal: "72650",
+  cached_enseigne: "",
+  cached_est_active: true,
+  cached_est_diffusible: true,
+  cached_etat_administratif: "A",
+  cached_libelle_activite_principale: "47.59A - Commerce de détail de meubles",
+  cached_libelle_categorie_juridique: "SAS, société par actions simplifiée",
+  cached_libelle_tranche_effectif: "3 à 5 salariés, en 2022",
+  cached_libelle: "Papillon",
+  cached_nom_complet: "Papillon",
+  cached_statut_diffusion: "diffusible",
+  cached_tranche_effectifs_unite_legale: "11",
+  cached_tranche_effectifs: "02",
+  siret: "39234600300198",
+} as Organization;
