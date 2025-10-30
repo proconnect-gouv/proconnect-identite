@@ -141,7 +141,7 @@ export const InseeApiRepository = {
         ? inseeOpenApiTestClient
         : await getInseeOpenApiClient();
 
-    return InseeApi.findBySiretFactory(client, () => ({
+    return InseeApi.findUniteLegaleBySiretFactory(client, () => ({
       signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
     }))(siret);
   },

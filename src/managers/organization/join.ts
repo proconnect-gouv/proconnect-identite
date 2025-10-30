@@ -215,9 +215,29 @@ export const joinOrganization = async ({
   }
 
   if (certificationRequested) {
-    const isDirigeant = await isOrganizationDirigeant(siret, user_id);
+    const { cause, details, ok } = await isOrganizationDirigeant(
+      siret,
+      user_id,
+    );
 
-    if (!isDirigeant) throw new InvalidCertificationError();
+    logger.info(
+      details.dirigeant,
+      `'(${details.source})`,
+      " is the closest source dirigeant to ",
+      details.identity,
+      " with a distance of ",
+      details.distance,
+      cause,
+    );
+
+    if (!ok)
+      throw new InvalidCertificationError(cause, {
+        cause: new AssertionError({
+          expected: 0,
+          actual: details.distance,
+          operator: "isOrganizationDirigeant",
+        }),
+      });
 
     return await linkUserToOrganization({
       organization_id,

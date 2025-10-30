@@ -2,7 +2,7 @@ import { NotFoundError } from "#src/errors";
 import {
   CommunautéDeCommunes,
   RogalDornEntrepreneur,
-} from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/insee/siret";
+} from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-insee-sirene-etablissements-siret";
 import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";

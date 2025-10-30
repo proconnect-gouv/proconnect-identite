@@ -1,0 +1,17 @@
+exports[`toIdentityVector > LiElJonsonEstablishment 1`] = `
+{
+  "birthplace": "INW",
+  "birthdate": "+028500-02-05T00:00:00.000Z",
+  "family_name": "EL'JONSON",
+  "given_name": "LION"
+}
+`;
+
+exports[`toIdentityVector > RogalDornEstablishment 1`] = `
+{
+  "birthplace": "INWIT",
+  "birthdate": "+029000-01-07T00:00:00.000Z",
+  "family_name": "DORN",
+  "given_name": "ROGAL"
+}
+`;

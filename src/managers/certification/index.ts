@@ -7,7 +7,6 @@ import {
   InseeApiRepository,
 } from "../../connectors/api-sirene";
 import { getFranceConnectUserInfo } from "../../repositories/user";
-import { logger } from "../../services/log";
 
 //
 
@@ -16,5 +15,4 @@ export const isOrganizationDirigeant = isOrganizationDirigeantFactory({
   ApiEntrepriseInseeRepository,
   InseeApiRepository,
   getFranceConnectUserInfo,
-  log: logger.info,
 });

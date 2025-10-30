@@ -3,7 +3,7 @@
 import { createInseeSirenePrivateOpenApiClient } from "#src/client";
 import assert from "node:assert/strict";
 import { mock, suite, test } from "node:test";
-import { findBySiretFactory } from "./find-by-siret.js";
+import { findUniteLegaleBySiretFactory } from "./find-by-siret.js";
 
 //
 
@@ -14,7 +14,7 @@ suite("findBySiretFactory", () => {
         new Response(
           JSON.stringify({
             header: { statut: 200 },
-            etablissement: { siret: "🦄" },
+            etablissement: { uniteLegale: { nomUniteLegale: "🦄" } },
           }),
         ),
       );
@@ -25,10 +25,10 @@ suite("findBySiretFactory", () => {
         fetch,
       },
     );
-    const findBySiret = findBySiretFactory(client);
+    const findUniteLegaleBySiret = findUniteLegaleBySiretFactory(client);
 
-    const etablissement = await findBySiret("662042449");
+    const uniteLegale = await findUniteLegaleBySiret("662042449");
 
-    assert.equal(etablissement.siret, "🦄");
+    assert.equal(uniteLegale.nomUniteLegale, "🦄");
   });
 });

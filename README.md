@@ -20,7 +20,7 @@ to [our online documentation](https://partenaires.proconnect.gouv.fr/docs).
 
 ### 📦 Monorepo package architecture
 
-The codebase employs a **monorepo structure** using npm workspaces under the `@gouvfr-lasuite` namespace.
+The codebase employs a **monorepo structure** using npm workspaces under the `@proconnect-gouv` namespace.
 Each package serves distinct architectural responsibilities within the broader identity management ecosystem.
 
 ### 🌳 Repository structure overview

@@ -1,7 +1,7 @@
 //
 
+import { toOrganizationInfo } from "#src/api/api_entreprise/mappers";
 import { InvalidSiretError, NotFoundError } from "#src/errors";
-import { OrganizationInfoMapper } from "#src/mappers";
 import { type OrganizationInfo } from "#src/types";
 import type { ApiEntrepriseInseeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import {
@@ -23,13 +23,9 @@ export function getOrganizationInfoFactory(
       let establishment: OrganizationInfo;
 
       if (siretOrSiren.match(/^\d{14}$/)) {
-        establishment = OrganizationInfoMapper.fromSiret(
-          await findBySiret(siretOrSiren),
-        );
+        establishment = toOrganizationInfo(await findBySiret(siretOrSiren));
       } else if (siretOrSiren.match(/^\d{9}$/)) {
-        establishment = OrganizationInfoMapper.fromSiret(
-          await findBySiren(siretOrSiren),
-        );
+        establishment = toOrganizationInfo(await findBySiren(siretOrSiren));
       } else {
         throw new InvalidSiretError();
       }
