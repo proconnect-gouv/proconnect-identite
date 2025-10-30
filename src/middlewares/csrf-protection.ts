@@ -3,7 +3,7 @@ import type { Request } from "express";
 
 const { generateToken, csrfSynchronisedProtection } = csrfSync({
   getTokenFromRequest: (req: Request) => {
-    return req.body["_csrf"];
+    return req.body?._csrf;
   },
 });
 
