@@ -6,13 +6,13 @@ import {
   RogalDornFranceConnectUserInfo,
 } from "#testing/seed/franceconnect";
 import {
+  papillon_org_info,
+  rogal_dorn_org_info,
+} from "#testing/seed/organizations";
+import {
   RogalDornMandataire,
   UlysseToriMandataire,
 } from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-infogreffe-rcs-unites_legales-siren-mandataires_sociaux";
-import {
-  Papillon,
-  RogalDornEntrepreneur as RogalDornSireneEntrepreneur,
-} from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-insee-sirene-etablissements-siret";
 import {
   LiElJonsonEstablishment,
   RogalDornEstablishment,
@@ -29,19 +29,13 @@ describe("isOrganizationDirigeantFactory", () => {
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      ApiEntrepriseInseeRepository: {
-        findBySiret: () => Promise.resolve(RogalDornSireneEntrepreneur),
-      },
       InseeApiRepository: {
         findBySiret: () => Promise.resolve(RogalDornEstablishment),
       },
       getFranceConnectUserInfo: () =>
         Promise.resolve(RogalDornFranceConnectUserInfo),
     });
-    const isDirigeant = await isOrganizationDirigeant(
-      RogalDornSireneEntrepreneur.siret,
-      1,
-    );
+    const isDirigeant = await isOrganizationDirigeant(rogal_dorn_org_info, 1);
     assert.deepEqual(isDirigeant, {
       cause: "exact_match",
       details: {
@@ -64,19 +58,13 @@ describe("isOrganizationDirigeantFactory", () => {
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      ApiEntrepriseInseeRepository: {
-        findBySiret: () => Promise.resolve(RogalDornSireneEntrepreneur),
-      },
       InseeApiRepository: {
         findBySiret: () => Promise.resolve(LiElJonsonEstablishment),
       },
       getFranceConnectUserInfo: () =>
         Promise.resolve(RogalDornFranceConnectUserInfo),
     });
-    const isDirigeant = await isOrganizationDirigeant(
-      RogalDornSireneEntrepreneur.siret,
-      1,
-    );
+    const isDirigeant = await isOrganizationDirigeant(rogal_dorn_org_info, 1);
     assert.deepEqual(isDirigeant, {
       cause: "below_threshold",
       details: {
@@ -100,16 +88,13 @@ describe("isOrganizationDirigeantFactory", () => {
         findMandatairesSociauxBySiren: () =>
           Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
       },
-      ApiEntrepriseInseeRepository: {
-        findBySiret: () => Promise.resolve(Papillon),
-      },
       InseeApiRepository: {
         findBySiret: () => Promise.reject(new Error("💣")),
       },
       getFranceConnectUserInfo: () =>
         Promise.resolve(RogalDornFranceConnectUserInfo),
     });
-    const isDirigeant = await isOrganizationDirigeant(Papillon.siret, 1);
+    const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
     assert.deepEqual(isDirigeant, {
       cause: "exact_match",
       details: {
@@ -133,9 +118,6 @@ describe("isOrganizationDirigeantFactory", () => {
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      ApiEntrepriseInseeRepository: {
-        findBySiret: () => Promise.resolve(RogalDornSireneEntrepreneur),
-      },
       InseeApiRepository: {
         findBySiret: () => Promise.reject(new Error("💣")),
       },
@@ -143,7 +125,7 @@ describe("isOrganizationDirigeantFactory", () => {
     });
 
     await assert.rejects(
-      isOrganizationDirigeant("94957325700019", 1),
+      isOrganizationDirigeant(rogal_dorn_org_info, 1),
       new NotFoundError("FranceConnect UserInfo not found"),
     );
   });
@@ -153,9 +135,6 @@ describe("isOrganizationDirigeantFactory", () => {
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.resolve([]),
       },
-      ApiEntrepriseInseeRepository: {
-        findBySiret: () => Promise.resolve(Papillon),
-      },
       InseeApiRepository: {
         findBySiret: () => Promise.reject(new Error("💣")),
       },
@@ -164,7 +143,7 @@ describe("isOrganizationDirigeantFactory", () => {
     });
 
     await assert.rejects(
-      isOrganizationDirigeant(Papillon.siret, 1),
+      isOrganizationDirigeant(papillon_org_info, 1),
       new InvalidCertificationError("No candidates found"),
     );
   });

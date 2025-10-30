@@ -39,7 +39,7 @@
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
     "dev": "npm run build -- --watch --preserveWatchOutput",
-    "test:update-snapshots": "npm run test --test-update-snapshots src/**/*.test.ts",
+    "test:update-snapshots": "npm run test -- --test-update-snapshots",
     "test": "tsx --test --test-reporter=spec"
   },
   "dependencies": {
