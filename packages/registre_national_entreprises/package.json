@@ -26,11 +26,12 @@
     }
   },
   "scripts": {
+    "build:openapi": "openapi-typescript openapi/index.yaml -o openapi/index.d.ts",
     "build": "tsc --build tsconfig.lib.json",
     "check": "npm run build -- --noEmit",
-    "build:openapi": "openapi-typescript openapi/index.yaml -o openapi/index.d.ts",
-    "dev": "npm run build -- --watch --preserveWatchOutput",
+    "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
+    "dev": "npm run build -- --watch --preserveWatchOutput",
     "postbuild:openapi": "prettier --write openapi/*.d.ts",
     "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
