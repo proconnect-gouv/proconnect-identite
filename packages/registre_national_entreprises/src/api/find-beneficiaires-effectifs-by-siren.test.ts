@@ -77,4 +77,24 @@ suite("findBeneficiairesEffectifsBySirenFactory", () => {
       }),
     );
   });
+
+  test("❎ fails with timeout", async () => {
+    const client = createRegistreNationalEntreprisesOpenApiClient(TOKEN);
+    const findBySiren = findBeneficiairesEffectifsBySirenFactory(
+      client,
+      () => ({
+        signal: AbortSignal.timeout(0),
+      }),
+    );
+
+    await assert.rejects(
+      findBySiren("🐴"),
+      new (class TimeoutError extends Error {
+        constructor() {
+          super("The operation was aborted due to timeout");
+          this.name = "TimeoutError";
+        }
+      })(),
+    );
+  });
 });

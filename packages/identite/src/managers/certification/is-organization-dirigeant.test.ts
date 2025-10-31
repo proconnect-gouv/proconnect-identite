@@ -17,6 +17,10 @@ import {
   LiElJonsonEstablishment,
   RogalDornEstablishment,
 } from "@proconnect-gouv/proconnect.insee/testing/seed/establishments";
+import {
+  RogalDornBeneficiaireEffectif,
+  UlysseToriBeneficiaireEffectif,
+} from "@proconnect-gouv/proconnect.registre_national_entreprises/testing/seed";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { isOrganizationDirigeantFactory } from "./is-organization-dirigeant.js";
@@ -29,13 +33,21 @@ describe("isOrganizationDirigeantFactory", () => {
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
+      RegistreNationalEntreprisesApiRepository: {
+        findBeneficiairesEffectifsBySiren: () =>
+          Promise.reject(new Error("💣")),
+      },
       InseeApiRepository: {
         findBySiret: () => Promise.resolve(RogalDornEstablishment),
       },
-      getFranceConnectUserInfo: () =>
-        Promise.resolve(RogalDornFranceConnectUserInfo),
+      FranceConnectApiRepository: {
+        getFranceConnectUserInfo: () =>
+          Promise.resolve(RogalDornFranceConnectUserInfo),
+      },
     });
+
     const isDirigeant = await isOrganizationDirigeant(rogal_dorn_org_info, 1);
+
     assert.deepEqual(isDirigeant, {
       cause: "exact_match",
       details: {
@@ -58,13 +70,21 @@ describe("isOrganizationDirigeantFactory", () => {
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
+      RegistreNationalEntreprisesApiRepository: {
+        findBeneficiairesEffectifsBySiren: () =>
+          Promise.reject(new Error("💣")),
+      },
       InseeApiRepository: {
         findBySiret: () => Promise.resolve(LiElJonsonEstablishment),
       },
-      getFranceConnectUserInfo: () =>
-        Promise.resolve(RogalDornFranceConnectUserInfo),
+      FranceConnectApiRepository: {
+        getFranceConnectUserInfo: () =>
+          Promise.resolve(RogalDornFranceConnectUserInfo),
+      },
     });
+
     const isDirigeant = await isOrganizationDirigeant(rogal_dorn_org_info, 1);
+
     assert.deepEqual(isDirigeant, {
       cause: "below_threshold",
       details: {
@@ -82,19 +102,67 @@ describe("isOrganizationDirigeantFactory", () => {
     });
   });
 
-  it("should match Rogal Dorn among the executive of Papillon", async () => {
+  it("should match Rogal Dorn among the executive of Papillon in RNE", async () => {
+    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
+      ApiEntrepriseInfogreffeRepository: {
+        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
+      },
+      RegistreNationalEntreprisesApiRepository: {
+        findBeneficiairesEffectifsBySiren: () =>
+          Promise.resolve([
+            UlysseToriBeneficiaireEffectif,
+            RogalDornBeneficiaireEffectif,
+          ]),
+      },
+      InseeApiRepository: {
+        findBySiret: () => Promise.reject(new Error("💣")),
+      },
+      FranceConnectApiRepository: {
+        getFranceConnectUserInfo: () =>
+          Promise.resolve(RogalDornFranceConnectUserInfo),
+      },
+    });
+
+    const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
+
+    assert.deepEqual(isDirigeant, {
+      cause: "exact_match",
+      details: {
+        dirigeant: {
+          birthdate: RogalDornFranceConnectUserInfo.birthdate,
+          birthplace: "INWIT",
+          family_name: "DORN",
+          given_name: "ROGAL",
+        },
+        distance: 0,
+        identity: RogalDornFranceConnectUserInfo,
+        source: "registre-national-entreprises.inpi.fr/api",
+      },
+      ok: true,
+    });
+  });
+
+  it("should match Rogal Dorn among the executive of Papillon in Infogreffe", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () =>
           Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
       },
+      RegistreNationalEntreprisesApiRepository: {
+        findBeneficiairesEffectifsBySiren: () =>
+          Promise.reject(new Error("💣")),
+      },
       InseeApiRepository: {
         findBySiret: () => Promise.reject(new Error("💣")),
       },
-      getFranceConnectUserInfo: () =>
-        Promise.resolve(RogalDornFranceConnectUserInfo),
+      FranceConnectApiRepository: {
+        getFranceConnectUserInfo: () =>
+          Promise.resolve(RogalDornFranceConnectUserInfo),
+      },
     });
+
     const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
+
     assert.deepEqual(isDirigeant, {
       cause: "exact_match",
       details: {
@@ -118,10 +186,16 @@ describe("isOrganizationDirigeantFactory", () => {
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
+      RegistreNationalEntreprisesApiRepository: {
+        findBeneficiairesEffectifsBySiren: () =>
+          Promise.reject(new Error("💣")),
+      },
       InseeApiRepository: {
         findBySiret: () => Promise.reject(new Error("💣")),
       },
-      getFranceConnectUserInfo: () => Promise.resolve(undefined),
+      FranceConnectApiRepository: {
+        getFranceConnectUserInfo: () => Promise.resolve(undefined),
+      },
     });
 
     await assert.rejects(
@@ -133,13 +207,18 @@ describe("isOrganizationDirigeantFactory", () => {
   it("❎ fail with no mandataires", async () => {
     const isOrganizationDirigeant = isOrganizationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
-        findMandatairesSociauxBySiren: () => Promise.resolve([]),
+        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
+      },
+      RegistreNationalEntreprisesApiRepository: {
+        findBeneficiairesEffectifsBySiren: () => Promise.resolve([]),
       },
       InseeApiRepository: {
         findBySiret: () => Promise.reject(new Error("💣")),
       },
-      getFranceConnectUserInfo: () =>
-        Promise.resolve(LiElJonsonFranceConnectUserInfo),
+      FranceConnectApiRepository: {
+        getFranceConnectUserInfo: () =>
+          Promise.resolve(LiElJonsonFranceConnectUserInfo),
+      },
     });
 
     await assert.rejects(

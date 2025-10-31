@@ -7,7 +7,7 @@ import {
   RogalDornEntrepreneur,
 } from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-insee-sirene-etablissements-siret";
 import { suite, test } from "node:test";
-import { toOrganizationInfo } from "./establishment.js";
+import { toOrganizationInfo } from "./api_entreprise.js";
 
 suite("toOrganizationInfo", () => {
   test("AppleEuropeInc", (t) => {

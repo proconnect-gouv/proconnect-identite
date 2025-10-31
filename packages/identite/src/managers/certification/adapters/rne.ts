@@ -1,5 +1,3 @@
-//
-
 import type { IdentityVector } from "#src/types";
 import type { FindBeneficiairesEffectifsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 
