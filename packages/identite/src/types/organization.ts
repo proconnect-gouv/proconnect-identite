@@ -16,9 +16,9 @@ export interface Organization {
   cached_tranche_effectifs_unite_legale: string | null;
   cached_libelle_tranche_effectif: string | null;
   cached_etat_administratif: string | null;
-  cached_est_active: string | null;
+  cached_est_active: boolean | null;
   cached_statut_diffusion: string | null;
-  cached_est_diffusible: string | null;
+  cached_est_diffusible: boolean | null;
   cached_adresse: string | null;
   cached_code_postal: string | null;
   cached_code_officiel_geographique: string | null;

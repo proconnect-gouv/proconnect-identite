@@ -150,25 +150,25 @@ components:
             content:
               type: object
               properties:
+                personneMorale:
+                  type: object
+                  properties:
+                    beneficiairesEffectifs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          actif:
+                            type: boolean
+                            description: Actif ou non
+                          beneficiaireId:
+                            type: string
+                            description: Identifiant du bénéficiaire
+                          beneficiaire:
+                            $ref: "#/components/schemas/Beneficiaire"
             diffusionINSEE:
               type: string
               description: Diffusion dans l'INSEE
-            personneMorale:
-              type: object
-              properties:
-                beneficiairesEffectifs:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      actif:
-                        type: boolean
-                        description: Actif ou non
-                      beneficiaireId:
-                        type: string
-                        description: Identifiant du bénéficiaire
-                      beneficiaire:
-                        $ref: "#/components/schemas/Beneficiaire"
         siren:
           type: string
           description: Numéro Siren de l'entreprise

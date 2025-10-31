@@ -1,5 +1,3 @@
-//
-
 import type { IdentityVector } from "#src/types";
 import type { InfogreffeSirenMandatairesSociaux } from "@proconnect-gouv/proconnect.api_entreprise/types";
 

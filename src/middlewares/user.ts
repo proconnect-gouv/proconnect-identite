@@ -7,6 +7,7 @@ import {
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
+import { AssertionError } from "node:assert";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
@@ -45,6 +46,7 @@ import { updateUserOrganizationLink } from "../repositories/organization/setters
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { getFranceConnectUserInfo } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
+import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 const getReferrerPath = (req: Request) => {
@@ -494,11 +496,29 @@ export function checkUserWantToRepresentAnOrganization(
           return next();
         }
 
-        const isDirigeant = await isOrganizationDirigeant(
-          organization.siret,
+        const { cause, details, ok } = await isOrganizationDirigeant(
+          organization,
           user_id,
         );
-        if (!isDirigeant) throw new InvalidCertificationError();
+
+        logger.info(
+          details.dirigeant,
+          `'(${details.source})`,
+          " is the closest source dirigeant to ",
+          details.identity,
+          " with a distance of ",
+          details.distance,
+          cause,
+        );
+
+        if (!ok)
+          throw new InvalidCertificationError(cause, {
+            cause: new AssertionError({
+              expected: 0,
+              actual: details.distance,
+              operator: "isOrganizationDirigeant",
+            }),
+          });
 
         // user is already in the organization
         // we override the previous verification_type

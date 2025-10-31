@@ -12,29 +12,31 @@ import type { QueryResult } from "pg";
 export function upsertFactory({ pg }: DatabaseContext) {
   return async function upsert({
     siret,
-    organizationInfo: {
-      libelle: cached_libelle,
-      nomComplet: cached_nom_complet,
-      enseigne: cached_enseigne,
-      trancheEffectifs: cached_tranche_effectifs,
-      trancheEffectifsUniteLegale: cached_tranche_effectifs_unite_legale,
-      libelleTrancheEffectif: cached_libelle_tranche_effectif,
-      etatAdministratif: cached_etat_administratif,
-      estActive: cached_est_active,
-      statutDiffusion: cached_statut_diffusion,
-      estDiffusible: cached_est_diffusible,
-      adresse: cached_adresse,
-      codePostal: cached_code_postal,
-      codeOfficielGeographique: cached_code_officiel_geographique,
-      activitePrincipale: cached_activite_principale,
-      libelleActivitePrincipale: cached_libelle_activite_principale,
-      categorieJuridique: cached_categorie_juridique,
-      libelleCategorieJuridique: cached_libelle_categorie_juridique,
-    },
+    organizationInfo,
   }: {
     siret: string;
     organizationInfo: OrganizationInfo;
   }) {
+    const {
+      cached_libelle,
+      cached_nom_complet,
+      cached_enseigne,
+      cached_tranche_effectifs,
+      cached_tranche_effectifs_unite_legale,
+      cached_libelle_tranche_effectif,
+      cached_etat_administratif,
+      cached_est_active,
+      cached_statut_diffusion,
+      cached_est_diffusible,
+      cached_adresse,
+      cached_code_postal,
+      cached_code_officiel_geographique,
+      cached_activite_principale,
+      cached_libelle_activite_principale,
+      cached_categorie_juridique,
+      cached_libelle_categorie_juridique,
+    } = toPartialOrganization(organizationInfo);
+
     const { rows }: QueryResult<Organization> = await pg.query(
       `
     INSERT INTO organizations
@@ -140,3 +142,51 @@ export function upsertFactory({ pg }: DatabaseContext) {
 }
 
 export type UpsertHandler = ReturnType<typeof upsertFactory>;
+
+//
+
+function toPartialOrganization(organization_info: OrganizationInfo) {
+  const {
+    activitePrincipale: cached_activite_principale,
+    adresse: cached_adresse,
+    categorieJuridique: cached_categorie_juridique,
+    codeOfficielGeographique: cached_code_officiel_geographique,
+    codePostal: cached_code_postal,
+    enseigne: cached_enseigne,
+    estActive: cached_est_active,
+    estDiffusible: cached_est_diffusible,
+    etatAdministratif: cached_etat_administratif,
+    libelle: cached_libelle,
+    libelleActivitePrincipale: cached_libelle_activite_principale,
+    libelleCategorieJuridique: cached_libelle_categorie_juridique,
+    libelleTrancheEffectif: cached_libelle_tranche_effectif,
+    nomComplet: cached_nom_complet,
+    siret,
+    statutDiffusion: cached_statut_diffusion,
+    trancheEffectifs: cached_tranche_effectifs,
+    trancheEffectifsUniteLegale: cached_tranche_effectifs_unite_legale,
+  } = organization_info;
+  return {
+    cached_activite_principale,
+    cached_adresse,
+    cached_categorie_juridique,
+    cached_code_officiel_geographique,
+    cached_code_postal,
+    cached_enseigne,
+    cached_est_active,
+    cached_est_diffusible,
+    cached_etat_administratif,
+    cached_libelle_activite_principale,
+    cached_libelle_categorie_juridique,
+    cached_libelle_tranche_effectif,
+    cached_libelle,
+    cached_nom_complet,
+    cached_statut_diffusion,
+    cached_tranche_effectifs_unite_legale,
+    cached_tranche_effectifs,
+    siret,
+  } satisfies Omit<
+    Organization,
+    "created_at" | "id" | "updated_at" | "organization_info_fetched_at"
+  >;
+}

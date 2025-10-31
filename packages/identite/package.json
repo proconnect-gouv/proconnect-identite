@@ -40,7 +40,7 @@
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
     "test": "tsx --test --test-reporter=spec",
-    "test:update-snapshots": "npm run test --test-update-snapshots src/**/*.test.ts"
+    "test:update-snapshots": "npm run test -- --test-update-snapshots"
   },
   "dependencies": {
     "leven": "^4.0.0",
