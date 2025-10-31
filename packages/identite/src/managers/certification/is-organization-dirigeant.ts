@@ -1,84 +1,106 @@
 //
 
-import * as ApiEntrepriseMap from "#src/api/api_entreprise/mappers";
-import * as InseeMap from "#src/api/insee/mappers";
 import { InvalidCertificationError, NotFoundError } from "#src/errors";
 import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
 import { isEntrepriseUnipersonnelle } from "#src/services/organization";
 import type { IdentityVector, Organization } from "#src/types";
-import type {
-  ApiEntrepriseInfogreffeRepository,
-  ApiEntrepriseInseeRepository,
-} from "@proconnect-gouv/proconnect.api_entreprise/api";
+import type { ApiEntrepriseInfogreffeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import type { InseeApiRepository } from "@proconnect-gouv/proconnect.insee/api";
+import type { FindBeneficiairesEffectifsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { match } from "ts-pattern";
 import z from "zod/v4";
+import * as ApiEntreprise from "./adapters/api_entreprise.js";
+import * as INSEE from "./adapters/insee.js";
+import * as RNE from "./adapters/rne.js";
 import { distance } from "./distance.js";
 
 //
 
 type IsOrganizationExecutiveFactoryFactoryConfig = {
-  ApiEntrepriseInfogreffeRepository: ApiEntrepriseInfogreffeRepository;
-  ApiEntrepriseInseeRepository: Pick<
-    ApiEntrepriseInseeRepository,
-    "findBySiret"
+  ApiEntrepriseInfogreffeRepository: Pick<
+    ApiEntrepriseInfogreffeRepository,
+    "findMandatairesSociauxBySiren"
   >;
   EQUALITY_THRESHOLD?: number;
-  getFranceConnectUserInfo: GetFranceConnectUserInfoHandler;
+  FranceConnectApiRepository: {
+    getFranceConnectUserInfo: GetFranceConnectUserInfoHandler;
+  };
   InseeApiRepository: Pick<InseeApiRepository, "findBySiret">;
+  RegistreNationalEntreprisesApiRepository: {
+    findBeneficiairesEffectifsBySiren: FindBeneficiairesEffectifsBySirenHandler;
+  };
 };
 
 //
 
+async function getMandatairesSociaux(
+  {
+    RegistreNationalEntreprisesApiRepository,
+    ApiEntrepriseInfogreffeRepository,
+  }: IsOrganizationExecutiveFactoryFactoryConfig,
+  siren: string,
+) {
+  try {
+    const mandataires =
+      await RegistreNationalEntreprisesApiRepository.findBeneficiairesEffectifsBySiren(
+        siren,
+      );
+    const dirigeants = mandataires.map(RNE.toIdentityVector);
+
+    return {
+      dirigeants,
+      source: SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"],
+    };
+  } catch {
+    const mandataires =
+      await ApiEntrepriseInfogreffeRepository.findMandatairesSociauxBySiren(
+        siren,
+      );
+    const dirigeants = mandataires.map(ApiEntreprise.toIdentityVector);
+
+    return {
+      dirigeants,
+      source:
+        SourceDirigeant.enum[
+          "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux"
+        ],
+    };
+  }
+}
+
 export function isOrganizationDirigeantFactory(
   config: IsOrganizationExecutiveFactoryFactoryConfig,
 ) {
-  const {
-    ApiEntrepriseInseeRepository,
-    ApiEntrepriseInfogreffeRepository,
-    InseeApiRepository,
-    getFranceConnectUserInfo,
-  } = config;
+  const { InseeApiRepository, FranceConnectApiRepository } = config;
 
   return async function isOrganizationDirigeant(
-    siret: string,
+    organization: Organization,
     user_id: number,
   ) {
-    const organization = await ApiEntrepriseInseeRepository.findBySiret(
-      siret,
-    ).then(ApiEntrepriseMap.toOrganizationInfo);
-
-    const franceconnectUserInfo = await getFranceConnectUserInfo(user_id);
+    const franceconnectUserInfo =
+      await FranceConnectApiRepository.getFranceConnectUserInfo(user_id);
     if (!franceconnectUserInfo) {
       throw new NotFoundError("FranceConnect UserInfo not found");
     }
+    const prefered_source = isEntrepriseUnipersonnelle(organization)
+      ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
+      : SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"];
 
-    const source = determine_source_dirigeant_source({
-      cached_libelle_categorie_juridique:
-        organization.libelleCategorieJuridique,
-      cached_tranche_effectifs: organization.trancheEffectifs,
-    });
-
-    const sourceDirigeants = await match(source)
-      .with("api.insee.fr/api-sirene/private", () =>
-        InseeApiRepository.findBySiret(siret)
-          .then(InseeMap.toIdentityVector)
+    const { dirigeants, source } = await match(prefered_source)
+      .with("api.insee.fr/api-sirene/private", async () => ({
+        dirigeants: await InseeApiRepository.findBySiret(organization.siret)
+          .then(INSEE.toIdentityVector)
           .then((vector) => [vector]),
-      )
-      .with(
-        "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
-        () =>
-          ApiEntrepriseInfogreffeRepository.findMandatairesSociauxBySiren(
-            siret.substring(0, 9),
-          ).then((mandataires) =>
-            mandataires.map(ApiEntrepriseMap.toIdentityVector),
-          ),
+        source: SourceDirigeant.enum["api.insee.fr/api-sirene/private"],
+      }))
+      .with("registre-national-entreprises.inpi.fr/api", () =>
+        getMandatairesSociaux(config, organization.siret.substring(0, 9)),
       )
       .exhaustive();
 
     const result = match_identity_to_dirigeant(
       franceconnectUserInfo,
-      sourceDirigeants,
+      dirigeants,
     );
 
     if (result.kind === "no_candidates")
@@ -104,19 +126,6 @@ const SourceDirigeant = z.enum([
   "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
   "registre-national-entreprises.inpi.fr/api",
 ]);
-
-function determine_source_dirigeant_source(
-  organization: Pick<
-    Organization,
-    "cached_libelle_categorie_juridique" | "cached_tranche_effectifs"
-  >,
-) {
-  return isEntrepriseUnipersonnelle(organization)
-    ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
-    : SourceDirigeant.enum[
-        "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux"
-      ];
-}
 
 function match_identity_to_dirigeant(
   identity: IdentityVector,

@@ -1,4 +1,4 @@
-exports[`fromSiret > AppleEuropeInc 1`] = `
+exports[`toOrganizationInfo > AppleEuropeInc 1`] = `
 {
   "activitePrincipale": "70.22Z",
   "adresse": "100 west ten wilmington delawa, 99404, ETATS-UNIS",
@@ -21,7 +21,7 @@ exports[`fromSiret > AppleEuropeInc 1`] = `
 }
 `;
 
-exports[`fromSiret > Commune de clamart - Mairie 1`] = `
+exports[`toOrganizationInfo > Commune de clamart - Mairie 1`] = `
 {
   "activitePrincipale": "84.11Z",
   "adresse": "1 place maurice gunsbourg, 92140 Clamart",
@@ -44,7 +44,30 @@ exports[`fromSiret > Commune de clamart - Mairie 1`] = `
 }
 `;
 
-exports[`fromSiret > RogalDornEntrepreneur 1`] = `
+exports[`toOrganizationInfo > Papillon 1`] = `
+{
+  "activitePrincipale": "47.59A",
+  "adresse": "5-7, 5 rue du moulin aux moines, 72650 La chapelle-saint-aubin",
+  "categorieJuridique": "5710",
+  "codeOfficielGeographique": "72065",
+  "codePostal": "72650",
+  "enseigne": "",
+  "estActive": true,
+  "estDiffusible": true,
+  "etatAdministratif": "A",
+  "libelle": "Papillon",
+  "libelleActivitePrincipale": "47.59A - Commerce de détail de meubles",
+  "libelleCategorieJuridique": "SAS, société par actions simplifiée",
+  "libelleTrancheEffectif": "3 à 5 salariés, en 2022",
+  "nomComplet": "Papillon",
+  "siret": "39234600300198",
+  "statutDiffusion": "diffusible",
+  "trancheEffectifs": "02",
+  "trancheEffectifsUniteLegale": "11"
+}
+`;
+
+exports[`toOrganizationInfo > RogalDornEntrepreneur 1`] = `
 {
   "activitePrincipale": "62.02A",
   "adresse": "06155 Vallauris",

@@ -5,7 +5,7 @@ import {
   RogalDornEstablishment,
 } from "@proconnect-gouv/proconnect.insee/testing/seed/establishments";
 import { suite, test } from "node:test";
-import { toIdentityVector } from "./unite-legale.js";
+import { toIdentityVector } from "./insee.js";
 
 suite("toIdentityVector", () => {
   test("LiElJonsonEstablishment", (t) => {

@@ -13,7 +13,7 @@ import {
   UlysseToriMandataire,
 } from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-infogreffe-rcs-unites_legales-siren-mandataires_sociaux";
 import { suite, test } from "node:test";
-import { toIdentityVector } from "./mandataires-sociaux.js";
+import { toIdentityVector } from "./api_entreprise.js";
 
 suite("toIdentityVector", () => {
   test("UlysseToriMandataire - French DIRIGEANT", (t) => {
