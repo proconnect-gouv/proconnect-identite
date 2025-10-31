@@ -1,28 +1,50 @@
 //
 
 import { createRegistreNationalEntreprisesOpenApiClient } from "#src/client";
-import { RegistreNationalEntreprisesApiError } from "#src/types";
+import {
+  RegistreNationalEntreprisesApiError,
+  type CompaniesSirenResponse,
+} from "#src/types";
 import assert from "node:assert/strict";
 import { mock, suite, test } from "node:test";
-import { findBySirenFactory } from "./find-by-siren.js";
+import { findBeneficiairesEffectifsBySirenFactory } from "./find-beneficiaires-effectifs-by-siren.js";
 
 //
 
 const TOKEN = "__REGISTRE_NATIONAL_ENTREPRISES_API_TOKEN__";
 
-suite("findBySirenFactory", () => {
+suite("findBeneficiairesEffectifsBySirenFactory", () => {
   test("should return an company from a siren", async () => {
     const fetch = mock.fn(() => {
-      return Promise.resolve(new Response(JSON.stringify({ siren: "🦄" })));
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            siren: "🦄",
+            formality: {
+              content: {
+                personneMorale: {
+                  beneficiairesEffectifs: [
+                    { beneficiaire: { descriptionPersonne: { nom: "🤷" } } },
+                  ],
+                },
+              },
+            },
+          } satisfies CompaniesSirenResponse),
+        ),
+      );
     });
     const client = createRegistreNationalEntreprisesOpenApiClient(TOKEN, {
       fetch,
     });
-    const findBySiren = findBySirenFactory(client);
+    const findBySiren = findBeneficiairesEffectifsBySirenFactory(client);
 
-    const company = await findBySiren("791088917");
+    const beneficiairesEffectifs = await findBySiren("791088917");
 
-    assert.equal(company.siren, "🦄");
+    assert.deepEqual(beneficiairesEffectifs, [
+      {
+        descriptionPersonne: { nom: "🤷" },
+      },
+    ]);
   });
 
   test("❎ fails not found", async () => {
@@ -44,7 +66,7 @@ suite("findBySirenFactory", () => {
     const client = createRegistreNationalEntreprisesOpenApiClient(TOKEN, {
       fetch,
     });
-    const findBySiren = findBySirenFactory(client);
+    const findBySiren = findBeneficiairesEffectifsBySirenFactory(client);
 
     await assert.rejects(
       findBySiren("🐴"),

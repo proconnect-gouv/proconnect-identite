@@ -153,18 +153,19 @@ export interface components {
       /** @description Identifiant de l'entreprise */
       id?: string;
       formality?: {
-        content?: Record<string, never>;
+        content?: {
+          personneMorale?: {
+            beneficiairesEffectifs?: {
+              /** @description Actif ou non */
+              actif?: boolean;
+              /** @description Identifiant du bénéficiaire */
+              beneficiaireId?: string;
+              beneficiaire?: components["schemas"]["Beneficiaire"];
+            }[];
+          };
+        };
         /** @description Diffusion dans l'INSEE */
         diffusionINSEE?: string;
-        personneMorale?: {
-          beneficiairesEffectifs?: {
-            /** @description Actif ou non */
-            actif?: boolean;
-            /** @description Identifiant du bénéficiaire */
-            beneficiaireId?: string;
-            beneficiaire?: components["schemas"]["Beneficiaire"];
-          }[];
-        };
       };
       /** @description Numéro Siren de l'entreprise */
       siren?: string;
