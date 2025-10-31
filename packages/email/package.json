@@ -30,9 +30,9 @@
     "build": "tsc --build ./tsconfig.lib.json",
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "storybook": "vite",
-    "type-check": "tsc --noEmit",
     "test": "npm run test:unit src/**/*.test.tsx",
-    "test:unit": "tsx --test --test-reporter=spec"
+    "test:unit": "tsx --test --test-reporter=spec",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@kitajs/html": "^4.2.9",
