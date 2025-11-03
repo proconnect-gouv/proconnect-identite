@@ -1,7 +1,7 @@
 FROM node:22-slim AS base
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 WORKDIR /app
-# Test Docker workflow with checkout and cache persistence
+# Test cache hit on second build
 
 FROM base AS prod-deps
 RUN --mount=type=bind,source=package.json,target=package.json \
