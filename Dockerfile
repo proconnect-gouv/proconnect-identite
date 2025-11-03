@@ -1,7 +1,6 @@
 FROM node:22-slim AS base
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 WORKDIR /app
-# Test cache hit on second build
 
 FROM base AS prod-deps
 RUN --mount=type=bind,source=package.json,target=package.json \
