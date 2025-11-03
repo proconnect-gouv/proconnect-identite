@@ -17,7 +17,6 @@ import {
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import type {
   Organization,
-  OrganizationInfo,
   UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
@@ -144,9 +143,13 @@ export const joinOrganization = async ({
   certificationRequested?: boolean;
 }): Promise<UserOrganizationLink> => {
   // Update organizationInfo
-  let organizationInfo: OrganizationInfo;
+  let organization: Organization;
   try {
-    organizationInfo = await getOrganizationInfo(siret);
+    const organizationInfo = await getOrganizationInfo(siret);
+    organization = await upsert({
+      siret,
+      organizationInfo,
+    });
   } catch (error) {
     if (error instanceof ApiEntrepriseError) {
       throw error;
@@ -154,10 +157,6 @@ export const joinOrganization = async ({
 
     throw new InvalidSiretError("", { cause: error });
   }
-  let organization = await upsert({
-    siret,
-    organizationInfo,
-  });
 
   // Ensure the organization is active
   if (!organization.cached_est_active) {
@@ -216,7 +215,7 @@ export const joinOrganization = async ({
 
   if (certificationRequested) {
     const { cause, details, ok } = await isOrganizationDirigeant(
-      siret,
+      organization,
       user_id,
     );
 

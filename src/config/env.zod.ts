@@ -54,6 +54,11 @@ export const connectorEnvSchema = z.object({
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   RNE_API_PASSWORD: z.string().default("🎭 Mocked RNE API Password"),
   RNE_API_USERNAME: z.string().default("🎭 Mocked RNE API Username"),
+  RNE_API_HTTP_CLIENT_TIMEOUT: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(1_000 * 3), // 3 seconds in milliseconds;
   SENTRY_DSN: z.string().default(""),
   SMTP_FROM: z
     .string()

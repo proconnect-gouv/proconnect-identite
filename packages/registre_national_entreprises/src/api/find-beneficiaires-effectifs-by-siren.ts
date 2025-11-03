@@ -6,11 +6,11 @@ import type { FetchOptions } from "openapi-fetch";
 
 //
 
-export function findBySirenFactory(
+export function findBeneficiairesEffectifsBySirenFactory(
   client: RegistreNationalEntreprisesOpenApiClient,
   optionsFn: () => FetchOptions<unknown> = () => ({}),
 ) {
-  return async function findBySiren(siren: string) {
+  return async function findBeneficiairesEffectifsBySiren(siren: string) {
     const { data, error } = await client.GET("/companies/{siren}", {
       ...optionsFn(),
       params: {
@@ -22,8 +22,14 @@ export function findBySirenFactory(
 
     if (error) throw new RegistreNationalEntreprisesApiError(error);
 
-    return data;
+    return (
+      data.formality?.content?.personneMorale?.beneficiairesEffectifs ?? []
+    )
+      .map(({ beneficiaire }) => beneficiaire)
+      .filter((beneficiaire) => beneficiaire !== undefined);
   };
 }
 
-export type FindBySirenHandler = ReturnType<typeof findBySirenFactory>;
+export type FindBeneficiairesEffectifsBySirenHandler = ReturnType<
+  typeof findBeneficiairesEffectifsBySirenFactory
+>;

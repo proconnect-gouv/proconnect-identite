@@ -1,5 +1,3 @@
-//
-
 import type { IdentityVector } from "#src/types";
 import { formatBirthdate } from "@proconnect-gouv/proconnect.insee/formatters";
 import type { InseeUniteLegale } from "@proconnect-gouv/proconnect.insee/types";
