@@ -28,6 +28,7 @@ export async function fetch_crisp<
     body: options.method === "GET" ? null : JSON.stringify(body),
     headers,
     method: options.method,
+    signal: AbortSignal.timeout(config.timeout ?? 10_000),
   });
 
   config.debug &&
