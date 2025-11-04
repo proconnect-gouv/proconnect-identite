@@ -6,6 +6,7 @@ export interface Config {
   identifier: string;
   key: string;
   plugin_urn: `urn:${string}` | string;
+  timeout?: number;
   user_nickname: string;
   website_id: string;
 }
