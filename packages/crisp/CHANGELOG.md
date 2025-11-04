@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.crisp
 
+## 1.0.1
+
+### Patch Changes
+
+- [#1558](https://github.com/proconnect-gouv/proconnect-identite/pull/1558) [`103bb14`](https://github.com/proconnect-gouv/proconnect-identite/commit/103bb14d47e36b555a97b4d4badbcc593075772e) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 Ajout d'un timeout par default de 10s sur les appels API
+
 ## 1.0.0
 
 ### Major Changes
