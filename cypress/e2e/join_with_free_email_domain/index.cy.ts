@@ -186,6 +186,10 @@ describe("join syndicat communal", () => {
       code: "26090012100013",
       type: "Établissement public local social et médico-social",
     },
+    {
+      code: "26290359400014",
+      type: "Centre communal d'action sociale",
+    },
   ];
 
   beforeEach(() => {

@@ -51,6 +51,17 @@ The handler uses [Hono](https://hono.dev/) framework and provides:
 
 Fetch real establishment data and save it as anonymized test data:
 
+##### Specific .env
+
+For regular use, do not follow the next exports instructions. Create a `.env.development.local` file with:
+
+```
+ENTREPRISE_API_TOKEN="your api key"
+ENTREPRISE_API_URL="https://entreprise.api.gouv.fr
+```
+
+Comment it out by default and uncomment it when you want to extract data.
+
 ```bash
 # Set up environment variables
 export ENTREPRISE_API_TOKEN="your-api-token"
@@ -59,7 +70,7 @@ export ENTREPRISE_API_TRACKING_CONTEXT="testing"
 export ENTREPRISE_API_TRACKING_RECIPIENT="your-siret"
 
 # Add establishment data
-npm run cli entreprise etablissements add 49430870300052
+npx tsx scripts/testing.ts entreprise add 49430870300052
 ```
 
 This command:
