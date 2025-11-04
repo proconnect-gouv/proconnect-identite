@@ -55,8 +55,10 @@ Fetch real establishment data and save it as anonymized test data:
 
 For regular use, do not follow the next exports instructions. Create a `.env.development.local` file with:
 
+```
 ENTREPRISE_API_TOKEN="your api key"
 ENTREPRISE_API_URL="https://entreprise.api.gouv.fr
+```
 
 Comment it out by default and uncomment it when you want to extract data.
 
