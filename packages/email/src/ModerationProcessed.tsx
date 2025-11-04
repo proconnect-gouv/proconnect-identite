@@ -11,7 +11,7 @@ export default function ModerationProcessed(props: Props) {
     <Layout baseurl={baseurl}>
       <Text>Bonjour,</Text>
       <Text safe>
-        Le rattachement de votre compte ProConnect ({email}) à l'organisation «
+        Le rattachement de votre compte ProConnect ({email}) à l'organisation «{" "}
         {libelle} » a été validée sur {baseurl}.
       </Text>
       <Text>
