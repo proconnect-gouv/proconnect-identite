@@ -148,7 +148,7 @@ exports[`ModerationProcessed > should render 1`] = `
                                   >
                                     Le rattachement de votre compte ProConnect
                                     (marie.dupont@example.com) à
-                                    l&#39;organisation «Ministère de
+                                    l&#39;organisation « Ministère de
                                     l&#39;Éducation nationale » a été validée
                                     sur http://localhost:3000.
                                   </p>
