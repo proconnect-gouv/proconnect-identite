@@ -33,6 +33,7 @@
     "build:openapi:auth": "openapi-typescript openapi/auth.yaml -o openapi/auth.d.ts",
     "build:openapi:index": "openapi-typescript openapi/index.yaml -o openapi/index.d.ts",
     "check": "npm run build -- --noEmit",
+    "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
     "test": "tsx --test --test-reporter=spec src/**/*.test.ts"

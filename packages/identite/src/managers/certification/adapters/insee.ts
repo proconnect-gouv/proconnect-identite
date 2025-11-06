@@ -1,13 +1,15 @@
 import type { IdentityVector } from "#src/types";
 import { formatBirthdate } from "@proconnect-gouv/proconnect.insee/formatters";
-import type { InseeUniteLegale } from "@proconnect-gouv/proconnect.insee/types";
+import type { InseSirenUniteLegale } from "@proconnect-gouv/proconnect.insee/types";
 
 //
 
 export function toIdentityVector(
-  uniteLegale: InseeUniteLegale,
+  uniteLegale: InseSirenUniteLegale,
 ): IdentityVector {
   let birthdate: Date | null = null;
+  const nomUniteLegale = uniteLegale.periodesUniteLegale?.at(0)?.nomUniteLegale;
+
   if (uniteLegale?.dateNaissanceUniteLegale) {
     const parsedDate = formatBirthdate(
       String(uniteLegale.dateNaissanceUniteLegale),
@@ -18,7 +20,7 @@ export function toIdentityVector(
   return {
     birthplace: uniteLegale?.codeCommuneNaissanceUniteLegale ?? null,
     birthdate,
-    family_name: uniteLegale?.nomUniteLegale ?? null,
+    family_name: nomUniteLegale ?? null,
     given_name: [
       uniteLegale?.prenom1UniteLegale,
       uniteLegale?.prenom2UniteLegale,

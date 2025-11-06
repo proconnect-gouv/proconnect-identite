@@ -1,11 +1,9 @@
 //
 
 import { isOrganizationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
+import { ApiEntrepriseInfogreffeRepository } from "../../connectors/api-entreprise";
+import { InseeApiRepository } from "../../connectors/api-insee";
 import { RegistreNationalEntreprisesApiRepository } from "../../connectors/api-rne";
-import {
-  ApiEntrepriseInfogreffeRepository,
-  InseeApiRepository,
-} from "../../connectors/api-sirene";
 import { getFranceConnectUserInfo } from "../../repositories/user";
 
 //
@@ -13,6 +11,6 @@ import { getFranceConnectUserInfo } from "../../repositories/user";
 export const isOrganizationDirigeant = isOrganizationDirigeantFactory({
   ApiEntrepriseInfogreffeRepository,
   FranceConnectApiRepository: { getFranceConnectUserInfo },
-  InseeApiRepository,
+  InseeApiRepository: { findBySiren: InseeApiRepository.findBySiren },
   RegistreNationalEntreprisesApiRepository,
 });

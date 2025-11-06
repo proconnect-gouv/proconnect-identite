@@ -1069,7 +1069,9 @@ components:
         et dateFin
       properties:
         dateFin:
-          type: string
+          type:
+            - string
+            - "null"
           format: date
           $comment:
             Null pour la période contenant les valeurs courantes de l'entreprise
@@ -1129,7 +1131,10 @@ components:
             "Nomenclature de l'activité, permet de savoir Ã  partir de quelle\
             \ nomenclature est codifiée ActivitePrincipaleEtablissement"
           enum:
-            - "NAP,NAFRev1,NAFRev2,NAF1993"
+            - NAP
+            - NAFRev1
+            - NAFRev2
+            - NAF1993
         changementActivitePrincipaleEtablissement:
           type: boolean
           description:
@@ -1229,7 +1234,10 @@ components:
             "Catégorie Ã  laquelle appartient l'entreprise : Petite ou moyenne\
             \ entreprise, Entreprise de taille intermédiaire, Grande entreprise"
           enum:
-            - "PME,ETI,GE,null"
+            - PME
+            - ETI
+            - GE
+            - null
         anneeCategorieEntreprise:
           type: string
           description: Année de validité de la catégorie d'entreprise
@@ -1240,7 +1248,9 @@ components:
           type: string
           description: Sexe pour les personnes physiques sinon null
           enum:
-            - "M,F,null"
+            - M
+            - F
+            - null
         prenom1UniteLegale:
           type: string
           description:
@@ -1270,7 +1280,8 @@ components:
             "Ã‰tat de l'entreprise pendant la période (A= entreprise active,\
             \ C= entreprise cessée)"
           enum:
-            - "A,C"
+            - A
+            - C
         nomUniteLegale:
           type: string
           $comment: Null pour les personnes morales
@@ -1318,7 +1329,10 @@ components:
             "Nomenclature de l'activité, permet de savoir Ã  partir de quelle\
             \ nomenclature est codifiée ActivitePrincipale"
           enum:
-            - "NAP,NAFRev1,NAFRev2,NAF1993"
+            - NAP
+            - NAFRev1
+            - NAFRev2
+            - NAF1993
         nomUsageUniteLegale:
           type: string
           description: Nom dâ€™usage pour les personnes physiques sinon null
@@ -1336,7 +1350,9 @@ components:
             Caractère employeur de l'entreprise. Valeur courante=O si au
             moins l'un des établissements actifs de l'unité légale emploie des salariés
           enum:
-            - "O,N,null"
+            - O
+            - N
+            - null
     ReponseErreur:
       type: object
       properties:
@@ -1397,7 +1413,9 @@ components:
       type: object
       properties:
         dateFin:
-          type: string
+          type:
+            - string
+            - "null"
           format: date
           $comment:
             Null pour la période contenant les valeurs courantes de l'entreprise
@@ -1416,7 +1434,8 @@ components:
             "Ã‰tat de l'entreprise pendant la période (A= entreprise active,\
             \ C= entreprise cessée)"
           enum:
-            - "A,C"
+            - A
+            - C
         changementEtatAdministratifUniteLegale:
           type: boolean
           description: Indicatrice de changement d'état par rapport Ã  la période précédente
@@ -1489,7 +1508,10 @@ components:
             "Nomenclature de l'activité, permet de savoir Ã  partir de quelle\
             \ nomenclature est codifiée ActivitePrincipale"
           enum:
-            - "NAP,NAFRev1,NAFRev2,NAF1993"
+            - NAP
+            - NAFRev1
+            - NAFRev2
+            - NAF1993
         changementActivitePrincipaleUniteLegale:
           type: boolean
           description:
@@ -1532,7 +1554,9 @@ components:
             Caractère employeur de l'entreprise. Valeur courante=O si au
             moins l'un des établissements actifs de l'unité légale emploie des salariés
           enum:
-            - "O,N,null"
+            - O
+            - N
+            - null
         changementCaractereEmployeurUniteLegale:
           type: boolean
           description:
@@ -1644,7 +1668,10 @@ components:
             "Catégorie Ã  laquelle appartient l'entreprise : Petite ou moyenne\
             \ entreprise, Entreprise de taille intermédiaire, Grande entreprise"
           enum:
-            - "PME,ETI,GE,null"
+            - PME
+            - ETI
+            - GE
+            - null
         anneeCategorieEntreprise:
           type: string
           description: Année de validité de la catégorie d'entreprise
@@ -1655,7 +1682,9 @@ components:
           type: string
           description: Sexe pour les personnes physiques sinon null
           enum:
-            - "M,F,null"
+            - M
+            - F
+            - null
         prenom1UniteLegale:
           type: string
           description:
@@ -1795,7 +1824,8 @@ components:
           type: string
           description: Nom de la collection
           enum:
-            - "Unités Légales, Ã‰tablissements"
+            - "Unités Légales"
+            - "Ã‰tablissements"
         dateDerniereMiseADisposition:
           type: string
           format: date-time
@@ -1829,7 +1859,8 @@ components:
           type: string
           description: Etat du service
           enum:
-            - "UP,DOWN"
+            - UP
+            - DOWN
     ReponseInformations:
       type: object
       description:
@@ -1842,7 +1873,8 @@ components:
           type: string
           description: Ã‰tat actuel du service
           enum:
-            - "UP,DOWN"
+            - UP
+            - DOWN
         etatsDesServices:
           type: array
           description: Etats des services
