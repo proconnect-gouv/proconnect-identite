@@ -135,7 +135,6 @@ const inseeOpenApiTestClient: InseeSirenePrivateOpenApiClient =
 
 export const InseeApiRepository = {
   async findBySiret(siret: string) {
-    console.log("siret", siret);
     const client: InseeSirenePrivateOpenApiClient =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_INSEE_API_SIRETS.includes(siret)
