@@ -5,7 +5,7 @@ import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite
 import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
-import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-sirene";
+import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { upsert } from "../src/repositories/organization/setters";
 import { logger } from "../src/services/log";

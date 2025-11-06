@@ -319,7 +319,7 @@ export interface components {
        * Format: date
        * @description Date de fin de la période, null pour la dernière période, format AAAA-MM-DD
        */
-      dateFin?: string;
+      dateFin?: string | null;
       /**
        * Format: date
        * @description Date de début de la période, format AAAA-MM-DD
@@ -337,7 +337,7 @@ export interface components {
       enseigne3Etablissement?: string;
       /** @description Indicatrice de changement de l'enseigne de l'établissement par rapport Ã  la période précédente (un seul indicateur pour les trois variables Enseigne1, Enseigne2 et Enseigne3). Un seul indicateur pour les trois variables enseigne */
       changementEnseigneEtablissement?: boolean;
-      /** @description Nom sous lequel lâ€™activité de lâ€™établissement est connu du public  */
+      /** @description Nom sous lequel lâ€™activité de lâ€™établissement est connu du public */
       denominationUsuelleEtablissement?: string;
       /** @description Indicatrice de changement de la dénomination usuelle de lâ€™établissement par rapport Ã  la période précédente */
       changementDenominationUsuelleEtablissement?: boolean;
@@ -347,7 +347,11 @@ export interface components {
        * @description Nomenclature de l'activité, permet de savoir Ã  partir de quelle nomenclature est codifiée ActivitePrincipaleEtablissement
        * @enum {string}
        */
-      nomenclatureActivitePrincipaleEtablissement?: "NAP,NAFRev1,NAFRev2,NAF1993";
+      nomenclatureActivitePrincipaleEtablissement?:
+        | "NAP"
+        | "NAFRev1"
+        | "NAFRev2"
+        | "NAF1993";
       /** @description Indicatrice de changement de l'activité principale de l'établissement par rapport Ã  la période précédente */
       changementActivitePrincipaleEtablissement?: boolean;
       /** @description Caractère employeur de l'établissement (O=oui, N=non, null=sans objet) */
@@ -374,6 +378,7 @@ export interface components {
        * Format: date
        * @description Date de création de l'unité légale
        * @example AAAA-MM-JJ
+       * @example 1955-01-01
        */
       dateCreationUniteLegale?: string;
       /** @description Lâ€™accès Ã  ces données est soumis Ã  une démarche auprès de la Commission nationale de lâ€™informatique et des libertés. Date de naissance pour la personne physique sinon null */
@@ -399,7 +404,7 @@ export interface components {
        * @description Catégorie Ã  laquelle appartient l'entreprise : Petite ou moyenne entreprise, Entreprise de taille intermédiaire, Grande entreprise
        * @enum {string}
        */
-      categorieEntreprise?: "PME,ETI,GE,null";
+      categorieEntreprise?: "PME" | "ETI" | "GE" | null;
       /** @description Année de validité de la catégorie d'entreprise */
       anneeCategorieEntreprise?: string;
       /** @description Sigle de l'unité légale */
@@ -408,7 +413,7 @@ export interface components {
        * @description Sexe pour les personnes physiques sinon null
        * @enum {string}
        */
-      sexeUniteLegale?: "M,F,null";
+      sexeUniteLegale?: "M" | "F" | null;
       /** @description Premier prénom déclaré pour une personne physique, peut être null dans le cas d'une unité purgée */
       prenom1UniteLegale?: string;
       /** @description Deuxième prénom déclaré pour une personne physique */
@@ -425,7 +430,7 @@ export interface components {
        * @description Ã‰tat de l'entreprise pendant la période (A= entreprise active, C= entreprise cessée)
        * @enum {string}
        */
-      etatAdministratifUniteLegale?: "A,C";
+      etatAdministratifUniteLegale?: "A" | "C";
       /** @description Nom de naissance pour les personnes physiques pour la période (null pour les personnes morales) */
       nomUniteLegale?: string;
       /** @description Raison sociale (personnes morales) */
@@ -446,7 +451,11 @@ export interface components {
        * @description Nomenclature de l'activité, permet de savoir Ã  partir de quelle nomenclature est codifiée ActivitePrincipale
        * @enum {string}
        */
-      nomenclatureActivitePrincipaleUniteLegale?: "NAP,NAFRev1,NAFRev2,NAF1993";
+      nomenclatureActivitePrincipaleUniteLegale?:
+        | "NAP"
+        | "NAFRev1"
+        | "NAFRev2"
+        | "NAF1993";
       /** @description Nom dâ€™usage pour les personnes physiques sinon null */
       nomUsageUniteLegale?: string;
       /** @description Appartenance de lâ€™unité légale au champ de lâ€™économie sociale et solidaire (ESS) */
@@ -457,7 +466,7 @@ export interface components {
        * @description Caractère employeur de l'entreprise. Valeur courante=O si au moins l'un des établissements actifs de l'unité légale emploie des salariés
        * @enum {string}
        */
-      caractereEmployeurUniteLegale?: "O,N,null";
+      caractereEmployeurUniteLegale?: "O" | "N" | null;
     };
     ReponseErreur: {
       header?: components["schemas"]["Header"];
@@ -514,7 +523,7 @@ export interface components {
        * Format: date
        * @description Date de fin de la période, null pour la dernière période, format AAAA-MM-DD
        */
-      dateFin?: string;
+      dateFin?: string | null;
       /**
        * Format: date
        * @description Date de début de la période, format AAAA-MM-DD
@@ -524,7 +533,7 @@ export interface components {
        * @description Ã‰tat de l'entreprise pendant la période (A= entreprise active, C= entreprise cessée)
        * @enum {string}
        */
-      etatAdministratifUniteLegale?: "A,C";
+      etatAdministratifUniteLegale?: "A" | "C";
       /** @description Indicatrice de changement d'état par rapport Ã  la période précédente */
       changementEtatAdministratifUniteLegale?: boolean;
       /** @description Nom de naissance pour les personnes physiques pour la période (null pour les personnes morales) */
@@ -555,7 +564,11 @@ export interface components {
        * @description Nomenclature de l'activité, permet de savoir Ã  partir de quelle nomenclature est codifiée ActivitePrincipale
        * @enum {string}
        */
-      nomenclatureActivitePrincipaleUniteLegale?: "NAP,NAFRev1,NAFRev2,NAF1993";
+      nomenclatureActivitePrincipaleUniteLegale?:
+        | "NAP"
+        | "NAFRev1"
+        | "NAFRev2"
+        | "NAF1993";
       /** @description Indicatrice de changement de l'activité principale par rapport Ã  la période précédente */
       changementActivitePrincipaleUniteLegale?: boolean;
       /** @description Identifiant du siège pour la période (le Siret du siège est obtenu en concaténant le numéro Siren et le Nic) */
@@ -574,7 +587,7 @@ export interface components {
        * @description Caractère employeur de l'entreprise. Valeur courante=O si au moins l'un des établissements actifs de l'unité légale emploie des salariés
        * @enum {string}
        */
-      caractereEmployeurUniteLegale?: "O,N,null";
+      caractereEmployeurUniteLegale?: "O" | "N" | null;
       /** @description Indicatrice de changement du caractère employeur par rapport Ã  la période précédente */
       changementCaractereEmployeurUniteLegale?: boolean;
       /** @description Indicatrice de changement de la dénomination par rapport Ã la période précédente */
@@ -608,6 +621,7 @@ export interface components {
        * Format: date
        * @description Date de création de l'unité légale
        * @example AAAA-MM-JJ
+       * @example 1955-01-01
        */
       dateCreationUniteLegale?: string;
       /** @description Lâ€™accès Ã  ces données est soumis Ã  une démarche auprès de la Commission nationale de lâ€™informatique et des libertés. Date de naissance pour la personne physique sinon null */
@@ -638,7 +652,7 @@ export interface components {
        * @description Catégorie Ã  laquelle appartient l'entreprise : Petite ou moyenne entreprise, Entreprise de taille intermédiaire, Grande entreprise
        * @enum {string}
        */
-      categorieEntreprise?: "PME,ETI,GE,null";
+      categorieEntreprise?: "PME" | "ETI" | "GE" | null;
       /** @description Année de validité de la catégorie d'entreprise */
       anneeCategorieEntreprise?: string;
       /** @description Sigle de l'unité légale */
@@ -647,7 +661,7 @@ export interface components {
        * @description Sexe pour les personnes physiques sinon null
        * @enum {string}
        */
-      sexeUniteLegale?: "M,F,null";
+      sexeUniteLegale?: "M" | "F" | null;
       /** @description Premier prénom déclaré pour une personne physique, peut être null dans le cas d'une unité purgée */
       prenom1UniteLegale?: string;
       /** @description Deuxième prénom déclaré pour une personne physique */
@@ -751,7 +765,7 @@ export interface components {
        * @description Nom de la collection
        * @enum {string}
        */
-      collection?: "Unités Légales, Ã‰tablissements";
+      collection?: "Unités Légales" | "Ã‰tablissements";
       /**
        * Format: date-time
        * @description Date et heure (yyyy-MM-ddTHH:mm:ss.SSS) de la dernière mise Ã  disposition des données de la collection
@@ -778,7 +792,7 @@ export interface components {
        * @description Etat du service
        * @enum {string}
        */
-      etatCollection?: "UP,DOWN";
+      etatCollection?: "UP" | "DOWN";
     };
     /** @description Objet renvoyé en cas de requête demandant les informations sur le service */
     ReponseInformations: {
@@ -787,7 +801,7 @@ export interface components {
        * @description Ã‰tat actuel du service
        * @enum {string}
        */
-      etatService?: "UP,DOWN";
+      etatService?: "UP" | "DOWN";
       /** @description Etats des services */
       etatsDesServices?: components["schemas"]["EtatCollection"][];
       /** @description Numéro de la version */
