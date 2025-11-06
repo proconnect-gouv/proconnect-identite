@@ -1,7 +1,10 @@
 describe("Signup with a client requiring certification dirigeant", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
+    cy.visit("/");
+    cy.origin("http://localhost:4000", () => {
+      cy.visit("/");
+      cy.contains("Forcer une connexion par certification dirigeant").click();
+    });
   });
 
   it("should seed the database once", function () {
@@ -9,9 +12,6 @@ describe("Signup with a client requiring certification dirigeant", () => {
   });
 
   it("should welcome Elia Alvernhe as dirigeant of JEREMIE COOK", () => {
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
-
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("elia.alvernhe@yopmail.com");
@@ -70,9 +70,6 @@ describe("Signup with a client requiring certification dirigeant", () => {
   });
 
   it("should no allow Adrian Volckaert to represent Danone", () => {
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
-
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("adrian.volckaert@yopmail.com");
@@ -120,9 +117,6 @@ describe("Signup with a client requiring certification dirigeant", () => {
   });
 
   it("should welcome Angela Claire Louise DUBOIS as dirigeant of Angela GNESOTTO", () => {
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
-
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("angela.83832482000011@yopmail.com");
@@ -180,132 +174,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains('"label": "Angela Gnesotto",');
   });
 
-  it("should welcome Angela Claire Louise DUBOIS as dirigeant of Thunnus thynnus iii (80761229600036)", () => {
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
-
-    cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("angela.80761229600036@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
-
-    cy.title().should("include", "Certification dirigeant -");
-    cy.getByLabel("S’identifier avec FranceConnect").click();
-
-    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
-    cy.contains("Je suis Angela Claire Louise DUBOIS").click();
-
-    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-
-    cy.title().should("include", "Rejoindre une organisation - ");
-    cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("80761229600036");
-    cy.getByLabel(
-      "Organisation correspondante au SIRET donné : Thunnus thynnus iii",
-    ).click();
-
-    cy.title().should("include", "Compte certifié - ");
-    cy.contains("Vous êtes bien certifié !");
-    cy.contains("Prénom Angela Claire Louise");
-    cy.contains("Nom DUBOIS");
-    cy.contains("Email professionnel angela.80761229600036@yopmail.com");
-    cy.contains("Organisation Thunnus thynnus iii");
-    cy.contains("Statut Compte certifié");
-    cy.contains("Continuer").click();
-
-    cy.title().should("equal", "standard-client - ProConnect");
-    cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
-    );
-    cy.contains('"email": "angela.80761229600036@yopmail.com",');
-    cy.contains('"siret": "80761229600036",');
-    cy.contains('"label": "Thunnus thynnus iii",');
-  });
-
-  it("should welcome Angela Claire Louise DUBOIS as dirigeant of Thunnus thynnus iii (80761229600069)", () => {
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
-
-    cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("angela.80761229600069@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
-
-    cy.title().should("include", "Certification dirigeant -");
-    cy.getByLabel("S’identifier avec FranceConnect").click();
-
-    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
-    cy.contains("Je suis Angela Claire Louise DUBOIS").click();
-
-    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-
-    cy.title().should("include", "Rejoindre une organisation - ");
-    cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("80761229600069");
-    cy.getByLabel(
-      "Organisation correspondante au SIRET donné : Thunnus thynnus iii",
-    ).click();
-
-    cy.title().should("include", "Compte certifié - ");
-    cy.contains("Vous êtes bien certifié !");
-    cy.contains("Prénom Angela Claire Louise");
-    cy.contains("Nom DUBOIS");
-    cy.contains("Email professionnel angela.80761229600069@yopmail.com");
-    cy.contains("Organisation Thunnus thynnus iii");
-    cy.contains("Statut Compte certifié");
-    cy.contains("Continuer").click();
-
-    cy.title().should("equal", "standard-client - ProConnect");
-    cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
-    );
-    cy.contains('"email": "angela.80761229600069@yopmail.com",');
-    cy.contains('"siret": "80761229600069",');
-    cy.contains('"label": "Thunnus thynnus iii",');
-  });
-
   it("should come back to the certification dirigeant page if FranceConnect access denied", function () {
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
-
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("jean.michel@yopmail.com");
@@ -340,5 +209,83 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains(
       "L'authentification FranceConnect a échoué. Veuillez réessayer.",
     );
+  });
+});
+
+describe("Signup on each organizations of the same siren", () => {
+  before(() => {
+    cy.visit("/");
+    cy.seed();
+  });
+
+  [
+    { siret: "80761229600036" },
+    { siret: "80761229600044" },
+    { siret: "80761229600051" },
+    { siret: "80761229600069" },
+  ].forEach(({ siret }) => {
+    it(`should welcome Angela Claire Louise DUBOIS as dirigeant of Thunnus thynnus iii (${siret})`, () => {
+      cy.origin("http://localhost:4000", () => {
+        cy.visit("/");
+        cy.contains("Forcer une connexion par certification dirigeant").click();
+      });
+
+      cy.visit("/");
+      cy.title().should("include", "S'inscrire ou se connecter - ");
+      cy.contains("Email professionnel").click();
+      cy.focused().type(`angela.${siret}@yopmail.com`);
+      cy.contains("Valider").click();
+
+      cy.title().should("include", "Choisir votre mot de passe - ");
+      cy.contains("Mot de passe").click();
+      cy.contains("Recevoir un lien d’identification").click();
+      cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
+        (email) => {
+          cy.maildevVisitMessageById(email.id);
+          cy.origin("http://localhost:1080", () => {
+            cy.contains(
+              "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+            );
+            cy.contains("Se connecter")
+              .get("a")
+              .invoke("attr", "target", "")
+              .click();
+          });
+          cy.maildevDeleteMessageById(email.id);
+        },
+      );
+
+      cy.title().should("include", "Certification dirigeant -");
+      cy.getByLabel("S’identifier avec FranceConnect").click();
+
+      cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+      cy.contains("Je suis Angela Claire Louise DUBOIS").click();
+
+      cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
+
+      cy.title().should("include", "Rejoindre une organisation - ");
+      cy.contains("SIRET de l’organisation que vous représentez").click();
+      cy.focused().clear().type(siret);
+      cy.getByLabel(
+        "Organisation correspondante au SIRET donné : Thunnus thynnus iii",
+      ).click();
+
+      cy.title().should("include", "Compte certifié - ");
+      cy.contains("Vous êtes bien certifié !");
+      cy.contains("Prénom Angela Claire Louise");
+      cy.contains("Nom DUBOIS");
+      cy.contains(`Email professionnel angela.${siret}@yopmail.com`);
+      cy.contains("Organisation Thunnus thynnus iii");
+      cy.contains("Statut Compte certifié");
+      cy.contains("Continuer").click();
+
+      cy.title().should("equal", "standard-client - ProConnect");
+      cy.contains(
+        '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
+      );
+      cy.contains(`"email": "angela.${siret}@yopmail.com",`);
+      cy.contains(`"siret": "${siret}",`);
+      cy.contains('"label": "Thunnus thynnus iii",');
+    });
   });
 });
