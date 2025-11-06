@@ -16,7 +16,7 @@ import {
 import {
   LiElJonsonEstablishment,
   RogalDornEstablishment,
-} from "@proconnect-gouv/proconnect.insee/testing/seed/establishments";
+} from "@proconnect-gouv/proconnect.insee/testing/seed";
 import {
   RogalDornBeneficiaireEffectif,
   UlysseToriBeneficiaireEffectif,
@@ -38,7 +38,7 @@ describe("isOrganizationDirigeantFactory", () => {
           Promise.reject(new Error("💣")),
       },
       InseeApiRepository: {
-        findBySiret: () => Promise.resolve(RogalDornEstablishment),
+        findBySiren: () => Promise.resolve(RogalDornEstablishment),
       },
       FranceConnectApiRepository: {
         getFranceConnectUserInfo: () =>
@@ -75,7 +75,7 @@ describe("isOrganizationDirigeantFactory", () => {
           Promise.reject(new Error("💣")),
       },
       InseeApiRepository: {
-        findBySiret: () => Promise.resolve(LiElJonsonEstablishment),
+        findBySiren: () => Promise.resolve(LiElJonsonEstablishment),
       },
       FranceConnectApiRepository: {
         getFranceConnectUserInfo: () =>
@@ -115,7 +115,7 @@ describe("isOrganizationDirigeantFactory", () => {
           ]),
       },
       InseeApiRepository: {
-        findBySiret: () => Promise.reject(new Error("💣")),
+        findBySiren: () => Promise.reject(new Error("💣")),
       },
       FranceConnectApiRepository: {
         getFranceConnectUserInfo: () =>
@@ -153,7 +153,7 @@ describe("isOrganizationDirigeantFactory", () => {
           Promise.reject(new Error("💣")),
       },
       InseeApiRepository: {
-        findBySiret: () => Promise.reject(new Error("💣")),
+        findBySiren: () => Promise.reject(new Error("💣")),
       },
       FranceConnectApiRepository: {
         getFranceConnectUserInfo: () =>
@@ -191,7 +191,7 @@ describe("isOrganizationDirigeantFactory", () => {
           Promise.reject(new Error("💣")),
       },
       InseeApiRepository: {
-        findBySiret: () => Promise.reject(new Error("💣")),
+        findBySiren: () => Promise.reject(new Error("💣")),
       },
       FranceConnectApiRepository: {
         getFranceConnectUserInfo: () => Promise.resolve(undefined),
@@ -213,7 +213,7 @@ describe("isOrganizationDirigeantFactory", () => {
         findBeneficiairesEffectifsBySiren: () => Promise.resolve([]),
       },
       InseeApiRepository: {
-        findBySiret: () => Promise.reject(new Error("💣")),
+        findBySiren: () => Promise.reject(new Error("💣")),
       },
       FranceConnectApiRepository: {
         getFranceConnectUserInfo: () =>

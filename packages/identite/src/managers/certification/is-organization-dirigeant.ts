@@ -2,10 +2,9 @@
 
 import { InvalidCertificationError, NotFoundError } from "#src/errors";
 import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
-import { isEntrepriseUnipersonnelle } from "#src/services/organization";
 import type { IdentityVector, Organization } from "#src/types";
 import type { ApiEntrepriseInfogreffeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
-import type { InseeApiRepository } from "@proconnect-gouv/proconnect.insee/api";
+import type { FindUniteLegaleBySirenHandler } from "@proconnect-gouv/proconnect.insee/api";
 import type { FindBeneficiairesEffectifsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { match } from "ts-pattern";
 import z from "zod/v4";
@@ -25,7 +24,7 @@ type IsOrganizationExecutiveFactoryFactoryConfig = {
   FranceConnectApiRepository: {
     getFranceConnectUserInfo: GetFranceConnectUserInfoHandler;
   };
-  InseeApiRepository: Pick<InseeApiRepository, "findBySiret">;
+  InseeApiRepository: { findBySiren: FindUniteLegaleBySirenHandler };
   RegistreNationalEntreprisesApiRepository: {
     findBeneficiairesEffectifsBySiren: FindBeneficiairesEffectifsBySirenHandler;
   };
@@ -77,24 +76,27 @@ export function isOrganizationDirigeantFactory(
     organization: Organization,
     user_id: number,
   ) {
+    const siren = organization.siret.substring(0, 9);
     const franceconnectUserInfo =
       await FranceConnectApiRepository.getFranceConnectUserInfo(user_id);
     if (!franceconnectUserInfo) {
       throw new NotFoundError("FranceConnect UserInfo not found");
     }
-    const prefered_source = isEntrepriseUnipersonnelle(organization)
-      ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
-      : SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"];
+    const prefered_source =
+      organization.cached_libelle_categorie_juridique ===
+      "Entrepreneur individuel"
+        ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
+        : SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"];
 
     const { dirigeants, source } = await match(prefered_source)
       .with("api.insee.fr/api-sirene/private", async () => ({
-        dirigeants: await InseeApiRepository.findBySiret(organization.siret)
+        dirigeants: await InseeApiRepository.findBySiren(siren)
           .then(INSEE.toIdentityVector)
           .then((vector) => [vector]),
         source: SourceDirigeant.enum["api.insee.fr/api-sirene/private"],
       }))
       .with("registre-national-entreprises.inpi.fr/api", () =>
-        getMandatairesSociaux(config, organization.siret.substring(0, 9)),
+        getMandatairesSociaux(config, siren),
       )
       .exhaustive();
 

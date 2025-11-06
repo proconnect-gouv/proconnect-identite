@@ -3,7 +3,7 @@
 import {
   LiElJonsonEstablishment,
   RogalDornEstablishment,
-} from "@proconnect-gouv/proconnect.insee/testing/seed/establishments";
+} from "@proconnect-gouv/proconnect.insee/testing/seed";
 import { suite, test } from "node:test";
 import { toIdentityVector } from "./insee.js";
 
