@@ -1,0 +1,61 @@
+{
+  "header": {
+    "statut": 200,
+    "message": "OK"
+  },
+  "uniteLegale": {
+    "siren": "552032534",
+    "statutDiffusionUniteLegale": "O",
+    "dateCreationUniteLegale": "1955-10-20",
+    "dateNaissanceUniteLegale": null,
+    "codeCommuneNaissanceUniteLegale": null,
+    "codePaysNaissanceUniteLegale": null,
+    "libelleNationaliteUniteLegale": null,
+    "sigleUniteLegale": null,
+    "sexeUniteLegale": null,
+    "prenom1UniteLegale": null,
+    "prenom2UniteLegale": null,
+    "prenom3UniteLegale": null,
+    "prenom4UniteLegale": null,
+    "prenomUsuelUniteLegale": null,
+    "pseudonymeUniteLegale": null,
+    "identifiantAssociationUniteLegale": null,
+    "trancheEffectifsUniteLegale": "42",
+    "anneeEffectifsUniteLegale": "2022",
+    "dateDernierTraitementUniteLegale": "2025-01-15T10:30:00.000",
+    "nombrePeriodesUniteLegale": 1,
+    "categorieEntreprise": "GE",
+    "anneeCategorieEntreprise": "2023",
+    "periodesUniteLegale": [
+      {
+        "dateFin": null,
+        "dateDebut": "1955-10-20",
+        "etatAdministratifUniteLegale": "A",
+        "changementEtatAdministratifUniteLegale": false,
+        "nomUniteLegale": null,
+        "changementNomUniteLegale": false,
+        "nomUsageUniteLegale": null,
+        "changementNomUsageUniteLegale": false,
+        "denominationUniteLegale": "DANONE",
+        "changementDenominationUniteLegale": false,
+        "denominationUsuelle1UniteLegale": null,
+        "denominationUsuelle2UniteLegale": null,
+        "denominationUsuelle3UniteLegale": null,
+        "changementDenominationUsuelleUniteLegale": false,
+        "categorieJuridiqueUniteLegale": "5599",
+        "changementCategorieJuridiqueUniteLegale": false,
+        "activitePrincipaleUniteLegale": "70.10Z",
+        "nomenclatureActivitePrincipaleUniteLegale": "NAFRev2",
+        "changementActivitePrincipaleUniteLegale": false,
+        "nicSiegeUniteLegale": "00646",
+        "changementNicSiegeUniteLegale": false,
+        "economieSocialeSolidaireUniteLegale": null,
+        "changementEconomieSocialeSolidaireUniteLegale": false,
+        "societeMissionUniteLegale": null,
+        "changementSocieteMissionUniteLegale": false,
+        "caractereEmployeurUniteLegale": "O",
+        "changementCaractereEmployeurUniteLegale": false
+      }
+    ]
+  }
+}
