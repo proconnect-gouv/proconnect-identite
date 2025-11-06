@@ -6,22 +6,21 @@ import { Text } from "./components";
 //
 
 export default function ModerationProcessed(props: Props) {
-  const { baseurl, libelle } = props;
+  const { baseurl, libelle, email } = props;
   return (
     <Layout baseurl={baseurl}>
       <Text>Bonjour,</Text>
       <Text safe>
-        Votre demande pour rejoindre l’organisation « {libelle} » a été
-        débloquée sur {baseurl}.
+        Le rattachement de votre compte ProConnect ({email}) à l'organisation «{" "}
+        {libelle} » a été validée sur {baseurl}.
       </Text>
       <Text>
-        Vous allez recevoir un email de confirmation.
-        <br />
-        <br />
-        Vous pouvez à présent retourner sur votre démarche ou demande.
+        Vous pouvez à présent vous connecter sur le service en ligne souhaité.
         <br />
         <br />
         Nous restons à votre disposition pour toute information complémentaire.
+        <br />
+        <br />
       </Text>
     </Layout>
   );
@@ -31,4 +30,5 @@ export default function ModerationProcessed(props: Props) {
 
 export type Props = LayoutProps & {
   libelle: string;
+  email: string;
 };

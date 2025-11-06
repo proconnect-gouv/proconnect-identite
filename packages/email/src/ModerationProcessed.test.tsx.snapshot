@@ -146,9 +146,11 @@ exports[`ModerationProcessed > should render 1`] = `
                                       margin: 0;
                                     "
                                   >
-                                    Votre demande pour rejoindre l’organisation
-                                    « Ministère de l&#39;Éducation nationale » a
-                                    été débloquée sur http://localhost:3000.
+                                    Le rattachement de votre compte ProConnect
+                                    (marie.dupont@example.com) à
+                                    l&#39;organisation « Ministère de
+                                    l&#39;Éducation nationale » a été validée
+                                    sur http://localhost:3000.
                                   </p>
                                   <p
                                     style="
@@ -162,12 +164,10 @@ exports[`ModerationProcessed > should render 1`] = `
                                       margin: 0;
                                     "
                                   >
-                                    Vous allez recevoir un email de
-                                    confirmation.<br /><br />Vous pouvez à
-                                    présent retourner sur votre démarche ou
-                                    demande.<br /><br />Nous restons à votre
-                                    disposition pour toute information
-                                    complémentaire.
+                                    Vous pouvez à présent vous connecter sur le
+                                    service en ligne souhaité.<br /><br />Nous
+                                    restons à votre disposition pour toute
+                                    information complémentaire.<br /><br />
                                   </p>
                                   <p
                                     style="

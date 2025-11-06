@@ -43,6 +43,7 @@ export const sendModerationProcessedEmail = async ({
     html: ModerationProcessed({
       baseurl: HOST,
       libelle: cached_libelle || siret,
+      email,
     }).toString(),
     tag: "moderation-processed",
   });

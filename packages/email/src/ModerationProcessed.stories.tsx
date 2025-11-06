@@ -11,5 +11,6 @@ export default {
   args: {
     baseurl: "http://localhost:3000",
     libelle: "Ministère de l'Éducation nationale",
+    email: "marie.dupont@example.com",
   } satisfies Props,
 } as ComponentAnnotations<Renderer, Props>;
