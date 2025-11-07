@@ -71,41 +71,62 @@ paths:
                 $ref: "#/components/schemas/ReponseCompany"
 components:
   schemas:
-    Beneficiaire:
+    Composition:
+      type: object
+      properties:
+        pouvoirs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Pouvoir"
+    DescriptionPersonne:
+      type: object
+      properties:
+        dateDeNaissance:
+          type: string
+          format: AAAA-MM-JJ
+          description: Date de naissance
+        nom:
+          type: string
+          description: Nom de naissance
+        prenoms:
+          type: array
+          items:
+            type: string
+          description: Prénoms
+        genre:
+          type: string
+          description: Sexe
+          enum:
+            - "1"
+            - "2"
+        lieuDeNaissance:
+          type: string
+          description: Lieu de naissance
+        codePostalNaissance:
+          type: string
+          description: Code postal de naissance (commune de naissance pour les français)
+        paysNaissance:
+          type: string
+          description: Pays de naissance (pour les étrangers)
+    Individu:
       type: object
       properties:
         descriptionPersonne:
-          type: object
-          properties:
-            dateDeNaissance:
-              type: string
-              format: AAAA-MM-JJ
-            nom:
-              type: string
-              description: Nom de naissance
-            prenoms:
-              type: array
-              items:
-                type: string
-                description: Prénoms
-            genre:
-              type: string
-              description: Genre
-              enum:
-                - "1"
-                - "2"
-            paysNaissance:
-              type: string
-              description: Pays de naissance
-            lieuDeNaissance:
-              type: string
-              description: Lieu de naissance
-            codePostalNaissance:
-              type: string
-              description: Code postal de naissance
-            codeInseeGeographique:
-              type: string
-              description: Code insee de la commune de naissance
+          $ref: "#/components/schemas/DescriptionPersonne"
+    Pouvoir:
+      type: object
+      properties:
+        typeDePersonne:
+          type: string
+          description: Type de personne
+          enum:
+            - INDIVIDU
+            - PERSONNE_MORALE
+        actif:
+          type: boolean
+          description: Actif ou non
+        individu:
+          $ref: "#/components/schemas/Individu"
     Error:
       type: object
       properties:
@@ -153,19 +174,8 @@ components:
                 personneMorale:
                   type: object
                   properties:
-                    beneficiairesEffectifs:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          actif:
-                            type: boolean
-                            description: Actif ou non
-                          beneficiaireId:
-                            type: string
-                            description: Identifiant du bénéficiaire
-                          beneficiaire:
-                            $ref: "#/components/schemas/Beneficiaire"
+                    composition:
+                      $ref: "#/components/schemas/Composition"
             diffusionINSEE:
               type: string
               description: Diffusion dans l'INSEE

@@ -1,0 +1,92 @@
+//
+
+import { RegistreNationalEntreprisesApiError } from "#src/types";
+import { createRegistreNationalEntreprisesOpenApiClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/client";
+import { UlysseTosiPouvoir } from "@proconnect-gouv/proconnect.registre_national_entreprises/testing/seed";
+import { TestingRegistreNationalEntreprisesOpenApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/registre-national-entreprises.inpi.fr";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { findPouvoirsBySirenFactory } from "./find-pouvoirs-by-siren.js";
+
+//
+
+describe("findPouvoirsBySiren", () => {
+  it("should return pouvoirs for a valid SIREN", async () => {
+    const client = createRegistreNationalEntreprisesOpenApiClient(
+      "__RNE_API_TOKEN__",
+      {
+        fetch: (input: Request) =>
+          Promise.resolve(
+            TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
+          ),
+      },
+    );
+
+    const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
+    const pouvoirs = await findPouvoirsBySiren("552032534");
+
+    assert.deepEqual(pouvoirs, [UlysseTosiPouvoir]);
+  });
+
+  it("should filter out inactive pouvoirs", async () => {
+    const client = createRegistreNationalEntreprisesOpenApiClient(
+      "__RNE_API_TOKEN__",
+      {
+        fetch: (input: Request) =>
+          Promise.resolve(
+            TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
+          ),
+      },
+    );
+
+    const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
+    const pouvoirs = await findPouvoirsBySiren("807612296");
+
+    // Should only return active pouvoirs
+    assert.ok(pouvoirs.every((p) => p.actif === true));
+    // Should only return individuals
+    assert.ok(pouvoirs.every((p) => p.typeDePersonne === "INDIVIDU"));
+  });
+
+  it("should throw RegistreNationalEntreprisesApiError on API error", async () => {
+    const client = createRegistreNationalEntreprisesOpenApiClient(
+      "__RNE_API_TOKEN__",
+      {
+        fetch: () =>
+          Promise.resolve(
+            new Response(JSON.stringify({ error: "Not found" }), {
+              status: 404,
+              headers: { "Content-Type": "application/json" },
+            }),
+          ),
+      },
+    );
+
+    const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
+
+    await assert.rejects(
+      findPouvoirsBySiren("999999999"),
+      RegistreNationalEntreprisesApiError,
+    );
+  });
+
+  it("should return empty array when no composition data", async () => {
+    const client = createRegistreNationalEntreprisesOpenApiClient(
+      "__RNE_API_TOKEN__",
+      {
+        fetch: () =>
+          Promise.resolve(
+            new Response(JSON.stringify({ formality: { content: {} } }), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }),
+          ),
+      },
+    );
+
+    const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
+    const pouvoirs = await findPouvoirsBySiren("123456789");
+
+    assert.deepEqual(pouvoirs, []);
+  });
+});

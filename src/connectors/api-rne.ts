@@ -1,7 +1,7 @@
 //
 
 import {
-  findBeneficiairesEffectifsBySirenFactory,
+  findPouvoirsBySirenFactory,
   getRegistreNationalEntreprisesAccessTokenFactory,
 } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { createRegistreNationalEntreprisesOpenApiClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/client";
@@ -27,13 +27,13 @@ const rneOpenApiTestClient = createRegistreNationalEntreprisesOpenApiClient(
 );
 
 export const RegistreNationalEntreprisesApiRepository = {
-  async findBeneficiairesEffectifsBySiren(siren: string) {
+  async findPouvoirsBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_RNE_API_SIRENS.includes(siren)
         ? rneOpenApiTestClient
         : await get_client();
-    return findBeneficiairesEffectifsBySirenFactory(client, () => ({
+    return findPouvoirsBySirenFactory(client, () => ({
       signal: AbortSignal.timeout(RNE_API_HTTP_CLIENT_TIMEOUT),
     }))(siren);
   },
