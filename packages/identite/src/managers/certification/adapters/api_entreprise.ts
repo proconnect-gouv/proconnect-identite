@@ -11,6 +11,7 @@ export function toIdentityVector(
     birthplace: mandataire.lieu_naissance ?? null,
     birthdate: isNaN(birthdate.getTime()) ? null : birthdate,
     family_name: mandataire.nom ?? null,
+    gender: null, // API Entreprise Infogreffe doesn't provide gender
     given_name: mandataire.prenom ?? null,
   };
 }

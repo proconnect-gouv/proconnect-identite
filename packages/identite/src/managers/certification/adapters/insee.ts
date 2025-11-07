@@ -17,10 +17,18 @@ export function toIdentityVector(
     birthdate = isNaN(parsedDate.getTime()) ? null : parsedDate;
   }
 
+  // Map sexeUniteLegale: "M" = male, "F" = female
+  const mapGender = (sexe: "M" | "F" | null | undefined) => {
+    if (sexe === "M") return "male";
+    if (sexe === "F") return "female";
+    return null;
+  };
+
   return {
     birthplace: uniteLegale?.codeCommuneNaissanceUniteLegale ?? null,
     birthdate,
     family_name: nomUniteLegale ?? null,
+    gender: mapGender(uniteLegale?.sexeUniteLegale),
     given_name: [
       uniteLegale?.prenom1UniteLegale,
       uniteLegale?.prenom2UniteLegale,

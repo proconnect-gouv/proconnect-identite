@@ -80,6 +80,23 @@ export function isOrganizationDirigeantFactory(
     if (!franceconnectUserInfo) {
       throw new NotFoundError("FranceConnect UserInfo not found");
     }
+
+    // Map FranceConnect gender to standard format
+    const mapGender = (gender: string | undefined) => {
+      const lowerGender = gender?.toLowerCase();
+      if (lowerGender === "male" || lowerGender === "m") return "male";
+      if (lowerGender === "female" || lowerGender === "f") return "female";
+      return null;
+    };
+
+    const identity: IdentityVector = {
+      birthplace: franceconnectUserInfo.birthplace,
+      birthdate: franceconnectUserInfo.birthdate,
+      family_name: franceconnectUserInfo.family_name,
+      gender: mapGender(franceconnectUserInfo.gender),
+      given_name: franceconnectUserInfo.given_name,
+    };
+
     const prefered_source =
       organization.cached_libelle_categorie_juridique ===
       "Entrepreneur individuel"
@@ -98,17 +115,14 @@ export function isOrganizationDirigeantFactory(
       )
       .exhaustive();
 
-    const result = match_identity_to_dirigeant(
-      franceconnectUserInfo,
-      dirigeants,
-    );
+    const result = match_identity_to_dirigeant(identity, dirigeants);
 
     if (result.kind === "no_candidates")
       throw new InvalidCertificationError("No candidates found");
     return {
       details: {
         ...result.closest,
-        identity: franceconnectUserInfo,
+        identity,
         source,
       },
       cause: result.kind,
