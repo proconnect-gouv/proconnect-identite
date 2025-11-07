@@ -167,6 +167,7 @@ INSERT INTO
     birthdate,
     birthplace,
     family_name,
+    gender,
     given_name,
     created_at,
     updated_at
@@ -177,6 +178,7 @@ VALUES
     '1990-06-01',
     '75000',
     'Un',
+    'male',
     'Jean',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -186,6 +188,7 @@ VALUES
     '1990-06-01',
     '75000',
     'Deux',
+    'male',
     'Jean',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -195,6 +198,7 @@ VALUES
     '1990-06-01',
     '75000',
     'Trois',
+    'male',
     'Jean',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -204,6 +208,7 @@ VALUES
     '1990-06-01',
     '75000',
     'Quatre',
+    'male',
     'Jean',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -213,6 +218,7 @@ VALUES
     '1980-06-01',
     '75000',
     'Cinq',
+    'male',
     'Jean',
     CURRENT_TIMESTAMP - INTERVAL '6 months',
     CURRENT_TIMESTAMP - INTERVAL '4 months'
@@ -222,6 +228,7 @@ VALUES
     '1980-06-01',
     '75000',
     'DUTEIL',
+    'male',
     'Douglas Le Gris',
     CURRENT_TIMESTAMP - INTERVAL '6 months',
     CURRENT_TIMESTAMP - INTERVAL '4 months'
@@ -231,6 +238,7 @@ VALUES
     '1992-09-07',
     'Internet',
     'Tosi',
+    'male',
     'Ulysse',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -240,6 +248,7 @@ VALUES
     '1979-11-12',
     'Internet',
     'Cheron',
+    'male',
     'Stevens',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP

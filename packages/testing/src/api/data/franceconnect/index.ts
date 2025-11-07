@@ -47,7 +47,6 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
         gender: "male",
         given_name: "Elia",
         preferred_username: "Dulac",
-
         sub: "🎭 FranceConnect Sub",
       },
       avataaars: `https://avataaars.io/?${new URLSearchParams({
