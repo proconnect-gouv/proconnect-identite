@@ -1,31 +1,30 @@
 {
+  "id": "🎭 RNE Company ID",
+  "siren": "807612296",
   "formality": {
     "content": {
       "personneMorale": {
-        "beneficiairesEffectifs": [
-          {
-            "actif": true,
-            "beneficiaireId": "angela-dubois-thunnus",
-            "indexPouvoir": 0,
-            "beneficiaire": {
-              "descriptionPersonne": {
-                "dateDeNaissance": "1962-08-24",
-                "role": "53",
-                "dateEffetRoleDeclarant": "2018-03-19",
-                "nom": "DUBOIS",
-                "prenoms": ["Angela", "Claire", "Louise"],
-                "genre": "2",
-                "paysNaissance": "FRANCE",
-                "lieuDeNaissance": "75107",
-                "codePostalNaissance": "75007",
-                "codeInseeGeographique": "75107",
-                "optionRgpd": "N",
-                "statutVisAVisFormalite": "4"
+        "composition": {
+          "pouvoirs": [
+            {
+              "typeDePersonne": "INDIVIDU",
+              "actif": true,
+              "individu": {
+                "descriptionPersonne": {
+                  "dateDeNaissance": "1962-08-24",
+                  "nom": "DUBOIS",
+                  "prenoms": ["Angela", "Claire", "Louise"],
+                  "genre": "2",
+                  "lieuDeNaissance": "75107",
+                  "codePostalNaissance": "75007",
+                  "paysNaissance": "FRANCE"
+                }
               }
             }
-          }
-        ]
+          ]
+        }
       }
-    }
+    },
+    "diffusionINSEE": "O"
   }
 }

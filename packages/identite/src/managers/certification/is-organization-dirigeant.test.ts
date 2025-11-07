@@ -18,8 +18,8 @@ import {
   RogalDornEstablishment,
 } from "@proconnect-gouv/proconnect.insee/testing/seed";
 import {
-  RogalDornBeneficiaireEffectif,
-  UlysseToriBeneficiaireEffectif,
+  RogalDornPouvoir,
+  UlysseTosiPouvoir,
 } from "@proconnect-gouv/proconnect.registre_national_entreprises/testing/seed";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -34,8 +34,7 @@ describe("isOrganizationDirigeantFactory", () => {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiRepository: {
-        findBeneficiairesEffectifsBySiren: () =>
-          Promise.reject(new Error("💣")),
+        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
       },
       InseeApiRepository: {
         findBySiren: () => Promise.resolve(RogalDornEstablishment),
@@ -71,8 +70,7 @@ describe("isOrganizationDirigeantFactory", () => {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiRepository: {
-        findBeneficiairesEffectifsBySiren: () =>
-          Promise.reject(new Error("💣")),
+        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
       },
       InseeApiRepository: {
         findBySiren: () => Promise.resolve(LiElJonsonEstablishment),
@@ -108,11 +106,8 @@ describe("isOrganizationDirigeantFactory", () => {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiRepository: {
-        findBeneficiairesEffectifsBySiren: () =>
-          Promise.resolve([
-            UlysseToriBeneficiaireEffectif,
-            RogalDornBeneficiaireEffectif,
-          ]),
+        findPouvoirsBySiren: () =>
+          Promise.resolve([UlysseTosiPouvoir, RogalDornPouvoir]),
       },
       InseeApiRepository: {
         findBySiren: () => Promise.reject(new Error("💣")),
@@ -149,8 +144,7 @@ describe("isOrganizationDirigeantFactory", () => {
           Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
       },
       RegistreNationalEntreprisesApiRepository: {
-        findBeneficiairesEffectifsBySiren: () =>
-          Promise.reject(new Error("💣")),
+        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
       },
       InseeApiRepository: {
         findBySiren: () => Promise.reject(new Error("💣")),
@@ -187,8 +181,7 @@ describe("isOrganizationDirigeantFactory", () => {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiRepository: {
-        findBeneficiairesEffectifsBySiren: () =>
-          Promise.reject(new Error("💣")),
+        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
       },
       InseeApiRepository: {
         findBySiren: () => Promise.reject(new Error("💣")),
@@ -210,7 +203,7 @@ describe("isOrganizationDirigeantFactory", () => {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiRepository: {
-        findBeneficiairesEffectifsBySiren: () => Promise.resolve([]),
+        findPouvoirsBySiren: () => Promise.resolve([]),
       },
       InseeApiRepository: {
         findBySiren: () => Promise.reject(new Error("💣")),

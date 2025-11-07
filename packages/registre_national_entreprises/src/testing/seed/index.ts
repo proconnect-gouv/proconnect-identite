@@ -1,1 +1,1 @@
-export * from "./beneficiaires-effectifs.js";
+export * from "./pouvoirs.js";

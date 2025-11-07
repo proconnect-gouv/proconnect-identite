@@ -5,7 +5,7 @@ import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
 import type { IdentityVector, Organization } from "#src/types";
 import type { ApiEntrepriseInfogreffeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import type { FindUniteLegaleBySirenHandler } from "@proconnect-gouv/proconnect.insee/api";
-import type { FindBeneficiairesEffectifsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
+import type { FindPouvoirsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { match } from "ts-pattern";
 import z from "zod/v4";
 import * as ApiEntreprise from "./adapters/api_entreprise.js";
@@ -26,7 +26,7 @@ type IsOrganizationExecutiveFactoryFactoryConfig = {
   };
   InseeApiRepository: { findBySiren: FindUniteLegaleBySirenHandler };
   RegistreNationalEntreprisesApiRepository: {
-    findBeneficiairesEffectifsBySiren: FindBeneficiairesEffectifsBySirenHandler;
+    findPouvoirsBySiren: FindPouvoirsBySirenHandler;
   };
 };
 
@@ -40,11 +40,9 @@ async function getMandatairesSociaux(
   siren: string,
 ) {
   try {
-    const mandataires =
-      await RegistreNationalEntreprisesApiRepository.findBeneficiairesEffectifsBySiren(
-        siren,
-      );
-    const dirigeants = mandataires.map(RNE.toIdentityVector);
+    const pouvoirs =
+      await RegistreNationalEntreprisesApiRepository.findPouvoirsBySiren(siren);
+    const dirigeants = pouvoirs.map(RNE.toIdentityVector);
 
     return {
       dirigeants,

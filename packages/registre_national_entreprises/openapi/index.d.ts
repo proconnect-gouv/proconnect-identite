@@ -98,27 +98,43 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    Beneficiaire: {
-      descriptionPersonne?: {
-        /** Format: AAAA-MM-JJ */
-        dateDeNaissance?: string;
-        /** @description Nom de naissance */
-        nom?: string;
-        prenoms?: string[];
-        /**
-         * @description Genre
-         * @enum {string}
-         */
-        genre?: "1" | "2";
-        /** @description Pays de naissance */
-        paysNaissance?: string;
-        /** @description Lieu de naissance */
-        lieuDeNaissance?: string;
-        /** @description Code postal de naissance */
-        codePostalNaissance?: string;
-        /** @description Code insee de la commune de naissance */
-        codeInseeGeographique?: string;
-      };
+    Composition: {
+      pouvoirs?: components["schemas"]["Pouvoir"][];
+    };
+    DescriptionPersonne: {
+      /**
+       * Format: AAAA-MM-JJ
+       * @description Date de naissance
+       */
+      dateDeNaissance?: string;
+      /** @description Nom de naissance */
+      nom?: string;
+      /** @description Prénoms */
+      prenoms?: string[];
+      /**
+       * @description Sexe
+       * @enum {string}
+       */
+      genre?: "1" | "2";
+      /** @description Lieu de naissance */
+      lieuDeNaissance?: string;
+      /** @description Code postal de naissance (commune de naissance pour les français) */
+      codePostalNaissance?: string;
+      /** @description Pays de naissance (pour les étrangers) */
+      paysNaissance?: string;
+    };
+    Individu: {
+      descriptionPersonne?: components["schemas"]["DescriptionPersonne"];
+    };
+    Pouvoir: {
+      /**
+       * @description Type de personne
+       * @enum {string}
+       */
+      typeDePersonne?: "INDIVIDU" | "PERSONNE_MORALE";
+      /** @description Actif ou non */
+      actif?: boolean;
+      individu?: components["schemas"]["Individu"];
     };
     Error: {
       /**
@@ -155,13 +171,7 @@ export interface components {
       formality?: {
         content?: {
           personneMorale?: {
-            beneficiairesEffectifs?: {
-              /** @description Actif ou non */
-              actif?: boolean;
-              /** @description Identifiant du bénéficiaire */
-              beneficiaireId?: string;
-              beneficiaire?: components["schemas"]["Beneficiaire"];
-            }[];
+            composition?: components["schemas"]["Composition"];
           };
         };
         /** @description Diffusion dans l'INSEE */

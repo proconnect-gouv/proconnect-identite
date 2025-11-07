@@ -1,31 +1,30 @@
 {
+  "id": "🎭 RNE Company ID",
+  "siren": "552032534",
   "formality": {
     "content": {
       "personneMorale": {
-        "beneficiairesEffectifs": [
-          {
-            "actif": true,
-            "beneficiaireId": "ulysse-tosi-danone",
-            "indexPouvoir": 0,
-            "beneficiaire": {
-              "descriptionPersonne": {
-                "dateDeNaissance": "1992-09-07",
-                "role": "53",
-                "dateEffetRoleDeclarant": "2021-09-15",
-                "nom": "TOSI",
-                "prenoms": ["Ulysse"],
-                "genre": "1",
-                "paysNaissance": "FRANCE",
-                "lieuDeNaissance": "Internet",
-                "codePostalNaissance": "13001",
-                "codeInseeGeographique": "13055",
-                "optionRgpd": "N",
-                "statutVisAVisFormalite": "4"
+        "composition": {
+          "pouvoirs": [
+            {
+              "typeDePersonne": "INDIVIDU",
+              "actif": true,
+              "individu": {
+                "descriptionPersonne": {
+                  "dateDeNaissance": "1992-09-07",
+                  "nom": "TOSI",
+                  "prenoms": ["Ulysse"],
+                  "genre": "1",
+                  "lieuDeNaissance": "Internet",
+                  "codePostalNaissance": "13001",
+                  "paysNaissance": "FRANCE"
+                }
               }
             }
-          }
-        ]
+          ]
+        }
       }
-    }
+    },
+    "diffusionINSEE": "O"
   }
 }
