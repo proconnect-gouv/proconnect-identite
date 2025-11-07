@@ -1,13 +1,13 @@
 import type { FranceConnectUserInfo } from "#src/types";
 
 export const LiElJonsonFranceConnectUserInfo: FranceConnectUserInfo = {
-  birthdate: new Date(Date.UTC(29000, 10, 7)),
-  birthplace: "Caliban",
+  birthdate: new Date(Date.UTC(28500, 1, 5)),
+  birthplace: "INW",
   created_at: new Date("4444-04-04"),
-  family_name: "El'Jonson",
+  family_name: "EL'JONSON",
   gender: "male",
-  given_name: "Li",
-  preferred_username: "Li",
+  given_name: "LION",
+  preferred_username: "Lion",
   sub: "abcdefghijklmnopqrstuvwxyz",
   updated_at: new Date("4444-04-05"),
   user_id: NaN,
