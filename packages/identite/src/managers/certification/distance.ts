@@ -24,6 +24,8 @@ export function distance(
         Math.random().toString(36),
       sourceDirigeant.family_name?.toUpperCase() || Math.random().toString(36),
     );
+  const sameGender = () =>
+    franceconnectUserInfo.gender === sourceDirigeant.gender ? 0 : 1;
   const sameBirthDay = () =>
     (Number(sourceDirigeant.birthdate) -
       Number(franceconnectUserInfo.birthdate)) /
@@ -34,8 +36,11 @@ export function distance(
       sourceDirigeant.birthplace || Math.random().toString(36),
     );
 
-  return [sameGivenName, sameFamilyName, sameBirthDay, sameBirthPlace].reduce(
-    (value, metric) => value + metric(),
-    0,
-  );
+  return [
+    sameGivenName,
+    sameFamilyName,
+    sameGender,
+    sameBirthDay,
+    sameBirthPlace,
+  ].reduce((value, metric) => value + metric(), 0);
 }

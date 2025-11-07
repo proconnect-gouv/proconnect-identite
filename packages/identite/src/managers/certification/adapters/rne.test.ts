@@ -16,6 +16,7 @@ suite("RNE adapter - toIdentityVector", () => {
       birthdate: new Date(Date.UTC(1992, 8, 7)), // September (month 8) 7, 1992
       birthplace: "Internet",
       family_name: "TOSI",
+      gender: "male",
       given_name: "Ulysse",
     });
   });
@@ -28,6 +29,7 @@ suite("RNE adapter - toIdentityVector", () => {
           lieuDeNaissance: "Paris",
           nom: "DUPONT",
           prenoms: ["Jean", "Paul", "Marie"],
+          genre: "1",
         },
       },
     };
@@ -36,6 +38,7 @@ suite("RNE adapter - toIdentityVector", () => {
 
     assert.equal(result.given_name, "Jean Paul Marie");
     assert.equal(result.family_name, "DUPONT");
+    assert.equal(result.gender, "male");
   });
 
   test("handles invalid date format - returns null birthdate", () => {
@@ -63,6 +66,7 @@ suite("RNE adapter - toIdentityVector", () => {
       birthdate: null,
       birthplace: null,
       family_name: null,
+      gender: null,
       given_name: null,
     });
   });
@@ -93,6 +97,7 @@ suite("RNE adapter - toIdentityVector", () => {
       birthdate: new Date(Date.UTC(29000, 0, 7)), // January 7, 29000
       birthplace: "INWIT",
       family_name: "DORN",
+      gender: "male",
       given_name: "ROGAL",
     });
   });
@@ -123,7 +128,59 @@ suite("RNE adapter - toIdentityVector", () => {
       birthdate: null,
       birthplace: null,
       family_name: null,
+      gender: null,
       given_name: null,
     });
+  });
+
+  test("maps genre 1 to male", () => {
+    const pouvoir = {
+      individu: {
+        descriptionPersonne: {
+          dateDeNaissance: "1990-01-01",
+          lieuDeNaissance: "Paris",
+          nom: "DUPONT",
+          prenoms: ["Jean"],
+          genre: "1",
+        },
+      },
+    };
+
+    const result = toIdentityVector(pouvoir);
+    assert.equal(result.gender, "male");
+  });
+
+  test("maps genre 2 to female", () => {
+    const pouvoir = {
+      individu: {
+        descriptionPersonne: {
+          dateDeNaissance: "1990-01-01",
+          lieuDeNaissance: "Paris",
+          nom: "MARTIN",
+          prenoms: ["Marie"],
+          genre: "2",
+        },
+      },
+    };
+
+    const result = toIdentityVector(pouvoir);
+    assert.equal(result.gender, "female");
+  });
+
+  test("returns null for unknown genre", () => {
+    const pouvoir = {
+      individu: {
+        descriptionPersonne: {
+          dateDeNaissance: "1990-01-01",
+          lieuDeNaissance: "Paris",
+          nom: "BERNARD",
+          prenoms: ["Alex"],
+          genre: "3",
+        },
+      },
+    };
+
+    const result = toIdentityVector(pouvoir);
+    assert.equal(result.gender, null);
   });
 });

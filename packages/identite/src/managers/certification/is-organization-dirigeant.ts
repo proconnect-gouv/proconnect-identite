@@ -9,6 +9,7 @@ import type { FindPouvoirsBySirenHandler } from "@proconnect-gouv/proconnect.reg
 import { match } from "ts-pattern";
 import z from "zod/v4";
 import * as ApiEntreprise from "./adapters/api_entreprise.js";
+import * as FranceConnect from "./adapters/franceconnect.js";
 import * as INSEE from "./adapters/insee.js";
 import * as RNE from "./adapters/rne.js";
 import { distance } from "./distance.js";
@@ -80,6 +81,9 @@ export function isOrganizationDirigeantFactory(
     if (!franceconnectUserInfo) {
       throw new NotFoundError("FranceConnect UserInfo not found");
     }
+
+    const identity = FranceConnect.toIdentityVector(franceconnectUserInfo);
+
     const prefered_source =
       organization.cached_libelle_categorie_juridique ===
       "Entrepreneur individuel"
@@ -98,21 +102,18 @@ export function isOrganizationDirigeantFactory(
       )
       .exhaustive();
 
-    const result = match_identity_to_dirigeant(
-      franceconnectUserInfo,
-      dirigeants,
-    );
+    const result = match_identity_to_dirigeant(identity, dirigeants);
 
     if (result.kind === "no_candidates")
       throw new InvalidCertificationError("No candidates found");
     return {
       details: {
         ...result.closest,
-        identity: franceconnectUserInfo,
+        identity,
         source,
       },
       cause: result.kind,
-      ok: result.kind === "exact_match",
+      ok: result.kind === "exact_match" || result.kind === "close_match",
     };
   };
 }
@@ -140,14 +141,17 @@ function match_identity_to_dirigeant(
     }))
     .toSorted((a, b) => a.distance - b.distance);
 
-  if (closest.distance > 0)
-    return {
+  return match(closest.distance)
+    .with(0, () => ({
+      kind: "exact_match" as const,
+      closest,
+    }))
+    .with(1, () => ({
+      kind: "close_match" as const,
+      closest,
+    }))
+    .otherwise(() => ({
       kind: "below_threshold" as const,
       closest,
-    };
-
-  return {
-    kind: "exact_match" as const,
-    closest,
-  };
+    }));
 }

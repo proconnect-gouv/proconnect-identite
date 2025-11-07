@@ -1,6 +1,7 @@
 import type { IdentityVector } from "#src/types";
 import { formatBirthdate } from "@proconnect-gouv/proconnect.insee/formatters";
 import type { InseSirenUniteLegale } from "@proconnect-gouv/proconnect.insee/types";
+import { match } from "ts-pattern";
 
 //
 
@@ -21,6 +22,10 @@ export function toIdentityVector(
     birthplace: uniteLegale?.codeCommuneNaissanceUniteLegale ?? null,
     birthdate,
     family_name: nomUniteLegale ?? null,
+    gender: match(uniteLegale?.sexeUniteLegale)
+      .with("M", () => "male" as const)
+      .with("F", () => "female" as const)
+      .otherwise(() => null),
     given_name: [
       uniteLegale?.prenom1UniteLegale,
       uniteLegale?.prenom2UniteLegale,

@@ -1,6 +1,7 @@
 //
 
 import { InvalidCertificationError, NotFoundError } from "#src/errors";
+import { IdentityVectorSchema } from "#src/types";
 import {
   LiElJonsonFranceConnectUserInfo,
   RogalDornFranceConnectUserInfo,
@@ -50,14 +51,9 @@ describe("isOrganizationDirigeantFactory", () => {
     assert.deepEqual(isDirigeant, {
       cause: "exact_match",
       details: {
-        dirigeant: {
-          birthdate: RogalDornFranceConnectUserInfo.birthdate,
-          birthplace: "INWIT",
-          family_name: "DORN",
-          given_name: "ROGAL",
-        },
+        dirigeant: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         distance: 0,
-        identity: RogalDornFranceConnectUserInfo,
+        identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
       },
       ok: true,
@@ -86,14 +82,9 @@ describe("isOrganizationDirigeantFactory", () => {
     assert.deepEqual(isDirigeant, {
       cause: "below_threshold",
       details: {
-        dirigeant: {
-          birthdate: new Date(Date.UTC(28500, 1, 5)),
-          birthplace: "INW",
-          family_name: "EL'JONSON",
-          given_name: "LION",
-        },
+        dirigeant: IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
         distance: 182578,
-        identity: RogalDornFranceConnectUserInfo,
+        identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
       },
       ok: false,
@@ -123,14 +114,9 @@ describe("isOrganizationDirigeantFactory", () => {
     assert.deepEqual(isDirigeant, {
       cause: "exact_match",
       details: {
-        dirigeant: {
-          birthdate: RogalDornFranceConnectUserInfo.birthdate,
-          birthplace: "INWIT",
-          family_name: "DORN",
-          given_name: "ROGAL",
-        },
+        dirigeant: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         distance: 0,
-        identity: RogalDornFranceConnectUserInfo,
+        identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "registre-national-entreprises.inpi.fr/api",
       },
       ok: true,
@@ -158,16 +144,14 @@ describe("isOrganizationDirigeantFactory", () => {
     const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
 
     assert.deepEqual(isDirigeant, {
-      cause: "exact_match",
+      cause: "close_match",
       details: {
         dirigeant: {
-          birthdate: RogalDornFranceConnectUserInfo.birthdate,
-          birthplace: "INWIT",
-          family_name: "DORN",
-          given_name: "ROGAL",
+          ...IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
+          gender: null,
         },
-        distance: 0,
-        identity: RogalDornFranceConnectUserInfo,
+        distance: 1,
+        identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source:
           "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
       },

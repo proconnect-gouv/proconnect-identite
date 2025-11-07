@@ -1,11 +1,14 @@
 describe("sign-in with a client requiring certification dirigeant", () => {
-  beforeEach(() => {
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
+  before(function () {
+    cy.visit("/");
+    cy.seed();
   });
 
-  it("should seed the database once", function () {
-    cy.seed();
+  beforeEach(() => {
+    cy.origin("http://localhost:4000", function () {
+      cy.visit("/");
+      cy.contains("Forcer une connexion par certification dirigeant").click();
+    });
   });
 
   it("should sign-in as the executive of an organization", function () {
