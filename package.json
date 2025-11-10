@@ -108,7 +108,7 @@
     "otpauth": "^9.4.1",
     "pg": "^8.16.3",
     "qrcode": "^1.5.4",
-    "rate-limiter-flexible": "^7.2.0",
+    "rate-limiter-flexible": "^8.2.0",
     "ts-pattern": "^5.7.0",
     "tsx": "^4.20.3",
     "zod": "^4.0.17",
