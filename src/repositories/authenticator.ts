@@ -1,24 +1,16 @@
+import type { Base64URLString } from "@simplewebauthn/server";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../connectors/postgres";
-import { decodeBase64URL, encodeBase64URL } from "../services/base64";
 import type {
   Authenticator,
   BaseAuthenticator,
   SerializedAuthenticator,
 } from "../types/authenticator";
 
-const deserializeAuthenticator = (
-  rows: SerializedAuthenticator[],
-): Authenticator[] =>
-  rows.map((auth) => ({
-    ...auth,
-    credential_id: decodeBase64URL(auth.credential_id),
-  }));
-
 export const getAuthenticatorsByUserId = async (user_id: number) => {
   const connection = getDatabaseConnection();
 
-  const { rows }: QueryResult<SerializedAuthenticator> = await connection.query(
+  const { rows }: QueryResult<Authenticator> = await connection.query(
     `
         SELECT *
         FROM authenticators
@@ -27,7 +19,7 @@ export const getAuthenticatorsByUserId = async (user_id: number) => {
     [user_id],
   );
 
-  return deserializeAuthenticator(rows);
+  return rows;
 };
 
 export const findAuthenticator = async (
@@ -89,7 +81,7 @@ export const createAuthenticator = async ({
         RETURNING *;`,
     [
       user_id,
-      encodeBase64URL(credential_id),
+      credential_id,
       credential_public_key,
       counter,
       credential_device_type,
@@ -106,7 +98,7 @@ export const createAuthenticator = async ({
 };
 
 export const updateAuthenticator = async (
-  credential_id: Uint8Array,
+  credential_id: Base64URLString,
   { counter, last_used_at, usage_count }: Partial<BaseAuthenticator>,
 ) => {
   const connexion = getDatabaseConnection();
@@ -117,7 +109,7 @@ export const updateAuthenticator = async (
         SET counter = $2, last_used_at = $3, usage_count = $4
         WHERE credential_id = $1
         RETURNING *`,
-    [encodeBase64URL(credential_id), counter, last_used_at, usage_count],
+    [credential_id, counter, last_used_at, usage_count],
   );
 
   return deserializeAuthenticator(rows).shift()!;
