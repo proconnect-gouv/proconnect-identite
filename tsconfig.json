@@ -11,7 +11,8 @@
     "moduleResolution": "Bundler",
     "outDir": "./build",
     "resolveJsonModule": true,
-    "types": ["cypress"]
+    "types": ["cypress"],
+    "lib": ["DOM", "ESNext"]
   },
   "exclude": ["packages/*", "build/*", "dist/*"],
   "include": [
