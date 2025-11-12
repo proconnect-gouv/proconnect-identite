@@ -2,6 +2,10 @@ import {
   NotFoundError,
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
+import type {
+  AuthenticationResponseJSON,
+  RegistrationResponseJSON,
+} from "@simplewebauthn/server";
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
@@ -9,11 +13,8 @@ import {
   type VerifiedRegistrationResponse,
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
+  type WebAuthnCredential,
 } from "@simplewebauthn/server";
-import type {
-  AuthenticationResponseJSON,
-  RegistrationResponseJSON,
-} from "@simplewebauthn/types";
 import { isEmpty } from "lodash-es";
 import moment from "moment";
 import "moment-timezone";
@@ -36,7 +37,6 @@ import {
   getById,
   update,
 } from "../repositories/user";
-import { encodeBase64URL } from "../services/base64";
 import { logger } from "../services/log";
 import { disableForce2fa, enableForce2fa, is2FACapable } from "./2fa";
 
@@ -73,11 +73,9 @@ export const getUserAuthenticators = async (email: string) => {
       last_used_at,
       user_verified,
     }) => ({
-      credential_id: encodeBase64URL(credential_id),
+      credential_id,
       usage_count,
-      display_name:
-        display_name ||
-        `Clé ${encodeBase64URL(credential_id).substring(0, 10)}`,
+      display_name: display_name || `Clé ${credential_id.substring(0, 10)}`,
       created_at: moment(created_at).tz("Europe/Paris").locale("fr").calendar(),
       last_used_at: last_used_at
         ? moment(last_used_at).tz("Europe/Paris").locale("fr").calendar()
@@ -123,7 +121,7 @@ export const getRegistrationOptions = async (email: string) => {
   const registrationOptions = await generateRegistrationOptions({
     rpName,
     rpID,
-    userID: user.id.toString(10),
+    userID: new TextEncoder().encode(user.id.toString(10)),
     userName: user.email,
     // Don't prompt users for additional information about the authenticator
     // (Recommended for smoother UX)
@@ -197,9 +195,12 @@ export const verifyRegistration = async ({
 
   const {
     aaguid,
-    credentialPublicKey: credential_public_key,
-    credentialID: credential_id,
-    counter,
+    credential: {
+      counter,
+      id: credential_id,
+      publicKey: credential_public_key,
+      transports,
+    },
     credentialDeviceType: credential_device_type,
     credentialBackedUp: credential_backed_up,
     userVerified: user_verified,
@@ -216,9 +217,7 @@ export const verifyRegistration = async ({
       counter,
       credential_device_type,
       credential_backed_up,
-      transports: response.response.transports as
-        | AuthenticatorTransport[]
-        | undefined,
+      transports,
       display_name,
       last_used_at: null,
       usage_count: 0,
@@ -305,13 +304,15 @@ export const verifyAuthentication = async ({
     });
   }
 
-  const {
-    credential_public_key: credentialPublicKey,
-    credential_id: credentialID,
-    counter,
-    transports,
-  } = authenticator;
+  const { credential_public_key, credential_id, counter, transports } =
+    authenticator;
 
+  const credential: WebAuthnCredential = {
+    id: credential_id,
+    counter,
+    publicKey: new Uint8Array(credential_public_key),
+    transports,
+  };
   let verification: VerifiedAuthenticationResponse;
   try {
     verification = await verifyAuthenticationResponse({
@@ -319,12 +320,7 @@ export const verifyAuthentication = async ({
       expectedChallenge: current_challenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
-      authenticator: {
-        credentialPublicKey,
-        credentialID,
-        counter,
-        transports,
-      },
+      credential,
       // do not enforce user verification by the authenticator (via PIN, fingerprint, etc...)
       // to authorize usage of fido u2f security keys for second factor authentication
       requireUserVerification: !isSecondFactorVerification,
