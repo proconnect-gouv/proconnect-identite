@@ -238,7 +238,8 @@ CREATE TABLE "public"."franceconnect_userinfo" (
   "preferred_username" character varying(255),
   "sub" character varying(255),
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+  "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  "birthcountry" character varying(255)
 );
 
 --
