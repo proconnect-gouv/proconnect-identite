@@ -2,7 +2,7 @@ exports[`toIdentityVector > LiElJonsonEstablishment 1`] = `
 {
   "birthcountry": null,
   "birthdate": "+028500-02-05T00:00:00.000Z",
-  "birthplace": "INW",
+  "birthplace": "75056",
   "family_name": "EL'JONSON",
   "gender": "male",
   "given_name": "LION"

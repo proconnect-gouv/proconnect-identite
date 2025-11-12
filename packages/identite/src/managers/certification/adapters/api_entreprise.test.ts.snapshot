@@ -55,7 +55,7 @@ exports[`toIdentityVector > PierreDurandMandataire - French DIRECTEUR GENERAL 1`
 
 exports[`toIdentityVector > RogalDornMandataire - Edge case (futuristic) 1`] = `
 {
-  "birthcountry": null,
+  "birthcountry": "99102",
   "birthdate": "+029000-01-07T00:00:00.000Z",
   "birthplace": null,
   "family_name": "DORN",

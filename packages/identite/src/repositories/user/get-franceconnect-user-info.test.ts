@@ -37,6 +37,7 @@ describe("getFranceConnectUserInfo", () => {
     const user = await getFranceConnectUserInfo(1);
     assert.ok(user);
     assert.deepEqual(user, {
+      birthcountry: null,
       birthdate: new Date("8888-08-08"),
       birthplace: "Caliban",
       created_at: new Date("4444-04-04"),
