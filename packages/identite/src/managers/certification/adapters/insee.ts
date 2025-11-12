@@ -19,8 +19,9 @@ export function toIdentityVector(
   }
 
   return {
-    birthplace: uniteLegale?.codeCommuneNaissanceUniteLegale ?? null,
+    birthcountry: uniteLegale?.codePaysNaissanceUniteLegale ?? null,
     birthdate,
+    birthplace: uniteLegale?.codeCommuneNaissanceUniteLegale ?? null,
     family_name: nomUniteLegale ?? null,
     gender: match(uniteLegale?.sexeUniteLegale)
       .with("M", () => "male" as const)

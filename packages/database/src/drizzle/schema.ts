@@ -217,33 +217,6 @@ export const oidc_clients = pgTable("oidc_clients", {
   is_proconnect_federation: boolean().default(false).notNull(),
 });
 
-export const franceconnect_userinfo = pgTable(
-  "franceconnect_userinfo",
-  {
-    user_id: integer().primaryKey().notNull(),
-    birthdate: timestamp({ withTimezone: true, mode: "string" }),
-    birthplace: varchar({ length: 255 }),
-    family_name: varchar({ length: 255 }),
-    gender: varchar({ length: 255 }),
-    given_name: varchar({ length: 255 }),
-    preferred_username: varchar({ length: 255 }),
-    sub: varchar({ length: 255 }),
-    created_at: timestamp({ withTimezone: true, mode: "string" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updated_at: timestamp({ withTimezone: true, mode: "string" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-  },
-  (table) => [
-    foreignKey({
-      columns: [table.user_id],
-      foreignColumns: [users.id],
-      name: "franceconnect_userinfo_user_id_fkey",
-    }).onDelete("cascade"),
-  ],
-);
-
 export const moderations = pgTable(
   "moderations",
   {
@@ -284,6 +257,34 @@ export const email_deliverability_whitelist = pgTable(
       .notNull(),
     verified_by: varchar(),
   },
+);
+
+export const franceconnect_userinfo = pgTable(
+  "franceconnect_userinfo",
+  {
+    user_id: integer().primaryKey().notNull(),
+    birthdate: timestamp({ withTimezone: true, mode: "string" }),
+    birthplace: varchar({ length: 255 }),
+    family_name: varchar({ length: 255 }),
+    gender: varchar({ length: 255 }),
+    given_name: varchar({ length: 255 }),
+    preferred_username: varchar({ length: 255 }),
+    sub: varchar({ length: 255 }),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    birthcountry: varchar({ length: 255 }),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.user_id],
+      foreignColumns: [users.id],
+      name: "franceconnect_userinfo_user_id_fkey",
+    }).onDelete("cascade"),
+  ],
 );
 
 export const users_organizations = pgTable(

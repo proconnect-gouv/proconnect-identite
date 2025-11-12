@@ -120,8 +120,10 @@ export interface components {
       lieuDeNaissance?: string;
       /** @description Code postal de naissance (commune de naissance pour les français) */
       codePostalNaissance?: string;
-      /** @description Pays de naissance (pour les étrangers) */
-      paysNaissance?: string;
+      /** @description Code INSEE géographique de naissance */
+      codeInseeGeographique?: string;
+      /** @description Pays de naissance */
+      codePaysNaissance?: string;
     };
     Individu: {
       descriptionPersonne?: components["schemas"]["DescriptionPersonne"];

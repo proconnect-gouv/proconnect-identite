@@ -84,6 +84,7 @@ describe("env.zod", () => {
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
       FRANCECONNECT_SCOPES: [
+        "birthcountry",
         "birthplace",
         "birthdate",
         "family_name",

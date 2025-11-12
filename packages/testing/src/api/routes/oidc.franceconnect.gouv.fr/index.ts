@@ -30,6 +30,7 @@ const CODE_MAP = new Map<
 
 const SUB_VALUE = "🎭 FranceConnect Sub";
 const DEFAULT_USERINFO: FranceConnectUserInfoResponse = {
+  birthcountry: "99100",
   birthdate: new Date("2001-01-01"),
   birthplace: "Internet",
   family_name: "Dupont",

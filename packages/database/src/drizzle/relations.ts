@@ -32,8 +32,8 @@ export const users_oidc_clientsRelations = relations(
 export const usersRelations = relations(users, ({ many }) => ({
   users_oidc_clients: many(users_oidc_clients),
   authenticators: many(authenticators),
-  franceconnect_userinfos: many(franceconnect_userinfo),
   moderations: many(moderations),
+  franceconnect_userinfos: many(franceconnect_userinfo),
   users_organizations: many(users_organizations),
 }));
 
@@ -62,16 +62,6 @@ export const email_domainsRelations = relations(email_domains, ({ one }) => ({
   }),
 }));
 
-export const franceconnect_userinfoRelations = relations(
-  franceconnect_userinfo,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [franceconnect_userinfo.user_id],
-      references: [users.id],
-    }),
-  }),
-);
-
 export const moderationsRelations = relations(moderations, ({ one }) => ({
   user: one(users, {
     fields: [moderations.user_id],
@@ -82,6 +72,16 @@ export const moderationsRelations = relations(moderations, ({ one }) => ({
     references: [organizations.id],
   }),
 }));
+
+export const franceconnect_userinfoRelations = relations(
+  franceconnect_userinfo,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [franceconnect_userinfo.user_id],
+      references: [users.id],
+    }),
+  }),
+);
 
 export const users_organizationsRelations = relations(
   users_organizations,

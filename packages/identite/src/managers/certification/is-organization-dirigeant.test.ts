@@ -51,8 +51,11 @@ describe("isOrganizationDirigeantFactory", () => {
     assert.deepEqual(isDirigeant, {
       cause: "exact_match",
       details: {
-        dirigeant: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
-        distance: 0,
+        dirigeant: {
+          ...IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
+          birthplace: null, // INSEE adapter returns null for foreigners
+        },
+        score: 5,
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
       },
@@ -82,8 +85,11 @@ describe("isOrganizationDirigeantFactory", () => {
     assert.deepEqual(isDirigeant, {
       cause: "below_threshold",
       details: {
-        dirigeant: IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
-        distance: 182578,
+        dirigeant: {
+          ...IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
+          birthcountry: null, // INSEE adapter returns null for French people
+        },
+        score: 1,
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
       },
@@ -114,8 +120,11 @@ describe("isOrganizationDirigeantFactory", () => {
     assert.deepEqual(isDirigeant, {
       cause: "exact_match",
       details: {
-        dirigeant: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
-        distance: 0,
+        dirigeant: {
+          ...IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
+          birthplace: null, // RNE adapter returns null for foreigners
+        },
+        score: 5,
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "registre-national-entreprises.inpi.fr/api",
       },
@@ -144,13 +153,14 @@ describe("isOrganizationDirigeantFactory", () => {
     const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
 
     assert.deepEqual(isDirigeant, {
-      cause: "close_match",
+      cause: "exact_match",
       details: {
         dirigeant: {
           ...IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
-          gender: null,
+          birthplace: null, // API Entreprise adapter doesn't provide birthplace
+          gender: null, // API Entreprise adapter doesn't provide gender
         },
-        distance: 1,
+        score: 5,
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source:
           "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",

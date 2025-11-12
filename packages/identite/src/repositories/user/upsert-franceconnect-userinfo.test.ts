@@ -41,6 +41,7 @@ describe("upsertFranceconnectUserinfo", () => {
     });
 
     assert.deepEqual(user, {
+      birthcountry: null,
       birthdate: new Date("8888-08-08"),
       birthplace: "Caliban",
       created_at: new Date("4444-04-01"),
@@ -76,6 +77,7 @@ describe("upsertFranceconnectUserinfo", () => {
     });
 
     assert.deepEqual(user, {
+      birthcountry: null,
       birthdate: null,
       birthplace: null,
       created_at: new Date("4444-04-01"),

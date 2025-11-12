@@ -1,7 +1,8 @@
 exports[`toIdentityVector > LiElJonsonEstablishment 1`] = `
 {
-  "birthplace": "INW",
+  "birthcountry": null,
   "birthdate": "+028500-02-05T00:00:00.000Z",
+  "birthplace": "75056",
   "family_name": "EL'JONSON",
   "gender": "male",
   "given_name": "LION"
@@ -10,8 +11,9 @@ exports[`toIdentityVector > LiElJonsonEstablishment 1`] = `
 
 exports[`toIdentityVector > RogalDornEstablishment 1`] = `
 {
-  "birthplace": "INWIT",
+  "birthcountry": "99102",
   "birthdate": "+029000-01-07T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "DORN",
   "gender": "male",
   "given_name": "ROGAL"

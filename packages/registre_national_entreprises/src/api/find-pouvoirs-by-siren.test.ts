@@ -2,40 +2,111 @@
 
 import { RegistreNationalEntreprisesApiError } from "#src/types";
 import { createRegistreNationalEntreprisesOpenApiClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/client";
-import { UlysseTosiPouvoir } from "@proconnect-gouv/proconnect.registre_national_entreprises/testing/seed";
-import { TestingRegistreNationalEntreprisesOpenApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/registre-national-entreprises.inpi.fr";
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { describe, it, mock } from "node:test";
 import { findPouvoirsBySirenFactory } from "./find-pouvoirs-by-siren.js";
 
 //
 
 describe("findPouvoirsBySiren", () => {
   it("should return pouvoirs for a valid SIREN", async () => {
+    const fetch = mock.fn(() => {
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            formality: {
+              content: {
+                personneMorale: {
+                  composition: {
+                    pouvoirs: [
+                      {
+                        typeDePersonne: "INDIVIDU",
+                        actif: true,
+                        individu: {
+                          nom: "🦄",
+                          prenom: "🐹",
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          }),
+        ),
+      );
+    });
+
     const client = createRegistreNationalEntreprisesOpenApiClient(
       "__RNE_API_TOKEN__",
       {
-        fetch: (input: Request) =>
-          Promise.resolve(
-            TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
-          ),
+        fetch,
       },
     );
 
     const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
     const pouvoirs = await findPouvoirsBySiren("552032534");
 
-    assert.deepEqual(pouvoirs, [UlysseTosiPouvoir]);
+    assert.deepEqual(pouvoirs, [
+      {
+        typeDePersonne: "INDIVIDU",
+        actif: true,
+        individu: {
+          nom: "🦄",
+          prenom: "🐹",
+        },
+      },
+    ]);
   });
 
   it("should filter out inactive pouvoirs", async () => {
+    const fetch = mock.fn(() => {
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            formality: {
+              content: {
+                personneMorale: {
+                  composition: {
+                    pouvoirs: [
+                      {
+                        typeDePersonne: "INDIVIDU",
+                        actif: true,
+                        individu: {
+                          nom: "Active",
+                          prenom: "Person",
+                        },
+                      },
+                      {
+                        typeDePersonne: "INDIVIDU",
+                        actif: false,
+                        individu: {
+                          nom: "Inactive",
+                          prenom: "Person",
+                        },
+                      },
+                      {
+                        typeDePersonne: "MORALE",
+                        actif: true,
+                        individu: {
+                          nom: "Company",
+                          prenom: "Name",
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          }),
+        ),
+      );
+    });
+
     const client = createRegistreNationalEntreprisesOpenApiClient(
       "__RNE_API_TOKEN__",
       {
-        fetch: (input: Request) =>
-          Promise.resolve(
-            TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
-          ),
+        fetch,
       },
     );
 

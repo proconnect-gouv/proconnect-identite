@@ -13,8 +13,9 @@ suite("RNE adapter - toIdentityVector", () => {
     const result = toIdentityVector(UlysseTosiPouvoir);
 
     assert.deepEqual(result, {
+      birthcountry: "99100",
       birthdate: new Date(Date.UTC(1992, 8, 7)), // September (month 8) 7, 1992
-      birthplace: "Internet",
+      birthplace: "13055",
       family_name: "TOSI",
       gender: "male",
       given_name: "Ulysse",
@@ -63,6 +64,7 @@ suite("RNE adapter - toIdentityVector", () => {
     const result = toIdentityVector({});
 
     assert.deepEqual(result, {
+      birthcountry: null,
       birthdate: null,
       birthplace: null,
       family_name: null,
@@ -94,8 +96,9 @@ suite("RNE adapter - toIdentityVector", () => {
 
     // Year 29000 should be parsed correctly
     assert.deepEqual(result, {
+      birthcountry: "99102", // ISL (Iceland) converts to 99102
       birthdate: new Date(Date.UTC(29000, 0, 7)), // January 7, 29000
-      birthplace: "INWIT",
+      birthplace: null,
       family_name: "DORN",
       gender: "male",
       given_name: "ROGAL",
@@ -125,6 +128,7 @@ suite("RNE adapter - toIdentityVector", () => {
     const result = toIdentityVector(pouvoir);
 
     assert.deepEqual(result, {
+      birthcountry: null,
       birthdate: null,
       birthplace: null,
       family_name: null,
@@ -182,5 +186,91 @@ suite("RNE adapter - toIdentityVector", () => {
 
     const result = toIdentityVector(pouvoir);
     assert.equal(result.gender, null);
+  });
+
+  test("ignores codeInseeGeographique when codePostalNaissance is missing", () => {
+    const pouvoir = {
+      individu: {
+        descriptionPersonne: {
+          dateDeNaissance: "1990-01-01",
+          lieuDeNaissance: "Lyon",
+          nom: "DUPONT",
+          prenoms: ["Jean"],
+          codeInseeGeographique: "69123",
+        },
+      },
+    };
+
+    const result = toIdentityVector(pouvoir);
+    assert.equal(result.birthplace, null);
+  });
+
+  test("ignores codeInseeGeographique when format is invalid", () => {
+    const pouvoir = {
+      individu: {
+        descriptionPersonne: {
+          dateDeNaissance: "1990-01-01",
+          lieuDeNaissance: "Lyon",
+          nom: "DUPONT",
+          prenoms: ["Jean"],
+          codeInseeGeographique: "1234", // Invalid: only 4 digits
+          codePostalNaissance: "69001",
+        },
+      },
+    };
+
+    const result = toIdentityVector(pouvoir);
+    assert.equal(result.birthplace, null);
+  });
+
+  test("ignores codeInseeGeographique when it starts with 99 (foreign country)", () => {
+    const pouvoir = {
+      individu: {
+        descriptionPersonne: {
+          dateDeNaissance: "1990-01-01",
+          lieuDeNaissance: "Foreign",
+          nom: "DUPONT",
+          prenoms: ["Jean"],
+          codeInseeGeographique: "99123", // Foreign country code
+          codePostalNaissance: "69001",
+        },
+      },
+    };
+
+    const result = toIdentityVector(pouvoir);
+    assert.equal(result.birthplace, null);
+  });
+
+  test("converts codePaysNaissance from ISO 3166 to COG format", () => {
+    const pouvoir = {
+      individu: {
+        descriptionPersonne: {
+          dateDeNaissance: "1990-01-01",
+          lieuDeNaissance: "Dublin",
+          nom: "O'CONNOR",
+          prenoms: ["Sean"],
+          codePaysNaissance: "IRL",
+        },
+      },
+    };
+
+    const result = toIdentityVector(pouvoir);
+    assert.equal(result.birthcountry, "99136");
+  });
+
+  test("returns null for birthcountry when codePaysNaissance is invalid", () => {
+    const pouvoir = {
+      individu: {
+        descriptionPersonne: {
+          dateDeNaissance: "1990-01-01",
+          nom: "DUPONT",
+          prenoms: ["Jean"],
+          codePaysNaissance: "XXX",
+        },
+      },
+    };
+
+    const result = toIdentityVector(pouvoir);
+    assert.equal(result.birthcountry, null);
   });
 });
