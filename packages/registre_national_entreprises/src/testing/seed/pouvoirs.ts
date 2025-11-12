@@ -17,9 +17,10 @@ export const UlysseTosiPouvoir: Pouvoir = {
       nom: "TOSI",
       prenoms: ["Ulysse"],
       genre: "1",
-      lieuDeNaissance: "Internet",
+      lieuDeNaissance: "Marseille",
+      codeInseeGeographique: "13055",
       codePostalNaissance: "13001",
-      paysNaissance: "FRANCE",
+      codePaysNaissance: "FRA",
     },
   },
 };
@@ -34,8 +35,7 @@ export const RogalDornPouvoir: Pouvoir = {
       prenoms: ["ROGAL"],
       genre: "1",
       lieuDeNaissance: "INWIT",
-      codePostalNaissance: "00000",
-      paysNaissance: "INWIT",
+      codePaysNaissance: "ISL",
     },
   },
 };

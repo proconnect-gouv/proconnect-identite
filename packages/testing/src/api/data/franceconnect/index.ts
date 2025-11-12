@@ -14,6 +14,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Angela Claire Louise DUBOIS",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("1962-08-24"),
         birthplace: "75107",
         family_name: "DUBOIS",
@@ -41,6 +42,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Elia Alvernhe",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("1993-03-12"),
         birthplace: "86070",
         family_name: "Alvernhe",
@@ -70,6 +72,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Adrian Volckaert",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("1984-06-05"),
         birthplace: "Internet",
         family_name: "Volckaert",
@@ -98,6 +101,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Karima Aknine",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("1999-07-15"),
         birthplace: "Internet",
         family_name: "Aknine",
@@ -125,6 +129,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Ulysse Tosi",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("1992-09-07"),
         birthplace: "Internet",
         family_name: "Tosi",
@@ -154,6 +159,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Stevens Cheron",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("1979-11-12"),
         birthplace: "Internet",
         family_name: "Cheron",
@@ -181,6 +187,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Jean De La Rose",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("2001-01-01"),
         birthplace: "Internet",
         family_name: "De La Rose",
@@ -209,6 +216,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Marie Héricart",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("2001-01-01"),
         birthplace: "75000",
         family_name: "Héricart",
@@ -238,6 +246,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Rogal Dorn",
     {
       user_info: {
+        birthcountry: "99102",
         birthdate: new Date("2001-01-01"),
         birthplace: "00007",
         family_name: "Dorn",
@@ -266,6 +275,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     "Douglas Duteil",
     {
       user_info: {
+        birthcountry: "99100",
         birthdate: new Date("1980-06-01"),
         birthplace: "75000",
         family_name: "Duteil",

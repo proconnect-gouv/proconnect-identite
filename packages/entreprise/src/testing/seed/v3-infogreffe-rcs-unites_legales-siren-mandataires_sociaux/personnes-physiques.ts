@@ -103,8 +103,8 @@ export const SophieMartinMandataire: InfogreffeSirenMandatairesSociaux = {
 };
 
 export const RogalDornMandataire: InfogreffeSirenMandatairesSociaux = {
-  code_nationalite: "IM",
-  code_pays_naissance: "IM",
+  code_nationalite: "IS",
+  code_pays_naissance: "IS",
   date_naissance_timestamp: 852984950400000,
   date_naissance: "29000-01-07",
   fonction: "Primarch",

@@ -28,6 +28,7 @@ export const connectorEnvSchema = z.object({
   FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("ES256"),
   FRANCECONNECT_ISSUER: z.string().url(),
   FRANCECONNECT_SCOPES: zCoerceArray().default([
+    "birthcountry",
     "birthplace",
     "birthdate",
     "family_name",

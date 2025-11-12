@@ -1,7 +1,8 @@
 exports[`toIdentityVector > CommissaireComptesMandataire - Personne morale COMMISSAIRE 1`] = `
 {
-  "birthplace": null,
+  "birthcountry": null,
   "birthdate": null,
+  "birthplace": null,
   "family_name": null,
   "gender": null,
   "given_name": null
@@ -10,8 +11,9 @@ exports[`toIdentityVector > CommissaireComptesMandataire - Personne morale COMMI
 
 exports[`toIdentityVector > JohnSmithMandataire - US COMMISSAIRE 1`] = `
 {
-  "birthplace": "New York",
+  "birthcountry": "99404",
   "birthdate": "1985-01-01T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "SMITH",
   "gender": null,
   "given_name": "John"
@@ -20,8 +22,9 @@ exports[`toIdentityVector > JohnSmithMandataire - US COMMISSAIRE 1`] = `
 
 exports[`toIdentityVector > KarimaAknineMandataire - French DIRIGEANT 1`] = `
 {
-  "birthplace": "Internet",
+  "birthcountry": "99100",
   "birthdate": "1999-07-15T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "AKNINE",
   "gender": null,
   "given_name": "Karima"
@@ -30,8 +33,9 @@ exports[`toIdentityVector > KarimaAknineMandataire - French DIRIGEANT 1`] = `
 
 exports[`toIdentityVector > MarieLeblancMandataire - French PRESIDENT 1`] = `
 {
-  "birthplace": "Paris",
+  "birthcountry": "99100",
   "birthdate": "1988-01-01T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "LEBLANC",
   "gender": null,
   "given_name": "Marie"
@@ -40,8 +44,9 @@ exports[`toIdentityVector > MarieLeblancMandataire - French PRESIDENT 1`] = `
 
 exports[`toIdentityVector > PierreDurandMandataire - French DIRECTEUR GENERAL 1`] = `
 {
-  "birthplace": "Lyon",
+  "birthcountry": "99100",
   "birthdate": "1991-01-01T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "DURAND",
   "gender": null,
   "given_name": "Pierre"
@@ -50,8 +55,9 @@ exports[`toIdentityVector > PierreDurandMandataire - French DIRECTEUR GENERAL 1`
 
 exports[`toIdentityVector > RogalDornMandataire - Edge case (futuristic) 1`] = `
 {
-  "birthplace": "INWIT",
+  "birthcountry": null,
   "birthdate": "+029000-01-07T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "DORN",
   "gender": null,
   "given_name": "ROGAL"
@@ -60,8 +66,9 @@ exports[`toIdentityVector > RogalDornMandataire - Edge case (futuristic) 1`] = `
 
 exports[`toIdentityVector > SocietePresidenteMandataire - Personne morale PRESIDENT 1`] = `
 {
-  "birthplace": null,
+  "birthcountry": null,
   "birthdate": null,
+  "birthplace": null,
   "family_name": null,
   "gender": null,
   "given_name": null
@@ -70,8 +77,9 @@ exports[`toIdentityVector > SocietePresidenteMandataire - Personne morale PRESID
 
 exports[`toIdentityVector > SophieMartinMandataire - French GERANT 1`] = `
 {
-  "birthplace": "Marseille",
+  "birthcountry": "99100",
   "birthdate": "1996-01-01T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "MARTIN",
   "gender": null,
   "given_name": "Sophie"
@@ -80,8 +88,9 @@ exports[`toIdentityVector > SophieMartinMandataire - French GERANT 1`] = `
 
 exports[`toIdentityVector > StevensCheronMandataire - French DIRIGEANT 1`] = `
 {
-  "birthplace": "Internet",
+  "birthcountry": "99100",
   "birthdate": "1979-11-12T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "CHERON",
   "gender": null,
   "given_name": "Stevens"
@@ -90,8 +99,9 @@ exports[`toIdentityVector > StevensCheronMandataire - French DIRIGEANT 1`] = `
 
 exports[`toIdentityVector > UlysseToriMandataire - French DIRIGEANT 1`] = `
 {
-  "birthplace": "Internet",
+  "birthcountry": "99100",
   "birthdate": "1992-09-07T00:00:00.000Z",
+  "birthplace": null,
   "family_name": "TOSI",
   "gender": null,
   "given_name": "Ulysse"

@@ -1,8 +1,9 @@
 import type { FranceConnectUserInfo } from "#src/types";
 
 export const LiElJonsonFranceConnectUserInfo: FranceConnectUserInfo = {
+  birthcountry:"99100",
   birthdate: new Date(Date.UTC(28500, 1, 5)),
-  birthplace: "INW",
+  birthplace: "75056",
   created_at: new Date("4444-04-04"),
   family_name: "EL'JONSON",
   gender: "male",
@@ -14,8 +15,9 @@ export const LiElJonsonFranceConnectUserInfo: FranceConnectUserInfo = {
 };
 
 export const BelisariusCawlFranceConnectUserInfo: FranceConnectUserInfo = {
+  birthcountry:"99100",
   birthdate: new Date(Date.UTC(28500, 1, 5)),
-  birthplace: "MARS",
+  birthplace: "13055",
   created_at: new Date("2023-04-10"),
   family_name: "CAWL",
   gender: "male",
@@ -27,8 +29,9 @@ export const BelisariusCawlFranceConnectUserInfo: FranceConnectUserInfo = {
 };
 
 export const RogalDornFranceConnectUserInfo: FranceConnectUserInfo = {
+  birthcountry:"99102",
   birthdate: new Date(Date.UTC(29000, 0, 7)),
-  birthplace: "INWIT",
+  birthplace: "",
   created_at: new Date("2023-04-10"),
   family_name: "DORN",
   gender: "male",

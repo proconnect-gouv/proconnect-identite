@@ -1,7 +1,7 @@
 import type { InseSirenUniteLegale } from "#src/types";
 
 export const LiElJonsonEstablishment: InseSirenUniteLegale = {
-  codeCommuneNaissanceUniteLegale: "INW",
+  codeCommuneNaissanceUniteLegale: "75056",
   dateNaissanceUniteLegale: "285000205",
   periodesUniteLegale: [
     {
@@ -14,8 +14,8 @@ export const LiElJonsonEstablishment: InseSirenUniteLegale = {
 };
 
 export const RogalDornEstablishment: InseSirenUniteLegale = {
-  codeCommuneNaissanceUniteLegale: "INWIT",
   dateNaissanceUniteLegale: "290000107",
+  codePaysNaissanceUniteLegale: "99102",
   periodesUniteLegale: [
     {
       dateFin: null,

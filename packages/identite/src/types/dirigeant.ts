@@ -5,6 +5,7 @@ import { z } from "zod";
 //
 
 export const IdentityVectorSchema = z.object({
+  birthcountry: z.string().nullable(),
   birthdate: z.date().nullable(),
   birthplace: z.string().nullable(),
   family_name: z.string().nullable(),
