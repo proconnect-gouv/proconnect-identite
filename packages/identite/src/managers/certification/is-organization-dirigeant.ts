@@ -145,7 +145,7 @@ function match_identity_to_dirigeant(
   return match(closest.score)
     .with(5, () => ({
       kind: "exact_match" as const,
-      closest, 
+      closest,
     }))
     .with(4, () => ({
       kind: "close_match" as const,

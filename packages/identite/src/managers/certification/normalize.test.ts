@@ -69,4 +69,3 @@ describe("extractFirstName", () => {
     assert.equal(extractFirstName(undefined), "");
   });
 });
-

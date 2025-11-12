@@ -7,7 +7,7 @@
  * - Replace special characters (including ' and -) with spaces
  * - Remove multiple consecutive spaces
  * - Trim leading and trailing spaces
- * 
+ *
  * @param text - The text to normalize
  * @returns The normalized text
  */
@@ -59,7 +59,7 @@ export function normalizeText(text: string | null | undefined): string {
 /**
  * Extracts the first name from a normalized full name string.
  * The first name is the part before the first space.
- * 
+ *
  * @param givenName - The full given name (may contain multiple names)
  * @returns The first name only
  */
@@ -70,4 +70,3 @@ export function extractFirstName(givenName: string | null | undefined): string {
   const parts = normalized.split(" ");
   return parts[0] || "";
 }
-

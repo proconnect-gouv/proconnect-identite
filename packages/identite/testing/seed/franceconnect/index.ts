@@ -1,7 +1,7 @@
 import type { FranceConnectUserInfo } from "#src/types";
 
 export const LiElJonsonFranceConnectUserInfo: FranceConnectUserInfo = {
-  birthcountry:"99100",
+  birthcountry: "99100",
   birthdate: new Date(Date.UTC(28500, 1, 5)),
   birthplace: "75056",
   created_at: new Date("4444-04-04"),
@@ -15,7 +15,7 @@ export const LiElJonsonFranceConnectUserInfo: FranceConnectUserInfo = {
 };
 
 export const BelisariusCawlFranceConnectUserInfo: FranceConnectUserInfo = {
-  birthcountry:"99100",
+  birthcountry: "99100",
   birthdate: new Date(Date.UTC(28500, 1, 5)),
   birthplace: "13055",
   created_at: new Date("2023-04-10"),
@@ -29,7 +29,7 @@ export const BelisariusCawlFranceConnectUserInfo: FranceConnectUserInfo = {
 };
 
 export const RogalDornFranceConnectUserInfo: FranceConnectUserInfo = {
-  birthcountry:"99102",
+  birthcountry: "99102",
   birthdate: new Date(Date.UTC(29000, 0, 7)),
   birthplace: "",
   created_at: new Date("2023-04-10"),
