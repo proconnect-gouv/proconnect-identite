@@ -12,7 +12,7 @@ import * as ApiEntreprise from "./adapters/api_entreprise.js";
 import * as FranceConnect from "./adapters/franceconnect.js";
 import * as INSEE from "./adapters/insee.js";
 import * as RNE from "./adapters/rne.js";
-import { distance } from "./distance.js";
+import { certificationScore } from "./certification-score.js";
 
 //
 
@@ -113,7 +113,7 @@ export function isOrganizationDirigeantFactory(
         source,
       },
       cause: result.kind,
-      ok: result.kind === "exact_match" || result.kind === "close_match",
+      ok: result.kind === "exact_match",
     };
   };
 }
@@ -137,16 +137,21 @@ function match_identity_to_dirigeant(
   const [closest] = dirigeants
     .map((dirigeant) => ({
       dirigeant,
-      distance: Math.abs(distance(identity, dirigeant)),
+      score: certificationScore(identity, dirigeant),
     }))
-    .toSorted((a, b) => a.distance - b.distance);
+    .toSorted((a, b) => b.score - a.score); // Sort by score descending (higher is better)
 
-  return match(closest.distance)
-    .with(0, () => ({
+  // According to the specification, only score of 5 (perfect match) is certified
+  return match(closest.score)
+    .with(5, () => ({
       kind: "exact_match" as const,
+      closest, 
+    }))
+    .with(4, () => ({
+      kind: "close_match" as const,
       closest,
     }))
-    .with(1, () => ({
+    .with(3, () => ({
       kind: "close_match" as const,
       closest,
     }))
