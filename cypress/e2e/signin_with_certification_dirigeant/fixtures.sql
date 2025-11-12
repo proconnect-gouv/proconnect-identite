@@ -164,6 +164,7 @@ VALUES
 INSERT INTO
   franceconnect_userinfo (
     user_id,
+    birthcountry,
     birthdate,
     birthplace,
     family_name,
@@ -175,6 +176,7 @@ INSERT INTO
 VALUES
   (
     1,
+    '99100',
     '1990-06-01',
     '75000',
     'Un',
@@ -185,6 +187,7 @@ VALUES
   ),
   (
     2,
+    '99100',
     '1990-06-01',
     '75000',
     'Deux',
@@ -195,6 +198,7 @@ VALUES
   ),
   (
     3,
+    '99100',
     '1990-06-01',
     '75000',
     'Trois',
@@ -205,6 +209,7 @@ VALUES
   ),
   (
     4,
+    '99100',
     '1990-06-01',
     '75000',
     'Quatre',
@@ -215,6 +220,7 @@ VALUES
   ),
   (
     5,
+    '99100',
     '1980-06-01',
     '75000',
     'Cinq',
@@ -225,6 +231,7 @@ VALUES
   ),
   (
     6,
+    '99100',
     '1980-06-01',
     '75000',
     'DUTEIL',
@@ -235,6 +242,7 @@ VALUES
   ),
   (
     8,
+    '99100',
     '1992-09-07',
     'Internet',
     'Tosi',
@@ -245,6 +253,7 @@ VALUES
   ),
   (
     9,
+    '99100',
     '1979-11-12',
     'Internet',
     'Cheron',

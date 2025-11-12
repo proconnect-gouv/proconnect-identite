@@ -221,6 +221,7 @@ export const franceconnect_userinfo = pgTable(
   "franceconnect_userinfo",
   {
     user_id: integer().primaryKey().notNull(),
+    birthcountry: varchar({ length: 255 }),
     birthdate: timestamp({ withTimezone: true, mode: "string" }),
     birthplace: varchar({ length: 255 }),
     family_name: varchar({ length: 255 }),
