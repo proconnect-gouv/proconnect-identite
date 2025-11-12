@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.insee",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/insee#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
