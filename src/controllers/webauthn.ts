@@ -29,9 +29,7 @@ import {
   verifyAuthentication,
   verifyRegistration,
 } from "../managers/webauthn";
-import { csrfToken } from "../middlewares/csrf-protection";
 import { optionalCheckboxSchema } from "../services/custom-zod-schemas";
-import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import { logger } from "../services/log";
 
 export const deletePasskeyController = async (
@@ -126,22 +124,6 @@ export const postVerifyRegistrationControllerFactory =
       next(e);
     }
   };
-
-export const getSignInWithPasskeyController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.render("user/sign-in-with-passkey", {
-      pageTitle: "Se connecter avec une clé d’accès",
-      notifications: await getNotificationsFromRequest(req),
-      csrfToken: csrfToken(req),
-    });
-  } catch (e) {
-    next(e);
-  }
-};
 
 export const getGenerateAuthenticationOptionsControllerFactory =
   (isSecondFactorAuthentication: boolean) =>

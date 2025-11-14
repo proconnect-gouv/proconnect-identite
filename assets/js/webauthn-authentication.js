@@ -59,8 +59,9 @@ document.addEventListener(
       authenticationResponseStringInputElement.value = JSON.stringify(asseResp);
       authenticationResponseForm.requestSubmit();
     };
-
-    beginElement.addEventListener("click", onAuthenticateClick);
+    if (beginElement) {
+      beginElement.addEventListener("click", onAuthenticateClick);
+    }
 
     const initiatingConditionalUI = async () => {
       const urlParams = new URLSearchParams(window.location.search);

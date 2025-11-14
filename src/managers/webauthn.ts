@@ -10,6 +10,7 @@ import {
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
 } from "@simplewebauthn/server";
+import { isoBase64URL } from "@simplewebauthn/server/helpers";
 import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,
@@ -123,14 +124,14 @@ export const getRegistrationOptions = async (email: string) => {
   const registrationOptions = await generateRegistrationOptions({
     rpName,
     rpID,
-    userID: user.id.toString(10),
+    userID: new TextEncoder().encode(user.id.toString(10)),
     userName: user.email,
     // Don't prompt users for additional information about the authenticator
     // (Recommended for smoother UX)
     attestationType: "none",
     // Prevent users from re-registering existing authenticators
     excludeCredentials: userAuthenticators.map((authenticator) => ({
-      id: authenticator.credential_id,
+      id: isoBase64URL.fromBuffer(authenticator.credential_id),
       type: "public-key",
       // Optional
       transports: authenticator.transports || [],
@@ -211,7 +212,7 @@ export const verifyRegistration = async ({
   await createAuthenticator({
     user_id: user.id,
     authenticator: {
-      credential_id,
+      credential_id: isoBase64URL.toBuffer(credential_id),
       credential_public_key,
       counter,
       credential_device_type,
@@ -253,7 +254,7 @@ export const getAuthenticationOptions = async (
     rpID,
     // Require users to use a previously registered authenticator
     allowCredentials: userAuthenticators.map((authenticator) => ({
-      id: authenticator.credential_id,
+      id: isoBase64URL.fromBuffer(authenticator.credential_id),
       type: "public-key",
       transports: authenticator.transports || [],
     })),
@@ -321,7 +322,7 @@ export const verifyAuthentication = async ({
       expectedRPID: rpID,
       authenticator: {
         credentialPublicKey,
-        credentialID,
+        credentialID: isoBase64URL.fromBuffer(credentialID),
         counter,
         transports,
       },
@@ -366,7 +367,7 @@ export const verifyAuthentication = async ({
     userVerified,
   } = authenticationInfo;
 
-  await updateAuthenticator(newCredentialID, {
+  await updateAuthenticator(isoBase64URL.toBuffer(newCredentialID), {
     // for some reason, newCounter is not incremented in authenticationInfo
     counter: newCounter,
     last_used_at: new Date(),
