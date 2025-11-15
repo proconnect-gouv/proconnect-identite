@@ -1,7 +1,8 @@
+import type { Base64URLString } from "@simplewebauthn/server";
 import { CredentialDeviceType } from "@simplewebauthn/typescript-types";
 
 interface BaseAuthenticator {
-  credential_id: Uint8Array;
+  credential_id: Base64URLString;
   credential_public_key: Uint8Array;
   counter: number;
   // Ex: 'singleDevice' | 'multiDevice'
