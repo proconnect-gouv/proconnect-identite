@@ -71,6 +71,13 @@ describe("findPouvoirsBySiren", () => {
                     pouvoirs: [
                       {
                         typeDePersonne: "INDIVIDU",
+                        individu: {
+                          nom: "Implicitly active",
+                          prenom: "Person",
+                        },
+                      },
+                      {
+                        typeDePersonne: "INDIVIDU",
                         actif: true,
                         individu: {
                           nom: "Active",
@@ -114,9 +121,23 @@ describe("findPouvoirsBySiren", () => {
     const pouvoirs = await findPouvoirsBySiren("807612296");
 
     // Should only return active pouvoirs
-    assert.ok(pouvoirs.every((p) => p.actif === true));
-    // Should only return individuals
-    assert.ok(pouvoirs.every((p) => p.typeDePersonne === "INDIVIDU"));
+    assert.deepEqual(pouvoirs, [
+      {
+        typeDePersonne: "INDIVIDU",
+        individu: {
+          nom: "Implicitly active",
+          prenom: "Person",
+        },
+      },
+      {
+        typeDePersonne: "INDIVIDU",
+        actif: true,
+        individu: {
+          nom: "Active",
+          prenom: "Person",
+        },
+      },
+    ]);
   });
 
   it("should throw RegistreNationalEntreprisesApiError on API error", async () => {

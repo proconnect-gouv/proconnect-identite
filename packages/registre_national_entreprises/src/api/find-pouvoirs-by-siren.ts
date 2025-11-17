@@ -27,7 +27,7 @@ export function findPouvoirsBySirenFactory(
     ).filter(
       (pouvoir) =>
         pouvoir.typeDePersonne === "INDIVIDU" &&
-        pouvoir.actif === true &&
+        (pouvoir.actif === undefined || pouvoir.actif === true) &&
         pouvoir.individu !== undefined,
     );
   };
