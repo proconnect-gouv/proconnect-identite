@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.registre_national_entreprises",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/registre_national_entreprises#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
