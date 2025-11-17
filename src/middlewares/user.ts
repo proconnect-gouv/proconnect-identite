@@ -4,6 +4,7 @@ import {
   NotFoundError,
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
+import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
@@ -535,6 +536,7 @@ export function checkUserWantToRepresentAnOrganization(
         next();
       } catch (error) {
         if (error instanceof InvalidCertificationError) {
+          captureException(error);
           return res.redirect("/users/unable-to-certify-user-as-executive");
         }
         next(error);
