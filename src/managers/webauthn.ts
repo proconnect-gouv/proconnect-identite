@@ -2,6 +2,10 @@ import {
   NotFoundError,
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
+import type {
+  AuthenticationResponseJSON,
+  RegistrationResponseJSON,
+} from "@simplewebauthn/server";
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
@@ -11,10 +15,6 @@ import {
   verifyRegistrationResponse,
   type WebAuthnCredential,
 } from "@simplewebauthn/server";
-import type {
-  AuthenticationResponseJSON,
-  RegistrationResponseJSON,
-} from "@simplewebauthn/types";
 import { isEmpty } from "lodash-es";
 import moment from "moment";
 import "moment-timezone";

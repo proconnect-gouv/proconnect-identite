@@ -1,8 +1,8 @@
 import type {
   AuthenticatorTransportFuture,
   Base64URLString,
+  CredentialDeviceType,
 } from "@simplewebauthn/server";
-import { CredentialDeviceType } from "@simplewebauthn/typescript-types";
 
 interface BaseAuthenticator {
   credential_id: Base64URLString;

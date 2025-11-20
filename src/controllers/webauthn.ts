@@ -1,6 +1,8 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
-import type { RegistrationResponseJSON } from "@simplewebauthn/server";
-import type { AuthenticationResponseJSON } from "@simplewebauthn/types";
+import type {
+  AuthenticationResponseJSON,
+  RegistrationResponseJSON,
+} from "@simplewebauthn/server";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z, ZodError } from "zod/v4";
