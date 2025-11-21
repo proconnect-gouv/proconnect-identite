@@ -341,7 +341,13 @@ export const checkUserHasAtLeastOneOrganizationMiddleware = (
           ),
         )
       ) {
-        return res.redirect("/users/join-organization");
+        if (req.session.siretHint) {
+          return res.redirect(
+            `/users/join-organization?siret_hint=${req.session.siretHint}`,
+          );
+        } else {
+          return res.redirect("/users/join-organization");
+        }
       }
 
       return next();
@@ -434,7 +440,19 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
             organization_id: userOrganisations[0].id,
           });
         } else {
-          return res.redirect("/users/select-organization");
+          const siretHintedOrganization = req.session.siretHint
+            ? userOrganisations.find(
+                (org) => org.siret === req.session.siretHint,
+              )
+            : undefined;
+          if (siretHintedOrganization) {
+            await selectOrganization({
+              user_id: getUserFromAuthenticatedSession(req).id,
+              organization_id: siretHintedOrganization.id,
+            });
+          } else {
+            return res.redirect("/users/select-organization");
+          }
         }
       }
 
