@@ -1,5 +1,6 @@
 import { to } from "await-to-js";
 import { interactionPolicy } from "oidc-provider";
+import { getOrganizationById } from "../managers/organization/main";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { mustReturnOneOrganizationInPayload } from "./must-return-one-organization-in-payload";
 
@@ -32,6 +33,16 @@ policy.add(
           !selectedOrganizationId
         ) {
           return Check.REQUEST_PROMPT;
+        }
+
+        const oidcContextParams = ctx.oidc.params as OIDCContextParams;
+        if (oidcContextParams.siret_hint && selectedOrganizationId) {
+          const selectedOrganization = (await getOrganizationById(
+            selectedOrganizationId,
+          ))!;
+          if (selectedOrganization.siret !== oidcContextParams.siret_hint) {
+            return Check.REQUEST_PROMPT;
+          }
         }
 
         return Check.NO_NEED_TO_PROMPT;
