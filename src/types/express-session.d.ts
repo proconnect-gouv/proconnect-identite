@@ -4,6 +4,7 @@ import type { FranceConnectOidcSession } from "../managers/session/franceconnect
 export interface UnauthenticatedSessionData {
   email?: string;
   loginHint?: string;
+  siretHint?: string;
   needsInclusionconnectWelcomePage?: boolean;
   hasWebauthnConfigured?: boolean;
   interactionId?: string;

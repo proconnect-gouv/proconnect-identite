@@ -340,7 +340,13 @@ export const checkUserHasAtLeastOneOrganizationMiddleware = (
           ),
         )
       ) {
-        return res.redirect("/users/join-organization");
+        if (req.session.siretHint) {
+          return res.redirect(
+            `/users/join-organization?siret_hint=${req.session.siretHint}`,
+          );
+        } else {
+          return res.redirect("/users/join-organization");
+        }
       }
 
       return next();
