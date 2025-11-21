@@ -31,4 +31,28 @@ describe("sign-up with suggestion", () => {
     cy.url().should("include", "users/organization-suggestions");
     cy.get("#submit-join-organization-1").contains("Ministere des armees");
   });
+
+  it("should sign-up with magic link with siret_hint and be suggested corresponding organization", function () {
+    cy.visit("http://localhost:4001");
+    cy.updateCustomParams((customParams) => ({
+      ...customParams,
+      siret_hint: "21340126800130",
+    }));
+    cy.contains("Connexion personnalisée").click({ force: true });
+
+    cy.get('[name="password"]').type(
+      "This super secret password is hidden well!",
+    );
+    cy.get('[action="/users/sign-up"]  [type="submit"]').click();
+
+    cy.verifyEmail();
+
+    // Fill the user's personal information
+    cy.get('[name="given_name"]').type("Loïs");
+    cy.get('[name="family_name"]').type("Lane");
+    cy.get('[type="submit"]').click();
+
+    cy.url().should("include", "users/join-organization");
+    cy.get('input[name="siret"]').should("have.value", "21340126800130");
+  });
 });
