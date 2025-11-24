@@ -22,3 +22,15 @@ describe("should suggest valid email address", () => {
     cy.contains("Choisir votre mot de passe");
   });
 });
+
+describe("allowed whithelist email domains", () => {
+  it("should sign-in", function () {
+    cy.visit("http://localhost:4001");
+    cy.get("button.proconnect-button").click();
+
+    cy.get('[name="login"]').clear().type("user@vip.com");
+    cy.get('[action="/users/start-sign-in"]  [type="submit"]').click();
+
+    cy.contains("Choisir votre mot de passe");
+  });
+});
