@@ -171,3 +171,20 @@ describe("through a service provider with 2fa only on sites that require it", ()
     });
   });
 });
+
+describe("webauthn fails", () => {
+  it("should display sign in page with error notification", function () {
+    cy.visit("/");
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("lion.eljonson@darkangels.world");
+    cy.contains("Valider").click();
+
+    cy.title().should("include", "Accéder au compte - ProConnect");
+    cy.seed();
+    cy.contains("Se connecter avec une clé d’accès").click();
+
+    cy.title().should("include", "Accéder au compte - ProConnect");
+    cy.contains("Erreur : nous n’avons pas trouvé votre clé d’accès.");
+  });
+});
