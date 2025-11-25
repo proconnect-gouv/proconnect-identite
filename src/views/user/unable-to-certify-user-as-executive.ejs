@@ -7,19 +7,29 @@
   <div>
     <div class="fr-alert fr-alert--error fr-mb-2w">
       <p class="fr-alert__title">
-        La catégorie juridique de votre entreprise n’appartient pas au champ
-        ProConnect
-      </p>
-
-      <p>
-        Actuellement le service ProConnect ne couvre pas l’intégralité des
-        entreprises.
-      </p>
-      <p>
-        Nous vous invitons à utiliser un autre moyen de certification proposé
-        par le portail de services publics.
+        Nous ne trouvons pas de dirigeant correspondant à votre identité pour cette entreprise.
       </p>
     </div>
+
+    <p>
+      <a
+        href="https://annuaire-entreprises.data.gouv.fr/entreprises/liste"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Vérifiez la liste des dirigeants sur l'Annuaire des Entreprises
+      </a>
+    </p>
+    <p>
+      Si vous ne figurez pas dans la liste ou si une information est incorrecte.
+      <a
+        href="https://proconnect.crisp.help/fr/"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Consultez notre aide
+      </a>
+    </p>
 
     <% if (locals.interactionId && locals.oidcError) { %>
     <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--secondary">Continuer</a>
