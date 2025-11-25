@@ -1,24 +1,12 @@
+import type { Base64URLString } from "@simplewebauthn/server";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../connectors/postgres";
-import { decodeBase64URL, encodeBase64URL } from "../services/base64";
-import type {
-  Authenticator,
-  BaseAuthenticator,
-  SerializedAuthenticator,
-} from "../types/authenticator";
-
-const deserializeAuthenticator = (
-  rows: SerializedAuthenticator[],
-): Authenticator[] =>
-  rows.map((auth) => ({
-    ...auth,
-    credential_id: decodeBase64URL(auth.credential_id),
-  }));
+import type { Authenticator, BaseAuthenticator } from "../types/authenticator";
 
 export const getAuthenticatorsByUserId = async (user_id: number) => {
   const connection = getDatabaseConnection();
 
-  const { rows }: QueryResult<SerializedAuthenticator> = await connection.query(
+  const { rows }: QueryResult<Authenticator> = await connection.query(
     `
         SELECT *
         FROM authenticators
@@ -27,7 +15,7 @@ export const getAuthenticatorsByUserId = async (user_id: number) => {
     [user_id],
   );
 
-  return deserializeAuthenticator(rows);
+  return rows;
 };
 
 export const findAuthenticator = async (
@@ -36,7 +24,7 @@ export const findAuthenticator = async (
 ) => {
   const connection = getDatabaseConnection();
 
-  const { rows }: QueryResult<SerializedAuthenticator> = await connection.query(
+  const { rows }: QueryResult<Authenticator> = await connection.query(
     `
         SELECT *
         FROM authenticators
@@ -46,7 +34,7 @@ export const findAuthenticator = async (
     [user_id, serialized_credential_id],
   );
 
-  return deserializeAuthenticator(rows).shift();
+  return rows.shift();
 };
 
 export const createAuthenticator = async ({
@@ -69,7 +57,7 @@ export const createAuthenticator = async ({
 }) => {
   const connection = getDatabaseConnection();
 
-  const { rows }: QueryResult<SerializedAuthenticator> = await connection.query(
+  const { rows }: QueryResult<Authenticator> = await connection.query(
     `
         INSERT INTO authenticators
             (user_id,
@@ -89,7 +77,7 @@ export const createAuthenticator = async ({
         RETURNING *;`,
     [
       user_id,
-      encodeBase64URL(credential_id),
+      credential_id,
       credential_public_key,
       counter,
       credential_device_type,
@@ -102,25 +90,25 @@ export const createAuthenticator = async ({
     ],
   );
 
-  return deserializeAuthenticator(rows).shift()!;
+  return rows.shift()!;
 };
 
 export const updateAuthenticator = async (
-  credential_id: Uint8Array,
+  credential_id: Base64URLString,
   { counter, last_used_at, usage_count }: Partial<BaseAuthenticator>,
 ) => {
   const connexion = getDatabaseConnection();
 
-  const { rows }: QueryResult<SerializedAuthenticator> = await connexion.query(
+  const { rows }: QueryResult<Authenticator> = await connexion.query(
     `
         UPDATE authenticators
         SET counter = $2, last_used_at = $3, usage_count = $4
         WHERE credential_id = $1
         RETURNING *`,
-    [encodeBase64URL(credential_id), counter, last_used_at, usage_count],
+    [credential_id, counter, last_used_at, usage_count],
   );
 
-  return deserializeAuthenticator(rows).shift()!;
+  return rows.shift()!;
 };
 
 export const deleteAuthenticator = async (

@@ -2,10 +2,10 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,
-} from "@simplewebauthn/types";
+} from "@simplewebauthn/server";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
-import { z, ZodError } from "zod";
+import { z, ZodError } from "zod/v4";
 import {
   UserNotLoggedInError,
   WebauthnAuthenticationFailedError,
@@ -89,15 +89,12 @@ export const postVerifyRegistrationControllerFactory =
       const { webauthn_registration_response_string, force_2fa } =
         await schema.parseAsync(req.body);
 
-      const registrationResponseJson = JSON.parse(
-        webauthn_registration_response_string,
-      );
-      const registrationResponseSchema = z.custom<RegistrationResponseJSON>();
-
-      const response = await registrationResponseSchema.parseAsync(
-        registrationResponseJson,
-      );
-
+      const response = await z
+        .preprocess(
+          (val) => (typeof val === "string" ? JSON.parse(val) : val),
+          z.custom<RegistrationResponseJSON>(),
+        )
+        .parseAsync(webauthn_registration_response_string);
       const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
       const { userVerified, user: updatedUser } = await verifyRegistration({
