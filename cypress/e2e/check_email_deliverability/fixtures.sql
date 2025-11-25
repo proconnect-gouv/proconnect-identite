@@ -29,8 +29,6 @@ VALUES
     'ES256'
   );
 
-TRUNCATE TABLE email_deliverability_whitelist;
-
 INSERT INTO
   email_deliverability_whitelist (problematic_email, email_domain)
 VALUES

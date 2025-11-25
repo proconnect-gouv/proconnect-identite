@@ -12,6 +12,8 @@ DELETE FROM oidc_clients;
 
 DELETE FROM email_domains;
 
+DELETE FROM email_deliverability_whitelist;
+
 -- The sequence starts at 1000 to prevent collisions with data from fixture files
 -- where the IDs are predefined, as well as to avoid any conflicts when a record
 -- is added subsequent to the insertion of fixtures in database.
