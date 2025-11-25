@@ -2,9 +2,9 @@
     <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <%- include('partials/notifications.ejs', {notifications: notifications}) %>
-        <h2>Compte et connexion</h2>
+        <h1 class="fr-h2">Compte et connexion</h1>
         <section class="fr-mb-6w">
-            <h3>Identifiants</h3>
+            <h2 class="fr-h3">Identifiants</h2>
             <div class="fr-input-group">
                 <label class="fr-label" for="email-input-disabled">Adresse email</label>
                 <input class="fr-input" disabled type="text" id="email-input-disabled" name="email-input-disabled" value="<%=email%>" autocomplete="email">
@@ -22,12 +22,12 @@
         </section>
         <hr>
         <section aria-describedby="two-factor-authentication" class="fr-mb-4w">
-            <h3 id="two-factor-authentication">Double authentification</h3>
+            <h2 class="fr-h3" id="two-factor-authentication">Double authentification</h2>
             <% if (isAuthenticatorConfigured){ %>
                 <div class="fr-card fr-card--horizontal fr-mb-3w fr-col-8">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
-                            <h3 class="fr-card__title blue-france">FreeOTP Authenticator</h3>
+                            <h2 class="fr-card__title blue-france">FreeOTP Authenticator</h2>
                             <div class="fr-card__desc">
                                 <p class="fr-mb-2w">Création : <%= totpKeyVerifiedAt; %>
                                 </p>
@@ -73,7 +73,7 @@
                                         </p>
                                     </div>
                                 <% } %>
-                                <h3 class="fr-card__title blue-france"><%= display_name; %></h3>
+                                <h2 class="fr-card__title blue-france"><%= display_name; %></h2>
                                 <div class="fr-card__desc">
                                     <p class="fr-mb-1w">Création : <%= created_at; %>
                                     </p>
@@ -163,7 +163,7 @@
         <% } %>
         <hr>
         <section class="fr-mb-6w">
-            <h3>Suppression du compte</h3>
+            <h2 class="fr-h3">Suppression du compte</h2>
             <p>
                 Pour des raisons légales, vos données sont sauvegardées pendant 3 ans après la suppression de votre compte.
             </p>
