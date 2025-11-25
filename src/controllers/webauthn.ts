@@ -29,9 +29,7 @@ import {
   verifyAuthentication,
   verifyRegistration,
 } from "../managers/webauthn";
-import { csrfToken } from "../middlewares/csrf-protection";
 import { optionalCheckboxSchema } from "../services/custom-zod-schemas";
-import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import { logger } from "../services/log";
 
 export const deletePasskeyController = async (
@@ -127,22 +125,6 @@ export const postVerifyRegistrationControllerFactory =
     }
   };
 
-export const getSignInWithPasskeyController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.render("user/sign-in-with-passkey", {
-      pageTitle: "Se connecter avec une clé d’accès",
-      notifications: await getNotificationsFromRequest(req),
-      csrfToken: csrfToken(req),
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-
 export const getGenerateAuthenticationOptionsControllerFactory =
   (isSecondFactorAuthentication: boolean) =>
   async (req: Request, res: Response, next: NextFunction) => {
@@ -220,13 +202,13 @@ export const postVerifyAuthenticationController =
         e instanceof WebauthnAuthenticationFailedError
       ) {
         return res.redirect(
-          `/users/${isSecondFactorVerification ? "2fa-sign-in" : "sign-in-with-passkey"}?notification=invalid_passkey`,
+          `/users/${isSecondFactorVerification ? "2fa-sign-in" : "sign-in"}?notification=invalid_passkey`,
         );
       }
 
       if (e instanceof NotFoundError) {
         return res.redirect(
-          `/users/${isSecondFactorVerification ? "2fa-sign-in" : "sign-in-with-passkey"}?notification=passkey_not_found`,
+          `/users/${isSecondFactorVerification ? "2fa-sign-in" : "sign-in"}?notification=passkey_not_found`,
         );
       }
 

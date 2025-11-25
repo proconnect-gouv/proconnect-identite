@@ -81,7 +81,6 @@ import {
   getWelcomeDirigeantController,
 } from "../controllers/user/welcome";
 import {
-  getSignInWithPasskeyController,
   postVerifyFirstFactorAuthenticationController,
   postVerifyRegistrationControllerFactory,
   postVerifySecondFactorAuthenticationController,
@@ -286,14 +285,6 @@ export const userRouter = () => {
     "/sign-in-with-magic-link",
     csrfProtectionMiddleware,
     postSignInWithMagicLinkController,
-    checkUserSignInRequirementsMiddleware,
-    issueSessionOrRedirectController,
-  );
-  userRouter.get(
-    "/sign-in-with-passkey",
-    checkCredentialPromptRequirementsMiddleware,
-    csrfProtectionMiddleware,
-    getSignInWithPasskeyController,
     checkUserSignInRequirementsMiddleware,
     issueSessionOrRedirectController,
   );
