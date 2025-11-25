@@ -1,7 +1,15 @@
 //
 
+import type { MatchCriteria } from "../managers/certification/certification-score.js";
+
+//
+
 export class InvalidCertificationError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
+  constructor(
+    public matches?: Set<MatchCriteria>,
+    message?: string,
+    options?: ErrorOptions,
+  ) {
     super(message, options);
     this.name = "InvalidCertificationError";
   }

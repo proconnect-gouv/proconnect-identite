@@ -46,7 +46,6 @@ import { updateUserOrganizationLink } from "../repositories/organization/setters
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { getFranceConnectUserInfo } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
-import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 const getReferrerPath = (req: Request) => {
@@ -493,30 +492,24 @@ export function checkUserPassedCertificationDirigeant(
           user_id,
         );
 
-        if (details.dirigeant) {
-          logger.info(
-            details.dirigeant,
-            `'(${details.source})`,
-            " is the closest source dirigeant to ",
-            details.identity,
-            " with a score of ",
-            details.score,
-            cause,
-          );
-        }
-
         if (!ok) {
+          const matches = cause === "close_match" ? details.matches : undefined;
           captureException(
-            new InvalidCertificationError(cause, {
+            new InvalidCertificationError(matches, cause, {
               cause: new AssertionError({
                 expected: 0,
-                actual: details.score,
+                actual: details.matches.size,
                 operator: "isOrganizationDirigeant",
               }),
             }),
           );
 
-          return res.redirect("/users/unable-to-certify-user-as-executive");
+          return matches
+            ? res.redirect(
+                "/users/unable-to-certify-user-as-executive?matches=" +
+                  [...error.matches].join(","),
+              )
+            : res.redirect("/users/unable-to-certify-user-as-executive");
         }
 
         // user is already in the organization

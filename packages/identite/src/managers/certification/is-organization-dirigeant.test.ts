@@ -55,7 +55,13 @@ describe("isOrganizationDirigeantFactory", () => {
           ...IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
           birthplace: null, // INSEE adapter returns null for foreigners
         },
-        score: 5,
+        matches: new Set([
+          "family_name",
+          "first_name",
+          "gender",
+          "birth_date",
+          "birth_country",
+        ]),
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
       },
@@ -89,7 +95,7 @@ describe("isOrganizationDirigeantFactory", () => {
           ...IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
           birthcountry: null, // INSEE adapter returns null for French people
         },
-        score: 1,
+        matches: new Set(["gender"]),
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
       },
@@ -124,7 +130,13 @@ describe("isOrganizationDirigeantFactory", () => {
           ...IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
           birthplace: null, // RNE adapter returns null for foreigners
         },
-        score: 5,
+        matches: new Set([
+          "family_name",
+          "first_name",
+          "gender",
+          "birth_date",
+          "birth_country",
+        ]),
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "registre-national-entreprises.inpi.fr/api",
       },
@@ -160,7 +172,13 @@ describe("isOrganizationDirigeantFactory", () => {
           birthplace: null, // API Entreprise adapter doesn't provide birthplace
           gender: null, // API Entreprise adapter doesn't provide gender
         },
-        score: 5,
+        matches: new Set([
+          "family_name",
+          "first_name",
+          "gender",
+          "birth_date",
+          "birth_country",
+        ]),
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source:
           "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
@@ -214,8 +232,8 @@ describe("isOrganizationDirigeantFactory", () => {
       cause: "no_candidates",
       details: {
         dirigeant: undefined,
-        score: undefined,
         identity: IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
+        matches: new Set(),
         source: "registre-national-entreprises.inpi.fr/api",
       },
       ok: false,
