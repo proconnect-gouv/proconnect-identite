@@ -1,5 +1,7 @@
 <div>
     <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
+    <div class="fr-alert fr-alert--error fr-mb-2w sr-announce" role="alert" id="webauthn-alert-error" hidden></div>
+    <div class="fr-alert fr-alert--success fr-mb-2w sr-announce" role="status" id="webauthn-alert-success" hidden></div>
     <h1 class="fr-h3">
         Accéder au compte
     </h1>
@@ -71,13 +73,10 @@
         <% if (showPasskeySection) { %>
 
         <p class="fr-hr-or">ou</p>
-
-        <a
-            class="fr-btn fr-mb-2w btn--fullwidth fr-btn--secondary fr-btn--icon-left fr-icon-lock-unlock-line"
-            href="/users/sign-in-with-passkey"
-        >
+        
+        <button class="fr-btn fr-mb-2w btn--fullwidth fr-btn--secondary fr-btn--icon-left fr-icon-lock-unlock-line" id="webauthn-btn-begin-authentication">
             Se connecter avec une clé d’accès
-        </a>
+        </button>
         <% } %>
 
         <p class="fr-hr-or">ou</p>
@@ -93,6 +92,12 @@
             </button>
         </form>
         <%- include('../partials/go-back.ejs') %>
+        <form id="webauthn-authentication-response-form" action="/users/sign-in-with-passkey" method="post" hidden>
+        <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
+        <input type="hidden" name="webauthn_authentication_response_string" autocomplete="webauthn">
+        <button type="submit" class="fr-btn"></button>
+    </form>
     </div>
 </div>
 <script type="module" src="<%= js('show-password.js') %>"></script>
+<script type="module" src="<%= js('webauthn-authentication.js') %>"></script>

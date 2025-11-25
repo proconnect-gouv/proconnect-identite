@@ -6,6 +6,9 @@ document.addEventListener(
     const beginElement = document.getElementById(
       "webauthn-btn-begin-authentication",
     );
+    if (!beginElement) {
+      return;
+    }
     const authenticationResponseStringInputElement = document.querySelector(
       'input[name="webauthn_authentication_response_string"]',
     );
@@ -61,36 +64,6 @@ document.addEventListener(
     };
 
     beginElement.addEventListener("click", onAuthenticateClick);
-
-    const initiatingConditionalUI = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const hasNotification = urlParams.get("notification") !== null;
-
-      if (!hasNotification) {
-        try {
-          const authOptions = await fetch(authOptionsUrl);
-
-          let asseResp = await startAuthentication(
-            await authOptions.json(),
-            true,
-          );
-
-          authenticationResponseStringInputElement.value =
-            JSON.stringify(asseResp);
-          authenticationResponseForm.requestSubmit();
-        } catch (e) {
-          // fail silently
-          console.error(e);
-        }
-      }
-    };
-
-    if (
-      authenticationResponseStringInputElement.getAttribute("autocomplete") ===
-      "webauthn"
-    ) {
-      initiatingConditionalUI();
-    }
   },
   false,
 );

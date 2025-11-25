@@ -2,10 +2,10 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,
-} from "@simplewebauthn/types";
+} from "@simplewebauthn/server";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
-import { z, ZodError } from "zod";
+import { z, ZodError } from "zod/v4";
 import {
   UserNotLoggedInError,
   WebauthnAuthenticationFailedError,
@@ -29,9 +29,7 @@ import {
   verifyAuthentication,
   verifyRegistration,
 } from "../managers/webauthn";
-import { csrfToken } from "../middlewares/csrf-protection";
 import { optionalCheckboxSchema } from "../services/custom-zod-schemas";
-import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import { logger } from "../services/log";
 
 export const deletePasskeyController = async (
@@ -91,15 +89,12 @@ export const postVerifyRegistrationControllerFactory =
       const { webauthn_registration_response_string, force_2fa } =
         await schema.parseAsync(req.body);
 
-      const registrationResponseJson = JSON.parse(
-        webauthn_registration_response_string,
-      );
-      const registrationResponseSchema = z.custom<RegistrationResponseJSON>();
-
-      const response = await registrationResponseSchema.parseAsync(
-        registrationResponseJson,
-      );
-
+      const response = await z
+        .preprocess(
+          (val) => (typeof val === "string" ? JSON.parse(val) : val),
+          z.custom<RegistrationResponseJSON>(),
+        )
+        .parseAsync(webauthn_registration_response_string);
       const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
       const { userVerified, user: updatedUser } = await verifyRegistration({
@@ -126,22 +121,6 @@ export const postVerifyRegistrationControllerFactory =
       next(e);
     }
   };
-
-export const getSignInWithPasskeyController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.render("user/sign-in-with-passkey", {
-      pageTitle: "Se connecter avec une clé d’accès",
-      notifications: await getNotificationsFromRequest(req),
-      csrfToken: csrfToken(req),
-    });
-  } catch (e) {
-    next(e);
-  }
-};
 
 export const getGenerateAuthenticationOptionsControllerFactory =
   (isSecondFactorAuthentication: boolean) =>
@@ -220,13 +199,13 @@ export const postVerifyAuthenticationController =
         e instanceof WebauthnAuthenticationFailedError
       ) {
         return res.redirect(
-          `/users/${isSecondFactorVerification ? "2fa-sign-in" : "sign-in-with-passkey"}?notification=invalid_passkey`,
+          `/users/${isSecondFactorVerification ? "2fa-sign-in" : "sign-in"}?notification=invalid_passkey`,
         );
       }
 
       if (e instanceof NotFoundError) {
         return res.redirect(
-          `/users/${isSecondFactorVerification ? "2fa-sign-in" : "sign-in-with-passkey"}?notification=passkey_not_found`,
+          `/users/${isSecondFactorVerification ? "2fa-sign-in" : "sign-in"}?notification=passkey_not_found`,
         );
       }
 
