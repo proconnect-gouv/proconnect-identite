@@ -2,9 +2,9 @@
     <%- include('partials/sidemenu.ejs', {activeLink: 'personal-information'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <%- include('partials/notifications.ejs', {notifications: notifications}) %>
-        <h2>
+        <h1 class="fr-h2">
             Vos informations personnelles
-        </h2>
+        </h1>
         <form action="/personal-information" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 

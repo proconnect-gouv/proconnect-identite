@@ -2,7 +2,7 @@
     <%- include('partials/sidemenu.ejs', {activeLink: 'manage-organizations'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <%- include('partials/notifications.ejs', {notifications: notifications}) %>
-        <h2>Vos organisations de rattachement</h2>
+        <h1 class="fr-h2">Vos organisations de rattachement</h1>
         <div class="fr-grid-row fr-grid-row--gutters">
             <% if (userOrganizations.length + pendingUserOrganizations.length > 0) { %>
                 <% userOrganizations.forEach(({
