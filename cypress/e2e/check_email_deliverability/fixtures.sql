@@ -28,3 +28,8 @@ VALUES
     'ES256',
     'ES256'
   );
+
+INSERT INTO
+  email_deliverability_whitelist (problematic_email, email_domain)
+VALUES
+  ('user@vip.com', 'vip.com');

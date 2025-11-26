@@ -50,6 +50,7 @@ import {
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
+import { findEmailInDeliverabilityWhiteList } from "../repositories/email-deliverability-whitelist";
 import {
   create,
   findByEmail,
@@ -86,23 +87,26 @@ export const startLogin = async (
     };
   }
 
-  let { isEmailSafeToSend, didYouMean } =
-    await isEmailSafeToSendTransactional(email);
+  const isInWhiteList = await findEmailInDeliverabilityWhiteList(email);
 
-  if (!isEmailSafeToSend) {
-    if (!didYouMean) {
-      didYouMean = getDidYouMeanSuggestion(email);
+  if (!isInWhiteList) {
+    let { isEmailSafeToSend, didYouMean } =
+      await isEmailSafeToSendTransactional(email);
+
+    if (!isEmailSafeToSend) {
+      if (!didYouMean) {
+        didYouMean = getDidYouMeanSuggestion(email);
+      }
+
+      throw new InvalidEmailError(didYouMean, {
+        cause: new AssertionError({
+          actual: email,
+          expected: didYouMean,
+          operator: "isEmailSafeToSendTransactional",
+        }),
+      });
     }
-
-    throw new InvalidEmailError(didYouMean, {
-      cause: new AssertionError({
-        actual: email,
-        expected: didYouMean,
-        operator: "isEmailSafeToSendTransactional",
-      }),
-    });
   }
-
   return {
     email,
     userExists: false,
