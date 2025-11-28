@@ -9,7 +9,7 @@ import { certificationScore } from "./certification-score.js";
 describe("certification scoring", () => {
   it("perfect match - all 5 criteria", () => {
     // All criteria match: family name, first name, gender, birthdate, birthplace
-    assert.equal(
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -28,13 +28,19 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      5,
+      new Set([
+        "family_name",
+        "first_name",
+        "gender",
+        "birth_date",
+        "birth_place",
+      ]),
     );
   });
 
   it("family name mismatch", () => {
-    // Different family name = -1 point
-    assert.equal(
+    // Different family name = missing family_name
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -53,13 +59,13 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      4,
+      new Set(["first_name", "gender", "birth_date", "birth_place"]),
     );
   });
 
   it("different birthdate", () => {
-    // Different birthdate = -1 point
-    assert.equal(
+    // Different birthdate = missing birth_date
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -78,13 +84,13 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      4,
+      new Set(["family_name", "first_name", "gender", "birth_place"]),
     );
   });
 
   it("different birthplace", () => {
-    // Different birthplace = -1 point
-    assert.equal(
+    // Different birthplace = missing birth_place
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -103,13 +109,13 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      4,
+      new Set(["family_name", "first_name", "gender", "birth_date"]),
     );
   });
 
   it("swapped first and family names", () => {
-    // Both names don't match = -2 points
-    assert.equal(
+    // Both names don't match = missing both name criteria
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -128,13 +134,13 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      3,
+      new Set(["gender", "birth_date", "birth_place"]),
     );
   });
 
   it("different gender still matches when source gender is null", () => {
-    // Gender is null in source = still gets point
-    assert.equal(
+    // Gender is null in source = still gets gender match
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -153,13 +159,19 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      5,
+      new Set([
+        "family_name",
+        "first_name",
+        "gender",
+        "birth_date",
+        "birth_place",
+      ]),
     );
   });
 
   it("different gender when source has gender", () => {
-    // Different gender = -1 point
-    assert.equal(
+    // Different gender = missing gender
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -178,13 +190,13 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      4,
+      new Set(["family_name", "first_name", "birth_date", "birth_place"]),
     );
   });
 
   it("matches first name with hyphen normalization", () => {
-    // Jean-Pierre and Jean Pierre should match (first name is "Jean")
-    assert.equal(
+    // Jean-Pierre and Jean Marc should match (first name is "Jean")
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -203,13 +215,19 @@ describe("certification scoring", () => {
           given_name: "Jean Marc",
         },
       ),
-      5,
+      new Set([
+        "family_name",
+        "first_name",
+        "gender",
+        "birth_date",
+        "birth_place",
+      ]),
     );
   });
 
   it("birthplace with commune code conversion", () => {
     // 75050 should convert to 92050
-    assert.equal(
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -228,13 +246,19 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      5,
+      new Set([
+        "family_name",
+        "first_name",
+        "gender",
+        "birth_date",
+        "birth_place",
+      ]),
     );
   });
 
   it("null birthplace in source still matches", () => {
-    // Null birthplace in source = still gets point
-    assert.equal(
+    // Null birthplace in source = still gets birth_place match
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: null,
@@ -253,13 +277,19 @@ describe("certification scoring", () => {
           given_name: "Stéphane",
         },
       ),
-      5,
+      new Set([
+        "family_name",
+        "first_name",
+        "gender",
+        "birth_date",
+        "birth_place",
+      ]),
     );
   });
 
   it("foreign person with matching country", () => {
     // For foreigners, check country code
-    assert.equal(
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: "99136",
@@ -278,13 +308,19 @@ describe("certification scoring", () => {
           given_name: "Patrick",
         },
       ),
-      5,
+      new Set([
+        "family_name",
+        "first_name",
+        "gender",
+        "birth_date",
+        "birth_country",
+      ]),
     );
   });
 
   it("foreign person with different country", () => {
-    // Different country = -1 point
-    assert.equal(
+    // Different country = missing birth_country
+    assert.deepStrictEqual(
       certificationScore(
         {
           birthcountry: "99136", // Ireland
@@ -303,7 +339,7 @@ describe("certification scoring", () => {
           given_name: "Patrick",
         },
       ),
-      4,
+      new Set(["family_name", "first_name", "gender", "birth_date"]),
     );
   });
 });

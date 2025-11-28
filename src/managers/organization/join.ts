@@ -225,7 +225,7 @@ export const joinOrganization = async ({
       " is the closest source dirigeant to ",
       details.identity,
       " with a score of ",
-      details.score,
+      details.matches.size,
       cause,
     );
 
@@ -233,7 +233,7 @@ export const joinOrganization = async ({
       throw new InvalidCertificationError(cause, {
         cause: new AssertionError({
           expected: 0,
-          actual: details.score,
+          actual: details.matches.size,
           operator: "isOrganizationDirigeant",
         }),
       });

@@ -4,11 +4,12 @@ import {
   NotFoundError,
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
-import { captureException } from "@sentry/node";
+import { captureException, captureMessage } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { AssertionError } from "node:assert";
+import { match } from "ts-pattern";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
@@ -497,7 +498,7 @@ export function checkUserWantToRepresentAnOrganization(
           return next();
         }
 
-        const { cause, details, ok } = await isOrganizationDirigeant(
+        const { cause, details } = await isOrganizationDirigeant(
           organization,
           user_id,
         );
@@ -508,18 +509,45 @@ export function checkUserWantToRepresentAnOrganization(
           " is the closest source dirigeant to ",
           details.identity,
           " with a score of ",
-          details.score,
+
           cause,
         );
+        captureMessage(
+          `${details.dirigeant} is the closest source dirigeant to ${details.identity} with a score of ${details.matches.size} (${cause})`,
 
-        if (!ok)
-          throw new InvalidCertificationError(cause, {
-            cause: new AssertionError({
-              expected: 0,
-              actual: details.score,
-              operator: "isOrganizationDirigeant",
-            }),
-          });
+          {
+            tags: {
+              "certification-dirigeant": true,
+              "certification-dirigeant-cause": cause,
+              "certification-dirigeant-score": details.matches.size,
+              "certification-dirigeant-source": details.source,
+              "certification-dirigeant-identity": details.identity as any,
+            },
+          },
+        );
+
+        const redirect_url = match(cause)
+          .with("below_threshold", () => {
+            throw new InvalidCertificationError(cause, {
+              cause: new AssertionError({
+                expected: 0,
+                actual: details.matches.size,
+                operator: "isOrganizationDirigeant",
+              }),
+            });
+          })
+          .with(
+            "close_match",
+            () =>
+              "/users/unable-to-certify-user-as-executive?matches=" +
+              [...details.matches].join(","),
+          )
+          .with("exact_match", () => {})
+          .exhaustive();
+
+        if (redirect_url) {
+          return res.redirect(redirect_url);
+        }
 
         // user is already in the organization
         // we override the previous verification_type
