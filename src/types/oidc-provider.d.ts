@@ -17,6 +17,7 @@ declare global {
   interface OIDCContextParams extends UnknownObject {
     client_id: string;
     login_hint: string;
+    siret_hint: string;
     prompt: "select_organization" | "update_userinfo";
     scope: string;
     sp_name?: string;

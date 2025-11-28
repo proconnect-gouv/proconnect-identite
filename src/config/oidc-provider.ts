@@ -126,7 +126,7 @@ export const oidcProviderConfiguration = ({
     // This scope will be deprecated
     is_service_public: ["is_service_public"],
   },
-  extraParams: ["sp_name"],
+  extraParams: ["sp_name", "siret_hint"],
   features: {
     claimsParameter: { enabled: true },
     devInteractions: { enabled: false },
