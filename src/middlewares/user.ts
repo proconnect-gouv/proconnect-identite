@@ -45,6 +45,7 @@ import { getUserOrganizationLink } from "../repositories/organization/getters";
 import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { getFranceConnectUserInfo } from "../repositories/user";
+import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
@@ -339,13 +340,11 @@ export const checkUserHasAtLeastOneOrganizationMiddleware = (
           ),
         )
       ) {
-        if (req.session.siretHint) {
-          return res.redirect(
-            `/users/join-organization?siret_hint=${req.session.siretHint}`,
-          );
-        } else {
-          return res.redirect("/users/join-organization");
-        }
+        return res.redirect(
+          addQueryParameters("/users/join-organization", {
+            siret_hint: req.session.siretHint,
+          }),
+        );
       }
 
       return next();
