@@ -90,3 +90,11 @@ form:invalid button.fr-btn {
 .visually-hidden-focusable:not(:focus, :focus-within) * {
   overflow: hidden !important;
 }
+
+.go-back-link {
+  display: none !important;
+}
+
+.go-back-link.visible {
+  display: inline-flex !important;
+}
