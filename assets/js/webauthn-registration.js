@@ -93,5 +93,4 @@ const clearDisplay = () => {
   notSupportedElement.style.display = "none";
   errorAlertElement.style.display = "none";
   errorAlertElement.innerText = "";
-  submitButton.disabled = false;
 };
