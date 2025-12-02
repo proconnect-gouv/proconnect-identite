@@ -91,7 +91,7 @@
     "csrf-sync": "^4.2.1",
     "dotenv-flow": "^4.1.0",
     "ejs": "^3.1.10",
-    "express": "^5.1.0",
+    "express": "^5.2.0",
     "express-basic-auth": "^1.2.1",
     "express-session": "^1.18.2",
     "helmet": "^8.1.0",
