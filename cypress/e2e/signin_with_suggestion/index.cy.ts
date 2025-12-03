@@ -85,7 +85,7 @@ describe("sign-in with suggestion", () => {
     cy.get('[action="/users/sign-in"] [type="submit"]').click();
 
     cy.url().should("include", "users/join-organization");
-    cy.get('input[name="siret"]').should("have.value", "21340126800130");
+    cy.get('input[name="siret"]').should("have.value", "66204244933106");
   });
 
   it("should sign-in with password with siret_hint and select corresponding organization if already present", function () {
