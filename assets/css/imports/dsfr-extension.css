@@ -13,8 +13,8 @@
 }
 
 .fr-notice.notice--change-email .fr-btn--close:before {
-  -webkit-mask-image: url("@gouvfr/dsfr/dist/icons/system/arrow-go-back-fill.svg");
-  mask-image: url("@gouvfr/dsfr/dist/icons/system/arrow-go-back-fill.svg");
+  -webkit-mask-image: url("/dist/arrow-go-back-fill.svg");
+  mask-image: url("/dist/arrow-go-back-fill.svg");
 }
 
 .fr-tile.selectable-tile {
