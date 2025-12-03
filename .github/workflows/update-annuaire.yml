@@ -122,7 +122,7 @@ jobs:
           delete-branch: true
           title: "⬆️ bump annuaire-entreprises-data-gouv-fr/search-infra@${{ steps.latest.outputs.short_commit }}"
           body: |
-            <div align=center><img src="https://annuaire-entreprises.data.gouv.fr/images/linkedin.jpg" /></div>
+            <div align=center><img src="https://github.com/annuaire-entreprises-data-gouv-fr/site/raw/main/public/images/annuaire-entreprises-paysage-large.gif" /></div>
 
             ---
 
