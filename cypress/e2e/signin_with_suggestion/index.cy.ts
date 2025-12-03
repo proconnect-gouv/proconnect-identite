@@ -1,11 +1,11 @@
 //
 
 describe("sign-in with suggestion", () => {
-  it("should seed the database once", function () {
+  it.only("should seed the database once", function () {
     cy.seed();
   });
 
-  xit("should sign-up with magic link and be suggested the Ministere des armees organization", function () {
+  it("should sign-up with magic link and be suggested the Ministere des armees organization", function () {
     // Visit the signup page
     cy.visit("/users/start-sign-in");
 
@@ -32,7 +32,7 @@ describe("sign-in with suggestion", () => {
     cy.get("#submit-join-organization-1").contains("Ministere des armees");
   });
 
-  xit("should sign-up with magic link with siret_hint and be suggested corresponding organization", function () {
+  it("should sign-up with magic link with siret_hint and be suggested corresponding organization", function () {
     cy.visit("http://localhost:4001");
     cy.updateCustomParams((customParams) => ({
       ...customParams,
@@ -56,12 +56,28 @@ describe("sign-in with suggestion", () => {
     cy.get('input[name="siret"]').should("have.value", "21340126800130");
   });
 
-  xit("should sign-in with password with siret_hint and be suggested corresponding organization if not already present", function () {
+  it("should sign-in with password with siret_hint and be suggested corresponding organization if not already present", function () {
     cy.visit("http://localhost:4001");
     cy.updateCustomParams((customParams) => ({
       ...customParams,
       login_hint: "lion.eljonson@darkangels.world",
       siret_hint: "21340126800130",
+    }));
+    cy.contains("Connexion personnalisée").click({ force: true });
+
+    cy.get('[name="password"]').type("password123");
+    cy.get('[action="/users/sign-in"] [type="submit"]').click();
+
+    cy.url().should("include", "users/join-organization");
+    cy.get('input[name="siret"]').should("have.value", "21340126800130");
+  });
+
+  it.only("should sign-in with password with siret_hint with multiple organizations and be suggested corresponding organization if not already present", function () {
+    cy.visit("http://localhost:4001");
+    cy.updateCustomParams((customParams) => ({
+      ...customParams,
+      login_hint: "rogal.dorn@imperialfists.world",
+      siret_hint: "66204244933106",
     }));
     cy.contains("Connexion personnalisée").click({ force: true });
 
