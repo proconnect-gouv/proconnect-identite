@@ -53,7 +53,7 @@
     "watch:assets": "NODE_ENV=development vite build --clearScreen false --watch",
     "watch:ejs": "CHOKIDAR_USEPOLLING=true copy-and-watch --clean --watch \"src/views/**/*.ejs\" src/views/*.ejs build/views/",
     "watch:js": "tsc --watch --preserveWatchOutput",
-    "watch:node": "tsx --import ./src/instrument.ts --inspect --watch src/index.ts",
+    "watch:node": "tsx watch --import ./src/instrument.ts src/index.ts",
     "watch:workspaces:core": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.core",
     "watch:workspaces:crisp": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.crisp",
     "watch:workspaces:debounce": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.debounce",
