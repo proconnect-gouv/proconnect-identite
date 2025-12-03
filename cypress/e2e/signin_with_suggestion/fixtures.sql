@@ -12,6 +12,12 @@ VALUES
     '21340126800130',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
+  ),
+  (
+    3,
+    '66204244933106',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO
@@ -90,6 +96,20 @@ VALUES
     'I',
     'Primarque',
     false
+  ),
+  (
+    3,
+    'rogal.dorn@imperialfists.world',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Rogal',
+    'Dorn',
+    'I',
+    'Primarque',
+    false
   );
 
 INSERT INTO
@@ -102,4 +122,6 @@ INSERT INTO
   )
 VALUES
   (2, 1, false, 'verified_email_domain', true),
-  (2, 2, false, 'verified_email_domain', true);
+  (2, 2, false, 'verified_email_domain', true),
+  (3, 1, false, 'verified_email_domain', true),
+  (3, 2, false, 'verified_email_domain', true);
