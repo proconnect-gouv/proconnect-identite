@@ -1,6 +1,6 @@
 //
 
-import { InvalidCertificationError, NotFoundError } from "#src/errors";
+import { NotFoundError } from "#src/errors";
 import { IdentityVectorSchema } from "#src/types";
 import {
   LiElJonsonFranceConnectUserInfo,
@@ -208,9 +208,17 @@ describe("isOrganizationDirigeantFactory", () => {
       },
     });
 
-    await assert.rejects(
-      isOrganizationDirigeant(papillon_org_info, 1),
-      new InvalidCertificationError("No candidates found"),
-    );
+    const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
+
+    assert.deepEqual(isDirigeant, {
+      cause: "no_candidates",
+      details: {
+        dirigeant: undefined,
+        score: undefined,
+        identity: IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
+        source: "registre-national-entreprises.inpi.fr/api",
+      },
+      ok: false,
+    });
   });
 });

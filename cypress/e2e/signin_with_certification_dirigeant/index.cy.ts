@@ -28,7 +28,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     );
   });
 
-  it("should refuse FranceConnect-ed empolyee of known organization", function () {
+  it("should refuse FranceConnect-ed employee of known organization", function () {
     cy.login("franceconnected+employee@yopmail.com");
 
     cy.title().should("include", "Choisir une organisation -");

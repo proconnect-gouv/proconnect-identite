@@ -1,7 +1,6 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import {
   InvalidCertificationError,
-  NotFoundError,
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import { captureException } from "@sentry/node";
@@ -16,7 +15,7 @@ import {
 } from "../config/env";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
-import { isOrganizationDirigeant } from "../managers/certification";
+import { performCertificationDirigeant } from "../managers/certification";
 import {
   greetForCertification,
   greetForJoiningOrganization,
@@ -281,7 +280,7 @@ export const checkBrowserIsTrustedMiddleware = (
     }
   });
 
-export const checkUserNeedCertificationDirigeantMiddleware = (
+export const checkUserIsFranceConnectedMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -311,7 +310,7 @@ export const checkUserHasPersonalInformationsMiddleware = (
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserNeedCertificationDirigeantMiddleware(req, res, async (error) => {
+  checkUserIsFranceConnectedMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
       const { given_name, family_name } = getUserFromAuthenticatedSession(req);
@@ -413,38 +412,35 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
   checkUserHasAtLeastOneOrganizationMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
+      if (!req.session.mustReturnOneOrganizationInPayload) return next();
 
       const selectedOrganizationId = await getSelectedOrganizationId(
         getUserFromAuthenticatedSession(req).id,
       );
       if (selectedOrganizationId) return next();
 
-      if (req.session.certificationDirigeantRequested) {
-        return res.redirect("/users/select-organization");
+      const userOrganisations = await getOrganizationsByUserId(
+        getUserFromAuthenticatedSession(req).id,
+      );
+
+      if (
+        userOrganisations.length === 1 &&
+        !req.session.certificationDirigeantRequested
+      ) {
+        await selectOrganization({
+          user_id: getUserFromAuthenticatedSession(req).id,
+          organization_id: userOrganisations[0].id,
+        });
+        return next();
       }
 
-      if (req.session.mustReturnOneOrganizationInPayload) {
-        const userOrganisations = await getOrganizationsByUserId(
-          getUserFromAuthenticatedSession(req).id,
-        );
-
-        if (userOrganisations.length === 1) {
-          await selectOrganization({
-            user_id: getUserFromAuthenticatedSession(req).id,
-            organization_id: userOrganisations[0].id,
-          });
-        } else {
-          return res.redirect("/users/select-organization");
-        }
-      }
-
-      return next();
+      return res.redirect("/users/select-organization");
     } catch (error) {
       next(error);
     }
   });
 
-export function checkUserWantToRepresentAnOrganization(
+export function checkUserPassedCertificationDirigeant(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -455,30 +451,25 @@ export function checkUserWantToRepresentAnOrganization(
     async (error) => {
       try {
         if (error) return next(error);
+        if (!req.session.mustReturnOneOrganizationInPayload) return next();
+
         if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
         if (!req.session.certificationDirigeantRequested) return next();
 
         const { id: user_id } = getUserFromAuthenticatedSession(req);
-        const selectedOrganizationId = await getSelectedOrganizationId(user_id);
-        if (selectedOrganizationId === null) return next();
+        const selectedOrganizationId =
+          (await getSelectedOrganizationId(user_id))!;
 
-        const organization = await getOrganizationById(selectedOrganizationId);
-        if (isEmpty(organization)) {
-          throw new NotFoundError("Organization not found");
-        }
-
-        const userOrganizationLink = await getUserOrganizationLink(
+        const organization = (await getOrganizationById(
+          selectedOrganizationId,
+        ))!;
+        const userOrganizationLink = (await getUserOrganizationLink(
           selectedOrganizationId,
           user_id,
-        );
-        if (isEmpty(userOrganizationLink)) {
-          throw new NotFoundError("User in organization not found");
-        }
+        ))!;
 
-        const franceconnectUserInfo = await getFranceConnectUserInfo(user_id);
-        if (isEmpty(franceconnectUserInfo)) {
-          throw new NotFoundError("FranceConnect user info not found");
-        }
+        const franceconnectUserInfo =
+          (await getFranceConnectUserInfo(user_id))!;
 
         const expiredCertification = isExpired(
           userOrganizationLink.verified_at,
@@ -497,29 +488,36 @@ export function checkUserWantToRepresentAnOrganization(
           return next();
         }
 
-        const { cause, details, ok } = await isOrganizationDirigeant(
+        const { cause, details, ok } = await performCertificationDirigeant(
           organization,
           user_id,
         );
 
-        logger.info(
-          details.dirigeant,
-          `'(${details.source})`,
-          " is the closest source dirigeant to ",
-          details.identity,
-          " with a score of ",
-          details.score,
-          cause,
-        );
+        if (details.dirigeant) {
+          logger.info(
+            details.dirigeant,
+            `'(${details.source})`,
+            " is the closest source dirigeant to ",
+            details.identity,
+            " with a score of ",
+            details.score,
+            cause,
+          );
+        }
 
-        if (!ok)
-          throw new InvalidCertificationError(cause, {
-            cause: new AssertionError({
-              expected: 0,
-              actual: details.score,
-              operator: "isOrganizationDirigeant",
+        if (!ok) {
+          captureException(
+            new InvalidCertificationError(cause, {
+              cause: new AssertionError({
+                expected: 0,
+                actual: details.score,
+                operator: "isOrganizationDirigeant",
+              }),
             }),
-          });
+          );
+
+          return res.redirect("/users/unable-to-certify-user-as-executive");
+        }
 
         // user is already in the organization
         // we override the previous verification_type
@@ -535,10 +533,6 @@ export function checkUserWantToRepresentAnOrganization(
 
         next();
       } catch (error) {
-        if (error instanceof InvalidCertificationError) {
-          captureException(error);
-          return res.redirect("/users/unable-to-certify-user-as-executive");
-        }
         next(error);
       }
     },
@@ -550,7 +544,7 @@ export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware = (
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserWantToRepresentAnOrganization(req, res, async (error) => {
+  checkUserPassedCertificationDirigeant(req, res, async (error) => {
     try {
       if (error) return next(error);
 
