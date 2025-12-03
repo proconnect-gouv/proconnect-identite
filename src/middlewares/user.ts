@@ -22,6 +22,7 @@ import {
 } from "../managers/organization/join";
 import {
   getOrganizationById,
+  getOrganizationBySiret,
   getOrganizationsByUserId,
   selectOrganization,
 } from "../managers/organization/main";
@@ -422,6 +423,25 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
       const selectedOrganizationId = await getSelectedOrganizationId(
         getUserFromAuthenticatedSession(req).id,
       );
+
+      if (selectedOrganizationId) {
+        if (!req.session.siretHint) {
+          return next();
+        }
+        const organization = await getOrganizationBySiret(
+          req.session.siretHint,
+        );
+        if (organization?.id === selectedOrganizationId) {
+          return next();
+        } else {
+          return res.redirect(
+            addQueryParameters("/users/select-organization", {
+              siret_hint: req.session.siretHint,
+            }),
+          );
+        }
+      }
+
       if (selectedOrganizationId) return next();
 
       const userOrganisations = await getOrganizationsByUserId(
