@@ -17,6 +17,7 @@ import {
   AccessRestrictedToPublicServiceEmailError,
   DomainRestrictedError,
   ForbiddenError,
+  GouvFrDomainsForbiddenForPrivateOrg,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -167,6 +168,10 @@ export const postJoinOrganizationMiddleware = async (
 
     if (error instanceof AccessRestrictedToPublicServiceEmailError) {
       return res.redirect(`/users/access-restricted-to-public-sector-email`);
+    }
+
+    if (error instanceof GouvFrDomainsForbiddenForPrivateOrg) {
+      return res.redirect(`/users/access-restricted-to-private-sector-email`);
     }
 
     if (error instanceof DomainRestrictedError) {
@@ -387,6 +392,17 @@ export async function getAccessRestrictedToPublicSectorEmailController(
 ) {
   return res.render("user/access-restricted-to-public-sector-email", {
     csrfToken: csrfToken(req),
+    illustration: "connection-lost.svg",
+    pageTitle: "Email non autorisé",
+  });
+}
+
+export async function getAccessRestrictedToPrivateSectorEmailController(
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  return res.render("user/access-restricted-to-private-sector-email", {
     illustration: "connection-lost.svg",
     pageTitle: "Email non autorisé",
   });

@@ -62,6 +62,8 @@ export class AccessRestrictedToPublicServiceEmailError extends Error {
   }
 }
 
+export class GouvFrDomainsForbiddenForPrivateOrg extends Error {}
+
 export class DomainRestrictedError extends Error {
   constructor(
     public organizationId: number,
