@@ -2,6 +2,7 @@ import { Router, urlencoded } from "express";
 import nocache from "nocache";
 import { HOST } from "../config/env";
 import {
+  getAccessRestrictedToPrivateSectorEmailController,
   getAccessRestrictedToPublicSectorEmailController,
   getDomainsRestrictedInOrganizationController,
   getJoinOrganizationConfirmController,
@@ -424,6 +425,13 @@ export const userRouter = () => {
     checkUserHasPersonalInformationsMiddleware,
     csrfProtectionMiddleware,
     getAccessRestrictedToPublicSectorEmailController,
+  );
+
+  userRouter.get(
+    "/access-restricted-to-private-sector-email",
+    checkUserHasPersonalInformationsMiddleware,
+    csrfProtectionMiddleware,
+    getAccessRestrictedToPrivateSectorEmailController,
   );
 
   userRouter.post(

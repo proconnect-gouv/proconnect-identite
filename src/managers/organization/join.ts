@@ -30,6 +30,7 @@ import {
   MAX_SUGGESTED_ORGANIZATIONS,
 } from "../../config/env";
 import {
+  AccessRestrictedToPrivateServiceEmailError,
   AccessRestrictedToPublicServiceEmailError,
   DomainRestrictedError,
   UnableToAutoJoinOrganizationError,
@@ -243,6 +244,10 @@ export const joinOrganization = async ({
       user_id,
       verification_type: "organization_dirigeant",
     });
+  }
+
+  if (domain.endsWith("gouv.fr") && !isPublicService(organization)) {
+    throw new AccessRestrictedToPrivateServiceEmailError();
   }
 
   if (isEntrepriseUnipersonnelle(organization)) {
