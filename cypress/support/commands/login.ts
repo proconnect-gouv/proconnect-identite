@@ -47,6 +47,24 @@ export function fillTotpFields(totpSecret = defaultTotpSecret) {
   cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
 }
 
+export function fillAndSubmitTotpForm(action: string) {
+  return cy
+    .get("#humanReadableTotpKey")
+    .invoke("text")
+    .then((text) => {
+      const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
+      const totp = new TOTP({
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: humanReadableTotpKey,
+      });
+      const token = totp.generate();
+      cy.get("[name=totpToken]").type(token);
+      cy.get(`[action="${action}"] [type="submit"]`).click();
+    });
+}
+
 export function login(email: string) {
   cy.fillLoginFields({ email, password: defaultPassword });
 }
