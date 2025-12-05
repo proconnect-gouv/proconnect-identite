@@ -7,6 +7,7 @@ import {
   NotFoundError,
   OrganizationNotActiveError,
 } from "@proconnect-gouv/proconnect.identite/errors";
+import { MatchCriteria } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -36,6 +37,7 @@ import {
 import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { csrfToken } from "../middlewares/csrf-protection";
 import { getModerationById } from "../repositories/moderation";
+import { getFranceConnectUserInfo } from "../repositories/user";
 import {
   idSchema,
   oidcErrorSchema,
@@ -140,7 +142,12 @@ export const postJoinOrganizationMiddleware = async (
   } catch (error) {
     if (error instanceof InvalidCertificationError) {
       captureException(error);
-      return res.redirect("/users/unable-to-certify-user-as-executive");
+      return error.matches
+        ? res.redirect(
+            "/users/unable-to-certify-user-as-executive?matches=" +
+              [...error.matches].join(","),
+          )
+        : res.redirect("/users/unable-to-certify-user-as-executive");
     }
 
     if (
@@ -340,11 +347,24 @@ export const getModerationRejectedController = async (
   }
 };
 
-export function getUnableToCertifyUserAsExecutiveController(
+export async function getUnableToCertifyUserAsExecutiveController(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
+  const { matches } = z
+    .object({
+      matches: z
+        .string()
+        .pipe(z.transform((v) => v.split(",")))
+        .pipe(z.array(MatchCriteria))
+        .pipe(z.transform((matches) => new Set(matches)))
+        .optional(),
+    })
+    .parse(req.query);
+  const user = getUserFromAuthenticatedSession(req);
+  const user_info = await getFranceConnectUserInfo(user.id);
+
   try {
     return res.render("user/unable-to-certify-user-as-executive", {
       illustration: "connection-lost.svg",
@@ -352,6 +372,8 @@ export function getUnableToCertifyUserAsExecutiveController(
       interactionId: req.session.interactionId,
       pageTitle: "Certification impossible",
       use_dashboard_layout: false,
+      matches,
+      user_info,
     });
   } catch (e) {
     next(e);

@@ -1,10 +1,21 @@
 //
 
 import type { IdentityVector } from "#src/types";
+import z from "zod/v4";
 import { convertCommuneCode } from "./birthplace-conversion.js";
 import { extractFirstName, normalizeText } from "./normalize.js";
 
 //
+
+export const MatchCriteria = z.enum([
+  "birth_country",
+  "birth_date",
+  "birth_place",
+  "family_name",
+  "first_name",
+  "gender",
+]);
+export type MatchCriteria = z.output<typeof MatchCriteria>;
 
 /**
  * Calculates a certification score between identity from FranceConnect (IdentitePivot)
@@ -28,8 +39,8 @@ import { extractFirstName, normalizeText } from "./normalize.js";
 export function certificationScore(
   identitePivot: IdentityVector,
   sourceDirigeant: IdentityVector,
-): number {
-  let score = 0;
+) {
+  const matches = new Set<MatchCriteria>();
 
   // 1. Family name match (after normalization)
   const normalizedFamilyNamePivot = normalizeText(identitePivot.family_name);
@@ -40,7 +51,7 @@ export function certificationScore(
     normalizedFamilyNameSource &&
     normalizedFamilyNamePivot === normalizedFamilyNameSource
   ) {
-    score += 1;
+    matches.add(MatchCriteria.enum.family_name);
   }
 
   // 2. First name match (first name only, after normalization)
@@ -48,7 +59,7 @@ export function certificationScore(
   const firstNameSource = extractFirstName(sourceDirigeant.given_name);
 
   if (firstNamePivot && firstNameSource && firstNamePivot === firstNameSource) {
-    score += 1;
+    matches.add(MatchCriteria.enum.first_name);
   }
 
   // 3. Gender match (match or absent in source)
@@ -56,7 +67,7 @@ export function certificationScore(
     !sourceDirigeant.gender ||
     identitePivot.gender === sourceDirigeant.gender
   ) {
-    score += 1;
+    matches.add(MatchCriteria.enum.gender);
   }
 
   // 4. Birth date match (exact match)
@@ -65,7 +76,7 @@ export function certificationScore(
     sourceDirigeant.birthdate &&
     identitePivot.birthdate.getTime() === sourceDirigeant.birthdate.getTime()
   ) {
-    score += 1;
+    matches.add(MatchCriteria.enum.birth_date);
   }
 
   // 5. Birth place match (different logic for French vs foreigners)
@@ -79,7 +90,7 @@ export function certificationScore(
 
     // Match if equal or if source has no commune data
     if (!communeSource || (communePivot && communePivot === communeSource)) {
-      score += 1;
+      matches.add(MatchCriteria.enum.birth_place);
     }
   } else {
     // For foreigners: check country code (with conversion if needed from RNE)
@@ -89,9 +100,9 @@ export function certificationScore(
       sourceDirigeant.birthcountry &&
       identitePivot.birthcountry === sourceDirigeant.birthcountry
     ) {
-      score += 1;
+      matches.add(MatchCriteria.enum.birth_country);
     }
   }
 
-  return score;
+  return matches;
 }

@@ -127,53 +127,6 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains('"label": "Danone",');
   });
 
-  it("should no allow Adrian Volckaert to represent Danone", () => {
-    cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("adrian.volckaert@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
-
-    cy.title().should("include", "Certification dirigeant -");
-    cy.getByLabel("S’identifier avec FranceConnect").click();
-
-    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
-    cy.contains("Je suis Adrian Volckaert").click();
-
-    cy.title().should("include", "Rejoindre une organisation - ");
-    cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("55203253400646");
-    cy.getByLabel(
-      "Organisation correspondante au SIRET donné : Danone",
-    ).click();
-
-    cy.title().should("include", "Certification impossible -");
-    cy.contains("Nous n’arrivons pas à certifier votre compte.");
-    cy.contains("Continuer").click();
-
-    cy.title().should("include", "Error");
-    cy.contains("AuthorizationResponseError");
-    cy.contains("login_required");
-  });
-
   it("should welcome Angela Claire Louise DUBOIS as dirigeant of Angela GNESOTTO", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
@@ -345,5 +298,120 @@ describe("Signup on each organizations of the same siren", () => {
       cy.contains(`"siret": "${siret}",`);
       cy.contains('"label": "Thunnus thynnus iii",');
     });
+  });
+});
+
+describe("❎ Bad match", () => {
+  beforeEach(() => {
+    cy.seed();
+    cy.origin("http://localhost:4000", () => {
+      cy.visit("/");
+      cy.contains("Forcer une connexion par certification dirigeant").click();
+    });
+  });
+
+  it("Adrian Volckaert is not a dirigeant of Danone", () => {
+    cy.title().should("include", "S'inscrire ou se connecter - ");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("adrian.volckaert@yopmail.com");
+    cy.contains("Valider").click();
+
+    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.contains("Mot de passe").click();
+    cy.contains("Recevoir un lien d’identification").click();
+    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
+      (email) => {
+        cy.maildevVisitMessageById(email.id);
+        cy.origin("http://localhost:1080", () => {
+          cy.contains(
+            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+          );
+          cy.contains("Se connecter")
+            .get("a")
+            .invoke("attr", "target", "")
+            .click();
+        });
+        cy.maildevDeleteMessageById(email.id);
+      },
+    );
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Adrian Volckaert").click();
+
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("55203253400646");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Danone",
+    ).click();
+
+    cy.title().should("include", "Certification impossible -");
+    cy.contains("Nous n’arrivons pas à certifier votre compte.");
+    cy.contains(
+      "Vérifiez la liste des dirigeants sur l'Annuaire des Entreprises",
+    );
+    cy.contains("Continuer").click();
+
+    cy.title().should("include", "Error");
+    cy.contains("AuthorizationResponseError");
+    cy.contains("login_required");
+  });
+
+  it("Adrian Volckaert maybe a dirigeant of Herisson", () => {
+    cy.title().should("include", "S'inscrire ou se connecter - ");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("adrian.volckaert@yopmail.com");
+    cy.contains("Valider").click();
+
+    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.contains("Mot de passe").click();
+    cy.contains("Recevoir un lien d’identification").click();
+    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
+      (email) => {
+        cy.maildevVisitMessageById(email.id);
+        cy.origin("http://localhost:1080", () => {
+          cy.contains(
+            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+          );
+          cy.contains("Se connecter")
+            .get("a")
+            .invoke("attr", "target", "")
+            .click();
+        });
+        cy.maildevDeleteMessageById(email.id);
+      },
+    );
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Adrian Volckaert").click();
+
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("79271377800019");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Herisson",
+    ).click();
+
+    cy.title().should("include", "Certification impossible -");
+    cy.contains("Nous n’arrivons pas à certifier votre compte.");
+    cy.contains(
+      "Certaines informations transmises par FranceConnect ne correspondent pas à celles du registre des dirigeants.",
+    );
+    cy.contains("Prénom ❌");
+    cy.contains("Nom ✅");
+    cy.contains("Genre ✅");
+    cy.contains("Date de naissance ✅");
+    cy.contains("Commune de naissance ✅");
+    cy.contains("Continuer").click();
+
+    cy.title().should("include", "Error");
+    cy.contains("AuthorizationResponseError");
+    cy.contains("login_required");
   });
 });

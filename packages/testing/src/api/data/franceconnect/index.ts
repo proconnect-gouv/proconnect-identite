@@ -74,7 +74,7 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
       user_info: {
         birthcountry: "99100",
         birthdate: new Date("1984-06-05"),
-        birthplace: "Internet",
+        birthplace: "75111",
         family_name: "Volckaert",
         gender: "male",
         given_name: "Adrian",
