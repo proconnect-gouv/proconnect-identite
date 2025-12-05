@@ -1,7 +1,12 @@
 //
 
-import { TOTP } from "otpauth";
 import { checkA11y } from "./a11y/checkA11y";
+import {
+  fillLoginFields,
+  fillTotpFields,
+  login,
+  mfaLogin,
+} from "./commands/login";
 import { seed } from "./commands/seed";
 import "./webauthn";
 
@@ -10,14 +15,10 @@ import "./webauthn";
 declare global {
   namespace Cypress {
     interface Chainable {
-      fillLoginFields(options: {
-        email: string;
-        password?: string;
-        totpSecret?: string;
-      }): Chainable<void>;
-      fillTotpFields(totpSecret?: string): Chainable<void>;
-      login(email: string): Chainable<void>;
-      mfaLogin(email: string): Chainable<void>;
+      fillLoginFields: typeof fillLoginFields;
+      fillTotpFields: typeof fillTotpFields;
+      login: typeof login;
+      mfaLogin: typeof mfaLogin;
       seeInField: typeof seeInFieldCommand;
       setRequestedAcrs(requestedAcrs?: string[]): Chainable<void>;
       getDescribed: typeof getDescribedCommand;
@@ -34,53 +35,13 @@ declare global {
 
 Cypress.Commands.overwrite("checkA11y", checkA11y);
 
-const defaultTotpSecret = "din5ncvbluqpx7xfzqcybmibmtjocnsf";
-const defaultPassword = "password123";
+Cypress.Commands.add("fillTotpFields", fillTotpFields);
 
-Cypress.Commands.add("fillTotpFields", (totpSecret = defaultTotpSecret) => {
-  const totp = new TOTP({
-    algorithm: "SHA1",
-    digits: 6,
-    period: 30,
-    secret: totpSecret,
-  });
-  const token = totp.generate();
-  cy.get("[name=totpToken]").type(token);
-  cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
-});
+Cypress.Commands.add("fillLoginFields", fillLoginFields);
 
-Cypress.Commands.add(
-  "fillLoginFields",
-  ({ email, password = defaultPassword, totpSecret }) => {
-    // Sign in with the existing inbox
-    cy.get('[name="login"]').type(email);
-    cy.get('[type="submit"]').click();
+Cypress.Commands.add("login", login);
 
-    cy.get('[name="password"]').type(password);
-    cy.get('[action="/users/sign-in"]  [type="submit"]')
-      .contains("S’identifier")
-      .click();
-
-    if (totpSecret) {
-      // redirect to the TOTP login page
-      cy.contains("Valider avec la double authentification");
-
-      cy.fillTotpFields(totpSecret);
-    }
-  },
-);
-
-Cypress.Commands.add("login", (email) => {
-  cy.fillLoginFields({ email, password: defaultPassword });
-});
-
-Cypress.Commands.add("mfaLogin", (email) => {
-  cy.fillLoginFields({
-    email,
-    password: defaultPassword,
-    totpSecret: defaultTotpSecret,
-  });
-});
+Cypress.Commands.add("mfaLogin", mfaLogin);
 
 function seeInFieldCommand(field: string, value: string) {
   return cy
