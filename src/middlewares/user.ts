@@ -22,6 +22,7 @@ import {
 } from "../managers/organization/join";
 import {
   getOrganizationById,
+  getOrganizationBySiret,
   getOrganizationsByUserId,
   selectOrganization,
 } from "../managers/organization/main";
@@ -45,6 +46,7 @@ import { getUserOrganizationLink } from "../repositories/organization/getters";
 import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { getFranceConnectUserInfo } from "../repositories/user";
+import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
 import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
@@ -340,7 +342,11 @@ export const checkUserHasAtLeastOneOrganizationMiddleware = (
           ),
         )
       ) {
-        return res.redirect("/users/join-organization");
+        return res.redirect(
+          addQueryParameters("/users/join-organization", {
+            siret_hint: req.session.siretHint,
+          }),
+        );
       }
 
       return next();
@@ -417,6 +423,25 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
       const selectedOrganizationId = await getSelectedOrganizationId(
         getUserFromAuthenticatedSession(req).id,
       );
+
+      if (selectedOrganizationId) {
+        if (!req.session.siretHint) {
+          return next();
+        }
+        const organization = await getOrganizationBySiret(
+          req.session.siretHint,
+        );
+        if (organization?.id === selectedOrganizationId) {
+          return next();
+        } else {
+          return res.redirect(
+            addQueryParameters("/users/select-organization", {
+              siret_hint: req.session.siretHint,
+            }),
+          );
+        }
+      }
+
       if (selectedOrganizationId) return next();
 
       const userOrganisations = await getOrganizationsByUserId(

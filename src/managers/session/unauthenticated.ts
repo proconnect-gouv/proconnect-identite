@@ -10,6 +10,14 @@ export const getAndRemoveLoginHintFromUnauthenticatedSession = (
   delete req.session.loginHint;
   return loginHint;
 };
+export const setSiretHintInUnauthenticatedSession = (
+  req: Request,
+  siretHint: string,
+) => {
+  req.session.siretHint = siretHint;
+
+  return siretHint;
+};
 export const setLoginHintInUnauthenticatedSession = (
   req: Request,
   loginHint: string,
