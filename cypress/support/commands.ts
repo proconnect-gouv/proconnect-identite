@@ -2,6 +2,7 @@
 
 import { checkA11y } from "./a11y/checkA11y";
 import {
+  fillAndSubmitTotpForm,
   fillLoginFields,
   fillTotpFields,
   login,
@@ -15,17 +16,17 @@ import "./webauthn";
 declare global {
   namespace Cypress {
     interface Chainable {
+      fillAndSubmitTotpForm: typeof fillAndSubmitTotpForm;
       fillLoginFields: typeof fillLoginFields;
       fillTotpFields: typeof fillTotpFields;
+      getByLabel: typeof getByLabelCommand;
+      getDescribed: typeof getDescribedCommand;
       login: typeof login;
       mfaLogin: typeof mfaLogin;
+      seed: typeof seed;
       seeInField: typeof seeInFieldCommand;
       setRequestedAcrs(requestedAcrs?: string[]): Chainable<void>;
-      getDescribed: typeof getDescribedCommand;
-      seed: typeof seed;
-      getByLabel: typeof getByLabelCommand;
       updateCustomParams: typeof updateCustomParams;
-      fillAndSubmitTotpForm: typeof fillAndSubmitTotpFormCommand;
       verifyEmail: typeof verifyEmailCommand;
     }
   }
@@ -110,24 +111,7 @@ function getByLabelCommand(text: string) {
 }
 Cypress.Commands.add("getByLabel", getByLabelCommand);
 
-function fillAndSubmitTotpFormCommand(action: string) {
-  return cy
-    .get("#humanReadableTotpKey")
-    .invoke("text")
-    .then((text) => {
-      const humanReadableTotpKey = text.trim().replace(/\s+/g, "");
-      const totp = new TOTP({
-        algorithm: "SHA1",
-        digits: 6,
-        period: 30,
-        secret: humanReadableTotpKey,
-      });
-      const token = totp.generate();
-      cy.get("[name=totpToken]").type(token);
-      cy.get(`[action="${action}"] [type="submit"]`).click();
-    });
-}
-Cypress.Commands.add("fillAndSubmitTotpForm", fillAndSubmitTotpFormCommand);
+Cypress.Commands.add("fillAndSubmitTotpForm", fillAndSubmitTotpForm);
 
 function verifyEmailCommand() {
   return cy
