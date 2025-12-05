@@ -1,6 +1,6 @@
 //
 
-import { InvalidCertificationError, NotFoundError } from "#src/errors";
+import { NotFoundError } from "#src/errors";
 import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
 import type { IdentityVector, Organization } from "#src/types";
 import type { ApiEntrepriseInfogreffeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
@@ -104,8 +104,14 @@ export function isOrganizationDirigeantFactory(
 
     const result = match_identity_to_dirigeant(identity, dirigeants);
 
-    if (result.kind === "no_candidates")
-      throw new InvalidCertificationError("No candidates found");
+    if (result.kind === "no_candidates") {
+      return {
+        details: { dirigeant: undefined, score: undefined, identity, source },
+        cause: result.kind,
+        ok: false,
+      };
+    }
+
     return {
       details: {
         ...result.closest,

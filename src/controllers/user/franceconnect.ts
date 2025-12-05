@@ -174,35 +174,37 @@ export function useFranceConnectLogoutMiddlewareFactory(
   };
 }
 
-export function getFranceConnectLogoutCallbackControllerFactory(
-  redirect_url: string,
+export async function getFranceConnectLogoutCallbackMiddleware(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
 ) {
-  return async function getFranceConnectLogoutCallbackController(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
-    try {
-      const query = await z
-        .object({ state: z.string() })
-        .safeParseAsync(req.query);
-      if (!query.success) {
-        throw new OidcError("invalid_state", "The query state is invalid", {
+  try {
+    const query = await z
+      .object({ state: z.string() })
+      .safeParseAsync(req.query);
+    if (!query.success) {
+      return next(
+        new OidcError("invalid_state", "The query state is invalid", {
           cause: query.error,
-        });
-      }
+        }),
+      );
+    }
 
-      const franceconnect_session = await FranceConnectOidcSessionSchema.pick({
-        state: true,
-      }).safeParseAsync(req.session);
-      if (!franceconnect_session.success) {
-        throw new OidcError("invalid_state", "The session state is invalid", {
+    const franceconnect_session = await FranceConnectOidcSessionSchema.pick({
+      state: true,
+    }).safeParseAsync(req.session);
+    if (!franceconnect_session.success) {
+      return next(
+        new OidcError("invalid_state", "The session state is invalid", {
           cause: franceconnect_session.error,
-        });
-      }
+        }),
+      );
+    }
 
-      if (franceconnect_session.data.state !== query.data.state) {
-        throw new OidcError(
+    if (franceconnect_session.data.state !== query.data.state) {
+      return next(
+        new OidcError(
           "invalid_state",
           "state mismatch between query and session",
           {
@@ -212,16 +214,16 @@ export function getFranceConnectLogoutCallbackControllerFactory(
               operator: "===",
             }),
           },
-        );
-      }
-
-      req.session.id_token_hint = undefined;
-      req.session.nonce = undefined;
-      req.session.state = undefined;
-
-      return res.redirect(redirect_url);
-    } catch (error) {
-      next(error);
+        ),
+      );
     }
-  };
+
+    req.session.id_token_hint = undefined;
+    req.session.nonce = undefined;
+    req.session.state = undefined;
+
+    return next();
+  } catch (error) {
+    next(error);
+  }
 }

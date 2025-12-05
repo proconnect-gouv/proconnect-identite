@@ -23,32 +23,6 @@ export const getWelcomeController = async (
     });
     updateUserInAuthenticatedSession(req, user);
 
-    if (req.session.certificationDirigeantRequested) {
-      const selectedOrganizationId = await getSelectedOrganizationId(
-        getUserFromAuthenticatedSession(req).id,
-      );
-      if (selectedOrganizationId === null) return next();
-      const userOrganisations = await getOrganizationById(
-        selectedOrganizationId,
-      );
-      if (!userOrganisations)
-        throw new NotFoundError("User in organization not found");
-
-      return res.render("user/welcome-executive", {
-        pageTitle: "Compte certifié",
-        csrfToken: csrfToken(req),
-        illustration: "illu-support.svg",
-        showInclusionConnectOnboardingHelp,
-        organization: { libelle: userOrganisations.cached_libelle },
-        user: {
-          email: user.email,
-          family_name: user.family_name,
-          given_name: user.given_name,
-          job: user.job,
-        },
-      });
-    }
-
     return res.render("user/welcome", {
       pageTitle: "Compte créé",
       csrfToken: csrfToken(req),
@@ -77,7 +51,8 @@ export const getWelcomeDirigeantController = async (
     const selectedOrganizationId = await getSelectedOrganizationId(
       getUserFromAuthenticatedSession(req).id,
     );
-    if (selectedOrganizationId === null) return next();
+    if (selectedOrganizationId === null)
+      throw new NotFoundError("Selected organization not found");
 
     const userOrganisations = await getOrganizationById(selectedOrganizationId);
     if (!userOrganisations)

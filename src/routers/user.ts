@@ -24,7 +24,7 @@ import {
 } from "../controllers/user/edit-moderation";
 import {
   getFranceConnectLoginCallbackMiddlewareFactory,
-  getFranceConnectLogoutCallbackControllerFactory,
+  getFranceConnectLogoutCallbackMiddleware,
   postFranceConnectLoginRedirectControllerFactory,
   useFranceConnectLogoutMiddlewareFactory,
 } from "../controllers/user/franceconnect";
@@ -366,9 +366,11 @@ export const userRouter = () => {
     "/personal-information/franceconnect/logout/callback",
     checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
-    getFranceConnectLogoutCallbackControllerFactory(
-      "/personal-information?notification=personal_information_update_via_franceconnect_success",
-    ),
+    getFranceConnectLogoutCallbackMiddleware,
+    (_req, res) =>
+      res.redirect(
+        "/personal-information?notification=personal_information_update_via_franceconnect_success",
+      ),
   );
 
   userRouter.get(
@@ -537,7 +539,8 @@ export const userRouter = () => {
   userRouter.get(
     "/franceconnect/logout/callback",
     checkUserCanAccessAdminMiddleware,
-    getFranceConnectLogoutCallbackControllerFactory(`${HOST}/oauth/logout`),
+    getFranceConnectLogoutCallbackMiddleware,
+    (_req, res) => res.redirect("/oauth/logout"),
   );
 
   userRouter.get(
@@ -571,9 +574,9 @@ export const userRouter = () => {
     "/certification-dirigeant/franceconnect/logout/callback",
     checkBrowserIsTrustedMiddleware,
     csrfProtectionMiddleware,
-    getFranceConnectLogoutCallbackControllerFactory(
-      "/users/select-organization",
-    ),
+    getFranceConnectLogoutCallbackMiddleware,
+    checkUserSignInRequirementsMiddleware,
+    issueSessionOrRedirectController,
   );
 
   userRouter.get(

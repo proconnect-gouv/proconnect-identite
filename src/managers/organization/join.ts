@@ -75,7 +75,7 @@ import {
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
-import { isOrganizationDirigeant } from "../certification";
+import { performCertificationDirigeant } from "../certification";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
 
 export const doSuggestOrganizations = async ({
@@ -214,7 +214,7 @@ export const joinOrganization = async ({
   }
 
   if (certificationRequested) {
-    const { cause, details, ok } = await isOrganizationDirigeant(
+    const { cause, details, ok } = await performCertificationDirigeant(
       organization,
       user_id,
     );

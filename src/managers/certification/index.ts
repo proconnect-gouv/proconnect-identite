@@ -8,7 +8,7 @@ import { getFranceConnectUserInfo } from "../../repositories/user";
 
 //
 
-export const isOrganizationDirigeant = isOrganizationDirigeantFactory({
+export const performCertificationDirigeant = isOrganizationDirigeantFactory({
   ApiEntrepriseInfogreffeRepository,
   FranceConnectApiRepository: { getFranceConnectUserInfo },
   InseeApiRepository: { findBySiren: InseeApiRepository.findBySiren },
