@@ -62,6 +62,13 @@ export class AccessRestrictedToPublicServiceEmailError extends Error {
   }
 }
 
+export class AccessRestrictedToPrivateServiceEmailError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "AccessRestrictedToPrivateServiceEmailError";
+  }
+}
+
 export class DomainRestrictedError extends Error {
   constructor(
     public organizationId: number,

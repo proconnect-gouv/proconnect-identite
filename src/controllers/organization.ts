@@ -13,6 +13,7 @@ import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { z, ZodError } from "zod";
 import {
+  AccessRestrictedToPrivateServiceEmailError,
   AccessRestrictedToPublicServiceEmailError,
   DomainRestrictedError,
   ForbiddenError,
@@ -160,6 +161,10 @@ export const postJoinOrganizationMiddleware = async (
 
     if (error instanceof AccessRestrictedToPublicServiceEmailError) {
       return res.redirect(`/users/access-restricted-to-public-sector-email`);
+    }
+
+    if (error instanceof AccessRestrictedToPrivateServiceEmailError) {
+      return res.redirect(`/users/access-restricted-to-private-sector-email`);
     }
 
     if (error instanceof DomainRestrictedError) {
@@ -364,6 +369,18 @@ export async function getAccessRestrictedToPublicSectorEmailController(
   _next: NextFunction,
 ) {
   return res.render("user/access-restricted-to-public-sector-email", {
+    csrfToken: csrfToken(req),
+    illustration: "connection-lost.svg",
+    pageTitle: "Email non autorisé",
+  });
+}
+
+export async function getAccessRestrictedToPrivateSectorEmailController(
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  return res.render("user/access-restricted-to-private-sector-email", {
     csrfToken: csrfToken(req),
     illustration: "connection-lost.svg",
     pageTitle: "Email non autorisé",
