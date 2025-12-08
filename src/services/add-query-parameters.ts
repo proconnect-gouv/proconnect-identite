@@ -2,19 +2,22 @@ const addQueryParameters = (
   uri: string,
   params: Record<string, string | undefined>,
 ) => {
-  let isThereAtLeastOneTruthyParam = false;
-  for (const [key, value] of Object.entries(params)) {
-    if (!!value) {
-      if (isThereAtLeastOneTruthyParam) {
-        uri += "&";
-      } else {
-        uri += "?";
-        isThereAtLeastOneTruthyParam = true;
-      }
-      uri += `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-    }
+  const filteredParams = Object.entries(params).filter(([, value]) => !!value);
+
+  if (filteredParams.length === 0) {
+    return uri;
   }
-  return uri;
+
+  const objParams = filteredParams.reduce(
+    (acc, [key, value]) => {
+      acc[key] = value as string;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  const searchParams = new URLSearchParams(objParams);
+  return `${uri}?${searchParams.toString()}`;
 };
 
 export { addQueryParameters };
