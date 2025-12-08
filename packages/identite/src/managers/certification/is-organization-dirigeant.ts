@@ -49,7 +49,8 @@ async function getMandatairesSociaux(
       dirigeants,
       source: SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"],
     };
-  } catch {
+  } catch (error) {
+    console.error(error);
     const mandataires =
       await ApiEntrepriseInfogreffeRepository.findMandatairesSociauxBySiren(
         siren,
@@ -106,7 +107,7 @@ export function isOrganizationDirigeantFactory(
 
     if (result.kind === "no_candidates") {
       return {
-        details: { dirigeant: undefined, score: undefined, identity, source },
+        details: { dirigeant: undefined, identity, matches: new Set(), source },
         cause: result.kind,
         ok: false,
       };
@@ -143,12 +144,12 @@ function match_identity_to_dirigeant(
   const [closest] = dirigeants
     .map((dirigeant) => ({
       dirigeant,
-      score: certificationScore(identity, dirigeant),
+      matches: certificationScore(identity, dirigeant),
     }))
-    .toSorted((a, b) => b.score - a.score); // Sort by score descending (higher is better)
+    .toSorted((a, b) => b.matches.size - a.matches.size); // Sort by score descending (higher is better)
 
   // According to the specification, only score of 5 (perfect match) is certified
-  return match(closest.score)
+  return match(closest.matches.size)
     .with(5, () => ({
       kind: "exact_match" as const,
       closest,

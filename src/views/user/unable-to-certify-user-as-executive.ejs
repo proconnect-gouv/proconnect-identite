@@ -5,21 +5,92 @@
   <h1 class="fr-h2">Nous n’arrivons pas à certifier votre compte.</h1>
 
   <div>
+    <% if (locals.matches) { %>
     <div class="fr-alert fr-alert--error fr-mb-2w">
       <p class="fr-alert__title">
-        La catégorie juridique de votre entreprise n’appartient pas au champ
-        ProConnect
-      </p>
-
-      <p>
-        Actuellement le service ProConnect ne couvre pas l’intégralité des
-        entreprises.
-      </p>
-      <p>
-        Nous vous invitons à utiliser un autre moyen de certification proposé
-        par le portail de services publics.
+        Les informations de votre identité ne correspondent pas exactement aux registres officiels.
       </p>
     </div>
+
+    <p>
+      Certaines informations transmises par FranceConnect ne correspondent pas
+      à celles du registre des dirigeants.
+    </p>
+
+    <p>
+      Prénom <%= locals.matches.has("first_name") ? "✅" : "❌"%><br/>
+      <b><%= user_info.given_name; %></b>
+    </p>
+    <p>
+      Nom <%= locals.matches.has("family_name") ? "✅" : "❌"%><br/>
+      <b><%= user_info.family_name; %></b>
+    </p>
+
+    <% if (user_info.gender) { %>
+    <p>
+      Genre <%= locals.matches.has("gender") ? "✅" : "❌"%><br/>
+      <b><%- include('../partials/gender.ejs', {gender: user_info.gender}) %></b>
+    </p>
+    <% } %>
+
+    <p>
+      Date de naissance <%= locals.matches.has("birth_date") ? "✅" : "❌"%><br/>
+      <b>
+        <time
+          datetime="<%= new Date(user_info.birthdate).toISOString() %>"
+          title="<%= user_info.birthdate %>">
+          <%= new Date(user_info.birthdate).toLocaleDateString("fr-FR"); %>
+        </time>
+      </b>
+    </p>
+
+    <p>
+      Commune de naissance <%= locals.matches.has("birth_place") ? "✅" : "❌"%><br/>
+      <b><%= user_info.birthplace; %></b>
+    </p>
+
+    <p>
+      Si une information est incorrecte ou si vous pensez que les données du
+      registre ne sont pas à jour,
+      <a
+        href="https://proconnect.crisp.help/fr/"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        consultez notre aide
+      </a>
+    </p>
+
+    <% } else { %>
+
+    <div class="fr-alert fr-alert--error fr-mb-2w">
+      <p class="fr-alert__title">
+        Nous ne trouvons pas de dirigeant correspondant à votre identité pour cette entreprise.
+      </p>
+    </div>
+
+    <p>
+      <a
+        href="https://annuaire-entreprises.data.gouv.fr/entreprises/liste"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Vérifiez la liste des dirigeants sur l'Annuaire des Entreprises
+      </a>
+    </p>
+
+    <p>
+      Si vous ne figurez pas dans la liste ou si une information est incorrecte.
+      <a
+        href="https://proconnect.crisp.help/fr/"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Consultez notre aide
+      </a>
+    </p>
+
+    <% } %>
 
     <% if (locals.interactionId && locals.oidcError) { %>
     <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--secondary">Continuer</a>
