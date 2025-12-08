@@ -32,6 +32,7 @@ import {
 import {
   AccessRestrictedToPublicServiceEmailError,
   DomainRestrictedError,
+  GouvFrDomainsForbiddenForPrivateOrg,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -245,6 +246,10 @@ export const joinOrganization = async ({
       user_id,
       verification_type: "organization_dirigeant",
     });
+  }
+
+  if (domain.endsWith("gouv.fr") && !isPublicService(organization)) {
+    throw new GouvFrDomainsForbiddenForPrivateOrg();
   }
 
   if (isEntrepriseUnipersonnelle(organization)) {
