@@ -409,12 +409,69 @@ export const checkUserTwoFactorAuthForAdminMiddleware = (
 export const checkUserCanAccessAdminMiddleware =
   checkUserTwoFactorAuthForAdminMiddleware;
 
+const checkUserBelongsToHintedOrganizationMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  checkUserHasAtLeastOneOrganizationMiddleware(req, res, async (error) => {
+    try {
+      if (error) {
+        return next(error);
+      }
+
+      if (!req.session.siretHint) {
+        return next();
+      }
+      const hintedOrganization = await getOrganizationBySiret(
+        req.session.siretHint,
+      );
+
+      if (!hintedOrganization) {
+        return next(
+          new Error(
+            `Organization with SIRET "${req.session.siretHint}" not found`,
+          ),
+        );
+      }
+
+      const selectedOrganizationId = await getSelectedOrganizationId(
+        getUserFromAuthenticatedSession(req).id,
+      );
+
+      if (selectedOrganizationId === hintedOrganization.id) {
+        return next();
+      }
+
+      const userOrganisations = await getOrganizationsByUserId(
+        getUserFromAuthenticatedSession(req).id,
+      );
+
+      if (userOrganisations.some((org) => org.id === hintedOrganization.id)) {
+        await selectOrganization({
+          user_id: getUserFromAuthenticatedSession(req).id,
+          organization_id: hintedOrganization.id,
+        });
+        return next();
+      } else {
+        return res.redirect(
+          addQueryParameters("/users/join-organization", {
+            siret_hint: req.session.siretHint,
+          }),
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+};
+
 export const checkUserHasSelectedAnOrganizationMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserHasAtLeastOneOrganizationMiddleware(req, res, async (error) => {
+  checkUserBelongsToHintedOrganizationMiddleware(req, res, async (error) => {
     try {
       if (error) return next(error);
       if (!req.session.mustReturnOneOrganizationInPayload) return next();
@@ -424,24 +481,8 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
       );
 
       if (selectedOrganizationId) {
-        if (!req.session.siretHint) {
-          return next();
-        }
-        const organization = await getOrganizationBySiret(
-          req.session.siretHint,
-        );
-        if (organization?.id === selectedOrganizationId) {
-          return next();
-        } else {
-          return res.redirect(
-            addQueryParameters("/users/select-organization", {
-              siret_hint: req.session.siretHint,
-            }),
-          );
-        }
+        return next();
       }
-
-      if (selectedOrganizationId) return next();
 
       const userOrganisations = await getOrganizationsByUserId(
         getUserFromAuthenticatedSession(req).id,

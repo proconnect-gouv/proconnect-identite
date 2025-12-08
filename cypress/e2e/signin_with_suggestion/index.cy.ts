@@ -1,7 +1,7 @@
 //
 
 describe("sign-in with suggestion", () => {
-  it.only("should seed the database once", function () {
+  it("should seed the database once", function () {
     cy.seed();
   });
 
@@ -72,7 +72,7 @@ describe("sign-in with suggestion", () => {
     cy.get('input[name="siret"]').should("have.value", "21340126800130");
   });
 
-  it.only("should sign-in with password with siret_hint with multiple organizations and be suggested corresponding organization if not already present", function () {
+  it("should sign-in with password with siret_hint with multiple organizations and be suggested corresponding organization if not already present", function () {
     cy.visit("http://localhost:4001");
     cy.updateCustomParams((customParams) => ({
       ...customParams,
