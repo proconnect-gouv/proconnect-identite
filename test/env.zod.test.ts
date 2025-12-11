@@ -57,7 +57,6 @@ describe("env.zod", () => {
       DEPLOY_ENV: "localhost",
       DIRTY_DS_REDIRECTION_URL:
         "https://www.demarches-simplifiees.fr/agent_connect/logout_from_mcp",
-      EMAIL_DELIVERABILITY_WHITELIST: [],
       ENTREPRISE_API_TOKEN: "🎭 Mocked Entreprise Api Token",
       ENTREPRISE_API_TRACKING_CONTEXT: "ProConnect Identité",
       ENTREPRISE_API_TRACKING_RECIPIENT: "13002526500013",

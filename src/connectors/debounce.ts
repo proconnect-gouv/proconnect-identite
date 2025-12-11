@@ -1,8 +1,6 @@
-import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { singleValidationFactory } from "@proconnect-gouv/proconnect.debounce/api";
 import {
   DEBOUNCE_API_KEY,
-  EMAIL_DELIVERABILITY_WHITELIST,
   FEATURE_CHECK_EMAIL_DELIVERABILITY,
   HTTP_CLIENT_TIMEOUT,
 } from "../config/env";
@@ -22,13 +20,6 @@ export const isEmailSafeToSendTransactional = async (
 ): Promise<EmailDebounceInfo> => {
   if (!FEATURE_CHECK_EMAIL_DELIVERABILITY) {
     logger.info(`Email address "${email}" not verified.`);
-
-    return { isEmailSafeToSend: true };
-  }
-
-  const domain = getEmailDomain(email);
-  if (EMAIL_DELIVERABILITY_WHITELIST.includes(domain)) {
-    logger.info(`Email address "${email}" is whitelisted.`);
 
     return { isEmailSafeToSend: true };
   }

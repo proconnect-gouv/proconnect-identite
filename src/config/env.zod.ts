@@ -147,7 +147,6 @@ export const paramsEnvSchema = z.object({
     .default(
       "https://www.demarches-simplifiees.fr/agent_connect/logout_from_mcp",
     ),
-  EMAIL_DELIVERABILITY_WHITELIST: zCoerceArray().default([]),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
