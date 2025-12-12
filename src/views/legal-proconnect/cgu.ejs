@@ -1,4 +1,4 @@
-<div class="fr-container fr-my-5w">   
+<div class="fr-container fr-my-5w">
     <h1>Conditions Générales d'Utilisation</h1>
     <h2>Table des matières</h2>
     <ul>
@@ -90,6 +90,12 @@
                         <li>L'utilisateur est ensuite directement lié à l'organisation.</li>
                     </ul>
                 </li>
+                <li><strong>Pour une association de moins de 50 salariés</strong> :
+                    <ul>
+                        <li>Si l'email de l'utilisateur ne provient pas d'un fournisseur d'email gratuit, le domaine de cet email est ajouté à la liste des domaines autorisés de l'organisation.</li>
+                        <li>L'utilisateur est ensuite directement lié à l'organisation.</li>
+                    </ul>
+                </li>
                 <li><strong>Pour une collectivité territoriale (hors Éducation nationale)</strong> :
                     <ul>
                         <li>L'adresse email officielle de la collectivité est récupérée.</li>
@@ -112,7 +118,7 @@
             <ul>
                 <li>Si le domaine de l'email de l'utilisateur est déjà vérifié, il est directement associé.</li>
                 <li>Si le domaine de l'email de l'utilisateur est autorisé de manière externe, il est lié comme utilisateur externe.</li>
-                <li>Si le domaine de l'email de l'utilisateur est simplement autorisé, une demande de modération est créée, et il est lié temporairement.</li>
+                <li>Si le domaine de l'email de l'utilisateur est importé d'un partenaire externe, le compte est lié temporairement et modéré a posteriori.</li>
             </ul>
         </li>
         <li><strong>Modération</strong> : Si aucune des étapes ci-dessus n'aboutit à une association automatique, une demande de modération est créée. L'utilisateur reçoit alors un email l'informant de cette situation et un agent de la fonction publique examine la demande.</li>
