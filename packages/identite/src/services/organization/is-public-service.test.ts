@@ -81,7 +81,7 @@ describe("isPublicService", () => {
 
   it("should return true for whitelisted SIREN even with non-public nature juridique", () => {
     const whitelisted_siren_org = {
-      siret: "13003013300123",
+      siret: "33465403500123",
       cached_categorie_juridique: "5599", // Non-public nature juridique
       cached_etat_administratif: "A",
     } as Organization;
