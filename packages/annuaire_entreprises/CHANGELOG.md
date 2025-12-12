@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.annuaire_entreprises
 
+## 1.1.3
+
+### Patch Changes
+
+- [#1615](https://github.com/proconnect-gouv/proconnect-identite/pull/1615) [`b1a2289`](https://github.com/proconnect-gouv/proconnect-identite/commit/b1a22894a95b627e4e71469bb5d0572ea9a5c884) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour des données annuaire entreprises depuis search-infra@12f4c78
+
 ## 1.1.2
 
 ### Patch Changes
