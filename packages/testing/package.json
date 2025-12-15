@@ -24,7 +24,7 @@
     "test:unit": "tsx --test --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.4",
+    "@hono/node-server": "^1.19.7",
     "@hono/zod-validator": "^0.7.2",
     "@proconnect-gouv/proconnect.api_entreprise": "1.1.0",
     "hono": "^4.10.2"
