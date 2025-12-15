@@ -8,6 +8,7 @@ import {
   LeakedPasswordError,
   WeakPasswordError,
 } from "../../config/errors";
+import { getAnnuaireServicePublicContactEmail } from "../../connectors/api-annuaire-service-public";
 import { createAuthenticatedSession } from "../../managers/session/authenticated";
 import {
   getAndRemoveLoginHintFromUnauthenticatedSession,
@@ -38,6 +39,11 @@ export const getStartSignInController = async (
   next: NextFunction,
 ) => {
   try {
+    const contactTest = await getAnnuaireServicePublicContactEmail(
+      "50099",
+      "50480",
+    );
+    console.log(contactTest);
     // Bypass email submission when a login hint is provided in the interaction
     const hintFromOidcInteraction =
       getAndRemoveLoginHintFromUnauthenticatedSession(req);

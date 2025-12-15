@@ -6,6 +6,7 @@ import { getAnnuaireServicePublicContactEmail } from "../src/connectors/api-annu
 import invalidCogData from "./api-annuaire-service-public-data/invalid-cog.json";
 import multiEmailsMarieData from "./api-annuaire-service-public-data/multi-emails-marie.json";
 import oneMairieData from "./api-annuaire-service-public-data/one-mairie.json";
+import regroupingMairie from "./api-annuaire-service-public-data/regrouping-mairie.json";
 import twoMairiesData from "./api-annuaire-service-public-data/two-mairies.json";
 
 describe("getAnnuaireServicePublicContactEmail", () => {
@@ -29,6 +30,17 @@ describe("getAnnuaireServicePublicContactEmail", () => {
     assert.equal(
       await getAnnuaireServicePublicContactEmail("15014", "15000"),
       "administration@aurillac.fr",
+    );
+  });
+  it("should return a valid email for carentan", async () => {
+    nock("https://api-lannuaire.service-public.fr")
+      .get(
+        `/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "50099" and pivot LIKE "mairie"`,
+      )
+      .reply(200, regroupingMairie);
+    assert.equal(
+      await getAnnuaireServicePublicContactEmail("50099", "50480"),
+      "mairie.houesville@wanadoo.fr",
     );
   });
   it("should return valid email for two mairies with the same Code Officiel Geographique", async () => {
