@@ -46,7 +46,7 @@
   position: absolute;
 }
 
-/* Inspied by `.fr-input:disabled` from the dsfr */
+/* Inspired by `.fr-input:disabled` from the DSFR */
 input[readonly] {
   color: var(--text-disabled-grey);
   box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
