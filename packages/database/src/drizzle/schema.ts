@@ -14,41 +14,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const users_oidc_clients = pgTable(
-  "users_oidc_clients",
-  {
-    user_id: integer().notNull(),
-    oidc_client_id: integer().notNull(),
-    created_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-    updated_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-    id: serial().primaryKey().notNull(),
-    organization_id: integer(),
-  },
-  (table) => [
-    foreignKey({
-      columns: [table.user_id],
-      foreignColumns: [users.id],
-      name: "users_oidc_clients_user_id_fkey",
-    })
-      .onUpdate("cascade")
-      .onDelete("cascade"),
-    foreignKey({
-      columns: [table.oidc_client_id],
-      foreignColumns: [oidc_clients.id],
-      name: "users_oidc_clients_oidc_client_id_fkey",
-    })
-      .onUpdate("cascade")
-      .onDelete("cascade"),
-    foreignKey({
-      columns: [table.organization_id],
-      foreignColumns: [organizations.id],
-      name: "users_oidc_clients_organization_id_fkey",
-    })
-      .onUpdate("cascade")
-      .onDelete("set null"),
-  ],
-);
-
 export const authenticators = pgTable(
   "authenticators",
   {
@@ -243,6 +208,43 @@ export const franceconnect_userinfo = pgTable(
       foreignColumns: [users.id],
       name: "franceconnect_userinfo_user_id_fkey",
     }).onDelete("cascade"),
+  ],
+);
+
+export const users_oidc_clients = pgTable(
+  "users_oidc_clients",
+  {
+    user_id: integer().notNull(),
+    oidc_client_id: integer().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    id: serial().primaryKey().notNull(),
+    organization_id: integer(),
+    sp_name: varchar(),
+    user_ip_address: varchar(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.user_id],
+      foreignColumns: [users.id],
+      name: "users_oidc_clients_user_id_fkey",
+    })
+      .onUpdate("cascade")
+      .onDelete("cascade"),
+    foreignKey({
+      columns: [table.oidc_client_id],
+      foreignColumns: [oidc_clients.id],
+      name: "users_oidc_clients_oidc_client_id_fkey",
+    })
+      .onUpdate("cascade")
+      .onDelete("cascade"),
+    foreignKey({
+      columns: [table.organization_id],
+      foreignColumns: [organizations.id],
+      name: "users_oidc_clients_organization_id_fkey",
+    })
+      .onUpdate("cascade")
+      .onDelete("set null"),
   ],
 );
 
