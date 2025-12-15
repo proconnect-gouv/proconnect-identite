@@ -50,3 +50,9 @@ a.btn--danger:not([href]) {
   justify-content: center !important;
   width: 100% !important;
 }
+
+/* see https://docs.partenaires.franceconnect.gouv.fr/fs/fs-integration/integration-bouton-fc/ */
+.fr-connect {
+  width: 209px;
+  height: 56px;
+}
