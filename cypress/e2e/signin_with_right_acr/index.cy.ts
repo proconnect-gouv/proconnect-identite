@@ -175,17 +175,14 @@ describe("sign-in with a client requiring certification dirigeant and consistenc
 });
 
 describe("sign-in with a client requiring eidas1", () => {
-  it("should return an error with no self asserted acr", function () {
+  it("should sign-in an return the eidas1 acr value", function () {
     cy.visit("http://localhost:4000");
-    cy.updateCustomParams((customParams) => ({
-      ...customParams,
-      acr_values: "eidas1",
-    }));
+    cy.setRequestedAcrs(["eidas1"]);
 
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial1-aal1@yopmail.com");
 
-    cy.contains('"acr": "https://proconnect.gouv.fr/assurance/self-asserted",');
+    cy.contains("none of the requested ACRs could be obtained");
   });
 });

@@ -62,7 +62,6 @@ describe("env.zod", () => {
       ENTREPRISE_API_TRACKING_RECIPIENT: "13002526500013",
       ENTREPRISE_API_URL:
         "http://localhost:3000/___testing___/entreprise.api.gouv.fr",
-      FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: false,
       FEATURE_AUTHENTICATE_BROWSER: false,
       FEATURE_CHECK_EMAIL_DELIVERABILITY: false,
       FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE: false,

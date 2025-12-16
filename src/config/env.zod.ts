@@ -68,7 +68,6 @@ export const connectorEnvSchema = z.object({
 });
 
 export const featureTogglesEnvSchema = z.object({
-  FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR: zodTrueFalseBoolean().default(false),
   FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default(false),
   FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default(false),
   FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default(false),

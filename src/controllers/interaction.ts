@@ -2,7 +2,6 @@ import type { NextFunction, Request, Response } from "express";
 import { AssertionError } from "node:assert";
 import Provider, { errors } from "oidc-provider";
 import { z } from "zod";
-import { FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR } from "../config/env";
 import { OidcError } from "../config/errors";
 import {
   getCurrentAcr,
@@ -100,10 +99,16 @@ export const interactionEndControllerFactory =
         ? epochTime(user.last_sign_in_at)
         : undefined;
 
-      const { prompt } = await oidcProvider.interactionDetails(req, res);
+      const { prompt, params } = await oidcProvider.interactionDetails(
+        req,
+        res,
+      );
 
+      // Previously, OIDC clients were required to include `acr_values=eidas1` as a query parameter in the /authorize request.
+      // Some clients may still expect the returned ACR to be "eidas1" for successful authentication.
+      // We maintain this legacy behavior until all OIDC clients have been properly migrated.
       if (
-        FEATURE_ALWAYS_RETURN_EIDAS1_FOR_ACR &&
+        params?.["acr_values"] === "eidas1" &&
         !isThereAnyRequestedAcr(prompt)
       ) {
         currentAcr = "eidas1";
