@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import HttpErrors from "http-errors";
 import { AssertionError } from "node:assert";
 import Provider, { errors } from "oidc-provider";
 import { z } from "zod";
@@ -10,7 +11,10 @@ import {
   isWithinAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { clearInteractionSession } from "../managers/session/interaction";
-import { setLoginHintInUnauthenticatedSession } from "../managers/session/unauthenticated";
+import {
+  setLoginHintInUnauthenticatedSession,
+  setSiretHintInUnauthenticatedSession,
+} from "../managers/session/unauthenticated";
 import { findByClientId } from "../repositories/oidc-client";
 import {
   certificationDirigeantRequested,
@@ -18,7 +22,7 @@ import {
   isThereAnyRequestedAcr,
   twoFactorsAuthRequested,
 } from "../services/acr-checks";
-import { oidcErrorSchema } from "../services/custom-zod-schemas";
+import { oidcErrorSchema, siretSchema } from "../services/custom-zod-schemas";
 import epochTime from "../services/epoch-time";
 import { mustReturnOneOrganizationInPayload } from "../services/must-return-one-organization-in-payload";
 
@@ -31,7 +35,7 @@ export const interactionStartControllerFactory =
         params,
         prompt,
       } = await oidcProvider.interactionDetails(req, res);
-      const { client_id, login_hint, scope, sp_name } =
+      const { client_id, login_hint, siret_hint, scope, sp_name } =
         params as OIDCContextParams;
 
       req.session.certificationDirigeantRequested =
@@ -48,6 +52,18 @@ export const interactionStartControllerFactory =
 
       if (login_hint) {
         setLoginHintInUnauthenticatedSession(req, login_hint);
+      }
+
+      if (siret_hint) {
+        const result = siretSchema().safeParse(siret_hint);
+        if (!result.success) {
+          return next(
+            new HttpErrors.BadRequest(
+              `Siret_hint ${siret_hint} is not valid (should be 14 digits)`,
+            ),
+          );
+        }
+        setSiretHintInUnauthenticatedSession(req, siret_hint);
       }
 
       if (prompt.name === "login" && prompt.reasons.includes("login_prompt")) {

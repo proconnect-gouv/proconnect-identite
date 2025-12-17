@@ -7,6 +7,7 @@ import {
   deleteEmailDomainsByVerificationTypes,
 } from "../../repositories/email-domain";
 import {
+  findBySiret,
   findByUserId,
   findById as findOrganizationById,
   findPendingByUserId,
@@ -20,6 +21,7 @@ import { setSelectedOrganizationId } from "../../repositories/redis/selected-org
 
 export const getOrganizationsByUserId = findByUserId;
 export const getOrganizationById = findOrganizationById;
+export const getOrganizationBySiret = findBySiret;
 export const getUserOrganizations = async (
   userId: number,
 ): Promise<{
