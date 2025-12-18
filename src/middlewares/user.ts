@@ -79,19 +79,15 @@ function chain(first: Middleware, second: Middleware): Middleware {
   };
 }
 
-const nop: Middleware = async (_req, _res, next) => next();
+export const checkIsUser: Middleware = async (req, _res, next) => {
+  if (usesAuthHeaders(req)) {
+    throw new HttpErrors.Forbidden(
+      "Access denied. The requested resource does not require authentication.",
+    );
+  }
 
-export const checkIsUser = chain(
-  nop,
-  async (req, _res, next) => {
-    if (usesAuthHeaders(req)) {
-      throw new HttpErrors.Forbidden(
-        "Access denied. The requested resource does not require authentication.",
-      );
-    }
-
-    return next();
-  });
+  return next();
+};
 
 // redirect user to start sign in page if no email is available in session
 export const checkEmailInSessionMiddleware = chain(
