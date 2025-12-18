@@ -207,12 +207,12 @@ export const checkUserIsVerifiedMiddleware = async (
     return next();
   }));
 
-export const checkUserTwoFactorAuthMiddleware = (
+export const checkUserTwoFactorAuthMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  checkUserIsVerifiedMiddleware(req, res, errWrap(next, async ()=> {
+  await checkUserIsVerifiedMiddleware(req, res, errWrap(next, async ()=> {
     try {
       const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -239,12 +239,12 @@ export const checkUserTwoFactorAuthMiddleware = (
   }));
 };
 
-export const checkBrowserIsTrustedMiddleware = (
+export const checkBrowserIsTrustedMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserTwoFactorAuthMiddleware(req, res, errWrap(next, async ()=> {
+  await checkUserTwoFactorAuthMiddleware(req, res, errWrap(next, async ()=> {
     const is_browser_trusted = isBrowserTrustedForUser(req);
 
     if (!is_browser_trusted) {
@@ -256,12 +256,12 @@ export const checkBrowserIsTrustedMiddleware = (
     return next();
   }));
 
-export const checkUserIsFranceConnectedMiddleware = (
+export const checkUserIsFranceConnectedMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkBrowserIsTrustedMiddleware(req, res, errWrap(next, async ()=> {
+  await checkBrowserIsTrustedMiddleware(req, res, errWrap(next, async ()=> {
     if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
 
     const { certificationDirigeantRequested: isRequested } =
@@ -276,12 +276,12 @@ export const checkUserIsFranceConnectedMiddleware = (
     return res.redirect("/users/certification-dirigeant");
   }));
 
-export const checkUserHasPersonalInformationsMiddleware = (
+export const checkUserHasPersonalInformationsMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserIsFranceConnectedMiddleware(req, res, errWrap(next, async ()=> {
+  await checkUserIsFranceConnectedMiddleware(req, res, errWrap(next, async ()=> {
     const { given_name, family_name } = getUserFromAuthenticatedSession(req);
     if (isEmpty(given_name) || isEmpty(family_name)) {
       return res.redirect("/users/personal-information");
@@ -290,12 +290,12 @@ export const checkUserHasPersonalInformationsMiddleware = (
     return next();
   }));
 
-export const checkUserHasAtLeastOneOrganizationMiddleware = (
+export const checkUserHasAtLeastOneOrganizationMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserHasPersonalInformationsMiddleware(req, res, errWrap(next, async ()=> {
+  await checkUserHasPersonalInformationsMiddleware(req, res, errWrap(next, async ()=> {
     if (
       isEmpty(
         await getOrganizationsByUserId(
@@ -316,12 +316,12 @@ export const checkUserHasAtLeastOneOrganizationMiddleware = (
 export const checkUserCanAccessAppMiddleware =
   checkUserHasAtLeastOneOrganizationMiddleware;
 
-export const checkUserHasLoggedInRecentlyMiddleware = (
+export const checkUserHasLoggedInRecentlyMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserCanAccessAppMiddleware(req, res, errWrap(next, async ()=> {
+  await checkUserCanAccessAppMiddleware(req, res, errWrap(next, async ()=> {
     const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
     if (!hasLoggedInRecently) {
@@ -333,12 +333,12 @@ export const checkUserHasLoggedInRecentlyMiddleware = (
     next();
   }));
 
-export const checkUserTwoFactorAuthForAdminMiddleware = (
+export const checkUserTwoFactorAuthForAdminMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserHasLoggedInRecentlyMiddleware(req, res, errWrap(next, async ()=> {
+  await checkUserHasLoggedInRecentlyMiddleware(req, res, errWrap(next, async ()=> {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     if (
@@ -392,12 +392,12 @@ const checkUserBelongsToHintedOrganizationMiddleware = async (
   }));
 };
 
-export const checkUserHasSelectedAnOrganizationMiddleware = (
+export const checkUserHasSelectedAnOrganizationMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserBelongsToHintedOrganizationMiddleware(req, res, errWrap(next, async ()=> {
+  await checkUserBelongsToHintedOrganizationMiddleware(req, res, errWrap(next, async ()=> {
     if (!req.session.mustReturnOneOrganizationInPayload) return next();
 
     const selectedOrganizationId = await getSelectedOrganizationId(
@@ -426,12 +426,12 @@ export const checkUserHasSelectedAnOrganizationMiddleware = (
     return res.redirect("/users/select-organization");
   }));
 
-export function checkUserPassedCertificationDirigeant(
+export const checkUserPassedCertificationDirigeant = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) {
-  return checkUserHasSelectedAnOrganizationMiddleware(req, res, errWrap(next, async ()=> {
+) => {
+  await checkUserHasSelectedAnOrganizationMiddleware(req, res, errWrap(next, async ()=> {
     if (!req.session.mustReturnOneOrganizationInPayload) return next();
 
     if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
@@ -510,12 +510,12 @@ export function checkUserPassedCertificationDirigeant(
   }));
 }
 
-export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware = (
+export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserPassedCertificationDirigeant(req, res, errWrap(next, async ()=> {
+  await checkUserPassedCertificationDirigeant(req, res, errWrap(next, async ()=> {
     const userOrganisations = await getOrganizationsByUserId(
       getUserFromAuthenticatedSession(req).id,
     );
@@ -551,12 +551,12 @@ export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware = (
 
 ///
 
-export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = (
+export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) =>
-  checkUserHasNoPendingOfficialContactEmailVerificationMiddleware(req, res, errWrap(next, async ()=> {
+  await checkUserHasNoPendingOfficialContactEmailVerificationMiddleware(req, res, errWrap(next, async ()=> {
     const userOrganisations = await getOrganizationsByUserId(
       getUserFromAuthenticatedSession(req).id,
     );
