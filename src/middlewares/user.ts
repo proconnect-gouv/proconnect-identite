@@ -60,11 +60,7 @@ const getReferrerPath = (req: Request) => {
   return originPath || referrerPath || undefined;
 };
 
-type Middleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => void;
+type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
 function chain(first: Middleware, second: Middleware): Middleware {
   return (req, res, next) => {
@@ -97,7 +93,8 @@ export const checkEmailInSessionMiddleware = chain(
       return res.redirect(`/users/start-sign-in`);
     }
     return next();
-  });
+  },
+);
 
 // redirect user to inclusionconnect welcome page if needed
 export const checkUserHasSeenInclusionconnectWelcomePage = chain(
@@ -111,7 +108,8 @@ export const checkUserHasSeenInclusionconnectWelcomePage = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkCredentialPromptRequirementsMiddleware =
   checkUserHasSeenInclusionconnectWelcomePage;
@@ -139,7 +137,8 @@ export const checkUserIsConnectedMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkUserHasConnectedRecentlyMiddleware = chain(
   checkUserIsConnectedMiddleware,
@@ -153,7 +152,8 @@ export const checkUserHasConnectedRecentlyMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkUserIsVerifiedMiddleware = chain(
   checkUserIsConnectedMiddleware,
@@ -185,7 +185,8 @@ export const checkUserIsVerifiedMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkUserTwoFactorAuthMiddleware = chain(
   checkUserIsVerifiedMiddleware,
@@ -213,7 +214,8 @@ export const checkUserTwoFactorAuthMiddleware = chain(
       throw error;
     }
     return next();
-  });
+  },
+);
 
 export const checkBrowserIsTrustedMiddleware = chain(
   checkUserTwoFactorAuthMiddleware,
@@ -227,7 +229,8 @@ export const checkBrowserIsTrustedMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkUserIsFranceConnectedMiddleware = chain(
   checkBrowserIsTrustedMiddleware,
@@ -244,7 +247,8 @@ export const checkUserIsFranceConnectedMiddleware = chain(
     if (isVerified) return next();
 
     return res.redirect("/users/certification-dirigeant");
-  });
+  },
+);
 
 export const checkUserHasPersonalInformationsMiddleware = chain(
   checkUserIsFranceConnectedMiddleware,
@@ -255,16 +259,15 @@ export const checkUserHasPersonalInformationsMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkUserHasAtLeastOneOrganizationMiddleware = chain(
   checkUserHasPersonalInformationsMiddleware,
   async (req, res, next) => {
     if (
       isEmpty(
-        await getOrganizationsByUserId(
-          getUserFromAuthenticatedSession(req).id,
-        ),
+        await getOrganizationsByUserId(getUserFromAuthenticatedSession(req).id),
       )
     ) {
       return res.redirect(
@@ -275,7 +278,8 @@ export const checkUserHasAtLeastOneOrganizationMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkUserCanAccessAppMiddleware =
   checkUserHasAtLeastOneOrganizationMiddleware;
@@ -292,7 +296,8 @@ export const checkUserHasLoggedInRecentlyMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkUserTwoFactorAuthForAdminMiddleware = chain(
   checkUserHasLoggedInRecentlyMiddleware,
@@ -309,7 +314,8 @@ export const checkUserTwoFactorAuthForAdminMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 export const checkUserCanAccessAdminMiddleware =
   checkUserTwoFactorAuthForAdminMiddleware;
@@ -344,7 +350,8 @@ const checkUserBelongsToHintedOrganizationMiddleware = chain(
       );
     }
     return next();
-  });
+  },
+);
 
 export const checkUserHasSelectedAnOrganizationMiddleware = chain(
   checkUserBelongsToHintedOrganizationMiddleware,
@@ -375,7 +382,8 @@ export const checkUserHasSelectedAnOrganizationMiddleware = chain(
     }
 
     return res.redirect("/users/select-organization");
-  });
+  },
+);
 
 export const checkUserPassedCertificationDirigeant = chain(
   checkUserHasSelectedAnOrganizationMiddleware,
@@ -386,19 +394,15 @@ export const checkUserPassedCertificationDirigeant = chain(
     if (!req.session.certificationDirigeantRequested) return next();
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
-    const selectedOrganizationId =
-      (await getSelectedOrganizationId(user_id))!;
+    const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
 
-    const organization = (await getOrganizationById(
-      selectedOrganizationId,
-    ))!;
+    const organization = (await getOrganizationById(selectedOrganizationId))!;
     const userOrganizationLink = (await getUserOrganizationLink(
       selectedOrganizationId,
       user_id,
     ))!;
 
-    const franceconnectUserInfo =
-      (await getFranceConnectUserInfo(user_id))!;
+    const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
 
     const expiredCertification = isExpired(
       userOrganizationLink.verified_at,
@@ -455,11 +459,11 @@ export const checkUserPassedCertificationDirigeant = chain(
     );
 
     return next();
-  });
+  },
+);
 
-export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware = chain(
-  checkUserPassedCertificationDirigeant,
-  async (req, res, next) => {
+export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware =
+  chain(checkUserPassedCertificationDirigeant, async (req, res, next) => {
     const userOrganisations = await getOrganizationsByUserId(
       getUserFromAuthenticatedSession(req).id,
     );
@@ -540,7 +544,8 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = chain(
     }
 
     return next();
-  });
+  },
+);
 
 // check that user go through all requirements before issuing a session
 export const checkUserSignInRequirementsMiddleware =
