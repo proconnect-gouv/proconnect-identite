@@ -65,4 +65,68 @@ describe("decide_access", () => {
       assert.deepStrictEqual(result, { type: "pass" });
     });
   });
+
+  describe("email_verified check", () => {
+    it("denies when email verification renewal needed", () => {
+      const result = decide_access({
+        uses_auth_headers: false,
+        is_user_connected: true,
+        is_email_verified: true,
+        needs_email_verification_renewal: true,
+      });
+      assert.deepStrictEqual(result, {
+        type: "deny",
+        reason: { code: "email_verification_renewal" },
+      });
+    });
+
+    it("denies when email not verified", () => {
+      const result = decide_access({
+        uses_auth_headers: false,
+        is_user_connected: true,
+        is_email_verified: false,
+      });
+      assert.deepStrictEqual(result, {
+        type: "deny",
+        reason: { code: "email_not_verified" },
+      });
+    });
+
+    it("denies with email_not_verified when email not verified even if renewal needed", () => {
+      // This scenario happens during signup: email_verified=false but
+      // needsEmailVerificationRenewal might return true due to null/old email_verified_at
+      const result = decide_access({
+        uses_auth_headers: false,
+        is_user_connected: true,
+        is_email_verified: false,
+        needs_email_verification_renewal: true,
+      });
+      assert.deepStrictEqual(result, {
+        type: "deny",
+        reason: { code: "email_not_verified" },
+      });
+    });
+
+    it("passes when email is verified and no renewal needed", () => {
+      const result = decide_access({
+        uses_auth_headers: false,
+        is_user_connected: true,
+        is_email_verified: true,
+        needs_email_verification_renewal: false,
+      });
+      assert.deepStrictEqual(result, { type: "pass" });
+    });
+
+    it("passes with stop_after=email_verified", () => {
+      const result = decide_access(
+        {
+          uses_auth_headers: false,
+          is_user_connected: true,
+          is_email_verified: true,
+        },
+        "email_verified",
+      );
+      assert.deepStrictEqual(result, { type: "pass" });
+    });
+  });
 });
