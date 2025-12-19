@@ -21,5 +21,16 @@ export function decide_access(
     return { type: "pass" };
   }
 
+  // email_verified - require verified email
+  if (ctx.is_email_verified === false) {
+    return { type: "deny", reason: { code: "email_not_verified" } };
+  }
+  if (ctx.needs_email_verification_renewal) {
+    return { type: "deny", reason: { code: "email_verification_renewal" } };
+  }
+  if (stop_after === "email_verified") {
+    return { type: "pass" };
+  }
+
   return { type: "pass" };
 }
