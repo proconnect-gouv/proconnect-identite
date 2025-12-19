@@ -109,7 +109,7 @@ export const checkUserHasSeenInclusionconnectWelcomePage = async (
 ) => {
   await checkEmailInSessionMiddleware(req, res, async (error) => {
     try {
-      if (error) next(error);
+      if (error) return next(error);
 
       if (
         getPartialUserFromUnauthenticatedSession(req)
@@ -217,7 +217,7 @@ export const checkUserIsVerifiedMiddleware = async (
       if (error instanceof UserNotFoundError) {
         // The user has an active session but is not in the database anymore
         await destroyAuthenticatedSession(req);
-        next(new HttpErrors.Unauthorized());
+        return next(new HttpErrors.Unauthorized());
       }
 
       next(error);
@@ -231,7 +231,7 @@ export const checkUserTwoFactorAuthMiddleware = (
 ) => {
   checkUserIsVerifiedMiddleware(req, res, async (error) => {
     try {
-      if (error) next(error);
+      if (error) return next(error);
 
       const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -251,7 +251,7 @@ export const checkUserTwoFactorAuthMiddleware = (
       if (error instanceof UserNotFoundError) {
         // The user has an active session but is not in the database anymore
         await destroyAuthenticatedSession(req);
-        next(new HttpErrors.Unauthorized());
+        return next(new HttpErrors.Unauthorized());
       }
       next(error);
     }
@@ -692,6 +692,6 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = (
     },
   );
 
-// check that user go through all requirements before issuing a session
+// check that the user goes through all requirements before issuing a session
 export const checkUserSignInRequirementsMiddleware =
   checkUserHasBeenGreetedForJoiningOrganizationMiddleware;

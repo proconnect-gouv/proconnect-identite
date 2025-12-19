@@ -1,10 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import moment from "moment/moment";
 import z, { ZodError } from "zod";
-import {
-  DIRTY_DS_REDIRECTION_URL,
-  FEATURE_FRANCECONNECT_CONNECTION,
-} from "../config/env";
+import { FEATURE_FRANCECONNECT_CONNECTION } from "../config/env";
 import notificationMessages from "../config/notification-messages";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
@@ -12,11 +9,6 @@ import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
-import {
-  deleteNeedsDirtyDSRedirect,
-  getNeedsDirtyDSRedirect,
-  setNeedsDirtyDSRedirect,
-} from "../managers/session/dirty-ds-redirect";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import {
   getUserVerificationLabel,
@@ -31,10 +23,7 @@ import {
   nameSchema,
   phoneNumberSchema,
 } from "../services/custom-zod-schemas";
-import {
-  getNotificationLabelFromRequest,
-  getNotificationsFromRequest,
-} from "../services/get-notifications-from-request";
+import { getNotificationsFromRequest } from "../services/get-notifications-from-request";
 
 export const getHomeController = async (
   req: Request,
@@ -170,22 +159,6 @@ export const getConnectionAndAccountController = async (
     const isVerifiedWithFranceConnect =
       await isUserVerifiedWithFranceconnect(user_id);
 
-    // Dirty ad hoc implementation waiting for complete acr support on ProConnect
-    const notificationLabel = await getNotificationLabelFromRequest(req);
-    if (notificationLabel === "2fa_not_configured_for_ds") {
-      setNeedsDirtyDSRedirect(req);
-    }
-    if (
-      notificationLabel &&
-      ["authenticator_added", "passkey_successfully_created"].includes(
-        notificationLabel,
-      ) &&
-      getNeedsDirtyDSRedirect(req)
-    ) {
-      deleteNeedsDirtyDSRedirect(req);
-
-      return res.redirect(DIRTY_DS_REDIRECTION_URL);
-    }
     return res.render("connection-and-account", {
       pageTitle: "Compte et connexion",
       notifications: await getNotificationsFromRequest(req),
