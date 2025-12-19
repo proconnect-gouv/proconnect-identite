@@ -3,6 +3,10 @@ import {
   InvalidCertificationError,
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
+import {
+  decide_access,
+  type AccessContext,
+} from "@proconnect-gouv/proconnect.identite/managers/access-control";
 import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -66,7 +70,13 @@ export const checkIsUser = async (
   next: NextFunction,
 ) => {
   try {
-    if (usesAuthHeaders(req)) {
+    const ctx: AccessContext = {
+      uses_auth_headers: usesAuthHeaders(req),
+    };
+
+    const decision = decide_access(ctx, "session_auth");
+
+    if (decision.type === "deny") {
       return next(
         new HttpErrors.Forbidden(
           "Access denied. The requested resource does not require authentication.",
