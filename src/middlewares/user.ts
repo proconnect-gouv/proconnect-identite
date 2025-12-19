@@ -38,7 +38,6 @@ import {
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
-import { getPartialUserFromUnauthenticatedSession } from "../managers/session/unauthenticated";
 import {
   isUserVerifiedWithFranceconnect,
   needsEmailVerificationRenewal,
@@ -69,28 +68,8 @@ export const checkEmailInSessionMiddleware =
   createAccessControlMiddleware("email_in_session");
 
 // redirect user to inclusionconnect welcome page if needed
-export const checkUserHasSeenInclusionconnectWelcomePage = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkEmailInSessionMiddleware(req, res, async (error) => {
-    try {
-      if (error) next(error);
-
-      if (
-        getPartialUserFromUnauthenticatedSession(req)
-          .needsInclusionconnectWelcomePage
-      ) {
-        return res.redirect(`/users/inclusionconnect-welcome`);
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-};
+export const checkUserHasSeenInclusionconnectWelcomePage =
+  createAccessControlMiddleware("inclusionconnect_welcome");
 
 export const checkCredentialPromptRequirementsMiddleware =
   checkUserHasSeenInclusionconnectWelcomePage;

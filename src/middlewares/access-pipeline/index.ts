@@ -9,33 +9,41 @@ import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { HOST } from "../../config/env";
 import { isWithinAuthenticatedSession } from "../../managers/session/authenticated";
-import { getEmailFromUnauthenticatedSession } from "../../managers/session/unauthenticated";
+import {
+  getEmailFromUnauthenticatedSession,
+  getPartialUserFromUnauthenticatedSession,
+} from "../../managers/session/unauthenticated";
 import { usesAuthHeaders } from "../../services/uses-auth-headers";
 
-function load_access_context(req: Request, until: CheckName) {
-  const ctx: AccessContext = {
+//
+// Context loaders for different middleware chains
+//
+
+function load_credential_prompt_context(req: Request): AccessContext {
+  const partial_user = getPartialUserFromUnauthenticatedSession(req);
+  return {
     uses_auth_headers: usesAuthHeaders(req),
+    has_email_in_session: !isEmpty(getEmailFromUnauthenticatedSession(req)),
+    is_user_connected: isWithinAuthenticatedSession(req.session),
+    needs_inclusionconnect_welcome:
+      partial_user.needsInclusionconnectWelcomePage,
   };
-
-  if (until === "session_auth") {
-    return ctx;
-  }
-
-  // email_in_session context
-  if (until === "email_in_session") {
-    ctx.has_email_in_session = !isEmpty(
-      getEmailFromUnauthenticatedSession(req),
-    );
-  }
-
-  if (until === "email_in_session") {
-    return ctx;
-  }
-
-  ctx.is_user_connected = isWithinAuthenticatedSession(req.session);
-
-  return ctx;
 }
+
+function load_signin_requirements_context(req: Request): AccessContext {
+  return {
+    uses_auth_headers: usesAuthHeaders(req),
+    is_user_connected: isWithinAuthenticatedSession(req.session),
+  };
+}
+
+const CONTEXT_LOADERS: Record<CheckName, (req: Request) => AccessContext> = {
+  email_in_session: load_credential_prompt_context,
+  inclusionconnect_welcome: load_credential_prompt_context,
+  session_auth: load_signin_requirements_context,
+  user_connected: load_signin_requirements_context,
+  email_verified: load_signin_requirements_context,
+};
 
 function get_referrer_path(req: Request) {
   const originPath =
@@ -55,7 +63,7 @@ export function createAccessControlMiddleware(until: CheckName) {
         return res.send();
       }
 
-      const ctx = load_access_context(req, until);
+      const ctx = CONTEXT_LOADERS[until](req);
       const decision = decide_access(ctx, until);
 
       if (decision.type === "pass") {
@@ -84,6 +92,8 @@ export function createAccessControlMiddleware(until: CheckName) {
           return res.redirect(
             "/users/verify-email?notification=email_verification_renewal",
           );
+        case "needs_inclusionconnect_welcome":
+          return res.redirect("/users/inclusionconnect-welcome");
         default:
           throw decision.reason satisfies never;
       }

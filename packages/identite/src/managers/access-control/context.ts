@@ -4,4 +4,5 @@ export type AccessContext = {
   is_email_verified?: boolean;
   needs_email_verification_renewal?: boolean;
   has_email_in_session?: boolean;
+  needs_inclusionconnect_welcome?: boolean;
 };

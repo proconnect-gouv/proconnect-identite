@@ -171,4 +171,48 @@ describe("decide_access", () => {
       assert.deepStrictEqual(result, { type: "pass" });
     });
   });
+
+  describe("inclusionconnect_welcome check", () => {
+    it("denies when needs inclusionconnect welcome", () => {
+      const result = decide_access({
+        uses_auth_headers: false,
+        has_email_in_session: true,
+        needs_inclusionconnect_welcome: true,
+      });
+      assert.deepStrictEqual(result, {
+        type: "deny",
+        reason: { code: "needs_inclusionconnect_welcome" },
+      });
+    });
+
+    it("passes when doesn't need welcome page", () => {
+      const result = decide_access({
+        uses_auth_headers: false,
+        has_email_in_session: true,
+        needs_inclusionconnect_welcome: false,
+      });
+      assert.deepStrictEqual(result, { type: "pass" });
+    });
+
+    it("passes with stop_after=inclusionconnect_welcome when welcome not needed", () => {
+      const result = decide_access(
+        {
+          uses_auth_headers: false,
+          has_email_in_session: true,
+          needs_inclusionconnect_welcome: false,
+        },
+        "inclusionconnect_welcome",
+      );
+      assert.deepStrictEqual(result, { type: "pass" });
+    });
+
+    it("skips check when needs_inclusionconnect_welcome is undefined", () => {
+      const result = decide_access({
+        uses_auth_headers: false,
+        has_email_in_session: true,
+        needs_inclusionconnect_welcome: undefined,
+      });
+      assert.deepStrictEqual(result, { type: "pass" });
+    });
+  });
 });
