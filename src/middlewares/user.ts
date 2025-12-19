@@ -217,12 +217,21 @@ export const checkUserIsVerifiedMiddleware = async (
       const needs_email_verification_renewal =
         await needsEmailVerificationRenewal(email);
 
-      if (!email_verified || needs_email_verification_renewal) {
+      const ctx: AccessContext = {
+        uses_auth_headers: usesAuthHeaders(req),
+        is_user_connected: isWithinAuthenticatedSession(req.session),
+        is_email_verified: email_verified,
+        needs_email_verification_renewal,
+      };
+
+      const decision = decide_access(ctx, "email_verified");
+
+      if (decision.type === "deny") {
         let notification_param = "";
 
-        if (!email_verified) {
+        if (decision.reason.code === "email_not_verified") {
           notification_param = "";
-        } else if (needs_email_verification_renewal) {
+        } else if (decision.reason.code === "email_verification_renewal") {
           notification_param = "?notification=email_verification_renewal";
         }
 
