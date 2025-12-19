@@ -139,13 +139,6 @@ export const paramsEnvSchema = z.object({
   DEPLOY_ENV: z
     .enum(["localhost", "preview", "production", "sandbox"])
     .default("localhost"),
-  DIRTY_DS_REDIRECTION_URL: z
-    .string()
-    .url()
-    .optional()
-    .default(
-      "https://www.demarches-simplifiees.fr/agent_connect/logout_from_mcp",
-    ),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
