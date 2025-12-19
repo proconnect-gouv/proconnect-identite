@@ -1,4 +1,5 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
+import { UserNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import {
   decide_access,
   type AccessContext,
@@ -7,10 +8,18 @@ import {
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { HOST } from "../../config/env";
-import { isWithinAuthenticatedSession } from "../../managers/session/authenticated";
+import {
+  destroyAuthenticatedSession,
+  getUserFromAuthenticatedSession,
+  isWithinAuthenticatedSession,
+} from "../../managers/session/authenticated";
+import { needsEmailVerificationRenewal } from "../../managers/user";
 import { usesAuthHeaders } from "../../services/uses-auth-headers";
 
-function load_access_context(req: Request, until: CheckName): AccessContext {
+async function load_access_context(
+  req: Request,
+  until: CheckName,
+): Promise<AccessContext> {
   const ctx: AccessContext = {
     uses_auth_headers: usesAuthHeaders(req),
   };
@@ -20,6 +29,18 @@ function load_access_context(req: Request, until: CheckName): AccessContext {
   }
 
   ctx.is_user_connected = isWithinAuthenticatedSession(req.session);
+
+  if (until === "user_connected") {
+    return ctx;
+  }
+
+  // For email_verified check, we need user data
+  if (ctx.is_user_connected) {
+    const { email, email_verified } = getUserFromAuthenticatedSession(req);
+    ctx.is_email_verified = email_verified;
+    ctx.needs_email_verification_renewal =
+      await needsEmailVerificationRenewal(email);
+  }
 
   return ctx;
 }
@@ -33,14 +54,14 @@ function get_referrer_path(req: Request): string | undefined {
 }
 
 export function createAccessControlMiddleware(until: CheckName) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
       // HEAD requests return empty response for connection checks
       if (until !== "session_auth" && req.method === "HEAD") {
         return res.send();
       }
 
-      const ctx = load_access_context(req, until);
+      const ctx = await load_access_context(req, until);
       const decision = decide_access(ctx, until);
 
       if (decision.type === "pass") {
@@ -71,6 +92,10 @@ export function createAccessControlMiddleware(until: CheckName) {
           throw decision.reason satisfies never;
       }
     } catch (error) {
+      if (error instanceof UserNotFoundError) {
+        await destroyAuthenticatedSession(req);
+        return next(new HttpErrors.Unauthorized());
+      }
       next(error);
     }
   };

@@ -3,10 +3,6 @@ import {
   InvalidCertificationError,
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
-import {
-  decide_access,
-  type AccessContext,
-} from "@proconnect-gouv/proconnect.identite/managers/access-control";
 import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -34,7 +30,6 @@ import {
   destroyAuthenticatedSession,
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
-  isWithinAuthenticatedSession,
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
@@ -42,17 +37,13 @@ import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
-import {
-  isUserVerifiedWithFranceconnect,
-  needsEmailVerificationRenewal,
-} from "../managers/user";
+import { isUserVerifiedWithFranceconnect } from "../managers/user";
 import { getUserOrganizationLink } from "../repositories/organization/getters";
 import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { getFranceConnectUserInfo } from "../repositories/user";
 import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
-import { usesAuthHeaders } from "../services/uses-auth-headers";
 import { createAccessControlMiddleware } from "./access-pipeline";
 
 const getReferrerPath = (req: Request) => {
@@ -142,52 +133,8 @@ export const checkUserHasConnectedRecentlyMiddleware = async (
   });
 };
 
-export const checkUserIsVerifiedMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) =>
-  await checkUserIsConnectedMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      const { email, email_verified } = getUserFromAuthenticatedSession(req);
-
-      const needs_email_verification_renewal =
-        await needsEmailVerificationRenewal(email);
-
-      const ctx: AccessContext = {
-        uses_auth_headers: usesAuthHeaders(req),
-        is_user_connected: isWithinAuthenticatedSession(req.session),
-        is_email_verified: email_verified,
-        needs_email_verification_renewal,
-      };
-
-      const decision = decide_access(ctx, "email_verified");
-
-      if (decision.type === "deny") {
-        let notification_param = "";
-
-        if (decision.reason.code === "email_not_verified") {
-          notification_param = "";
-        } else if (decision.reason.code === "email_verification_renewal") {
-          notification_param = "?notification=email_verification_renewal";
-        }
-
-        return res.redirect(`/users/verify-email${notification_param}`);
-      }
-
-      return next();
-    } catch (error) {
-      if (error instanceof UserNotFoundError) {
-        // The user has an active session but is not in the database anymore
-        await destroyAuthenticatedSession(req);
-        next(new HttpErrors.Unauthorized());
-      }
-
-      next(error);
-    }
-  });
+export const checkUserIsVerifiedMiddleware =
+  createAccessControlMiddleware("email_verified");
 
 export const checkUserTwoFactorAuthMiddleware = (
   req: Request,
