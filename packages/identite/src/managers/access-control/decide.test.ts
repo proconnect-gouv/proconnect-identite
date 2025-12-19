@@ -129,4 +129,46 @@ describe("decide_access", () => {
       assert.deepStrictEqual(result, { type: "pass" });
     });
   });
+
+  describe("email_in_session check", () => {
+    it("denies when no email in session", () => {
+      const result = decide_access({
+        uses_auth_headers: false,
+        has_email_in_session: false,
+      });
+      assert.deepStrictEqual(result, {
+        type: "deny",
+        reason: { code: "no_email_in_session" },
+      });
+    });
+
+    it("passes when email in session", () => {
+      const result = decide_access({
+        uses_auth_headers: false,
+        has_email_in_session: true,
+      });
+      assert.deepStrictEqual(result, { type: "pass" });
+    });
+
+    it("passes with stop_after=email_in_session", () => {
+      const result = decide_access(
+        {
+          uses_auth_headers: false,
+          has_email_in_session: true,
+        },
+        "email_in_session",
+      );
+      assert.deepStrictEqual(result, { type: "pass" });
+    });
+
+    it("skips check when has_email_in_session is undefined (other middleware chains)", () => {
+      // When called from user_connected or other chains, has_email_in_session
+      // is not set - the check should be skipped
+      const result = decide_access({
+        uses_auth_headers: false,
+        has_email_in_session: undefined,
+      });
+      assert.deepStrictEqual(result, { type: "pass" });
+    });
+  });
 });

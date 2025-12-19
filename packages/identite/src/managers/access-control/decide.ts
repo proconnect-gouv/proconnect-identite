@@ -13,6 +13,14 @@ export function decide_access(
     return { type: "pass" };
   }
 
+  // email_in_session - require email in unauthenticated session
+  if (ctx.has_email_in_session === false) {
+    return { type: "deny", reason: { code: "no_email_in_session" } };
+  }
+  if (stop_after === "email_in_session") {
+    return { type: "pass" };
+  }
+
   // user_connected - require authenticated session
   if (ctx.is_user_connected === false) {
     return { type: "deny", reason: { code: "not_connected" } };

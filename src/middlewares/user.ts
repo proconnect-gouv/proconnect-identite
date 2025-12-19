@@ -38,10 +38,7 @@ import {
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
-import {
-  getEmailFromUnauthenticatedSession,
-  getPartialUserFromUnauthenticatedSession,
-} from "../managers/session/unauthenticated";
+import { getPartialUserFromUnauthenticatedSession } from "../managers/session/unauthenticated";
 import {
   isUserVerifiedWithFranceconnect,
   needsEmailVerificationRenewal,
@@ -68,25 +65,8 @@ const getReferrerPath = (req: Request) => {
 export const checkIsUser = createAccessControlMiddleware("session_auth");
 
 // redirect user to start sign in page if no email is available in session
-export const checkEmailInSessionMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkIsUser(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
-        return res.redirect(`/users/start-sign-in`);
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-};
+export const checkEmailInSessionMiddleware =
+  createAccessControlMiddleware("email_in_session");
 
 // redirect user to inclusionconnect welcome page if needed
 export const checkUserHasSeenInclusionconnectWelcomePage = async (

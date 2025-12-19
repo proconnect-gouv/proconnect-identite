@@ -6,8 +6,10 @@ import {
 } from "@proconnect-gouv/proconnect.identite/managers/access-control";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
+import { isEmpty } from "lodash-es";
 import { HOST } from "../../config/env";
 import { isWithinAuthenticatedSession } from "../../managers/session/authenticated";
+import { getEmailFromUnauthenticatedSession } from "../../managers/session/unauthenticated";
 import { usesAuthHeaders } from "../../services/uses-auth-headers";
 
 function load_access_context(req: Request, until: CheckName) {
@@ -16,6 +18,17 @@ function load_access_context(req: Request, until: CheckName) {
   };
 
   if (until === "session_auth") {
+    return ctx;
+  }
+
+  // email_in_session context
+  if (until === "email_in_session") {
+    ctx.has_email_in_session = !isEmpty(
+      getEmailFromUnauthenticatedSession(req),
+    );
+  }
+
+  if (until === "email_in_session") {
     return ctx;
   }
 
@@ -56,6 +69,8 @@ export function createAccessControlMiddleware(until: CheckName) {
               "Access denied. The requested resource does not require authentication.",
             ),
           );
+        case "no_email_in_session":
+          return res.redirect("/users/start-sign-in");
         case "not_connected": {
           const referrerPath = get_referrer_path(req);
           if (referrerPath) {
