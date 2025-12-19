@@ -157,7 +157,14 @@ export const checkUserIsConnectedMiddleware = async (
         return res.send();
       }
 
-      if (!isWithinAuthenticatedSession(req.session)) {
+      const ctx: AccessContext = {
+        uses_auth_headers: usesAuthHeaders(req),
+        is_user_connected: isWithinAuthenticatedSession(req.session),
+      };
+
+      const decision = decide_access(ctx, "user_connected");
+
+      if (decision.type === "deny") {
         const referrerPath = getReferrerPath(req);
         if (referrerPath) {
           req.session.referrerPath = referrerPath;

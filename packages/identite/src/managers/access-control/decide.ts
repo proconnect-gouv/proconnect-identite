@@ -13,5 +13,13 @@ export function decide_access(
     return { type: "pass" };
   }
 
+  // user_connected - require authenticated session
+  if (ctx.is_user_connected === false) {
+    return { type: "deny", reason: { code: "not_connected" } };
+  }
+  if (stop_after === "user_connected") {
+    return { type: "pass" };
+  }
+
   return { type: "pass" };
 }
