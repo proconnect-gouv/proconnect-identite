@@ -92,6 +92,21 @@ describe("decide_access", () => {
       });
     });
 
+    it("denies with email_not_verified when email not verified even if renewal needed", () => {
+      // This scenario happens during signup: email_verified=false but
+      // needsEmailVerificationRenewal might return true due to null/old email_verified_at
+      const result = decide_access({
+        uses_auth_headers: false,
+        is_user_connected: true,
+        is_email_verified: false,
+        needs_email_verification_renewal: true,
+      });
+      assert.deepStrictEqual(result, {
+        type: "deny",
+        reason: { code: "email_not_verified" },
+      });
+    });
+
     it("passes when email is verified and no renewal needed", () => {
       const result = decide_access({
         uses_auth_headers: false,
