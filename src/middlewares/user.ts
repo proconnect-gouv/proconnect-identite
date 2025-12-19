@@ -53,6 +53,7 @@ import { getFranceConnectUserInfo } from "../repositories/user";
 import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
+import { createAccessControlMiddleware } from "./access-pipeline";
 
 const getReferrerPath = (req: Request) => {
   // If the method is not GET (ex: POST), then the referrer must be taken from
@@ -64,31 +65,7 @@ const getReferrerPath = (req: Request) => {
   return originPath || referrerPath || undefined;
 };
 
-export const checkIsUser = async (
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const ctx: AccessContext = {
-      uses_auth_headers: usesAuthHeaders(req),
-    };
-
-    const decision = decide_access(ctx, "session_auth");
-
-    if (decision.type === "deny") {
-      return next(
-        new HttpErrors.Forbidden(
-          "Access denied. The requested resource does not require authentication.",
-        ),
-      );
-    }
-
-    return next();
-  } catch (error) {
-    next(error);
-  }
-};
+export const checkIsUser = createAccessControlMiddleware("session_auth");
 
 // redirect user to start sign in page if no email is available in session
 export const checkEmailInSessionMiddleware = async (
