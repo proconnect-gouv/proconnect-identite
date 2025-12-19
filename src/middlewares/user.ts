@@ -3,6 +3,11 @@ import {
   InvalidCertificationError,
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
+import {
+  run_checks,
+  signin_requirements_checks,
+  type SigninRequirementsContext,
+} from "@proconnect-gouv/proconnect.identite/managers/access-control";
 import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -35,10 +40,6 @@ import {
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
 import {
-  getEmailFromUnauthenticatedSession,
-  getPartialUserFromUnauthenticatedSession,
-} from "../managers/session/unauthenticated";
-import {
   isUserVerifiedWithFranceconnect,
   needsEmailVerificationRenewal,
 } from "../managers/user";
@@ -49,6 +50,11 @@ import { getFranceConnectUserInfo } from "../repositories/user";
 import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
+import {
+  createAccessControlMiddleware,
+  credential_prompt_builder,
+  signin_requirements_builder,
+} from "./access-pipeline";
 
 const getReferrerPath = (req: Request) => {
   // If the method is not GET (ex: POST), then the referrer must be taken from
@@ -60,108 +66,32 @@ const getReferrerPath = (req: Request) => {
   return originPath || referrerPath || undefined;
 };
 
-export const checkIsUser = async (
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-) => {
-  try {
-    if (usesAuthHeaders(req)) {
-      return next(
-        new HttpErrors.Forbidden(
-          "Access denied. The requested resource does not require authentication.",
-        ),
-      );
-    }
-
-    return next();
-  } catch (error) {
-    next(error);
-  }
-};
+export const checkIsUser = createAccessControlMiddleware(
+  credential_prompt_builder,
+  "session_auth",
+);
 
 // redirect user to start sign in page if no email is available in session
-export const checkEmailInSessionMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkIsUser(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
-        return res.redirect(`/users/start-sign-in`);
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-};
+export const checkEmailInSessionMiddleware = createAccessControlMiddleware(
+  credential_prompt_builder,
+  "email_in_session",
+);
 
 // redirect user to inclusionconnect welcome page if needed
-export const checkUserHasSeenInclusionconnectWelcomePage = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkEmailInSessionMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      if (
-        getPartialUserFromUnauthenticatedSession(req)
-          .needsInclusionconnectWelcomePage
-      ) {
-        return res.redirect(`/users/inclusionconnect-welcome`);
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-};
+export const checkUserHasSeenInclusionconnectWelcomePage =
+  createAccessControlMiddleware(
+    credential_prompt_builder,
+    "inclusionconnect_welcome",
+  );
 
 export const checkCredentialPromptRequirementsMiddleware =
   checkUserHasSeenInclusionconnectWelcomePage;
 
 // redirect user to login page if no active session is available
-export const checkUserIsConnectedMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkIsUser(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      if (req.method === "HEAD") {
-        // From express documentation:
-        // The app.get() function is automatically called for the HTTP HEAD method
-        // in addition to the GET method if app.head() was not called for the path
-        // before app.get().
-        // We return empty response and the headers are sent to the client.
-        return res.send();
-      }
-
-      if (!isWithinAuthenticatedSession(req.session)) {
-        const referrerPath = getReferrerPath(req);
-        if (referrerPath) {
-          req.session.referrerPath = referrerPath;
-        }
-
-        return res.redirect(`/users/start-sign-in`);
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-};
+export const checkUserIsConnectedMiddleware = createAccessControlMiddleware(
+  signin_requirements_builder,
+  "user_connected",
+);
 export const checkUserHasConnectedRecentlyMiddleware = async (
   req: Request,
   res: Response,
@@ -200,12 +130,22 @@ export const checkUserIsVerifiedMiddleware = async (
       const needs_email_verification_renewal =
         await needsEmailVerificationRenewal(email);
 
-      if (!email_verified || needs_email_verification_renewal) {
+      const ctx: SigninRequirementsContext = {
+        is_email_verified: email_verified,
+        is_user_connected: isWithinAuthenticatedSession(req.session),
+        needs_email_verification_renewal,
+        uses_auth_headers: usesAuthHeaders(req),
+      };
+
+      const generator = signin_requirements_checks(ctx);
+      const decision = run_checks(generator, "email_verified");
+
+      if (decision.type === "deny") {
         let notification_param = "";
 
-        if (!email_verified) {
+        if (decision.reason.code === "email_not_verified") {
           notification_param = "";
-        } else if (needs_email_verification_renewal) {
+        } else if (decision.reason.code === "email_verification_renewal") {
           notification_param = "?notification=email_verification_renewal";
         }
 
@@ -217,7 +157,7 @@ export const checkUserIsVerifiedMiddleware = async (
       if (error instanceof UserNotFoundError) {
         // The user has an active session but is not in the database anymore
         await destroyAuthenticatedSession(req);
-        return next(new HttpErrors.Unauthorized());
+        next(new HttpErrors.Unauthorized());
       }
 
       next(error);
@@ -231,7 +171,7 @@ export const checkUserTwoFactorAuthMiddleware = (
 ) => {
   checkUserIsVerifiedMiddleware(req, res, async (error) => {
     try {
-      if (error) return next(error);
+      if (error) next(error);
 
       const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -251,7 +191,7 @@ export const checkUserTwoFactorAuthMiddleware = (
       if (error instanceof UserNotFoundError) {
         // The user has an active session but is not in the database anymore
         await destroyAuthenticatedSession(req);
-        return next(new HttpErrors.Unauthorized());
+        next(new HttpErrors.Unauthorized());
       }
       next(error);
     }
@@ -692,6 +632,6 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = (
     },
   );
 
-// check that the user goes through all requirements before issuing a session
+// check that user go through all requirements before issuing a session
 export const checkUserSignInRequirementsMiddleware =
   checkUserHasBeenGreetedForJoiningOrganizationMiddleware;
