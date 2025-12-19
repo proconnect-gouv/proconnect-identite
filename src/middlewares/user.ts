@@ -116,46 +116,8 @@ export const checkCredentialPromptRequirementsMiddleware =
   checkUserHasSeenInclusionconnectWelcomePage;
 
 // redirect user to login page if no active session is available
-export const checkUserIsConnectedMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkIsUser(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      if (req.method === "HEAD") {
-        // From express documentation:
-        // The app.get() function is automatically called for the HTTP HEAD method
-        // in addition to the GET method if app.head() was not called for the path
-        // before app.get().
-        // We return empty response and the headers are sent to the client.
-        return res.send();
-      }
-
-      const ctx: AccessContext = {
-        uses_auth_headers: usesAuthHeaders(req),
-        is_user_connected: isWithinAuthenticatedSession(req.session),
-      };
-
-      const decision = decide_access(ctx, "user_connected");
-
-      if (decision.type === "deny") {
-        const referrerPath = getReferrerPath(req);
-        if (referrerPath) {
-          req.session.referrerPath = referrerPath;
-        }
-
-        return res.redirect(`/users/start-sign-in`);
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-};
+export const checkUserIsConnectedMiddleware =
+  createAccessControlMiddleware("user_connected");
 export const checkUserHasConnectedRecentlyMiddleware = async (
   req: Request,
   res: Response,
