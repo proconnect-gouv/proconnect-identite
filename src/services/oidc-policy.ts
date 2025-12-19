@@ -19,7 +19,7 @@ policy.add(
       async (ctx) => {
         const { oidc } = ctx;
 
-        // existence of oidc.session.accountId is ensured by previous prompt
+        // existence of oidc.session.accountId is ensured by the previous prompt
         const user_id = parseInt(oidc.session!.accountId!, 10);
 
         const [, selectedOrganizationId] = await to(

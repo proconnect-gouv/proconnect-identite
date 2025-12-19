@@ -55,8 +55,6 @@ describe("env.zod", () => {
         "postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite",
       DEBOUNCE_API_KEY: "",
       DEPLOY_ENV: "localhost",
-      DIRTY_DS_REDIRECTION_URL:
-        "https://www.demarches-simplifiees.fr/agent_connect/logout_from_mcp",
       ENTREPRISE_API_TOKEN: "🎭 Mocked Entreprise Api Token",
       ENTREPRISE_API_TRACKING_CONTEXT: "ProConnect Identité",
       ENTREPRISE_API_TRACKING_RECIPIENT: "13002526500013",
