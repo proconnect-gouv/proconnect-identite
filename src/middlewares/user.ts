@@ -692,6 +692,6 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = (
     },
   );
 
-// check that user go through all requirements before issuing a session
+// check that the user goes through all requirements before issuing a session
 export const checkUserSignInRequirementsMiddleware =
   checkUserHasBeenGreetedForJoiningOrganizationMiddleware;
