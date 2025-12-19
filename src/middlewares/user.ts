@@ -4,8 +4,9 @@ import {
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
-  decide_access,
-  type AccessContext,
+  run_checks,
+  signin_requirements_checks,
+  type SigninRequirementsContext,
 } from "@proconnect-gouv/proconnect.identite/managers/access-control";
 import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
@@ -38,7 +39,6 @@ import {
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
-import { getPartialUserFromUnauthenticatedSession } from "../managers/session/unauthenticated";
 import {
   isUserVerifiedWithFranceconnect,
   needsEmailVerificationRenewal,
@@ -50,7 +50,11 @@ import { getFranceConnectUserInfo } from "../repositories/user";
 import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
-import { createAccessControlMiddleware } from "./access-pipeline";
+import {
+  createAccessControlMiddleware,
+  credential_prompt_builder,
+  signin_requirements_builder,
+} from "./access-pipeline";
 
 const getReferrerPath = (req: Request) => {
   // If the method is not GET (ex: POST), then the referrer must be taken from
@@ -62,42 +66,32 @@ const getReferrerPath = (req: Request) => {
   return originPath || referrerPath || undefined;
 };
 
-export const checkIsUser = createAccessControlMiddleware("session_auth");
+export const checkIsUser = createAccessControlMiddleware(
+  credential_prompt_builder,
+  "session_auth",
+);
 
 // redirect user to start sign in page if no email is available in session
-export const checkEmailInSessionMiddleware =
-  createAccessControlMiddleware("email_in_session");
+export const checkEmailInSessionMiddleware = createAccessControlMiddleware(
+  credential_prompt_builder,
+  "email_in_session",
+);
 
 // redirect user to inclusionconnect welcome page if needed
-export const checkUserHasSeenInclusionconnectWelcomePage = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkEmailInSessionMiddleware(req, res, async (error) => {
-    try {
-      if (error) next(error);
-
-      if (
-        getPartialUserFromUnauthenticatedSession(req)
-          .needsInclusionconnectWelcomePage
-      ) {
-        return res.redirect(`/users/inclusionconnect-welcome`);
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-};
+export const checkUserHasSeenInclusionconnectWelcomePage =
+  createAccessControlMiddleware(
+    credential_prompt_builder,
+    "inclusionconnect_welcome",
+  );
 
 export const checkCredentialPromptRequirementsMiddleware =
   checkUserHasSeenInclusionconnectWelcomePage;
 
 // redirect user to login page if no active session is available
-export const checkUserIsConnectedMiddleware =
-  createAccessControlMiddleware("user_connected");
+export const checkUserIsConnectedMiddleware = createAccessControlMiddleware(
+  signin_requirements_builder,
+  "user_connected",
+);
 export const checkUserHasConnectedRecentlyMiddleware = async (
   req: Request,
   res: Response,
@@ -136,14 +130,15 @@ export const checkUserIsVerifiedMiddleware = async (
       const needs_email_verification_renewal =
         await needsEmailVerificationRenewal(email);
 
-      const ctx: AccessContext = {
-        uses_auth_headers: usesAuthHeaders(req),
-        is_user_connected: isWithinAuthenticatedSession(req.session),
+      const ctx: SigninRequirementsContext = {
         is_email_verified: email_verified,
+        is_user_connected: isWithinAuthenticatedSession(req.session),
         needs_email_verification_renewal,
+        uses_auth_headers: usesAuthHeaders(req),
       };
 
-      const decision = decide_access(ctx, "email_verified");
+      const generator = signin_requirements_checks(ctx);
+      const decision = run_checks(generator, "email_verified");
 
       if (decision.type === "deny") {
         let notification_param = "";
