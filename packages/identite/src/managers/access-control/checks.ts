@@ -38,6 +38,7 @@ export function check_session_auth(
 
 export type UserConnectedContext = {
   is_within_authenticated_session: boolean;
+  is_method_head: boolean;
 };
 
 /**
@@ -50,6 +51,9 @@ export type UserConnectedContext = {
 export function check_user_connected(
   ctx: UserConnectedContext,
 ): CheckOutput<"session_active", "session_missing"> {
+  if (ctx.is_method_head) {
+    return { type: "pass", name: "session_active" };
+  }
   if (!ctx.is_within_authenticated_session) {
     return {
       type: "deny",

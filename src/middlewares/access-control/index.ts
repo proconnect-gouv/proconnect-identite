@@ -12,6 +12,7 @@ import {
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { HOST } from "../../config/env.js";
+import { isWithinAuthenticatedSession } from "../../managers/session/authenticated.js";
 import { usesAuthHeaders } from "../../services/uses-auth-headers.js";
 
 //
@@ -77,6 +78,11 @@ export type AccessControlOptions<TChecks extends readonly CheckFn[]> = {
    * each stopping at different checkpoints.
    */
   break_on?: InferPassNames<TChecks>;
+  /**
+   * If true and the request method is HEAD, return an early empty response
+   * after the checks pass.
+   */
+  handle_head?: boolean;
 };
 
 export function createAccessControlMiddleware<
@@ -90,6 +96,9 @@ export function createAccessControlMiddleware<
       });
 
       if (result.type === "pass") {
+        if (options?.handle_head && req.method === "HEAD") {
+          return res.send();
+        }
         return next();
       }
 
@@ -138,6 +147,10 @@ export const signin_requirements_builder: ChecksBuilder<
   load_context: async (req): Promise<SigninRequirementsContext> => {
     return {
       uses_auth_headers: usesAuthHeaders(req),
+      is_within_authenticated_session: isWithinAuthenticatedSession(
+        req.session,
+      ),
+      is_method_head: req.method === "HEAD",
     };
   },
 };

@@ -1,4 +1,4 @@
-import { check_session_auth } from "./checks.js";
+import { check_session_auth, check_user_connected } from "./checks.js";
 import { define_check_chain } from "./coherency.js";
 import type { InferCheckNames, InferContext } from "./types.js";
 
@@ -8,9 +8,11 @@ import type { InferCheckNames, InferContext } from "./types.js";
  *
  * Checks are logically ordered and type-safe via Coherent Chaining:
  * 1. session_auth - Ensures request doesn't use auth headers
+ * 2. user_connected - Ensures user has an authenticated session
  */
 export const signin_requirements_checks = define_check_chain([
   check_session_auth,
+  check_user_connected,
 ] as const);
 
 export type SigninRequirementsCheck = InferCheckNames<
