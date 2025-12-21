@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import type { User } from "../../types/index.js";
 import { run_checks } from "./run-checks.js";
 import {
   signin_requirements_checks,
@@ -13,6 +14,8 @@ function signin_context(
     uses_auth_headers: false,
     is_within_authenticated_session: true,
     is_method_head: false,
+    user: { id: 1, email_verified: true } as User,
+    needs_email_verification_renewal: false,
     ...overrides,
   };
 }
@@ -57,7 +60,51 @@ describe("signin_requirements_checks", () => {
     });
   });
 
-  describe("when request has no auth headers (normal browser request)", () => {
+  describe("when user was deleted but session exists", () => {
+    it("destroys session (user not found)", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({ user: undefined }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        name: "user_not_found",
+        reason: { code: "user_not_found" },
+      });
+    });
+  });
+
+  describe("when email is not verified", () => {
+    it("redirects to verification page", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({
+          user: { id: 1, email_verified: false } as User,
+        }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        name: "email_unverified",
+        reason: { code: "email_not_verified" },
+      });
+    });
+  });
+
+  describe("when email verification needs renewal", () => {
+    it("redirects to verification page with notification", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({ needs_email_verification_renewal: true }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        name: "email_renewal_needed",
+        reason: { code: "email_verification_renewal" },
+      });
+    });
+  });
+
+  describe("when all checks pass", () => {
     it("allows access", () => {
       const result = run_checks(signin_requirements_checks, signin_context());
       assert.deepEqual(result, { type: "pass" });

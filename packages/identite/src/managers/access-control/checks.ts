@@ -100,7 +100,7 @@ export function check_user_exists(
 //
 
 export type EmailVerifiedContext = {
-  user?: User;
+  user: User;
   needs_email_verification_renewal: boolean;
 };
 
@@ -115,11 +115,6 @@ export type EmailVerifiedContext = {
 export function check_email_verified(
   ctx: EmailVerifiedContext,
 ): CheckOutput<"email_confirmed", "email_unverified" | "email_renewal_needed"> {
-  if (!ctx.user) {
-    // If no user is present, this check cannot perform its duty.
-    // We pass and let check_user_exists handle the denial.
-    return { type: "pass", name: "email_confirmed" };
-  }
   if (!ctx.user.email_verified) {
     return {
       type: "deny",

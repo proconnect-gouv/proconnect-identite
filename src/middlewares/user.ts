@@ -37,10 +37,7 @@ import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
-import {
-  isUserVerifiedWithFranceconnect,
-  needsEmailVerificationRenewal,
-} from "../managers/user";
+import { isUserVerifiedWithFranceconnect } from "../managers/user";
 import { getUserOrganizationLink } from "../repositories/organization/getters";
 import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
@@ -144,44 +141,10 @@ export const checkUserHasConnectedRecentlyMiddleware = async (
   });
 };
 
-export const checkUserIsVerifiedMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) =>
-  await checkUserIsConnectedMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      const user = getUserFromAuthenticatedSession(req);
-      const { email_verified } = user;
-
-      const needs_email_verification_renewal =
-        needsEmailVerificationRenewal(user);
-
-      if (!email_verified || needs_email_verification_renewal) {
-        let notification_param = "";
-
-        if (!email_verified) {
-          notification_param = "";
-        } else if (needs_email_verification_renewal) {
-          notification_param = "?notification=email_verification_renewal";
-        }
-
-        return res.redirect(`/users/verify-email${notification_param}`);
-      }
-
-      return next();
-    } catch (error) {
-      if (error instanceof UserNotFoundError) {
-        // The user has an active session but is not in the database anymore
-        await destroyAuthenticatedSession(req);
-        return next(new HttpErrors.Unauthorized());
-      }
-
-      next(error);
-    }
-  });
+export const checkUserIsVerifiedMiddleware = createAccessControlMiddleware(
+  signin_requirements_builder,
+  { break_on: "email_confirmed" },
+);
 
 export const checkUserTwoFactorAuthMiddleware = (
   req: Request,
