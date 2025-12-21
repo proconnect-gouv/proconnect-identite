@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { check_session_auth } from "./checks.js";
 import { run_checks } from "./run-checks.js";
 import type { CheckFn } from "./types.js";
 
@@ -51,49 +50,58 @@ describe("run_checks", () => {
       });
     });
   });
-});
 
-describe("check_session_auth", () => {
-  describe("when request uses auth headers (API-style)", () => {
-    it("denies access - web routes don't accept API authentication", () => {
-      const result = check_session_auth({ uses_auth_headers: true });
+  describe("break_on option (pipeline checkpoints)", () => {
+    it("stops after a specific pass name", () => {
+      const checks = [pass("a"), pass("b"), pass("c")] as const;
+
+      const result = run_checks(checks, {}, { break_on: "b" });
+
+      assert.deepEqual(result, { type: "pass" });
+    });
+
+    it("still denies if deny occurs before break_on", () => {
+      const checks = [pass("a"), deny("b", "error"), pass("c")] as const;
+
+      const result = run_checks(checks, {}, { break_on: "c" });
 
       assert.deepEqual(result, {
         type: "deny",
-        name: "api_request_rejected",
-        reason: { code: "forbidden" },
+        name: "b",
+        reason: { code: "error" },
       });
     });
-  });
 
-  describe("when request has no auth headers (normal browser request)", () => {
-    it("passes - this is a web request using session auth", () => {
-      const result = check_session_auth({ uses_auth_headers: false });
+    it("runs all checks when break_on is not provided", () => {
+      let executed: string[] = [];
+      const track =
+        <T extends string>(name: T): CheckFn<T, unknown> =>
+        () => {
+          executed.push(name);
+          return { type: "pass", name };
+        };
 
-      assert.deepEqual(result, {
-        type: "pass",
-        name: "web_request",
-      });
+      const checks = [track("a"), track("b"), track("c")] as const;
+
+      run_checks(checks, {});
+
+      assert.deepEqual(executed, ["a", "b", "c"]);
     });
-  });
-});
 
-describe("session_auth in pipeline", () => {
-  const checks = [check_session_auth] as const;
+    it("skips checks after break_on checkpoint", () => {
+      let executed: string[] = [];
+      const track =
+        <T extends string>(name: T): CheckFn<T, unknown> =>
+        () => {
+          executed.push(name);
+          return { type: "pass", name };
+        };
 
-  it("rejects API-style requests on web routes", () => {
-    const result = run_checks(checks, { uses_auth_headers: true });
+      const checks = [track("a"), track("b"), track("c")] as const;
 
-    assert.deepEqual(result, {
-      type: "deny",
-      name: "api_request_rejected",
-      reason: { code: "forbidden" },
+      run_checks(checks, {}, { break_on: "b" });
+
+      assert.deepEqual(executed, ["a", "b"]);
     });
-  });
-
-  it("allows normal browser requests", () => {
-    const result = run_checks(checks, { uses_auth_headers: false });
-
-    assert.deepEqual(result, { type: "pass" });
   });
 });

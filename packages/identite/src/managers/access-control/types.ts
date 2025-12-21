@@ -48,5 +48,16 @@ export type PipelineResult<TName extends string = string> =
 export type InferCheckNames<TChecks extends readonly CheckFn[]> =
   ReturnType<TChecks[number]> extends CheckOutput<infer TName> ? TName : never;
 
+/**
+ * Extract only the pass names from a check's return type.
+ * These are the valid checkpoint names for `break_on`.
+ */
+type ExtractPassName<T> = T extends { type: "pass"; name: infer TName }
+  ? TName
+  : never;
+
+export type InferPassNames<TChecks extends readonly CheckFn[]> =
+  ExtractPassName<ReturnType<TChecks[number]>>;
+
 export type InferContext<TChecks extends readonly CheckFn[]> =
   PipelineContext<TChecks>;

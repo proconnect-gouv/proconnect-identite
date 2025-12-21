@@ -1,3 +1,4 @@
+import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import {
   InvalidCertificationError,
   UserNotFoundError,
@@ -10,6 +11,7 @@ import { AssertionError } from "node:assert";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
+  HOST,
 } from "../config/env";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
@@ -47,24 +49,23 @@ import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
 import {
   createAccessControlMiddleware,
-  getReferrerPath,
-  session_auth_builder,
   signin_requirements_builder,
-} from "./access-control/index.js";
-export const checkIsUser = createAccessControlMiddleware(session_auth_builder);
-const checkUserIsConnectedPipeline = createAccessControlMiddleware(
-  signin_requirements_builder,
-);
-export const checkUserIsConnectedMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  if (req.method === "HEAD") {
-    return res.send();
-  }
-  return checkUserIsConnectedPipeline(req, res, next);
+} from "./access-control";
+
+const getReferrerPath = (req: Request) => {
+  // If the method is not GET (ex: POST), then the referrer must be taken from
+  // the referrer header. This ensures the referrerPath can be redirected to.
+  const originPath =
+    req.method === "GET" ? getTrustedReferrerPath(req.originalUrl, HOST) : null;
+  const referrerPath = getTrustedReferrerPath(req.get("Referrer"), HOST);
+
+  return originPath || referrerPath || undefined;
 };
+
+export const checkIsUser = createAccessControlMiddleware(
+  signin_requirements_builder,
+  { break_on: "web_request" },
+);
 
 // redirect user to start sign in page if no email is available in session
 export const checkEmailInSessionMiddleware = async (
@@ -113,6 +114,12 @@ export const checkUserHasSeenInclusionconnectWelcomePage = async (
 
 export const checkCredentialPromptRequirementsMiddleware =
   checkUserHasSeenInclusionconnectWelcomePage;
+
+// redirect user to login page if no active session is available
+export const checkUserIsConnectedMiddleware = createAccessControlMiddleware(
+  signin_requirements_builder,
+  { break_on: "session_active" },
+);
 export const checkUserHasConnectedRecentlyMiddleware = async (
   req: Request,
   res: Response,
@@ -146,11 +153,10 @@ export const checkUserIsVerifiedMiddleware = async (
     try {
       if (error) return next(error);
 
-      const user = getUserFromAuthenticatedSession(req);
-      const { email_verified } = user;
+      const { email, email_verified } = getUserFromAuthenticatedSession(req);
 
       const needs_email_verification_renewal =
-        needsEmailVerificationRenewal(user);
+        await needsEmailVerificationRenewal(email);
 
       if (!email_verified || needs_email_verification_renewal) {
         let notification_param = "";

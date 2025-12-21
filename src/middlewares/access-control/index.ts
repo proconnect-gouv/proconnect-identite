@@ -6,6 +6,7 @@ import {
   type CheckFn,
   type DenyReason,
   type InferContext,
+  type InferPassNames,
   type SigninRequirementsContext,
 } from "@proconnect-gouv/proconnect.identite/managers/access-control";
 import { type User } from "@proconnect-gouv/proconnect.identite/types";
@@ -77,13 +78,24 @@ function handleDeny(
   }
 }
 
+export type AccessControlOptions<TChecks extends readonly CheckFn[]> = {
+  /**
+   * Stop the pipeline after a check passes with this name.
+   * Useful for creating multiple middlewares from a single pipeline,
+   * each stopping at different checkpoints.
+   */
+  break_on?: InferPassNames<TChecks>;
+};
+
 export function createAccessControlMiddleware<
   TChecks extends readonly CheckFn[],
->(builder: ChecksBuilder<TChecks>) {
+>(builder: ChecksBuilder<TChecks>, options?: AccessControlOptions<TChecks>) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const ctx = await builder.load_context(req);
-      const result = run_checks(builder.checks, ctx);
+      const result = run_checks(builder.checks, ctx, {
+        break_on: options?.break_on,
+      });
 
       if (result.type === "pass") {
         return next();
