@@ -1,4 +1,3 @@
-import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import {
   InvalidCertificationError,
   UserNotFoundError,
@@ -11,7 +10,6 @@ import { AssertionError } from "node:assert";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
-  HOST,
 } from "../config/env";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
@@ -48,37 +46,12 @@ import { getSelectedOrganizationId } from "../repositories/redis/selected-organi
 import { getFranceConnectUserInfo } from "../repositories/user";
 import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
-import { usesAuthHeaders } from "../services/uses-auth-headers";
-
-const getReferrerPath = (req: Request) => {
-  // If the method is not GET (ex: POST), then the referrer must be taken from
-  // the referrer header. This ensures the referrerPath can be redirected to.
-  const originPath =
-    req.method === "GET" ? getTrustedReferrerPath(req.originalUrl, HOST) : null;
-  const referrerPath = getTrustedReferrerPath(req.get("Referrer"), HOST);
-
-  return originPath || referrerPath || undefined;
-};
-
-export const checkIsUser = async (
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-) => {
-  try {
-    if (usesAuthHeaders(req)) {
-      return next(
-        new HttpErrors.Forbidden(
-          "Access denied. The requested resource does not require authentication.",
-        ),
-      );
-    }
-
-    return next();
-  } catch (error) {
-    next(error);
-  }
-};
+import {
+  createAccessControlMiddleware,
+  getReferrerPath,
+  session_auth_builder,
+} from "./access-control/index.js";
+export const checkIsUser = createAccessControlMiddleware(session_auth_builder);
 
 // redirect user to start sign in page if no email is available in session
 export const checkEmailInSessionMiddleware = async (
