@@ -16,6 +16,7 @@ function signin_context(
     is_method_head: false,
     user: { id: 1, email_verified: true } as User,
     needs_email_verification_renewal: false,
+    has_authenticated_recently: true,
     ...overrides,
   };
 }
@@ -100,6 +101,20 @@ describe("signin_requirements_checks", () => {
         type: "deny",
         name: "email_renewal_needed",
         reason: { code: "email_verification_renewal" },
+      });
+    });
+  });
+
+  describe("when user session is stale (authenticated too long ago)", () => {
+    it("redirects to sign-in with login_required notification", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({ has_authenticated_recently: false }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        name: "session_stale",
+        reason: { code: "login_required" },
       });
     });
   });

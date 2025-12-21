@@ -15,6 +15,7 @@ import HttpErrors from "http-errors";
 import { HOST } from "../../config/env.js";
 import {
   getUserFromAuthenticatedSession,
+  hasUserAuthenticatedRecently,
   isWithinAuthenticatedSession,
 } from "../../managers/session/authenticated.js";
 import { needsEmailVerificationRenewal } from "../../managers/user.js";
@@ -167,6 +168,9 @@ export const signin_requirements_builder: ChecksBuilder<
       user,
       needs_email_verification_renewal: user
         ? needsEmailVerificationRenewal(user)
+        : false,
+      has_authenticated_recently: isAuthenticated
+        ? hasUserAuthenticatedRecently(req)
         : false,
     };
   },

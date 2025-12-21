@@ -117,29 +117,10 @@ export const checkUserIsConnectedMiddleware = createAccessControlMiddleware(
   signin_requirements_builder,
   { break_on: "session_active", handle_head: true },
 );
-export const checkUserHasConnectedRecentlyMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkUserIsConnectedMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
-
-      if (!hasLoggedInRecently) {
-        req.session.referrerPath = getReferrerPath(req);
-
-        return res.redirect(`/users/start-sign-in?notification=login_required`);
-      }
-
-      next();
-    } catch (error) {
-      next(error);
-    }
+export const checkUserHasConnectedRecentlyMiddleware =
+  createAccessControlMiddleware(signin_requirements_builder, {
+    break_on: "session_fresh",
   });
-};
 
 export const checkUserIsVerifiedMiddleware = createAccessControlMiddleware(
   signin_requirements_builder,

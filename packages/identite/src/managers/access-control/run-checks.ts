@@ -1,4 +1,9 @@
-import type { CheckFn, PipelineResult } from "./types.js";
+import type {
+  CheckFn,
+  InferContext,
+  InferPassNames,
+  PipelineResult,
+} from "./types.js";
 
 export type RunChecksOptions<TPassName extends string = string> = {
   /**
@@ -18,13 +23,13 @@ export type RunChecksOptions<TPassName extends string = string> = {
  * @param options - Optional configuration (break_on for checkpoints)
  * @returns PipelineResult - pass or deny with reason
  */
-export function run_checks<TCtx, TPassName extends string = string>(
-  checks: readonly CheckFn<string, TCtx>[],
-  ctx: TCtx,
-  options?: RunChecksOptions<TPassName>,
+export function run_checks<TChecks extends readonly CheckFn[]>(
+  checks: TChecks,
+  ctx: InferContext<TChecks>,
+  options?: RunChecksOptions<InferPassNames<TChecks>>,
 ): PipelineResult {
   for (const check of checks) {
-    const result = check(ctx);
+    const result = (check as any)(ctx);
     if (result.type === "deny") {
       return result;
     }

@@ -1,4 +1,5 @@
 import {
+  check_connected_recently,
   check_email_verified,
   check_session_auth,
   check_user_connected,
@@ -16,12 +17,14 @@ import type { InferCheckNames, InferContext } from "./types.js";
  * 2. user_connected - Ensures user has an authenticated session
  * 3. user_exists - Ensures the user still exists in database (Establishes {user: User})
  * 4. email_verified - Ensures user's email is verified
+ * 5. connected_recently - Ensures user has authenticated recently
  */
 export const signin_requirements_checks = define_check_chain([
   check_session_auth,
   check_user_connected,
   check_user_exists,
   check_email_verified,
+  check_connected_recently,
 ] as const);
 
 export type SigninRequirementsCheck = InferCheckNames<
