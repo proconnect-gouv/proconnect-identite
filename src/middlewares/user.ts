@@ -1,11 +1,7 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
-import {
-  InvalidCertificationError,
-  UserNotFoundError,
-} from "@proconnect-gouv/proconnect.identite/errors";
+import { InvalidCertificationError } from "@proconnect-gouv/proconnect.identite/errors";
 import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
-import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { AssertionError } from "node:assert";
 import {
@@ -13,7 +9,7 @@ import {
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
   HOST,
 } from "../config/env";
-import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
+import { is2FACapable } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import { performCertificationDirigeant } from "../managers/certification";
 import {
@@ -27,7 +23,6 @@ import {
   selectOrganization,
 } from "../managers/organization/main";
 import {
-  destroyAuthenticatedSession,
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
   isWithinTwoFactorAuthenticatedSession,
@@ -127,39 +122,10 @@ export const checkUserIsVerifiedMiddleware = createAccessControlMiddleware(
   { break_on: "email_confirmed" },
 );
 
-export const checkUserTwoFactorAuthMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  checkUserIsVerifiedMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-      if (
-        ((await shouldForce2faForUser(user_id)) ||
-          req.session.twoFactorsAuthRequested) &&
-        !isWithinTwoFactorAuthenticatedSession(req)
-      ) {
-        if (await is2FACapable(user_id)) {
-          return res.redirect("/users/2fa-sign-in");
-        } else {
-          return res.redirect("/users/double-authentication-choice");
-        }
-      }
-      return next();
-    } catch (error) {
-      if (error instanceof UserNotFoundError) {
-        // The user has an active session but is not in the database anymore
-        await destroyAuthenticatedSession(req);
-        return next(new HttpErrors.Unauthorized());
-      }
-      next(error);
-    }
-  });
-};
+export const checkUserTwoFactorAuthMiddleware = createAccessControlMiddleware(
+  signin_requirements_builder,
+  { break_on: "2fa_completed" },
+);
 
 export const checkBrowserIsTrustedMiddleware = (
   req: Request,

@@ -2,6 +2,7 @@ import {
   check_connected_recently,
   check_email_verified,
   check_session_auth,
+  check_two_factor_auth,
   check_user_connected,
   check_user_exists,
 } from "./checks.js";
@@ -18,6 +19,7 @@ import type { InferCheckNames, InferContext } from "./types.js";
  * 3. user_exists - Ensures the user still exists in database (Establishes {user: User})
  * 4. email_verified - Ensures user's email is verified
  * 5. connected_recently - Ensures user has authenticated recently
+ * 6. two_factor_auth - Ensures user has completed 2FA if required
  */
 export const signin_requirements_checks = define_check_chain([
   check_session_auth,
@@ -25,6 +27,7 @@ export const signin_requirements_checks = define_check_chain([
   check_user_exists,
   check_email_verified,
   check_connected_recently,
+  check_two_factor_auth,
 ] as const);
 
 export type SigninRequirementsCheck = InferCheckNames<

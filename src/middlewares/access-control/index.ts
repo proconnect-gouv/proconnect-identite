@@ -13,10 +13,12 @@ import { type User } from "@proconnect-gouv/proconnect.identite/types";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { HOST } from "../../config/env.js";
+import { is2FACapable, shouldForce2faForUser } from "../../managers/2fa.js";
 import {
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
   isWithinAuthenticatedSession,
+  isWithinTwoFactorAuthenticatedSession,
 } from "../../managers/session/authenticated.js";
 import { needsEmailVerificationRenewal } from "../../managers/user.js";
 import { findById } from "../../repositories/user.js";
@@ -71,6 +73,10 @@ function handleDeny(
       }
       return res.redirect("/users/start-sign-in?notification=login_required");
     }
+    case "two_factor_auth_required":
+      return res.redirect("/users/2fa-sign-in");
+    case "two_factor_choice_required":
+      return res.redirect("/users/double-authentication-choice");
     default: {
       const _exhaustive: never = reason.code;
       return _exhaustive;
@@ -172,6 +178,11 @@ export const signin_requirements_builder: ChecksBuilder<
       has_authenticated_recently: isAuthenticated
         ? hasUserAuthenticatedRecently(req)
         : false,
+      should_force_2fa: user ? await shouldForce2faForUser(user.id) : false,
+      two_factors_auth_requested: !!req.session.twoFactorsAuthRequested,
+      is_within_two_factor_authenticated_session:
+        isWithinTwoFactorAuthenticatedSession(req),
+      is_2fa_capable: user ? await is2FACapable(user.id) : false,
     };
   },
 };

@@ -17,6 +17,10 @@ function signin_context(
     user: { id: 1, email_verified: true } as User,
     needs_email_verification_renewal: false,
     has_authenticated_recently: true,
+    should_force_2fa: false,
+    two_factors_auth_requested: false,
+    is_within_two_factor_authenticated_session: false,
+    is_2fa_capable: false,
     ...overrides,
   };
 }
@@ -115,6 +119,40 @@ describe("signin_requirements_checks", () => {
         type: "deny",
         name: "session_stale",
         reason: { code: "login_required" },
+      });
+    });
+  });
+
+  describe("when 2FA is required but not completed", () => {
+    it("redirects to 2FA page if user is 2FA capable", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({
+          should_force_2fa: true,
+          is_2fa_capable: true,
+          is_within_two_factor_authenticated_session: false,
+        }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        name: "2fa_required",
+        reason: { code: "two_factor_auth_required" },
+      });
+    });
+
+    it("redirects to choice page if user is NOT 2FA capable", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({
+          should_force_2fa: true,
+          is_2fa_capable: false,
+          is_within_two_factor_authenticated_session: false,
+        }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        name: "2fa_choice_needed",
+        reason: { code: "two_factor_choice_required" },
       });
     });
   });

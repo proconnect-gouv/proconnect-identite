@@ -164,3 +164,49 @@ export function check_connected_recently(
   }
   return { type: "pass", name: "session_fresh" };
 }
+
+//
+// Check: two_factor_auth
+// Ensures user has completed 2FA if required
+//
+
+export type TwoFactorAuthContext = {
+  user: User;
+  should_force_2fa: boolean;
+  two_factors_auth_requested: boolean;
+  is_within_two_factor_authenticated_session: boolean;
+  is_2fa_capable: boolean;
+};
+
+/**
+ * Requires 2FA if forced or requested.
+ *
+ * Semantic names:
+ * - "2fa_completed": 2FA is done or not required
+ * - "2fa_required": User needs to perform 2FA
+ * - "2fa_choice_needed": User needs to choose 2FA method
+ */
+export function check_two_factor_auth(
+  ctx: TwoFactorAuthContext,
+): CheckOutput<"2fa_completed", "2fa_required" | "2fa_choice_needed"> {
+  const is_2fa_required =
+    ctx.should_force_2fa || ctx.two_factors_auth_requested;
+
+  if (is_2fa_required && !ctx.is_within_two_factor_authenticated_session) {
+    if (ctx.is_2fa_capable) {
+      return {
+        type: "deny",
+        name: "2fa_required",
+        reason: { code: "two_factor_auth_required" },
+      };
+    } else {
+      return {
+        type: "deny",
+        name: "2fa_choice_needed",
+        reason: { code: "two_factor_choice_required" },
+      };
+    }
+  }
+
+  return { type: "pass", name: "2fa_completed" };
+}

@@ -10,7 +10,9 @@ export type DenyReasonCode =
   | "user_not_found"
   | "email_not_verified"
   | "email_verification_renewal"
-  | "login_required";
+  | "login_required"
+  | "two_factor_auth_required"
+  | "two_factor_choice_required";
 
 export type DenyReason = {
   code: DenyReasonCode;
