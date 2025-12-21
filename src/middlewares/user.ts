@@ -28,7 +28,6 @@ import {
   destroyAuthenticatedSession,
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
-  isWithinAuthenticatedSession,
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { CertificationSessionSchema } from "../managers/session/certification";
@@ -50,8 +49,22 @@ import {
   createAccessControlMiddleware,
   getReferrerPath,
   session_auth_builder,
+  signin_requirements_builder,
 } from "./access-control/index.js";
 export const checkIsUser = createAccessControlMiddleware(session_auth_builder);
+const checkUserIsConnectedPipeline = createAccessControlMiddleware(
+  signin_requirements_builder,
+);
+export const checkUserIsConnectedMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (req.method === "HEAD") {
+    return res.send();
+  }
+  return checkUserIsConnectedPipeline(req, res, next);
+};
 
 // redirect user to start sign in page if no email is available in session
 export const checkEmailInSessionMiddleware = async (
@@ -100,41 +113,6 @@ export const checkUserHasSeenInclusionconnectWelcomePage = async (
 
 export const checkCredentialPromptRequirementsMiddleware =
   checkUserHasSeenInclusionconnectWelcomePage;
-
-// redirect user to login page if no active session is available
-export const checkUserIsConnectedMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  await checkIsUser(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      if (req.method === "HEAD") {
-        // From express documentation:
-        // The app.get() function is automatically called for the HTTP HEAD method
-        // in addition to the GET method if app.head() was not called for the path
-        // before app.get().
-        // We return empty response and the headers are sent to the client.
-        return res.send();
-      }
-
-      if (!isWithinAuthenticatedSession(req.session)) {
-        const referrerPath = getReferrerPath(req);
-        if (referrerPath) {
-          req.session.referrerPath = referrerPath;
-        }
-
-        return res.redirect(`/users/start-sign-in`);
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-};
 export const checkUserHasConnectedRecentlyMiddleware = async (
   req: Request,
   res: Response,
@@ -168,10 +146,11 @@ export const checkUserIsVerifiedMiddleware = async (
     try {
       if (error) return next(error);
 
-      const { email, email_verified } = getUserFromAuthenticatedSession(req);
+      const user = getUserFromAuthenticatedSession(req);
+      const { email_verified } = user;
 
       const needs_email_verification_renewal =
-        await needsEmailVerificationRenewal(email);
+        needsEmailVerificationRenewal(user);
 
       if (!email_verified || needs_email_verification_renewal) {
         let notification_param = "";

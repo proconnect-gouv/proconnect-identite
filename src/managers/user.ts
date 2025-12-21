@@ -417,15 +417,7 @@ export const verifyEmail = async (
   });
 };
 
-export const needsEmailVerificationRenewal = async (
-  email: string,
-): Promise<boolean> => {
-  const user = await findByEmail(email);
-
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-
+export const needsEmailVerificationRenewal = (user: User): boolean => {
   return isExpired(
     user.email_verified_at,
     MAX_DURATION_BETWEEN_TWO_EMAIL_ADDRESS_VERIFICATION_IN_MINUTES,
