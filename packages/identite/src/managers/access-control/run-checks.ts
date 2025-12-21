@@ -1,9 +1,8 @@
 import type { CheckFn, PipelineResult } from "./types.js";
 
 /**
- * Runs a check pipeline.
- *
- * Executes checks in order, stops on first denial.
+ * Executes a pipeline of check functions against a context.
+ * Stops on the first "deny" result.
  *
  * @param checks - Array of check functions
  * @param ctx - Context with raw facts about the request
@@ -14,12 +13,10 @@ export function run_checks<TCtx>(
   ctx: TCtx,
 ): PipelineResult {
   for (const check of checks) {
-    const output = check(ctx);
-
-    if (output.type === "deny") {
-      return { type: "deny", reason: output.reason };
+    const result = check(ctx);
+    if (result.type === "deny") {
+      return result;
     }
   }
-
   return { type: "pass" };
 }

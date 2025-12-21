@@ -1,8 +1,16 @@
+import type { PipelineContext } from "./coherency.js";
+
 //
 // Minimal types for access control pipeline
 //
 
-export type DenyReasonCode = "forbidden";
+export type DenyReasonCode =
+  | "forbidden"
+  | "not_connected"
+  | "user_not_found"
+  | "email_not_verified"
+  | "email_verification_renewal"
+  | "login_required";
 
 export type DenyReason = {
   code: DenyReasonCode;
@@ -14,37 +22,31 @@ export type DenyReason = {
  * - `pass`: Check passed, continue to next check
  * - `deny`: Check failed, stop pipeline and redirect/reject
  */
-export type CheckOutput<TName extends string> =
-  | { type: "pass"; name: TName }
-  | { type: "deny"; name: TName; reason: DenyReason };
+export type CheckOutput<TPass extends string, TDeny extends string = string> =
+  | { type: "pass"; name: TPass }
+  | { type: "deny"; name: TDeny; reason: DenyReason };
 
 /**
  * Check function signature.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CheckFn<TName extends string = string, TCtx = any> = (
+export type CheckFn<TPass extends string = string, TCtx = any> = (
   ctx: TCtx,
-) => CheckOutput<TName>;
+) => CheckOutput<TPass, any>;
 
 /**
  * Result after running a pipeline.
  */
-export type PipelineResult =
+export type PipelineResult<TName extends string = string> =
   | { type: "pass" }
-  | { type: "deny"; reason: DenyReason };
+  | { type: "deny"; name: TName; reason: DenyReason };
 
 //
 // Type inference helpers
 //
 
-type UnionToIntersection<U> = (
-  U extends unknown ? (k: U) => void : never
-) extends (k: infer I) => void
-  ? I
-  : never;
-
 export type InferCheckNames<TChecks extends readonly CheckFn[]> =
   ReturnType<TChecks[number]> extends CheckOutput<infer TName> ? TName : never;
 
 export type InferContext<TChecks extends readonly CheckFn[]> =
-  UnionToIntersection<Parameters<TChecks[number]>[0]>;
+  PipelineContext<TChecks>;

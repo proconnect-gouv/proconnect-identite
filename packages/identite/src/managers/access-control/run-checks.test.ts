@@ -30,6 +30,7 @@ describe("run_checks", () => {
 
       assert.deepEqual(result, {
         type: "deny",
+        name: "b",
         reason: { code: "some_error" },
       });
     });
@@ -45,6 +46,7 @@ describe("run_checks", () => {
 
       assert.deepEqual(result, {
         type: "deny",
+        name: "first",
         reason: { code: "error_1" },
       });
     });
@@ -58,19 +60,19 @@ describe("check_session_auth", () => {
 
       assert.deepEqual(result, {
         type: "deny",
-        name: "session_auth",
+        name: "api_request_rejected",
         reason: { code: "forbidden" },
       });
     });
   });
 
   describe("when request has no auth headers (normal browser request)", () => {
-    it("passes - this is an anonymous web request", () => {
+    it("passes - this is a web request using session auth", () => {
       const result = check_session_auth({ uses_auth_headers: false });
 
       assert.deepEqual(result, {
         type: "pass",
-        name: "session_auth",
+        name: "web_request",
       });
     });
   });
@@ -84,6 +86,7 @@ describe("session_auth in pipeline", () => {
 
     assert.deepEqual(result, {
       type: "deny",
+      name: "api_request_rejected",
       reason: { code: "forbidden" },
     });
   });
