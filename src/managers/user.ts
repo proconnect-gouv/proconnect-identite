@@ -496,7 +496,7 @@ export const sendResetPasswordEmail = async (
     return true;
   }
 
-  const resetPasswordToken = await generateToken();
+  const resetPasswordToken = generateToken();
 
   await update(user.id, {
     reset_password_token: resetPasswordToken,

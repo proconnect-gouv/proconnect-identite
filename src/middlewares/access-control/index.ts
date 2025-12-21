@@ -9,17 +9,9 @@ import {
   type InferPassNames,
   type SigninRequirementsContext,
 } from "@proconnect-gouv/proconnect.identite/managers/access-control";
-import { type User } from "@proconnect-gouv/proconnect.identite/types";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { HOST } from "../../config/env.js";
-import {
-  getUserFromAuthenticatedSession,
-  hasUserAuthenticatedRecently,
-  isWithinAuthenticatedSession,
-} from "../../managers/session/authenticated.js";
-import { needsEmailVerificationRenewal } from "../../managers/user.js";
-import { findById } from "../../repositories/user.js";
 import { usesAuthHeaders } from "../../services/uses-auth-headers.js";
 
 //
@@ -144,25 +136,8 @@ export const signin_requirements_builder: ChecksBuilder<
 > = {
   checks: signin_requirements_checks,
   load_context: async (req): Promise<SigninRequirementsContext> => {
-    const isAuthenticated = isWithinAuthenticatedSession(req.session);
-
-    // Gather user if authenticated (findById returns User | undefined)
-    let user: User | undefined;
-    if (isAuthenticated) {
-      const sessionUser = getUserFromAuthenticatedSession(req);
-      user = await findById(sessionUser.id);
-    }
-
     return {
       uses_auth_headers: usesAuthHeaders(req),
-      is_within_authenticated_session: isAuthenticated,
-      user,
-      needs_email_verification_renewal: user
-        ? needsEmailVerificationRenewal(user)
-        : false,
-      has_authenticated_recently: isAuthenticated
-        ? hasUserAuthenticatedRecently(req)
-        : false,
     };
   },
 };
