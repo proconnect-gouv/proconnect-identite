@@ -170,3 +170,70 @@ export function check_two_factor_auth(ctx: TwoFactorAuthContext) {
 
   return pass("2fa_completed", { user: ctx.user });
 }
+
+//
+// Check: browser_trust
+// Ensures the browser is trusted for the user
+//
+
+export type BrowserTrustContext = {
+  user: User;
+  is_browser_trusted: boolean;
+};
+
+/**
+ * Requires the browser to be trusted.
+ *
+ * Semantic names:
+ * - "browser_trusted": Browser is trusted
+ * - "browser_untrusted": Browser is not trusted
+ */
+export function check_browser_trust(ctx: BrowserTrustContext) {
+  if (!ctx.is_browser_trusted) {
+    return deny("browser_not_trusted");
+  }
+
+  return pass("browser_trusted", { is_browser_trusted: true as const });
+}
+
+//
+// Check: franceconnect_identity
+// Ensures user has linked their account with FranceConnect if required
+//
+
+export type FranceConnectIdentityContext = {
+  is_franceconnect_certification_requested: boolean;
+  is_franceconnect_policy_override: boolean;
+  is_user_verified_with_franceconnect: boolean;
+};
+
+/**
+ * Requires FranceConnect identity if requested by client,
+ * unless overridden by server policy.
+ *
+ * Semantic names:
+ * - "franceconnect_identity_verified": User is verified with FranceConnect
+ * - "franceconnect_identity_not_required_by_policy": FC not required due to server settings
+ * - "franceconnect_identity_not_requested": Client did not request FC-level assurance
+ */
+export function check_franceconnect_identity(
+  ctx: FranceConnectIdentityContext,
+) {
+  if (ctx.is_user_verified_with_franceconnect) {
+    return pass("franceconnect_identity_verified", {
+      is_user_verified_with_franceconnect: true as const,
+    });
+  }
+
+  if (ctx.is_franceconnect_policy_override) {
+    return pass("franceconnect_identity_not_required_by_policy", {
+      is_user_verified_with_franceconnect: true as const,
+    });
+  }
+
+  if (!ctx.is_franceconnect_certification_requested) {
+    return pass("franceconnect_identity_not_requested");
+  }
+
+  return deny("franceconnect_certification_required");
+}

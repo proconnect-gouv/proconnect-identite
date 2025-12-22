@@ -10,7 +10,6 @@ import {
   HOST,
 } from "../config/env";
 import { is2FACapable } from "../managers/2fa";
-import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import { performCertificationDirigeant } from "../managers/certification";
 import {
   greetForCertification,
@@ -27,12 +26,10 @@ import {
   hasUserAuthenticatedRecently,
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
-import { CertificationSessionSchema } from "../managers/session/certification";
 import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
-import { isUserVerifiedWithFranceconnect } from "../managers/user";
 import { getUserOrganizationLink } from "../repositories/organization/getters";
 import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
@@ -127,52 +124,14 @@ export const checkUserTwoFactorAuthMiddleware = createAccessControlMiddleware(
   { break_on: "2fa_completed" },
 );
 
-export const checkBrowserIsTrustedMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) =>
-  checkUserTwoFactorAuthMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
+export const checkBrowserIsTrustedMiddleware = createAccessControlMiddleware(
+  signin_requirements_builder,
+  { break_on: "browser_trusted" },
+);
 
-      const is_browser_trusted = isBrowserTrustedForUser(req);
-
-      if (!is_browser_trusted) {
-        return res.redirect(
-          `/users/verify-email?notification=browser_not_trusted`,
-        );
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
-  });
-
-export const checkUserIsFranceConnectedMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) =>
-  checkBrowserIsTrustedMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-      if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
-
-      const { certificationDirigeantRequested: isRequested } =
-        await CertificationSessionSchema.parseAsync(req.session);
-      if (!isRequested) return next();
-
-      const { id: userId } = getUserFromAuthenticatedSession(req);
-      const isVerified = await isUserVerifiedWithFranceconnect(userId);
-
-      if (isVerified) return next();
-
-      return res.redirect("/users/certification-dirigeant");
-    } catch (error) {
-      next(error);
-    }
+export const checkUserIsFranceConnectedMiddleware =
+  createAccessControlMiddleware(signin_requirements_builder, {
+    break_on: "franceconnect_certified",
   });
 
 export const checkUserHasPersonalInformationsMiddleware = (

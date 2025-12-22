@@ -11,15 +11,22 @@ import {
 import { type User } from "@proconnect-gouv/proconnect.identite/types";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
-import { HOST } from "../../config/env.js";
+import {
+  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
+  HOST,
+} from "../../config/env.js";
 import { is2FACapable, shouldForce2faForUser } from "../../managers/2fa.js";
+import { isBrowserTrustedForUser } from "../../managers/browser-authentication.js";
 import {
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
   isWithinAuthenticatedSession,
   isWithinTwoFactorAuthenticatedSession,
 } from "../../managers/session/authenticated.js";
-import { needsEmailVerificationRenewal } from "../../managers/user.js";
+import {
+  isUserVerifiedWithFranceconnect,
+  needsEmailVerificationRenewal,
+} from "../../managers/user.js";
 import { findById } from "../../repositories/user.js";
 import { usesAuthHeaders } from "../../services/uses-auth-headers.js";
 
@@ -74,6 +81,12 @@ function handleDeny(
       return res.redirect("/users/2fa-sign-in");
     case "two_factor_choice_required":
       return res.redirect("/users/double-authentication-choice");
+    case "browser_not_trusted":
+      return res.redirect(
+        "/users/verify-email?notification=browser_not_trusted",
+      );
+    case "franceconnect_certification_required":
+      return res.redirect("/users/certification-dirigeant");
     default: {
       code satisfies never;
     }
@@ -179,6 +192,15 @@ export const signin_requirements_builder: ChecksBuilder<
       is_within_two_factor_authenticated_session:
         isWithinTwoFactorAuthenticatedSession(req),
       is_2fa_capable: user ? await is2FACapable(user.id) : false,
+      is_browser_trusted: user ? isBrowserTrustedForUser(req) : false,
+      is_franceconnect_certification_requested:
+        !!req.session.certificationDirigeantRequested,
+      is_franceconnect_policy_override:
+        !!FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
+      is_user_verified_with_franceconnect:
+        !!user &&
+        !FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED &&
+        (await isUserVerifiedWithFranceconnect(user.id)),
     };
   },
 };

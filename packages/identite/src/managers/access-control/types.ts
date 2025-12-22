@@ -10,7 +10,9 @@ export type DenyReasonCode =
   | "email_verification_renewal"
   | "login_required"
   | "two_factor_auth_required"
-  | "two_factor_choice_required";
+  | "two_factor_choice_required"
+  | "browser_not_trusted"
+  | "franceconnect_certification_required";
 
 /**
  * Result of a single check function.

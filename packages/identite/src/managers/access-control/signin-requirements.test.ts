@@ -21,6 +21,10 @@ function signin_context(
     two_factors_auth_requested: false,
     is_within_two_factor_authenticated_session: false,
     is_2fa_capable: false,
+    is_browser_trusted: true,
+    is_franceconnect_certification_requested: false,
+    is_franceconnect_policy_override: false,
+    is_user_verified_with_franceconnect: false,
     ...overrides,
   };
 }
@@ -146,6 +150,58 @@ describe("signin_requirements_checks", () => {
         type: "deny",
         code: "two_factor_choice_required",
       });
+    });
+  });
+
+  describe("when browser is NOT trusted", () => {
+    it("redirects to browser trust page", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({ is_browser_trusted: false }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        code: "browser_not_trusted",
+      });
+    });
+  });
+
+  describe("when FranceConnect certification is required but not completed", () => {
+    it("redirects to FranceConnect certification page", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({
+          is_franceconnect_certification_requested: true,
+          is_user_verified_with_franceconnect: false,
+        }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        code: "franceconnect_certification_required",
+      });
+    });
+
+    it("passes if feature flag to consider all users as certified is enabled", () => {
+      // In reality, the loader handles this by setting is_franceconnect_policy_override to true
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({
+          is_franceconnect_certification_requested: true,
+          is_user_verified_with_franceconnect: false,
+          is_franceconnect_policy_override: true,
+        }),
+      );
+      assert.deepEqual(result, { type: "pass" });
+    });
+
+    it("passes with franceconnect_identity_not_requested when not requested", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({
+          is_franceconnect_certification_requested: false,
+        }),
+      );
+      assert.deepEqual(result, { type: "pass" });
     });
   });
 

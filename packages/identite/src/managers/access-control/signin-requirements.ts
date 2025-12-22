@@ -1,8 +1,10 @@
 import type { User } from "../../types/index.js";
 import { createCheckChain } from "./chain-builder.js";
 import {
+  check_browser_trust,
   check_connected_recently,
   check_email_verified,
+  check_franceconnect_identity,
   check_session_auth,
   check_two_factor_auth,
   check_user_connected,
@@ -24,6 +26,10 @@ export type SigninRequirementsInitialContext = {
   two_factors_auth_requested: boolean;
   is_within_two_factor_authenticated_session: boolean;
   is_2fa_capable: boolean;
+  is_browser_trusted: boolean;
+  is_franceconnect_certification_requested: boolean;
+  is_franceconnect_policy_override: boolean;
+  is_user_verified_with_franceconnect: boolean;
 };
 
 /**
@@ -37,6 +43,8 @@ export type SigninRequirementsInitialContext = {
  * 4. email_verified - Ensures user's email is verified
  * 5. connected_recently - Ensures user has authenticated recently
  * 6. two_factor_auth - Ensures user has completed 2FA if required
+ * 7. browser_trust - Ensures the browser is trusted
+ * 8. franceconnect_identity - Ensures user has completed FranceConnect certification if required
  */
 export const signin_requirements_pipeline =
   createCheckChain<SigninRequirementsInitialContext>()
@@ -46,6 +54,8 @@ export const signin_requirements_pipeline =
     .add(check_email_verified)
     .add(check_connected_recently)
     .add(check_two_factor_auth)
+    .add(check_browser_trust)
+    .add(check_franceconnect_identity)
     .build();
 
 export const signin_requirements_checks = signin_requirements_pipeline.checks;
