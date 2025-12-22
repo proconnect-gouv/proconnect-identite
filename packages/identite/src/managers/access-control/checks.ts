@@ -1,4 +1,4 @@
-import type { Organization, User } from "#src/types";
+import type { Organization, User } from "../../types/index.js";
 import { deny, pass } from "./check-helpers.js";
 
 //
@@ -43,17 +43,15 @@ export type UserConnectedContext = {
  * - "session_missing": No authenticated session found
  */
 export function check_user_connected(ctx: UserConnectedContext) {
-  if (ctx.is_method_head) {
+  if (ctx.is_within_authenticated_session) {
     return pass("session_active", {
       is_within_authenticated_session: true as const,
     });
   }
-  if (!ctx.is_within_authenticated_session) {
-    return deny("not_connected");
+  if (ctx.is_method_head) {
+    return pass("session_active");
   }
-  return pass("session_active", {
-    is_within_authenticated_session: true as const,
-  });
+  return deny("not_connected");
 }
 
 //
@@ -105,7 +103,9 @@ export function check_email_verified(ctx: EmailVerifiedContext) {
   if (ctx.needs_email_verification_renewal) {
     return deny("email_verification_renewal");
   }
-  return pass("email_confirmed", { user: ctx.user });
+  return pass("email_confirmed", {
+    user: ctx.user as User & { email_verified: true },
+  });
 }
 
 //
@@ -114,7 +114,6 @@ export function check_email_verified(ctx: EmailVerifiedContext) {
 //
 
 export type ConnectedRecentlyContext = {
-  user: User;
   has_authenticated_recently: boolean;
 };
 
@@ -126,13 +125,10 @@ export type ConnectedRecentlyContext = {
  * - "session_stale": User authenticated too long ago
  */
 export function check_connected_recently(ctx: ConnectedRecentlyContext) {
-  if (!ctx.user) {
-    return pass("session_fresh");
-  }
   if (!ctx.has_authenticated_recently) {
     return deny("login_required");
   }
-  return pass("session_fresh", { user: ctx.user });
+  return pass("session_fresh", { has_authenticated_recently: true as const });
 }
 
 //
@@ -141,7 +137,6 @@ export function check_connected_recently(ctx: ConnectedRecentlyContext) {
 //
 
 export type TwoFactorAuthContext = {
-  user: User;
   should_force_2fa: boolean;
   two_factors_auth_requested: boolean;
   is_within_two_factor_authenticated_session: boolean;
@@ -168,7 +163,13 @@ export function check_two_factor_auth(ctx: TwoFactorAuthContext) {
     }
   }
 
-  return pass("2fa_completed", { user: ctx.user });
+  if (ctx.is_within_two_factor_authenticated_session) {
+    return pass("2fa_completed", {
+      is_within_two_factor_authenticated_session: true as const,
+    });
+  }
+
+  return pass("2fa_completed");
 }
 
 //
@@ -177,7 +178,6 @@ export function check_two_factor_auth(ctx: TwoFactorAuthContext) {
 //
 
 export type BrowserTrustContext = {
-  user: User;
   is_browser_trusted: boolean;
 };
 
