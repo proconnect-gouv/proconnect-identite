@@ -120,7 +120,7 @@ export const checkUserIsVerifiedMiddleware = createAccessControlMiddleware(
 
 export const checkUserTwoFactorAuthMiddleware = createAccessControlMiddleware(
   signin_requirements_builder,
-  { break_on: "2fa_completed" },
+  { break_on: "2fa_satisfied" },
 );
 
 export const checkBrowserIsTrustedMiddleware = createAccessControlMiddleware(

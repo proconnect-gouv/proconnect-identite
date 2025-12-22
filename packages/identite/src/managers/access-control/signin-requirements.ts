@@ -9,6 +9,7 @@ import {
   check_profile_complete,
   check_session_auth,
   check_two_factor_auth,
+  check_two_factor_state,
   check_user_connected,
   check_user_exists,
 } from "./checks.js";
@@ -58,8 +59,10 @@ export const signin_requirements_pipeline =
     .add(check_user_exists)
     .add(check_email_verified)
     .add(check_connected_recently)
+    .add(check_two_factor_state)
     .add(check_two_factor_auth)
     .add(check_browser_trust)
+
     .add(check_franceconnect_identity)
     .add(check_profile_complete)
     .add(check_has_organization)

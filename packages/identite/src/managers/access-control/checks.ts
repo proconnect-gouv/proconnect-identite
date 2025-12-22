@@ -132,6 +132,35 @@ export function check_connected_recently(ctx: ConnectedRecentlyContext) {
 }
 
 //
+// Check: two_factor_state
+// Pure state observation of the 2FA session
+//
+
+export type TwoFactorStateContext = {
+  is_within_two_factor_authenticated_session: boolean;
+};
+
+/**
+ * Observes and narrows the 2FA session state.
+ * Never denies.
+ *
+ * Semantic names:
+ * - "2fa_session_active": Session is 2FA verified
+ * - "2fa_session_inactive": Session is NOT 2FA verified
+ */
+export function check_two_factor_state(ctx: TwoFactorStateContext) {
+  if (ctx.is_within_two_factor_authenticated_session) {
+    return pass("2fa_session_active", {
+      is_within_two_factor_authenticated_session: true as const,
+    });
+  }
+
+  return pass("2fa_session_inactive", {
+    is_within_two_factor_authenticated_session: false as const,
+  });
+}
+
+//
 // Check: two_factor_auth
 // Ensures user has completed 2FA if required
 //
@@ -147,24 +176,24 @@ export type TwoFactorAuthContext = {
  * Requires 2FA if forced or requested.
  *
  * Semantic names:
- * - "2fa_completed": 2FA is done or not required
- * - "2fa_required": User needs to perform 2FA
- * - "2fa_choice_needed": User needs to choose 2FA method
+ * - "2fa_satisfied": 2FA requirement is met (either by session or policy)
  */
 export function check_two_factor_auth(ctx: TwoFactorAuthContext) {
+  // If we already have a 2FA session, we satisfied the requirement.
+  // The state was already narrowed by check_two_factor_state.
   if (ctx.is_within_two_factor_authenticated_session) {
-    return pass("2fa_completed", {
-      is_within_two_factor_authenticated_session: true as const,
-    });
+    return pass("2fa_satisfied");
   }
 
+  // If not active, check if 2FA is actually required for this request.
   const is_2fa_required =
     ctx.should_force_2fa || ctx.two_factors_auth_requested;
 
   if (!is_2fa_required) {
-    return pass("2fa_completed");
+    return pass("2fa_satisfied");
   }
 
+  // 2FA is required but we don't have a 2FA session.
   return deny(
     ctx.is_2fa_capable
       ? "two_factor_auth_required"
