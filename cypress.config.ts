@@ -7,8 +7,6 @@ const RECORD = process.env["CYPRESS_RECORD"] === "true";
 
 export default defineConfig({
   chromeWebSecurity: false,
-  defaultCommandTimeout: 60000,
-  pageLoadTimeout: 60000,
   e2e: {
     baseUrl: "http://localhost:3000",
     // We've imported your old cypress plugins here.
