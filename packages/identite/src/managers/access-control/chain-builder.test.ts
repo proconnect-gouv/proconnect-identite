@@ -46,25 +46,29 @@ describe("CheckChainBuilder (Infrastructure)", () => {
   });
 
   describe("Runtime execution", () => {
-    it("passes when all checks pass", () => {
+    it("passes when all checks pass", async () => {
       const pipeline = createCheckChain<{ user?: string }>()
         .add(check_establishing_user)
         .build();
 
-      const result = pipeline.run({ user: "exists" });
+      const result = await pipeline.run({ user: "exists" });
       assert.deepEqual(result, { type: "pass" });
     });
 
-    it("denies when a check fails", () => {
+    it("denies when a check fails", async () => {
       const pipeline = createCheckChain<{ user?: string }>()
         .add(check_establishing_user)
         .build();
 
-      const result = pipeline.run({ user: undefined });
-      assert.deepEqual(result, { type: "deny", code: "user_not_found" });
+      const result = await pipeline.run({ user: undefined });
+      assert.deepEqual(result, {
+        code: "user_not_found",
+        effects: [],
+        type: "deny",
+      });
     });
 
-    it("stops at break_on checkpoint", () => {
+    it("stops at break_on checkpoint", async () => {
       let secondExecuted = false;
       const check2 = () => {
         secondExecuted = true;
@@ -76,7 +80,7 @@ describe("CheckChainBuilder (Infrastructure)", () => {
         .add(check2)
         .build();
 
-      const result = pipeline.run({}, { break_on: "one" });
+      const result = await pipeline.run({}, { break_on: "one" });
       assert.deepEqual(result, { type: "pass" });
       assert.equal(secondExecuted, false);
     });

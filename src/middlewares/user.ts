@@ -17,9 +17,7 @@ import {
 } from "../managers/organization/join";
 import {
   getOrganizationById,
-  getOrganizationBySiret,
   getOrganizationsByUserId,
-  selectOrganization,
 } from "../managers/organization/main";
 import {
   getUserFromAuthenticatedSession,
@@ -198,87 +196,9 @@ export const checkUserTwoFactorAuthForAdminMiddleware = (
 export const checkUserCanAccessAdminMiddleware =
   checkUserTwoFactorAuthForAdminMiddleware;
 
-const checkUserBelongsToHintedOrganizationMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  checkUserHasAtLeastOneOrganizationMiddleware(req, res, async (error) => {
-    try {
-      if (error) {
-        return next(error);
-      }
-
-      if (!req.session.siretHint) {
-        return next();
-      }
-      const hintedOrganization = await getOrganizationBySiret(
-        req.session.siretHint,
-      );
-
-      const userFromAuthenticatedSession = getUserFromAuthenticatedSession(req);
-
-      const userOrganisations = await getOrganizationsByUserId(
-        userFromAuthenticatedSession.id,
-      );
-
-      if (
-        !isEmpty(hintedOrganization) &&
-        userOrganisations.some((org) => org.id === hintedOrganization.id)
-      ) {
-        await selectOrganization({
-          user_id: userFromAuthenticatedSession.id,
-          organization_id: hintedOrganization.id,
-        });
-        return next();
-      } else {
-        return res.redirect(
-          `/users/join-organization?siret_hint=${req.session.siretHint}`,
-        );
-      }
-    } catch (error) {
-      next(error);
-    }
-  });
-};
-
-export const checkUserHasSelectedAnOrganizationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) =>
-  checkUserBelongsToHintedOrganizationMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-      if (!req.session.mustReturnOneOrganizationInPayload) return next();
-
-      const selectedOrganizationId = await getSelectedOrganizationId(
-        getUserFromAuthenticatedSession(req).id,
-      );
-
-      if (selectedOrganizationId) {
-        return next();
-      }
-
-      const userOrganisations = await getOrganizationsByUserId(
-        getUserFromAuthenticatedSession(req).id,
-      );
-
-      if (
-        userOrganisations.length === 1 &&
-        !req.session.certificationDirigeantRequested
-      ) {
-        await selectOrganization({
-          user_id: getUserFromAuthenticatedSession(req).id,
-          organization_id: userOrganisations[0].id,
-        });
-        return next();
-      }
-
-      return res.redirect("/users/select-organization");
-    } catch (error) {
-      next(error);
-    }
+export const checkUserHasSelectedAnOrganizationMiddleware =
+  createAccessControlMiddleware(signin_requirements_builder, {
+    break_on: "organization_selected",
   });
 
 export function checkUserPassedCertificationDirigeant(

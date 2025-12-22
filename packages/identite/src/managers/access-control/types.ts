@@ -3,18 +3,33 @@
 //
 
 export type DenyReasonCode =
-  | "forbidden"
-  | "not_connected"
-  | "user_not_found"
+  | "browser_not_trusted"
   | "email_not_verified"
   | "email_verification_renewal"
+  | "forbidden"
+  | "franceconnect_certification_required"
   | "login_required"
+  | "not_connected"
+  | "organization_required"
+  | "organization_selection_required"
+  | "personal_info_missing"
   | "two_factor_auth_required"
   | "two_factor_choice_required"
-  | "browser_not_trusted"
-  | "franceconnect_certification_required"
-  | "personal_info_missing"
-  | "organization_required";
+  | "user_not_found";
+
+//
+// Effect types - pure data describing intended side effects
+//
+
+export type SelectOrganizationEffect = {
+  organization_id: number;
+  type: "select_organization";
+  user_id: number;
+};
+
+export type Effect = SelectOrganizationEffect;
+
+export type EffectExecutor = (effect: Effect) => Promise<void>;
 
 /**
  * Result of a single check function.
@@ -23,14 +38,16 @@ export type DenyReasonCode =
  * - `deny`: Check failed, stop pipeline and redirect/reject. Carries error code.
  */
 export type PassResult<TName extends string, TCtx extends object> = {
-  type: "pass";
-  name: TName;
   ctx: TCtx;
+  effects: Effect[];
+  name: TName;
+  type: "pass";
 };
 
 export type DenyResult<TCode extends DenyReasonCode> = {
-  type: "deny";
   code: TCode;
+  effects: Effect[];
+  type: "deny";
 };
 
 export type CheckResult<

@@ -1,7 +1,13 @@
-import type { DenyReasonCode, DenyResult, PassResult } from "./types.js";
+import type {
+  DenyReasonCode,
+  DenyResult,
+  Effect,
+  PassResult,
+} from "./types.js";
 
 /**
- * Creates a successful check result with a semantic name and optional narrowed context.
+ * Creates a successful check result with a semantic name, optional narrowed context,
+ * and optional effects to be executed.
  */
 export function pass<TName extends string>(
   name: TName,
@@ -12,24 +18,40 @@ export function pass<TName extends string, TCtx extends object>(
 ): PassResult<TName, TCtx>;
 export function pass<TName extends string, TCtx extends object>(
   name: TName,
+  ctx: TCtx,
+  effects: Effect[],
+): PassResult<TName, TCtx>;
+export function pass<TName extends string, TCtx extends object>(
+  name: TName,
   ctx?: TCtx,
+  effects: Effect[] = [],
 ): PassResult<TName, TCtx | object> {
   return {
-    type: "pass",
-    name,
     ctx: ctx ?? {},
+    effects,
+    name,
+    type: "pass",
   };
 }
 
 /**
- * Creates a failed check result with a reason code.
+ * Creates a failed check result with a reason code and optional effects.
  */
 export function deny<TCode extends DenyReasonCode>(
   code: TCode,
+): DenyResult<TCode>;
+export function deny<TCode extends DenyReasonCode>(
+  code: TCode,
+  effects: Effect[],
+): DenyResult<TCode>;
+export function deny<TCode extends DenyReasonCode>(
+  code: TCode,
+  effects: Effect[] = [],
 ): DenyResult<TCode> {
   return {
-    type: "deny",
     code,
+    effects,
+    type: "deny",
   };
 }
 

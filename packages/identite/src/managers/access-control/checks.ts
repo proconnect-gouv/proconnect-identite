@@ -321,3 +321,59 @@ export function check_has_organization(ctx: HasOrganizationContext) {
     organizations: ctx.organizations as [Organization, ...Organization[]],
   });
 }
+
+//
+// Check: organization_selected
+// Ensures user has selected an organization if required
+//
+
+export type OrganizationSelectedContext = {
+  is_franceconnect_certification_requested: boolean;
+  must_return_one_organization: boolean;
+  organizations: [Organization, ...Organization[]];
+  selected_organization_id?: number;
+  user: User;
+};
+
+/**
+ * Requires an organization selection if requested by client.
+ * Auto-selects if user has exactly one organization and no certification is required.
+ *
+ * Semantic names:
+ * - "organization_selected": User has a valid selection
+ * - "selection_not_required": Selection is not needed for this request
+ *
+ * Effects:
+ * - "select_organization": Auto-select the single organization
+ */
+export function check_organization_selected(ctx: OrganizationSelectedContext) {
+  // Selection not required? Pass with no effects.
+  if (!ctx.must_return_one_organization) {
+    return pass("selection_not_required");
+  }
+
+  // Already selected? Pass with no effects.
+  if (ctx.selected_organization_id !== undefined) {
+    return pass("organization_selected", {
+      selected_organization_id: ctx.selected_organization_id,
+    });
+  }
+
+  // Auto-select if single org and no certification required
+  if (
+    ctx.organizations.length === 1 &&
+    !ctx.is_franceconnect_certification_requested
+  ) {
+    const org = ctx.organizations[0];
+    return pass("organization_selected", { selected_organization_id: org.id }, [
+      {
+        organization_id: org.id,
+        type: "select_organization",
+        user_id: ctx.user.id,
+      },
+    ]);
+  }
+
+  // Multiple orgs or certification required - user must choose
+  return deny("organization_selection_required");
+}

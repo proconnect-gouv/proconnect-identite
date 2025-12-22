@@ -7,6 +7,7 @@ import type {
   CheckFn,
   CheckResult,
   DenyReasonCode,
+  EffectExecutor,
   PipelineResult,
 } from "./types.js";
 
@@ -75,10 +76,10 @@ export class CheckChainBuilder<
       checks: this.checks,
       PassNames: {} as TPassNames,
       RequiredContext: {} as TInitial,
-      run: (
+      run: async (
         ctx: TInitial,
-        options?: { break_on?: TPassNames },
-      ): PipelineResult<TDenyCodes> => {
+        options?: { break_on?: TPassNames; execute_effect?: EffectExecutor },
+      ): Promise<PipelineResult<TDenyCodes>> => {
         // At runtime, the ctx passed to run() contains all required facts.
         // As checks run, they may narrow/refine this context.
         // We cast to any for the execution loop since the type safety is enforced at composition.
@@ -86,6 +87,13 @@ export class CheckChainBuilder<
 
         for (const check of this.checks) {
           const result = check(currentCtx) as CheckResult<any, any, any>;
+
+          // Execute effects immediately after each check
+          if (result.effects?.length && options?.execute_effect) {
+            for (const effect of result.effects) {
+              await options.execute_effect(effect);
+            }
+          }
 
           if (result.type === "deny") {
             return result;

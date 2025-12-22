@@ -6,6 +6,7 @@ import {
   check_email_verified,
   check_franceconnect_identity,
   check_has_organization,
+  check_organization_selected,
   check_profile_complete,
   check_session_auth,
   check_two_factor_auth,
@@ -19,21 +20,23 @@ import {
  * Properties that need narrowing (like user) should be optional or wider.
  */
 export type SigninRequirementsInitialContext = {
-  uses_auth_headers: boolean;
-  is_within_authenticated_session: boolean;
-  is_method_head: boolean;
-  user?: User;
-  needs_email_verification_renewal: boolean;
   has_authenticated_recently: boolean;
-  should_force_2fa: boolean;
-  two_factors_auth_requested: boolean;
-  is_within_two_factor_authenticated_session: boolean;
   is_2fa_capable: boolean;
   is_browser_trusted: boolean;
   is_franceconnect_certification_requested: boolean;
   is_franceconnect_policy_override: boolean;
+  is_method_head: boolean;
   is_user_verified_with_franceconnect: boolean;
+  is_within_authenticated_session: boolean;
+  is_within_two_factor_authenticated_session: boolean;
+  must_return_one_organization: boolean;
+  needs_email_verification_renewal: boolean;
   organizations: Organization[];
+  selected_organization_id?: number;
+  should_force_2fa: boolean;
+  two_factors_auth_requested: boolean;
+  user?: User;
+  uses_auth_headers: boolean;
 };
 
 /**
@@ -66,6 +69,7 @@ export const signin_requirements_pipeline =
     .add(check_franceconnect_identity)
     .add(check_profile_complete)
     .add(check_has_organization)
+    .add(check_organization_selected)
     .build();
 
 export const signin_requirements_checks = signin_requirements_pipeline.checks;
