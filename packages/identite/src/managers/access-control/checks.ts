@@ -1,4 +1,4 @@
-import type { User } from "../../types/index.js";
+import type { Organization, User } from "#src/types";
 import { deny, pass } from "./check-helpers.js";
 
 //
@@ -264,5 +264,31 @@ export function check_profile_complete(ctx: ProfileCompleteContext) {
       given_name: string;
       family_name: string;
     },
+  });
+}
+
+//
+// Check: has_organization
+// Ensures user belongs to at least one organization
+//
+
+export type HasOrganizationContext = {
+  organizations: Organization[];
+};
+
+/**
+ * Requires the user to have at least one organization link.
+ *
+ * Semantic names:
+ * - "has_organization": User belongs to at least one organization
+ * - "no_organization": User needs to join an organization
+ */
+export function check_has_organization(ctx: HasOrganizationContext) {
+  if (ctx.organizations.length === 0) {
+    return deny("organization_required");
+  }
+
+  return pass("has_organization", {
+    organizations: ctx.organizations as [Organization, ...Organization[]],
   });
 }

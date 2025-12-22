@@ -17,6 +17,7 @@ import {
 } from "../../config/env.js";
 import { is2FACapable, shouldForce2faForUser } from "../../managers/2fa.js";
 import { isBrowserTrustedForUser } from "../../managers/browser-authentication.js";
+import { getOrganizationsByUserId } from "../../managers/organization/main.js";
 import {
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
@@ -28,6 +29,7 @@ import {
   needsEmailVerificationRenewal,
 } from "../../managers/user.js";
 import { findById } from "../../repositories/user.js";
+import { addQueryParameters } from "../../services/add-query-parameters.js";
 import { usesAuthHeaders } from "../../services/uses-auth-headers.js";
 
 //
@@ -89,6 +91,12 @@ function handleDeny(
       return res.redirect("/users/certification-dirigeant");
     case "personal_info_missing":
       return res.redirect("/users/personal-information");
+    case "organization_required":
+      return res.redirect(
+        addQueryParameters("/users/join-organization", {
+          siret_hint: req.session.siretHint,
+        }),
+      );
     default: {
       code satisfies never;
     }
@@ -203,6 +211,7 @@ export const signin_requirements_builder: ChecksBuilder<
         !!user &&
         !FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED &&
         (await isUserVerifiedWithFranceconnect(user.id)),
+      organizations: user ? await getOrganizationsByUserId(user.id) : [],
     };
   },
 };

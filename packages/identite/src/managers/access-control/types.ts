@@ -13,7 +13,8 @@ export type DenyReasonCode =
   | "two_factor_choice_required"
   | "browser_not_trusted"
   | "franceconnect_certification_required"
-  | "personal_info_missing";
+  | "personal_info_missing"
+  | "organization_required";
 
 /**
  * Result of a single check function.

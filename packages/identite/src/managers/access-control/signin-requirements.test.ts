@@ -30,6 +30,7 @@ function signin_context(
     is_franceconnect_certification_requested: false,
     is_franceconnect_policy_override: false,
     is_user_verified_with_franceconnect: false,
+    organizations: [{ id: 1 }] as any[],
     ...overrides,
   };
 }
@@ -226,6 +227,19 @@ describe("signin_requirements_checks", () => {
       assert.deepEqual(result, {
         type: "deny",
         code: "personal_info_missing",
+      });
+    });
+  });
+
+  describe("when user has no organization", () => {
+    it("redirects to join organization page", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({ organizations: [] }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        code: "organization_required",
       });
     });
   });

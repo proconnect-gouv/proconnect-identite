@@ -1,10 +1,11 @@
-import type { User } from "../../types/index.js";
+import type { Organization, User } from "../../types/index.js";
 import { createCheckChain } from "./chain-builder.js";
 import {
   check_browser_trust,
   check_connected_recently,
   check_email_verified,
   check_franceconnect_identity,
+  check_has_organization,
   check_profile_complete,
   check_session_auth,
   check_two_factor_auth,
@@ -31,6 +32,7 @@ export type SigninRequirementsInitialContext = {
   is_franceconnect_certification_requested: boolean;
   is_franceconnect_policy_override: boolean;
   is_user_verified_with_franceconnect: boolean;
+  organizations: Organization[];
 };
 
 /**
@@ -46,6 +48,8 @@ export type SigninRequirementsInitialContext = {
  * 6. two_factor_auth - Ensures user has completed 2FA if required
  * 7. browser_trust - Ensures the browser is trusted
  * 8. franceconnect_identity - Ensures user has completed FranceConnect certification if required
+ * 9. profile_complete - Ensures user has provided names
+ * 10. has_organization - Ensures user belongs to at least one organization
  */
 export const signin_requirements_pipeline =
   createCheckChain<SigninRequirementsInitialContext>()
@@ -58,6 +62,7 @@ export const signin_requirements_pipeline =
     .add(check_browser_trust)
     .add(check_franceconnect_identity)
     .add(check_profile_complete)
+    .add(check_has_organization)
     .build();
 
 export const signin_requirements_checks = signin_requirements_pipeline.checks;

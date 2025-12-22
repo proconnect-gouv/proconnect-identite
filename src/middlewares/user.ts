@@ -34,7 +34,6 @@ import { getUserOrganizationLink } from "../repositories/organization/getters";
 import { updateUserOrganizationLink } from "../repositories/organization/setters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { getFranceConnectUserInfo } from "../repositories/user";
-import { addQueryParameters } from "../services/add-query-parameters";
 import { isExpired } from "../services/is-expired";
 import {
   createAccessControlMiddleware,
@@ -139,33 +138,9 @@ export const checkUserHasPersonalInformationsMiddleware =
     break_on: "profile_complete",
   });
 
-export const checkUserHasAtLeastOneOrganizationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) =>
-  checkUserHasPersonalInformationsMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-
-      if (
-        isEmpty(
-          await getOrganizationsByUserId(
-            getUserFromAuthenticatedSession(req).id,
-          ),
-        )
-      ) {
-        return res.redirect(
-          addQueryParameters("/users/join-organization", {
-            siret_hint: req.session.siretHint,
-          }),
-        );
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
+export const checkUserHasAtLeastOneOrganizationMiddleware =
+  createAccessControlMiddleware(signin_requirements_builder, {
+    break_on: "has_organization",
   });
 
 export const checkUserCanAccessAppMiddleware =
