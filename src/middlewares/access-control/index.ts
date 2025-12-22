@@ -4,8 +4,7 @@ import {
   run_checks,
   signin_requirements_checks,
   type CheckFn,
-  type DenyReason,
-  type InferContext,
+  type DenyReasonCode,
   type InferPassNames,
   type SigninRequirementsContext,
 } from "@proconnect-gouv/proconnect.identite/managers/access-control";
@@ -30,18 +29,16 @@ import { usesAuthHeaders } from "../../services/uses-auth-headers.js";
 
 export type ChecksBuilder<TChecks extends readonly CheckFn[]> = {
   checks: TChecks;
-  load_context: (
-    req: Request,
-  ) => InferContext<TChecks> | Promise<InferContext<TChecks>>;
+  load_context: (req: Request) => any | Promise<any>;
 };
 
 function handleDeny(
-  reason: DenyReason,
+  code: DenyReasonCode,
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  switch (reason.code) {
+  switch (code) {
     case "forbidden":
       return next(
         HttpErrors.Forbidden(
@@ -78,8 +75,7 @@ function handleDeny(
     case "two_factor_choice_required":
       return res.redirect("/users/double-authentication-choice");
     default: {
-      const _exhaustive: never = reason.code;
-      return _exhaustive;
+      code satisfies never;
     }
   }
 }
@@ -115,7 +111,7 @@ export function createAccessControlMiddleware<
         return next();
       }
 
-      return handleDeny(result.reason, req, res, next);
+      return handleDeny(result.code, req, res, next);
     } catch (error) {
       next(error);
     }

@@ -1,16 +1,19 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { run_checks } from "./run-checks.js";
-import type { CheckFn } from "./types.js";
+import type { CheckFn, DenyReasonCode } from "./types.js";
 
 // Test helpers - simple pass/deny factories
 const pass =
-  <T extends string>(name: T): CheckFn<T, unknown> =>
-  () => ({ type: "pass", name });
+  <T extends string>(name: T): CheckFn<T, object> =>
+  () => ({ type: "pass", name, ctx: {} });
 
 const deny =
-  <T extends string>(name: T, code: string): CheckFn<T, unknown> =>
-  () => ({ type: "deny", name, reason: { code } as never });
+  <T extends string, TCode extends DenyReasonCode>(
+    _name: T,
+    code: TCode,
+  ): CheckFn<T, object> =>
+  () => ({ type: "deny", code });
 
 describe("run_checks", () => {
   describe("pipeline behavior", () => {
@@ -23,30 +26,32 @@ describe("run_checks", () => {
     });
 
     it("stops on first deny and returns the reason", () => {
-      const checks = [pass("a"), deny("b", "some_error"), pass("c")] as const;
-
-      const result = run_checks(checks, {});
-
-      assert.deepEqual(result, {
-        type: "deny",
-        name: "b",
-        reason: { code: "some_error" },
-      });
-    });
-
-    it("evaluates checks in order", () => {
-      // If both would deny, the first one wins
       const checks = [
-        deny("first", "error_1"),
-        deny("second", "error_2"),
+        pass("a"),
+        deny("b", "user_not_found"),
+        pass("c"),
       ] as const;
 
       const result = run_checks(checks, {});
 
       assert.deepEqual(result, {
         type: "deny",
-        name: "first",
-        reason: { code: "error_1" },
+        code: "user_not_found",
+      });
+    });
+
+    it("evaluates checks in order", () => {
+      // If both would deny, the first one wins
+      const checks = [
+        deny("first", "forbidden"),
+        deny("second", "not_connected"),
+      ] as const;
+
+      const result = run_checks(checks, {});
+
+      assert.deepEqual(result, {
+        type: "deny",
+        code: "forbidden",
       });
     });
   });
@@ -61,24 +66,23 @@ describe("run_checks", () => {
     });
 
     it("still denies if deny occurs before break_on", () => {
-      const checks = [pass("a"), deny("b", "error"), pass("c")] as const;
+      const checks = [pass("a"), deny("b", "forbidden"), pass("c")] as const;
 
       const result = run_checks(checks, {}, { break_on: "c" });
 
       assert.deepEqual(result, {
         type: "deny",
-        name: "b",
-        reason: { code: "error" },
+        code: "forbidden",
       });
     });
 
     it("runs all checks when break_on is not provided", () => {
       let executed: string[] = [];
       const track =
-        <T extends string>(name: T): CheckFn<T, unknown> =>
+        <T extends string>(name: T): CheckFn<T, object> =>
         () => {
           executed.push(name);
-          return { type: "pass", name };
+          return { type: "pass", name, ctx: {} };
         };
 
       const checks = [track("a"), track("b"), track("c")] as const;
@@ -91,10 +95,10 @@ describe("run_checks", () => {
     it("skips checks after break_on checkpoint", () => {
       let executed: string[] = [];
       const track =
-        <T extends string>(name: T): CheckFn<T, unknown> =>
+        <T extends string>(name: T): CheckFn<T, object> =>
         () => {
           executed.push(name);
-          return { type: "pass", name };
+          return { type: "pass", name, ctx: {} };
         };
 
       const checks = [track("a"), track("b"), track("c")] as const;

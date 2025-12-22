@@ -1,3 +1,5 @@
+import type { User } from "../../types/index.js";
+import { createCheckChain } from "./chain-builder.js";
 import {
   check_connected_recently,
   check_email_verified,
@@ -6,8 +8,23 @@ import {
   check_user_connected,
   check_user_exists,
 } from "./checks.js";
-import { define_check_chain } from "./coherency.js";
-import type { InferCheckNames, InferContext } from "./types.js";
+
+/**
+ * Initial context provided by the loader.
+ * Properties that need narrowing (like user) should be optional or wider.
+ */
+export type SigninRequirementsInitialContext = {
+  uses_auth_headers: boolean;
+  is_within_authenticated_session: boolean;
+  is_method_head: boolean;
+  user?: User;
+  needs_email_verification_renewal: boolean;
+  has_authenticated_recently: boolean;
+  should_force_2fa: boolean;
+  two_factors_auth_requested: boolean;
+  is_within_two_factor_authenticated_session: boolean;
+  is_2fa_capable: boolean;
+};
 
 /**
  * Signin requirements pipeline checks.
@@ -21,18 +38,19 @@ import type { InferCheckNames, InferContext } from "./types.js";
  * 5. connected_recently - Ensures user has authenticated recently
  * 6. two_factor_auth - Ensures user has completed 2FA if required
  */
-export const signin_requirements_checks = define_check_chain([
-  check_session_auth,
-  check_user_connected,
-  check_user_exists,
-  check_email_verified,
-  check_connected_recently,
-  check_two_factor_auth,
-] as const);
+export const signin_requirements_pipeline =
+  createCheckChain<SigninRequirementsInitialContext>()
+    .add(check_session_auth)
+    .add(check_user_connected)
+    .add(check_user_exists)
+    .add(check_email_verified)
+    .add(check_connected_recently)
+    .add(check_two_factor_auth)
+    .build();
 
-export type SigninRequirementsCheck = InferCheckNames<
-  typeof signin_requirements_checks
->;
-export type SigninRequirementsContext = InferContext<
-  typeof signin_requirements_checks
->;
+export const signin_requirements_checks = signin_requirements_pipeline.checks;
+
+export type SigninRequirementsPassNames =
+  typeof signin_requirements_pipeline.PassNames;
+export type SigninRequirementsContext =
+  typeof signin_requirements_pipeline.RequiredContext;

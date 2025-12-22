@@ -34,8 +34,7 @@ describe("signin_requirements_checks", () => {
       );
       assert.deepEqual(result, {
         type: "deny",
-        name: "api_request_rejected",
-        reason: { code: "forbidden" },
+        code: "forbidden",
       });
     });
   });
@@ -48,8 +47,7 @@ describe("signin_requirements_checks", () => {
       );
       assert.deepEqual(result, {
         type: "deny",
-        name: "session_missing",
-        reason: { code: "not_connected" },
+        code: "not_connected",
       });
     });
 
@@ -73,8 +71,7 @@ describe("signin_requirements_checks", () => {
       );
       assert.deepEqual(result, {
         type: "deny",
-        name: "user_not_found",
-        reason: { code: "user_not_found" },
+        code: "user_not_found",
       });
     });
   });
@@ -89,8 +86,7 @@ describe("signin_requirements_checks", () => {
       );
       assert.deepEqual(result, {
         type: "deny",
-        name: "email_unverified",
-        reason: { code: "email_not_verified" },
+        code: "email_not_verified",
       });
     });
   });
@@ -103,8 +99,7 @@ describe("signin_requirements_checks", () => {
       );
       assert.deepEqual(result, {
         type: "deny",
-        name: "email_renewal_needed",
-        reason: { code: "email_verification_renewal" },
+        code: "email_verification_renewal",
       });
     });
   });
@@ -117,8 +112,7 @@ describe("signin_requirements_checks", () => {
       );
       assert.deepEqual(result, {
         type: "deny",
-        name: "session_stale",
-        reason: { code: "login_required" },
+        code: "login_required",
       });
     });
   });
@@ -135,8 +129,7 @@ describe("signin_requirements_checks", () => {
       );
       assert.deepEqual(result, {
         type: "deny",
-        name: "2fa_required",
-        reason: { code: "two_factor_auth_required" },
+        code: "two_factor_auth_required",
       });
     });
 
@@ -151,8 +144,7 @@ describe("signin_requirements_checks", () => {
       );
       assert.deepEqual(result, {
         type: "deny",
-        name: "2fa_choice_needed",
-        reason: { code: "two_factor_choice_required" },
+        code: "two_factor_choice_required",
       });
     });
   });

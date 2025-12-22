@@ -1,5 +1,3 @@
-import type { PipelineContext } from "./coherency.js";
-
 //
 // Minimal types for access control pipeline
 //
@@ -14,41 +12,48 @@ export type DenyReasonCode =
   | "two_factor_auth_required"
   | "two_factor_choice_required";
 
-export type DenyReason = {
-  code: DenyReasonCode;
-};
-
 /**
  * Result of a single check function.
  *
- * - `pass`: Check passed, continue to next check
- * - `deny`: Check failed, stop pipeline and redirect/reject
+ * - `pass`: Check passed, continue to next check. Carries narrowed context.
+ * - `deny`: Check failed, stop pipeline and redirect/reject. Carries error code.
  */
-export type CheckOutput<TPass extends string, TDeny extends string = string> =
-  | { type: "pass"; name: TPass }
-  | { type: "deny"; name: TDeny; reason: DenyReason };
+export type PassResult<TName extends string, TCtx extends object> = {
+  type: "pass";
+  name: TName;
+  ctx: TCtx;
+};
+
+export type DenyResult<TCode extends DenyReasonCode> = {
+  type: "deny";
+  code: TCode;
+};
+
+export type CheckResult<
+  TPass extends string = string,
+  TCtx extends object = object,
+  TCode extends DenyReasonCode = DenyReasonCode,
+> = PassResult<TPass, TCtx> | DenyResult<TCode>;
 
 /**
  * Check function signature.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CheckFn<TPass extends string = string, TCtx = any> = (
-  ctx: TCtx,
-) => CheckOutput<TPass, any>;
+export type CheckFn<
+  TPass extends string = string,
+  TCtx extends object = any,
+  TCode extends DenyReasonCode = DenyReasonCode,
+> = (ctx: TCtx) => CheckResult<TPass, any, TCode>;
 
 /**
  * Result after running a pipeline.
  */
-export type PipelineResult<TName extends string = string> =
+export type PipelineResult<TCode extends DenyReasonCode = DenyReasonCode> =
   | { type: "pass" }
-  | { type: "deny"; name: TName; reason: DenyReason };
+  | DenyResult<TCode>;
 
 //
 // Type inference helpers
 //
-
-export type InferCheckNames<TChecks extends readonly CheckFn[]> =
-  ReturnType<TChecks[number]> extends CheckOutput<infer TName> ? TName : never;
 
 /**
  * Extract only the pass names from a check's return type.
@@ -60,6 +65,3 @@ type ExtractPassName<T> = T extends { type: "pass"; name: infer TName }
 
 export type InferPassNames<TChecks extends readonly CheckFn[]> =
   ExtractPassName<ReturnType<TChecks[number]>>;
-
-export type InferContext<TChecks extends readonly CheckFn[]> =
-  PipelineContext<TChecks>;
