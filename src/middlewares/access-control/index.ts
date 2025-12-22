@@ -87,6 +87,8 @@ function handleDeny(
       );
     case "franceconnect_certification_required":
       return res.redirect("/users/certification-dirigeant");
+    case "personal_info_missing":
+      return res.redirect("/users/personal-information");
     default: {
       code satisfies never;
     }

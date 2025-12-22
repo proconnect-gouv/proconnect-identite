@@ -5,6 +5,7 @@ import {
   check_connected_recently,
   check_email_verified,
   check_franceconnect_identity,
+  check_profile_complete,
   check_session_auth,
   check_two_factor_auth,
   check_user_connected,
@@ -56,6 +57,7 @@ export const signin_requirements_pipeline =
     .add(check_two_factor_auth)
     .add(check_browser_trust)
     .add(check_franceconnect_identity)
+    .add(check_profile_complete)
     .build();
 
 export const signin_requirements_checks = signin_requirements_pipeline.checks;

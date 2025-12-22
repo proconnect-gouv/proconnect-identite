@@ -14,7 +14,12 @@ function signin_context(
     uses_auth_headers: false,
     is_within_authenticated_session: true,
     is_method_head: false,
-    user: { id: 1, email_verified: true } as User,
+    user: {
+      id: 1,
+      email_verified: true,
+      given_name: "John",
+      family_name: "Doe",
+    } as User,
     needs_email_verification_renewal: false,
     has_authenticated_recently: true,
     should_force_2fa: false,
@@ -202,6 +207,26 @@ describe("signin_requirements_checks", () => {
         }),
       );
       assert.deepEqual(result, { type: "pass" });
+    });
+  });
+
+  describe("when profile is incomplete", () => {
+    it("redirects to personal information page", () => {
+      const result = run_checks(
+        signin_requirements_checks,
+        signin_context({
+          user: {
+            id: 1,
+            email_verified: true,
+            given_name: null,
+            family_name: "Doe",
+          } as any,
+        }),
+      );
+      assert.deepEqual(result, {
+        type: "deny",
+        code: "personal_info_missing",
+      });
     });
   });
 

@@ -237,3 +237,32 @@ export function check_franceconnect_identity(
 
   return deny("franceconnect_certification_required");
 }
+
+//
+// Check: profile_complete
+// Ensures user has filled in their personal information
+//
+
+export type ProfileCompleteContext = {
+  user: User;
+};
+
+/**
+ * Requires basic profile information (given name and family name).
+ *
+ * Semantic names:
+ * - "profile_complete": User has provided names
+ * - "profile_incomplete": User needs to provide names
+ */
+export function check_profile_complete(ctx: ProfileCompleteContext) {
+  if (!ctx.user.given_name || !ctx.user.family_name) {
+    return deny("personal_info_missing");
+  }
+
+  return pass("profile_complete", {
+    user: ctx.user as User & {
+      given_name: string;
+      family_name: string;
+    },
+  });
+}

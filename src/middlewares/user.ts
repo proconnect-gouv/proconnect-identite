@@ -131,26 +131,12 @@ export const checkBrowserIsTrustedMiddleware = createAccessControlMiddleware(
 
 export const checkUserIsFranceConnectedMiddleware =
   createAccessControlMiddleware(signin_requirements_builder, {
-    break_on: "franceconnect_certified",
+    break_on: "franceconnect_identity_verified",
   });
 
-export const checkUserHasPersonalInformationsMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) =>
-  checkUserIsFranceConnectedMiddleware(req, res, async (error) => {
-    try {
-      if (error) return next(error);
-      const { given_name, family_name } = getUserFromAuthenticatedSession(req);
-      if (isEmpty(given_name) || isEmpty(family_name)) {
-        return res.redirect("/users/personal-information");
-      }
-
-      return next();
-    } catch (error) {
-      next(error);
-    }
+export const checkUserHasPersonalInformationsMiddleware =
+  createAccessControlMiddleware(signin_requirements_builder, {
+    break_on: "profile_complete",
   });
 
 export const checkUserHasAtLeastOneOrganizationMiddleware = (
