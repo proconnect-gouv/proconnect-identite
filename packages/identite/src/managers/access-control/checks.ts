@@ -152,24 +152,24 @@ export type TwoFactorAuthContext = {
  * - "2fa_choice_needed": User needs to choose 2FA method
  */
 export function check_two_factor_auth(ctx: TwoFactorAuthContext) {
-  const is_2fa_required =
-    ctx.should_force_2fa || ctx.two_factors_auth_requested;
-
-  if (is_2fa_required && !ctx.is_within_two_factor_authenticated_session) {
-    if (ctx.is_2fa_capable) {
-      return deny("two_factor_auth_required");
-    } else {
-      return deny("two_factor_choice_required");
-    }
-  }
-
   if (ctx.is_within_two_factor_authenticated_session) {
     return pass("2fa_completed", {
       is_within_two_factor_authenticated_session: true as const,
     });
   }
 
-  return pass("2fa_completed");
+  const is_2fa_required =
+    ctx.should_force_2fa || ctx.two_factors_auth_requested;
+
+  if (!is_2fa_required) {
+    return pass("2fa_completed");
+  }
+
+  return deny(
+    ctx.is_2fa_capable
+      ? "two_factor_auth_required"
+      : "two_factor_choice_required",
+  );
 }
 
 //
