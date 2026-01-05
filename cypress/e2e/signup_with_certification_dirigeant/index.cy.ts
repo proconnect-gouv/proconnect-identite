@@ -11,7 +11,9 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.seed();
   });
 
-  it("should welcome Elia Alvernhe as dirigeant of JEREMIE COOK", () => {
+  // This test causes a "FranceConnect UserInfo not found" error.
+  // TODO we need to reconsider how we handle the "certification dirigeant" flow.
+  it.only("should welcome Elia Alvernhe as dirigeant of JEREMIE COOK", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("elia.alvernhe@yopmail.com");
@@ -36,6 +38,13 @@ describe("Signup with a client requiring certification dirigeant", () => {
       },
     );
 
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("49430870300052");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Jeremie Cook",
+    ).click();
+
     cy.title().should("include", "Certification dirigeant -");
     cy.getByLabel("S’identifier avec FranceConnect").click();
 
@@ -43,13 +52,6 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains("Je suis Elia Alvernhe").click();
 
     cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-
-    cy.title().should("include", "Rejoindre une organisation - ");
-    cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("49430870300052");
-    cy.getByLabel(
-      "Organisation correspondante au SIRET donné : Jeremie Cook",
-    ).click();
 
     cy.title().should("include", "Compte certifié - ");
     cy.contains("Vous êtes bien certifié !");

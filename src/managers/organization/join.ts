@@ -205,7 +205,7 @@ export const joinOrganization = async ({
   }
 
   const { id: organization_id, cached_libelle } = organization;
-  const { email, given_name, family_name } = user;
+  const { email } = user;
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
@@ -425,7 +425,6 @@ export const joinOrganization = async ({
     ticket_id = await startCripsConversation({
       content: unableToAutoJoinOrganizationMd(),
       email,
-      nickname: `${given_name} ${family_name}`,
       subject: `[ProConnect] Demande pour rejoindre ${cached_libelle || siret}`,
     });
   } else {
