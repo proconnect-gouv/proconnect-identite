@@ -190,6 +190,10 @@ describe("join syndicat communal", () => {
       code: "26290359400014",
       type: "Centre communal d'action sociale",
     },
+    {
+      code: "13001270100020",
+      type: "Groupement de coopération sanitaire à gestion publique",
+    },
   ];
 
   beforeEach(() => {

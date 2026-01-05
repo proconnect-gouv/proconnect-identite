@@ -3,6 +3,7 @@ import type { Organization } from "#src/types";
 const cat_jur = [
   "Centre communal d'action sociale",
   "Établissement public local social et médico-social",
+  "Groupement de coopération sanitaire à gestion publique",
   "Syndicat intercommunal à vocation multiple (SIVOM)",
   "Syndicat intercommunal à vocation unique (SIVU)",
   "Syndicat mixte fermé",

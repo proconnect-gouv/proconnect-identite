@@ -1,0 +1,100 @@
+{
+  "data": {
+    "siret": "13001270100020",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "96.01A",
+      "nomenclature": "NAFRev2",
+      "libelle": "Blanchisserie-teinturerie de gros"
+    },
+    "tranche_effectif_salarie": {
+      "de": 50,
+      "a": 99,
+      "code": "21",
+      "date_reference": "2023",
+      "intitule": "50 à 99 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1575586800,
+    "unite_legale": {
+      "siren": "130012701",
+      "rna": null,
+      "siret_siege_social": "13001270100020",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "GROUPEMENT DE COOPERATION SANITAIRE UNITE DE TRAITEMENT INTER ETABLISSEMENTS DU LINGE",
+        "sigle": "UTIL"
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": "PME",
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "7470",
+        "libelle": "Groupement de coopération sanitaire à gestion publique"
+      },
+      "activite_principale": {
+        "code": "96.01A",
+        "nomenclature": "NAFRev2",
+        "libelle": "Blanchisserie-teinturerie de gros"
+      },
+      "tranche_effectif_salarie": {
+        "de": 50,
+        "a": 99,
+        "code": "21",
+        "date_reference": "2023",
+        "intitule": "50 à 99 salariés"
+      },
+      "economie_sociale_et_solidaire": false,
+      "date_creation": 1275516000,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": "1",
+      "indice_repetition_voie": null,
+      "type_voie": "RUE",
+      "libelle_voie": "DE LA BRIQUETERIE",
+      "code_postal": "80800",
+      "libelle_commune": "VILLERS-BRETONNEUX",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "80799",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "GROUPEMENT DE COOPERATION SANITAIRE UNITE DE TRAITEMENT INTER ETABLISSEMENTS DU LINGE",
+        "l2": "",
+        "l3": "",
+        "l4": "1 RUE DE LA BRIQUETERIE",
+        "l5": "",
+        "l6": "80800 VILLERS-BRETONNEUX",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/130012701"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1764975600,
+    "redirect_from_siret": null
+  }
+}
