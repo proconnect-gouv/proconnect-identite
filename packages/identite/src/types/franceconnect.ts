@@ -26,13 +26,12 @@ export type FranceConnectUserInfoResponse = z.output<
 //
 
 export const FranceConnectUserInfoSchema =
-  FranceConnectUserInfoResponseSchema.merge(
-    z.object({
-      created_at: z.coerce.date(),
-      updated_at: z.coerce.date(),
-      user_id: z.number(),
-    }),
-  );
+  FranceConnectUserInfoResponseSchema.extend({
+    created_at: z.coerce.date(),
+    updated_at: z.coerce.date(),
+    user_id: z.number(),
+  });
+
 export type FranceConnectUserInfo = z.output<
   typeof FranceConnectUserInfoSchema
 >;

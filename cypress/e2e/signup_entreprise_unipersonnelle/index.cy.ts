@@ -27,13 +27,13 @@ describe("Signup into new entreprise unipersonnelle", () => {
 
     cy.verifyEmail();
 
+    // Fill the user's organization information
+    cy.get('[name="siret"]').type("82869625200018");
+    cy.get('[type="submit"]').click();
+
     // Fill the user's personal information
     cy.get('[name="given_name"]').type("Georges");
     cy.get('[name="family_name"]').type("Moustaki");
-    cy.get('[type="submit"]').click();
-
-    // Fill the user's organization information
-    cy.get('[name="siret"]').type("82869625200018");
     cy.get('[type="submit"]').click();
 
     // Click on "continue" on the welcome page

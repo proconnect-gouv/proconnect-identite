@@ -1,16 +1,14 @@
 // Some of these tests are described in this doc: https://docs.numerique.gouv.fr/docs/ba263c29-5478-4ee0-b6f8-004b61fe6433/
 
 describe("Signup with a client requiring certification dirigeant", () => {
+  before(cy.seed);
+
   beforeEach(() => {
     cy.visit("/");
     cy.origin("http://localhost:4000", () => {
       cy.visit("/");
       cy.contains("Forcer une connexion par certification dirigeant").click();
     });
-  });
-
-  it("should seed the database once", function () {
-    cy.seed();
   });
 
   it("should welcome Elia Alvernhe as dirigeant of JEREMIE COOK", () => {
@@ -38,6 +36,13 @@ describe("Signup with a client requiring certification dirigeant", () => {
       },
     );
 
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("49430870300052");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Jeremie Cook",
+    ).click();
+
     cy.title().should("include", "Certification dirigeant -");
     cy.getByLabel("S’identifier avec FranceConnect").click();
 
@@ -45,13 +50,6 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains("Je suis Elia Alvernhe").click();
 
     cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-
-    cy.title().should("include", "Rejoindre une organisation - ");
-    cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("49430870300052");
-    cy.getByLabel(
-      "Organisation correspondante au SIRET donné : Jeremie Cook",
-    ).click();
 
     cy.title().should("include", "Compte certifié - ");
     cy.contains("Vous êtes bien certifié !");
@@ -96,6 +94,13 @@ describe("Signup with a client requiring certification dirigeant", () => {
       },
     );
 
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("55203253400646");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Danone",
+    ).click();
+
     cy.title().should("include", "Certification dirigeant -");
     cy.getByLabel("S’identifier avec FranceConnect").click();
 
@@ -103,13 +108,6 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains("Je suis Ulysse Tosi").click();
 
     cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-
-    cy.title().should("include", "Rejoindre une organisation - ");
-    cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("55203253400646");
-    cy.getByLabel(
-      "Organisation correspondante au SIRET donné : Danone",
-    ).click();
 
     cy.title().should("include", "Compte certifié - ");
     cy.contains("Vous êtes bien certifié !");
@@ -153,6 +151,12 @@ describe("Signup with a client requiring certification dirigeant", () => {
         cy.maildevDeleteMessageById(email.id);
       },
     );
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("83832482000011");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Angela Gnesotto",
+    ).click();
 
     cy.title().should("include", "Certification dirigeant -");
     cy.getByLabel("S’identifier avec FranceConnect").click();
@@ -161,13 +165,6 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.contains("Je suis Angela Claire Louise DUBOIS").click();
 
     cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-
-    cy.title().should("include", "Rejoindre une organisation - ");
-    cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("83832482000011");
-    cy.getByLabel(
-      "Organisation correspondante au SIRET donné : Angela Gnesotto",
-    ).click();
 
     cy.title().should("include", "Compte certifié - ");
     cy.contains("Vous êtes bien certifié !");
@@ -211,6 +208,13 @@ describe("Signup with a client requiring certification dirigeant", () => {
         cy.maildevDeleteMessageById(email.id);
       },
     );
+
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("83832482000011");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Angela Gnesotto",
+    ).click();
 
     cy.title().should("include", "Certification dirigeant -");
     cy.getByLabel("S’identifier avec FranceConnect").click();
@@ -268,6 +272,13 @@ describe("Signup on each organizations of the same siren", () => {
         },
       );
 
+      cy.title().should("include", "Rejoindre une organisation - ");
+      cy.contains("SIRET de l’organisation que vous représentez").click();
+      cy.focused().clear().type(siret);
+      cy.getByLabel(
+        "Organisation correspondante au SIRET donné : Thunnus thynnus iii",
+      ).click();
+
       cy.title().should("include", "Certification dirigeant -");
       cy.getByLabel("S’identifier avec FranceConnect").click();
 
@@ -275,13 +286,6 @@ describe("Signup on each organizations of the same siren", () => {
       cy.contains("Je suis Angela Claire Louise DUBOIS").click();
 
       cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
-
-      cy.title().should("include", "Rejoindre une organisation - ");
-      cy.contains("SIRET de l’organisation que vous représentez").click();
-      cy.focused().clear().type(siret);
-      cy.getByLabel(
-        "Organisation correspondante au SIRET donné : Thunnus thynnus iii",
-      ).click();
 
       cy.title().should("include", "Compte certifié - ");
       cy.contains("Vous êtes bien certifié !");
@@ -337,18 +341,18 @@ describe("❎ Bad match", () => {
       },
     );
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.getByLabel("S’identifier avec FranceConnect").click();
-
-    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
-    cy.contains("Je suis Adrian Volckaert").click();
-
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
     cy.focused().clear().type("13002526500013");
     cy.getByLabel(
       "Organisation correspondante au SIRET donné : Direction interministerielle du numerique (DINUM)",
     ).click();
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Adrian Volckaert").click();
 
     cy.title().should("include", "Certification impossible -");
     cy.contains(
@@ -386,18 +390,18 @@ describe("❎ Bad match", () => {
       },
     );
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.getByLabel("S’identifier avec FranceConnect").click();
-
-    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
-    cy.contains("Je suis Adrian Volckaert").click();
-
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
     cy.focused().clear().type("55203253400646");
     cy.getByLabel(
       "Organisation correspondante au SIRET donné : Danone",
     ).click();
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Adrian Volckaert").click();
 
     cy.title().should("include", "Certification impossible -");
     cy.contains("Nous n’arrivons pas à certifier votre compte.");
@@ -436,18 +440,18 @@ describe("❎ Bad match", () => {
       },
     );
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.getByLabel("S’identifier avec FranceConnect").click();
-
-    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
-    cy.contains("Je suis Adrian Volckaert").click();
-
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
     cy.focused().clear().type("79271377800019");
     cy.getByLabel(
       "Organisation correspondante au SIRET donné : Herisson",
     ).click();
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Adrian Volckaert").click();
 
     cy.title().should("include", "Certification impossible -");
     cy.contains("Nous n’arrivons pas à certifier votre compte.");

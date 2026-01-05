@@ -75,7 +75,6 @@ import {
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
-import { processCertificationDirigeantOrThrow } from "../certification";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
 
 export const doSuggestOrganizations = async ({
@@ -205,7 +204,7 @@ export const joinOrganization = async ({
   }
 
   const { id: organization_id, cached_libelle } = organization;
-  const { email, given_name, family_name } = user;
+  const { email } = user;
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
@@ -214,18 +213,16 @@ export const joinOrganization = async ({
     throw new DomainRestrictedError(organization_id);
   }
 
-  if (certificationRequested) {
-    await processCertificationDirigeantOrThrow(organization, user_id);
+  if (domain.endsWith("gouv.fr") && !isPublicService(organization)) {
+    throw new GouvFrDomainsForbiddenForPrivateOrg();
+  }
 
+  if (certificationRequested) {
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: "organization_dirigeant",
+      verification_type: "pending_organization_dirigeant",
     });
-  }
-
-  if (domain.endsWith("gouv.fr") && !isPublicService(organization)) {
-    throw new GouvFrDomainsForbiddenForPrivateOrg();
   }
 
   if (isEntrepriseUnipersonnelle(organization)) {
@@ -401,7 +398,6 @@ export const joinOrganization = async ({
     ticket_id = await startCripsConversation({
       content: unableToAutoJoinOrganizationMd(),
       email,
-      nickname: `${given_name} ${family_name}`,
       subject: `[ProConnect] Demande pour rejoindre ${cached_libelle || siret}`,
     });
   } else {

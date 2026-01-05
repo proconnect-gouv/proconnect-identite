@@ -19,14 +19,12 @@ import {
   getFranceConnectLogoutRedirectUrl,
   getFranceConnectUser,
 } from "../../connectors/franceconnect";
-import { getOrganizationsByUserId } from "../../managers/organization/main";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import { FranceConnectOidcSessionSchema } from "../../managers/session/franceconnect";
 import { updateFranceConnectUserInfo } from "../../managers/user";
-import { updateUserOrganizationLink } from "../../repositories/organization/setters";
 import { logger } from "../../services/log";
 
 //
@@ -88,17 +86,6 @@ export function getFranceConnectLoginCallbackMiddlewareFactory(
 
       const updatedUser = await updateFranceConnectUserInfo(userId, user_info);
       updateUserInAuthenticatedSession(req, updatedUser);
-
-      const userOrganizations = await getOrganizationsByUserId(userId);
-
-      await Promise.all(
-        userOrganizations.map(({ id }) =>
-          updateUserOrganizationLink(id, userId, {
-            verification_type: null,
-            verified_at: null,
-          }),
-        ),
-      );
 
       next();
     } catch (error) {

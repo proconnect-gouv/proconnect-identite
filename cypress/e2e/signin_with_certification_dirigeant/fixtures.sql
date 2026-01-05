@@ -66,16 +66,16 @@ VALUES
   ),
   (
     4,
-    'outdated-certified-franceconnected+dirigeant@unipersonnelle.com',
+    'outdated-certification+douglasduteil@mail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
-    'Jean',
-    'Quatre',
+    'Douglas Le Rouge',
+    'Duteil',
     '0123456789',
-    'FranceConnect-ed Entreprise Unipersonnelle Dirigeant',
+    'Douglas Outdated Certification',
     null,
     null,
     false
@@ -159,6 +159,38 @@ VALUES
     null,
     null,
     false
+  ),
+  (
+    10,
+    'no-franceconnect+already-in-org@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Dix',
+    '0123456789',
+    'Pas le chef de HERISSON ',
+    null,
+    null,
+    false
+  ),
+  (
+    11,
+    'outdated-certification+ex-dirigeant@unipersonnelle.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Dix',
+    '0123456789',
+    'Ex dirigeant de HERISSON',
+    null,
+    null,
+    false
   );
 
 INSERT INTO
@@ -210,11 +242,11 @@ VALUES
   (
     4,
     '99100',
-    '1990-06-01',
+    '1980-06-01',
     '75000',
-    'Quatre',
+    'DUTEIL',
     'male',
-    'Jean',
+    'Douglas Le Rouge',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
@@ -261,36 +293,52 @@ VALUES
     'Stevens',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
+  ),
+  (
+    11,
+    '99100',
+    '1980-06-01',
+    '75000',
+    'DUTEIL',
+    'male',
+    'Douglas Le Rouge',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO
-  organizations (id, siret, created_at, updated_at)
+  organizations (cached_libelle, id, siret, created_at, updated_at)
 VALUES
   (
+    'CLAMART',
     1,
     '45334017600024',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
   (
+    'DOUGLAS',
     2,
     '82869625200018',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
   (
+    'DANONE',
     3,
     '55203253400646',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
   (
+    'HERISSON',
     4,
     '79271377800019',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
   (
+    'SURICATE',
     5,
     '52169091700021',
     CURRENT_TIMESTAMP,
@@ -318,7 +366,7 @@ VALUES
   (2, 1, false, 'domain', CURRENT_TIMESTAMP, true),
   (
     4,
-    1,
+    2,
     false,
     'organization_dirigeant',
     CURRENT_TIMESTAMP - INTERVAL '1 day',
@@ -348,7 +396,16 @@ VALUES
     CURRENT_TIMESTAMP,
     true
   ),
-  (9, 5, false, 'domain', CURRENT_TIMESTAMP, true);
+  (9, 5, false, 'domain', CURRENT_TIMESTAMP, true),
+  (10, 4, false, 'domain', CURRENT_TIMESTAMP, true),
+  (
+    11,
+    1,
+    false,
+    'organization_dirigeant',
+    CURRENT_TIMESTAMP - INTERVAL '1 day',
+    true
+  );
 
 INSERT INTO
   oidc_clients (

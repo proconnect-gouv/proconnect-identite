@@ -34,7 +34,6 @@ import {
   isWithinAuthenticatedSession,
   isWithinTwoFactorAuthenticatedSession,
 } from "../managers/session/authenticated";
-import { CertificationSessionSchema } from "../managers/session/certification";
 import {
   getEmailFromUnauthenticatedSession,
   getPartialUserFromUnauthenticatedSession,
@@ -287,40 +286,8 @@ export const requireUserTwoFactorAuthForAdmin: NavigationGuardNode = {
 
 export const requireUserCanAccessAdmin = requireUserTwoFactorAuthForAdmin;
 
-export const requireUserIsFranceConnected: NavigationGuardNode = {
-  previous: requireBrowserIsTrusted,
-  guard: async (req) => {
-    if (!req.session.interactionId) return { type: "next" };
-    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
-
-    const { certificationDirigeantRequested: isRequested } =
-      await CertificationSessionSchema.parseAsync(req.session);
-    if (!isRequested) return { type: "next" };
-
-    const { id: userId } = getUserFromAuthenticatedSession(req);
-    const isVerified = await isUserVerifiedWithFranceconnect(userId);
-
-    if (isVerified) return { type: "next" };
-
-    return { type: "redirect", url: "/users/certification-dirigeant" };
-  },
-};
-
-export const requireUserHasPersonalInformations: NavigationGuardNode = {
-  previous: requireUserIsFranceConnected,
-  guard: (req) => {
-    if (!req.session.interactionId) return { type: "next" };
-    const { given_name, family_name } = getUserFromAuthenticatedSession(req);
-    if (isEmpty(given_name) || isEmpty(family_name)) {
-      return { type: "redirect", url: "/users/personal-information" };
-    }
-
-    return { type: "next" };
-  },
-};
-
 export const requireUserHasAtLeastOneOrganization: NavigationGuardNode = {
-  previous: requireUserHasPersonalInformations,
+  previous: requireBrowserIsTrusted,
   guard: async (req) => {
     if (!req.session.interactionId) return { type: "next" };
     if (
@@ -409,46 +376,120 @@ export const requireUserHasSelectedAnOrganization: NavigationGuardNode = {
   },
 };
 
-export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
+const requireSelectedOrganizationToBeFlaggedAsPending: NavigationGuardNode = {
   previous: requireUserHasSelectedAnOrganization,
   guard: async (req) => {
     if (!req.session.interactionId) return { type: "next" };
     if (!req.session.mustReturnOneOrganizationInPayload)
       return { type: "next" };
 
+    if (req.session.certificationDirigeantRequested) {
+      const { id: user_id } = getUserFromAuthenticatedSession(req);
+      const selectedOrganizationId =
+        (await getSelectedOrganizationId(user_id))!;
+      const { verification_type: linkType } = (await getUserOrganizationLink(
+        selectedOrganizationId,
+        user_id,
+      ))!;
+
+      if (
+        linkType !== "pending_organization_dirigeant" &&
+        linkType !== "organization_dirigeant"
+      ) {
+        await updateUserOrganizationLink(selectedOrganizationId, user_id, {
+          verification_type: "pending_organization_dirigeant",
+          verified_at: new Date(),
+        });
+      }
+    }
+
+    return { type: "next" };
+  },
+};
+const requireUserIsFranceConnected: NavigationGuardNode = {
+  previous: requireSelectedOrganizationToBeFlaggedAsPending,
+  guard: async (req) => {
+    if (!req.session.interactionId) return { type: "next" };
+    if (!req.session.mustReturnOneOrganizationInPayload)
+      return { type: "next" };
     if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
-    if (!req.session.certificationDirigeantRequested) return { type: "next" };
+
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
+    const { verification_type: linkType } = (await getUserOrganizationLink(
+      selectedOrganizationId,
+      user_id,
+    ))!;
+
+    if (
+      linkType !== "pending_organization_dirigeant" &&
+      linkType !== "organization_dirigeant"
+    )
+      return { type: "next" };
+
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const isVerified = await isUserVerifiedWithFranceconnect(userId);
+
+    if (isVerified) return { type: "next" };
+
+    return { type: "redirect", url: "/users/certification-dirigeant" };
+  },
+};
+
+const requireUserHasPersonalInformations: NavigationGuardNode = {
+  previous: requireUserIsFranceConnected,
+  guard: (req) => {
+    if (!req.session.interactionId) return { type: "next" };
+    const { given_name, family_name } = getUserFromAuthenticatedSession(req);
+    if (isEmpty(given_name) || isEmpty(family_name)) {
+      return { type: "redirect", url: "/users/personal-information" };
+    }
+
+    return { type: "next" };
+  },
+};
+
+const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
+  previous: requireUserHasPersonalInformations,
+  guard: async (req) => {
+    if (!req.session.interactionId) return { type: "next" };
+    if (!req.session.mustReturnOneOrganizationInPayload)
+      return { type: "next" };
+    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
     const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
 
     const organization = (await getOrganizationById(selectedOrganizationId))!;
-    const userOrganizationLink = (await getUserOrganizationLink(
-      selectedOrganizationId,
-      user_id,
-    ))!;
+    const { verification_type: linkType, verified_at: linkVerifiedAt } =
+      (await getUserOrganizationLink(selectedOrganizationId, user_id))!;
+
+    if (
+      linkType !== "pending_organization_dirigeant" &&
+      linkType !== "organization_dirigeant"
+    )
+      return { type: "next" };
 
     const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
 
     const expiredCertification = isExpired(
-      userOrganizationLink.verified_at,
+      linkVerifiedAt,
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
     );
     const expiredVerification =
-      Number(franceconnectUserInfo.updated_at) >
-      Number(userOrganizationLink.verified_at);
+      Number(franceconnectUserInfo.updated_at) > Number(linkVerifiedAt);
 
     const renewalNeeded = expiredCertification || expiredVerification;
 
-    if (
-      userOrganizationLink.verification_type === "organization_dirigeant" &&
-      !renewalNeeded
-    ) {
+    if (linkType === "organization_dirigeant" && !renewalNeeded)
       return { type: "next" };
-    }
 
     try {
-      await processCertificationDirigeantOrThrow(organization, user_id);
+      await processCertificationDirigeantOrThrow(
+        organization,
+        franceconnectUserInfo,
+        user_id,
+      );
     } catch (error) {
       if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
         return {
@@ -473,18 +514,6 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
 
       throw error;
     }
-
-    // user is already in the organization
-    // we override the previous verification_type
-    await updateUserOrganizationLink(
-      userOrganizationLink.organization_id,
-      userOrganizationLink.user_id,
-      {
-        verification_type: "organization_dirigeant",
-        verified_at: new Date(),
-        has_been_greeted: false,
-      },
-    );
 
     return { type: "next" };
   },

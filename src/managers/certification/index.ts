@@ -1,7 +1,10 @@
 //
 
 import { processCertificationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
-import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
+import type {
+  FranceConnectUserInfo,
+  Organization,
+} from "@proconnect-gouv/proconnect.identite/types";
 import { captureException } from "@sentry/node";
 import { AssertionError } from "node:assert";
 import {
@@ -12,7 +15,7 @@ import {
 import { ApiEntrepriseInfogreffeRepository } from "../../connectors/api-entreprise";
 import { InseeApiRepository } from "../../connectors/api-insee";
 import { RegistreNationalEntreprisesApiRepository } from "../../connectors/api-rne";
-import { getFranceConnectUserInfo } from "../../repositories/user";
+import { updateUserOrganizationLink } from "../../repositories/organization/setters";
 import { logger } from "../../services/log";
 
 //
@@ -20,18 +23,18 @@ import { logger } from "../../services/log";
 export const processCertificationDirigeant =
   processCertificationDirigeantFactory({
     ApiEntrepriseInfogreffeRepository,
-    FranceConnectApiRepository: { getFranceConnectUserInfo },
     InseeApiRepository: { findBySiren: InseeApiRepository.findBySiren },
     RegistreNationalEntreprisesApiRepository,
   });
 
 export const processCertificationDirigeantOrThrow = async (
   organization: Organization,
+  franceconnect_userinfo: FranceConnectUserInfo,
   user_id: number,
 ) => {
   const { cause, details, ok } = await processCertificationDirigeant(
     organization,
-    user_id,
+    franceconnect_userinfo,
   );
   const siren = organization.siret.substring(0, 9);
 
@@ -85,7 +88,11 @@ export const processCertificationDirigeantOrThrow = async (
     throw error;
   }
 
-  return;
+  return await updateUserOrganizationLink(organization.id, user_id, {
+    verification_type: "organization_dirigeant",
+    verified_at: new Date(),
+    has_been_greeted: false,
+  });
 };
 
 export const getCertificationDirigeantCloseMatchErrorUrl = (

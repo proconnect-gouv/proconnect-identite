@@ -1,6 +1,5 @@
 //
 
-import { NotFoundError } from "#src/errors";
 import { IdentityVectorSchema } from "#src/types";
 import {
   LiElJonsonFranceConnectUserInfo,
@@ -40,15 +39,11 @@ describe("processCertificationDirigeantFactory", () => {
       InseeApiRepository: {
         findBySiren: () => Promise.resolve(RogalDornEstablishment),
       },
-      FranceConnectApiRepository: {
-        getFranceConnectUserInfo: () =>
-          Promise.resolve(RogalDornFranceConnectUserInfo),
-      },
     });
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       rogal_dorn_org_info,
-      1,
+      RogalDornFranceConnectUserInfo,
     );
 
     assert.deepEqual(certificationDirigeantResult, {
@@ -83,15 +78,11 @@ describe("processCertificationDirigeantFactory", () => {
       InseeApiRepository: {
         findBySiren: () => Promise.resolve(LiElJonsonEstablishment),
       },
-      FranceConnectApiRepository: {
-        getFranceConnectUserInfo: () =>
-          Promise.resolve(RogalDornFranceConnectUserInfo),
-      },
     });
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       rogal_dorn_org_info,
-      1,
+      RogalDornFranceConnectUserInfo,
     );
 
     assert.deepEqual(certificationDirigeantResult, {
@@ -121,15 +112,11 @@ describe("processCertificationDirigeantFactory", () => {
       InseeApiRepository: {
         findBySiren: () => Promise.reject(new Error("💣")),
       },
-      FranceConnectApiRepository: {
-        getFranceConnectUserInfo: () =>
-          Promise.resolve(RogalDornFranceConnectUserInfo),
-      },
     });
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       papillon_org_info,
-      1,
+      RogalDornFranceConnectUserInfo,
     );
 
     assert.deepEqual(certificationDirigeantResult, {
@@ -165,15 +152,11 @@ describe("processCertificationDirigeantFactory", () => {
       InseeApiRepository: {
         findBySiren: () => Promise.reject(new Error("💣")),
       },
-      FranceConnectApiRepository: {
-        getFranceConnectUserInfo: () =>
-          Promise.resolve(RogalDornFranceConnectUserInfo),
-      },
     });
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       papillon_org_info,
-      1,
+      RogalDornFranceConnectUserInfo,
     );
 
     assert.deepEqual(certificationDirigeantResult, {
@@ -199,28 +182,6 @@ describe("processCertificationDirigeantFactory", () => {
     });
   });
 
-  it("❎ fail with no franceconnect user info", async () => {
-    const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeRepository: {
-        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
-      },
-      RegistreNationalEntreprisesApiRepository: {
-        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
-      },
-      InseeApiRepository: {
-        findBySiren: () => Promise.reject(new Error("💣")),
-      },
-      FranceConnectApiRepository: {
-        getFranceConnectUserInfo: () => Promise.resolve(undefined),
-      },
-    });
-
-    await assert.rejects(
-      processCertificationDirigeant(rogal_dorn_org_info, 1),
-      new NotFoundError("FranceConnect UserInfo not found"),
-    );
-  });
-
   it("❎ fail with no mandataires", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
@@ -232,15 +193,11 @@ describe("processCertificationDirigeantFactory", () => {
       InseeApiRepository: {
         findBySiren: () => Promise.reject(new Error("💣")),
       },
-      FranceConnectApiRepository: {
-        getFranceConnectUserInfo: () =>
-          Promise.resolve(LiElJonsonFranceConnectUserInfo),
-      },
     });
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       papillon_org_info,
-      1,
+      LiElJonsonFranceConnectUserInfo,
     );
 
     assert.deepEqual(certificationDirigeantResult, {
