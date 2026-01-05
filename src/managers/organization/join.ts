@@ -269,7 +269,7 @@ export const joinOrganization = async ({
   }
 
   if (
-    !isCommune(organization) &&
+    !isCommune(organization, true) &&
     isAFreeEmailProvider(email) &&
     isPublicService(organization) &&
     !isSyndicatCommunal(organization)
