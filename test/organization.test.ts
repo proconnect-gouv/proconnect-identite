@@ -87,30 +87,6 @@ const dinum_org_info = {
   cached_libelle_categorie_juridique: "Service central d'un ministère",
 } as Organization;
 
-const onf_org_info = {
-  siret: "66204311604119",
-  cached_tranche_effectifs: null,
-  cached_tranche_effectifs_unite_legale: "52",
-  cached_libelle_tranche_effectif: null,
-  cached_activite_principale: "02.40Z",
-  cached_libelle_activite_principale:
-    "02.40Z - Services de soutien à l’exploitation forestière",
-  cached_categorie_juridique: "4110",
-  cached_libelle_categorie_juridique:
-    "Établissement public national à caractère industriel ou commercial doté d'un comptable public",
-} as Organization;
-
-const whitelisted_org_info = {
-  siret: "32025248901075",
-  cached_tranche_effectifs: "42",
-  cached_tranche_effectifs_unite_legale: "51",
-  cached_libelle_tranche_effectif: "1 000 à 1 999 salariés, en 2021",
-  cached_activite_principale: "64.92Z",
-  cached_libelle_activite_principale: "64.92Z - Autre distribution de crédit",
-  cached_categorie_juridique: "5599",
-  cached_libelle_categorie_juridique: "SA à conseil d'administration (s.a.i.)",
-} as Organization;
-
 describe("isCommune", () => {
   it("should return false for bad call", () => {
     assert.equal(isCommune({} as Organization), false);
