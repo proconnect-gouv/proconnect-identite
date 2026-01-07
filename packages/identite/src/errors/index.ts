@@ -1,11 +1,15 @@
 //
 
 import type { MatchCriteria } from "../managers/certification/certification-score.js";
+import type { SourceDirigeant } from "../managers/certification/is-organization-dirigeant.js";
 
 //
 
 export class InvalidCertificationError extends Error {
   constructor(
+    public source: SourceDirigeant,
+    public siren: string,
+    public organization_label: string,
     public matches?: Set<MatchCriteria>,
     message?: string,
     options?: ErrorOptions,

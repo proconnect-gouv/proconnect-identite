@@ -13,8 +13,8 @@
     </div>
 
     <p>
-      Certaines informations transmises par FranceConnect ne correspondent pas
-      à celles du registre des dirigeants.
+      Des discordances ont été détectées entre votre identité <b>FranceConnect</b>
+      (affichée ici) et celle connue du <b><%= source_info.label; %></b> pour <b><%= organization_label; %></b>.
     </p>
 
     <p>
@@ -50,14 +50,22 @@
     </p>
 
     <p>
-      Si une information est incorrecte ou si vous pensez que les données du
-      registre ne sont pas à jour,
       <a
-        href="https://proconnect.crisp.help/fr/"
+        class="fr-btn fr-btn--primary fr-mb-2w"
+        href="<%= source_info.url; %>"
         rel="noopener noreferrer"
         target="_blank"
+        <%= locals.matches.has("birth_date") ? "hidden" : "" %>
       >
-        consultez notre aide
+        Vérifier sur <%= source_info.label; %>
+      </a>
+      <a
+        class="fr-btn fr-btn--secondary fr-mb-2w"
+          href="https://proconnect.crisp.help/fr/article/je-souhaite-corriger-mes-donnees-pour-la-certification-dirigeant-j44541/"
+          rel="noopener noreferrer"
+          target="_blank"
+      >
+        Comment corriger les données ?
       </a>
     </p>
 
@@ -80,13 +88,13 @@
     </p>
 
     <p>
-      Si vous ne figurez pas dans la liste ou si une information est incorrecte.
       <a
-        href="https://proconnect.crisp.help/fr/"
+        class="fr-btn fr-btn--secondary fr-mb-2w"
+        href="https://proconnect.crisp.help/fr/article/je-souhaite-corriger-mes-donnees-pour-la-certification-dirigeant-j44541/"
         rel="noopener noreferrer"
         target="_blank"
       >
-        Consultez notre aide
+        Comment corriger les données ?
       </a>
     </p>
 

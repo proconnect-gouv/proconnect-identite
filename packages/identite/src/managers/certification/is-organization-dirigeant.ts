@@ -129,11 +129,33 @@ export type IsOrganizationDirigeantHandler = ReturnType<
   typeof isOrganizationDirigeantFactory
 >;
 
-const SourceDirigeant = z.enum([
+export const SourceDirigeant = z.enum([
   "api.insee.fr/api-sirene/private",
   "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
   "registre-national-entreprises.inpi.fr/api",
 ]);
+
+export type SourceDirigeant = z.infer<typeof SourceDirigeant>;
+
+export function getSourceDirigeantInfo(source: SourceDirigeant, siren: string) {
+  return match(source)
+    .with("registre-national-entreprises.inpi.fr/api", () => ({
+      label: "Registre National des Entreprises",
+      url: `https://data.inpi.fr/entreprises/${siren}`,
+    }))
+    .with(
+      "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
+      () => ({
+        label: "Annuaire des Entreprises",
+        url: `https://annuaire-entreprises.data.gouv.fr/entreprise/${siren}`,
+      }),
+    )
+    .with("api.insee.fr/api-sirene/private", () => ({
+      label: "INSEE",
+      url: `https://data.inpi.fr/entreprises/${siren}`,
+    }))
+    .exhaustive();
+}
 
 function match_identity_to_dirigeant(
   identity: IdentityVector,
