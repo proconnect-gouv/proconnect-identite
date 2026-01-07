@@ -60,14 +60,32 @@ const getReferrerPath = (req: Request) => {
   return originPath || referrerPath || undefined;
 };
 
-type Middleware = (req: Request, res: Response, next: NextFunction) => void;
+type MiddlewareResult = void | { redirect: string } | "send";
 
-function chain(first: Middleware, second: Middleware): Middleware {
+type Middleware = (req: Request, res: Response, next: NextFunction) => void;
+type SimpleMiddleware = (req: Request) => Promise<MiddlewareResult>;
+
+function autoNext(fn: SimpleMiddleware): Middleware {
+  return async (req, res, next) => {
+    const result = await fn(req);
+    if (result === "send") {
+      return res.send();
+    } else if (result && typeof result === "object" && "redirect" in result) {
+      return res.redirect(result.redirect);
+    } else if (result === undefined) {
+      return next();
+    } else {
+      throw new Error("Invalid middleware result");
+    }
+  };
+}
+
+function chain(first: Middleware, second: SimpleMiddleware): Middleware {
   return (req, res, next) => {
     first(req, res, async (error: any) => {
       try {
         if (error) return next(error);
-        await second(req, res, next);
+        await autoNext(second)(req, res, next);
       } catch (err) {
         next(err);
       }
@@ -75,39 +93,31 @@ function chain(first: Middleware, second: Middleware): Middleware {
   };
 }
 
-export const checkIsUser: Middleware = async (req, _res, next) => {
+export const checkIsUser: Middleware = autoNext(async (req) => {
   if (usesAuthHeaders(req)) {
     throw new HttpErrors.Forbidden(
       "Access denied. The requested resource does not require authentication.",
     );
   }
-
-  return next();
-};
+});
 
 // redirect user to start sign in page if no email is available in session
-export const checkEmailInSessionMiddleware = chain(
-  checkIsUser,
-  async (req, res, next) => {
-    if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
-      return res.redirect(`/users/start-sign-in`);
-    }
-    return next();
-  },
-);
+export const checkEmailInSessionMiddleware = chain(checkIsUser, async (req) => {
+  if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
+    return { redirect: `/users/start-sign-in` };
+  }
+});
 
 // redirect user to inclusionconnect welcome page if needed
 export const checkUserHasSeenInclusionconnectWelcomePage = chain(
   checkEmailInSessionMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     if (
       getPartialUserFromUnauthenticatedSession(req)
         .needsInclusionconnectWelcomePage
     ) {
-      return res.redirect(`/users/inclusionconnect-welcome`);
+      return { redirect: `/users/inclusionconnect-welcome` };
     }
-
-    return next();
   },
 );
 
@@ -117,14 +127,14 @@ export const checkCredentialPromptRequirementsMiddleware =
 // redirect user to login page if no active session is available
 export const checkUserIsConnectedMiddleware = chain(
   checkIsUser,
-  async (req, res, next) => {
+  async (req) => {
     if (req.method === "HEAD") {
       // From express documentation:
       // The app.get() function is automatically called for the HTTP HEAD method
       // in addition to the GET method if app.head() was not called for the path
       // before app.get().
       // We return empty response and the headers are sent to the client.
-      return res.send();
+      return "send";
     }
 
     if (!isWithinAuthenticatedSession(req.session)) {
@@ -133,31 +143,27 @@ export const checkUserIsConnectedMiddleware = chain(
         req.session.referrerPath = referrerPath;
       }
 
-      return res.redirect(`/users/start-sign-in`);
+      return { redirect: `/users/start-sign-in` };
     }
-
-    return next();
   },
 );
 
 export const checkUserHasConnectedRecentlyMiddleware = chain(
   checkUserIsConnectedMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
     if (!hasLoggedInRecently) {
       req.session.referrerPath = getReferrerPath(req);
 
-      return res.redirect(`/users/start-sign-in?notification=login_required`);
+      return { redirect: `/users/start-sign-in?notification=login_required` };
     }
-
-    return next();
   },
 );
 
 export const checkUserIsVerifiedMiddleware = chain(
   checkUserIsConnectedMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     try {
       const { email, email_verified } = getUserFromAuthenticatedSession(req);
 
@@ -173,7 +179,7 @@ export const checkUserIsVerifiedMiddleware = chain(
           notification_param = "?notification=email_verification_renewal";
         }
 
-        return res.redirect(`/users/verify-email${notification_param}`);
+        return { redirect: `/users/verify-email${notification_param}` };
       }
     } catch (error) {
       if (error instanceof UserNotFoundError) {
@@ -183,14 +189,12 @@ export const checkUserIsVerifiedMiddleware = chain(
       }
       throw error;
     }
-
-    return next();
   },
 );
 
 export const checkUserTwoFactorAuthMiddleware = chain(
   checkUserIsVerifiedMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     try {
       const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -200,9 +204,9 @@ export const checkUserTwoFactorAuthMiddleware = chain(
         !isWithinTwoFactorAuthenticatedSession(req)
       ) {
         if (await is2FACapable(user_id)) {
-          return res.redirect("/users/2fa-sign-in");
+          return { redirect: "/users/2fa-sign-in" };
         } else {
-          return res.redirect("/users/double-authentication-choice");
+          return { redirect: "/users/double-authentication-choice" };
         }
       }
     } catch (error) {
@@ -213,71 +217,64 @@ export const checkUserTwoFactorAuthMiddleware = chain(
       }
       throw error;
     }
-    return next();
   },
 );
 
 export const checkBrowserIsTrustedMiddleware = chain(
   checkUserTwoFactorAuthMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     const is_browser_trusted = isBrowserTrustedForUser(req);
 
     if (!is_browser_trusted) {
-      return res.redirect(
-        `/users/verify-email?notification=browser_not_trusted`,
-      );
+      return {
+        redirect: `/users/verify-email?notification=browser_not_trusted`,
+      };
     }
-
-    return next();
   },
 );
 
 export const checkUserIsFranceConnectedMiddleware = chain(
   checkBrowserIsTrustedMiddleware,
-  async (req, res, next) => {
-    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
+  async (req) => {
+    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return;
 
     const { certificationDirigeantRequested: isRequested } =
       await CertificationSessionSchema.parseAsync(req.session);
-    if (!isRequested) return next();
+    if (!isRequested) return;
 
     const { id: userId } = getUserFromAuthenticatedSession(req);
     const isVerified = await isUserVerifiedWithFranceconnect(userId);
 
-    if (isVerified) return next();
+    if (isVerified) return;
 
-    return res.redirect("/users/certification-dirigeant");
+    return { redirect: "/users/certification-dirigeant" };
   },
 );
 
 export const checkUserHasPersonalInformationsMiddleware = chain(
   checkUserIsFranceConnectedMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     const { given_name, family_name } = getUserFromAuthenticatedSession(req);
     if (isEmpty(given_name) || isEmpty(family_name)) {
-      return res.redirect("/users/personal-information");
+      return { redirect: "/users/personal-information" };
     }
-
-    return next();
   },
 );
 
 export const checkUserHasAtLeastOneOrganizationMiddleware = chain(
   checkUserHasPersonalInformationsMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     if (
       isEmpty(
         await getOrganizationsByUserId(getUserFromAuthenticatedSession(req).id),
       )
     ) {
-      return res.redirect(
-        addQueryParameters("/users/join-organization", {
+      return {
+        redirect: addQueryParameters("/users/join-organization", {
           siret_hint: req.session.siretHint,
         }),
-      );
+      };
     }
-
-    return next();
   },
 );
 
@@ -286,22 +283,20 @@ export const checkUserCanAccessAppMiddleware =
 
 export const checkUserHasLoggedInRecentlyMiddleware = chain(
   checkUserCanAccessAppMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
     if (!hasLoggedInRecently) {
       req.session.referrerPath = getReferrerPath(req);
 
-      return res.redirect(`/users/start-sign-in?notification=login_required`);
+      return { redirect: `/users/start-sign-in?notification=login_required` };
     }
-
-    return next();
   },
 );
 
 export const checkUserTwoFactorAuthForAdminMiddleware = chain(
   checkUserHasLoggedInRecentlyMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     if (
@@ -310,10 +305,8 @@ export const checkUserTwoFactorAuthForAdminMiddleware = chain(
     ) {
       req.session.referrerPath = getReferrerPath(req);
 
-      return res.redirect("/users/2fa-sign-in?notification=2fa_required");
+      return { redirect: "/users/2fa-sign-in?notification=2fa_required" };
     }
-
-    return next();
   },
 );
 
@@ -322,9 +315,9 @@ export const checkUserCanAccessAdminMiddleware =
 
 const checkUserBelongsToHintedOrganizationMiddleware = chain(
   checkUserHasAtLeastOneOrganizationMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     if (!req.session.siretHint) {
-      return next();
+      return;
     }
     const hintedOrganization = await getOrganizationBySiret(
       req.session.siretHint,
@@ -345,25 +338,24 @@ const checkUserBelongsToHintedOrganizationMiddleware = chain(
         organization_id: hintedOrganization.id,
       });
     } else {
-      return res.redirect(
-        `/users/join-organization?siret_hint=${req.session.siretHint}`,
-      );
+      return {
+        redirect: `/users/join-organization?siret_hint=${req.session.siretHint}`,
+      };
     }
-    return next();
   },
 );
 
 export const checkUserHasSelectedAnOrganizationMiddleware = chain(
   checkUserBelongsToHintedOrganizationMiddleware,
-  async (req, res, next) => {
-    if (!req.session.mustReturnOneOrganizationInPayload) return next();
+  async (req) => {
+    if (!req.session.mustReturnOneOrganizationInPayload) return;
 
     const selectedOrganizationId = await getSelectedOrganizationId(
       getUserFromAuthenticatedSession(req).id,
     );
 
     if (selectedOrganizationId) {
-      return next();
+      return;
     }
 
     const userOrganisations = await getOrganizationsByUserId(
@@ -378,20 +370,20 @@ export const checkUserHasSelectedAnOrganizationMiddleware = chain(
         user_id: getUserFromAuthenticatedSession(req).id,
         organization_id: userOrganisations[0].id,
       });
-      return next();
+      return;
     }
 
-    return res.redirect("/users/select-organization");
+    return { redirect: "/users/select-organization" };
   },
 );
 
 export const checkUserPassedCertificationDirigeant = chain(
   checkUserHasSelectedAnOrganizationMiddleware,
-  async (req, res, next) => {
-    if (!req.session.mustReturnOneOrganizationInPayload) return next();
+  async (req) => {
+    if (!req.session.mustReturnOneOrganizationInPayload) return;
 
-    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
-    if (!req.session.certificationDirigeantRequested) return next();
+    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return;
+    if (!req.session.certificationDirigeantRequested) return;
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
     const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
@@ -418,7 +410,7 @@ export const checkUserPassedCertificationDirigeant = chain(
       userOrganizationLink.verification_type === "organization_dirigeant" &&
       !renewalNeeded
     ) {
-      return next();
+      return;
     }
 
     const { cause, details, ok } = await performCertificationDirigeant(
@@ -438,12 +430,12 @@ export const checkUserPassedCertificationDirigeant = chain(
         }),
       );
 
-      return matches
-        ? res.redirect(
-            "/users/unable-to-certify-user-as-executive?matches=" +
-              [...matches].join(","),
-          )
-        : res.redirect("/users/unable-to-certify-user-as-executive");
+      return {
+        redirect: matches
+          ? "/users/unable-to-certify-user-as-executive?matches=" +
+            [...matches].join(",")
+          : "/users/unable-to-certify-user-as-executive",
+      };
     }
 
     // user is already in the organization
@@ -457,13 +449,11 @@ export const checkUserPassedCertificationDirigeant = chain(
         has_been_greeted: false,
       },
     );
-
-    return next();
   },
 );
 
 export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware =
-  chain(checkUserPassedCertificationDirigeant, async (req, res, next) => {
+  chain(checkUserPassedCertificationDirigeant, async (req) => {
     const userOrganisations = await getOrganizationsByUserId(
       getUserFromAuthenticatedSession(req).id,
     );
@@ -489,19 +479,17 @@ export const checkUserHasNoPendingOfficialContactEmailVerificationMiddleware =
     }
 
     if (!isEmpty(organizationThatNeedsOfficialContactEmailVerification)) {
-      return res.redirect(
-        `/users/official-contact-email-verification/${organizationThatNeedsOfficialContactEmailVerification.id}`,
-      );
+      return {
+        redirect: `/users/official-contact-email-verification/${organizationThatNeedsOfficialContactEmailVerification.id}`,
+      };
     }
-
-    return next();
   });
 
 ///
 
 export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = chain(
   checkUserHasNoPendingOfficialContactEmailVerificationMiddleware,
-  async (req, res, next) => {
+  async (req) => {
     const userOrganisations = await getOrganizationsByUserId(
       getUserFromAuthenticatedSession(req).id,
     );
@@ -532,7 +520,7 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = chain(
           user_id: getUserFromAuthenticatedSession(req).id,
           organization_id: organizationThatNeedsGreetings.id,
         });
-        return res.redirect(`/users/welcome/dirigeant`);
+        return { redirect: `/users/welcome/dirigeant` };
       }
 
       await greetForJoiningOrganization({
@@ -540,10 +528,8 @@ export const checkUserHasBeenGreetedForJoiningOrganizationMiddleware = chain(
         organization_id: organizationThatNeedsGreetings.id,
       });
 
-      return res.redirect(`/users/welcome`);
+      return { redirect: `/users/welcome` };
     }
-
-    return next();
   },
 );
 
