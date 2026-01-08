@@ -137,24 +137,15 @@ export const SourceDirigeant = z.enum([
 
 export type SourceDirigeant = z.infer<typeof SourceDirigeant>;
 
-export function getSourceDirigeantInfo(source: SourceDirigeant, siren: string) {
-  return match(source)
-    .with("registre-national-entreprises.inpi.fr/api", () => ({
-      label: "Registre National des Entreprises",
-      url: `https://data.inpi.fr/entreprises/${siren}`,
-    }))
-    .with(
-      "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
-      () => ({
-        label: "Registre du commerce et des sociétés (RCS)",
-        url: `https://annuaire-entreprises.data.gouv.fr/entreprise/${siren}`,
-      }),
-    )
-    .with("api.insee.fr/api-sirene/private", () => ({
-      label: "Répertoire SIRENE de l'INSEE",
-      url: `https://annuaire-entreprises.data.gouv.fr/entreprise/${siren}`,
-    }))
-    .exhaustive();
+const SOURCE_DIRIGEANT_LABELS: { [source in SourceDirigeant]: string } = {
+  "api.insee.fr/api-sirene/private": "Répertoire SIRENE de l'INSEE",
+  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux":
+    "Registre du commerce et des sociétés (RCS)",
+  "registre-national-entreprises.inpi.fr/api":
+    "Registre National des Entreprises",
+};
+export function getSourceDirigeantInfo(source: SourceDirigeant) {
+  return SOURCE_DIRIGEANT_LABELS[source];
 }
 
 function match_identity_to_dirigeant(

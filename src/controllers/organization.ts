@@ -382,7 +382,7 @@ export async function getUnableToCertifyUserAsExecutiveController(
   const user = getUserFromAuthenticatedSession(req);
   const user_info = await getFranceConnectUserInfo(user.id);
 
-  const source_info = getSourceDirigeantInfo(query.source, query.siren);
+  const source_label = getSourceDirigeantInfo(query.source);
 
   try {
     return res.render("user/unable-to-certify-user-as-executive", {
@@ -392,7 +392,8 @@ export async function getUnableToCertifyUserAsExecutiveController(
       oidcError: oidcErrorSchema().enum.login_required,
       organization_label: query.organization_label,
       pageTitle: "Certification impossible",
-      source_info,
+      siren: query.siren,
+      source_label,
       use_dashboard_layout: false,
       user_info,
     });

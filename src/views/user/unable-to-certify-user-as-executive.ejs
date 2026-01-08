@@ -14,7 +14,7 @@
 
     <p>
       Des discordances ont été détectées entre votre identité <b>FranceConnect</b>
-      (affichée ici) et celle connue du <b><%= source_info.label; %></b> pour <b><%= organization_label; %></b>.
+      (affichée ici) et celle connue du <b><%= source_label; %></b> pour <b><%= organization_label; %></b>.
     </p>
 
     <p>
@@ -52,12 +52,12 @@
     <p>
       <a
         class="fr-btn fr-btn--primary fr-mb-2w"
-        href="<%= source_info.url; %>"
+        href="https://annuaire-entreprises.data.gouv.fr/dirigeants/<%= locals.siren; %>"
         rel="noopener noreferrer"
         target="_blank"
         <%= locals.matches.has("birth_date") ? "hidden" : "" %>
       >
-        Vérifier sur le <%= source_info.label; %>
+        Vérifier sur l’Annuaire des Entreprises
       </a>
       <a
         class="fr-btn fr-btn--secondary fr-mb-2w"
