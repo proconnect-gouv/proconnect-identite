@@ -5,7 +5,7 @@ import { captureException } from "@sentry/node";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
-import { AssertionError } from "node:assert";
+import assert, { AssertionError } from "node:assert/strict";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
@@ -205,8 +205,10 @@ export const requireUserHasConnectedRecently: NavigationGuardNode = {
 
 export const requireUserIsVerified: NavigationGuardNode = {
   previous: requireUserIsConnected,
-  guard: async ({ req }) => {
-    const { email, email_verified } = getUserFromAuthenticatedSession(req);
+  guard: async ({ user }) => {
+    assert.ok(user);
+
+    const { email, email_verified } = user;
 
     const needs_email_verification_renewal =
       await needsEmailVerificationRenewal(email);
@@ -232,8 +234,10 @@ export const requireUserIsVerified: NavigationGuardNode = {
 
 const requireUserTwoFactorAuth: NavigationGuardNode = {
   previous: requireUserIsVerified,
-  guard: async ({ req }) => {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+  guard: async ({ req, user }) => {
+    assert.ok(user);
+
+    const { id: user_id } = user;
 
     if (
       ((await shouldForce2faForUser(user_id)) ||
@@ -268,14 +272,16 @@ export const requireBrowserIsTrusted: NavigationGuardNode = {
 
 export const requireUserIsFranceConnected: NavigationGuardNode = {
   previous: requireBrowserIsTrusted,
-  guard: async ({ req }) => {
+  guard: async ({ req, user }) => {
+    assert.ok(user);
+
     if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
 
     const { certificationDirigeantRequested: isRequested } =
       await CertificationSessionSchema.parseAsync(req.session);
     if (!isRequested) return { type: "next" };
 
-    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const { id: userId } = user;
     const isVerified = await isUserVerifiedWithFranceconnect(userId);
 
     if (isVerified) return { type: "next" };
@@ -286,8 +292,10 @@ export const requireUserIsFranceConnected: NavigationGuardNode = {
 
 export const requireUserHasPersonalInformations: NavigationGuardNode = {
   previous: requireUserIsFranceConnected,
-  guard: ({ req }) => {
-    const { given_name, family_name } = getUserFromAuthenticatedSession(req);
+  guard: ({ user }) => {
+    assert.ok(user);
+
+    const { given_name, family_name } = user;
     if (isEmpty(given_name) || isEmpty(family_name)) {
       return { type: "redirect", url: "/users/personal-information" };
     }
@@ -298,12 +306,10 @@ export const requireUserHasPersonalInformations: NavigationGuardNode = {
 
 export const requireUserHasAtLeastOneOrganization: NavigationGuardNode = {
   previous: requireUserHasPersonalInformations,
-  guard: async ({ req }) => {
-    if (
-      isEmpty(
-        await getOrganizationsByUserId(getUserFromAuthenticatedSession(req).id),
-      )
-    ) {
+  guard: async ({ req, user }) => {
+    assert.ok(user);
+
+    if (isEmpty(await getOrganizationsByUserId(user.id))) {
       return {
         type: "redirect",
         url: addQueryParameters("/users/join-organization", {
@@ -320,7 +326,9 @@ export const requireUserCanAccessApp = requireUserHasAtLeastOneOrganization;
 
 export const requireUserHasLoggedInRecently: NavigationGuardNode = {
   previous: requireUserCanAccessApp,
-  guard: ({ req }) => {
+  guard: ({ req, user }) => {
+    assert.ok(user);
+
     const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
     if (!hasLoggedInRecently) {
@@ -338,8 +346,10 @@ export const requireUserHasLoggedInRecently: NavigationGuardNode = {
 
 export const requireUserTwoFactorAuthForAdmin: NavigationGuardNode = {
   previous: requireUserHasLoggedInRecently,
-  guard: async ({ req }) => {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+  guard: async ({ req, user }) => {
+    assert.ok(user);
+
+    const { id: user_id } = user;
 
     if (
       (await is2FACapable(user_id)) &&
@@ -361,7 +371,9 @@ export const requireUserCanAccessAdmin = requireUserTwoFactorAuthForAdmin;
 
 const requireUserBelongsToHintedOrganization: NavigationGuardNode = {
   previous: requireUserHasAtLeastOneOrganization,
-  guard: async ({ req }) => {
+  guard: async ({ req, user }) => {
+    assert.ok(user);
+
     if (!req.session.siretHint) {
       return { type: "next" };
     }
@@ -369,15 +381,15 @@ const requireUserBelongsToHintedOrganization: NavigationGuardNode = {
       req.session.siretHint,
     );
 
-    const userFromAuthenticatedSession = getUserFromAuthenticatedSession(req);
+    const userFromAuthenticatedSession = user;
 
-    const userOrganisations = await getOrganizationsByUserId(
+    const organizations = await getOrganizationsByUserId(
       userFromAuthenticatedSession.id,
     );
 
     if (
       !isEmpty(hintedOrganization) &&
-      userOrganisations.some((org) => org.id === hintedOrganization.id)
+      organizations.some((org) => org.id === hintedOrganization.id)
     ) {
       await selectOrganization({
         user_id: userFromAuthenticatedSession.id,
@@ -395,29 +407,27 @@ const requireUserBelongsToHintedOrganization: NavigationGuardNode = {
 
 export const requireUserHasSelectedAnOrganization: NavigationGuardNode = {
   previous: requireUserBelongsToHintedOrganization,
-  guard: async ({ req }) => {
+  guard: async ({ req, user }) => {
+    assert.ok(user);
+
     if (!req.session.mustReturnOneOrganizationInPayload)
       return { type: "next" };
 
-    const selectedOrganizationId = await getSelectedOrganizationId(
-      getUserFromAuthenticatedSession(req).id,
-    );
+    const selectedOrganizationId = await getSelectedOrganizationId(user.id);
 
     if (selectedOrganizationId) {
       return { type: "next" };
     }
 
-    const userOrganisations = await getOrganizationsByUserId(
-      getUserFromAuthenticatedSession(req).id,
-    );
+    const organizations = await getOrganizationsByUserId(user.id);
 
     if (
-      userOrganisations.length === 1 &&
+      organizations.length === 1 &&
       !req.session.certificationDirigeantRequested
     ) {
       await selectOrganization({
-        user_id: getUserFromAuthenticatedSession(req).id,
-        organization_id: userOrganisations[0].id,
+        user_id: user.id,
+        organization_id: organizations[0].id,
       });
       return { type: "next" };
     }
@@ -428,14 +438,16 @@ export const requireUserHasSelectedAnOrganization: NavigationGuardNode = {
 
 export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
   previous: requireUserHasSelectedAnOrganization,
-  guard: async ({ req }) => {
+  guard: async ({ req, user }) => {
+    assert.ok(user);
+
     if (!req.session.mustReturnOneOrganizationInPayload)
       return { type: "next" };
 
     if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
     if (!req.session.certificationDirigeantRequested) return { type: "next" };
 
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = user;
     const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
 
     const organization = (await getOrganizationById(selectedOrganizationId))!;
@@ -512,26 +524,22 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
 export const requireUserHasNoPendingOfficialContactEmailVerification: NavigationGuardNode =
   {
     previous: requireUserPassedCertificationDirigeant,
-    guard: async ({ req }) => {
-      const userOrganisations = await getOrganizationsByUserId(
-        getUserFromAuthenticatedSession(req).id,
-      );
+    guard: async ({ req, organizations, user }) => {
+      assert.ok(user);
 
       let organizationThatNeedsOfficialContactEmailVerification;
       if (req.session.mustReturnOneOrganizationInPayload) {
-        const selectedOrganizationId = await getSelectedOrganizationId(
-          getUserFromAuthenticatedSession(req).id,
-        );
+        const selectedOrganizationId = await getSelectedOrganizationId(user.id);
 
         organizationThatNeedsOfficialContactEmailVerification =
-          userOrganisations.find(
+          organizations.find(
             ({ id, needs_official_contact_email_verification }) =>
               needs_official_contact_email_verification &&
               id === selectedOrganizationId,
           );
       } else {
         organizationThatNeedsOfficialContactEmailVerification =
-          userOrganisations.find(
+          organizations.find(
             ({ needs_official_contact_email_verification }) =>
               needs_official_contact_email_verification,
           );
@@ -551,24 +559,19 @@ export const requireUserHasNoPendingOfficialContactEmailVerification: Navigation
 export const requireUserHasBeenGreetedForJoiningOrganization: NavigationGuardNode =
   {
     previous: requireUserHasNoPendingOfficialContactEmailVerification,
-    guard: async ({ req }) => {
-      const userOrganisations = await getOrganizationsByUserId(
-        getUserFromAuthenticatedSession(req).id,
-      );
-
+    guard: async ({ req, organizations, user }) => {
+      assert.ok(user);
       let organizationThatNeedsGreetings;
 
       if (req.session.mustReturnOneOrganizationInPayload) {
-        const selectedOrganizationId = await getSelectedOrganizationId(
-          getUserFromAuthenticatedSession(req).id,
-        );
+        const selectedOrganizationId = await getSelectedOrganizationId(user.id);
 
-        organizationThatNeedsGreetings = userOrganisations.find(
+        organizationThatNeedsGreetings = organizations.find(
           ({ id, has_been_greeted }) =>
             !has_been_greeted && id === selectedOrganizationId,
         );
       } else {
-        organizationThatNeedsGreetings = userOrganisations.find(
+        organizationThatNeedsGreetings = organizations.find(
           ({ has_been_greeted }) => !has_been_greeted,
         );
       }
@@ -579,14 +582,14 @@ export const requireUserHasBeenGreetedForJoiningOrganization: NavigationGuardNod
           "organization_dirigeant"
         ) {
           await greetForCertification({
-            user_id: getUserFromAuthenticatedSession(req).id,
+            user_id: user.id,
             organization_id: organizationThatNeedsGreetings.id,
           });
           return { type: "redirect", url: `/users/welcome/dirigeant` };
         }
 
         await greetForJoiningOrganization({
-          user_id: getUserFromAuthenticatedSession(req).id,
+          user_id: user.id,
           organization_id: organizationThatNeedsGreetings.id,
         });
 
