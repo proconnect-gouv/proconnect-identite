@@ -1,7 +1,7 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import { InvalidCertificationError } from "@proconnect-gouv/proconnect.identite/errors";
 import { captureException } from "@sentry/node";
-import type { NextFunction, Request, RequestHandler, Response } from "express";
+import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { AssertionError } from "node:assert";
@@ -56,40 +56,60 @@ const getReferrerPath = (req: Request) => {
   return originPath || referrerPath || undefined;
 };
 
+type GuardResult =
+  | { type: "next" }
+  | { type: "redirect"; url: string }
+  | { type: "send" };
+
+type Guard = (req: Request) => GuardResult | Promise<GuardResult>;
+
 type NavigationGuardNode = {
   previous?: NavigationGuardNode;
-  guard: RequestHandler;
+  guard: Guard;
 };
 
 export const navigationGuardChain = (
   node: NavigationGuardNode,
 ): RequestHandler[] => {
-  if (!node.previous) return [node.guard];
+  const expressGuard: RequestHandler = async (req, res, next) => {
+    const result = await node.guard(req);
 
-  return [...navigationGuardChain(node.previous), node.guard];
+    switch (result.type) {
+      case "next":
+        return next();
+      case "redirect":
+        return res.redirect(result.url);
+      case "send":
+        return res.send();
+    }
+  };
+
+  if (!node.previous) return [expressGuard];
+
+  return [...navigationGuardChain(node.previous), expressGuard];
 };
 
 export const requireIsUser: NavigationGuardNode = {
-  guard: async (req: Request, _res: Response, next: NextFunction) => {
+  guard: (req) => {
     if (usesAuthHeaders(req)) {
       throw new HttpErrors.Forbidden(
         "Access denied. The requested resource does not require authentication.",
       );
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
 // redirect user to start sign-in page if no email is available in session
 export const requireEmailInSession: NavigationGuardNode = {
   previous: requireIsUser,
-  guard: (req, res, next) => {
+  guard: (req) => {
     if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
-      return res.redirect(`/users/start-sign-in`);
+      return { type: "redirect", url: `/users/start-sign-in` };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
@@ -97,15 +117,15 @@ export const requireEmailInSession: NavigationGuardNode = {
 export const requireUserHasSeenInclusionconnectWelcomePage: NavigationGuardNode =
   {
     previous: requireEmailInSession,
-    guard: async (req: Request, res: Response, next: NextFunction) => {
+    guard: (req) => {
       if (
         getPartialUserFromUnauthenticatedSession(req)
           .needsInclusionconnectWelcomePage
       ) {
-        return res.redirect(`/users/inclusionconnect-welcome`);
+        return { type: "redirect", url: `/users/inclusionconnect-welcome` };
       }
 
-      return next();
+      return { type: "next" };
     },
   };
 
@@ -115,14 +135,14 @@ export const requireCredentialPromptRequirements =
 // redirect user to login page if no active session is available
 export const requireUserIsConnected: NavigationGuardNode = {
   previous: requireIsUser,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: (req) => {
     if (req.method === "HEAD") {
       // From express documentation:
       // The app.get() function is automatically called for the HTTP HEAD method
       // in addition to the GET method if app.head() was not called for the path
       // before app.get().
       // We return empty response and the headers are sent to the client.
-      return res.send();
+      return { type: "send" };
     }
 
     if (!isWithinAuthenticatedSession(req.session)) {
@@ -131,31 +151,34 @@ export const requireUserIsConnected: NavigationGuardNode = {
         req.session.referrerPath = referrerPath;
       }
 
-      return res.redirect(`/users/start-sign-in`);
+      return { type: "redirect", url: `/users/start-sign-in` };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
 export const requireUserHasConnectedRecently: NavigationGuardNode = {
   previous: requireUserIsConnected,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: (req) => {
     const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
     if (!hasLoggedInRecently) {
       req.session.referrerPath = getReferrerPath(req);
 
-      return res.redirect(`/users/start-sign-in?notification=login_required`);
+      return {
+        type: "redirect",
+        url: `/users/start-sign-in?notification=login_required`,
+      };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
 export const requireUserIsVerified: NavigationGuardNode = {
   previous: requireUserIsConnected,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: async (req) => {
     const { email, email_verified } = getUserFromAuthenticatedSession(req);
 
     const needs_email_verification_renewal =
@@ -170,16 +193,19 @@ export const requireUserIsVerified: NavigationGuardNode = {
         notification_param = "?notification=email_verification_renewal";
       }
 
-      return res.redirect(`/users/verify-email${notification_param}`);
+      return {
+        type: "redirect",
+        url: `/users/verify-email${notification_param}`,
+      };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
 export const requireUserTwoFactorAuth: NavigationGuardNode = {
   previous: requireUserIsVerified,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: async (req) => {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     if (
@@ -188,76 +214,78 @@ export const requireUserTwoFactorAuth: NavigationGuardNode = {
       !isWithinTwoFactorAuthenticatedSession(req)
     ) {
       if (await is2FACapable(user_id)) {
-        return res.redirect("/users/2fa-sign-in");
+        return { type: "redirect", url: "/users/2fa-sign-in" };
       } else {
-        return res.redirect("/users/double-authentication-choice");
+        return { type: "redirect", url: "/users/double-authentication-choice" };
       }
     }
-    return next();
+    return { type: "next" };
   },
 };
 
 export const requireBrowserIsTrusted: NavigationGuardNode = {
   previous: requireUserTwoFactorAuth,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: (req) => {
     const is_browser_trusted = isBrowserTrustedForUser(req);
 
     if (!is_browser_trusted) {
-      return res.redirect(
-        `/users/verify-email?notification=browser_not_trusted`,
-      );
+      return {
+        type: "redirect",
+        url: `/users/verify-email?notification=browser_not_trusted`,
+      };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
 export const requireUserIsFranceConnected: NavigationGuardNode = {
   previous: requireBrowserIsTrusted,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
-    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
+  guard: async (req) => {
+    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
 
     const { certificationDirigeantRequested: isRequested } =
       await CertificationSessionSchema.parseAsync(req.session);
-    if (!isRequested) return next();
+    if (!isRequested) return { type: "next" };
 
     const { id: userId } = getUserFromAuthenticatedSession(req);
     const isVerified = await isUserVerifiedWithFranceconnect(userId);
 
-    if (isVerified) return next();
+    if (isVerified) return { type: "next" };
 
-    return res.redirect("/users/certification-dirigeant");
+    return { type: "redirect", url: "/users/certification-dirigeant" };
   },
 };
 
 export const requireUserHasPersonalInformations: NavigationGuardNode = {
   previous: requireUserIsFranceConnected,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: (req) => {
     const { given_name, family_name } = getUserFromAuthenticatedSession(req);
     if (isEmpty(given_name) || isEmpty(family_name)) {
-      return res.redirect("/users/personal-information");
+      return { type: "redirect", url: "/users/personal-information" };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
 export const requireUserHasAtLeastOneOrganization: NavigationGuardNode = {
   previous: requireUserHasPersonalInformations,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: async (req) => {
     if (
       isEmpty(
         await getOrganizationsByUserId(getUserFromAuthenticatedSession(req).id),
       )
     ) {
-      return res.redirect(
-        addQueryParameters("/users/join-organization", {
+      return {
+        type: "redirect",
+        url: addQueryParameters("/users/join-organization", {
           siret_hint: req.session.siretHint,
         }),
-      );
+      };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
@@ -265,22 +293,25 @@ export const requireUserCanAccessApp = requireUserHasAtLeastOneOrganization;
 
 export const requireUserHasLoggedInRecently: NavigationGuardNode = {
   previous: requireUserCanAccessApp,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: (req) => {
     const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
     if (!hasLoggedInRecently) {
       req.session.referrerPath = getReferrerPath(req);
 
-      return res.redirect(`/users/start-sign-in?notification=login_required`);
+      return {
+        type: "redirect",
+        url: `/users/start-sign-in?notification=login_required`,
+      };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
 export const requireUserTwoFactorAuthForAdmin: NavigationGuardNode = {
   previous: requireUserHasLoggedInRecently,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: async (req) => {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     if (
@@ -289,10 +320,13 @@ export const requireUserTwoFactorAuthForAdmin: NavigationGuardNode = {
     ) {
       req.session.referrerPath = getReferrerPath(req);
 
-      return res.redirect("/users/2fa-sign-in?notification=2fa_required");
+      return {
+        type: "redirect",
+        url: "/users/2fa-sign-in?notification=2fa_required",
+      };
     }
 
-    return next();
+    return { type: "next" };
   },
 };
 
@@ -300,9 +334,9 @@ export const requireUserCanAccessAdmin = requireUserTwoFactorAuthForAdmin;
 
 const requireUserBelongsToHintedOrganization: NavigationGuardNode = {
   previous: requireUserHasAtLeastOneOrganization,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
+  guard: async (req) => {
     if (!req.session.siretHint) {
-      return next();
+      return { type: "next" };
     }
     const hintedOrganization = await getOrganizationBySiret(
       req.session.siretHint,
@@ -322,26 +356,28 @@ const requireUserBelongsToHintedOrganization: NavigationGuardNode = {
         user_id: userFromAuthenticatedSession.id,
         organization_id: hintedOrganization.id,
       });
-      return next();
+      return { type: "next" };
     } else {
-      return res.redirect(
-        `/users/join-organization?siret_hint=${req.session.siretHint}`,
-      );
+      return {
+        type: "redirect",
+        url: `/users/join-organization?siret_hint=${req.session.siretHint}`,
+      };
     }
   },
 };
 
 export const requireUserHasSelectedAnOrganization: NavigationGuardNode = {
   previous: requireUserBelongsToHintedOrganization,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session.mustReturnOneOrganizationInPayload) return next();
+  guard: async (req) => {
+    if (!req.session.mustReturnOneOrganizationInPayload)
+      return { type: "next" };
 
     const selectedOrganizationId = await getSelectedOrganizationId(
       getUserFromAuthenticatedSession(req).id,
     );
 
     if (selectedOrganizationId) {
-      return next();
+      return { type: "next" };
     }
 
     const userOrganisations = await getOrganizationsByUserId(
@@ -356,20 +392,21 @@ export const requireUserHasSelectedAnOrganization: NavigationGuardNode = {
         user_id: getUserFromAuthenticatedSession(req).id,
         organization_id: userOrganisations[0].id,
       });
-      return next();
+      return { type: "next" };
     }
 
-    return res.redirect("/users/select-organization");
+    return { type: "redirect", url: "/users/select-organization" };
   },
 };
 
 export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
   previous: requireUserHasSelectedAnOrganization,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session.mustReturnOneOrganizationInPayload) return next();
+  guard: async (req) => {
+    if (!req.session.mustReturnOneOrganizationInPayload)
+      return { type: "next" };
 
-    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
-    if (!req.session.certificationDirigeantRequested) return next();
+    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
+    if (!req.session.certificationDirigeantRequested) return { type: "next" };
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
     const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
@@ -396,7 +433,7 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
       userOrganizationLink.verification_type === "organization_dirigeant" &&
       !renewalNeeded
     ) {
-      return next();
+      return { type: "next" };
     }
 
     const { cause, details, ok } = await performCertificationDirigeant(
@@ -417,11 +454,16 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
       );
 
       return matches
-        ? res.redirect(
-            "/users/unable-to-certify-user-as-executive?matches=" +
+        ? {
+            type: "redirect",
+            url:
+              "/users/unable-to-certify-user-as-executive?matches=" +
               [...matches].join(","),
-          )
-        : res.redirect("/users/unable-to-certify-user-as-executive");
+          }
+        : {
+            type: "redirect",
+            url: "/users/unable-to-certify-user-as-executive",
+          };
     }
 
     // user is already in the organization
@@ -436,14 +478,14 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
       },
     );
 
-    return next();
+    return { type: "next" };
   },
 };
 
 export const requireUserHasNoPendingOfficialContactEmailVerification: NavigationGuardNode =
   {
     previous: requireUserPassedCertificationDirigeant,
-    guard: async (req: Request, res: Response, next: NextFunction) => {
+    guard: async (req) => {
       const userOrganisations = await getOrganizationsByUserId(
         getUserFromAuthenticatedSession(req).id,
       );
@@ -469,19 +511,20 @@ export const requireUserHasNoPendingOfficialContactEmailVerification: Navigation
       }
 
       if (!isEmpty(organizationThatNeedsOfficialContactEmailVerification)) {
-        return res.redirect(
-          `/users/official-contact-email-verification/${organizationThatNeedsOfficialContactEmailVerification.id}`,
-        );
+        return {
+          type: "redirect",
+          url: `/users/official-contact-email-verification/${organizationThatNeedsOfficialContactEmailVerification.id}`,
+        };
       }
 
-      return next();
+      return { type: "next" };
     },
   };
 
 export const requireUserHasBeenGreetedForJoiningOrganization: NavigationGuardNode =
   {
     previous: requireUserHasNoPendingOfficialContactEmailVerification,
-    guard: async (req: Request, res: Response, next: NextFunction) => {
+    guard: async (req) => {
       const userOrganisations = await getOrganizationsByUserId(
         getUserFromAuthenticatedSession(req).id,
       );
@@ -512,7 +555,7 @@ export const requireUserHasBeenGreetedForJoiningOrganization: NavigationGuardNod
             user_id: getUserFromAuthenticatedSession(req).id,
             organization_id: organizationThatNeedsGreetings.id,
           });
-          return res.redirect(`/users/welcome/dirigeant`);
+          return { type: "redirect", url: `/users/welcome/dirigeant` };
         }
 
         await greetForJoiningOrganization({
@@ -520,10 +563,10 @@ export const requireUserHasBeenGreetedForJoiningOrganization: NavigationGuardNod
           organization_id: organizationThatNeedsGreetings.id,
         });
 
-        return res.redirect(`/users/welcome`);
+        return { type: "redirect", url: `/users/welcome` };
       }
 
-      return next();
+      return { type: "next" };
     },
   };
 
