@@ -6,6 +6,7 @@ import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import assert, { AssertionError } from "node:assert/strict";
+import { AsyncLocalStorage } from "node:async_hooks";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
@@ -96,11 +97,19 @@ export type NavigationGuardNode = {
   guard: Guard;
 };
 
-type ExpressGuardBuilder = (guard: Guard) => RequestHandler;
-const defaultExpressGuardBuilder: ExpressGuardBuilder =
-  (guard) => async (req, res, next) => {
-    const context = await load_context(req);
-    const result = await guard({ req, ...context });
+const guardContextStorage = new AsyncLocalStorage<GuardContext>();
+
+const contextLoaderMiddleware: RequestHandler = async (req, _res, next) => {
+  const context = await load_context(req);
+  guardContextStorage.run({ req, ...context }, () => next());
+};
+
+const guardToMiddleware =
+  (guard: Guard): RequestHandler =>
+  async (_req, res, next) => {
+    const context = guardContextStorage.getStore();
+    assert.ok(context, "Guard context not initialized");
+    const result = await guard(context);
 
     switch (result.type) {
       case "next":
@@ -111,13 +120,18 @@ const defaultExpressGuardBuilder: ExpressGuardBuilder =
         return res.send();
     }
   };
+
 export const navigationGuardChain = (
   node: NavigationGuardNode,
-  expressGuard = defaultExpressGuardBuilder,
 ): RequestHandler[] => {
-  if (!node.previous) return [expressGuard(node.guard)];
+  if (!node.previous) {
+    return [contextLoaderMiddleware, guardToMiddleware(node.guard)];
+  }
 
-  return [...navigationGuardChain(node.previous), expressGuard(node.guard)];
+  return [
+    ...navigationGuardChain(node.previous),
+    guardToMiddleware(node.guard),
+  ];
 };
 
 export const requireIsUser: NavigationGuardNode = {
