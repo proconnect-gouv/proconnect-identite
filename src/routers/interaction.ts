@@ -6,8 +6,11 @@ import {
   interactionErrorControllerFactory,
   interactionStartControllerFactory,
 } from "../controllers/interaction";
+import {
+  navigationGuardChain,
+  requireUserSignInRequirements,
+} from "../middlewares/navigation-guards";
 import { rateLimiterMiddleware } from "../middlewares/rate-limiter";
-import { checkUserSignInRequirementsMiddleware } from "../middlewares/user";
 
 export const interactionRouter = (oidcProvider: Provider) => {
   const interactionRouter = Router();
@@ -24,7 +27,7 @@ export const interactionRouter = (oidcProvider: Provider) => {
   );
   interactionRouter.get(
     "/:grant/login",
-    checkUserSignInRequirementsMiddleware,
+    ...navigationGuardChain(requireUserSignInRequirements),
     interactionEndControllerFactory(oidcProvider),
   );
   interactionRouter.get(
