@@ -416,7 +416,7 @@ describe("❎ Bad match", () => {
     cy.contains("Date de naissance ✅");
     cy.contains("Commune de naissance ✅");
 
-    cy.contains("Vérifier sur Registre National des Entreprises");
+    cy.contains("Vérifier sur le Registre National des Entreprises");
     cy.contains("Comment corriger les données ?");
 
     cy.contains("Continuer").click();

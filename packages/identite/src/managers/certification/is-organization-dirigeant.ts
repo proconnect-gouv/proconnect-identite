@@ -146,13 +146,13 @@ export function getSourceDirigeantInfo(source: SourceDirigeant, siren: string) {
     .with(
       "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
       () => ({
-        label: "Annuaire des Entreprises",
+        label: "Registre du commerce et des sociétés (RCS)",
         url: `https://annuaire-entreprises.data.gouv.fr/entreprise/${siren}`,
       }),
     )
     .with("api.insee.fr/api-sirene/private", () => ({
-      label: "INSEE",
-      url: `https://data.inpi.fr/entreprises/${siren}`,
+      label: "Répertoire SIRENE de l'INSEE",
+      url: `https://annuaire-entreprises.data.gouv.fr/entreprise/${siren}`,
     }))
     .exhaustive();
 }
