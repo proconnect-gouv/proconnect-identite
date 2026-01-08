@@ -212,8 +212,27 @@ export const requireBrowserIsTrusted: NavigationGuardNode = {
   },
 };
 
-export const requireUserIsFranceConnected: NavigationGuardNode = {
+export const requireUserHasAtLeastOneOrganization: NavigationGuardNode = {
   previous: requireBrowserIsTrusted,
+  guard: async (req: Request, res: Response, next: NextFunction) => {
+    if (
+      isEmpty(
+        await getOrganizationsByUserId(getUserFromAuthenticatedSession(req).id),
+      )
+    ) {
+      return res.redirect(
+        addQueryParameters("/users/join-organization", {
+          siret_hint: req.session.siretHint,
+        }),
+      );
+    }
+
+    return next();
+  },
+};
+
+export const requireUserIsFranceConnected: NavigationGuardNode = {
+  previous: requireUserHasAtLeastOneOrganization,
   guard: async (req: Request, res: Response, next: NextFunction) => {
     if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return next();
 
@@ -242,26 +261,7 @@ export const requireUserHasPersonalInformations: NavigationGuardNode = {
   },
 };
 
-export const requireUserHasAtLeastOneOrganization: NavigationGuardNode = {
-  previous: requireUserHasPersonalInformations,
-  guard: async (req: Request, res: Response, next: NextFunction) => {
-    if (
-      isEmpty(
-        await getOrganizationsByUserId(getUserFromAuthenticatedSession(req).id),
-      )
-    ) {
-      return res.redirect(
-        addQueryParameters("/users/join-organization", {
-          siret_hint: req.session.siretHint,
-        }),
-      );
-    }
-
-    return next();
-  },
-};
-
-export const requireUserCanAccessApp = requireUserHasAtLeastOneOrganization;
+export const requireUserCanAccessApp = requireUserHasPersonalInformations;
 
 export const requireUserHasLoggedInRecently: NavigationGuardNode = {
   previous: requireUserCanAccessApp,
@@ -299,7 +299,7 @@ export const requireUserTwoFactorAuthForAdmin: NavigationGuardNode = {
 export const requireUserCanAccessAdmin = requireUserTwoFactorAuthForAdmin;
 
 const requireUserBelongsToHintedOrganization: NavigationGuardNode = {
-  previous: requireUserHasAtLeastOneOrganization,
+  previous: requireUserCanAccessApp,
   guard: async (req: Request, res: Response, next: NextFunction) => {
     if (!req.session.siretHint) {
       return next();
