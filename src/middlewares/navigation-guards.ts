@@ -1,18 +1,20 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import { InvalidCertificationError } from "@proconnect-gouv/proconnect.identite/errors";
-import { captureException } from "@sentry/node";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
-import { AssertionError } from "node:assert";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
   HOST,
 } from "../config/env";
+import { OrganizationNotCoveredByCertificationDirigeant } from "../config/errors";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
-import { performCertificationDirigeant } from "../managers/certification";
+import {
+  getInvalidCertificationErrorUrl,
+  performCertificationDirigeant,
+} from "../managers/certification";
 import {
   greetForCertification,
   greetForJoiningOrganization,
@@ -436,46 +438,24 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
       return { type: "next" };
     }
 
-    const { cause, details, ok } = await performCertificationDirigeant(
-      organization,
-      user_id,
-    );
+    try {
+      await performCertificationDirigeant(organization, user_id);
+    } catch (error) {
+      if (error instanceof InvalidCertificationError) {
+        return {
+          type: "redirect",
+          url: getInvalidCertificationErrorUrl(error),
+        };
+      }
 
-    if (!ok) {
-      const source = details.source;
-      const siren = organization.siret.substring(0, 9);
-      const organization_label =
-        organization.cached_libelle ?? organization.siret;
-      const matches = cause === "close_match" ? details.matches : undefined;
-      captureException(
-        new InvalidCertificationError(
-          source,
-          siren,
-          organization_label,
-          matches,
-          cause,
-          {
-            cause: new AssertionError({
-              expected: 0,
-              actual: details.matches.size,
-              operator: "isOrganizationDirigeant",
-            }),
-          },
-        ),
-      );
+      if (error instanceof OrganizationNotCoveredByCertificationDirigeant) {
+        return {
+          type: "redirect",
+          url: "/users/organization-not-covered-by-certification-dirigeant",
+        };
+      }
 
-      const params = new URLSearchParams();
-      if (matches) params.set("matches", [...matches].join(","));
-      params.set("source", source);
-      params.set("siren", siren);
-      params.set("organization_label", organization_label);
-      const query = params.toString();
-      return {
-        type: "redirect",
-        url:
-          "/users/unable-to-certify-user-as-executive" +
-          (query ? `?${query}` : ""),
-      };
+      throw error;
     }
 
     // user is already in the organization

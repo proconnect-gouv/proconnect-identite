@@ -8,6 +8,7 @@ import {
   getJoinOrganizationConfirmController,
   getJoinOrganizationController,
   getModerationRejectedController,
+  getOrganizationNotCoveredByCertificationDirigeant,
   getOrganizationSuggestionsController,
   getUnableToAutoJoinOrganizationController,
   getUnableToCertifyUserAsExecutiveController,
@@ -593,6 +594,13 @@ export const userRouter = () => {
     ...navigationGuardChain(requireUserHasPersonalInformations),
     csrfProtectionMiddleware,
     getUnableToCertifyUserAsExecutiveController,
+  );
+
+  userRouter.get(
+    "/organization-not-covered-by-certification-dirigeant",
+    ...navigationGuardChain(requireUserHasPersonalInformations),
+    csrfProtectionMiddleware,
+    getOrganizationNotCoveredByCertificationDirigeant,
   );
 
   return userRouter;

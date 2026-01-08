@@ -12,7 +12,6 @@ import {
   MatchCriteria,
   SourceDirigeant,
 } from "@proconnect-gouv/proconnect.identite/managers/certification";
-import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
@@ -22,12 +21,14 @@ import {
   DomainRestrictedError,
   ForbiddenError,
   GouvFrDomainsForbiddenForPrivateOrg,
+  OrganizationNotCoveredByCertificationDirigeant,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
   UserModerationRejectedError,
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
+import { getInvalidCertificationErrorUrl } from "../managers/certification";
 import { getOrganizationFromModeration } from "../managers/moderation";
 import {
   doSuggestOrganizations,
@@ -146,16 +147,12 @@ export const postJoinOrganizationMiddleware = async (
     next();
   } catch (error) {
     if (error instanceof InvalidCertificationError) {
-      captureException(error);
-      const params = new URLSearchParams();
-      if (error.matches) params.set("matches", [...error.matches].join(","));
-      params.set("source", error.source);
-      params.set("siren", error.siren);
-      params.set("organization_label", error.organization_label);
-      const query = params.toString();
+      return res.redirect(getInvalidCertificationErrorUrl(error));
+    }
+
+    if (error instanceof OrganizationNotCoveredByCertificationDirigeant) {
       return res.redirect(
-        "/users/unable-to-certify-user-as-executive" +
-          (query ? `?${query}` : ""),
+        "/users/organization-not-covered-by-certification-dirigeant",
       );
     }
 
@@ -360,6 +357,26 @@ export const getModerationRejectedController = async (
   }
 };
 
+export async function getOrganizationNotCoveredByCertificationDirigeant(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    return res.render(
+      "user/organization-not-covered-by-certification-dirigeant",
+      {
+        illustration: "connection-lost.svg",
+        oidcError: oidcErrorSchema().enum.login_required,
+        interactionId: req.session.interactionId,
+        pageTitle: "Certification impossible",
+        use_dashboard_layout: false,
+      },
+    );
+  } catch (e) {
+    next(e);
+  }
+}
 export async function getUnableToCertifyUserAsExecutiveController(
   req: Request,
   res: Response,

@@ -3,7 +3,6 @@ import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { Welcome } from "@proconnect-gouv/proconnect.email";
 import {
-  InvalidCertificationError,
   InvalidSiretError,
   OrganizationNotActiveError,
   OrganizationNotFoundError,
@@ -132,6 +131,7 @@ export const getOrganizationSuggestions = async ({
     ({ id }) => !userOrganizationsIds.includes(id),
   );
 };
+
 export const joinOrganization = async ({
   siret,
   user_id,
@@ -215,40 +215,7 @@ export const joinOrganization = async ({
   }
 
   if (certificationRequested) {
-    const { cause, details, ok } = await performCertificationDirigeant(
-      organization,
-      user_id,
-    );
-
-    logger.info(
-      details.dirigeant,
-      `'(${details.source})`,
-      " is the closest source dirigeant to ",
-      details.identity,
-      " with a score of ",
-      details.matches.size,
-      cause,
-    );
-
-    if (!ok) {
-      const siren = organization.siret.substring(0, 9);
-      const organization_label = cached_libelle ?? organization.siret;
-      const matches = cause === "close_match" ? details.matches : undefined;
-      throw new InvalidCertificationError(
-        details.source,
-        siren,
-        organization_label,
-        matches,
-        cause,
-        {
-          cause: new AssertionError({
-            expected: 0,
-            actual: details.matches.size,
-            operator: "isOrganizationDirigeant",
-          }),
-        },
-      );
-    }
+    await performCertificationDirigeant(organization, user_id);
 
     return await linkUserToOrganization({
       organization_id,
