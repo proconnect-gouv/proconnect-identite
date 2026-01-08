@@ -76,10 +76,14 @@ const load_context = async (req: Request) => {
   const organizations = user ? await getOrganizationsByUserId(user.id) : [];
 
   return {
-    uses_auth_headers: usesAuthHeaders(req),
+    email: getEmailFromUnauthenticatedSession(req),
     is_within_authenticated_session,
+    needsInclusionconnectWelcomePage:
+      getPartialUserFromUnauthenticatedSession(req)
+        .needsInclusionconnectWelcomePage,
     organizations,
     user,
+    uses_auth_headers: usesAuthHeaders(req),
   };
 };
 export type GuardContext = Awaited<ReturnType<typeof load_context>> & {
@@ -131,8 +135,8 @@ export const requireIsUser: NavigationGuardNode = {
 // redirect user to start sign-in page if no email is available in session
 export const requireEmailInSession: NavigationGuardNode = {
   previous: requireIsUser,
-  guard: ({ req }) => {
-    if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
+  guard: ({ email }) => {
+    if (isEmpty(email)) {
       return { type: "redirect", url: `/users/start-sign-in` };
     }
 
@@ -144,11 +148,8 @@ export const requireEmailInSession: NavigationGuardNode = {
 export const requireUserHasSeenInclusionconnectWelcomePage: NavigationGuardNode =
   {
     previous: requireEmailInSession,
-    guard: ({ req }) => {
-      if (
-        getPartialUserFromUnauthenticatedSession(req)
-          .needsInclusionconnectWelcomePage
-      ) {
+    guard: ({ needsInclusionconnectWelcomePage }) => {
+      if (needsInclusionconnectWelcomePage) {
         return { type: "redirect", url: `/users/inclusionconnect-welcome` };
       }
 
