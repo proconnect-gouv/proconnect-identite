@@ -405,23 +405,38 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
     );
 
     if (!ok) {
+      const source = details.source;
+      const siren = organization.siret.substring(0, 9);
+      const organization_label =
+        organization.cached_libelle ?? organization.siret;
       const matches = cause === "close_match" ? details.matches : undefined;
       captureException(
-        new InvalidCertificationError(matches, cause, {
-          cause: new AssertionError({
-            expected: 0,
-            actual: details.matches.size,
-            operator: "isOrganizationDirigeant",
-          }),
-        }),
+        new InvalidCertificationError(
+          source,
+          siren,
+          organization_label,
+          matches,
+          cause,
+          {
+            cause: new AssertionError({
+              expected: 0,
+              actual: details.matches.size,
+              operator: "isOrganizationDirigeant",
+            }),
+          },
+        ),
       );
 
-      return matches
-        ? res.redirect(
-            "/users/unable-to-certify-user-as-executive?matches=" +
-              [...matches].join(","),
-          )
-        : res.redirect("/users/unable-to-certify-user-as-executive");
+      const params = new URLSearchParams();
+      if (matches) params.set("matches", [...matches].join(","));
+      params.set("source", source);
+      params.set("siren", siren);
+      params.set("organization_label", organization_label);
+      const query = params.toString();
+      return res.redirect(
+        "/users/unable-to-certify-user-as-executive" +
+          (query ? `?${query}` : ""),
+      );
     }
 
     // user is already in the organization

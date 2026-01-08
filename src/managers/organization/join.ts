@@ -231,14 +231,23 @@ export const joinOrganization = async ({
     );
 
     if (!ok) {
+      const siren = organization.siret.substring(0, 9);
+      const organization_label = cached_libelle ?? organization.siret;
       const matches = cause === "close_match" ? details.matches : undefined;
-      throw new InvalidCertificationError(matches, cause, {
-        cause: new AssertionError({
-          expected: 0,
-          actual: details.matches.size,
-          operator: "isOrganizationDirigeant",
-        }),
-      });
+      throw new InvalidCertificationError(
+        details.source,
+        siren,
+        organization_label,
+        matches,
+        cause,
+        {
+          cause: new AssertionError({
+            expected: 0,
+            actual: details.matches.size,
+            operator: "isOrganizationDirigeant",
+          }),
+        },
+      );
     }
 
     return await linkUserToOrganization({

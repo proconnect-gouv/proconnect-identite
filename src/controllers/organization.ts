@@ -7,7 +7,11 @@ import {
   NotFoundError,
   OrganizationNotActiveError,
 } from "@proconnect-gouv/proconnect.identite/errors";
-import { MatchCriteria } from "@proconnect-gouv/proconnect.identite/managers/certification";
+import {
+  getSourceDirigeantInfo,
+  MatchCriteria,
+  SourceDirigeant,
+} from "@proconnect-gouv/proconnect.identite/managers/certification";
 import { captureException } from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -143,12 +147,16 @@ export const postJoinOrganizationMiddleware = async (
   } catch (error) {
     if (error instanceof InvalidCertificationError) {
       captureException(error);
-      return error.matches
-        ? res.redirect(
-            "/users/unable-to-certify-user-as-executive?matches=" +
-              [...error.matches].join(","),
-          )
-        : res.redirect("/users/unable-to-certify-user-as-executive");
+      const params = new URLSearchParams();
+      if (error.matches) params.set("matches", [...error.matches].join(","));
+      params.set("source", error.source);
+      params.set("siren", error.siren);
+      params.set("organization_label", error.organization_label);
+      const query = params.toString();
+      return res.redirect(
+        "/users/unable-to-certify-user-as-executive" +
+          (query ? `?${query}` : ""),
+      );
     }
 
     if (
@@ -357,7 +365,7 @@ export async function getUnableToCertifyUserAsExecutiveController(
   res: Response,
   next: NextFunction,
 ) {
-  const { matches } = z
+  const query = z
     .object({
       matches: z
         .string()
@@ -365,19 +373,28 @@ export async function getUnableToCertifyUserAsExecutiveController(
         .pipe(z.array(MatchCriteria))
         .pipe(z.transform((matches) => new Set(matches)))
         .optional(),
+      organization_label: z.string(),
+      siren: z.string().length(9),
+      source: SourceDirigeant,
     })
     .parse(req.query);
+
   const user = getUserFromAuthenticatedSession(req);
   const user_info = await getFranceConnectUserInfo(user.id);
+
+  const source_label = getSourceDirigeantInfo(query.source);
 
   try {
     return res.render("user/unable-to-certify-user-as-executive", {
       illustration: "connection-lost.svg",
-      oidcError: oidcErrorSchema().enum.login_required,
       interactionId: req.session.interactionId,
+      matches: query.matches,
+      oidcError: oidcErrorSchema().enum.login_required,
+      organization_label: query.organization_label,
       pageTitle: "Certification impossible",
+      siren: query.siren,
+      source_label,
       use_dashboard_layout: false,
-      matches,
       user_info,
     });
   } catch (e) {

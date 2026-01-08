@@ -401,13 +401,24 @@ describe("❎ Bad match", () => {
     cy.title().should("include", "Certification impossible -");
     cy.contains("Nous n’arrivons pas à certifier votre compte.");
     cy.contains(
-      "Certaines informations transmises par FranceConnect ne correspondent pas à celles du registre des dirigeants.",
+      "Les informations de votre identité ne correspondent pas exactement aux registres officiels.",
     );
+    cy.contains(
+      "Des discordances ont été détectées entre votre identité FranceConnect (affichée ici)",
+    );
+    cy.contains(
+      "et celle connue du Registre National des Entreprises pour Herisson.",
+    );
+
     cy.contains("Prénom ❌");
     cy.contains("Nom ✅");
     cy.contains("Genre ✅");
     cy.contains("Date de naissance ✅");
     cy.contains("Commune de naissance ✅");
+
+    cy.contains("Vérifier sur l’Annuaire des Entreprises");
+    cy.contains("Comment corriger les données ?");
+
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
