@@ -2,7 +2,12 @@
 
 import { NotFoundError } from "#src/errors";
 import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
-import type { IdentityVector, Organization } from "#src/types";
+import { isOrganizationCoveredByCertificationDirigeant } from "#src/services/organization";
+import {
+  IdentityVectorZero,
+  type IdentityVector,
+  type Organization,
+} from "#src/types";
 import type { ApiEntrepriseInfogreffeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import type { FindUniteLegaleBySirenHandler } from "@proconnect-gouv/proconnect.insee/api";
 import type { FindPouvoirsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
@@ -76,6 +81,17 @@ export function isOrganizationDirigeantFactory(
     organization: Organization,
     user_id: number,
   ) {
+    if (!isOrganizationCoveredByCertificationDirigeant(organization)) {
+      return {
+        details: {
+          identity: IdentityVectorZero,
+          matches: new Set(),
+        },
+        cause: "organisation_not_covered" as const,
+        ok: false,
+      };
+    }
+
     const siren = organization.siret.substring(0, 9);
     const franceconnectUserInfo =
       await FranceConnectApiRepository.getFranceConnectUserInfo(user_id);

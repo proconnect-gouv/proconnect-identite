@@ -1,3 +1,5 @@
+// Some of these tests are described in this doc: https://docs.numerique.gouv.fr/docs/ba263c29-5478-4ee0-b6f8-004b61fe6433/
+
 describe("Signup with a client requiring certification dirigeant", () => {
   beforeEach(() => {
     cy.visit("/");
@@ -308,6 +310,55 @@ describe("❎ Bad match", () => {
       cy.visit("/");
       cy.contains("Forcer une connexion par certification dirigeant").click();
     });
+  });
+
+  it("Adrian Volckaert is not a dirigeant of DINUM", () => {
+    cy.title().should("include", "S'inscrire ou se connecter - ");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("adrian.volckaert@yopmail.com");
+    cy.contains("Valider").click();
+
+    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.contains("Mot de passe").click();
+    cy.contains("Recevoir un lien d’identification").click();
+    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
+      (email) => {
+        cy.maildevVisitMessageById(email.id);
+        cy.origin("http://localhost:1080", () => {
+          cy.contains(
+            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
+          );
+          cy.contains("Se connecter")
+            .get("a")
+            .invoke("attr", "target", "")
+            .click();
+        });
+        cy.maildevDeleteMessageById(email.id);
+      },
+    );
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Adrian Volckaert").click();
+
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("13002526500013");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Direction interministerielle du numerique (DINUM)",
+    ).click();
+
+    cy.title().should("include", "Certification impossible -");
+    cy.contains(
+      "Votre organisation n’est pas couverte par la certification dirigeant ProConnect.",
+    );
+    cy.contains("Continuer sur le service").click();
+
+    cy.title().should("include", "Error");
+    cy.contains("AuthorizationResponseError");
+    cy.contains("login_required");
   });
 
   it("Adrian Volckaert is not a dirigeant of Danone", () => {

@@ -1,0 +1,24 @@
+<div>
+  <div class="fr-mb-2w">
+    <img src="/dist/alert.svg" alt="" />
+  </div>
+  <h1 class="fr-h2">Nous n’arrivons pas à certifier votre compte.</h1>
+
+  <div>
+    <p>
+      <b>Votre organisation n’est pas couverte</b> par la certification dirigeant ProConnect.
+    <p>
+    </p>
+      Merci d’utiliser un autre moyen de connexion pour accéder au service.
+    </p>
+
+    <p>
+    <% if (locals.interactionId && locals.oidcError) { %>
+    <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--secondary">Continuer sur le service</a>
+    <% } else { %>
+    <a href="/" class="fr-btn fr-btn--secondary">Retour à l’accueil</a>
+    <% } %>
+    </p>
+
+  </div>
+</div>

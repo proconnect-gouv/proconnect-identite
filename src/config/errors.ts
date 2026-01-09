@@ -62,6 +62,13 @@ export class AccessRestrictedToPublicServiceEmailError extends Error {
   }
 }
 
+export class OrganizationNotCoveredByCertificationDirigeant extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "OrganizationNotCoveredByCertificationDirigeant";
+  }
+}
+
 export class GouvFrDomainsForbiddenForPrivateOrg extends Error {}
 
 export class DomainRestrictedError extends Error {

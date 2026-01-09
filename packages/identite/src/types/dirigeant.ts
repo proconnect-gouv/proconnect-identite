@@ -14,3 +14,12 @@ export const IdentityVectorSchema = z.object({
 });
 
 export type IdentityVector = z.output<typeof IdentityVectorSchema>;
+
+export const IdentityVectorZero: IdentityVector = IdentityVectorSchema.parse({
+  birthcountry: null,
+  birthdate: null,
+  birthplace: null,
+  family_name: null,
+  gender: null,
+  given_name: null,
+});
