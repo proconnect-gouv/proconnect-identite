@@ -4,7 +4,7 @@ import { NotFoundError } from "#src/errors";
 import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
 import { isOrganizationCoveredByCertificationDirigeant } from "#src/services/organization";
 import {
-  IdentityVectorZero,
+  NullIdentityVector,
   type IdentityVector,
   type Organization,
 } from "#src/types";
@@ -84,8 +84,10 @@ export function isOrganizationDirigeantFactory(
     if (!isOrganizationCoveredByCertificationDirigeant(organization)) {
       return {
         details: {
-          identity: IdentityVectorZero,
+          dirigeant: null,
           matches: new Set(),
+          identity: NullIdentityVector,
+          source: null,
         },
         cause: "organisation_not_covered" as const,
         ok: false,
@@ -101,13 +103,13 @@ export function isOrganizationDirigeantFactory(
 
     const identity = FranceConnect.toIdentityVector(franceconnectUserInfo);
 
-    const prefered_source =
+    const preferred_source =
       organization.cached_libelle_categorie_juridique ===
       "Entrepreneur individuel"
         ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
         : SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"];
 
-    const { dirigeants, source } = await match(prefered_source)
+    const { dirigeants, source } = await match(preferred_source)
       .with("api.insee.fr/api-sirene/private", async () => ({
         dirigeants: await InseeApiRepository.findBySiren(siren)
           .then(INSEE.toIdentityVector)
@@ -123,7 +125,7 @@ export function isOrganizationDirigeantFactory(
 
     if (result.kind === "no_candidates") {
       return {
-        details: { dirigeant: undefined, identity, matches: new Set(), source },
+        details: { dirigeant: undefined, matches: new Set(), identity, source },
         cause: result.kind,
         ok: false,
       };
@@ -131,7 +133,8 @@ export function isOrganizationDirigeantFactory(
 
     return {
       details: {
-        ...result.closest,
+        dirigeant: result.closest.dirigeant,
+        matches: result.closest.matches,
         identity,
         source,
       },

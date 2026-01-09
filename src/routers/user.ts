@@ -4,14 +4,15 @@ import { HOST } from "../config/env";
 import {
   getAccessRestrictedToPrivateSectorEmailController,
   getAccessRestrictedToPublicSectorEmailController,
+  getCertificationDirigeantCloseMatchError,
+  getCertificationDirigeantNoMatchError,
+  getCertificationDirigeantOrganizationNotCoveredError,
   getDomainsRestrictedInOrganizationController,
   getJoinOrganizationConfirmController,
   getJoinOrganizationController,
   getModerationRejectedController,
-  getOrganizationNotCoveredByCertificationDirigeant,
   getOrganizationSuggestionsController,
   getUnableToAutoJoinOrganizationController,
-  getUnableToCertifyUserAsExecutiveController,
   postJoinOrganizationMiddleware,
   postQuitUserOrganizationController,
 } from "../controllers/organization";
@@ -590,17 +591,24 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/unable-to-certify-user-as-executive",
+    "/certification-dirigeant/organization-not-covered-error",
     ...navigationGuardChain(requireUserHasPersonalInformations),
     csrfProtectionMiddleware,
-    getUnableToCertifyUserAsExecutiveController,
+    getCertificationDirigeantOrganizationNotCoveredError,
   );
 
   userRouter.get(
-    "/organization-not-covered-by-certification-dirigeant",
+    "/certification-dirigeant/close-match-error",
     ...navigationGuardChain(requireUserHasPersonalInformations),
     csrfProtectionMiddleware,
-    getOrganizationNotCoveredByCertificationDirigeant,
+    getCertificationDirigeantCloseMatchError,
+  );
+
+  userRouter.get(
+    "/certification-dirigeant/no-match-error",
+    ...navigationGuardChain(requireUserHasPersonalInformations),
+    csrfProtectionMiddleware,
+    getCertificationDirigeantNoMatchError,
   );
 
   return userRouter;
