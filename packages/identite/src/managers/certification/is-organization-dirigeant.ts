@@ -103,13 +103,13 @@ export function isOrganizationDirigeantFactory(
 
     const identity = FranceConnect.toIdentityVector(franceconnectUserInfo);
 
-    const prefered_source =
+    const preferred_source =
       organization.cached_libelle_categorie_juridique ===
       "Entrepreneur individuel"
         ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
         : SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"];
 
-    const { dirigeants, source } = await match(prefered_source)
+    const { dirigeants, source } = await match(preferred_source)
       .with("api.insee.fr/api-sirene/private", async () => ({
         dirigeants: await InseeApiRepository.findBySiren(siren)
           .then(INSEE.toIdentityVector)
