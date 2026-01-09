@@ -382,26 +382,26 @@ export async function getUnableToCertifyUserAsExecutiveController(
   res: Response,
   next: NextFunction,
 ) {
-  const query = z
-    .object({
-      matches: z
-        .string()
-        .pipe(z.transform((v) => v.split(",")))
-        .pipe(z.array(MatchCriteria))
-        .pipe(z.transform((matches) => new Set(matches)))
-        .optional(),
-      organization_label: z.string(),
-      siren: z.string().length(9),
-      source: SourceDirigeant,
-    })
-    .parse(req.query);
-
-  const user = getUserFromAuthenticatedSession(req);
-  const user_info = await getFranceConnectUserInfo(user.id);
-
-  const source_label = getSourceDirigeantInfo(query.source);
-
   try {
+    const query = z
+      .object({
+        matches: z
+          .string()
+          .pipe(z.transform((v) => v.split(",")))
+          .pipe(z.array(MatchCriteria))
+          .pipe(z.transform((matches) => new Set(matches)))
+          .optional(),
+        organization_label: z.string(),
+        siren: z.string().length(9),
+        source: SourceDirigeant,
+      })
+      .parse(req.query);
+
+    const user = getUserFromAuthenticatedSession(req);
+    const user_info = await getFranceConnectUserInfo(user.id);
+
+    const source_label = getSourceDirigeantInfo(query.source);
+
     return res.render("user/unable-to-certify-user-as-executive", {
       illustration: "connection-lost.svg",
       interactionId: req.session.interactionId,
