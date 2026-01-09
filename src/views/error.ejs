@@ -14,8 +14,8 @@
         </p>
     </div>
     <% if (locals.interactionId && locals.oidcError) { %>
-        <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--secondary">Continuer</a>
+        <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn">Continuer sur le service</a>
     <% } else { %>
-        <a href="/" class="fr-btn fr-btn--secondary">Retour à l’accueil</a>
+        <a href="/" class="fr-btn">Retour à l’accueil</a>
     <% } %>
 </div>
