@@ -30,18 +30,19 @@ export const connectionCountMiddleware = async (
     ctx.oidc?.route === "resume"
   ) {
     // we log a connection in 2 cases:
-    // 1. a client ask for a connection and the oidcProvider answer back with an accountId
-    // this happens when users is already logged in ProConnect Identité but not on the client
-    // 2. a client ask for a connection but is not logged in ProConnect Identité
+    // 1. a client asks for a connection, and the oidcProvider answers back with an accountId
+    // this happens when a user is already logged in ProConnect Identité but not on the client
+    // 2. a client asks for a connection but is not logged in ProConnect Identité
     // There is no accountId in the session, we wait for a session to be open.
     // This happens when hitting the resume route.
     try {
-      // if the interaction resulted in a success accountId and clientId should be set
+      // if the interaction resulted in a success, accountId and clientId should be set
       if (ctx.oidc.session?.accountId && ctx.oidc.client?.clientId) {
         await recordNewConnection({
           accountId: ctx.oidc.session.accountId,
           client: ctx.oidc.client,
           params: ctx.oidc.params as OIDCContextParams,
+          requestHeaders: ctx.request.headers,
         });
       }
     } catch (err) {
