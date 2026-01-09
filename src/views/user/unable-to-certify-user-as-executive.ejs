@@ -69,6 +69,12 @@
       </a>
     </p>
 
+    <% if (locals.interactionId && locals.oidcError) { %>
+    <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--secondary">Continuer sur le service</a>
+    <% } else { %>
+    <a href="/" class="fr-btn fr-btn--secondary">Retour à l’accueil</a>
+    <% } %>
+
     <% } else { %>
 
     <div class="fr-alert fr-alert--error fr-mb-2w">
@@ -79,7 +85,7 @@
 
     <p>
       <a
-        href="https://annuaire-entreprises.data.gouv.fr/entreprise/<%= locals.siren; %>"
+        href="https://annuaire-entreprises.data.gouv.fr/dirigeants/<%= locals.siren; %>"
         rel="noopener noreferrer"
         target="_blank"
       >
@@ -98,12 +104,12 @@
       </a>
     </p>
 
+    <% if (locals.interactionId && locals.oidcError) { %>
+    <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn">Continuer sur le service</a>
+    <% } else { %>
+    <a href="/" class="fr-btn">Retour à l’accueil</a>
     <% } %>
 
-    <% if (locals.interactionId && locals.oidcError) { %>
-    <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--secondary">Continuer</a>
-    <% } else { %>
-    <a href="/" class="fr-btn fr-btn--secondary">Retour à l’accueil</a>
     <% } %>
 
   </div>
