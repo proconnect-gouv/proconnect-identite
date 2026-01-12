@@ -154,7 +154,6 @@ export function processCertificationDirigeantFactory(
   };
 }
 
-// TODO move to type
 export const CertificationDirigeantDataSource = z.enum([
   "api.insee.fr/api-sirene/private",
   "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
