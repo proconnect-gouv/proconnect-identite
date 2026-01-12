@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm/relations";
 import {
+  audit_logs,
   authenticators,
   email_domains,
   franceconnect_userinfo,
@@ -34,6 +35,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   authenticators: many(authenticators),
   moderations: many(moderations),
   franceconnect_userinfos: many(franceconnect_userinfo),
+  audit_logs: many(audit_logs),
   users_organizations: many(users_organizations),
 }));
 
@@ -82,6 +84,13 @@ export const franceconnect_userinfoRelations = relations(
     }),
   }),
 );
+
+export const audit_logsRelations = relations(audit_logs, ({ one }) => ({
+  user: one(users, {
+    fields: [audit_logs.user_id],
+    references: [users.id],
+  }),
+}));
 
 export const users_organizationsRelations = relations(
   users_organizations,

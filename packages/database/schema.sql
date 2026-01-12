@@ -63,6 +63,15 @@ DROP CONSTRAINT IF EXISTS "email_domains_organization_id_fkey";
 ALTER TABLE IF EXISTS ONLY "public"."authenticators"
 DROP CONSTRAINT IF EXISTS "authenticators_user_id_fkey";
 
+ALTER TABLE IF EXISTS ONLY "public"."audit_logs"
+DROP CONSTRAINT IF EXISTS "audit_logs_user_id_fkey";
+
+DROP TRIGGER IF EXISTS "audit_users_organizations" ON "public"."users_organizations";
+
+DROP TRIGGER IF EXISTS "audit_users" ON "public"."users";
+
+DROP TRIGGER IF EXISTS "audit_organizations" ON "public"."organizations";
+
 DROP INDEX IF EXISTS "public"."index_users_on_reset_password_token";
 
 DROP INDEX IF EXISTS "public"."index_users_on_email";
@@ -70,6 +79,14 @@ DROP INDEX IF EXISTS "public"."index_users_on_email";
 DROP INDEX IF EXISTS "public"."index_organizations_on_siret";
 
 DROP INDEX IF EXISTS "public"."index_authenticators_on_credential_id";
+
+DROP INDEX IF EXISTS "public"."idx_audit_logs_user_id";
+
+DROP INDEX IF EXISTS "public"."idx_audit_logs_table_record";
+
+DROP INDEX IF EXISTS "public"."idx_audit_logs_migration";
+
+DROP INDEX IF EXISTS "public"."idx_audit_logs_created_at";
 
 ALTER TABLE IF EXISTS ONLY "public"."users"
 DROP CONSTRAINT IF EXISTS "users_pkey";
@@ -104,6 +121,9 @@ DROP CONSTRAINT IF EXISTS "email_deliverability_whitelist_pkey";
 ALTER TABLE IF EXISTS ONLY "public"."authenticators"
 DROP CONSTRAINT IF EXISTS "authenticators_pkey";
 
+ALTER TABLE IF EXISTS ONLY "public"."audit_logs"
+DROP CONSTRAINT IF EXISTS "audit_logs_pkey";
+
 ALTER TABLE IF EXISTS "public"."users_oidc_clients"
 ALTER COLUMN "id"
 DROP DEFAULT;
@@ -125,6 +145,10 @@ ALTER COLUMN "id"
 DROP DEFAULT;
 
 ALTER TABLE IF EXISTS "public"."email_domains"
+ALTER COLUMN "id"
+DROP DEFAULT;
+
+ALTER TABLE IF EXISTS "public"."audit_logs"
 ALTER COLUMN "id"
 DROP DEFAULT;
 
@@ -160,16 +184,128 @@ DROP TABLE IF EXISTS "public"."email_deliverability_whitelist";
 
 DROP TABLE IF EXISTS "public"."authenticators";
 
+DROP SEQUENCE IF EXISTS "public"."audit_logs_id_seq";
+
+DROP TABLE IF EXISTS "public"."audit_logs";
+
+DROP FUNCTION IF EXISTS "public"."audit_trigger_func" ();
+
 --
 -- Name: SCHEMA "public"; Type: COMMENT; Schema: -; Owner: -
 --
 COMMENT ON SCHEMA "public" IS 'standard public schema';
+
+--
+-- Name: audit_trigger_func(); Type: FUNCTION; Schema: public; Owner: -
+--
+CREATE FUNCTION "public"."audit_trigger_func" () RETURNS "trigger" LANGUAGE "plpgsql" AS $$
+    DECLARE
+      v_old_values JSONB;
+      v_new_values JSONB;
+      v_changed_fields TEXT[];
+      v_record_id INTEGER;
+      v_user_id INTEGER;
+      v_actor_email VARCHAR(255);
+      v_actor_type VARCHAR(50);
+      v_migration_name VARCHAR(100);
+      v_key TEXT;
+    BEGIN
+      -- Get context from session variables (set by application or migrations)
+      v_user_id := NULLIF(current_setting('app.actor_user_id', true), '')::INTEGER;
+      v_actor_email := NULLIF(current_setting('app.actor_email', true), '');
+      v_actor_type := COALESCE(NULLIF(current_setting('app.actor_type', true), ''), 'system');
+      v_migration_name := NULLIF(current_setting('app.current_migration', true), '');
+
+      -- Determine record_id (handle composite keys for users_organizations)
+      IF TG_TABLE_NAME = 'users_organizations' THEN
+        v_record_id := COALESCE(NEW.user_id, OLD.user_id);
+      ELSE
+        v_record_id := COALESCE(NEW.id, OLD.id);
+      END IF;
+
+      -- Set old/new values based on operation
+      IF TG_OP = 'INSERT' THEN
+        v_old_values := NULL;
+        v_new_values := to_jsonb(NEW);
+        v_changed_fields := NULL;
+      ELSIF TG_OP = 'UPDATE' THEN
+        v_old_values := to_jsonb(OLD);
+        v_new_values := to_jsonb(NEW);
+        -- Compute changed fields
+        SELECT ARRAY_AGG(key)
+        INTO v_changed_fields
+        FROM jsonb_each(v_new_values) AS n(key, value)
+        WHERE v_old_values->key IS DISTINCT FROM n.value;
+      ELSIF TG_OP = 'DELETE' THEN
+        v_old_values := to_jsonb(OLD);
+        v_new_values := NULL;
+        v_changed_fields := NULL;
+      END IF;
+
+      -- Insert audit log entry
+      INSERT INTO audit_logs (
+        table_name,
+        record_id,
+        action,
+        old_values,
+        new_values,
+        changed_fields,
+        user_id,
+        actor_email,
+        actor_type,
+        migration_name
+      ) VALUES (
+        TG_TABLE_NAME,
+        v_record_id,
+        TG_OP,
+        v_old_values,
+        v_new_values,
+        v_changed_fields,
+        v_user_id,
+        v_actor_email,
+        v_actor_type,
+        v_migration_name
+      );
+
+      RETURN COALESCE(NEW, OLD);
+    END;
+    $$;
 
 SET
   default_tablespace = '';
 
 SET
   default_table_access_method = "heap";
+
+--
+-- Name: audit_logs; Type: TABLE; Schema: public; Owner: -
+--
+CREATE TABLE "public"."audit_logs" (
+  "id" integer NOT NULL,
+  "table_name" character varying(100) NOT NULL,
+  "record_id" integer NOT NULL,
+  "action" character varying(20) NOT NULL,
+  "old_values" "jsonb",
+  "new_values" "jsonb",
+  "changed_fields" "text" [],
+  "user_id" integer,
+  "actor_email" character varying(255),
+  "actor_type" character varying(50) DEFAULT '''system'''::character varying,
+  "migration_name" character varying(100),
+  "created_at" timestamp with time zone DEFAULT "now" () NOT NULL
+);
+
+--
+-- Name: audit_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+CREATE SEQUENCE "public"."audit_logs_id_seq" AS integer START
+WITH
+  1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+
+--
+-- Name: audit_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+ALTER SEQUENCE "public"."audit_logs_id_seq" OWNED BY "public"."audit_logs"."id";
 
 --
 -- Name: authenticators; Type: TABLE; Schema: public; Owner: -
@@ -429,6 +565,13 @@ CREATE TABLE "public"."users_organizations" (
 );
 
 --
+-- Name: audit_logs id; Type: DEFAULT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."audit_logs"
+ALTER COLUMN "id"
+SET DEFAULT "nextval" ('"public"."audit_logs_id_seq"'::"regclass");
+
+--
 -- Name: email_domains id; Type: DEFAULT; Schema: public; Owner: -
 --
 ALTER TABLE ONLY "public"."email_domains"
@@ -471,6 +614,12 @@ ALTER COLUMN "id"
 SET DEFAULT "nextval" (
   '"public"."users_oidc_clients_id_seq"'::"regclass"
 );
+
+--
+-- Name: audit_logs audit_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."audit_logs"
+ADD CONSTRAINT "audit_logs_pkey" PRIMARY KEY ("id");
 
 --
 -- Name: authenticators authenticators_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -539,6 +688,30 @@ ALTER TABLE ONLY "public"."users"
 ADD CONSTRAINT "users_pkey" PRIMARY KEY ("id");
 
 --
+-- Name: idx_audit_logs_created_at; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_audit_logs_created_at" ON "public"."audit_logs" USING "btree" ("created_at");
+
+--
+-- Name: idx_audit_logs_migration; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_audit_logs_migration" ON "public"."audit_logs" USING "btree" ("migration_name")
+WHERE
+  ("migration_name" IS NOT NULL);
+
+--
+-- Name: idx_audit_logs_table_record; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_audit_logs_table_record" ON "public"."audit_logs" USING "btree" ("table_name", "record_id");
+
+--
+-- Name: idx_audit_logs_user_id; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_audit_logs_user_id" ON "public"."audit_logs" USING "btree" ("user_id")
+WHERE
+  ("user_id" IS NOT NULL);
+
+--
 -- Name: index_authenticators_on_credential_id; Type: INDEX; Schema: public; Owner: -
 --
 CREATE UNIQUE INDEX "index_authenticators_on_credential_id" ON "public"."authenticators" USING "btree" ("credential_id");
@@ -557,6 +730,42 @@ CREATE UNIQUE INDEX "index_users_on_email" ON "public"."users" USING "btree" ("e
 -- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
 --
 CREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "public"."users" USING "btree" ("reset_password_token");
+
+--
+-- Name: organizations audit_organizations; Type: TRIGGER; Schema: public; Owner: -
+--
+CREATE TRIGGER "audit_organizations"
+AFTER INSERT
+OR DELETE
+OR
+UPDATE ON "public"."organizations" FOR EACH ROW
+EXECUTE FUNCTION "public"."audit_trigger_func" ();
+
+--
+-- Name: users audit_users; Type: TRIGGER; Schema: public; Owner: -
+--
+CREATE TRIGGER "audit_users"
+AFTER INSERT
+OR DELETE
+OR
+UPDATE ON "public"."users" FOR EACH ROW
+EXECUTE FUNCTION "public"."audit_trigger_func" ();
+
+--
+-- Name: users_organizations audit_users_organizations; Type: TRIGGER; Schema: public; Owner: -
+--
+CREATE TRIGGER "audit_users_organizations"
+AFTER INSERT
+OR DELETE
+OR
+UPDATE ON "public"."users_organizations" FOR EACH ROW
+EXECUTE FUNCTION "public"."audit_trigger_func" ();
+
+--
+-- Name: audit_logs audit_logs_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."audit_logs"
+ADD CONSTRAINT "audit_logs_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON DELETE SET NULL;
 
 --
 -- Name: authenticators authenticators_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -

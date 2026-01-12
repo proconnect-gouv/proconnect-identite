@@ -1,6 +1,9 @@
 exports[`Database migration with external PostgreSQL > applies complete schema to fresh database instance 1`] = `
 [
   {
+    "table_name": "audit_logs"
+  },
+  {
     "table_name": "authenticators"
   },
   {
