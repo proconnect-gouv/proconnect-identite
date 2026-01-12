@@ -7,7 +7,8 @@ import {
   getCertificationDirigeantCloseMatchError,
   getCertificationDirigeantNoMatchError,
   getCertificationDirigeantOrganizationNotCoveredError,
-  getDomainsRestrictedInOrganizationController,
+  getDomainNotAllowedForOrganizationController,
+  getDomainRefusedForOrganizationController,
   getJoinOrganizationConfirmController,
   getJoinOrganizationController,
   getModerationRejectedController,
@@ -405,10 +406,17 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/domains-restricted-in-organization",
+    "/domain-not-allowed-for-organization",
     ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
-    getDomainsRestrictedInOrganizationController,
+    getDomainNotAllowedForOrganizationController,
+  );
+
+  userRouter.get(
+    "/domain-refused-for-organization",
+    ...navigationGuardChain(requireBrowserIsTrusted),
+    csrfProtectionMiddleware,
+    getDomainRefusedForOrganizationController,
   );
 
   userRouter.get(

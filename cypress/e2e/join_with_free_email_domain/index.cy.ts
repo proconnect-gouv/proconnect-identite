@@ -148,7 +148,7 @@ describe("restrict access for", () => {
 
     cy.contains("Enregistrer").click();
 
-    cy.title().should("include", "Domains restreintes dans l'organisation -");
+    cy.title().should("include", "Accès restreint - ProConnect");
     cy.contains("Accès restreint");
     cy.contains(
       "Seules les adresses finances.gouv.fr peuvent rejoindre l’organisation « Services de l'etat pour la facturation electronique - Destination etat via chorus pro ».",
