@@ -24,13 +24,13 @@ import {
 } from "@proconnect-gouv/proconnect.registre_national_entreprises/testing/seed";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { isOrganizationDirigeantFactory } from "./is-organization-dirigeant.js";
+import { processCertificationDirigeantFactory } from "./is-organization-dirigeant.js";
 
 //
 
-describe("isOrganizationDirigeantFactory", () => {
+describe("processCertificationDirigeantFactory", () => {
   it("should recognize a user as executive of a auto-entrepreneur", async () => {
-    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
+    const processCertificationDirigeant = processCertificationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
@@ -46,9 +46,12 @@ describe("isOrganizationDirigeantFactory", () => {
       },
     });
 
-    const isDirigeant = await isOrganizationDirigeant(rogal_dorn_org_info, 1);
+    const certificationDirigeantResult = await processCertificationDirigeant(
+      rogal_dorn_org_info,
+      1,
+    );
 
-    assert.deepEqual(isDirigeant, {
+    assert.deepEqual(certificationDirigeantResult, {
       cause: "exact_match",
       details: {
         dirigeant: {
@@ -70,7 +73,7 @@ describe("isOrganizationDirigeantFactory", () => {
   });
 
   it("should not match another mandataire", async () => {
-    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
+    const processCertificationDirigeant = processCertificationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
@@ -86,9 +89,12 @@ describe("isOrganizationDirigeantFactory", () => {
       },
     });
 
-    const isDirigeant = await isOrganizationDirigeant(rogal_dorn_org_info, 1);
+    const certificationDirigeantResult = await processCertificationDirigeant(
+      rogal_dorn_org_info,
+      1,
+    );
 
-    assert.deepEqual(isDirigeant, {
+    assert.deepEqual(certificationDirigeantResult, {
       cause: "below_threshold",
       details: {
         dirigeant: {
@@ -104,7 +110,7 @@ describe("isOrganizationDirigeantFactory", () => {
   });
 
   it("should match Rogal Dorn among the executive of Papillon in RNE", async () => {
-    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
+    const processCertificationDirigeant = processCertificationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
@@ -121,9 +127,12 @@ describe("isOrganizationDirigeantFactory", () => {
       },
     });
 
-    const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
+    const certificationDirigeantResult = await processCertificationDirigeant(
+      papillon_org_info,
+      1,
+    );
 
-    assert.deepEqual(isDirigeant, {
+    assert.deepEqual(certificationDirigeantResult, {
       cause: "exact_match",
       details: {
         dirigeant: {
@@ -145,7 +154,7 @@ describe("isOrganizationDirigeantFactory", () => {
   });
 
   it("should match Rogal Dorn among the executive of Papillon in Infogreffe", async () => {
-    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
+    const processCertificationDirigeant = processCertificationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () =>
           Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
@@ -162,9 +171,12 @@ describe("isOrganizationDirigeantFactory", () => {
       },
     });
 
-    const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
+    const certificationDirigeantResult = await processCertificationDirigeant(
+      papillon_org_info,
+      1,
+    );
 
-    assert.deepEqual(isDirigeant, {
+    assert.deepEqual(certificationDirigeantResult, {
       cause: "exact_match",
       details: {
         dirigeant: {
@@ -188,7 +200,7 @@ describe("isOrganizationDirigeantFactory", () => {
   });
 
   it("❎ fail with no franceconnect user info", async () => {
-    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
+    const processCertificationDirigeant = processCertificationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
@@ -204,13 +216,13 @@ describe("isOrganizationDirigeantFactory", () => {
     });
 
     await assert.rejects(
-      isOrganizationDirigeant(rogal_dorn_org_info, 1),
+      processCertificationDirigeant(rogal_dorn_org_info, 1),
       new NotFoundError("FranceConnect UserInfo not found"),
     );
   });
 
   it("❎ fail with no mandataires", async () => {
-    const isOrganizationDirigeant = isOrganizationDirigeantFactory({
+    const processCertificationDirigeant = processCertificationDirigeantFactory({
       ApiEntrepriseInfogreffeRepository: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
@@ -226,9 +238,12 @@ describe("isOrganizationDirigeantFactory", () => {
       },
     });
 
-    const isDirigeant = await isOrganizationDirigeant(papillon_org_info, 1);
+    const certificationDirigeantResult = await processCertificationDirigeant(
+      papillon_org_info,
+      1,
+    );
 
-    assert.deepEqual(isDirigeant, {
+    assert.deepEqual(certificationDirigeantResult, {
       cause: "no_candidates",
       details: {
         dirigeant: undefined,

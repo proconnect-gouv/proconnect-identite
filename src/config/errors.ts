@@ -1,6 +1,6 @@
 import type {
+  CertificationDirigeantDataSource,
   MatchCriteria,
-  SourceDirigeant,
 } from "@proconnect-gouv/proconnect.identite/managers/certification";
 
 export class InvalidEmailError extends Error {
@@ -87,7 +87,7 @@ export class CertificationDirigeantNoMatchError extends Error {
 
 export class CertificationDirigeantCloseMatchError extends Error {
   constructor(
-    public source: SourceDirigeant,
+    public source: CertificationDirigeantDataSource,
     public siren: string,
     public organization_label: string,
     public matches?: Set<MatchCriteria>,

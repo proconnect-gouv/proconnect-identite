@@ -7,9 +7,9 @@ import {
   OrganizationNotActiveError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
-  getSourceDirigeantInfo,
+  CertificationDirigeantDataSource,
+  getCertificationDirigeantDataSourceLabels,
   MatchCriteria,
-  SourceDirigeant,
 } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -401,14 +401,16 @@ export async function getCertificationDirigeantCloseMatchError(
           .optional(),
         organization_label: z.string(),
         siren: z.string().length(9),
-        source: SourceDirigeant,
+        source: CertificationDirigeantDataSource,
       })
       .parse(req.query);
 
     const user = getUserFromAuthenticatedSession(req);
     const user_info = await getFranceConnectUserInfo(user.id);
 
-    const source_label = getSourceDirigeantInfo(query.source);
+    const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
+      query.source,
+    );
 
     return res.render("certification-dirigeant/close-match-error", {
       illustration: "connection-lost.svg",
@@ -418,7 +420,7 @@ export async function getCertificationDirigeantCloseMatchError(
       organization_label: query.organization_label,
       pageTitle: "Certification impossible",
       siren: query.siren,
-      source_label,
+      dataSourceLabel,
       use_dashboard_layout: false,
       user_info,
     });

@@ -21,7 +21,7 @@ import { certificationScore } from "./certification-score.js";
 
 //
 
-type IsOrganizationExecutiveFactoryFactoryConfig = {
+type ProcessCertificationDirigeantConfig = {
   ApiEntrepriseInfogreffeRepository: Pick<
     ApiEntrepriseInfogreffeRepository,
     "findMandatairesSociauxBySiren"
@@ -42,7 +42,7 @@ async function getMandatairesSociaux(
   {
     RegistreNationalEntreprisesApiRepository,
     ApiEntrepriseInfogreffeRepository,
-  }: IsOrganizationExecutiveFactoryFactoryConfig,
+  }: ProcessCertificationDirigeantConfig,
   siren: string,
 ) {
   try {
@@ -52,7 +52,10 @@ async function getMandatairesSociaux(
 
     return {
       dirigeants,
-      source: SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"],
+      source:
+        CertificationDirigeantDataSource.enum[
+          "registre-national-entreprises.inpi.fr/api"
+        ],
     };
   } catch (error) {
     console.error(error);
@@ -65,15 +68,15 @@ async function getMandatairesSociaux(
     return {
       dirigeants,
       source:
-        SourceDirigeant.enum[
+        CertificationDirigeantDataSource.enum[
           "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux"
         ],
     };
   }
 }
 
-export function isOrganizationDirigeantFactory(
-  config: IsOrganizationExecutiveFactoryFactoryConfig,
+export function processCertificationDirigeantFactory(
+  config: ProcessCertificationDirigeantConfig,
 ) {
   const { InseeApiRepository, FranceConnectApiRepository } = config;
 
@@ -103,18 +106,25 @@ export function isOrganizationDirigeantFactory(
 
     const identity = FranceConnect.toIdentityVector(franceconnectUserInfo);
 
-    const preferred_source =
+    const preferredDataSource =
       organization.cached_libelle_categorie_juridique ===
       "Entrepreneur individuel"
-        ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
-        : SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"];
+        ? CertificationDirigeantDataSource.enum[
+            "api.insee.fr/api-sirene/private"
+          ]
+        : CertificationDirigeantDataSource.enum[
+            "registre-national-entreprises.inpi.fr/api"
+          ];
 
-    const { dirigeants, source } = await match(preferred_source)
+    const { dirigeants, source } = await match(preferredDataSource)
       .with("api.insee.fr/api-sirene/private", async () => ({
         dirigeants: await InseeApiRepository.findBySiren(siren)
           .then(INSEE.toIdentityVector)
           .then((vector) => [vector]),
-        source: SourceDirigeant.enum["api.insee.fr/api-sirene/private"],
+        source:
+          CertificationDirigeantDataSource.enum[
+            "api.insee.fr/api-sirene/private"
+          ],
       }))
       .with("registre-national-entreprises.inpi.fr/api", () =>
         getMandatairesSociaux(config, siren),
@@ -144,27 +154,30 @@ export function isOrganizationDirigeantFactory(
   };
 }
 
-export type IsOrganizationDirigeantHandler = ReturnType<
-  typeof isOrganizationDirigeantFactory
->;
-
-export const SourceDirigeant = z.enum([
+// TODO move to type
+export const CertificationDirigeantDataSource = z.enum([
   "api.insee.fr/api-sirene/private",
   "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
   "registre-national-entreprises.inpi.fr/api",
 ]);
 
-export type SourceDirigeant = z.infer<typeof SourceDirigeant>;
+export type CertificationDirigeantDataSource = z.infer<
+  typeof CertificationDirigeantDataSource
+>;
 
-const SOURCE_DIRIGEANT_LABELS: { [source in SourceDirigeant]: string } = {
+const CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS: {
+  [source in CertificationDirigeantDataSource]: string;
+} = {
   "api.insee.fr/api-sirene/private": "Répertoire SIRENE de l'INSEE",
   "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux":
     "Registre du commerce et des sociétés (RCS)",
   "registre-national-entreprises.inpi.fr/api":
     "Registre National des Entreprises",
 };
-export function getSourceDirigeantInfo(source: SourceDirigeant) {
-  return SOURCE_DIRIGEANT_LABELS[source];
+export function getCertificationDirigeantDataSourceLabels(
+  dataSource: CertificationDirigeantDataSource,
+) {
+  return CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS[dataSource];
 }
 
 function match_identity_to_dirigeant(

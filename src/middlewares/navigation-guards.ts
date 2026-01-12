@@ -16,7 +16,7 @@ import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import {
   getCertificationDirigeantCloseMatchErrorUrl,
-  performCertificationDirigeant,
+  processCertificationDirigeantOrThrow,
 } from "../managers/certification";
 import {
   greetForCertification,
@@ -442,7 +442,7 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
     }
 
     try {
-      await performCertificationDirigeant(organization, user_id);
+      await processCertificationDirigeantOrThrow(organization, user_id);
     } catch (error) {
       if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
         return {

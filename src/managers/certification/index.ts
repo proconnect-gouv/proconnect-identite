@@ -1,6 +1,6 @@
 //
 
-import { isOrganizationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
+import { processCertificationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { captureException } from "@sentry/node";
 import { AssertionError } from "node:assert";
@@ -17,14 +17,15 @@ import { logger } from "../../services/log";
 
 //
 
-export const processCertificationDirigeant = isOrganizationDirigeantFactory({
-  ApiEntrepriseInfogreffeRepository,
-  FranceConnectApiRepository: { getFranceConnectUserInfo },
-  InseeApiRepository: { findBySiren: InseeApiRepository.findBySiren },
-  RegistreNationalEntreprisesApiRepository,
-});
+export const processCertificationDirigeant =
+  processCertificationDirigeantFactory({
+    ApiEntrepriseInfogreffeRepository,
+    FranceConnectApiRepository: { getFranceConnectUserInfo },
+    InseeApiRepository: { findBySiren: InseeApiRepository.findBySiren },
+    RegistreNationalEntreprisesApiRepository,
+  });
 
-export const performCertificationDirigeant = async (
+export const processCertificationDirigeantOrThrow = async (
   organization: Organization,
   user_id: number,
 ) => {
