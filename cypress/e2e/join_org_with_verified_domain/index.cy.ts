@@ -1,7 +1,8 @@
 //
 
 describe("join organizations", () => {
-  it("should seed the database once", function () {
+  before(() => {
+    cy.visit("/");
     cy.seed();
   });
 
@@ -69,5 +70,35 @@ describe("join organizations", () => {
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("S’inscrire ou se connecter");
+  });
+});
+
+describe("restrict access for", () => {
+  before(() => {
+    cy.visit("/");
+    cy.seed();
+  });
+
+  it("refused email domain", function () {
+    cy.visit("/");
+    cy.login("alpharius.omegon@alphalegion.world");
+    cy.visit("/users/join-organization");
+
+    cy.title().should("include", "Rejoindre une organisation -");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("21920023500394");
+
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Commune de clamart - Service assainissement",
+    ).click();
+
+    cy.title().should(
+      "include",
+      "Domains restreintes dans l'organisation - ProConnect",
+    );
+    cy.contains("Accès restreint");
+    cy.contains(
+      "Vous ne pouvez pas rejoindre l’organisation « Commune de clamart - Service assainissement ».",
+    );
   });
 });

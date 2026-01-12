@@ -1,9 +1,15 @@
 <div>
   <h1 class="fr-h1">Accès restreint</h1>
+  <% if (locals.organization_domains) { %>
   <p>
     Seules les adresses <%= organization_domains; %> peuvent rejoindre l’organisation « <%= organization_label; %> ».
     Soyez sûrs d’utiliser le SIRET de l’organisation pour laquelle vous travaillez.
   </p>
+  <% } else { %>
+  <p>
+    Vous ne pouvez pas rejoindre l’organisation « <%= organization_label; %> ».
+  </p>
+  <% } %>
 
   <p>
     Vous pouvez également nous signaler cette erreur par mail à
