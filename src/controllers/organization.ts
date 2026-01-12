@@ -241,15 +241,12 @@ export const getDomainsRestrictedInOrganizationController = async (
       return next(new HttpErrors.NotFound());
     }
     const whitelist = DOMAINS_WHITELIST.get(organization.siret);
-    if (!whitelist) {
-      return next(new HttpErrors.NotFound());
-    }
 
     return res.render("user/access-restricted-to-domains", {
       pageTitle: "Domains restreintes dans l'organisation",
       csrfToken: csrfToken(req),
       organization_label: organization.cached_libelle,
-      organization_domains: whitelist.join(", "),
+      organization_domains: whitelist?.join(", "),
     });
   } catch (error) {
     next(error);

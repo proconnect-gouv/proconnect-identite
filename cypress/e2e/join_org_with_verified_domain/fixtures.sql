@@ -123,7 +123,13 @@ VALUES
     'verified',
     CURRENT_TIMESTAMP
   ),
-  (3, 'randomain.fr', 'verified', CURRENT_TIMESTAMP);
+  (3, 'randomain.fr', 'verified', CURRENT_TIMESTAMP),
+  (
+    2,
+    'alphalegion.world',
+    'refused',
+    CURRENT_TIMESTAMP
+  );
 
 INSERT INTO
   users_organizations (
