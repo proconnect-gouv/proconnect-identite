@@ -214,12 +214,6 @@ export const joinOrganization = async ({
     throw new DomainRestrictedError(organization_id);
   }
 
-  if (
-    some(organizationEmailDomains, { domain, verification_type: "refused" })
-  ) {
-    throw new DomainRestrictedError(organization_id);
-  }
-
   if (certificationRequested) {
     await processCertificationDirigeantOrThrow(organization, user_id);
 
