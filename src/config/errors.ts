@@ -40,6 +40,20 @@ export class UserAlreadyAskedToJoinOrganizationError extends Error {
   }
 }
 
+export class OrganizationNotActiveError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "OrganizationNotActiveError";
+  }
+}
+
+export class ModerationNotFoundError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ModerationNotFoundError";
+  }
+}
+
 export class UserModerationRejectedError extends Error {
   constructor(
     public moderationId: number,

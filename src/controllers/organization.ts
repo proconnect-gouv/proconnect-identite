@@ -4,7 +4,6 @@ import { DOMAINS_WHITELIST } from "@proconnect-gouv/proconnect.identite/data/org
 import {
   InvalidSiretError,
   NotFoundError,
-  OrganizationNotActiveError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
   CertificationDirigeantDataSource,
@@ -23,6 +22,7 @@ import {
   DomainRestrictedError,
   ForbiddenError,
   GouvFrDomainsForbiddenForPrivateOrg,
+  OrganizationNotActiveError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,

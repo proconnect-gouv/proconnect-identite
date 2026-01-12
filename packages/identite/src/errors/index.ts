@@ -14,13 +14,6 @@ export class NotFoundError extends Error {
   }
 }
 
-export class OrganizationNotActiveError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "OrganizationNotActiveError";
-  }
-}
-
 export class OrganizationNotFoundError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
     super(message, options);
@@ -32,12 +25,5 @@ export class UserNotFoundError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
     super(message, options);
     this.name = "UserNotFoundError";
-  }
-}
-
-export class ModerationNotFoundError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ModerationNotFoundError";
   }
 }

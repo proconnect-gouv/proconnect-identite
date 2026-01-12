@@ -1,5 +1,5 @@
-import { ModerationNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { QueryResult } from "pg";
+import { ModerationNotFoundError } from "../config/errors";
 import { getDatabaseConnection } from "../connectors/postgres";
 
 export const createModeration = async ({

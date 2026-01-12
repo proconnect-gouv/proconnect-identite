@@ -4,7 +4,6 @@ import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email"
 import { Welcome } from "@proconnect-gouv/proconnect.email";
 import {
   InvalidSiretError,
-  OrganizationNotActiveError,
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import { forceJoinOrganizationFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
@@ -32,6 +31,7 @@ import {
   AccessRestrictedToPublicServiceEmailError,
   DomainRestrictedError,
   GouvFrDomainsForbiddenForPrivateOrg,
+  OrganizationNotActiveError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,

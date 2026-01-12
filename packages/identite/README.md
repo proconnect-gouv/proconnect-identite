@@ -88,10 +88,8 @@ import {
   InvalidCertificationError,
   InvalidSiretError,
   NotFoundError,
-  OrganizationNotActiveError,
   OrganizationNotFoundError,
   UserNotFoundError,
-  ModerationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 ```
 
