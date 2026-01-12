@@ -1,5 +1,4 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
-import { InvalidCertificationError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
@@ -8,12 +7,16 @@ import {
   FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
   HOST,
 } from "../config/env";
-import { OrganizationNotCoveredByCertificationDirigeant } from "../config/errors";
+import {
+  CertificationDirigeantCloseMatchError,
+  CertificationDirigeantNoMatchError,
+  CertificationDirigeantOrganizationNotCoveredError,
+} from "../config/errors";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import {
-  getInvalidCertificationErrorUrl,
-  performCertificationDirigeant,
+  getCertificationDirigeantCloseMatchErrorUrl,
+  processCertificationDirigeantOrThrow,
 } from "../managers/certification";
 import {
   greetForCertification,
@@ -439,19 +442,26 @@ export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
     }
 
     try {
-      await performCertificationDirigeant(organization, user_id);
+      await processCertificationDirigeantOrThrow(organization, user_id);
     } catch (error) {
-      if (error instanceof InvalidCertificationError) {
+      if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
         return {
           type: "redirect",
-          url: getInvalidCertificationErrorUrl(error),
+          url: "/users/certification-dirigeant/organization-not-covered-error",
         };
       }
 
-      if (error instanceof OrganizationNotCoveredByCertificationDirigeant) {
+      if (error instanceof CertificationDirigeantCloseMatchError) {
         return {
           type: "redirect",
-          url: "/users/organization-not-covered-by-certification-dirigeant",
+          url: getCertificationDirigeantCloseMatchErrorUrl(error),
+        };
+      }
+
+      if (error instanceof CertificationDirigeantNoMatchError) {
+        return {
+          type: "redirect",
+          url: `/users/certification-dirigeant/no-match-error?siren=${error.siren}`,
         };
       }
 

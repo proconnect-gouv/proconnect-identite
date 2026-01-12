@@ -2,15 +2,13 @@ import { ApiEntrepriseError } from "@proconnect-gouv/proconnect.api_entreprise/t
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { DOMAINS_WHITELIST } from "@proconnect-gouv/proconnect.identite/data/organization";
 import {
-  InvalidCertificationError,
   InvalidSiretError,
   NotFoundError,
-  OrganizationNotActiveError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
-  getSourceDirigeantInfo,
+  CertificationDirigeantDataSource,
+  getCertificationDirigeantDataSourceLabels,
   MatchCriteria,
-  SourceDirigeant,
 } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -18,17 +16,20 @@ import { isEmpty } from "lodash-es";
 import { z, ZodError } from "zod";
 import {
   AccessRestrictedToPublicServiceEmailError,
+  CertificationDirigeantCloseMatchError,
+  CertificationDirigeantNoMatchError,
+  CertificationDirigeantOrganizationNotCoveredError,
   DomainRestrictedError,
   ForbiddenError,
   GouvFrDomainsForbiddenForPrivateOrg,
-  OrganizationNotCoveredByCertificationDirigeant,
+  OrganizationNotActiveError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
   UserModerationRejectedError,
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
-import { getInvalidCertificationErrorUrl } from "../managers/certification";
+import { getCertificationDirigeantCloseMatchErrorUrl } from "../managers/certification";
 import { getOrganizationFromModeration } from "../managers/moderation";
 import {
   doSuggestOrganizations,
@@ -146,13 +147,19 @@ export const postJoinOrganizationMiddleware = async (
 
     next();
   } catch (error) {
-    if (error instanceof InvalidCertificationError) {
-      return res.redirect(getInvalidCertificationErrorUrl(error));
+    if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
+      return res.redirect(
+        "/users/certification-dirigeant/organization-not-covered-error",
+      );
     }
 
-    if (error instanceof OrganizationNotCoveredByCertificationDirigeant) {
+    if (error instanceof CertificationDirigeantCloseMatchError) {
+      return res.redirect(getCertificationDirigeantCloseMatchErrorUrl(error));
+    }
+
+    if (error instanceof CertificationDirigeantNoMatchError) {
       return res.redirect(
-        "/users/organization-not-covered-by-certification-dirigeant",
+        `/users/certification-dirigeant/no-match-error?siren=${error.siren}`,
       );
     }
 
@@ -357,14 +364,14 @@ export const getModerationRejectedController = async (
   }
 };
 
-export async function getOrganizationNotCoveredByCertificationDirigeant(
+export async function getCertificationDirigeantOrganizationNotCoveredError(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
   try {
     return res.render(
-      "user/organization-not-covered-by-certification-dirigeant",
+      "certification-dirigeant/organization-not-covered-error",
       {
         illustration: "connection-lost.svg",
         oidcError: oidcErrorSchema().enum.login_required,
@@ -377,32 +384,35 @@ export async function getOrganizationNotCoveredByCertificationDirigeant(
     next(e);
   }
 }
-export async function getUnableToCertifyUserAsExecutiveController(
+
+export async function getCertificationDirigeantCloseMatchError(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  const query = z
-    .object({
-      matches: z
-        .string()
-        .pipe(z.transform((v) => v.split(",")))
-        .pipe(z.array(MatchCriteria))
-        .pipe(z.transform((matches) => new Set(matches)))
-        .optional(),
-      organization_label: z.string(),
-      siren: z.string().length(9),
-      source: SourceDirigeant,
-    })
-    .parse(req.query);
-
-  const user = getUserFromAuthenticatedSession(req);
-  const user_info = await getFranceConnectUserInfo(user.id);
-
-  const source_label = getSourceDirigeantInfo(query.source);
-
   try {
-    return res.render("user/unable-to-certify-user-as-executive", {
+    const query = z
+      .object({
+        matches: z
+          .string()
+          .pipe(z.transform((v) => v.split(",")))
+          .pipe(z.array(MatchCriteria))
+          .pipe(z.transform((matches) => new Set(matches)))
+          .optional(),
+        organization_label: z.string(),
+        siren: z.string().length(9),
+        source: CertificationDirigeantDataSource,
+      })
+      .parse(req.query);
+
+    const user = getUserFromAuthenticatedSession(req);
+    const user_info = await getFranceConnectUserInfo(user.id);
+
+    const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
+      query.source,
+    );
+
+    return res.render("certification-dirigeant/close-match-error", {
       illustration: "connection-lost.svg",
       interactionId: req.session.interactionId,
       matches: query.matches,
@@ -410,9 +420,34 @@ export async function getUnableToCertifyUserAsExecutiveController(
       organization_label: query.organization_label,
       pageTitle: "Certification impossible",
       siren: query.siren,
-      source_label,
+      dataSourceLabel,
       use_dashboard_layout: false,
       user_info,
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getCertificationDirigeantNoMatchError(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const query = z
+      .object({
+        siren: z.string().length(9),
+      })
+      .parse(req.query);
+
+    return res.render("certification-dirigeant/no-match-error", {
+      illustration: "connection-lost.svg",
+      interactionId: req.session.interactionId,
+      oidcError: oidcErrorSchema().enum.login_required,
+      pageTitle: "Certification impossible",
+      siren: query.siren,
+      use_dashboard_layout: false,
     });
   } catch (e) {
     next(e);

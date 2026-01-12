@@ -4,7 +4,7 @@ import { NotFoundError } from "#src/errors";
 import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
 import { isOrganizationCoveredByCertificationDirigeant } from "#src/services/organization";
 import {
-  IdentityVectorZero,
+  NullIdentityVector,
   type IdentityVector,
   type Organization,
 } from "#src/types";
@@ -21,7 +21,7 @@ import { certificationScore } from "./certification-score.js";
 
 //
 
-type IsOrganizationExecutiveFactoryFactoryConfig = {
+type ProcessCertificationDirigeantConfig = {
   ApiEntrepriseInfogreffeRepository: Pick<
     ApiEntrepriseInfogreffeRepository,
     "findMandatairesSociauxBySiren"
@@ -36,13 +36,38 @@ type IsOrganizationExecutiveFactoryFactoryConfig = {
   };
 };
 
+export const CertificationDirigeantDataSource = z.enum([
+  "api.insee.fr/api-sirene/private",
+  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
+  "registre-national-entreprises.inpi.fr/api",
+]);
+
+export type CertificationDirigeantDataSource = z.infer<
+  typeof CertificationDirigeantDataSource
+>;
+
+const CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS: {
+  [source in CertificationDirigeantDataSource]: string;
+} = {
+  "api.insee.fr/api-sirene/private": "Répertoire SIRENE de l'INSEE",
+  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux":
+    "Registre du commerce et des sociétés (RCS)",
+  "registre-national-entreprises.inpi.fr/api":
+    "Registre National des Entreprises",
+};
+export function getCertificationDirigeantDataSourceLabels(
+  dataSource: CertificationDirigeantDataSource,
+) {
+  return CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS[dataSource];
+}
+
 //
 
 async function getMandatairesSociaux(
   {
     RegistreNationalEntreprisesApiRepository,
     ApiEntrepriseInfogreffeRepository,
-  }: IsOrganizationExecutiveFactoryFactoryConfig,
+  }: ProcessCertificationDirigeantConfig,
   siren: string,
 ) {
   try {
@@ -52,7 +77,10 @@ async function getMandatairesSociaux(
 
     return {
       dirigeants,
-      source: SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"],
+      source:
+        CertificationDirigeantDataSource.enum[
+          "registre-national-entreprises.inpi.fr/api"
+        ],
     };
   } catch (error) {
     console.error(error);
@@ -65,103 +93,11 @@ async function getMandatairesSociaux(
     return {
       dirigeants,
       source:
-        SourceDirigeant.enum[
+        CertificationDirigeantDataSource.enum[
           "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux"
         ],
     };
   }
-}
-
-export function isOrganizationDirigeantFactory(
-  config: IsOrganizationExecutiveFactoryFactoryConfig,
-) {
-  const { InseeApiRepository, FranceConnectApiRepository } = config;
-
-  return async function isOrganizationDirigeant(
-    organization: Organization,
-    user_id: number,
-  ) {
-    if (!isOrganizationCoveredByCertificationDirigeant(organization)) {
-      return {
-        details: {
-          identity: IdentityVectorZero,
-          matches: new Set(),
-        },
-        cause: "organisation_not_covered" as const,
-        ok: false,
-      };
-    }
-
-    const siren = organization.siret.substring(0, 9);
-    const franceconnectUserInfo =
-      await FranceConnectApiRepository.getFranceConnectUserInfo(user_id);
-    if (!franceconnectUserInfo) {
-      throw new NotFoundError("FranceConnect UserInfo not found");
-    }
-
-    const identity = FranceConnect.toIdentityVector(franceconnectUserInfo);
-
-    const prefered_source =
-      organization.cached_libelle_categorie_juridique ===
-      "Entrepreneur individuel"
-        ? SourceDirigeant.enum["api.insee.fr/api-sirene/private"]
-        : SourceDirigeant.enum["registre-national-entreprises.inpi.fr/api"];
-
-    const { dirigeants, source } = await match(prefered_source)
-      .with("api.insee.fr/api-sirene/private", async () => ({
-        dirigeants: await InseeApiRepository.findBySiren(siren)
-          .then(INSEE.toIdentityVector)
-          .then((vector) => [vector]),
-        source: SourceDirigeant.enum["api.insee.fr/api-sirene/private"],
-      }))
-      .with("registre-national-entreprises.inpi.fr/api", () =>
-        getMandatairesSociaux(config, siren),
-      )
-      .exhaustive();
-
-    const result = match_identity_to_dirigeant(identity, dirigeants);
-
-    if (result.kind === "no_candidates") {
-      return {
-        details: { dirigeant: undefined, identity, matches: new Set(), source },
-        cause: result.kind,
-        ok: false,
-      };
-    }
-
-    return {
-      details: {
-        ...result.closest,
-        identity,
-        source,
-      },
-      cause: result.kind,
-      ok: result.kind === "exact_match",
-    };
-  };
-}
-
-export type IsOrganizationDirigeantHandler = ReturnType<
-  typeof isOrganizationDirigeantFactory
->;
-
-export const SourceDirigeant = z.enum([
-  "api.insee.fr/api-sirene/private",
-  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
-  "registre-national-entreprises.inpi.fr/api",
-]);
-
-export type SourceDirigeant = z.infer<typeof SourceDirigeant>;
-
-const SOURCE_DIRIGEANT_LABELS: { [source in SourceDirigeant]: string } = {
-  "api.insee.fr/api-sirene/private": "Répertoire SIRENE de l'INSEE",
-  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux":
-    "Registre du commerce et des sociétés (RCS)",
-  "registre-national-entreprises.inpi.fr/api":
-    "Registre National des Entreprises",
-};
-export function getSourceDirigeantInfo(source: SourceDirigeant) {
-  return SOURCE_DIRIGEANT_LABELS[source];
 }
 
 function match_identity_to_dirigeant(
@@ -195,4 +131,83 @@ function match_identity_to_dirigeant(
       kind: "below_threshold" as const,
       closest,
     }));
+}
+
+export function processCertificationDirigeantFactory(
+  config: ProcessCertificationDirigeantConfig,
+) {
+  const { InseeApiRepository, FranceConnectApiRepository } = config;
+
+  return async function isOrganizationDirigeant(
+    organization: Organization,
+    user_id: number,
+  ) {
+    if (!isOrganizationCoveredByCertificationDirigeant(organization)) {
+      return {
+        details: {
+          dirigeant: null,
+          matches: new Set(),
+          identity: NullIdentityVector,
+          source: null,
+        },
+        cause: "organisation_not_covered" as const,
+        ok: false,
+      };
+    }
+
+    const siren = organization.siret.substring(0, 9);
+    const franceconnectUserInfo =
+      await FranceConnectApiRepository.getFranceConnectUserInfo(user_id);
+    if (!franceconnectUserInfo) {
+      throw new NotFoundError("FranceConnect UserInfo not found");
+    }
+
+    const identity = FranceConnect.toIdentityVector(franceconnectUserInfo);
+
+    const preferredDataSource =
+      organization.cached_libelle_categorie_juridique ===
+      "Entrepreneur individuel"
+        ? CertificationDirigeantDataSource.enum[
+            "api.insee.fr/api-sirene/private"
+          ]
+        : CertificationDirigeantDataSource.enum[
+            "registre-national-entreprises.inpi.fr/api"
+          ];
+
+    const { dirigeants, source } = await match(preferredDataSource)
+      .with("api.insee.fr/api-sirene/private", async () => ({
+        dirigeants: await InseeApiRepository.findBySiren(siren)
+          .then(INSEE.toIdentityVector)
+          .then((vector) => [vector]),
+        source:
+          CertificationDirigeantDataSource.enum[
+            "api.insee.fr/api-sirene/private"
+          ],
+      }))
+      .with("registre-national-entreprises.inpi.fr/api", () =>
+        getMandatairesSociaux(config, siren),
+      )
+      .exhaustive();
+
+    const result = match_identity_to_dirigeant(identity, dirigeants);
+
+    if (result.kind === "no_candidates") {
+      return {
+        details: { dirigeant: undefined, matches: new Set(), identity, source },
+        cause: result.kind,
+        ok: false,
+      };
+    }
+
+    return {
+      details: {
+        dirigeant: result.closest.dirigeant,
+        matches: result.closest.matches,
+        identity,
+        source,
+      },
+      cause: result.kind,
+      ok: result.kind === "exact_match",
+    };
+  };
 }

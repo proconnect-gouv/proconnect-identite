@@ -1,11 +1,14 @@
 //
 
-import { InvalidCertificationError } from "@proconnect-gouv/proconnect.identite/errors";
-import { isOrganizationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
+import { processCertificationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { captureException } from "@sentry/node";
 import { AssertionError } from "node:assert";
-import { OrganizationNotCoveredByCertificationDirigeant } from "../../config/errors";
+import {
+  CertificationDirigeantCloseMatchError,
+  CertificationDirigeantNoMatchError,
+  CertificationDirigeantOrganizationNotCoveredError,
+} from "../../config/errors";
 import { ApiEntrepriseInfogreffeRepository } from "../../connectors/api-entreprise";
 import { InseeApiRepository } from "../../connectors/api-insee";
 import { RegistreNationalEntreprisesApiRepository } from "../../connectors/api-rne";
@@ -14,14 +17,15 @@ import { logger } from "../../services/log";
 
 //
 
-export const processCertificationDirigeant = isOrganizationDirigeantFactory({
-  ApiEntrepriseInfogreffeRepository,
-  FranceConnectApiRepository: { getFranceConnectUserInfo },
-  InseeApiRepository: { findBySiren: InseeApiRepository.findBySiren },
-  RegistreNationalEntreprisesApiRepository,
-});
+export const processCertificationDirigeant =
+  processCertificationDirigeantFactory({
+    ApiEntrepriseInfogreffeRepository,
+    FranceConnectApiRepository: { getFranceConnectUserInfo },
+    InseeApiRepository: { findBySiren: InseeApiRepository.findBySiren },
+    RegistreNationalEntreprisesApiRepository,
+  });
 
-export const performCertificationDirigeant = async (
+export const processCertificationDirigeantOrThrow = async (
   organization: Organization,
   user_id: number,
 ) => {
@@ -29,35 +33,36 @@ export const performCertificationDirigeant = async (
     organization,
     user_id,
   );
+  const siren = organization.siret.substring(0, 9);
 
-  if (cause === "organisation_not_covered") {
-    throw new OrganizationNotCoveredByCertificationDirigeant(cause, {
+  if (!ok && cause === "organisation_not_covered") {
+    throw new CertificationDirigeantOrganizationNotCoveredError(cause, {
       cause: new AssertionError({
         actual: organization,
       }),
     });
   }
 
-  logger.info(
-    details.dirigeant,
-    `'(${details.source})`,
-    " is the closest source dirigeant to ",
-    details.identity,
-    " with a score of ",
-    details.matches.size,
-    cause,
-  );
-
   if (!ok) {
-    const siren = organization.siret.substring(0, 9);
+    logger.info(
+      details.dirigeant,
+      `'(${details.source})`,
+      " is the closest source dirigeant to ",
+      details.identity,
+      " with a score of ",
+      details.matches.size,
+      cause,
+    );
+  }
+
+  if (!ok && cause === "close_match") {
     const organization_label =
       organization.cached_libelle ?? organization.siret;
-    const matches = cause === "close_match" ? details.matches : undefined;
-    const error = new InvalidCertificationError(
+    const error = new CertificationDirigeantCloseMatchError(
       details.source,
       siren,
       organization_label,
-      matches,
+      details.matches,
       cause,
       {
         cause: new AssertionError({
@@ -71,13 +76,23 @@ export const performCertificationDirigeant = async (
 
     throw error;
   }
+
+  if (!ok) {
+    const error = new CertificationDirigeantNoMatchError(siren, cause);
+
+    captureException(error);
+
+    throw error;
+  }
+
+  return;
 };
 
-export const getInvalidCertificationErrorUrl = (
-  error: InvalidCertificationError,
+export const getCertificationDirigeantCloseMatchErrorUrl = (
+  error: CertificationDirigeantCloseMatchError,
 ) => {
   const url = new URL(
-    "/users/unable-to-certify-user-as-executive",
+    "/users/certification-dirigeant/close-match-error",
     // placeholder domain, not used
     "http://example.com",
   );

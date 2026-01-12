@@ -4,7 +4,6 @@ import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email"
 import { Welcome } from "@proconnect-gouv/proconnect.email";
 import {
   InvalidSiretError,
-  OrganizationNotActiveError,
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import { forceJoinOrganizationFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
@@ -32,6 +31,7 @@ import {
   AccessRestrictedToPublicServiceEmailError,
   DomainRestrictedError,
   GouvFrDomainsForbiddenForPrivateOrg,
+  OrganizationNotActiveError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -75,7 +75,7 @@ import {
   isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
-import { performCertificationDirigeant } from "../certification";
+import { processCertificationDirigeantOrThrow } from "../certification";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
 
 export const doSuggestOrganizations = async ({
@@ -215,7 +215,7 @@ export const joinOrganization = async ({
   }
 
   if (certificationRequested) {
-    await performCertificationDirigeant(organization, user_id);
+    await processCertificationDirigeantOrThrow(organization, user_id);
 
     return await linkUserToOrganization({
       organization_id,

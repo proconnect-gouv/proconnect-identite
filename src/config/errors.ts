@@ -1,3 +1,8 @@
+import type {
+  CertificationDirigeantDataSource,
+  MatchCriteria,
+} from "@proconnect-gouv/proconnect.identite/managers/certification";
+
 export class InvalidEmailError extends Error {
   constructor(
     public didYouMean: string,
@@ -35,6 +40,20 @@ export class UserAlreadyAskedToJoinOrganizationError extends Error {
   }
 }
 
+export class OrganizationNotActiveError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "OrganizationNotActiveError";
+  }
+}
+
+export class ModerationNotFoundError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ModerationNotFoundError";
+  }
+}
+
 export class UserModerationRejectedError extends Error {
   constructor(
     public moderationId: number,
@@ -62,10 +81,35 @@ export class AccessRestrictedToPublicServiceEmailError extends Error {
   }
 }
 
-export class OrganizationNotCoveredByCertificationDirigeant extends Error {
+export class CertificationDirigeantOrganizationNotCoveredError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
     super(message, options);
-    this.name = "OrganizationNotCoveredByCertificationDirigeant";
+    this.name = "CertificationDirigeantOrganizationNotCoveredError";
+  }
+}
+
+export class CertificationDirigeantNoMatchError extends Error {
+  constructor(
+    public siren: string,
+    message?: string,
+    options?: ErrorOptions,
+  ) {
+    super(message, options);
+    this.name = "CertificationDirigeantNoMatchError";
+  }
+}
+
+export class CertificationDirigeantCloseMatchError extends Error {
+  constructor(
+    public source: CertificationDirigeantDataSource,
+    public siren: string,
+    public organization_label: string,
+    public matches?: Set<MatchCriteria>,
+    message?: string,
+    options?: ErrorOptions,
+  ) {
+    super(message, options);
+    this.name = "CertificationDirigeantCloseMatchError";
   }
 }
 
