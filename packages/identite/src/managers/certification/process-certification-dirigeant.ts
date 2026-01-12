@@ -36,6 +36,31 @@ type ProcessCertificationDirigeantConfig = {
   };
 };
 
+export const CertificationDirigeantDataSource = z.enum([
+  "api.insee.fr/api-sirene/private",
+  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
+  "registre-national-entreprises.inpi.fr/api",
+]);
+
+export type CertificationDirigeantDataSource = z.infer<
+  typeof CertificationDirigeantDataSource
+>;
+
+const CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS: {
+  [source in CertificationDirigeantDataSource]: string;
+} = {
+  "api.insee.fr/api-sirene/private": "Répertoire SIRENE de l'INSEE",
+  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux":
+    "Registre du commerce et des sociétés (RCS)",
+  "registre-national-entreprises.inpi.fr/api":
+    "Registre National des Entreprises",
+};
+export function getCertificationDirigeantDataSourceLabels(
+  dataSource: CertificationDirigeantDataSource,
+) {
+  return CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS[dataSource];
+}
+
 //
 
 async function getMandatairesSociaux(
@@ -73,6 +98,39 @@ async function getMandatairesSociaux(
         ],
     };
   }
+}
+
+function match_identity_to_dirigeant(
+  identity: IdentityVector,
+  dirigeants: IdentityVector[],
+) {
+  if (dirigeants.length === 0) return { kind: "no_candidates" as const };
+
+  const [closest] = dirigeants
+    .map((dirigeant) => ({
+      dirigeant,
+      matches: certificationScore(identity, dirigeant),
+    }))
+    .toSorted((a, b) => b.matches.size - a.matches.size); // Sort by score descending (higher is better)
+
+  // According to the specification, only score of 5 (perfect match) is certified
+  return match(closest.matches.size)
+    .with(5, () => ({
+      kind: "exact_match" as const,
+      closest,
+    }))
+    .with(4, () => ({
+      kind: "close_match" as const,
+      closest,
+    }))
+    .with(3, () => ({
+      kind: "close_match" as const,
+      closest,
+    }))
+    .otherwise(() => ({
+      kind: "below_threshold" as const,
+      closest,
+    }));
 }
 
 export function processCertificationDirigeantFactory(
@@ -152,62 +210,4 @@ export function processCertificationDirigeantFactory(
       ok: result.kind === "exact_match",
     };
   };
-}
-
-export const CertificationDirigeantDataSource = z.enum([
-  "api.insee.fr/api-sirene/private",
-  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
-  "registre-national-entreprises.inpi.fr/api",
-]);
-
-export type CertificationDirigeantDataSource = z.infer<
-  typeof CertificationDirigeantDataSource
->;
-
-const CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS: {
-  [source in CertificationDirigeantDataSource]: string;
-} = {
-  "api.insee.fr/api-sirene/private": "Répertoire SIRENE de l'INSEE",
-  "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux":
-    "Registre du commerce et des sociétés (RCS)",
-  "registre-national-entreprises.inpi.fr/api":
-    "Registre National des Entreprises",
-};
-export function getCertificationDirigeantDataSourceLabels(
-  dataSource: CertificationDirigeantDataSource,
-) {
-  return CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS[dataSource];
-}
-
-function match_identity_to_dirigeant(
-  identity: IdentityVector,
-  dirigeants: IdentityVector[],
-) {
-  if (dirigeants.length === 0) return { kind: "no_candidates" as const };
-
-  const [closest] = dirigeants
-    .map((dirigeant) => ({
-      dirigeant,
-      matches: certificationScore(identity, dirigeant),
-    }))
-    .toSorted((a, b) => b.matches.size - a.matches.size); // Sort by score descending (higher is better)
-
-  // According to the specification, only score of 5 (perfect match) is certified
-  return match(closest.matches.size)
-    .with(5, () => ({
-      kind: "exact_match" as const,
-      closest,
-    }))
-    .with(4, () => ({
-      kind: "close_match" as const,
-      closest,
-    }))
-    .with(3, () => ({
-      kind: "close_match" as const,
-      closest,
-    }))
-    .otherwise(() => ({
-      kind: "below_threshold" as const,
-      closest,
-    }));
 }
