@@ -37,7 +37,8 @@ export interface AuthenticatedSessionData {
 
 declare module "express-session" {
   export interface SessionData
-    extends UnauthenticatedSessionData,
+    extends
+      UnauthenticatedSessionData,
       Partial<FranceConnectOidcSession>,
       Partial<CertificationSession> {
     user?: User;
