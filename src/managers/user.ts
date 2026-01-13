@@ -572,15 +572,15 @@ export const updatePersonalInformationsForRegistration = async (
   {
     given_name,
     family_name,
-    phone_number,
-  }: Pick<User, "given_name" | "family_name" | "phone_number">,
+    job,
+  }: Pick<User, "given_name" | "family_name" | "job">,
 ): Promise<User> => {
   const isUserVerified = await getFranceConnectUserInfo(userId);
   const names = isUserVerified ? {} : { given_name, family_name };
 
   return update(userId, {
     ...names,
-    phone_number,
+    job,
   });
 };
 

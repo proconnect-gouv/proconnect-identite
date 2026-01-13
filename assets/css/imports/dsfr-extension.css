@@ -56,3 +56,73 @@ a.btn--danger:not([href]) {
   width: 209px;
   height: 56px;
 }
+
+/* Customise the header title */
+.fr-header__service-title {
+  display: flex;
+  align-items: center;
+  color: var(--text-action-high-blue-france);
+}
+
+/* Delete the shadow and reduces the size of the header  */
+.fr-header {
+  background-color: transparent !important;
+  filter: none !important;
+}
+
+.fr-header__brand {
+  background-color: transparent !important;
+  filter: none !important;
+}
+
+.fr-header__body-row {
+  padding: 0.5rem 0 !important;
+}
+
+/* Customise the organisation information tile */
+
+.fr-tile__link {
+  color: var(--text-default-grey) !important;
+}
+
+.fr-tile__desc,
+.fr-tile__desc {
+  color: var(--text-mention-grey) !important;
+}
+
+.layout-connexion .fr-grid-row .fr-tile {
+  height: auto;
+}
+
+/* Delete blue bottom border */
+.fr-tile__title a:before,
+.fr-tile__title button:before,
+.fr-tile__title:before {
+  background-size: 0% !important;
+}
+
+/* Add box-shadow on the tile */
+.fr-tile:not(.fr-tile--no-border):not(.fr-tile--shadow) {
+  background-image: none !important;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Customises the colour of the current stepper */
+.fr-stepper__steps {
+  position: relative;
+}
+
+.fr-stepper__steps::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(
+    (100% + var(--stepper-size)) * (var(--current-step) - 1) / var(--steps)
+  );
+  width: calc(
+    (100% + var(--stepper-size)) / var(--steps) - var(--stepper-size)
+  );
+  height: var(--stepper-size);
+  background-color: var(--background-action-high-blue-france-hover);
+  pointer-events: none;
+}

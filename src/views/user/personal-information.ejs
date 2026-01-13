@@ -1,8 +1,7 @@
 <div>
     <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
-    <h1 class="fr-h3">
-        Renseigner son identité
-    </h1>
+    <h1 class="fr-h5 fr-mb-1w">Compléter votre profil</h1>
+    <hr class="hr-personalized fr-mb-3w">
     <% if (locals.needs_inclusionconnect_onboarding_help) { %>
         <div class="fr-callout fr-callout--blue-ecume fr-icon-lightbulb-line">
             <p class="fr-callout__text">
@@ -11,18 +10,15 @@
         </div>
     <% } %>
     <div>
-        <p>
-            Ces informations nous permettent d’authentifier votre compte.
-        </p>
-
-        <p aria-hidden="true" class="fr-hint-text">Les champs notés * sont obligatoires.</p>
+        <p aria-hidden="true" class="fr-text--xs fr-mb-1w"><i>Les champs notés * sont obligatoires.</i></p>
 
         <form action="/users/personal-information" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 
-            <div class="fr-input-group">
+            <div class="fr-input-group fr-mb-2w">
                 <label class="fr-label" for="given_name">
-                    Prénom<span aria-hidden="true"> *</span>
+                    Prénom<span aria-hidden="true">*</span>
+                    <span class="fr-sr-only">obligatoire</span>
                     <% if (verifiedBy) { %>
                       <span class="fr-hint-text">
                         Issue de votre vérification par <b><%= verifiedBy; %></b>
@@ -40,9 +36,9 @@
                 >
             </div>
 
-            <div class="fr-input-group">
+            <div class="fr-input-group fr-mb-2w">
                 <label class="fr-label" for="family_name">
-                    Nom<span aria-hidden="true"> *</span>
+                    Nom<span aria-hidden="true">*</span>
                     <% if (verifiedBy) { %>
                       <span class="fr-hint-text">
                         Issue de votre vérification par <b><%= verifiedBy; %></b>
@@ -60,23 +56,23 @@
                 >
             </div>
 
-            <div class="fr-input-group">
-                <label class="fr-label" for="phone_number">
-                    Numéro de téléphone professionnel
+            <div class="fr-input-group fr-mb-2w">
+                <label class="fr-label" for="job">
+                    Rôle
                     <span class="fr-hint-text">
-                            Il pourra faciliter l’utilisation de nos services (assistance, demandes de précisions).
-                        </span>
+                        Votre fonction dans votre organisation
+                    </span>
                 </label>
                 <input
-                        class="fr-input" type="tel" name="phone_number"
-                        id="phone_number"
-                        pattern="\+?(?:[0-9][ \-]?){6,14}[0-9]"
-                        title="un numéro de téléphone doit être écrit en chiffres, avec ou sans extension internationale (ex: France +33)"
-                        autocomplete="tel"
-                <% if (phone_number) { %> value="<%= phone_number; %>"<% } %>
+                    class="fr-input" 
+                    type="text" 
+                    name="job"
+                    id="job"
+                    autocomplete="organization-title"
+                    <% if (job) { %> value="<%= job; %>"<% } %>
                 >
             </div>
-            <%- include('../partials/submit-button.ejs', {label: 'Valider'}) %>
+            <%- include('../partials/submit-button.ejs', {label: 'Continuer'}) %>
         </form>
         <%- include('../partials/go-back.ejs') %>
     </div>
