@@ -1,5 +1,5 @@
 describe("Signup into new entreprise unipersonnelle", () => {
-  it("should seed the database once", function () {
+  before("should seed the database once", function () {
     cy.seed();
   });
 
@@ -7,8 +7,6 @@ describe("Signup into new entreprise unipersonnelle", () => {
     cy.visit("/personal-information");
 
     cy.login("konrad.curze@nightlords.world");
-
-    cy.visit("/personal-information");
 
     cy.contains("Vos informations personnelles");
 
@@ -72,5 +70,27 @@ describe("Signup into new entreprise unipersonnelle", () => {
       "Profession ou rôle au sein de votre organisation",
       "Guide GPS Warp",
     );
+  });
+
+  it("should see an empty organization page", () => {
+    cy.visit("/manage-organizations");
+
+    cy.login("rogal.dorn@imperialfists.world");
+
+    cy.title().should("include", "Organisations");
+    cy.contains("Vous n’êtes attaché à aucune organisation.");
+  });
+
+  it("should see an empty userinfo page", () => {
+    cy.visit("/personal-information");
+
+    cy.login("rogal.dorn@imperialfists.world");
+
+    cy.title().should("include", "Informations personnelles");
+    cy.contains("Vos informations personnelles");
+
+    ["given_name", "family_name", "job"].forEach((inputName) => {
+      cy.get(`input[name="${inputName}"]`).should("have.value", "");
+    });
   });
 });

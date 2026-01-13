@@ -6,7 +6,7 @@ describe("join organizations", () => {
   });
 
   it("join suggested organisation", function () {
-    cy.visit("/");
+    cy.visit("/users/join-organization");
     cy.login("lion.eljonson@darkangels.world");
 
     // The user gets this suggestion because it as darkangels.world as trackdechets domain

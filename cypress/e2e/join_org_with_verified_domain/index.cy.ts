@@ -6,15 +6,10 @@ describe("join organizations", () => {
   });
 
   it("join suggested organisation", function () {
-    cy.visit("/");
+    cy.visit("/users/join-organization");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.login("lion.eljonson@darkangels.world");
-
-    cy.title().should(
-      "include",
-      "Votre organisation de rattachement - ProConnect",
-    );
 
     // The user gets this suggestion because it as darkangels.world as verified domain
     cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").contains(

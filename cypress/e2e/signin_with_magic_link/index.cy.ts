@@ -38,8 +38,8 @@ describe("sign-in with magic link", () => {
       },
     );
 
-    cy.title().should("include", "Renseigner votre identité - ProConnect");
-    cy.contains("Renseigner son identité");
+    cy.title().should("include", "Accueil - ProConnect");
+    cy.contains("Votre compte ProConnect");
   });
 
   it("should sign-in with magic link without setting password", function () {
@@ -79,8 +79,8 @@ describe("sign-in with magic link", () => {
       },
     );
 
-    cy.title().should("include", "Renseigner votre identité - ProConnect");
-    cy.contains("Renseigner son identité");
+    cy.title().should("include", "Accueil - ProConnect");
+    cy.contains("Votre compte ProConnect");
   });
 
   it("should set a password", function () {
@@ -98,8 +98,8 @@ describe("sign-in with magic link", () => {
 
     cy.verifyEmail();
 
-    cy.title().should("include", "Renseigner votre identité - ProConnect");
-    cy.contains("Renseigner son identité");
+    cy.title().should("include", "Accueil - ProConnect");
+    cy.contains("Votre compte ProConnect");
   });
 
   it("should sign-in with magic link without set password prompt", function () {
@@ -139,7 +139,7 @@ describe("sign-in with magic link", () => {
       },
     );
 
-    cy.title().should("include", "Renseigner votre identité - ProConnect");
-    cy.contains("Renseigner son identité");
+    cy.title().should("include", "Accueil - ProConnect");
+    cy.contains("Votre compte ProConnect");
   });
 });

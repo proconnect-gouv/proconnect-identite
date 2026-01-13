@@ -38,29 +38,20 @@ VALUES
     'Curze',
     '0404040404',
     null
-  );
-
-INSERT INTO
-  organizations (id, siret, created_at, updated_at)
-VALUES
+  ),
   (
-    1,
-    '21340126800130',
+    3,
+    'rogal.dorn@imperialfists.world',
+    true,
     CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    null,
+    null,
+    null,
+    null
   );
-
-INSERT INTO
-  users_organizations (
-    user_id,
-    organization_id,
-    is_external,
-    verification_type,
-    has_been_greeted
-  )
-VALUES
-  (1, 1, false, 'verified_email_domain', true),
-  (2, 1, false, 'verified_email_domain', true);
 
 INSERT INTO
   franceconnect_userinfo (user_id)
