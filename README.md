@@ -87,7 +87,7 @@ This will start all required services (e.g., databases) defined in the `docker-c
    Inside the project’s root directory, run:
 
 ```bash
-npm install
+npm ci
 npm run build
 ```
 
@@ -155,7 +155,7 @@ To customize or override these defaults, we recommend using the `.env*.local` fi
 If you prefer not to run end-to-end tests locally and want to avoid downloading the large Cypress binary, you can prevent it during the installation process. To do this, run the following command:
 
 ```bash
-CYPRESS_INSTALL_BINARY=0 npm install
+CYPRESS_INSTALL_BINARY=0 npm ci
 ```
 
 This command ensures that the Cypress binary is not downloaded, saving time and disk space during the installation process.
