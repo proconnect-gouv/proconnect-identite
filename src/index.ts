@@ -201,7 +201,6 @@ app.use(async (req, res, _next) => {
   res.status(404).send(
     await renderWithEjsLayout("not-found-error", {
       pageTitle: "Page introuvable",
-      illustration: "connection-lost.svg",
       oidcError: "invalid_request",
       interactionId: req.session?.interactionId,
       sentryTrackingMetaTags: Sentry.getTraceMetaTags(),
@@ -225,7 +224,6 @@ app.use(function errorHandler(
       return res.status(404).render("not-found-error", {
         // force not to use dashboard layout in case the error is shown within a dashboard page
         use_dashboard_layout: false,
-        illustration: "connection-lost.svg",
         oidcError: "invalid_request",
         interactionId: req.session.interactionId,
       });
@@ -235,7 +233,6 @@ app.use(function errorHandler(
       error_message: err.message,
       // force not to use dashboard layout in case the error is shown within a dashboard page
       use_dashboard_layout: false,
-      illustration: "connection-lost.svg",
       oidcError: "server_error",
       interactionId: req.session.interactionId,
     });
@@ -247,7 +244,6 @@ app.use(function errorHandler(
       error_message: err.message,
       // force not to use dashboard layout in case the error is shown within a dashboard page
       use_dashboard_layout: false,
-      illustration: "connection-lost.svg",
       oidcError: "invalid_request",
       interactionId: req.session.interactionId,
     });
@@ -259,7 +255,6 @@ app.use(function errorHandler(
       error_message: err.error_description,
       // force not to use dashboard layout in case the error is shown within a dashboard page
       use_dashboard_layout: false,
-      illustration: "connection-lost.svg",
       oidcError: err.error,
       interactionId: req.session.interactionId,
     });
@@ -270,7 +265,6 @@ app.use(function errorHandler(
     error_message: err.message,
     // force not to use dashboard layout in case the error is shown within a dashboard page
     use_dashboard_layout: false,
-    illustration: "connection-lost.svg",
     oidcError: "server_error",
     interactionId: req.session.interactionId,
   });

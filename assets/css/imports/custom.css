@@ -31,8 +31,12 @@
   background-color: #f6f6f6 !important;
 }
 
-.centered-content {
+.centered-content-flex {
   justify-content: center !important;
+}
+
+.centered-content {
+  justify-self: center;
 }
 
 /* display a loading bar on page load */

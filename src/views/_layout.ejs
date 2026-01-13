@@ -10,10 +10,13 @@
             <%- body; %>
         </main>
     <% } else { %>
-        <main role="main" id="main" class="onboarding-container">
-            <%- body; %>
-            <div class="centered-container">
-                <img src="/dist/<%= locals.illustration ? locals.illustration : 'illu-account.svg' ;%>" alt="" />
+        <main role="main" id="main" class="main-connexion fr-py-2w">
+            <div class="fr-container">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-5">
+                        <%- body; %>
+                    </div>
+                </div>
             </div>
         </main>
     <% } %>
