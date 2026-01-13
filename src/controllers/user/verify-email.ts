@@ -66,7 +66,6 @@ export const getVerifyEmailController = async (
         .tz("Europe/Paris")
         .locale("fr")
         .toNow(true),
-      illustration: "illu-password.svg",
     });
   } catch (error) {
     if (error instanceof NoNeedVerifyEmailAddressError) {

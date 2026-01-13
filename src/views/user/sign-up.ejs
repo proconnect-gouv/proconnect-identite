@@ -1,7 +1,10 @@
 <div>
     <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
+    <% if (isNewAccount) { %>
+        <p class="fr-badge fr-badge--new fr-mb-1w">Nouveau compte</p>
+    <% } %>
     <h1 class="fr-h3">
-        Choisir votre mot de passe
+        Choisir un mot de passe
     </h1>
     <div>
         <% if(locals.displayTestEnvWarning) { %><%- include('../partials/test-env-warning.ejs') %><% } %>
@@ -67,12 +70,12 @@
                 <%- include('../partials/password-input-messages.ejs') %>
             </div>
 
-            <%- include('../partials/submit-button.ejs', {label: 'Valider', ariaLabel: 'Valider le mot de passe'}) %>
+            <%- include('../partials/submit-button.ejs', {label: 'Continuer', ariaLabel: 'Valider le mot de passe'}) %>
         </form>
         <p class="fr-hr-or fr-mb-2w">ou</p>
         <form action="/users/send-magic-link" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-            <%- include('../partials/submit-button.ejs', {label: 'Recevoir un lien d’identification', additionnalClass: 'fr-btn--secondary'}) %>
+            <%- include('../partials/submit-button.ejs', {label: 'Recevoir un lien de connexion', additionnalClass: 'fr-btn--secondary fr-btn--icon-left fr-icon-mail-send-fill'}) %>
         </form>
         <%- include('../partials/go-back.ejs') %>
     </div>

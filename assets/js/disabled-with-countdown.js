@@ -5,32 +5,41 @@ document.addEventListener(
 
     elements.forEach((element) => {
       const rawEndDate = element.getAttribute("data-countdown-end-date");
+      const countdownContainer = document.querySelector(".countdown-container");
+      const countdownText = document.querySelector(".countdown-time");
+
+      if (!countdownContainer || !countdownText) return;
+
       try {
         const endDateInSeconds = new Date(rawEndDate).getTime() / 1000;
         const nowInSeconds = new Date().getTime() / 1000;
         let secondsToEndDate = Math.round(endDateInSeconds - nowInSeconds);
-        let intervalId;
+
+        if (secondsToEndDate <= 0) {
+          element.disabled = false;
+          return;
+        }
+
+        countdownContainer.classList.remove("fr-hidden");
         element.disabled = true;
-        intervalId = setInterval(function () {
-          secondsToEndDate--;
 
-          const prefixText =
-            element.textContent.match(
-              /(.*)(\s+\(disponible dans \d+:\d+\))/,
-            )?.[1] || element.textContent;
-          let suffixText = "";
-
+        const updateCountdown = () => {
           if (secondsToEndDate > 0) {
             const minutes = Math.floor(secondsToEndDate / 60);
             const seconds = String(secondsToEndDate % 60).padStart(2, "0");
-            suffixText = ` (disponible dans ${minutes}:${seconds})`;
-          }
-          element.textContent = prefixText + suffixText;
-
-          if (secondsToEndDate <= 0 || Number.isNaN(secondsToEndDate)) {
+            countdownText.textContent = `Disponible dans ${minutes}:${seconds}min`;
+          } else {
+            countdownContainer.classList.add("fr-hidden");
             element.disabled = false;
             clearInterval(intervalId);
           }
+        };
+
+        updateCountdown();
+
+        let intervalId = setInterval(function () {
+          secondsToEndDate--;
+          updateCountdown();
         }, 1000);
       } catch (error) {
         // silently fails

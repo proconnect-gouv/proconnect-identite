@@ -100,6 +100,7 @@ export class CertificationDirigeantOrganizationNotCoveredError extends Error {
 export class CertificationDirigeantNoMatchError extends Error {
   constructor(
     public siren: string,
+    public organization_label: string,
     message?: string,
     options?: ErrorOptions,
   ) {

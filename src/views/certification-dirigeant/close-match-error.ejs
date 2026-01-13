@@ -1,39 +1,57 @@
+<h1 class="fr-h5">Impossible de vous certifier ⚠️</h1>
+<hr class="hr-personalized fr-mb-3w">
+
 <div>
-  <div class="fr-mb-2w">
-    <img src="/dist/alert.svg" alt="" />
-  </div>
-  <h1 class="fr-h2">Nous n’arrivons pas à certifier votre compte.</h1>
+  <p>Des discordances ont été détectées entre votre identité <b>FranceConnect</b> (affichée ici) et celle connue du <b><%= dataSourceLabel; %></b> pour <b><%= organization_label; %></b>.
 
-  <div>
-    <div class="fr-alert fr-alert--error fr-mb-2w">
-      <p class="fr-alert__title">
-        Les informations de votre identité ne correspondent pas exactement aux registres officiels.
-      </p>
-    </div>
+  <p class="fr-mb-2w fr-badge fr-badge--warning">Informations discordantes</p>
 
-    <p>
-      Des discordances ont été détectées entre votre identité <b>FranceConnect</b>
-      (affichée ici) et celle connue du <b><%= dataSourceLabel; %></b> pour <b><%= organization_label; %></b>.
+  <div class="fr-pl-1w <%= locals.matches.has('given_name') ? '' : 'info-mismatch' %>">
+    <p class="fr-mb-0 fr-text--sm">
+      Prénom
     </p>
-
-    <p>
-      Prénom <%= locals.matches.has("first_name") ? "✅" : "❌"%><br/>
+    <p class="fr-mb-2w">
+      <% if (!locals.matches.has('given_name')) { %>
+        <span class="fr-sr-only">Information discordante : </span>
+      <% } %>
       <b><%= user_info.given_name; %></b>
     </p>
-    <p>
-      Nom <%= locals.matches.has("family_name") ? "✅" : "❌"%><br/>
+  </div>
+
+  <div class="fr-pl-1w <%= locals.matches.has('family_name') ? '' : 'info-mismatch' %>">
+    <p class="fr-mb-0 fr-text--sm">
+      Nom
+    </p>
+    <p class="fr-mb-2w">
+      <% if (!locals.matches.has('family_name')) { %>
+        <span class="fr-sr-only">Information discordante : </span>
+      <% } %>
       <b><%= user_info.family_name; %></b>
     </p>
+  </div>
 
-    <% if (user_info.gender) { %>
-    <p>
-      Genre <%= locals.matches.has("gender") ? "✅" : "❌"%><br/>
+  <% if (user_info.gender) { %>
+  <div class="fr-pl-1w <%= locals.matches.has('gender') ? '' : 'info-mismatch' %>">
+    <p class="fr-mb-0 fr-text--sm">
+      Genre
+    </p>
+    <p class="fr-mb-2w">
+      <% if (!locals.matches.has('gender')) { %>
+        <span class="fr-sr-only">Information discordante : </span>
+      <% } %>
       <b><%- include('../partials/gender.ejs', {gender: user_info.gender}) %></b>
     </p>
-    <% } %>
+  </div>
+  <% } %>
 
-    <p>
-      Date de naissance <%= locals.matches.has("birth_date") ? "✅" : "❌"%><br/>
+  <div class="fr-pl-1w <%= locals.matches.has('birth_date') ? '' : 'info-mismatch' %>">
+    <p class="fr-mb-0 fr-text--sm">
+      Date de naissance
+    </p>
+    <p class="fr-mb-2w">
+      <% if (!locals.matches.has('birth_date')) { %>
+        <span class="fr-sr-only">Information discordante : </span>
+      <% } %>
       <b>
         <time
           datetime="<%= new Date(user_info.birthdate).toISOString() %>"
@@ -42,36 +60,41 @@
         </time>
       </b>
     </p>
+  </div>
 
+  <div class="fr-pl-1w <%= locals.matches.has('birth_place') ? '' : 'info-mismatch' %>">
+    <p class="fr-mb-0 fr-text--sm">
+      Commune de naissance
+    </p>
     <p>
-      Commune de naissance <%= locals.matches.has("birth_place") ? "✅" : "❌"%><br/>
+      <% if (!locals.matches.has('birth_place')) { %>
+        <span class="fr-sr-only">Information discordante : </span>
+      <% } %>
       <b><%= user_info.birthplace; %></b>
     </p>
-
-    <p>
-      <a
-        class="fr-btn fr-btn--primary fr-mb-2w"
-        href="https://annuaire-entreprises.data.gouv.fr/dirigeants/<%= locals.siren; %>"
-        rel="noopener noreferrer"
-        target="_blank"
-        <%= locals.matches.has("birth_date") ? "hidden" : "" %>
-      >
-        Vérifier sur l’Annuaire des Entreprises
-      </a>
-      <a
-        class="fr-btn fr-btn--secondary fr-mb-2w"
-          href="https://proconnect.crisp.help/fr/article/je-souhaite-corriger-mes-donnees-pour-la-certification-dirigeant-j44541/"
-          rel="noopener noreferrer"
-          target="_blank"
-      >
-        Comment corriger les données ?
-      </a>
-    </p>
-
-    <% if (locals.interactionId && locals.oidcError) { %>
-    <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--secondary">Continuer sur le service</a>
-    <% } else { %>
-    <a href="/" class="fr-btn fr-btn--secondary">Retour à l’accueil</a>
-    <% } %>
   </div>
+
+  <a
+    class="fr-btn fr-btn--primary btn--fullwidth fr-mb-2w"
+    href="https://annuaire-entreprises.data.gouv.fr/dirigeants/<%= locals.siren; %>"
+    rel="noopener noreferrer"
+    target="_blank"
+    <%= locals.matches.has("birth_date") ? "hidden" : "" %>
+  >
+    Vérifier sur l’Annuaire des Entreprises
+  </a>
+  <a
+    class="fr-btn fr-btn--secondary btn--fullwidth fr-mb-2w"
+      href="https://proconnect.crisp.help/fr/article/je-souhaite-corriger-mes-donnees-pour-la-certification-dirigeant-j44541/"
+      rel="noopener noreferrer"
+      target="_blank"
+  >
+    Comment corriger les données ?
+  </a>
+
+  <% if (locals.interactionId && locals.oidcError) { %>
+  <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--tertiary btn--fullwidth">Continuer sur le service</a>
+  <% } else { %>
+  <a href="/" class="fr-btn fr-btn--tertiary btn--fullwidth">Retour à l’accueil</a>
+  <% } %>
 </div>

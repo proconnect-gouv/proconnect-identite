@@ -42,9 +42,6 @@ describe("join organizations", () => {
     cy.contains("Enregistrer").click();
 
     cy.title().should("include", "Rattachement en cours - ProConnect");
-    cy.contains(
-      "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
-    );
 
     // Try to change org
     cy.getByLabel("Corriger l'organisation de rattachement").click();

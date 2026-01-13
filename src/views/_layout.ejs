@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <%- include('partials/head.ejs'); %>
-<body>
+<body class="<%= locals.use_dashboard_layout ? '' : 'layout-connexion' %>">
     <%- include('partials/skiplinks.ejs'); %>
     <div id="loader-bar"></div>
     <%- include('partials/header.ejs'); %>
@@ -10,15 +10,18 @@
             <%- body; %>
         </main>
     <% } else { %>
-        <main role="main" id="main" class="onboarding-container">
-            <%- body; %>
-            <div class="centered-container">
-                <img src="/dist/<%= locals.illustration ? locals.illustration : 'illu-account.svg' ;%>" alt="" />
+        <main role="main" id="main" class="main-connexion fr-py-2w">
+            <div class="fr-container">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-5">
+                        <%- body; %>
+                    </div>
+                </div>
             </div>
         </main>
     <% } %>
     <%- include('partials/footer.ejs'); %>
     <div tabindex="-1" id="aria-live-message" aria-live="assertive" class="fr-sr-only"></div>
     <noscript><p><img src="https://stats.data.gouv.fr/matomo.php?idsite=85&amp;rec=1" style="border:0;" alt="" /></p></noscript>
-  </body>
+</body>
 </html>

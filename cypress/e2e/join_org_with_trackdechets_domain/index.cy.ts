@@ -10,15 +10,10 @@ describe("join organizations", () => {
     cy.login("lion.eljonson@darkangels.world");
 
     // The user gets this suggestion because it as darkangels.world as trackdechets domain
-    cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").contains(
-      "Bnp paribas",
-    );
-
-    // Click on the suggested organization
-    cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").click();
+    cy.contains("Bnp paribas").click();
 
     // Check redirection to welcome page
-    cy.contains("Votre compte est créé !");
+    cy.contains("Compte créé ! 🎊");
 
     cy.maildevGetMessageBySubject(
       "Votre compte ProConnect a bien été créé",

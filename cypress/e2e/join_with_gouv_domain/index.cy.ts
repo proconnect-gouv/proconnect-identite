@@ -19,7 +19,7 @@ describe("join with gouv.fr domain", () => {
     ).click();
 
     cy.title().should("include", "Compte créé -");
-    cy.contains("Votre compte est créé !");
+    cy.contains("Compte créé ! 🎊");
   });
 });
 

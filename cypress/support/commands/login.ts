@@ -80,9 +80,9 @@ export function mfaLogin(email: string) {
 export function magicLinkLogin(email: string) {
   cy.contains("Email professionnel").click();
   cy.focused().type(email);
-  cy.contains("Valider").click();
+  cy.contains("Continuer").click();
 
-  cy.contains("Recevoir un lien d’identification").click();
+  cy.contains("Recevoir un lien de connexion").click();
   cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
     (email) => {
       cy.maildevVisitMessageById(email.id);

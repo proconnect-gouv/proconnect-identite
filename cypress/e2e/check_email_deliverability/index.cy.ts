@@ -19,7 +19,7 @@ describe("should suggest valid email address", () => {
     cy.get("#did-you-mean-link").click();
     cy.get('[action="/users/start-sign-in"]  [type="submit"]').click();
 
-    cy.contains("Choisir votre mot de passe");
+    cy.contains("Choisir un mot de passe");
   });
 });
 
@@ -31,6 +31,6 @@ describe("allowed whitelist email domains", () => {
     cy.get('[name="login"]').clear().type("user@vip.com");
     cy.get('[action="/users/start-sign-in"]  [type="submit"]').click();
 
-    cy.contains("Choisir votre mot de passe");
+    cy.contains("Choisir un mot de passe");
   });
 });

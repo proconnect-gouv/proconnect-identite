@@ -35,10 +35,10 @@ describe("sign-in from standard client", () => {
     cy.contains("button", "Mettre à jour mes informations").click();
 
     cy.title().should("include", "Renseigner votre identité - ");
-    cy.contains("Renseigner son identité");
+    cy.contains("Compléter votre profil");
     cy.contains("Nom").click();
     cy.focused().clear().type("Moustaki");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("standard-client");

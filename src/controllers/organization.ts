@@ -166,7 +166,7 @@ export const postJoinOrganizationMiddleware = async (
 
     if (error instanceof CertificationDirigeantNoMatchError) {
       return res.redirect(
-        `/users/certification-dirigeant/no-match-error?siren=${error.siren}`,
+        `/users/certification-dirigeant/no-match-error?siren=${error.siren}&organization_label=${encodeURIComponent(error.organization_label)}`,
       );
     }
 
@@ -345,10 +345,11 @@ export const getUnableToAutoJoinOrganizationController = async (
     const { moderation_id } = await schema.parseAsync(req.query);
     const user = getUserFromAuthenticatedSession(req);
 
-    const { cached_libelle } = await getOrganizationFromModeration({
-      user,
-      moderation_id,
-    });
+    const { cached_libelle, siret, cached_adresse } =
+      await getOrganizationFromModeration({
+        user,
+        moderation_id,
+      });
 
     return res.render("user/unable-to-auto-join-organization", {
       pageTitle: "Rattachement en cours",
@@ -357,6 +358,8 @@ export const getUnableToAutoJoinOrganizationController = async (
       given_name: user.given_name,
       family_name: user.family_name,
       organization_label: cached_libelle,
+      siret,
+      adresse: cached_adresse,
       moderation_id,
     });
   } catch (e) {
@@ -382,10 +385,11 @@ export const getModerationRejectedController = async (
     const { moderation_id } = await schema.parseAsync(req.query);
     const user = getUserFromAuthenticatedSession(req);
 
-    const { cached_libelle } = await getOrganizationFromModeration({
-      user,
-      moderation_id,
-    });
+    const { cached_libelle, siret, cached_adresse } =
+      await getOrganizationFromModeration({
+        user,
+        moderation_id,
+      });
 
     const { comment } = await getModerationById(moderation_id);
     const rejectionReason = extractRejectionReason(comment);
@@ -397,10 +401,11 @@ export const getModerationRejectedController = async (
       email: user.email,
       family_name: user.family_name,
       given_name: user.given_name,
-      rejectionReason,
-      illustration: "illu-user.svg",
-      moderation_id,
       organization_label: cached_libelle,
+      siret,
+      adresse: cached_adresse,
+      rejectionReason,
+      moderation_id,
       pageTitle: allowEditing ? "Informations à corriger" : "Demande refusée",
     });
   } catch (e) {
@@ -420,7 +425,6 @@ export async function getCertificationDirigeantOrganizationNotCoveredError(
     return res.render(
       "certification-dirigeant/organization-not-covered-error",
       {
-        illustration: "connection-lost.svg",
         oidcError: oidcErrorSchema().enum.login_required,
         interactionId: req.session.interactionId,
         pageTitle: "Certification impossible",
@@ -460,7 +464,6 @@ export async function getCertificationDirigeantCloseMatchError(
     );
 
     return res.render("certification-dirigeant/close-match-error", {
-      illustration: "connection-lost.svg",
       interactionId: req.session.interactionId,
       matches: query.matches,
       oidcError: oidcErrorSchema().enum.login_required,
@@ -485,15 +488,16 @@ export async function getCertificationDirigeantNoMatchError(
     const query = z
       .object({
         siren: z.string().length(9),
+        organization_label: z.string().optional(),
       })
       .parse(req.query);
 
     return res.render("certification-dirigeant/no-match-error", {
-      illustration: "connection-lost.svg",
       interactionId: req.session.interactionId,
       oidcError: oidcErrorSchema().enum.login_required,
       pageTitle: "Certification impossible",
       siren: query.siren,
+      organization_label: query.organization_label,
       use_dashboard_layout: false,
     });
   } catch (e) {
@@ -508,7 +512,6 @@ export async function getAccessRestrictedToPublicSectorEmailController(
 ) {
   return res.render("user/access-restricted-to-public-sector-email", {
     csrfToken: csrfToken(req),
-    illustration: "connection-lost.svg",
     pageTitle: "Email non autorisé",
   });
 }
@@ -519,7 +522,6 @@ export async function getAccessRestrictedToPrivateSectorEmailController(
   _next: NextFunction,
 ) {
   return res.render("user/access-restricted-to-private-sector-email", {
-    illustration: "connection-lost.svg",
     pageTitle: "Email non autorisé",
   });
 }

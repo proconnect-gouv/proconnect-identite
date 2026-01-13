@@ -13,9 +13,6 @@ document.addEventListener(
     var organizationInfoAdresseElement = document.getElementById(
       "organization-info-adresse",
     );
-    var organizationInfoActivitePrincipaleElement = document.getElementById(
-      "organization-info-activite-principale",
-    );
     var organizationInfoTypeEtablissementElement = document.getElementById(
       "organization-info-type-etablissement",
     );
@@ -30,7 +27,6 @@ document.addEventListener(
       organizationInfoElement.style.display = "none";
       organizationInfoLibelleElement.innerHTML = "";
       organizationInfoAdresseElement.innerHTML = "";
-      organizationInfoActivitePrincipaleElement.innerHTML = "";
       organizationInfoTypeEtablissementElement.innerHTML = "";
       organizationAlertElement.style.display = "none";
       organizationAlertContentElement.innerHTML = "";
@@ -77,11 +73,16 @@ document.addEventListener(
               );
               organizationInfoAdresseElement.innerHTML = adresse;
               organizationInfoSiretElement.innerHTML = siret;
-              organizationInfoActivitePrincipaleElement.innerHTML =
-                libelleActivitePrincipale;
               organizationInfoTypeEtablissementElement.innerHTML = siegeSocial
                 ? "Siège social"
                 : "Établissement secondaire";
+              organizationInfoTypeEtablissementElement.classList.remove(
+                "fr-badge--info",
+                "fr-badge--new",
+              );
+              organizationInfoTypeEtablissementElement.classList.add(
+                siegeSocial ? "fr-badge--info" : "fr-badge--new",
+              );
               siretSelectorElement.removeAttribute("aria-describedby");
             } else {
               organizationAlertElement.style.display = "block";

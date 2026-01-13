@@ -8,7 +8,9 @@
     data-fr-current-step="<%= currentStep %>"
     data-fr-steps="3"
   ></div>
+  <% if (nextStepTitle) { %>
   <p class="fr-stepper__details">
     <span class="fr-text--bold">Étape suivante :</span> <%= nextStepTitle %>
   </p>
+  <% } %>
 </div>

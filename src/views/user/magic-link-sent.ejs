@@ -1,18 +1,13 @@
+<h1 class="fr-h3">
+    Consultez vos e-mails
+</h1>
 <div>
-    <div class="fr-mb-3w fr-mt-3w">
-        <img src="/dist/letter.svg" alt="" class="limited-width" />
-    </div>
-    <h1 class="fr-h3">
-        Consultez vos e-mails
-    </h1>
-    <div>
-        <p>
-            Votre lien vous attend
-            <% if (locals.email) { %> à l’adresse...
-            <br aria-hidden="true">
-            <p class="fr-badge fr-badge--info fr-badge--no-icon blue-france email-badge-lowercase"><%= email %></p>
-            <% } %>
-        </p>
-        <p>Cliquez sur le lien dans l’email pour vous connecter.</p>
-    </div>
+    <p>
+        Votre lien vous attend
+        <% if (locals.email) { %> à l’adresse...
+        <br aria-hidden="true">
+        <p class="fr-badge fr-badge--info fr-badge--no-icon blue-france email-badge-lowercase"><%= email %></p>
+        <% } %>
+    </p>
+    <p>Cliquez sur le lien dans l’email pour vous connecter.</p>
 </div>
