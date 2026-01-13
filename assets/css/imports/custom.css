@@ -31,8 +31,12 @@
   background-color: #f6f6f6 !important;
 }
 
-.centered-content {
+.justify-center {
   justify-content: center !important;
+}
+
+.centered-content {
+  text-align: center;
 }
 
 /* display a loading bar on page load */

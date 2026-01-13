@@ -1,8 +1,7 @@
 <div>
     <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
-    <h1 class="fr-h3">
-        Votre organisation de rattachement
-    </h1>
+    <h1 class="fr-h5 fr-mb-1w">Rejoindre votre organisation</h1>
+    <hr class="hr-personalized fr-mb-3w">
     <div>
         <form id="form-join-organization" action="/users/join-organization" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -16,6 +15,7 @@
                 </label>
                 <input
                     id="siret-selector"
+                    placeholder="ex : 13002526500013"
                     class="fr-input"
                     required
                     type="text"
@@ -27,12 +27,13 @@
                     <% } %>
                 >
                 <p class="fr-pt-2w">
+                    👉 
                     <a class="fr-link"
                        href="https://annuaire-entreprises.data.gouv.fr/<%= useGendarmerieSearchHint ? 'rechercher?terme=r%C3%A9gion+de+gendarmerie&' : '?' %>mtm_campaign=proconnect"
                        target="_blank"
                        rel="noopener noreferrer"
                     >
-                        Retrouver votre SIRET sur L’Annuaire des Entreprises
+                        Retrouvez-le sur L’Annuaire des Entreprises
                     </a>
                 </p>
             </div>
@@ -42,13 +43,12 @@
                     <div id="submit-join-organization" class="fr-tile fr-enlarge-link fr-tile--horizontal">
                         <div class="fr-tile__body">
                             <h2 class="fr-tile__title">
-                                <b><a id="organization-info-libelle" class="fr-tile__link" href role="button"></a></b>
+                                <a id="organization-info-libelle" class="fr-tile__link" href role="button"></a>
                             </h2>
                             <p class="fr-tile__desc fr-pb-0"><b>SIRET <span id="organization-info-siret"></span></b></p>
-                            <p id="organization-info-adresse" class="fr-tile__desc fr-pb-0"></p>
-                            <p id="organization-info-activite-principale" class="fr-tile__desc fr-pb-0"></p>
-                            <p class="fr-tile__desc">
-                                <span id="organization-info-type-etablissement" class="fr-badge"></span>
+                            <p id="organization-info-adresse" class="fr-tile__desc fr-pb-1w"></p>
+                            <p class="fr-tile__desc fr-pb-0">
+                                <span id="organization-info-type-etablissement" class="fr-badge fr-badge--no-icon"></span>
                             </p>
                         </div>
                     </div>
