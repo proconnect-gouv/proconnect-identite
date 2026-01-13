@@ -9,10 +9,7 @@ import {
   updatePersonalInformationsForRegistration,
 } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import {
-  nameSchema,
-  phoneNumberSchema,
-} from "../../services/custom-zod-schemas";
+import { jobSchema, nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 
 export const getPersonalInformationsController = async (
@@ -55,19 +52,17 @@ export const postPersonalInformationsController = async (
     const schema = z.object({
       given_name: nameSchema(),
       family_name: nameSchema(),
-      phone_number: phoneNumberSchema(),
+      job: jobSchema(),
     });
 
-    const { given_name, family_name, phone_number } = await schema.parseAsync(
-      req.body,
-    );
+    const { given_name, family_name, job } = await schema.parseAsync(req.body);
 
     const updatedUser = await updatePersonalInformationsForRegistration(
       getUserFromAuthenticatedSession(req).id,
       {
         given_name,
         family_name,
-        phone_number,
+        job,
       },
     );
 

@@ -1,21 +1,39 @@
 <div>
-    <div class="fr-mb-2w">
-        <img src="/dist/check.svg" alt="" class="limited-width"/>
-    </div>
     <h1 class="fr-h3">
         <% if (locals.showInclusionConnectOnboardingHelp) { %>
             Votre compte ProConnect est à jour.
-        <% } else { %>
-            Votre compte est créé !
         <% } %>
     </h1>
+    <% if (!locals.showInclusionConnectOnboardingHelp) { %>
+        <%- include('../partials/stepper.ejs', {currentStep: "3", stepsTitle: "Compte créé ! 🎊", nextStepTitle: null }); %>
+    <% } %>
     <div>
-        <p>
-            Vous avez reçu un email de confirmation.
-        </p>
+        <p class="fr-mb-0">Prénom</p>
+        <p class="fr-mb-2w"><b><%= user.given_name %></b></p>
+        <p class="fr-mb-0">Nom</p>
+        <p class="fr-mb-2w"><b><%= user.family_name %></b></p>
+        <p class="fr-mb-0">Email professionnel</p>
+        <p class="fr-mb-2w"><b><%= user.email %></b></p>
+        <p class="fr-mb-0">Rôle</p>
+        <p class="fr-mb-2w"><b><%= user.job %></b></p>
+
+        <% if (locals.organization) { %>
+            <div class="fr-tile fr-tile--horizontal fr-mb-2w">
+                <div class="fr-tile__body">
+                    <h2 class="fr-tile__title">
+                        <%= organization.libelle %>
+                    </h2>
+                    <% if (organization.adresse) { %>
+                        <p class="fr-tile__desc fr-pb-0"><%= organization.adresse %></p>
+                    <% } %>
+                    <% if (organization.siret) { %>
+                        <p class="fr-tile__desc fr-pb-0"><b>SIRET : <%= organization.siret %></b></p>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
         <form action="/users/welcome" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-
             <%- include('../partials/submit-button.ejs', {label: 'Continuer'}) %>
         </form>
     </div>
