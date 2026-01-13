@@ -244,57 +244,7 @@ export const requireBrowserIsTrusted: NavigationGuardNode = {
   },
 };
 
-export const requireUserIsFranceConnected: NavigationGuardNode = {
-  previous: requireBrowserIsTrusted,
-  guard: async (req) => {
-    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
-
-    const { certificationDirigeantRequested: isRequested } =
-      await CertificationSessionSchema.parseAsync(req.session);
-    if (!isRequested) return { type: "next" };
-
-    const { id: userId } = getUserFromAuthenticatedSession(req);
-    const isVerified = await isUserVerifiedWithFranceconnect(userId);
-
-    if (isVerified) return { type: "next" };
-
-    return { type: "redirect", url: "/users/certification-dirigeant" };
-  },
-};
-
-export const requireUserHasPersonalInformations: NavigationGuardNode = {
-  previous: requireUserIsFranceConnected,
-  guard: (req) => {
-    const { given_name, family_name } = getUserFromAuthenticatedSession(req);
-    if (isEmpty(given_name) || isEmpty(family_name)) {
-      return { type: "redirect", url: "/users/personal-information" };
-    }
-
-    return { type: "next" };
-  },
-};
-
-export const requireUserHasAtLeastOneOrganization: NavigationGuardNode = {
-  previous: requireUserHasPersonalInformations,
-  guard: async (req) => {
-    if (
-      isEmpty(
-        await getOrganizationsByUserId(getUserFromAuthenticatedSession(req).id),
-      )
-    ) {
-      return {
-        type: "redirect",
-        url: addQueryParameters("/users/join-organization", {
-          siret_hint: req.session.siretHint,
-        }),
-      };
-    }
-
-    return { type: "next" };
-  },
-};
-
-export const requireUserCanAccessApp = requireUserHasAtLeastOneOrganization;
+export const requireUserCanAccessApp = requireBrowserIsTrusted;
 
 export const requireUserHasLoggedInRecently: NavigationGuardNode = {
   previous: requireUserCanAccessApp,
@@ -337,9 +287,63 @@ export const requireUserTwoFactorAuthForAdmin: NavigationGuardNode = {
 
 export const requireUserCanAccessAdmin = requireUserTwoFactorAuthForAdmin;
 
+export const requireUserIsFranceConnected: NavigationGuardNode = {
+  previous: requireBrowserIsTrusted,
+  guard: async (req) => {
+    if (!req.session.interactionId) return { type: "next" };
+    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
+
+    const { certificationDirigeantRequested: isRequested } =
+      await CertificationSessionSchema.parseAsync(req.session);
+    if (!isRequested) return { type: "next" };
+
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const isVerified = await isUserVerifiedWithFranceconnect(userId);
+
+    if (isVerified) return { type: "next" };
+
+    return { type: "redirect", url: "/users/certification-dirigeant" };
+  },
+};
+
+export const requireUserHasPersonalInformations: NavigationGuardNode = {
+  previous: requireUserIsFranceConnected,
+  guard: (req) => {
+    if (!req.session.interactionId) return { type: "next" };
+    const { given_name, family_name } = getUserFromAuthenticatedSession(req);
+    if (isEmpty(given_name) || isEmpty(family_name)) {
+      return { type: "redirect", url: "/users/personal-information" };
+    }
+
+    return { type: "next" };
+  },
+};
+
+export const requireUserHasAtLeastOneOrganization: NavigationGuardNode = {
+  previous: requireUserHasPersonalInformations,
+  guard: async (req) => {
+    if (!req.session.interactionId) return { type: "next" };
+    if (
+      isEmpty(
+        await getOrganizationsByUserId(getUserFromAuthenticatedSession(req).id),
+      )
+    ) {
+      return {
+        type: "redirect",
+        url: addQueryParameters("/users/join-organization", {
+          siret_hint: req.session.siretHint,
+        }),
+      };
+    }
+
+    return { type: "next" };
+  },
+};
+
 const requireUserBelongsToHintedOrganization: NavigationGuardNode = {
   previous: requireUserHasAtLeastOneOrganization,
   guard: async (req) => {
+    if (!req.session.interactionId) return { type: "next" };
     if (!req.session.siretHint) {
       return { type: "next" };
     }
@@ -374,6 +378,7 @@ const requireUserBelongsToHintedOrganization: NavigationGuardNode = {
 export const requireUserHasSelectedAnOrganization: NavigationGuardNode = {
   previous: requireUserBelongsToHintedOrganization,
   guard: async (req) => {
+    if (!req.session.interactionId) return { type: "next" };
     if (!req.session.mustReturnOneOrganizationInPayload)
       return { type: "next" };
 
@@ -407,6 +412,7 @@ export const requireUserHasSelectedAnOrganization: NavigationGuardNode = {
 export const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
   previous: requireUserHasSelectedAnOrganization,
   guard: async (req) => {
+    if (!req.session.interactionId) return { type: "next" };
     if (!req.session.mustReturnOneOrganizationInPayload)
       return { type: "next" };
 

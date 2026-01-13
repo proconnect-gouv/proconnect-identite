@@ -24,6 +24,10 @@ describe("join organizations", () => {
 
     cy.login("unused2@yopmail.com");
 
+    cy.title().should("include", "Accueil - ProConnect");
+    cy.contains("Organisations").click();
+    cy.contains("Rejoindre une organisation").click();
+
     cy.get('[name="siret"]').type("54205118000066");
     cy.get('[type="submit"]').click();
 

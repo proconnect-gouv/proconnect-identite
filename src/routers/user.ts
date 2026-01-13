@@ -96,7 +96,6 @@ import {
   requireEmailInSession,
   requireIsUser,
   requireUserCanAccessAdmin,
-  requireUserCanAccessApp,
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
   requireUserHasPersonalInformations,
@@ -526,7 +525,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/quit-organization/:id",
-    ...navigationGuardChain(requireUserCanAccessApp),
+    ...navigationGuardChain(requireUserHasAtLeastOneOrganization),
     csrfProtectionMiddleware,
     postQuitUserOrganizationController,
   );

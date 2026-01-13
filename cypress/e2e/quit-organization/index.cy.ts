@@ -37,6 +37,7 @@ describe("quit the organization", () => {
       "Quitter l'organisation Services de l'etat pour la facturation electronique - Destination etat via chorus pro",
     ).click();
 
-    cy.title().should("include", "Rejoindre une organisation -");
+    cy.title().should("include", "Organisations -");
+    cy.contains("Vous n’êtes attaché à aucune organisation.");
   });
 });

@@ -6,8 +6,10 @@ describe("Signup into new entreprise unipersonnelle", () => {
   });
 
   it("creates a user", function () {
-    // Visit the signup page
-    cy.visit("/users/start-sign-in");
+    cy.origin("http://localhost:4000", () => {
+      cy.visit("/");
+      cy.contains("S’identifier avec ProConnect").click();
+    });
 
     // Sign up with the previously created inbox
     cy.get('[name="login"]').type("lion.eljonson@darkangels.world");
@@ -37,8 +39,8 @@ describe("Signup into new entreprise unipersonnelle", () => {
     // Click on "continue" on the welcome page
     cy.get('[type="submit"]').click();
 
-    // Check redirection to home page
-    cy.contains("Votre compte ProConnect");
+    // Check redirection to the oidc client
+    cy.contains("standard-client");
 
     cy.maildevGetMessageBySubject(
       "Votre compte ProConnect a bien été créé",

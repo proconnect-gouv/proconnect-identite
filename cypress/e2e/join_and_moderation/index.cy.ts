@@ -6,7 +6,7 @@ describe("join and moderation", () => {
   });
 
   it("will be moderated", function () {
-    cy.visit("/");
+    cy.visit("/users/join-organization");
 
     cy.login("lion.eljonson@darkangels.world");
 
