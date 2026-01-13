@@ -1,7 +1,7 @@
 <div>
     <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
     <h1 class="fr-h3">
-        Confirmer votre adresse
+        Confirmer votre adresse email
     </h1>
     <% if (locals.needs_inclusionconnect_onboarding_help) { %>
         <div class="fr-callout fr-callout--blue-ecume fr-icon-lightbulb-line">
@@ -13,17 +13,18 @@
     <div>
         <form id="verify-email" action="/users/verify-email" method="post" class="fr-mb-4w">
             <% if (codeSent || newCodeSent) { %>
-                <div class="fr-alert fr-alert--success fr-mb-4w">
-                    <p>Un <% if (newCodeSent) { %>nouveau <% } %>code de vérification a été envoyé à <%= email; %>.
+                <div class="fr-alert fr-alert--info fr-mb-4w">
+                    <h2 class="fr-h6">Code de vérification envoyé</h2>
+                    <p>Vérifiez les emails reçus par <b><%= email; %></b>.
                     </p>
                 </div>
             <% } %>
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
             <div class="fr-input-group fr-mb-2w">
                 <label class="fr-label" for="verify_email_token">
-                    Vérifiez vos emails et insérez le code à 10 chiffres.
+                    Code de confirmation
                     <span class="fr-hint-text">
-                        Code de confirmation
+                        Insérer le code à 10 chiffres reçu par email
                     </span>
                 </label>
                 <input
@@ -41,21 +42,20 @@
             method="post"
         >
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-            <button data-countdown-end-date="<%= countdownEndDate %>"
-            class="fr-btn fr-btn--tertiary fr-mb-2w disabled-with-countdown btn--fullwidth"
+            <button 
+                data-countdown-end-date="<%= countdownEndDate %>"
+                class="fr-btn fr-btn--tertiary fr-mb-2w disabled-with-countdown btn--fullwidth"
             >
-                Recevoir un nouvel email
+                Recevoir un nouveau code
             </button>
+            <p class="countdown-container blue-france fr-hidden centered-content">
+                <b>
+                    <span aria-hidden="true" class="fr-icon-timer-line"></span>
+                    <span class="countdown-time"></span>
+                </b>
+            </p>
         </form>
     </div>
-    <a
-        class="fr-link"
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://proconnect.crisp.help/fr/article/comment-regler-les-problematiques-liees-au-code-de-confirmation-a-10-chiffres-jyepuz/"
-    >
-        Vous ne recevez rien ? Consulter la page d'aide
-    </a>
     <%- include('../partials/go-back.ejs') %>
 </div>
 <script type="module" src="<%= js('disabled-with-countdown.js') %>"></script>
