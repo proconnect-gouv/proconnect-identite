@@ -7,6 +7,9 @@ document.addEventListener(
     var organizationInfoLibelleElement = document.getElementById(
       "organization-info-libelle",
     );
+    var organizationInfoSiretElement = document.getElementById(
+      "organization-info-siret",
+    );
     var organizationInfoAdresseElement = document.getElementById(
       "organization-info-adresse",
     );
@@ -52,6 +55,7 @@ document.addEventListener(
             var response = JSON.parse(xmlhttp.response);
             var libelle = response.organizationInfo.libelle;
             var adresse = response.organizationInfo.adresse;
+            var siret = response.organizationInfo.siret;
             var libelleActivitePrincipale =
               response.organizationInfo.libelleActivitePrincipale;
             var estActive = response.organizationInfo.estActive;
@@ -67,6 +71,7 @@ document.addEventListener(
                 "Enregistrer l'organisation " + libelle,
               );
               organizationInfoAdresseElement.innerHTML = adresse;
+              organizationInfoSiretElement.innerHTML = siret;
               organizationInfoActivitePrincipaleElement.innerHTML =
                 libelleActivitePrincipale;
               siretSelectorElement.removeAttribute("aria-describedby");
