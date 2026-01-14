@@ -11,6 +11,7 @@
                                                   cached_libelle,
                                                   cached_adresse,
                                                   cached_libelle_activite_principale,
+                                                  cached_siege_social,
                                                   verification_type
                                               }) => { %>
                     <div class="fr-col-12 fr-col-lg-10">
@@ -31,9 +32,16 @@
                                 </h3>
                                 <p class="fr-tile__desc fr-pb-0"><b>SIRET <%= siret; %></b></p>
                                 <p class="fr-tile__desc fr-pb-0"><%= cached_adresse; %></p>
-                                <p class="fr-tile__desc">
+                                <p class="fr-tile__desc<%= typeof cached_siege_social === 'boolean' ? ' fr-pb-0' : '' %>">
                                     Activité principale (NAF/APE) : <%= cached_libelle_activite_principale; %>
                                 </p>
+                                <% if (typeof cached_siege_social === 'boolean') { %>
+                                <p class="fr-tile__desc">
+                                    <span class="fr-badge">
+                                        <%= cached_siege_social ? "Siège social" : "Établissement secondaire"; %>
+                                    </span>
+                                </p>
+                                <% } %>
                                 <p>
                                     <strong>
                                         <small>
@@ -65,6 +73,7 @@
                                                          cached_libelle,
                                                          cached_adresse,
                                                          cached_libelle_activite_principale,
+                                                         cached_siege_social,
                                                          moderation_id
                                                      }) => { %>
                     <div class="fr-col-12 fr-col-lg-10">
@@ -80,7 +89,16 @@
                                 </h3>
                                 <p class="fr-tile__desc fr-pb-0"><%= cached_adresse; %></p>
                                 <p class="fr-tile__desc fr-pb-0"><b>SIRET <%= siret; %></b></p>
-                                <p class="fr-tile__desc"><%= cached_libelle_activite_principale; %></p>
+                                <p class="fr-tile__desc<%= typeof cached_siege_social === 'boolean' ? ' fr-pb-0' : '' %>">
+                                    <%= cached_libelle_activite_principale; %>
+                                </p>
+                                <% if (typeof cached_siege_social === 'boolean') { %>
+                                    <p class="fr-tile__desc">
+                                    <span class="fr-badge">
+                                        <%= cached_siege_social ? "Siège social" : "Établissement secondaire"; %>
+                                    </span>
+                                    </p>
+                                <% } %>
                                 <p class="fr-card__detail fr-icon-time-line fr-mb-2w">
                                     Votre demande pour représenter cette organisation en cours de traitement
                                 </p>

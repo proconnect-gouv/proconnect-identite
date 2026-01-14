@@ -16,6 +16,9 @@ document.addEventListener(
     var organizationInfoActivitePrincipaleElement = document.getElementById(
       "organization-info-activite-principale",
     );
+    var organizationInfoTypeEtablissementElement = document.getElementById(
+      "organization-info-type-etablissement",
+    );
     var organizationAlertElement =
       document.getElementById("organization-alert");
     var organizationAlertContentElement =
@@ -28,6 +31,7 @@ document.addEventListener(
       organizationInfoLibelleElement.innerHTML = "";
       organizationInfoAdresseElement.innerHTML = "";
       organizationInfoActivitePrincipaleElement.innerHTML = "";
+      organizationInfoTypeEtablissementElement.innerHTML = "";
       organizationAlertElement.style.display = "none";
       organizationAlertContentElement.innerHTML = "";
       submitElement.removeAttribute("aria-label");
@@ -58,6 +62,7 @@ document.addEventListener(
             var siret = response.organizationInfo.siret;
             var libelleActivitePrincipale =
               response.organizationInfo.libelleActivitePrincipale;
+            var siegeSocial = response.organizationInfo.siegeSocial;
             var estActive = response.organizationInfo.estActive;
             if (estActive) {
               organizationInfoElement.style.display = "block";
@@ -74,6 +79,9 @@ document.addEventListener(
               organizationInfoSiretElement.innerHTML = siret;
               organizationInfoActivitePrincipaleElement.innerHTML =
                 libelleActivitePrincipale;
+              organizationInfoTypeEtablissementElement.innerHTML = siegeSocial
+                ? "Siège social"
+                : "Établissement secondaire";
               siretSelectorElement.removeAttribute("aria-describedby");
             } else {
               organizationAlertElement.style.display = "block";

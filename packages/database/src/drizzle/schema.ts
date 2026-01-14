@@ -49,47 +49,6 @@ export const users_oidc_clients = pgTable(
   ],
 );
 
-export const organizations = pgTable(
-  "organizations",
-  {
-    id: serial().primaryKey().notNull(),
-    siret: varchar().notNull(),
-    created_at: timestamp({ withTimezone: true, mode: "string" })
-      .default("1970-01-01 00:00:00")
-      .notNull(),
-    updated_at: timestamp({ withTimezone: true, mode: "string" })
-      .default("1970-01-01 00:00:00")
-      .notNull(),
-    cached_libelle: varchar(),
-    cached_nom_complet: varchar(),
-    cached_enseigne: varchar(),
-    cached_tranche_effectifs: varchar(),
-    cached_tranche_effectifs_unite_legale: varchar(),
-    cached_libelle_tranche_effectif: varchar(),
-    cached_etat_administratif: varchar(),
-    cached_est_active: boolean(),
-    cached_statut_diffusion: varchar(),
-    cached_est_diffusible: boolean(),
-    cached_adresse: varchar(),
-    cached_code_postal: varchar(),
-    cached_activite_principale: varchar(),
-    cached_libelle_activite_principale: varchar(),
-    cached_categorie_juridique: varchar(),
-    cached_libelle_categorie_juridique: varchar(),
-    organization_info_fetched_at: timestamp({
-      withTimezone: true,
-      mode: "string",
-    }),
-    cached_code_officiel_geographique: varchar(),
-  },
-  (table) => [
-    uniqueIndex("index_organizations_on_siret").using(
-      "btree",
-      table.siret.asc().nullsLast().op("text_ops"),
-    ),
-  ],
-);
-
 export const authenticators = pgTable(
   "authenticators",
   {
@@ -284,6 +243,48 @@ export const franceconnect_userinfo = pgTable(
       foreignColumns: [users.id],
       name: "franceconnect_userinfo_user_id_fkey",
     }).onDelete("cascade"),
+  ],
+);
+
+export const organizations = pgTable(
+  "organizations",
+  {
+    id: serial().primaryKey().notNull(),
+    siret: varchar().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .default("1970-01-01 00:00:00")
+      .notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" })
+      .default("1970-01-01 00:00:00")
+      .notNull(),
+    cached_libelle: varchar(),
+    cached_nom_complet: varchar(),
+    cached_enseigne: varchar(),
+    cached_tranche_effectifs: varchar(),
+    cached_tranche_effectifs_unite_legale: varchar(),
+    cached_libelle_tranche_effectif: varchar(),
+    cached_etat_administratif: varchar(),
+    cached_est_active: boolean(),
+    cached_statut_diffusion: varchar(),
+    cached_est_diffusible: boolean(),
+    cached_adresse: varchar(),
+    cached_code_postal: varchar(),
+    cached_activite_principale: varchar(),
+    cached_libelle_activite_principale: varchar(),
+    cached_categorie_juridique: varchar(),
+    cached_libelle_categorie_juridique: varchar(),
+    organization_info_fetched_at: timestamp({
+      withTimezone: true,
+      mode: "string",
+    }),
+    cached_code_officiel_geographique: varchar(),
+    cached_siege_social: boolean(),
+  },
+  (table) => [
+    uniqueIndex("index_organizations_on_siret").using(
+      "btree",
+      table.siret.asc().nullsLast().op("text_ops"),
+    ),
   ],
 );
 
