@@ -1,6 +1,9 @@
 exports[`Database migration with in-memory PostgreSQL > bootstraps schema from scratch on clean database 1`] = `
 [
   {
+    "table_name": "audit_logs"
+  },
+  {
     "table_name": "authenticators"
   },
   {

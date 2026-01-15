@@ -3,7 +3,9 @@ import {
   bigint,
   boolean,
   foreignKey,
+  index,
   integer,
+  jsonb,
   pgTable,
   primaryKey,
   serial,
@@ -284,6 +286,48 @@ export const franceconnect_userinfo = pgTable(
       foreignColumns: [users.id],
       name: "franceconnect_userinfo_user_id_fkey",
     }).onDelete("cascade"),
+  ],
+);
+
+export const audit_logs = pgTable(
+  "audit_logs",
+  {
+    id: serial().primaryKey().notNull(),
+    table_name: varchar({ length: 100 }).notNull(),
+    record_id: integer().notNull(),
+    action: varchar({ length: 20 }).notNull(),
+    old_values: jsonb(),
+    new_values: jsonb(),
+    changed_fields: text().array(),
+    user_id: integer(),
+    actor_email: varchar({ length: 255 }),
+    actor_type: varchar({ length: 50 }).default("'system'"),
+    migration_name: varchar({ length: 100 }),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("idx_audit_logs_created_at").using(
+      "btree",
+      table.created_at.asc().nullsLast().op("timestamptz_ops"),
+    ),
+    index("idx_audit_logs_migration")
+      .using("btree", table.migration_name.asc().nullsLast().op("text_ops"))
+      .where(sql`(migration_name IS NOT NULL)`),
+    index("idx_audit_logs_table_record").using(
+      "btree",
+      table.table_name.asc().nullsLast().op("text_ops"),
+      table.record_id.asc().nullsLast().op("text_ops"),
+    ),
+    index("idx_audit_logs_user_id")
+      .using("btree", table.user_id.asc().nullsLast().op("int4_ops"))
+      .where(sql`(user_id IS NOT NULL)`),
+    foreignKey({
+      columns: [table.user_id],
+      foreignColumns: [users.id],
+      name: "audit_logs_user_id_fkey",
+    }).onDelete("set null"),
   ],
 );
 
