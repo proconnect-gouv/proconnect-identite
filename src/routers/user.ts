@@ -94,7 +94,6 @@ import {
   navigationGuardChain,
   requireBrowserIsTrusted,
   requireCredentialPromptRequirements,
-  requireEmailInSession,
   requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
@@ -135,13 +134,13 @@ export const userRouter = () => {
 
   userRouter.get(
     "/inclusionconnect-welcome",
-    ...navigationGuardChain(requireEmailInSession),
+    guard.emailInSession,
     csrfProtectionMiddleware,
     getInclusionconnectWelcomeController,
   );
   userRouter.post(
     "/inclusionconnect-welcome",
-    ...navigationGuardChain(requireEmailInSession),
+    guard.emailInSession,
     csrfProtectionMiddleware,
     postInclusionconnectWelcomeController,
   );

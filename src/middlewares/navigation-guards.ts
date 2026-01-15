@@ -135,25 +135,28 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
 }
 
 export const guard = {
+  emailInSession: middleware(requireEmailInSession),
   isUser: middleware(requireIsUser),
 };
 
-// redirect user to start sign-in page if no email is available in session
-export const requireEmailInSession: NavigationGuardNode = {
-  previous: asLegacyGuard(requireIsUser),
-  guard: (req) => {
-    if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
-      return { type: "redirect", url: `/users/start-sign-in` };
-    }
+export async function requireEmailInSession(
+  req: Request,
+): Promise<GuardResult<{ email: string }>> {
+  const prev = await requireIsUser(req);
+  if (!("ok" in prev)) return prev;
 
-    return { type: "next" };
-  },
-};
+  const email = getEmailFromUnauthenticatedSession(req);
+  if (isEmpty(email)) {
+    return { redirect: "/users/start-sign-in" };
+  }
+
+  return { ok: true, email: email! };
+}
 
 // redirect user to inclusionconnect welcome page if needed
 export const requireUserHasSeenInclusionconnectWelcomePage: NavigationGuardNode =
   {
-    previous: requireEmailInSession,
+    previous: asLegacyGuard(requireEmailInSession),
     guard: (req) => {
       if (
         getPartialUserFromUnauthenticatedSession(req)
