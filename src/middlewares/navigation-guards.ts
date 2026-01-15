@@ -66,6 +66,8 @@ export type Send = { send: true };
 export type Pass<T> = { ok: true } & T;
 export type GuardResult<T> = Pass<T> | Redirect | Send;
 
+const is_ok = <T>(result: GuardResult<T>): result is Pass<T> => "ok" in result;
+
 export type InteractionContext = {
   certificationDirigeantRequested: boolean | undefined;
   interactionId: string;
@@ -116,7 +118,7 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
  */
 async function requireUserHasSelectedAnOrganizationMiddleware(req: Request) {
   const prev = await requireUserHasAtLeastOneOrganization(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const { user, interaction } = prev;
 
@@ -129,7 +131,7 @@ async function requireUserHasSelectedAnOrganizationMiddleware(req: Request) {
     user,
     interaction,
   );
-  if (!("ok" in result)) return result;
+  if (!is_ok(result)) return result;
 
   return requireUserHasSelectedAnOrganization(
     user,
@@ -158,7 +160,7 @@ export async function requireEmailInSession(
   req: Request,
 ): Promise<GuardResult<{ email: string }>> {
   const prev = await requireIsUser(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const email = getEmailFromUnauthenticatedSession(req);
   if (isEmpty(email)) {
@@ -172,7 +174,7 @@ export async function requireCredentialPromptRequirements(
   req: Request,
 ): Promise<GuardResult<{ email: string }>> {
   const prev = await requireEmailInSession(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   if (
     getPartialUserFromUnauthenticatedSession(req)
@@ -188,7 +190,7 @@ export async function requireUserIsConnected(
   req: Request,
 ): Promise<GuardResult<{ user: User }>> {
   const prev = await requireIsUser(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   if (req.method === "HEAD") {
     return { send: true };
@@ -210,7 +212,7 @@ export async function requireUserHasConnectedRecently(
   req: Request,
 ): Promise<GuardResult<{ user: User }>> {
   const prev = await requireUserIsConnected(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
@@ -226,7 +228,7 @@ export async function requireUserIsVerified(
   req: Request,
 ): Promise<GuardResult<{ user: User }>> {
   const prev = await requireUserIsConnected(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const { email, email_verified } = prev.user;
   const needs_email_verification_renewal =
@@ -247,7 +249,7 @@ async function requireUserTwoFactorAuth(
   req: Request,
 ): Promise<GuardResult<{ user: User }>> {
   const prev = await requireUserIsVerified(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const { id: user_id } = prev.user;
   if (
@@ -269,7 +271,7 @@ export async function requireBrowserIsTrusted(
   req: Request,
 ): Promise<GuardResult<{ user: User }>> {
   const prev = await requireUserTwoFactorAuth(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   if (!isBrowserTrustedForUser(req)) {
     return { redirect: "/users/verify-email?notification=browser_not_trusted" };
@@ -284,7 +286,7 @@ export async function requireUserHasLoggedInRecently(
   req: Request,
 ): Promise<GuardResult<{ user: User }>> {
   const prev = await requireUserCanAccessApp(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
@@ -300,7 +302,7 @@ export async function requireUserTwoFactorAuthForAdmin(
   req: Request,
 ): Promise<GuardResult<{ user: User }>> {
   const prev = await requireUserHasLoggedInRecently(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const { id: user_id } = prev.user;
 
@@ -323,7 +325,7 @@ export async function requireUserHasAtLeastOneOrganization(
   GuardResult<{ user: User; interaction: InteractionContext | undefined }>
 > {
   const prev = await requireBrowserIsTrusted(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const interaction = getInteractionContext(req);
 
@@ -602,7 +604,7 @@ async function requireBranchingGuards(
     user,
     selectedOrganizationId,
   );
-  if (!("ok" in result)) return result;
+  if (!is_ok(result)) return result;
 
   return requireUserHasBeenGreetedForJoiningOrganization(
     user,
@@ -622,22 +624,22 @@ async function requireOrganizationSelectionChain(
     user,
     certificationDirigeantRequested,
   );
-  if (!("ok" in result)) return result;
+  if (!is_ok(result)) return result;
 
   result = await requireSelectedOrganizationToBeFlaggedAsPending(
     user,
     certificationDirigeantRequested,
   );
-  if (!("ok" in result)) return result;
+  if (!is_ok(result)) return result;
 
   result = await requireUserIsFranceConnected(user);
-  if (!("ok" in result)) return result;
+  if (!is_ok(result)) return result;
 
   result = await requireUserHasPersonalInformations(user);
-  if (!("ok" in result)) return result;
+  if (!is_ok(result)) return result;
 
   result = await requireUserPassedCertificationDirigeant(user);
-  if (!("ok" in result)) return result;
+  if (!is_ok(result)) return result;
 
   // Get selected org for scoped branching guards
   const selectedOrganizationId = await getSelectedOrganizationId(user.id);
@@ -654,10 +656,7 @@ async function requireInteractionChain(
   interaction: InteractionContext,
 ): Promise<GuardResult<{ user: User }>> {
   let result = await requireUserBelongsToHintedOrganization(user, interaction);
-  if (!("ok" in result)) return result;
-
-  result = await requireUserHasPersonalInformations(user);
-  if (!("ok" in result)) return result;
+  if (!is_ok(result)) return result;
 
   if (interaction.mustReturnOneOrganizationInPayload) {
     // Full org selection and certification chain
@@ -666,7 +665,10 @@ async function requireInteractionChain(
       interaction.certificationDirigeantRequested,
     );
   } else {
-    // No org selection required - just run branching guards
+    // No org selection required - check personal info then run branching guards
+    result = await requireUserHasPersonalInformations(user);
+    if (!is_ok(result)) return result;
+
     return requireBranchingGuards(user, undefined);
   }
 }
@@ -679,7 +681,7 @@ async function requireSignInRequirements(
   req: Request,
 ): Promise<GuardResult<{ user: User }>> {
   const prev = await requireUserHasAtLeastOneOrganization(req);
-  if (!("ok" in prev)) return prev;
+  if (!is_ok(prev)) return prev;
 
   const { user, interaction } = prev;
 
