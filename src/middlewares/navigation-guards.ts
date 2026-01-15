@@ -61,10 +61,10 @@ const getReferrerPath = (req: Request) => {
   return originPath || referrerPath || undefined;
 };
 
-type Redirect = { redirect: string };
-type Send = { send: true };
-type Pass<T> = { ok: true } & T;
-type GuardResult<T> = Pass<T> | Redirect | Send;
+export type Redirect = { redirect: string };
+export type Send = { send: true };
+export type Pass<T> = { ok: true } & T;
+export type GuardResult<T> = Pass<T> | Redirect | Send;
 
 function middleware<T>(
   fn: (req: Request) => Promise<GuardResult<T>>,
