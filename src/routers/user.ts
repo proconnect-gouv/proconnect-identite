@@ -93,7 +93,6 @@ import {
   guard,
   navigationGuardChain,
   requireBrowserIsTrusted,
-  requireCredentialPromptRequirements,
   requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
@@ -145,13 +144,13 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/sign-in",
-    ...navigationGuardChain(requireCredentialPromptRequirements),
+    guard.credentialPromptReady,
     csrfProtectionMiddleware,
     getSignInController,
   );
   userRouter.post(
     "/sign-in",
-    ...navigationGuardChain(requireCredentialPromptRequirements),
+    guard.credentialPromptReady,
     csrfProtectionMiddleware,
     passwordRateLimiterMiddleware,
     postSignInMiddleware,
@@ -160,13 +159,13 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/sign-up",
-    ...navigationGuardChain(requireCredentialPromptRequirements),
+    guard.credentialPromptReady,
     csrfProtectionMiddleware,
     getSignUpController,
   );
   userRouter.post(
     "/sign-up",
-    ...navigationGuardChain(requireCredentialPromptRequirements),
+    guard.credentialPromptReady,
     csrfProtectionMiddleware,
     postSignUpController,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -268,7 +267,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/send-magic-link",
-    ...navigationGuardChain(requireCredentialPromptRequirements),
+    guard.credentialPromptReady,
     csrfProtectionMiddleware,
     sendMagicLinkRateLimiterMiddleware,
     postSendMagicLinkController,
@@ -291,7 +290,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/sign-in-with-passkey",
-    ...navigationGuardChain(requireCredentialPromptRequirements),
+    guard.credentialPromptReady,
     csrfProtectionMiddleware,
     postVerifyFirstFactorAuthenticationController,
     ...navigationGuardChain(requireUserSignInRequirements),

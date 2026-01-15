@@ -137,6 +137,7 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
 
 export const guard = {
   connected: middleware(requireUserIsConnected),
+  credentialPromptReady: middleware(requireCredentialPromptRequirements),
   emailInSession: middleware(requireEmailInSession),
   isUser: middleware(requireIsUser),
 };
@@ -155,24 +156,21 @@ export async function requireEmailInSession(
   return { ok: true, email: email! };
 }
 
-// redirect user to inclusionconnect welcome page if needed
-export const requireUserHasSeenInclusionconnectWelcomePage: NavigationGuardNode =
-  {
-    previous: asLegacyGuard(requireEmailInSession),
-    guard: (req) => {
-      if (
-        getPartialUserFromUnauthenticatedSession(req)
-          .needsInclusionconnectWelcomePage
-      ) {
-        return { type: "redirect", url: `/users/inclusionconnect-welcome` };
-      }
+export async function requireCredentialPromptRequirements(
+  req: Request,
+): Promise<GuardResult<{ email: string }>> {
+  const prev = await requireEmailInSession(req);
+  if (!("ok" in prev)) return prev;
 
-      return { type: "next" };
-    },
-  };
+  if (
+    getPartialUserFromUnauthenticatedSession(req)
+      .needsInclusionconnectWelcomePage
+  ) {
+    return { redirect: "/users/inclusionconnect-welcome" };
+  }
 
-export const requireCredentialPromptRequirements =
-  requireUserHasSeenInclusionconnectWelcomePage;
+  return prev;
+}
 
 export async function requireUserIsConnected(
   req: Request,
