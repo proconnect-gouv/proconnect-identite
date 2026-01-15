@@ -94,7 +94,6 @@ import {
   navigationGuardChain,
   requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
-  requireUserHasConnectedRecently,
   requireUserHasSelectedAnOrganization,
   requireUserSignInRequirements,
 } from "../middlewares/navigation-guards";
@@ -172,28 +171,28 @@ export const userRouter = () => {
 
   userRouter.get(
     "/double-authentication-choice",
-    ...navigationGuardChain(requireUserHasConnectedRecently),
+    guard.connectedRecently,
     csrfProtectionMiddleware,
     getTwoFactorsAuthenticationChoiceController,
   );
 
   userRouter.get(
     "/is-totp-app-installed",
-    ...navigationGuardChain(requireUserHasConnectedRecently),
+    guard.connectedRecently,
     csrfProtectionMiddleware,
     getIsTotpAppInstalledController,
   );
 
   userRouter.get(
     "/totp-configuration",
-    ...navigationGuardChain(requireUserHasConnectedRecently),
+    guard.connectedRecently,
     csrfProtectionMiddleware,
     getTotpConfigurationController,
   );
 
   userRouter.post(
     "/totp-configuration",
-    ...navigationGuardChain(requireUserHasConnectedRecently),
+    guard.connectedRecently,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
     postTotpConfigurationController,
@@ -201,14 +200,14 @@ export const userRouter = () => {
 
   userRouter.get(
     "/2fa-successfully-configured",
-    ...navigationGuardChain(requireUserHasConnectedRecently),
+    guard.connectedRecently,
     csrfProtectionMiddleware,
     get2faSuccessfullyConfiguredController,
   );
 
   userRouter.post(
     "/2fa-successfully-configured",
-    ...navigationGuardChain(requireUserHasConnectedRecently),
+    guard.connectedRecently,
     csrfProtectionMiddleware,
     post2faSuccessfullyConfiguredMiddleware,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -297,7 +296,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/passkeys/verify-registration",
-    ...navigationGuardChain(requireUserHasConnectedRecently),
+    guard.connectedRecently,
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
       "/users/2fa-successfully-configured",

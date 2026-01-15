@@ -138,6 +138,7 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
 export const guard = {
   browserTrusted: middleware(requireBrowserIsTrusted),
   connected: middleware(requireUserIsConnected),
+  connectedRecently: middleware(requireUserHasConnectedRecently),
   credentialPromptReady: middleware(requireCredentialPromptRequirements),
   emailInSession: middleware(requireEmailInSession),
   isUser: middleware(requireIsUser),
@@ -196,23 +197,21 @@ export async function requireUserIsConnected(
   return { ok: true, user };
 }
 
-export const requireUserHasConnectedRecently: NavigationGuardNode = {
-  previous: asLegacyGuard(requireUserIsConnected),
-  guard: (req) => {
-    const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
+export async function requireUserHasConnectedRecently(
+  req: Request,
+): Promise<GuardResult<{ user: User }>> {
+  const prev = await requireUserIsConnected(req);
+  if (!("ok" in prev)) return prev;
 
-    if (!hasLoggedInRecently) {
-      req.session.referrerPath = getReferrerPath(req);
+  const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
-      return {
-        type: "redirect",
-        url: `/users/start-sign-in?notification=login_required`,
-      };
-    }
+  if (!hasLoggedInRecently) {
+    req.session.referrerPath = getReferrerPath(req);
+    return { redirect: `/users/start-sign-in?notification=login_required` };
+  }
 
-    return { type: "next" };
-  },
-};
+  return prev;
+}
 
 export async function requireUserIsVerified(
   req: Request,
