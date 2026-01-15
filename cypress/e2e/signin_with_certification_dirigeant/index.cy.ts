@@ -68,19 +68,19 @@ describe("sign-in with a client requiring certification dirigeant", () => {
   it("should re-FranceConnect expired Douglas Duteil as an executive of ONEDOES.DRAW.DOUBLEACE", function () {
     cy.login("outdated-franceconnected+douglasduteil@mail.com");
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.contains("Certifier votre statut");
-    cy.getByLabel("S’identifier avec FranceConnect").click();
-
-    cy.title().should("include", "🎭 FranceConnect 🎭");
-    cy.contains("Je suis Douglas Duteil").click();
-
     cy.title().should("include", "Rejoindre une organisation");
     cy.contains("SIRET de l’organisation que vous représentez").click();
     cy.focused().clear().type("82869625200018");
     cy.getByLabel(
       "Organisation correspondante au SIRET donné : Douglas Duteil",
     ).click();
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.contains("Certifier votre statut");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "🎭 FranceConnect 🎭");
+    cy.contains("Je suis Douglas Duteil").click();
 
     cy.title().should("include", "Compte certifié -");
     cy.contains("Vous êtes bien certifié !");
@@ -103,19 +103,19 @@ describe("sign-in with a client requiring certification dirigeant", () => {
   it("should welcome Karima Aknine as dirigeant of BATI-SEREIN", () => {
     cy.login("karima.aknine@yopmail.com");
 
-    cy.title().should("include", "Certification dirigeant -");
-    cy.contains("Certifier votre statut");
-    cy.getByLabel("S’identifier avec FranceConnect").click();
-
-    cy.title().should("include", "🎭 FranceConnect 🎭");
-    cy.contains("Je suis Karima Aknine").click();
-
     cy.title().should("include", "Rejoindre une organisation");
     cy.contains("SIRET de l’organisation que vous représentez").click();
     cy.focused().clear().type("51025277800012");
     cy.getByLabel(
       "Organisation correspondante au SIRET donné : Bati-serein",
     ).click();
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.contains("Certifier votre statut");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "🎭 FranceConnect 🎭");
+    cy.contains("Je suis Karima Aknine").click();
 
     cy.title().should("include", "Compte certifié -");
     cy.contains("Vous êtes bien certifié !");
@@ -201,8 +201,43 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains('"label": "Suricate - The kilberry"');
   });
 
-  it("should try to re-certify expired certificated FranceConnect user", function () {
-    cy.login("outdated-certified-franceconnected+dirigeant@unipersonnelle.com");
+  it("should ask for FranceConnect after org selection", () => {
+    cy.login("no-franceconnect+already-in-org@yopmail.com");
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Herisson (choisir cette organisation)").click();
+
+    cy.title().should("include", "Certification dirigeant - ");
+    cy.contains("Certifier votre statut");
+    cy.contains("S’identifier avec FranceConnect");
+  });
+
+  it("should try to re-certify a dirigeant after certification expiration", function () {
+    cy.login("outdated-certification+douglasduteil@mail.com");
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Douglas Duteil (choisir cette organisation)").click();
+
+    cy.title().should("include", "Compte certifié -");
+    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Prénom Douglas Le Rouge");
+    cy.contains("Nom Duteil");
+    cy.contains(
+      "Email professionnel outdated-certification+douglasduteil@mail.com",
+    );
+    cy.contains("Rôle Douglas Outdated Certification");
+    cy.contains("Organisation Douglas Duteil");
+    cy.contains("Statut Compte certifié");
+    cy.contains("Continuer").click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
+    );
+  });
+
+  it("should try to re-certify an ex-dirigeant and fail", function () {
+    cy.login("outdated-certification+ex-dirigeant@unipersonnelle.com");
 
     cy.title().should("include", "Choisir une organisation -");
     cy.getByLabel("Clamart (choisir cette organisation)").click();
@@ -218,6 +253,8 @@ describe("sign-in with a client requiring certification dirigeant", () => {
 });
 
 describe("connected user should go through the certification flow", function () {
+  before(cy.seed);
+
   it("with valid FranceConnect user", function () {
     cy.visit("/");
     cy.login("certified-franceconnected+dirigeant@yopmail.com");
@@ -240,16 +277,17 @@ describe("connected user should go through the certification flow", function () 
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("Forcer une connexion par certification dirigeant").click();
 
+    cy.getDescribed("Clamart").within(() => {
+      cy.contains("certifié").should("exist");
+    });
+    cy.getByLabel("Clamart (choisir cette organisation)").click();
+
     cy.title().should("include", "Certification dirigeant - ");
     cy.contains("Certifier votre statut");
     cy.getByLabel("S’identifier avec FranceConnect").click();
 
     cy.title().should("include", "🎭 FranceConnect 🎭");
     cy.contains("Je suis Marie Héricart").click();
-
-    cy.getDescribed("Clamart").within(() => {
-      cy.contains("certifié").should("not.exist");
-    });
   });
 
   it("with an organization pre-selected", () => {

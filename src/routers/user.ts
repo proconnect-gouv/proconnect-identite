@@ -98,7 +98,6 @@ import {
   requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
-  requireUserHasPersonalInformations,
   requireUserHasSelectedAnOrganization,
   requireUserIsConnected,
   requireUserIsVerified,
@@ -378,20 +377,20 @@ export const userRouter = () => {
 
   userRouter.get(
     "/organization-suggestions",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getOrganizationSuggestionsController,
   );
 
   userRouter.get(
     "/join-organization",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getJoinOrganizationController,
   );
   userRouter.post(
     "/join-organization",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     postJoinOrganizationMiddleware,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -400,54 +399,54 @@ export const userRouter = () => {
 
   userRouter.get(
     "/join-organization-confirm",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getJoinOrganizationConfirmController,
   );
 
   userRouter.get(
     "/domains-restricted-in-organization",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getDomainsRestrictedInOrganizationController,
   );
 
   userRouter.get(
     "/unable-to-auto-join-organization",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getUnableToAutoJoinOrganizationController,
   );
   userRouter.get(
     "/moderation-rejected",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getModerationRejectedController,
   );
   userRouter.get(
     "/access-restricted-to-public-sector-email",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getAccessRestrictedToPublicSectorEmailController,
   );
 
   userRouter.get(
     "/access-restricted-to-private-sector-email",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getAccessRestrictedToPrivateSectorEmailController,
   );
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-sign-in/:moderation_id",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory("/users/start-sign-in"),
   );
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-join-org/:moderation_id",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/users/join-organization",
@@ -456,7 +455,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-personal-information/:moderation_id",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/users/personal-information",
@@ -464,7 +463,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/reopen-moderation/:moderation_id",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     postReopenModerationAndRedirectControllerFactory(
       "/users/personal-information",
@@ -532,7 +531,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation/:moderation_id",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/manage-organizations?notification=cancel_moderation_success",
@@ -591,21 +590,21 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/organization-not-covered-error",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getCertificationDirigeantOrganizationNotCoveredError,
   );
 
   userRouter.get(
     "/certification-dirigeant/close-match-error",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getCertificationDirigeantCloseMatchError,
   );
 
   userRouter.get(
     "/certification-dirigeant/no-match-error",
-    ...navigationGuardChain(requireUserHasPersonalInformations),
+    ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     getCertificationDirigeantNoMatchError,
   );

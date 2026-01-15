@@ -1,10 +1,9 @@
 //
 
-import { NotFoundError } from "#src/errors";
-import type { GetFranceConnectUserInfoHandler } from "#src/repositories/user";
 import { isOrganizationCoveredByCertificationDirigeant } from "#src/services/organization";
 import {
   NullIdentityVector,
+  type FranceConnectUserInfo,
   type IdentityVector,
   type Organization,
 } from "#src/types";
@@ -27,9 +26,6 @@ type ProcessCertificationDirigeantConfig = {
     "findMandatairesSociauxBySiren"
   >;
   EQUALITY_THRESHOLD?: number;
-  FranceConnectApiRepository: {
-    getFranceConnectUserInfo: GetFranceConnectUserInfoHandler;
-  };
   InseeApiRepository: { findBySiren: FindUniteLegaleBySirenHandler };
   RegistreNationalEntreprisesApiRepository: {
     findPouvoirsBySiren: FindPouvoirsBySirenHandler;
@@ -136,11 +132,11 @@ function match_identity_to_dirigeant(
 export function processCertificationDirigeantFactory(
   config: ProcessCertificationDirigeantConfig,
 ) {
-  const { InseeApiRepository, FranceConnectApiRepository } = config;
+  const { InseeApiRepository } = config;
 
-  return async function isOrganizationDirigeant(
+  return async function processCertificationDirigeant(
     organization: Organization,
-    user_id: number,
+    franceconnect_userinfo: FranceConnectUserInfo,
   ) {
     if (!isOrganizationCoveredByCertificationDirigeant(organization)) {
       return {
@@ -156,13 +152,7 @@ export function processCertificationDirigeantFactory(
     }
 
     const siren = organization.siret.substring(0, 9);
-    const franceconnectUserInfo =
-      await FranceConnectApiRepository.getFranceConnectUserInfo(user_id);
-    if (!franceconnectUserInfo) {
-      throw new NotFoundError("FranceConnect UserInfo not found");
-    }
-
-    const identity = FranceConnect.toIdentityVector(franceconnectUserInfo);
+    const identity = FranceConnect.toIdentityVector(franceconnect_userinfo);
 
     const preferredDataSource =
       organization.cached_libelle_categorie_juridique ===

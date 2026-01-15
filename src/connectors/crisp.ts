@@ -36,12 +36,10 @@ const config: Config = {
 export async function startCripsConversation({
   content,
   email,
-  nickname,
   subject,
 }: {
   content: string;
   email: string;
-  nickname: string;
   subject: string;
 }) {
   const { session_id } = await fetch_crisp<CreateConversationRoute>(config, {
@@ -56,7 +54,6 @@ export async function startCripsConversation({
     searchParams: {},
     body: {
       email,
-      nickname,
       segments: ["email", ...CRISP_MODERATION_TAG, WEBSITE_IDENTIFIER],
       subject,
     },
