@@ -90,11 +90,11 @@ import {
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
+  guard,
   navigationGuardChain,
   requireBrowserIsTrusted,
   requireCredentialPromptRequirements,
   requireEmailInSession,
-  requireIsUser,
   requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
@@ -122,13 +122,13 @@ export const userRouter = () => {
 
   userRouter.get(
     "/start-sign-in",
-    ...navigationGuardChain(requireIsUser),
+    guard.isUser,
     csrfProtectionMiddleware,
     getStartSignInController,
   );
   userRouter.post(
     "/start-sign-in",
-    ...navigationGuardChain(requireIsUser),
+    guard.isUser,
     csrfProtectionMiddleware,
     postStartSignInController,
   );

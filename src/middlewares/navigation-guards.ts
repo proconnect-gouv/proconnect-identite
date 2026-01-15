@@ -60,16 +60,18 @@ const getReferrerPath = (req: Request) => {
   return originPath || referrerPath || undefined;
 };
 
-type GuardResult =
+type LegacyGuardResult =
   | { type: "next" }
   | { type: "redirect"; url: string }
   | { type: "send" };
 
-type Guard = (req: Request) => GuardResult | Promise<GuardResult>;
+type LegacyGuard = (
+  req: Request,
+) => LegacyGuardResult | Promise<LegacyGuardResult>;
 
 type NavigationGuardNode = {
   previous?: NavigationGuardNode;
-  guard: Guard;
+  guard: LegacyGuard;
 };
 
 export const navigationGuardChain = (
@@ -93,21 +95,52 @@ export const navigationGuardChain = (
   return [...navigationGuardChain(node.previous), expressGuard];
 };
 
-export const requireIsUser: NavigationGuardNode = {
-  guard: (req) => {
-    if (usesAuthHeaders(req)) {
-      throw new HttpErrors.Forbidden(
-        "Access denied. The requested resource does not require authentication.",
-      );
-    }
+type Redirect = { redirect: string };
+type Send = { send: true };
+type Pass<T> = { ok: true } & T;
+type GuardResult<T> = Pass<T> | Redirect | Send;
 
-    return { type: "next" };
-  },
+function middleware<T>(
+  fn: (req: Request) => Promise<GuardResult<T>>,
+): RequestHandler {
+  return async (req, res, next) => {
+    const result = await fn(req);
+    if ("redirect" in result) return res.redirect(result.redirect);
+    if ("send" in result) return res.send();
+    next();
+  };
+}
+
+function asLegacyGuard<T>(
+  fn: (req: Request) => Promise<GuardResult<T>>,
+): NavigationGuardNode {
+  return {
+    guard: async (req) => {
+      const result = await fn(req);
+      if ("redirect" in result)
+        return { type: "redirect", url: result.redirect };
+      if ("send" in result) return { type: "send" };
+      return { type: "next" };
+    },
+  };
+}
+
+export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
+  if (usesAuthHeaders(req)) {
+    throw new HttpErrors.Forbidden(
+      "Access denied. The requested resource does not require authentication.",
+    );
+  }
+  return { ok: true };
+}
+
+export const guard = {
+  isUser: middleware(requireIsUser),
 };
 
 // redirect user to start sign-in page if no email is available in session
 export const requireEmailInSession: NavigationGuardNode = {
-  previous: requireIsUser,
+  previous: asLegacyGuard(requireIsUser),
   guard: (req) => {
     if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
       return { type: "redirect", url: `/users/start-sign-in` };
@@ -138,7 +171,7 @@ export const requireCredentialPromptRequirements =
 
 // redirect user to login page if no active session is available
 export const requireUserIsConnected: NavigationGuardNode = {
-  previous: requireIsUser,
+  previous: asLegacyGuard(requireIsUser),
   guard: (req) => {
     if (req.method === "HEAD") {
       // From express documentation:
