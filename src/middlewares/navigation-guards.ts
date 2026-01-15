@@ -233,10 +233,10 @@ export async function requireUserIsVerified(
     await needsEmailVerificationRenewal(email);
 
   if (!email_verified || needs_email_verification_renewal) {
-    let notification_param = "";
-    if (needs_email_verification_renewal) {
-      notification_param = "?notification=email_verification_renewal";
-    }
+    const notification_param =
+      email_verified && needs_email_verification_renewal
+        ? "?notification=email_verification_renewal"
+        : "";
     return { redirect: `/users/verify-email${notification_param}` };
   }
 
