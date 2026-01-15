@@ -89,13 +89,7 @@ import {
   postVerifySecondFactorAuthenticationController,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
-import {
-  guard,
-  navigationGuardChain,
-  requireUserHasAtLeastOneOrganization,
-  requireUserHasSelectedAnOrganization,
-  requireUserSignInRequirements,
-} from "../middlewares/navigation-guards";
+import { guard } from "../middlewares/navigation-guards";
 import {
   authenticatorRateLimiterMiddleware,
   passwordRateLimiterMiddleware,
@@ -150,7 +144,7 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     passwordRateLimiterMiddleware,
     postSignInMiddleware,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
   userRouter.get(
@@ -164,7 +158,7 @@ export const userRouter = () => {
     guard.credentialPromptReady,
     csrfProtectionMiddleware,
     postSignUpController,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
@@ -209,7 +203,7 @@ export const userRouter = () => {
     guard.connectedRecently,
     csrfProtectionMiddleware,
     post2faSuccessfullyConfiguredMiddleware,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
@@ -226,7 +220,7 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     authenticatorRateLimiterMiddleware,
     postSignInWithTotpController,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
@@ -235,7 +229,7 @@ export const userRouter = () => {
     guard.verified,
     csrfProtectionMiddleware,
     postVerifySecondFactorAuthenticationController,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
@@ -251,7 +245,7 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     verifyEmailRateLimiterMiddleware,
     postVerifyEmailController,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
@@ -267,7 +261,7 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     sendMagicLinkRateLimiterMiddleware,
     postSendMagicLinkController,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
   userRouter.get("/magic-link-sent", getMagicLinkSentController);
@@ -280,7 +274,7 @@ export const userRouter = () => {
     "/sign-in-with-magic-link",
     csrfProtectionMiddleware,
     postSignInWithMagicLinkController,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
@@ -289,7 +283,7 @@ export const userRouter = () => {
     guard.credentialPromptReady,
     csrfProtectionMiddleware,
     postVerifyFirstFactorAuthenticationController,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
@@ -336,7 +330,7 @@ export const userRouter = () => {
     guard.browserTrusted,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
   userRouter.post(
@@ -386,7 +380,7 @@ export const userRouter = () => {
     guard.browserTrusted,
     csrfProtectionMiddleware,
     postJoinOrganizationMiddleware,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
@@ -465,59 +459,59 @@ export const userRouter = () => {
 
   userRouter.get(
     "/select-organization",
-    ...navigationGuardChain(requireUserHasAtLeastOneOrganization),
+    guard.hasAtLeastOneOrganization,
     csrfProtectionMiddleware,
     getSelectOrganizationController,
   );
 
   userRouter.post(
     "/select-organization",
-    ...navigationGuardChain(requireUserHasAtLeastOneOrganization),
+    guard.hasAtLeastOneOrganization,
     csrfProtectionMiddleware,
     postSelectOrganizationMiddleware,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/official-contact-email-verification/:organization_id",
-    ...navigationGuardChain(requireUserHasSelectedAnOrganization),
+    guard.hasSelectedAnOrganization,
     csrfProtectionMiddleware,
     getOfficialContactEmailVerificationController,
   );
 
   userRouter.post(
     "/official-contact-email-verification/:organization_id",
-    ...navigationGuardChain(requireUserHasSelectedAnOrganization),
+    guard.hasSelectedAnOrganization,
     csrfProtectionMiddleware,
     postOfficialContactEmailVerificationMiddleware,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/welcome",
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     csrfProtectionMiddleware,
     getWelcomeController,
   );
   userRouter.get(
     "/welcome/dirigeant",
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     csrfProtectionMiddleware,
     getWelcomeDirigeantController,
   );
 
   userRouter.post(
     "/welcome",
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     csrfProtectionMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.post(
     "/quit-organization/:id",
-    ...navigationGuardChain(requireUserHasAtLeastOneOrganization),
+    guard.hasAtLeastOneOrganization,
     csrfProtectionMiddleware,
     postQuitUserOrganizationController,
   );
@@ -577,7 +571,7 @@ export const userRouter = () => {
     guard.browserTrusted,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
-    ...navigationGuardChain(requireUserSignInRequirements),
+    guard.signInRequirements,
     issueSessionOrRedirectController,
   );
 
