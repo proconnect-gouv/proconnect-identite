@@ -115,19 +115,20 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
  * Used on routes that require org selection (part of OIDC flow).
  */
 async function requireUserHasSelectedAnOrganizationMiddleware(req: Request) {
-  let result;
-  result = await requireUserHasAtLeastOneOrganization(req);
-  if (!("ok" in result)) return result;
+  const prev = await requireUserHasAtLeastOneOrganization(req);
+  if (!("ok" in prev)) return prev;
 
-  const interaction = getInteractionContext(req);
+  const { user, interaction } = prev;
+
   if (!interaction?.mustReturnOneOrganizationInPayload) {
     // Outside OIDC flow or no org required - just pass through
-    return result;
+    return prev;
   }
 
-  const { user } = result;
-
-  result = await requireUserBelongsToHintedOrganization(user, interaction);
+  const result = await requireUserBelongsToHintedOrganization(
+    user,
+    interaction,
+  );
   if (!("ok" in result)) return result;
 
   return requireUserHasSelectedAnOrganization(
@@ -318,20 +319,26 @@ export const requireUserCanAccessAdmin = requireUserTwoFactorAuthForAdmin;
 
 export async function requireUserHasAtLeastOneOrganization(
   req: Request,
-): Promise<GuardResult<{ user: User }>> {
+): Promise<
+  GuardResult<{ user: User; interaction: InteractionContext | undefined }>
+> {
   const prev = await requireBrowserIsTrusted(req);
   if (!("ok" in prev)) return prev;
 
+  const interaction = getInteractionContext(req);
+
+  // Outside OIDC flow - don't require organizations
+  if (!interaction) return { ...prev, interaction };
+
   if (isEmpty(await getOrganizationsByUserId(prev.user.id))) {
-    const interaction = getInteractionContext(req);
     return {
       redirect: addQueryParameters("/users/join-organization", {
-        siret_hint: interaction?.siretHint,
+        siret_hint: interaction.siretHint,
       }),
     };
   }
 
-  return prev;
+  return { ...prev, interaction };
 }
 
 async function requireUserBelongsToHintedOrganization(
@@ -674,14 +681,14 @@ async function requireSignInRequirements(
   const prev = await requireUserHasAtLeastOneOrganization(req);
   if (!("ok" in prev)) return prev;
 
-  const interaction = getInteractionContext(req);
+  const { user, interaction } = prev;
 
   if (interaction) {
     // Full interaction chain with organization verification
-    return requireInteractionChain(prev.user, interaction);
+    return requireInteractionChain(user, interaction);
   } else {
     // Non-interaction: skip org verification, run branching guards only
-    return requireBranchingGuards(prev.user, undefined);
+    return requireBranchingGuards(user, undefined);
   }
 }
 
