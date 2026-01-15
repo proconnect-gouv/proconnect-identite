@@ -66,6 +66,30 @@ export type Send = { send: true };
 export type Pass<T> = { ok: true } & T;
 export type GuardResult<T> = Pass<T> | Redirect | Send;
 
+export type InteractionContext = {
+  certificationDirigeantRequested: boolean | undefined;
+  interactionId: string;
+  mustReturnOneOrganizationInPayload: boolean;
+  siretHint: string | undefined;
+};
+
+/**
+ * Extract interaction context from session.
+ * Returns undefined if not in an OIDC interaction flow.
+ */
+function getInteractionContext(req: Request): InteractionContext | undefined {
+  if (!req.session.interactionId) return undefined;
+
+  return {
+    certificationDirigeantRequested:
+      req.session.certificationDirigeantRequested,
+    interactionId: req.session.interactionId,
+    mustReturnOneOrganizationInPayload:
+      req.session.mustReturnOneOrganizationInPayload ?? false,
+    siretHint: req.session.siretHint,
+  };
+}
+
 function middleware<T>(
   fn: (req: Request) => Promise<GuardResult<T>>,
 ): RequestHandler {
@@ -86,6 +110,32 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
   return { ok: true };
 }
 
+/**
+ * Middleware wrapper for requireUserHasSelectedAnOrganization.
+ * Used on routes that require org selection (part of OIDC flow).
+ */
+async function requireUserHasSelectedAnOrganizationMiddleware(req: Request) {
+  let result;
+  result = await requireUserHasAtLeastOneOrganization(req);
+  if (!("ok" in result)) return result;
+
+  const interaction = getInteractionContext(req);
+  if (!interaction?.mustReturnOneOrganizationInPayload) {
+    // Outside OIDC flow or no org required - just pass through
+    return result;
+  }
+
+  const { user } = result;
+
+  result = await requireUserBelongsToHintedOrganization(user, interaction);
+  if (!("ok" in result)) return result;
+
+  return requireUserHasSelectedAnOrganization(
+    user,
+    interaction.certificationDirigeantRequested,
+  );
+}
+
 export const guard = {
   admin: middleware(requireUserTwoFactorAuthForAdmin),
   browserTrusted: middleware(requireBrowserIsTrusted),
@@ -94,12 +144,12 @@ export const guard = {
   credentialPromptReady: middleware(requireCredentialPromptRequirements),
   emailInSession: middleware(requireEmailInSession),
   hasAtLeastOneOrganization: middleware(requireUserHasAtLeastOneOrganization),
-  hasSelectedAnOrganization: middleware(requireUserHasSelectedAnOrganization),
+  hasSelectedAnOrganization: middleware(
+    requireUserHasSelectedAnOrganizationMiddleware,
+  ),
   isUser: middleware(requireIsUser),
   loggedInRecently: middleware(requireUserHasLoggedInRecently),
-  signInRequirements: middleware(
-    requireUserHasBeenGreetedForJoiningOrganization,
-  ),
+  signInRequirements: middleware(requireSignInRequirements),
   verified: middleware(requireUserIsVerified),
 };
 
@@ -272,12 +322,11 @@ export async function requireUserHasAtLeastOneOrganization(
   const prev = await requireBrowserIsTrusted(req);
   if (!("ok" in prev)) return prev;
 
-  if (!req.session.interactionId) return prev;
-
   if (isEmpty(await getOrganizationsByUserId(prev.user.id))) {
+    const interaction = getInteractionContext(req);
     return {
       redirect: addQueryParameters("/users/join-organization", {
-        siret_hint: req.session.siretHint,
+        siret_hint: interaction?.siretHint,
       }),
     };
   }
@@ -286,165 +335,143 @@ export async function requireUserHasAtLeastOneOrganization(
 }
 
 async function requireUserBelongsToHintedOrganization(
-  req: Request,
+  user: User,
+  interaction: InteractionContext,
 ): Promise<GuardResult<{ user: User }>> {
-  const prev = await requireUserHasAtLeastOneOrganization(req);
-  if (!("ok" in prev)) return prev;
-
-  if (!req.session.interactionId) return prev;
-  if (!req.session.siretHint) return prev;
+  if (!interaction.siretHint) {
+    return { ok: true, user };
+  }
 
   const hintedOrganization = await getOrganizationBySiret(
-    req.session.siretHint,
+    interaction.siretHint,
   );
-  const userOrganisations = await getOrganizationsByUserId(prev.user.id);
+  const userOrganisations = await getOrganizationsByUserId(user.id);
 
   if (
     !isEmpty(hintedOrganization) &&
     userOrganisations.some((org) => org.id === hintedOrganization.id)
   ) {
     await selectOrganization({
-      user_id: prev.user.id,
       organization_id: hintedOrganization.id,
+      user_id: user.id,
     });
-    return prev;
+    return { ok: true, user };
   }
 
   return {
-    redirect: `/users/join-organization?siret_hint=${req.session.siretHint}`,
+    redirect: `/users/join-organization?siret_hint=${interaction.siretHint}`,
   };
 }
 
-export async function requireUserHasSelectedAnOrganization(
-  req: Request,
+async function requireUserHasSelectedAnOrganization(
+  user: User,
+  certificationDirigeantRequested: boolean | undefined,
 ): Promise<GuardResult<{ user: User }>> {
-  const prev = await requireUserBelongsToHintedOrganization(req);
-  if (!("ok" in prev)) return prev;
+  const selectedOrganizationId = await getSelectedOrganizationId(user.id);
 
-  if (!req.session.interactionId) return prev;
-  if (!req.session.mustReturnOneOrganizationInPayload) return prev;
+  if (selectedOrganizationId) {
+    return { ok: true, user };
+  }
 
-  const selectedOrganizationId = await getSelectedOrganizationId(prev.user.id);
+  const userOrganisations = await getOrganizationsByUserId(user.id);
 
-  if (selectedOrganizationId) return prev;
-
-  const userOrganisations = await getOrganizationsByUserId(prev.user.id);
-
-  if (
-    userOrganisations.length === 1 &&
-    !req.session.certificationDirigeantRequested
-  ) {
+  if (userOrganisations.length === 1 && !certificationDirigeantRequested) {
     await selectOrganization({
-      user_id: prev.user.id,
       organization_id: userOrganisations[0].id,
+      user_id: user.id,
     });
-    return prev;
+    return { ok: true, user };
   }
 
   return { redirect: "/users/select-organization" };
 }
 
 async function requireSelectedOrganizationToBeFlaggedAsPending(
-  req: Request,
+  user: User,
+  certificationDirigeantRequested: boolean | undefined,
 ): Promise<GuardResult<{ user: User }>> {
-  const prev = await requireUserHasSelectedAnOrganization(req);
-  if (!("ok" in prev)) return prev;
-
-  if (!req.session.interactionId) return prev;
-  if (!req.session.mustReturnOneOrganizationInPayload) return prev;
-
-  if (req.session.certificationDirigeantRequested) {
-    const { id: user_id } = prev.user;
-    const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
+  if (certificationDirigeantRequested) {
+    const selectedOrganizationId = (await getSelectedOrganizationId(user.id))!;
     const { verification_type: linkType } = (await getUserOrganizationLink(
       selectedOrganizationId,
-      user_id,
+      user.id,
     ))!;
 
     if (
       linkType !== "pending_organization_dirigeant" &&
       linkType !== "organization_dirigeant"
     ) {
-      await updateUserOrganizationLink(selectedOrganizationId, user_id, {
+      await updateUserOrganizationLink(selectedOrganizationId, user.id, {
         verification_type: "pending_organization_dirigeant",
         verified_at: new Date(),
       });
     }
   }
 
-  return prev;
+  return { ok: true, user };
 }
 
 async function requireUserIsFranceConnected(
-  req: Request,
+  user: User,
 ): Promise<GuardResult<{ user: User }>> {
-  const prev = await requireSelectedOrganizationToBeFlaggedAsPending(req);
-  if (!("ok" in prev)) return prev;
+  if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) {
+    return { ok: true, user };
+  }
 
-  if (!req.session.interactionId) return prev;
-  if (!req.session.mustReturnOneOrganizationInPayload) return prev;
-  if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return prev;
-
-  const { id: user_id } = prev.user;
-  const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
+  const selectedOrganizationId = (await getSelectedOrganizationId(user.id))!;
   const { verification_type: linkType } = (await getUserOrganizationLink(
     selectedOrganizationId,
-    user_id,
+    user.id,
   ))!;
 
   if (
     linkType !== "pending_organization_dirigeant" &&
     linkType !== "organization_dirigeant"
-  )
-    return prev;
+  ) {
+    return { ok: true, user };
+  }
 
-  const isVerified = await isUserVerifiedWithFranceconnect(user_id);
+  const isVerified = await isUserVerifiedWithFranceconnect(user.id);
 
-  if (isVerified) return prev;
+  if (isVerified) {
+    return { ok: true, user };
+  }
 
   return { redirect: "/users/certification-dirigeant" };
 }
 
 async function requireUserHasPersonalInformations(
-  req: Request,
+  user: User,
 ): Promise<GuardResult<{ user: User }>> {
-  const prev = await requireUserIsFranceConnected(req);
-  if (!("ok" in prev)) return prev;
-
-  if (!req.session.interactionId) return prev;
-
-  const { given_name, family_name } = prev.user;
+  const { family_name, given_name } = user;
   if (isEmpty(given_name) || isEmpty(family_name)) {
     return { redirect: "/users/personal-information" };
   }
 
-  return prev;
+  return { ok: true, user };
 }
 
 async function requireUserPassedCertificationDirigeant(
-  req: Request,
+  user: User,
 ): Promise<GuardResult<{ user: User }>> {
-  const prev = await requireUserHasPersonalInformations(req);
-  if (!("ok" in prev)) return prev;
+  if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) {
+    return { ok: true, user };
+  }
 
-  if (!req.session.interactionId) return prev;
-  if (!req.session.mustReturnOneOrganizationInPayload) return prev;
-  if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return prev;
-
-  const { id: user_id } = prev.user;
-  const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
+  const selectedOrganizationId = (await getSelectedOrganizationId(user.id))!;
 
   const organization = (await getOrganizationById(selectedOrganizationId))!;
   const { verification_type: linkType, verified_at: linkVerifiedAt } =
-    (await getUserOrganizationLink(selectedOrganizationId, user_id))!;
+    (await getUserOrganizationLink(selectedOrganizationId, user.id))!;
 
   if (
     linkType !== "pending_organization_dirigeant" &&
     linkType !== "organization_dirigeant"
-  )
-    return prev;
+  ) {
+    return { ok: true, user };
+  }
 
-  const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
+  const franceconnectUserInfo = (await getFranceConnectUserInfo(user.id))!;
 
   const expiredCertification = isExpired(
     linkVerifiedAt,
@@ -455,13 +482,15 @@ async function requireUserPassedCertificationDirigeant(
 
   const renewalNeeded = expiredCertification || expiredVerification;
 
-  if (linkType === "organization_dirigeant" && !renewalNeeded) return prev;
+  if (linkType === "organization_dirigeant" && !renewalNeeded) {
+    return { ok: true, user };
+  }
 
   try {
     await processCertificationDirigeantOrThrow(
       organization,
       franceconnectUserInfo,
-      user_id,
+      user.id,
     );
   } catch (error) {
     if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
@@ -486,36 +515,26 @@ async function requireUserPassedCertificationDirigeant(
     throw error;
   }
 
-  return prev;
+  return { ok: true, user };
 }
 
-export async function requireUserHasNoPendingOfficialContactEmailVerification(
-  req: Request,
+async function requireUserHasNoPendingOfficialContactEmailVerification(
+  user: User,
+  selectedOrganizationId: number | undefined,
 ): Promise<GuardResult<{ user: User }>> {
-  const prev = await requireUserPassedCertificationDirigeant(req);
-  if (!("ok" in prev)) return prev;
+  const userOrganisations = await getOrganizationsByUserId(user.id);
 
-  const userOrganisations = await getOrganizationsByUserId(prev.user.id);
-
-  let organizationThatNeedsOfficialContactEmailVerification;
-  if (req.session.mustReturnOneOrganizationInPayload) {
-    const selectedOrganizationId = await getSelectedOrganizationId(
-      prev.user.id,
-    );
-
-    organizationThatNeedsOfficialContactEmailVerification =
-      userOrganisations.find(
-        ({ id, needs_official_contact_email_verification }) =>
-          needs_official_contact_email_verification &&
-          id === selectedOrganizationId,
-      );
-  } else {
-    organizationThatNeedsOfficialContactEmailVerification =
-      userOrganisations.find(
-        ({ needs_official_contact_email_verification }) =>
-          needs_official_contact_email_verification,
-      );
-  }
+  const organizationThatNeedsOfficialContactEmailVerification =
+    selectedOrganizationId
+      ? userOrganisations.find(
+          ({ id, needs_official_contact_email_verification }) =>
+            needs_official_contact_email_verification &&
+            id === selectedOrganizationId,
+        )
+      : userOrganisations.find(
+          ({ needs_official_contact_email_verification }) =>
+            needs_official_contact_email_verification,
+        );
 
   if (!isEmpty(organizationThatNeedsOfficialContactEmailVerification)) {
     return {
@@ -523,34 +542,21 @@ export async function requireUserHasNoPendingOfficialContactEmailVerification(
     };
   }
 
-  return prev;
+  return { ok: true, user };
 }
 
-export async function requireUserHasBeenGreetedForJoiningOrganization(
-  req: Request,
+async function requireUserHasBeenGreetedForJoiningOrganization(
+  user: User,
+  selectedOrganizationId: number | undefined,
 ): Promise<GuardResult<{ user: User }>> {
-  const prev =
-    await requireUserHasNoPendingOfficialContactEmailVerification(req);
-  if (!("ok" in prev)) return prev;
+  const userOrganisations = await getOrganizationsByUserId(user.id);
 
-  const userOrganisations = await getOrganizationsByUserId(prev.user.id);
-
-  let organizationThatNeedsGreetings;
-
-  if (req.session.mustReturnOneOrganizationInPayload) {
-    const selectedOrganizationId = await getSelectedOrganizationId(
-      prev.user.id,
-    );
-
-    organizationThatNeedsGreetings = userOrganisations.find(
-      ({ id, has_been_greeted }) =>
-        !has_been_greeted && id === selectedOrganizationId,
-    );
-  } else {
-    organizationThatNeedsGreetings = userOrganisations.find(
-      ({ has_been_greeted }) => !has_been_greeted,
-    );
-  }
+  const organizationThatNeedsGreetings = selectedOrganizationId
+    ? userOrganisations.find(
+        ({ has_been_greeted, id }) =>
+          !has_been_greeted && id === selectedOrganizationId,
+      )
+    : userOrganisations.find(({ has_been_greeted }) => !has_been_greeted);
 
   if (!isEmpty(organizationThatNeedsGreetings)) {
     if (
@@ -558,23 +564,126 @@ export async function requireUserHasBeenGreetedForJoiningOrganization(
       "organization_dirigeant"
     ) {
       await greetForCertification({
-        user_id: prev.user.id,
         organization_id: organizationThatNeedsGreetings.id,
+        user_id: user.id,
       });
       return { redirect: `/users/welcome/dirigeant` };
     }
 
     await greetForJoiningOrganization({
-      user_id: prev.user.id,
       organization_id: organizationThatNeedsGreetings.id,
+      user_id: user.id,
     });
 
     return { redirect: `/users/welcome` };
   }
 
-  return prev;
+  return { ok: true, user };
+}
+
+/**
+ * Branching guards that run in both interaction and non-interaction flows.
+ * The selectedOrganizationId scopes the checks:
+ * - undefined = check all user organizations
+ * - number = check only the selected organization
+ */
+async function requireBranchingGuards(
+  user: User,
+  selectedOrganizationId: number | undefined,
+): Promise<GuardResult<{ user: User }>> {
+  let result = await requireUserHasNoPendingOfficialContactEmailVerification(
+    user,
+    selectedOrganizationId,
+  );
+  if (!("ok" in result)) return result;
+
+  return requireUserHasBeenGreetedForJoiningOrganization(
+    user,
+    selectedOrganizationId,
+  );
+}
+
+/**
+ * Organization selection chain - runs when mustReturnOneOrganizationInPayload is true.
+ * Handles org selection, dirigeant certification, and FranceConnect verification.
+ */
+async function requireOrganizationSelectionChain(
+  user: User,
+  certificationDirigeantRequested: boolean | undefined,
+): Promise<GuardResult<{ user: User }>> {
+  let result = await requireUserHasSelectedAnOrganization(
+    user,
+    certificationDirigeantRequested,
+  );
+  if (!("ok" in result)) return result;
+
+  result = await requireSelectedOrganizationToBeFlaggedAsPending(
+    user,
+    certificationDirigeantRequested,
+  );
+  if (!("ok" in result)) return result;
+
+  result = await requireUserIsFranceConnected(user);
+  if (!("ok" in result)) return result;
+
+  result = await requireUserHasPersonalInformations(user);
+  if (!("ok" in result)) return result;
+
+  result = await requireUserPassedCertificationDirigeant(user);
+  if (!("ok" in result)) return result;
+
+  // Get selected org for scoped branching guards
+  const selectedOrganizationId = await getSelectedOrganizationId(user.id);
+
+  return requireBranchingGuards(user, selectedOrganizationId ?? undefined);
+}
+
+/**
+ * Interaction-only chain that runs the full organization verification flow.
+ * Forks based on mustReturnOneOrganizationInPayload.
+ */
+async function requireInteractionChain(
+  user: User,
+  interaction: InteractionContext,
+): Promise<GuardResult<{ user: User }>> {
+  let result = await requireUserBelongsToHintedOrganization(user, interaction);
+  if (!("ok" in result)) return result;
+
+  result = await requireUserHasPersonalInformations(user);
+  if (!("ok" in result)) return result;
+
+  if (interaction.mustReturnOneOrganizationInPayload) {
+    // Full org selection and certification chain
+    return requireOrganizationSelectionChain(
+      user,
+      interaction.certificationDirigeantRequested,
+    );
+  } else {
+    // No org selection required - just run branching guards
+    return requireBranchingGuards(user, undefined);
+  }
+}
+
+/**
+ * Main entry point for sign-in requirements.
+ * Forks once based on interaction presence.
+ */
+async function requireSignInRequirements(
+  req: Request,
+): Promise<GuardResult<{ user: User }>> {
+  const prev = await requireUserHasAtLeastOneOrganization(req);
+  if (!("ok" in prev)) return prev;
+
+  const interaction = getInteractionContext(req);
+
+  if (interaction) {
+    // Full interaction chain with organization verification
+    return requireInteractionChain(prev.user, interaction);
+  } else {
+    // Non-interaction: skip org verification, run branching guards only
+    return requireBranchingGuards(prev.user, undefined);
+  }
 }
 
 // check that the user goes through all requirements before issuing a session
-export const requireUserSignInRequirements =
-  requireUserHasBeenGreetedForJoiningOrganization;
+export const requireUserSignInRequirements = requireSignInRequirements;
