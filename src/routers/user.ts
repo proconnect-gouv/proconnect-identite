@@ -97,7 +97,6 @@ import {
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
   requireUserHasSelectedAnOrganization,
-  requireUserIsVerified,
   requireUserSignInRequirements,
 } from "../middlewares/navigation-guards";
 import {
@@ -219,14 +218,14 @@ export const userRouter = () => {
 
   userRouter.get(
     "/2fa-sign-in",
-    ...navigationGuardChain(requireUserIsVerified),
+    guard.verified,
     csrfProtectionMiddleware,
     get2faSignInController,
   );
 
   userRouter.post(
     "/2fa-sign-in-with-totp",
-    ...navigationGuardChain(requireUserIsVerified),
+    guard.verified,
     csrfProtectionMiddleware,
     authenticatorRateLimiterMiddleware,
     postSignInWithTotpController,
@@ -236,7 +235,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/2fa-sign-in-with-passkey",
-    ...navigationGuardChain(requireUserIsVerified),
+    guard.verified,
     csrfProtectionMiddleware,
     postVerifySecondFactorAuthenticationController,
     ...navigationGuardChain(requireUserSignInRequirements),

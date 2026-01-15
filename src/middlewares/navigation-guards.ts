@@ -140,6 +140,7 @@ export const guard = {
   credentialPromptReady: middleware(requireCredentialPromptRequirements),
   emailInSession: middleware(requireEmailInSession),
   isUser: middleware(requireIsUser),
+  verified: middleware(requireUserIsVerified),
 };
 
 export async function requireEmailInSession(
@@ -212,35 +213,29 @@ export const requireUserHasConnectedRecently: NavigationGuardNode = {
   },
 };
 
-export const requireUserIsVerified: NavigationGuardNode = {
-  previous: asLegacyGuard(requireUserIsConnected),
-  guard: async (req) => {
-    const { email, email_verified } = getUserFromAuthenticatedSession(req);
+export async function requireUserIsVerified(
+  req: Request,
+): Promise<GuardResult<{ user: User }>> {
+  const prev = await requireUserIsConnected(req);
+  if (!("ok" in prev)) return prev;
 
-    const needs_email_verification_renewal =
-      await needsEmailVerificationRenewal(email);
+  const { email, email_verified } = prev.user;
+  const needs_email_verification_renewal =
+    await needsEmailVerificationRenewal(email);
 
-    if (!email_verified || needs_email_verification_renewal) {
-      let notification_param = "";
-
-      if (!email_verified) {
-        notification_param = "";
-      } else if (needs_email_verification_renewal) {
-        notification_param = "?notification=email_verification_renewal";
-      }
-
-      return {
-        type: "redirect",
-        url: `/users/verify-email${notification_param}`,
-      };
+  if (!email_verified || needs_email_verification_renewal) {
+    let notification_param = "";
+    if (needs_email_verification_renewal) {
+      notification_param = "?notification=email_verification_renewal";
     }
+    return { redirect: `/users/verify-email${notification_param}` };
+  }
 
-    return { type: "next" };
-  },
-};
+  return prev;
+}
 
 export const requireUserTwoFactorAuth: NavigationGuardNode = {
-  previous: requireUserIsVerified,
+  previous: asLegacyGuard(requireUserIsVerified),
   guard: async (req) => {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
