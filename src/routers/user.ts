@@ -92,7 +92,6 @@ import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
   guard,
   navigationGuardChain,
-  requireBrowserIsTrusted,
   requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
@@ -330,13 +329,13 @@ export const userRouter = () => {
 
   userRouter.get(
     "/personal-information",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getPersonalInformationsController,
   );
   userRouter.post(
     "/personal-information",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -344,7 +343,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/personal-information/franceconnect/login",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/personal-information/franceconnect/login/callback`,
@@ -352,7 +351,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/personal-information`,
     ),
@@ -362,7 +361,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/logout/callback",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     (_req, res) =>
@@ -373,20 +372,20 @@ export const userRouter = () => {
 
   userRouter.get(
     "/organization-suggestions",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getOrganizationSuggestionsController,
   );
 
   userRouter.get(
     "/join-organization",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getJoinOrganizationController,
   );
   userRouter.post(
     "/join-organization",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postJoinOrganizationMiddleware,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -395,54 +394,54 @@ export const userRouter = () => {
 
   userRouter.get(
     "/join-organization-confirm",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getJoinOrganizationConfirmController,
   );
 
   userRouter.get(
     "/domains-restricted-in-organization",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getDomainsRestrictedInOrganizationController,
   );
 
   userRouter.get(
     "/unable-to-auto-join-organization",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getUnableToAutoJoinOrganizationController,
   );
   userRouter.get(
     "/moderation-rejected",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getModerationRejectedController,
   );
   userRouter.get(
     "/access-restricted-to-public-sector-email",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getAccessRestrictedToPublicSectorEmailController,
   );
 
   userRouter.get(
     "/access-restricted-to-private-sector-email",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getAccessRestrictedToPrivateSectorEmailController,
   );
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-sign-in/:moderation_id",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory("/users/start-sign-in"),
   );
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-join-org/:moderation_id",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/users/join-organization",
@@ -451,7 +450,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-personal-information/:moderation_id",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/users/personal-information",
@@ -459,7 +458,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/reopen-moderation/:moderation_id",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postReopenModerationAndRedirectControllerFactory(
       "/users/personal-information",
@@ -527,7 +526,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation/:moderation_id",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/manage-organizations?notification=cancel_moderation_success",
@@ -550,14 +549,14 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getCertificationDirigeantController,
   );
 
   userRouter.post(
     "/certification-dirigeant/franceconnect/login",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/certification-dirigeant/franceconnect/login/callback`,
@@ -566,7 +565,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/login/callback",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/users/certification-dirigeant`,
     ),
@@ -577,7 +576,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/logout/callback",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -586,21 +585,21 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/organization-not-covered-error",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getCertificationDirigeantOrganizationNotCoveredError,
   );
 
   userRouter.get(
     "/certification-dirigeant/close-match-error",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getCertificationDirigeantCloseMatchError,
   );
 
   userRouter.get(
     "/certification-dirigeant/no-match-error",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getCertificationDirigeantNoMatchError,
   );

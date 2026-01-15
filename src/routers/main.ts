@@ -26,9 +26,9 @@ import {
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
+  guard,
   navigationGuardChain,
   requireUserCanAccessAdmin,
-  requireUserCanAccessApp,
 } from "../middlewares/navigation-guards";
 import {
   authenticatorRateLimiterMiddleware,
@@ -147,7 +147,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessApp),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getPersonalInformationsController,
   );
@@ -158,7 +158,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessApp),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
   );
@@ -169,7 +169,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessApp),
+    guard.browserTrusted,
     csrfProtectionMiddleware,
     getManageOrganizationsController,
   );
@@ -180,7 +180,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessApp),
+    guard.browserTrusted,
     getHomeController,
   );
 

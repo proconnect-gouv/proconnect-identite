@@ -136,6 +136,7 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
 }
 
 export const guard = {
+  browserTrusted: middleware(requireBrowserIsTrusted),
   connected: middleware(requireUserIsConnected),
   credentialPromptReady: middleware(requireCredentialPromptRequirements),
   emailInSession: middleware(requireEmailInSession),
@@ -234,46 +235,45 @@ export async function requireUserIsVerified(
   return prev;
 }
 
-export const requireUserTwoFactorAuth: NavigationGuardNode = {
-  previous: asLegacyGuard(requireUserIsVerified),
-  guard: async (req) => {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+async function requireUserTwoFactorAuth(
+  req: Request,
+): Promise<GuardResult<{ user: User }>> {
+  const prev = await requireUserIsVerified(req);
+  if (!("ok" in prev)) return prev;
 
-    if (
-      ((await shouldForce2faForUser(user_id)) ||
-        req.session.twoFactorsAuthRequested) &&
-      !isWithinTwoFactorAuthenticatedSession(req)
-    ) {
-      if (await is2FACapable(user_id)) {
-        return { type: "redirect", url: "/users/2fa-sign-in" };
-      } else {
-        return { type: "redirect", url: "/users/double-authentication-choice" };
-      }
+  const { id: user_id } = prev.user;
+  if (
+    ((await shouldForce2faForUser(user_id)) ||
+      req.session.twoFactorsAuthRequested) &&
+    !isWithinTwoFactorAuthenticatedSession(req)
+  ) {
+    if (await is2FACapable(user_id)) {
+      return { redirect: "/users/2fa-sign-in" };
+    } else {
+      return { redirect: "/users/double-authentication-choice" };
     }
-    return { type: "next" };
-  },
-};
+  }
 
-export const requireBrowserIsTrusted: NavigationGuardNode = {
-  previous: requireUserTwoFactorAuth,
-  guard: (req) => {
-    const is_browser_trusted = isBrowserTrustedForUser(req);
+  return prev;
+}
 
-    if (!is_browser_trusted) {
-      return {
-        type: "redirect",
-        url: `/users/verify-email?notification=browser_not_trusted`,
-      };
-    }
+export async function requireBrowserIsTrusted(
+  req: Request,
+): Promise<GuardResult<{ user: User }>> {
+  const prev = await requireUserTwoFactorAuth(req);
+  if (!("ok" in prev)) return prev;
 
-    return { type: "next" };
-  },
-};
+  if (!isBrowserTrustedForUser(req)) {
+    return { redirect: "/users/verify-email?notification=browser_not_trusted" };
+  }
+
+  return prev;
+}
 
 export const requireUserCanAccessApp = requireBrowserIsTrusted;
 
 export const requireUserHasLoggedInRecently: NavigationGuardNode = {
-  previous: requireUserCanAccessApp,
+  previous: asLegacyGuard(requireUserCanAccessApp),
   guard: (req) => {
     const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
@@ -314,7 +314,7 @@ export const requireUserTwoFactorAuthForAdmin: NavigationGuardNode = {
 export const requireUserCanAccessAdmin = requireUserTwoFactorAuthForAdmin;
 
 export const requireUserHasAtLeastOneOrganization: NavigationGuardNode = {
-  previous: requireBrowserIsTrusted,
+  previous: asLegacyGuard(requireBrowserIsTrusted),
   guard: async (req) => {
     if (!req.session.interactionId) return { type: "next" };
     if (
