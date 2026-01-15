@@ -98,7 +98,6 @@ import {
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
   requireUserHasSelectedAnOrganization,
-  requireUserIsConnected,
   requireUserIsVerified,
   requireUserSignInRequirements,
 } from "../middlewares/navigation-guards";
@@ -247,13 +246,13 @@ export const userRouter = () => {
 
   userRouter.get(
     "/verify-email",
-    ...navigationGuardChain(requireUserIsConnected),
+    guard.connected,
     csrfProtectionMiddleware,
     getVerifyEmailController,
   );
   userRouter.post(
     "/verify-email",
-    ...navigationGuardChain(requireUserIsConnected),
+    guard.connected,
     csrfProtectionMiddleware,
     verifyEmailRateLimiterMiddleware,
     postVerifyEmailController,
@@ -263,7 +262,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/send-email-verification",
-    ...navigationGuardChain(requireUserIsConnected),
+    guard.connected,
     csrfProtectionMiddleware,
     postSendEmailVerificationController,
   );

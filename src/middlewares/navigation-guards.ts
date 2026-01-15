@@ -1,4 +1,5 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
+import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
@@ -135,6 +136,7 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
 }
 
 export const guard = {
+  connected: middleware(requireUserIsConnected),
   emailInSession: middleware(requireEmailInSession),
   isUser: middleware(requireIsUser),
 };
@@ -172,34 +174,30 @@ export const requireUserHasSeenInclusionconnectWelcomePage: NavigationGuardNode 
 export const requireCredentialPromptRequirements =
   requireUserHasSeenInclusionconnectWelcomePage;
 
-// redirect user to login page if no active session is available
-export const requireUserIsConnected: NavigationGuardNode = {
-  previous: asLegacyGuard(requireIsUser),
-  guard: (req) => {
-    if (req.method === "HEAD") {
-      // From express documentation:
-      // The app.get() function is automatically called for the HTTP HEAD method
-      // in addition to the GET method if app.head() was not called for the path
-      // before app.get().
-      // We return empty response and the headers are sent to the client.
-      return { type: "send" };
+export async function requireUserIsConnected(
+  req: Request,
+): Promise<GuardResult<{ user: User }>> {
+  const prev = await requireIsUser(req);
+  if (!("ok" in prev)) return prev;
+
+  if (req.method === "HEAD") {
+    return { send: true };
+  }
+
+  if (!isWithinAuthenticatedSession(req.session)) {
+    const referrerPath = getReferrerPath(req);
+    if (referrerPath) {
+      req.session.referrerPath = referrerPath;
     }
+    return { redirect: "/users/start-sign-in" };
+  }
 
-    if (!isWithinAuthenticatedSession(req.session)) {
-      const referrerPath = getReferrerPath(req);
-      if (referrerPath) {
-        req.session.referrerPath = referrerPath;
-      }
-
-      return { type: "redirect", url: `/users/start-sign-in` };
-    }
-
-    return { type: "next" };
-  },
-};
+  const user = getUserFromAuthenticatedSession(req);
+  return { ok: true, user };
+}
 
 export const requireUserHasConnectedRecently: NavigationGuardNode = {
-  previous: requireUserIsConnected,
+  previous: asLegacyGuard(requireUserIsConnected),
   guard: (req) => {
     const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
@@ -217,7 +215,7 @@ export const requireUserHasConnectedRecently: NavigationGuardNode = {
 };
 
 export const requireUserIsVerified: NavigationGuardNode = {
-  previous: requireUserIsConnected,
+  previous: asLegacyGuard(requireUserIsConnected),
   guard: async (req) => {
     const { email, email_verified } = getUserFromAuthenticatedSession(req);
 
