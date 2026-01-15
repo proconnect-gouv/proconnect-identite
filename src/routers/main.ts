@@ -25,11 +25,7 @@ import {
   postVerifyRegistrationControllerFactory,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
-import {
-  guard,
-  navigationGuardChain,
-  requireUserCanAccessAdmin,
-} from "../middlewares/navigation-guards";
+import { guard } from "../middlewares/navigation-guards";
 import {
   authenticatorRateLimiterMiddleware,
   rateLimiterMiddleware,
@@ -45,7 +41,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     csrfProtectionMiddleware,
     getConnectionAndAccountController,
   );
@@ -56,7 +52,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     csrfProtectionMiddleware,
     getDoubleAuthenticationController,
   );
@@ -67,7 +63,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     getIsTotpAppInstalledController,
   );
 
@@ -77,7 +73,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     csrfProtectionMiddleware,
     getTotpConfigurationController,
   );
@@ -88,7 +84,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
     postTotpConfigurationController,
@@ -100,7 +96,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     csrfProtectionMiddleware,
     postDeleteTotpConfigurationController,
   );
@@ -111,7 +107,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
       "/connection-and-account?notification=passkey_successfully_created",
@@ -125,7 +121,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     csrfProtectionMiddleware,
     deletePasskeyController,
   );
@@ -136,7 +132,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     csrfProtectionMiddleware,
     postSetForce2faController,
   );

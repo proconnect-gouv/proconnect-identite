@@ -92,7 +92,6 @@ import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
   guard,
   navigationGuardChain,
-  requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
   requireUserHasSelectedAnOrganization,
   requireUserSignInRequirements,
@@ -534,14 +533,14 @@ export const userRouter = () => {
 
   userRouter.post(
     "/delete",
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     csrfProtectionMiddleware,
     postDeleteUserController,
   );
 
   userRouter.get(
     "/franceconnect/logout/callback",
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    guard.admin,
     getFranceConnectLogoutCallbackMiddleware,
     (_req, res) => res.redirect("/oauth/logout"),
   );

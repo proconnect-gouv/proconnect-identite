@@ -136,12 +136,14 @@ export async function requireIsUser(req: Request): Promise<GuardResult<{}>> {
 }
 
 export const guard = {
+  admin: middleware(requireUserTwoFactorAuthForAdmin),
   browserTrusted: middleware(requireBrowserIsTrusted),
   connected: middleware(requireUserIsConnected),
   connectedRecently: middleware(requireUserHasConnectedRecently),
   credentialPromptReady: middleware(requireCredentialPromptRequirements),
   emailInSession: middleware(requireEmailInSession),
   isUser: middleware(requireIsUser),
+  loggedInRecently: middleware(requireUserHasLoggedInRecently),
   verified: middleware(requireUserIsVerified),
 };
 
@@ -271,44 +273,40 @@ export async function requireBrowserIsTrusted(
 
 export const requireUserCanAccessApp = requireBrowserIsTrusted;
 
-export const requireUserHasLoggedInRecently: NavigationGuardNode = {
-  previous: asLegacyGuard(requireUserCanAccessApp),
-  guard: (req) => {
-    const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
+export async function requireUserHasLoggedInRecently(
+  req: Request,
+): Promise<GuardResult<{ user: User }>> {
+  const prev = await requireUserCanAccessApp(req);
+  if (!("ok" in prev)) return prev;
 
-    if (!hasLoggedInRecently) {
-      req.session.referrerPath = getReferrerPath(req);
+  const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
-      return {
-        type: "redirect",
-        url: `/users/start-sign-in?notification=login_required`,
-      };
-    }
+  if (!hasLoggedInRecently) {
+    req.session.referrerPath = getReferrerPath(req);
+    return { redirect: `/users/start-sign-in?notification=login_required` };
+  }
 
-    return { type: "next" };
-  },
-};
+  return prev;
+}
 
-export const requireUserTwoFactorAuthForAdmin: NavigationGuardNode = {
-  previous: requireUserHasLoggedInRecently,
-  guard: async (req) => {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+export async function requireUserTwoFactorAuthForAdmin(
+  req: Request,
+): Promise<GuardResult<{ user: User }>> {
+  const prev = await requireUserHasLoggedInRecently(req);
+  if (!("ok" in prev)) return prev;
 
-    if (
-      (await is2FACapable(user_id)) &&
-      !isWithinTwoFactorAuthenticatedSession(req)
-    ) {
-      req.session.referrerPath = getReferrerPath(req);
+  const { id: user_id } = prev.user;
 
-      return {
-        type: "redirect",
-        url: "/users/2fa-sign-in?notification=2fa_required",
-      };
-    }
+  if (
+    (await is2FACapable(user_id)) &&
+    !isWithinTwoFactorAuthenticatedSession(req)
+  ) {
+    req.session.referrerPath = getReferrerPath(req);
+    return { redirect: "/users/2fa-sign-in?notification=2fa_required" };
+  }
 
-    return { type: "next" };
-  },
-};
+  return prev;
+}
 
 export const requireUserCanAccessAdmin = requireUserTwoFactorAuthForAdmin;
 
