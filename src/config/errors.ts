@@ -115,13 +115,23 @@ export class CertificationDirigeantCloseMatchError extends Error {
 
 export class GouvFrDomainsForbiddenForPrivateOrg extends Error {}
 
-export class DomainRestrictedError extends Error {
+export class DomainNotAllowedForOrganizationError extends Error {
   constructor(
     public organizationId: number,
     options?: ErrorOptions,
   ) {
     super(`Organization ${organizationId} is domain restricted`, options);
     this.name = "DomainRestrictedError";
+  }
+}
+
+export class DomainRefusedForOrganizationError extends Error {
+  constructor(
+    public organizationId: number,
+    options?: ErrorOptions,
+  ) {
+    super(`Domain refused for organization ${organizationId}`, options);
+    this.name = "DomainRefusedError";
   }
 }
 

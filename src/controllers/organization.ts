@@ -19,7 +19,8 @@ import {
   CertificationDirigeantCloseMatchError,
   CertificationDirigeantNoMatchError,
   CertificationDirigeantOrganizationNotCoveredError,
-  DomainRestrictedError,
+  DomainNotAllowedForOrganizationError,
+  DomainRefusedForOrganizationError,
   ForbiddenError,
   GouvFrDomainsForbiddenForPrivateOrg,
   OrganizationNotActiveError,
@@ -186,9 +187,15 @@ export const postJoinOrganizationMiddleware = async (
       return res.redirect(`/users/access-restricted-to-private-sector-email`);
     }
 
-    if (error instanceof DomainRestrictedError) {
+    if (error instanceof DomainNotAllowedForOrganizationError) {
       return res.redirect(
-        `/users/domains-restricted-in-organization?organization_id=${error.organizationId}`,
+        `/users/domain-not-allowed-for-organization?organization_id=${error.organizationId}`,
+      );
+    }
+
+    if (error instanceof DomainRefusedForOrganizationError) {
+      return res.redirect(
+        `/users/domain-refused-for-organization?organization_id=${error.organizationId}`,
       );
     }
 
@@ -224,7 +231,7 @@ export const postJoinOrganizationMiddleware = async (
   }
 };
 
-export const getDomainsRestrictedInOrganizationController = async (
+export const getDomainNotAllowedForOrganizationController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -241,15 +248,39 @@ export const getDomainsRestrictedInOrganizationController = async (
       return next(new HttpErrors.NotFound());
     }
     const whitelist = DOMAINS_WHITELIST.get(organization.siret);
-    if (!whitelist) {
+
+    return res.render("user/domain-not-allowed-for-organization", {
+      pageTitle: "Accès restreint",
+      csrfToken: csrfToken(req),
+      organization_label: organization.cached_libelle,
+      organization_domains: whitelist?.join(", "),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDomainRefusedForOrganizationController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      organization_id: idSchema(),
+    });
+
+    const { organization_id } = await schema.parseAsync(req.query);
+
+    const organization = await getOrganizationById(organization_id);
+    if (isEmpty(organization)) {
       return next(new HttpErrors.NotFound());
     }
 
-    return res.render("user/access-restricted-to-domains", {
-      pageTitle: "Domains restreintes dans l'organisation",
+    return res.render("user/domain-refused-for-organization", {
+      pageTitle: "Accès restreint",
       csrfToken: csrfToken(req),
       organization_label: organization.cached_libelle,
-      organization_domains: whitelist.join(", "),
     });
   } catch (error) {
     next(error);

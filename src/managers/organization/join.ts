@@ -29,7 +29,8 @@ import {
 } from "../../config/env";
 import {
   AccessRestrictedToPublicServiceEmailError,
-  DomainRestrictedError,
+  DomainNotAllowedForOrganizationError,
+  DomainRefusedForOrganizationError,
   GouvFrDomainsForbiddenForPrivateOrg,
   OrganizationNotActiveError,
   UnableToAutoJoinOrganizationError,
@@ -210,7 +211,13 @@ export const joinOrganization = async ({
     await findEmailDomainsByOrganizationId(organization_id);
 
   if (!isDomainAllowedForOrganization(siret, domain)) {
-    throw new DomainRestrictedError(organization_id);
+    throw new DomainNotAllowedForOrganizationError(organization_id);
+  }
+
+  if (
+    some(organizationEmailDomains, { domain, verification_type: "refused" })
+  ) {
+    throw new DomainRefusedForOrganizationError(organization_id);
   }
 
   if (domain.endsWith("gouv.fr") && !isPublicService(organization)) {
