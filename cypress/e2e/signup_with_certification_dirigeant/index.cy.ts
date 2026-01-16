@@ -19,7 +19,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
     cy.title().should("include", "Choisir votre mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -77,7 +77,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
     cy.title().should("include", "Choisir votre mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -135,7 +135,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
     cy.title().should("include", "Choisir votre mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -192,7 +192,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
     cy.title().should("include", "Choisir votre mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -255,7 +255,7 @@ describe("Signup on each organizations of the same siren", () => {
 
       cy.title().should("include", "Choisir votre mot de passe - ");
       cy.contains("Mot de passe").click();
-      cy.contains("Recevoir un lien d’identification").click();
+      cy.contains("Recevoir un lien de connexion").click();
       cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
         (email) => {
           cy.maildevVisitMessageById(email.id);
@@ -324,7 +324,7 @@ describe("❎ Bad match", () => {
 
     cy.title().should("include", "Choisir votre mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -373,7 +373,7 @@ describe("❎ Bad match", () => {
 
     cy.title().should("include", "Choisir votre mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -423,7 +423,7 @@ describe("❎ Bad match", () => {
 
     cy.title().should("include", "Choisir votre mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);

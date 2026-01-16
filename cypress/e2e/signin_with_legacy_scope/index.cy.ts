@@ -23,7 +23,7 @@ describe("sign-in with legacy scope", () => {
     cy.visit("http://localhost:4000");
     cy.get("button.proconnect-button").click();
     cy.contains("Votre organisation de rattachement");
-    cy.get(".fr-grid-row .fr-col-12:first-child .fr-tile__link").click();
+    cy.contains("Commune de lamalou-les-bains").click();
     cy.contains("standard-client");
     cy.contains("Commune de lamalou-les-bains - Mairie");
   });

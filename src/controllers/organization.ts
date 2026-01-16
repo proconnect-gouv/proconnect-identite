@@ -382,7 +382,6 @@ export const getModerationRejectedController = async (
       family_name: user.family_name,
       given_name: user.given_name,
       rejectionReason,
-      illustration: "illu-user.svg",
       moderation_id,
       organization_label: cached_libelle,
       pageTitle: allowEditing ? "Informations à corriger" : "Demande refusée",
@@ -404,7 +403,6 @@ export async function getCertificationDirigeantOrganizationNotCoveredError(
     return res.render(
       "certification-dirigeant/organization-not-covered-error",
       {
-        illustration: "connection-lost.svg",
         oidcError: oidcErrorSchema().enum.login_required,
         interactionId: req.session.interactionId,
         pageTitle: "Certification impossible",
@@ -492,7 +490,6 @@ export async function getAccessRestrictedToPublicSectorEmailController(
 ) {
   return res.render("user/access-restricted-to-public-sector-email", {
     csrfToken: csrfToken(req),
-    illustration: "connection-lost.svg",
     pageTitle: "Email non autorisé",
   });
 }
@@ -503,7 +500,6 @@ export async function getAccessRestrictedToPrivateSectorEmailController(
   _next: NextFunction,
 ) {
   return res.render("user/access-restricted-to-private-sector-email", {
-    illustration: "connection-lost.svg",
     pageTitle: "Email non autorisé",
   });
 }

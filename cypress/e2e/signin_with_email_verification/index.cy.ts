@@ -31,7 +31,7 @@ describe("sign-in with email verification renewal", () => {
     cy.login("rogal.dorn@imperialfists.world");
 
     cy.get('[action="/users/send-email-verification"]')
-      .contains("Recevoir un nouvel email")
+      .contains("Recevoir un nouveau code")
       .should("be.disabled");
 
     // Wait for countdown to last
@@ -40,12 +40,10 @@ describe("sign-in with email verification renewal", () => {
     cy.maildevDeleteAllMessages();
 
     cy.get('[action="/users/send-email-verification"]')
-      .contains("Recevoir un nouvel email")
+      .contains("Recevoir un nouveau code")
       .click();
 
-    cy.contains(
-      "Un nouveau code de vérification a été envoyé à rogal.dorn@imperialfists.world",
-    );
+    cy.contains("Vérifiez les emails reçus par rogal.dorn@imperialfists.world");
 
     cy.verifyEmail();
 

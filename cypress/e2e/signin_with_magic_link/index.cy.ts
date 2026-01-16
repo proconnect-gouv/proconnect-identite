@@ -14,7 +14,7 @@ describe("sign-in with magic link", () => {
     cy.contains("Valider").click();
 
     cy.title().should("include", "Choisir votre mot de passe - ProConnect");
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
 
     cy.title().should(
       "include",
@@ -55,7 +55,7 @@ describe("sign-in with magic link", () => {
       "Pour des raisons de sécurité, nous vous invitons à définir un nouveau mot de passe",
     );
 
-    cy.contains("button", "Recevoir un lien d’identification").click();
+    cy.contains("button", "Recevoir un lien de connexion").click();
 
     cy.title().should(
       "include",
@@ -115,7 +115,7 @@ describe("sign-in with magic link", () => {
       "Pour des raisons de sécurité, nous vous invitons à définir un nouveau mot de passe",
     ).should("not.exist");
 
-    cy.contains("button", "Recevoir un lien d’identification").click();
+    cy.contains("button", "Recevoir un lien de connexion").click();
 
     cy.title().should(
       "include",
