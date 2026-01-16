@@ -302,9 +302,6 @@ export const users_organizations = pgTable(
       .notNull(),
     verification_type: varchar(),
     has_been_greeted: boolean().default(false).notNull(),
-    needs_official_contact_email_verification: boolean()
-      .default(false)
-      .notNull(),
     official_contact_email_verification_token: varchar(),
     official_contact_email_verification_sent_at: timestamp({
       withTimezone: true,

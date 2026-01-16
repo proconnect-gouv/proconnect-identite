@@ -311,8 +311,7 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: "code_sent_to_official_contact_email",
-        needs_official_contact_email_verification: true,
+        verification_type: "pending_code_sent_to_official_contact_email",
       });
     }
   }
@@ -338,8 +337,7 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: "code_sent_to_official_contact_email",
-        needs_official_contact_email_verification: true,
+        verification_type: "pending_code_sent_to_official_contact_email",
       });
     }
   }

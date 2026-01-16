@@ -273,10 +273,12 @@ export async function getCurrentIAL(req: Request) {
   const hasConsistencyCheckVerificationType = [
     "code_sent_to_official_contact_email",
     "domain",
-    "imported_from_inclusion_connect",
     "imported_from_coop_mediation_numerique",
+    "imported_from_inclusion_connect",
     "in_liste_dirigeants_rna",
+    "in_liste_dirigeants_rne",
     "official_contact_email",
+    "proof_received",
     "bypassed",
   ].includes(link?.verification_type ?? "");
 

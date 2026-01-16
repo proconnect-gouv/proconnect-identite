@@ -7,7 +7,6 @@ exports[`linkUserToOrganizationFactory > should link user to organization 1`] = 
   "updated_at": "4444-04-04T00:00:00.000Z",
   "verification_type": null,
   "has_been_greeted": false,
-  "needs_official_contact_email_verification": false,
   "official_contact_email_verification_token": null,
   "official_contact_email_verification_sent_at": null,
   "verified_at": null
@@ -23,7 +22,6 @@ exports[`linkUserToOrganizationFactory > should mark a user as organization_diri
   "updated_at": "4444-04-04T00:00:00.000Z",
   "verification_type": "organization_dirigeant",
   "has_been_greeted": false,
-  "needs_official_contact_email_verification": false,
   "official_contact_email_verification_token": null,
   "official_contact_email_verification_sent_at": null,
   "verified_at": "4444-04-04T00:00:00.000Z"

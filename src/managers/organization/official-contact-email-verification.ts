@@ -47,12 +47,10 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     throw new NotFoundError();
   }
 
-  const {
-    needs_official_contact_email_verification,
-    official_contact_email_verification_sent_at,
-  } = user;
+  const { verification_type, official_contact_email_verification_sent_at } =
+    user;
 
-  if (!needs_official_contact_email_verification) {
+  if (verification_type !== "pending_code_sent_to_official_contact_email") {
     throw new OfficialContactEmailVerificationNotNeededError();
   }
 
@@ -135,7 +133,11 @@ export const verifyOfficialContactEmailToken = async ({
   const organization = await findOrganizationById(organization_id);
 
   // The user should be in the organization already
-  if (isEmpty(user) || isEmpty(organization)) {
+  if (
+    isEmpty(user) ||
+    isEmpty(organization) ||
+    user.verification_type !== "pending_code_sent_to_official_contact_email"
+  ) {
     throw new NotFoundError();
   }
 
@@ -158,7 +160,7 @@ export const verifyOfficialContactEmailToken = async ({
   }
 
   return await updateUserOrganizationLink(organization_id, user_id, {
-    needs_official_contact_email_verification: false,
+    verification_type: "code_sent_to_official_contact_email",
     official_contact_email_verification_token: null,
     official_contact_email_verification_sent_at: null,
   });

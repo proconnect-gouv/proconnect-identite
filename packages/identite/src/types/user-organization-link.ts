@@ -1,19 +1,24 @@
 import { z } from "zod";
 
 export const UserOrganizationLinkVerificationTypeSchema = z.enum([
+  // This verification makes the associated identity eligible for eIDAS level 2 and above
+  "organization_dirigeant",
+  // These verifications make the associated identity eligible for eIDAS level 1
   "code_sent_to_official_contact_email",
   "domain",
   "imported_from_coop_mediation_numerique",
   "imported_from_inclusion_connect",
   "in_liste_dirigeants_rna",
   "in_liste_dirigeants_rne",
-  "pending_organization_dirigeant",
+  "official_contact_email",
+  "proof_received",
+  // These verifications make the associated identity eligible for eIDAS level 0
   "no_validation_means_available",
   "no_verification_means_for_entreprise_unipersonnelle",
   "no_verification_means_for_small_association",
-  "official_contact_email",
-  "organization_dirigeant",
-  "proof_received",
+  // These verifications indicate that the linked identity has not yet been confirmed as part of the organization
+  "pending_code_sent_to_official_contact_email",
+  "pending_organization_dirigeant",
   // Used in the sandbox environment to bypass the verification process
   "bypassed",
 ]);
@@ -30,7 +35,6 @@ export const BaseUserOrganizationLinkSchema = z.object({
   // updated when verification_type is changed
   verified_at: z.date().or(z.literal(null)),
   has_been_greeted: z.boolean(),
-  needs_official_contact_email_verification: z.boolean(),
   official_contact_email_verification_token: z.string().nullable(),
   official_contact_email_verification_sent_at: z.date().nullable(),
 });
@@ -63,7 +67,6 @@ export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
 ).merge(
   UserOrganizationLinkSchema.pick({
     is_external: true,
-    needs_official_contact_email_verification: true,
   }).partial(),
 );
 

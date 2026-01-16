@@ -537,15 +537,17 @@ export const requireUserHasNoPendingOfficialContactEmailVerification: Navigation
 
         organizationThatNeedsOfficialContactEmailVerification =
           userOrganisations.find(
-            ({ id, needs_official_contact_email_verification }) =>
-              needs_official_contact_email_verification &&
+            ({ id, verification_type }) =>
+              verification_type ===
+                "pending_code_sent_to_official_contact_email" &&
               id === selectedOrganizationId,
           );
       } else {
         organizationThatNeedsOfficialContactEmailVerification =
           userOrganisations.find(
-            ({ needs_official_contact_email_verification }) =>
-              needs_official_contact_email_verification,
+            ({ verification_type }) =>
+              verification_type ===
+              "pending_code_sent_to_official_contact_email",
           );
       }
 
