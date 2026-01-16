@@ -20,7 +20,7 @@ describe("join with free email domain", () => {
     cy.contains("Enregistrer").click();
 
     cy.title().should("include", "Compte créé -");
-    cy.contains("Votre compte est créé !");
+    cy.contains("Compte créé ! 🎊");
   });
 
   it("collectivité territoriale", function () {
