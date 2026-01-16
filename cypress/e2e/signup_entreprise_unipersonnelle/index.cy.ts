@@ -32,9 +32,13 @@ describe("Signup into new entreprise unipersonnelle", () => {
     cy.get('[type="submit"]').click();
 
     // Fill the user's personal information
-    cy.get('[name="given_name"]').type("Georges");
-    cy.get('[name="family_name"]').type("Moustaki");
-    cy.get('[type="submit"]').click();
+    cy.title().should("include", "Certification avec FranceConnect -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
+
+    cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
 
     // Click on "continue" on the welcome page
     cy.get('[type="submit"]').click();
