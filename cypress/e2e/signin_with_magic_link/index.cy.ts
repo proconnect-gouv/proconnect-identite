@@ -11,10 +11,10 @@ describe("sign-in with magic link", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
     cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ProConnect");
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.title().should("include", "Choisir un mot de passe - ProConnect");
+    cy.contains("Recevoir un lien de connexion").click();
 
     cy.title().should(
       "include",
@@ -48,14 +48,14 @@ describe("sign-in with magic link", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
     cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ProConnect");
+    cy.title().should("include", "Choisir un mot de passe - ProConnect");
     cy.contains(
       "Pour des raisons de sécurité, nous vous invitons à définir un nouveau mot de passe",
     );
 
-    cy.contains("button", "Recevoir un lien d’identification").click();
+    cy.contains("button", "Recevoir un lien de connexion").click();
 
     cy.title().should(
       "include",
@@ -89,12 +89,12 @@ describe("sign-in with magic link", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
     cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ProConnect");
+    cy.title().should("include", "Choisir un mot de passe - ProConnect");
     cy.contains("Mot de passe").click();
     cy.focused().type("This super secret password is hidden well!");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
     cy.verifyEmail();
 
@@ -108,14 +108,14 @@ describe("sign-in with magic link", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
     cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
     cy.title().should("include", "Accéder au compte - ProConnect");
     cy.contains(
       "Pour des raisons de sécurité, nous vous invitons à définir un nouveau mot de passe",
     ).should("not.exist");
 
-    cy.contains("button", "Recevoir un lien d’identification").click();
+    cy.contains("button", "Recevoir un lien de connexion").click();
 
     cy.title().should(
       "include",

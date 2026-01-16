@@ -20,7 +20,7 @@ describe("join with free email domain", () => {
     cy.contains("Enregistrer").click();
 
     cy.title().should("include", "Compte créé -");
-    cy.contains("Votre compte est créé !");
+    cy.contains("Compte créé ! 🎊");
   });
 
   it("collectivité territoriale", function () {
@@ -210,9 +210,6 @@ describe("join syndicat communal", () => {
       cy.focused().clear().type(code);
       cy.contains("Enregistrer").click();
       cy.contains("Demande en cours");
-      cy.contains(
-        "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
-      );
     });
   });
 });

@@ -30,7 +30,7 @@ describe("sign-in with email verification renewal", () => {
       "somerandomandlongpasswordthatshouldcontentmcpsecuritypolicy",
     );
     cy.get('[action="/users/sign-up"]  [type="submit"]')
-      .contains("Valider")
+      .contains("Continuer")
       .click();
 
     cy.contains(
