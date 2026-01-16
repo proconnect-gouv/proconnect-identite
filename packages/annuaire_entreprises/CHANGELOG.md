@@ -1,5 +1,22 @@
 # @proconnect-gouv/proconnect.annuaire_entreprises
 
+## 1.1.3
+
+### Patch Changes
+
+- [#1615](https://github.com/proconnect-gouv/proconnect-identite/pull/1615) [`b1a2289`](https://github.com/proconnect-gouv/proconnect-identite/commit/b1a22894a95b627e4e71469bb5d0572ea9a5c884) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour des données annuaire entreprises depuis search-infra@12f4c78
+
+- [#1620](https://github.com/proconnect-gouv/proconnect-identite/pull/1620) [`91a18ba`](https://github.com/proconnect-gouv/proconnect-identite/commit/91a18ba62a6f9c30944db7c4ce4568d2bce87aea) Thanks [@github-actions](https://github.com/apps/github-actions)! - ✨ Mise à jour de l'algorithme de detection d'une organisation publiques
+
+  See https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/pull/610
+
+  > ✨ Automatiser l'identification des hôpitaux publics
+  > See https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/issues/575
+  > 🏛️ Revoir la définition d'une administration
+  > See https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/issues/584
+
+  ⬆️ Mise à jour des données annuaire entreprises depuis search-infra@4ec29b1
+
 ## 1.1.2
 
 ### Patch Changes
