@@ -376,36 +376,38 @@ export const requireUserHasSelectedAnOrganization: NavigationGuardNode = {
   },
 };
 
-const requireSelectedOrganizationToBeFlaggedAsPending: NavigationGuardNode = {
-  previous: requireUserHasSelectedAnOrganization,
-  guard: async (req) => {
-    if (!req.session.interactionId) return { type: "next" };
-    if (!req.session.mustReturnOneOrganizationInPayload)
-      return { type: "next" };
+export const requireSelectedOrganizationToBeFlaggedAsPending: NavigationGuardNode =
+  {
+    previous: requireUserHasSelectedAnOrganization,
+    guard: async (req) => {
+      if (!req.session.interactionId) return { type: "next" };
+      if (!req.session.mustReturnOneOrganizationInPayload)
+        return { type: "next" };
 
-    if (req.session.certificationDirigeantRequested) {
-      const { id: user_id } = getUserFromAuthenticatedSession(req);
-      const selectedOrganizationId =
-        (await getSelectedOrganizationId(user_id))!;
-      const { verification_type: linkType } = (await getUserOrganizationLink(
-        selectedOrganizationId,
-        user_id,
-      ))!;
+      if (req.session.certificationDirigeantRequested) {
+        const { id: user_id } = getUserFromAuthenticatedSession(req);
+        const selectedOrganizationId =
+          (await getSelectedOrganizationId(user_id))!;
+        const { verification_type: linkType } = (await getUserOrganizationLink(
+          selectedOrganizationId,
+          user_id,
+        ))!;
 
-      if (
-        linkType !== "pending_organization_dirigeant" &&
-        linkType !== "organization_dirigeant"
-      ) {
-        await updateUserOrganizationLink(selectedOrganizationId, user_id, {
-          verification_type: "pending_organization_dirigeant",
-          verified_at: new Date(),
-        });
+        if (
+          linkType !== "pending_organization_dirigeant" &&
+          linkType !== "organization_dirigeant"
+        ) {
+          await updateUserOrganizationLink(selectedOrganizationId, user_id, {
+            verification_type: "pending_organization_dirigeant",
+            verified_at: new Date(),
+          });
+        }
       }
-    }
 
-    return { type: "next" };
-  },
-};
+      return { type: "next" };
+    },
+  };
+
 const requireUserIsFranceConnected: NavigationGuardNode = {
   previous: requireSelectedOrganizationToBeFlaggedAsPending,
   guard: async (req) => {

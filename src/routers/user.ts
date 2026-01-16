@@ -96,6 +96,7 @@ import {
   requireCredentialPromptRequirements,
   requireEmailInSession,
   requireIsUser,
+  requireSelectedOrganizationToBeFlaggedAsPending,
   requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
@@ -252,6 +253,8 @@ export const userRouter = () => {
     ...navigationGuardChain(requireUserIsConnected),
     csrfProtectionMiddleware,
     getVerifyEmailController,
+    ...navigationGuardChain(requireUserSignInRequirements),
+    issueSessionOrRedirectController,
   );
   userRouter.post(
     "/verify-email",
@@ -268,6 +271,8 @@ export const userRouter = () => {
     ...navigationGuardChain(requireUserIsConnected),
     csrfProtectionMiddleware,
     postSendEmailVerificationController,
+    ...navigationGuardChain(requireUserSignInRequirements),
+    issueSessionOrRedirectController,
   );
   userRouter.post(
     "/send-magic-link",
@@ -335,13 +340,13 @@ export const userRouter = () => {
 
   userRouter.get(
     "/personal-information",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
     csrfProtectionMiddleware,
     getPersonalInformationsController,
   );
   userRouter.post(
     "/personal-information",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
     csrfProtectionMiddleware,
     postPersonalInformationsController,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -349,7 +354,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/personal-information/franceconnect/login",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/personal-information/franceconnect/login/callback`,
@@ -357,7 +362,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/personal-information`,
     ),
@@ -367,7 +372,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/logout/callback",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     (_req, res) =>
