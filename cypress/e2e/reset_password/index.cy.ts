@@ -12,7 +12,7 @@ describe("reset password", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
     cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
     cy.title().should("include", "Accéder au compte - ProConnect");
     cy.contains("Renseignez votre mot de passe").click();
@@ -58,7 +58,7 @@ describe("reset password", () => {
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Votre mot de passe a été mis à jour.");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
     cy.title().should("include", "Accéder au compte - ProConnect");
     cy.contains("Renseignez votre mot de passe").click();
