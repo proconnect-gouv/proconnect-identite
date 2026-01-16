@@ -26,7 +26,7 @@ describe("trigger rate limit by email", () => {
     // trigger reset email verification rate limiter
     for (let i = 0; i <= 10; i++) {
       cy.contains(
-        "Vérifiez vos emails et insérez le code à 10 chiffres.",
+        "Vérifiez les emails reçus par email-verification-needed@yopmail.com.",
       ).click();
       cy.focused().type("1234567890");
       cy.get('[type="submit"]').click();
