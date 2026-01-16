@@ -38,6 +38,7 @@ suite("findByIdFactory", () => {
       cached_libelle_tranche_effectif: null,
       cached_libelle: "Necron",
       cached_nom_complet: "Necrontyr",
+      cached_siege_social: null,
       cached_statut_diffusion: null,
       cached_tranche_effectifs_unite_legale: null,
       cached_tranche_effectifs: null,

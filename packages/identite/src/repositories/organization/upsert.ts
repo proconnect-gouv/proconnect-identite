@@ -35,6 +35,7 @@ export function upsertFactory({ pg }: DatabaseContext) {
       cached_libelle_activite_principale,
       cached_categorie_juridique,
       cached_libelle_categorie_juridique,
+      cached_siege_social,
     } = toPartialOrganization(organizationInfo);
 
     const { rows }: QueryResult<Organization> = await pg.query(
@@ -59,12 +60,13 @@ export function upsertFactory({ pg }: DatabaseContext) {
         cached_libelle_activite_principale,
         cached_categorie_juridique,
         cached_libelle_categorie_juridique,
+        cached_siege_social,
         organization_info_fetched_at,
         updated_at,
         created_at
       )
     VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
     ON CONFLICT (siret)
     DO UPDATE
     SET (
@@ -86,6 +88,7 @@ export function upsertFactory({ pg }: DatabaseContext) {
         cached_libelle_activite_principale,
         cached_categorie_juridique,
         cached_libelle_categorie_juridique,
+        cached_siege_social,
         organization_info_fetched_at,
         updated_at
     ) = (
@@ -107,6 +110,7 @@ export function upsertFactory({ pg }: DatabaseContext) {
         EXCLUDED.cached_libelle_activite_principale,
         EXCLUDED.cached_categorie_juridique,
         EXCLUDED.cached_libelle_categorie_juridique,
+        EXCLUDED.cached_siege_social,
         EXCLUDED.organization_info_fetched_at,
         EXCLUDED.updated_at
     )
@@ -131,6 +135,7 @@ export function upsertFactory({ pg }: DatabaseContext) {
         cached_libelle_activite_principale,
         cached_categorie_juridique,
         cached_libelle_categorie_juridique,
+        cached_siege_social,
         new Date(),
         new Date(),
         new Date(),
@@ -161,6 +166,7 @@ function toPartialOrganization(organization_info: OrganizationInfo) {
     libelleCategorieJuridique: cached_libelle_categorie_juridique,
     libelleTrancheEffectif: cached_libelle_tranche_effectif,
     nomComplet: cached_nom_complet,
+    siegeSocial: cached_siege_social,
     siret,
     statutDiffusion: cached_statut_diffusion,
     trancheEffectifs: cached_tranche_effectifs,
@@ -181,6 +187,7 @@ function toPartialOrganization(organization_info: OrganizationInfo) {
     cached_libelle_tranche_effectif,
     cached_libelle,
     cached_nom_complet,
+    cached_siege_social,
     cached_statut_diffusion,
     cached_tranche_effectifs_unite_legale,
     cached_tranche_effectifs,

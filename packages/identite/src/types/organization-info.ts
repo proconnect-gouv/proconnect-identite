@@ -19,6 +19,7 @@ export const OrganizationInfoSchema = z.object({
   libelleCategorieJuridique: z.string(),
   libelleTrancheEffectif: z.string(),
   nomComplet: z.string(),
+  siegeSocial: z.boolean(),
   siret: z.string(),
   statutDiffusion: z.enum([
     "diffusible",

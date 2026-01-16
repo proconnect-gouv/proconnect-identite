@@ -7,7 +7,7 @@
         <p><span class="fr-label">Quelle organisation voulez-vous représenter ?</span></p>
         <% } %>
         <div class="fr-grid-row fr-grid-row--gutters fr-mb-3v">
-            <% userOrganizations.forEach(({ id, verification_type, siret, cached_libelle, cached_adresse, cached_libelle_activite_principale }, index) => { %>
+            <% userOrganizations.forEach(({ id, verification_type, siret, cached_libelle, cached_adresse, cached_libelle_activite_principale, cached_siege_social }, index) => { %>
                 <div class="fr-col-12" aria-describedby="submit-join-organization-<%= id %>">
                     <div id="submit-join-organization-<%= id %>" class="fr-tile fr-enlarge-link fr-tile--horizontal selectable-tile <% if (index === 0) { %>selected-tile<% } %>">
                         <div class="fr-tile__body">
@@ -21,7 +21,16 @@
                             </h2>
                             <p class="fr-tile__desc fr-pb-0"><%= cached_adresse; %></p>
                             <p class="fr-tile__desc fr-pb-0"><b>SIRET <%= siret; %></b></p>
-                            <p class="fr-tile__desc"><%= cached_libelle_activite_principale; %></p>
+                            <p class="fr-tile__desc<%= typeof cached_siege_social === 'boolean' ? ' fr-pb-0' : '' %>">
+                                <%= cached_libelle_activite_principale; %>
+                            </p>
+                            <% if (typeof cached_siege_social === 'boolean') { %>
+                                <p class="fr-tile__desc">
+                                    <span class="fr-badge">
+                                        <%= cached_siege_social ? "Siège social" : "Établissement secondaire"; %>
+                                    </span>
+                                </p>
+                            <% } %>
                         </div>
                     </div>
                     <form id="form-join-organization-<%= id %>" hidden action="/users/select-organization" method="post">
