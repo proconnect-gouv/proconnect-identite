@@ -18,7 +18,6 @@ import {
   postQuitUserOrganizationController,
 } from "../controllers/organization";
 import { postSignInWithTotpController } from "../controllers/totp";
-import { getCertificationDirigeantController } from "../controllers/user/certification-dirigeant";
 import { postDeleteUserController } from "../controllers/user/delete";
 
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
@@ -27,6 +26,7 @@ import {
   postReopenModerationAndRedirectControllerFactory,
 } from "../controllers/user/edit-moderation";
 import {
+  getFranceConnectController,
   getFranceConnectLoginCallbackMiddlewareFactory,
   getFranceConnectLogoutCallbackMiddleware,
   postFranceConnectLoginRedirectControllerFactory,
@@ -566,14 +566,14 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/certification-dirigeant",
+    "/franceconnect",
     ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
-    getCertificationDirigeantController,
+    getFranceConnectController,
   );
 
   userRouter.post(
-    "/certification-dirigeant/franceconnect/login",
+    "/franceconnect/login",
     ...navigationGuardChain(requireBrowserIsTrusted),
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
@@ -585,7 +585,7 @@ export const userRouter = () => {
     "/certification-dirigeant/franceconnect/login/callback",
     ...navigationGuardChain(requireBrowserIsTrusted),
     getFranceConnectLoginCallbackMiddlewareFactory(
-      `${HOST}/users/certification-dirigeant`,
+      `${HOST}/users/franceconnect`,
     ),
     useFranceConnectLogoutMiddlewareFactory(
       `${HOST}/users/certification-dirigeant/franceconnect/logout/callback`,

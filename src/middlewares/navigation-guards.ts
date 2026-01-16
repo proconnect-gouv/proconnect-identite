@@ -425,7 +425,10 @@ const requireUserIsFranceConnected: NavigationGuardNode = {
 
     if (
       linkType !== "pending_organization_dirigeant" &&
-      linkType !== "organization_dirigeant"
+      linkType !== "organization_dirigeant" &&
+      linkType !== "no_validation_means_available" &&
+      linkType !== "no_verification_means_for_entreprise_unipersonnelle" &&
+      linkType !== "no_verification_means_for_small_association"
     )
       return { type: "next" };
 
@@ -434,7 +437,7 @@ const requireUserIsFranceConnected: NavigationGuardNode = {
 
     if (isVerified) return { type: "next" };
 
-    return { type: "redirect", url: "/users/certification-dirigeant" };
+    return { type: "redirect", url: "/users/franceconnect" };
   },
 };
 

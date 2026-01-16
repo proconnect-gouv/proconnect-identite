@@ -25,9 +25,34 @@ import {
 } from "../../managers/session/authenticated";
 import { FranceConnectOidcSessionSchema } from "../../managers/session/franceconnect";
 import { updateFranceConnectUserInfo } from "../../managers/user";
+import { csrfToken } from "../../middlewares/csrf-protection";
+import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 import { logger } from "../../services/log";
 
 //
+
+export async function getFranceConnectController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const displayCertificationDirigeantContent =
+      !!req.session.certificationDirigeantRequested;
+    const pageTitle = displayCertificationDirigeantContent
+      ? "Certification dirigeant"
+      : "Vérifier votre identité";
+
+    return res.render("user/franceconnect", {
+      csrfToken: csrfToken(req),
+      pageTitle,
+      notifications: await getNotificationsFromRequest(req),
+      displayCertificationDirigeantContent,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export function getFranceConnectLoginCallbackMiddlewareFactory(
   exception_redirect_uri: string,
