@@ -30,7 +30,6 @@ exports[`getUsersByOrganizationFactory > should find users by organization id 1`
     "verification_type": "no_verification_means_available",
     "verified_at": null,
     "has_been_greeted": false,
-    "needs_official_contact_email_verification": false,
     "official_contact_email_verification_token": null,
     "official_contact_email_verification_sent_at": null
   }

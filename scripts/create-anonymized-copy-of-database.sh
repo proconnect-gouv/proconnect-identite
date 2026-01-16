@@ -183,7 +183,6 @@ SELECT
 	updated_at,
 	verification_type,
 	has_been_greeted,
-	needs_official_contact_email_verification,
 	'**********' as official_contact_email_verification_token,
 	official_contact_email_verification_sent_at,
 	verified_at

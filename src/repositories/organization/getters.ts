@@ -97,7 +97,6 @@ SELECT
   verification_type,
   verified_at,
   has_been_greeted,
-  needs_official_contact_email_verification,
   official_contact_email_verification_token,
   official_contact_email_verification_sent_at
 FROM users_organizations

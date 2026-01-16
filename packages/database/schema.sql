@@ -423,7 +423,6 @@ CREATE TABLE "public"."users_organizations" (
   "updated_at" timestamp with time zone DEFAULT '1970-01-01 00:00:00'::timestamp without time zone NOT NULL,
   "verification_type" character varying,
   "has_been_greeted" boolean DEFAULT false NOT NULL,
-  "needs_official_contact_email_verification" boolean DEFAULT false NOT NULL,
   "official_contact_email_verification_token" character varying,
   "official_contact_email_verification_sent_at" timestamp with time zone,
   "verified_at" timestamp with time zone
