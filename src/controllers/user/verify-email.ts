@@ -70,9 +70,7 @@ export const getVerifyEmailController = async (
     });
   } catch (error) {
     if (error instanceof NoNeedVerifyEmailAddressError) {
-      return res.redirect(
-        `/users/personal-information?notification=no_need_to_verify_email_address`,
-      );
+      return next();
     }
 
     next(error);
@@ -133,9 +131,7 @@ export const postSendEmailVerificationController = async (
     return res.redirect(`/users/verify-email?new_code_sent=true`);
   } catch (error) {
     if (error instanceof NoNeedVerifyEmailAddressError) {
-      return res.redirect(
-        `/users/personal-information?notification=no_need_to_verify_email_address`,
-      );
+      return next();
     }
 
     next(error);
