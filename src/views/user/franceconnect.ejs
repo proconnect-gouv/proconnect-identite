@@ -1,15 +1,23 @@
 <div>
   <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
 
+  <% if (locals.displayCertificationDirigeantContent) { %>
   <h1 class="fr-h3">Certifier votre statut</h1>
 
   <p>
     Vous pouvez authentifier instantanément votre statut de dirigeant grâce à
     FranceConnect.
   </p>
+  <% } else { %>
+  <h1 class="fr-h3">Certifier votre compte</h1>
+
+  <p>
+    Nous avons besoin de certifier votre compte avec FranceConnect.
+  </p>
+  <% } %>
 
   <form
-    action="/users/certification-dirigeant/franceconnect/login"
+    action="/users/franceconnect/login"
     method="post"
   >
     <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />

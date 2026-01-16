@@ -23,7 +23,7 @@ describe("should suggest valid email address", () => {
   });
 });
 
-describe("allowed whithelist email domains", () => {
+describe("allowed whitelist email domains", () => {
   it("should sign-in", function () {
     cy.visit("http://localhost:4001");
     cy.get("button.proconnect-button").click();
