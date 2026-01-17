@@ -112,7 +112,7 @@
     "ts-pattern": "^5.7.0",
     "tsx": "^4.20.3",
     "zod": "^4.3.5",
-    "zod-validation-error": "^4.0.1"
+    "zod-validation-error": "^5.0.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
