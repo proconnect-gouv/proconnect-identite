@@ -5,12 +5,12 @@ exports[`linkUserToOrganizationFactory > should link user to organization 1`] = 
   "is_external": false,
   "created_at": "4444-04-04T00:00:00.000Z",
   "updated_at": "4444-04-04T00:00:00.000Z",
-  "verification_type": null,
+  "verification_type": "domain_not_verified_yet",
   "has_been_greeted": false,
   "needs_official_contact_email_verification": false,
   "official_contact_email_verification_token": null,
   "official_contact_email_verification_sent_at": null,
-  "verified_at": null
+  "verified_at": "4444-04-04T00:00:00.000Z"
 }
 `;
 

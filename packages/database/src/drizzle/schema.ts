@@ -300,7 +300,7 @@ export const users_organizations = pgTable(
     updated_at: timestamp({ withTimezone: true, mode: "string" })
       .default("1970-01-01 00:00:00")
       .notNull(),
-    verification_type: varchar(),
+    verification_type: varchar().notNull(),
     has_been_greeted: boolean().default(false).notNull(),
     needs_official_contact_email_verification: boolean()
       .default(false)

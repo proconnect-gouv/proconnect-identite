@@ -421,7 +421,7 @@ CREATE TABLE "public"."users_organizations" (
   "is_external" boolean DEFAULT false NOT NULL,
   "created_at" timestamp with time zone DEFAULT '1970-01-01 00:00:00'::timestamp without time zone NOT NULL,
   "updated_at" timestamp with time zone DEFAULT '1970-01-01 00:00:00'::timestamp without time zone NOT NULL,
-  "verification_type" character varying,
+  "verification_type" character varying NOT NULL,
   "has_been_greeted" boolean DEFAULT false NOT NULL,
   "needs_official_contact_email_verification" boolean DEFAULT false NOT NULL,
   "official_contact_email_verification_token" character varying,

@@ -80,24 +80,25 @@ VALUES
   );
 
 INSERT INTO
-  organizations (id, siret, created_at, updated_at)
+  organizations (id, cached_libelle, siret, created_at, updated_at)
 VALUES
-  -- COMMUNE DE CLAMART - Mairie
   (
     1,
+    'COMMUNE DE CLAMART - Mairie',
     '21920023500014',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
-  -- COMMUNE DE CLAMART - Service assainissement
   (
     2,
+    'COMMUNE DE CLAMART - Service assainissement',
     '21920023500394',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
   (
     3,
+    'CLAMART',
     '45334017600024',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP

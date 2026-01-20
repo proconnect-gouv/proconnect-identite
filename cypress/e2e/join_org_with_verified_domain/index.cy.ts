@@ -1,10 +1,7 @@
 //
 
 describe("join organizations", () => {
-  before(() => {
-    cy.visit("/");
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("join suggested organisation", function () {
     cy.visit("/users/join-organization");
@@ -37,7 +34,7 @@ describe("join organizations", () => {
     cy.visit("/users/join-organization");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.login("lion.eljonson@darkangels.world");
+    cy.login("rogal.dorn@imperialfists.world");
 
     cy.title().should("include", "Rejoindre une organisation - ProConnect");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -54,7 +51,7 @@ describe("join organizations", () => {
 
     cy.title().should("include", "Rejoindre une organisation - ProConnect");
     cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("13002526500013");
+    cy.focused().clear().type("45334017600024");
     cy.contains("Enregistrer").click();
 
     cy.title().should("include", "Rattachement en cours - ProConnect");

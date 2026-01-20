@@ -28,22 +28,25 @@ VALUES
   );
 
 INSERT INTO
-  organizations (id, siret, created_at, updated_at)
+  organizations (id, cached_libelle, siret, created_at, updated_at)
 VALUES
   (
     1,
+    'BNP PARIBAS à SAINT-SYMPHORIEN-D OZON',
     '66204244933106',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
   (
     2,
+    'BNP PARIBAS (HELLO BANK!) à CARCASSONNE',
     '66204244914742',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
   (
     3,
+    'BNP PARIBAS (HELLO BANK!) à CLAMECY',
     '66204244905476',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -58,8 +61,7 @@ INSERT INTO
     created_at,
     moderated_at,
     comment,
-    moderated_by,
-    ticket_id
+    moderated_by
   )
 VALUES
   (
@@ -70,8 +72,7 @@ VALUES
     CURRENT_TIMESTAMP - INTERVAL '2 days',
     CURRENT_TIMESTAMP - INTERVAL '1 day',
     'Rejeté par moderator@yopmail.com | Raison : "Nom de domaine introuvable"',
-    'moderator@yopmail.com',
-    NULL
+    'moderator@yopmail.com'
   ),
   (
     2,
@@ -81,8 +82,7 @@ VALUES
     CURRENT_TIMESTAMP - INTERVAL '2 days',
     CURRENT_TIMESTAMP - INTERVAL '1 day',
     'Rejeté par moderator@yopmail.com | Raison : "Inversion Nom et Prénom"',
-    'moderator@yopmail.com',
-    NULL
+    'moderator@yopmail.com'
   ),
   (
     3,
@@ -92,6 +92,5 @@ VALUES
     CURRENT_TIMESTAMP - INTERVAL '2 days',
     CURRENT_TIMESTAMP - INTERVAL '1 day',
     'Rejeté par moderator@yopmail.com | Documents insuffisants',
-    'moderator@yopmail.com',
-    NULL
+    'moderator@yopmail.com'
   );

@@ -15,8 +15,10 @@ import {
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import type {
   Organization,
+  User,
   UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
+import { LinkTypes } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";
@@ -33,6 +35,7 @@ import {
   DomainRefusedForOrganizationError,
   GouvFrDomainsForbiddenForPrivateOrg,
   OrganizationNotActiveError,
+  PendingCertificationDirigeantError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -132,18 +135,7 @@ export const getOrganizationSuggestions = async ({
   );
 };
 
-export const joinOrganization = async ({
-  siret,
-  user_id,
-  confirmed = false,
-  certificationRequested = false,
-}: {
-  siret: string;
-  user_id: number;
-  confirmed: boolean;
-  certificationRequested?: boolean;
-}): Promise<UserOrganizationLink> => {
-  // Update organizationInfo
+export const upsertOrganization = async (siret: string) => {
   let organization: Organization;
   try {
     const organizationInfo = await getOrganizationInfo(siret);
@@ -158,6 +150,22 @@ export const joinOrganization = async ({
 
     throw new InvalidSiretError("", { cause: error });
   }
+
+  return organization;
+};
+
+export const joinOrganization = async ({
+  organization,
+  user_id,
+  confirmed = false,
+  certificationRequested = false,
+}: {
+  organization: Organization;
+  user_id: number;
+  confirmed: boolean;
+  certificationRequested?: boolean;
+}): Promise<UserOrganizationLink> => {
+  const { siret } = organization;
 
   // Ensure the organization is active
   if (!organization.cached_est_active) {
@@ -204,7 +212,7 @@ export const joinOrganization = async ({
     });
   }
 
-  const { id: organization_id, cached_libelle } = organization;
+  const { id: organization_id } = organization;
   const { email } = user;
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
@@ -225,18 +233,15 @@ export const joinOrganization = async ({
   }
 
   if (certificationRequested) {
-    return await linkUserToOrganization({
-      organization_id,
-      user_id,
-      verification_type: "pending_organization_dirigeant",
-    });
+    throw new PendingCertificationDirigeantError(organization_id);
   }
 
   if (isEntrepriseUnipersonnelle(organization)) {
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: "no_verification_means_for_entreprise_unipersonnelle",
+      verification_type:
+        LinkTypes.enum.no_verification_means_for_entreprise_unipersonnelle,
     });
   }
 
@@ -244,7 +249,8 @@ export const joinOrganization = async ({
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: "no_verification_means_for_small_association",
+      verification_type:
+        LinkTypes.enum.no_verification_means_for_small_association,
     });
   }
 
@@ -296,7 +302,7 @@ export const joinOrganization = async ({
         return await linkUserToOrganization({
           organization_id,
           user_id,
-          verification_type: "official_contact_email",
+          verification_type: LinkTypes.enum.official_contact_email,
         });
       }
 
@@ -304,14 +310,14 @@ export const joinOrganization = async ({
         return await linkUserToOrganization({
           organization_id,
           user_id,
-          verification_type: "domain",
+          verification_type: LinkTypes.enum.domain,
         });
       }
 
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: "code_sent_to_official_contact_email",
+        verification_type: LinkTypes.enum.code_sent_to_official_contact_email,
         needs_official_contact_email_verification: true,
       });
     }
@@ -330,7 +336,7 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: "official_contact_email",
+        verification_type: LinkTypes.enum.official_contact_email,
       });
     }
 
@@ -338,7 +344,7 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: "code_sent_to_official_contact_email",
+        verification_type: LinkTypes.enum.code_sent_to_official_contact_email,
         needs_official_contact_email_verification: true,
       });
     }
@@ -350,7 +356,7 @@ export const joinOrganization = async ({
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: "domain",
+      verification_type: LinkTypes.enum.domain,
     });
   }
 
@@ -361,7 +367,7 @@ export const joinOrganization = async ({
       organization_id,
       user_id,
       is_external: true,
-      verification_type: "domain",
+      verification_type: LinkTypes.enum.domain,
     });
   }
 
@@ -374,7 +380,7 @@ export const joinOrganization = async ({
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: "domain",
+      verification_type: LinkTypes.enum.domain,
     });
   }
 
@@ -382,7 +388,7 @@ export const joinOrganization = async ({
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: "bypassed",
+      verification_type: LinkTypes.enum.bypassed,
     });
   }
 
@@ -396,34 +402,11 @@ export const joinOrganization = async ({
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: null,
+      verification_type: LinkTypes.enum.domain_not_verified_yet,
     });
   }
 
-  let ticket_id = null;
-  if (CRISP_WEBSITE_ID) {
-    ticket_id = await startCripsConversation({
-      content: unableToAutoJoinOrganizationMd(),
-      email,
-      subject: `[ProConnect] Demande pour rejoindre ${cached_libelle || siret}`,
-    });
-  } else {
-    logger.info(
-      `unable_to_auto_join_organization_md mail not send to ${email}:`,
-    );
-    logger.info({
-      libelle: cached_libelle || siret,
-    });
-  }
-
-  const { id: moderation_id } = await createModeration({
-    user_id,
-    organization_id,
-    type: "organization_join_block",
-    ticket_id,
-  });
-
-  throw new UnableToAutoJoinOrganizationError(moderation_id);
+  throw new UnableToAutoJoinOrganizationError(organization_id);
 };
 
 export const forceJoinOrganization = forceJoinOrganizationFactory({
@@ -482,5 +465,39 @@ export const greetForCertification = async ({
 
   return await updateUserOrganizationLink(organization_id, user_id, {
     has_been_greeted: true,
+  });
+};
+
+export const createPendingModeration = async ({
+  user,
+  organization,
+}: {
+  user: User;
+  organization: Organization;
+}) => {
+  let ticket_id = null;
+  const { id: user_id, email } = user;
+  const { id: organization_id, siret, cached_libelle } = organization;
+
+  if (CRISP_WEBSITE_ID) {
+    ticket_id = await startCripsConversation({
+      content: unableToAutoJoinOrganizationMd(),
+      email,
+      subject: `[ProConnect] Demande pour rejoindre ${cached_libelle || siret}`,
+    });
+  } else {
+    logger.info(
+      `unable_to_auto_join_organization_md mail not send to ${email}:`,
+    );
+    logger.info({
+      libelle: cached_libelle || siret,
+    });
+  }
+
+  return createModeration({
+    user_id,
+    organization_id,
+    type: "organization_join_block",
+    ticket_id,
   });
 };

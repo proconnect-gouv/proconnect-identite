@@ -15,7 +15,6 @@ import {
 import { ApiEntrepriseInfogreffeRepository } from "../../connectors/api-entreprise";
 import { InseeApiRepository } from "../../connectors/api-insee";
 import { RegistreNationalEntreprisesApiRepository } from "../../connectors/api-rne";
-import { updateUserOrganizationLink } from "../../repositories/organization/setters";
 import { logger } from "../../services/log";
 
 //
@@ -30,7 +29,6 @@ export const processCertificationDirigeant =
 export const processCertificationDirigeantOrThrow = async (
   organization: Organization,
   franceconnect_userinfo: FranceConnectUserInfo,
-  user_id: number,
 ) => {
   const { cause, details, ok } = await processCertificationDirigeant(
     organization,
@@ -87,12 +85,6 @@ export const processCertificationDirigeantOrThrow = async (
 
     throw error;
   }
-
-  return await updateUserOrganizationLink(organization.id, user_id, {
-    verification_type: "organization_dirigeant",
-    verified_at: new Date(),
-    has_been_greeted: false,
-  });
 };
 
 export const getCertificationDirigeantCloseMatchErrorUrl = (
