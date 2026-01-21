@@ -1,3 +1,7 @@
+import type {
+  Moderation,
+  ModerationType,
+} from "@proconnect-gouv/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { ModerationNotFoundError } from "../config/errors";
 import { getDatabaseConnection } from "../connectors/postgres";
@@ -10,7 +14,7 @@ export const createModeration = async ({
 }: {
   user_id: number;
   organization_id: number;
-  type: Moderation["type"];
+  type: ModerationType;
   ticket_id: string | null;
 }) => {
   const connection = getDatabaseConnection();
@@ -33,7 +37,7 @@ export const findPendingModeration = async ({
 }: {
   user_id: number;
   organization_id: number;
-  type: Moderation["type"];
+  type: ModerationType;
 }) => {
   const connection = getDatabaseConnection();
 
@@ -79,7 +83,7 @@ export const findRejectedModeration = async ({
 }: {
   user_id: number;
   organization_id: number;
-  type: Moderation["type"];
+  type: ModerationType;
 }) => {
   const connection = getDatabaseConnection();
 
