@@ -8,6 +8,7 @@ export const ModerationStatusSchema = z.enum([
   "accepted",
   "pending",
   "rejected",
+  "reopened",
   "unknown",
 ]);
 export type ModerationStatus = z.output<typeof ModerationStatusSchema>;

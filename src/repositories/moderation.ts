@@ -1,6 +1,7 @@
-import type {
-  Moderation,
-  ModerationType,
+import {
+  ModerationStatusSchema,
+  type Moderation,
+  type ModerationType,
 } from "@proconnect-gouv/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { ModerationNotFoundError } from "../config/errors";
@@ -95,8 +96,8 @@ WHERE user_id = $1
   AND organization_id = $2
   AND type = $3
   AND moderated_at IS NOT NULL
-  AND comment LIKE '%Rejeté par%';`,
-    [user_id, organization_id, type],
+  AND status = $4;`,
+    [user_id, organization_id, type, ModerationStatusSchema.enum.rejected],
   );
 
   return rows.shift();
@@ -131,10 +132,11 @@ export const reopenModeration = async ({
 UPDATE moderations
 SET moderated_at = NULL,
     moderated_by = NULL,
+    status = $4,
     comment = COALESCE(comment, '') || ' | Réouvert le ' || NOW()::date || ' par ' || $2 || ' - ' || $3
 WHERE id = $1
 RETURNING *;`,
-    [id, userEmail, cause],
+    [id, userEmail, cause, ModerationStatusSchema.enum.reopened],
   );
 
   return rows.shift();
