@@ -13,9 +13,10 @@ import {
   isPublicService,
   isSyndicatCommunal,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
-import type {
-  Organization,
-  UserOrganizationLink,
+import {
+  ModerationTypeSchema,
+  type Organization,
+  type UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
@@ -175,7 +176,7 @@ export const joinOrganization = async ({
   const pendingModeration = await findPendingModeration({
     user_id,
     organization_id: organization.id,
-    type: "organization_join_block",
+    type: ModerationTypeSchema.enum.organization_join_block,
   });
   if (!isEmpty(pendingModeration)) {
     const { id: moderation_id } = pendingModeration;
@@ -191,7 +192,7 @@ export const joinOrganization = async ({
   const rejectedModeration = await findRejectedModeration({
     user_id,
     organization_id: organization.id,
-    type: "organization_join_block",
+    type: ModerationTypeSchema.enum.organization_join_block,
   });
   if (!isEmpty(rejectedModeration)) {
     const { id: moderation_id } = rejectedModeration;
@@ -390,7 +391,7 @@ export const joinOrganization = async ({
     await createModeration({
       user_id,
       organization_id,
-      type: "non_verified_domain",
+      type: ModerationTypeSchema.enum.non_verified_domain,
       ticket_id: null,
     });
     return await linkUserToOrganization({
@@ -419,7 +420,7 @@ export const joinOrganization = async ({
   const { id: moderation_id } = await createModeration({
     user_id,
     organization_id,
-    type: "organization_join_block",
+    type: ModerationTypeSchema.enum.organization_join_block,
     ticket_id,
   });
 

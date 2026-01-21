@@ -96,8 +96,8 @@ WHERE user_id = $1
   AND organization_id = $2
   AND type = $3
   AND moderated_at IS NOT NULL
-  AND status = $4;`,
-    [user_id, organization_id, type, ModerationStatusSchema.enum.rejected],
+  AND comment LIKE '%Rejeté par%';`,
+    [user_id, organization_id, type],
   );
 
   return rows.shift();
