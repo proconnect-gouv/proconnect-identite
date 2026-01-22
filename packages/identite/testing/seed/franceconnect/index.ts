@@ -41,3 +41,17 @@ export const RogalDornFranceConnectUserInfo: FranceConnectUserInfo = {
   updated_at: new Date(),
   user_id: NaN,
 };
+
+export const AmberleyVailFranceConnectUserInfo: FranceConnectUserInfo = {
+  birthcountry: "99102",
+  birthdate: new Date(Date.UTC(29000, 6, 7)),
+  birthplace: "",
+  created_at: new Date("2023-04-10"),
+  family_name: "Vail",
+  gender: "female",
+  given_name: "Amberley",
+  preferred_username: "Holy Inquisition",
+  sub: "ORDOS546",
+  updated_at: new Date(),
+  user_id: NaN,
+};
