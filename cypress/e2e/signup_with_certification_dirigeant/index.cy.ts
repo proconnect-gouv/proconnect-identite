@@ -17,9 +17,9 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.focused().type("elia.alvernhe@yopmail.com");
     cy.contains("Valider").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -75,9 +75,9 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.focused().type("ulysse.tosi@yopmail.com");
     cy.contains("Valider").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -133,9 +133,9 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.focused().type("angela.83832482000011@yopmail.com");
     cy.contains("Valider").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -190,9 +190,9 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.focused().type("jean.michel@yopmail.com");
     cy.contains("Valider").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -253,9 +253,9 @@ describe("Signup on each organizations of the same siren", () => {
       cy.focused().type(`angela.${siret}@yopmail.com`);
       cy.contains("Valider").click();
 
-      cy.title().should("include", "Choisir votre mot de passe - ");
+      cy.title().should("include", "Choisir un mot de passe - ");
       cy.contains("Mot de passe").click();
-      cy.contains("Recevoir un lien d’identification").click();
+      cy.contains("Recevoir un lien de connexion").click();
       cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
         (email) => {
           cy.maildevVisitMessageById(email.id);
@@ -322,9 +322,9 @@ describe("❎ Bad match", () => {
     cy.focused().type("adrian.volckaert@yopmail.com");
     cy.contains("Valider").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -371,9 +371,9 @@ describe("❎ Bad match", () => {
     cy.focused().type("adrian.volckaert@yopmail.com");
     cy.contains("Valider").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -421,9 +421,9 @@ describe("❎ Bad match", () => {
     cy.focused().type("adrian.volckaert@yopmail.com");
     cy.contains("Valider").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);

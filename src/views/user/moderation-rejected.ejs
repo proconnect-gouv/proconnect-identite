@@ -24,9 +24,9 @@
   </div>
   <div class="border-shadow fr-p-2w">
     <h2 class="fr-h4"><%= allowEditing ? "Informations à vérifier" : "Informations de votre demande refusée" %></h2>
-    <div class="fr-grid-row centered-container-mobile">
-      <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Prénom</p>
-      <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
+    <div class="fr-grid-row">
+      <p class="fr-mb-1w fr-mb-md-2w fr-mr-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content-flex">Prénom</p>
+      <div class="fr-col-7 fr-mb-2w">
         <span id="prenom-display"><b><%= given_name; %></b></span>
         <% if (allowEditing) { %>
           <%- include(
@@ -38,8 +38,8 @@
           ) %>
         <% } %>
       </div>
-      <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Nom</p>
-      <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
+      <p class="fr-mb-1w fr-mb-md-2w fr-mr-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content-flex">Nom</p>
+      <div class="fr-col-md-7 fr-mb-2w">
         <span>
           <b><%= family_name; %></b>
         </span>
@@ -53,8 +53,8 @@
           ) %>
         <% } %>
       </div>
-      <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Email</p>
-      <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
+      <p class="fr-mb-1w fr-mb-md-2w fr-mr-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content-flex">Email</p>
+      <div class="fr-col-md-7 fr-mb-2w">
         <span><b><%= email; %></b></span>
         <a
           href="/users/start-sign-in"
@@ -63,8 +63,8 @@
           title="Changer d’adresse email"
         ></a>
       </div>
-      <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Organisation</p>
-      <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
+      <p class="fr-mb-1w fr-mb-md-2w fr-mr-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content-flex">Organisation</p>
+      <div class="fr-col-md-7 fr-mb-2w">
         <span><b><%= organization_label; %></b></span>
         <a
           href="/users/join-organization"
