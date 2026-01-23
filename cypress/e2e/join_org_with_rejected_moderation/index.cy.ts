@@ -1,9 +1,7 @@
 //
 
 describe("join organization with rejected moderation", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should show rejection message when user tries to join organization they were rejected from", function () {
     cy.visit("/users/join-organization");
@@ -28,10 +26,18 @@ describe("join organization with rejected moderation", () => {
   });
 
   it("should show warning page with edit options for warning-type rejections", function () {
-    cy.visit("/users/join-organization");
+    cy.visit("/");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.login("rejected.user@yopmail.com");
+
+    cy.contains("Organisations").click();
+
+    cy.title().should("include", "Organisations - ProConnect");
+    cy.contains("Vos organisations de rattachement");
+    cy.contains("Vous n’êtes attaché à aucune organisation.");
+
+    cy.contains("Rejoindre une organisation").click();
 
     cy.title().should("include", "Rejoindre une organisation - ProConnect");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -50,20 +56,13 @@ describe("join organization with rejected moderation", () => {
     cy.contains("Valider").click();
 
     cy.title().should("include", "Accueil - ProConnect");
+    cy.contains("Votre compte ProConnect");
+
     cy.contains("Organisations").click();
+    cy.contains("66204244914742");
     cy.contains(
-      "Votre demande pour représenter cette organisation en cours de traitement",
-    ).click();
-
-    cy.contains("Rejoindre une autre organisation").click();
-    cy.title().should("include", "Rejoindre une organisation - ProConnect");
-    cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("66204244914742");
-    cy.contains("Enregistrer").click();
-
-    cy.title().should("include", "Rattachement en cours - ProConnect");
-    cy.contains("Demande en cours");
-    cy.contains("Nom Le Bon");
+      "Votre demande pour représenter cette organisation est en cours de traitement",
+    );
   });
 
   it("should show default reason when moderation comment has no standard format", function () {

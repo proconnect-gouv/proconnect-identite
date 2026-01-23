@@ -28,7 +28,7 @@ export const getUserOrganizations = async (
   userOrganizations: Organization[];
   pendingUserOrganizations: Organization[];
 }> => {
-  const userOrganizations = await findByUserId(userId);
+  const userOrganizations = await getOrganizationsByUserId(userId);
   const pendingUserOrganizations = await findPendingByUserId(userId);
 
   return { userOrganizations, pendingUserOrganizations };

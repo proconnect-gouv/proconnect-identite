@@ -1,5 +1,10 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
+import {
+  StrongLinkTypes,
+  UnverifiedLinkTypes,
+  WeakLinkTypes,
+} from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import type { Request, Response } from "express";
 import { Session, type SessionData } from "express-session";
@@ -35,7 +40,6 @@ import {
   setBrowserAsTrustedForUser,
   setIsTrustedBrowserFromLoggedInSession,
 } from "../browser-authentication";
-
 export const isWithinAuthenticatedSession = (
   session: Session & Partial<SessionData>,
 ): session is Session & Partial<SessionData> & AuthenticatedSessionData => {
@@ -263,28 +267,12 @@ export async function getCurrentIAL(req: Request) {
     throw new NotFoundError("link should be set");
   }
 
-  if (
-    req.session.certificationDirigeantRequested &&
-    link.verification_type === "organization_dirigeant"
-  ) {
-    return 3;
-  }
-
-  const hasConsistencyCheckVerificationType = [
-    "code_sent_to_official_contact_email",
-    "domain",
-    "imported_from_inclusion_connect",
-    "imported_from_coop_mediation_numerique",
-    "in_liste_dirigeants_rna",
-    "official_contact_email",
-    "bypassed",
-  ].includes(link?.verification_type ?? "");
-
-  if (hasConsistencyCheckVerificationType) {
-    return 2;
-  }
-
-  return 1;
+  return match(link.verification_type)
+    .returnType<1 | 2 | 3>()
+    .with(...StrongLinkTypes, () => 3)
+    .with(...WeakLinkTypes, () => 2)
+    .with(...UnverifiedLinkTypes, () => 1)
+    .exhaustive();
 }
 
 // get the current Authentication Assurance Level (e.g. password, 2 factor, carte agent, etc.)

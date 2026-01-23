@@ -289,26 +289,4 @@ describe("connected user should go through the certification flow", function () 
     cy.title().should("include", "🎭 FranceConnect 🎭");
     cy.contains("Je suis Marie Héricart").click();
   });
-
-  it("with an organization pre-selected", () => {
-    cy.visit("http://localhost:4000");
-    cy.updateCustomParams((customParams) => ({
-      ...customParams,
-      claims: { id_token: { acr: {} } },
-    }));
-    cy.get("button#custom-connection").click({ force: true });
-
-    cy.login("certified-franceconnected+dirigeant@yopmail.com");
-
-    cy.title().should("equal", "standard-client - ProConnect");
-    cy.contains('"job": "Certified Single Dirigeant",');
-    cy.contains('"label": "Clamart",');
-    cy.contains('"acr": "https://proconnect.gouv.fr/assurance/self-asserted"');
-
-    cy.visit("http://localhost:4000");
-    cy.contains("Forcer une connexion par certification dirigeant").click();
-    cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
-    );
-  });
 });

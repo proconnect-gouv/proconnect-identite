@@ -1,32 +1,37 @@
 import { z } from "zod";
 
-export const UserOrganizationLinkVerificationTypeSchema = z.enum([
+export const WeakLinkTypes = [
   "code_sent_to_official_contact_email",
   "domain",
   "imported_from_coop_mediation_numerique",
   "imported_from_inclusion_connect",
   "in_liste_dirigeants_rna",
   "in_liste_dirigeants_rne",
-  "pending_organization_dirigeant",
-  "no_validation_means_available",
-  "no_verification_means_for_entreprise_unipersonnelle",
-  "no_verification_means_for_small_association",
   "official_contact_email",
-  "organization_dirigeant",
   "proof_received",
   // Used in the sandbox environment to bypass the verification process
   "bypassed",
-]);
+] as const;
 
-export type UserOrganizationLinkVerificationType = z.output<
-  typeof UserOrganizationLinkVerificationTypeSchema
->;
+export const StrongLinkTypes = ["organization_dirigeant"] as const;
 
-//
+export const VerifiedLinkTypes = [
+  ...WeakLinkTypes,
+  ...StrongLinkTypes,
+] as const;
+
+export const UnverifiedLinkTypes = [
+  "no_validation_means_available",
+  "no_verification_means_for_entreprise_unipersonnelle",
+  "no_verification_means_for_small_association",
+  "domain_not_verified_yet",
+] as const;
+
+export const LinkTypes = z.enum([...VerifiedLinkTypes, ...UnverifiedLinkTypes]);
 
 export const BaseUserOrganizationLinkSchema = z.object({
   is_external: z.boolean(),
-  verification_type: UserOrganizationLinkVerificationTypeSchema.nullable(),
+  verification_type: LinkTypes,
   // updated when verification_type is changed
   verified_at: z.date().or(z.literal(null)),
   has_been_greeted: z.boolean(),

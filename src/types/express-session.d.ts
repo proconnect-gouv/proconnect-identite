@@ -44,5 +44,7 @@ declare module "express-session" {
     user?: User;
     temporaryEncryptedTotpKey?: string;
     amr?: AmrValue[];
+    pendingModerationOrganizationId?: number;
+    pendingCertificationDirigeantOrganizationId?: number;
   }
 }
