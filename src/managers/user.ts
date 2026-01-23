@@ -603,7 +603,7 @@ export const updatePersonalInformationsForDashboard = async (
   });
 };
 
-export async function isUserVerifiedWithFranceconnect(userId: number) {
+export async function hasValidFranceConnectIdentity(userId: number) {
   const userFranceConnect = await getFranceConnectUserInfo(userId);
 
   if (isEmpty(userFranceConnect)) {
@@ -614,6 +614,14 @@ export async function isUserVerifiedWithFranceconnect(userId: number) {
     userFranceConnect.updated_at,
     FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
   );
+}
+
+export async function hasFranceConnectIdentity(userId: number) {
+  return !isEmpty(await getFranceConnectUserInfo(userId));
+}
+
+export async function needsFranceConnectIdentityRenewal(userId: number) {
+  return !(await hasValidFranceConnectIdentity(userId));
 }
 
 export async function updateFranceConnectUserInfo(
