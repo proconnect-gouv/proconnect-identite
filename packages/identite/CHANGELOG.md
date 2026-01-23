@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.identite
 
+## 1.3.0
+
+### Minor Changes
+
+- [#1702](https://github.com/proconnect-gouv/proconnect-identite/pull/1702) [`8aa56f4`](https://github.com/proconnect-gouv/proconnect-identite/commit/8aa56f456bed0f13a00dc6e68c8699166d478e75) Thanks [@rdubigny](https://github.com/rdubigny)! - 🗃️ users_organizations.verification_type ne peut plus être null
+
+  ✏️ renommage du schema pour les verification_type
+
 ## 1.2.0
 
 ### Minor Changes
