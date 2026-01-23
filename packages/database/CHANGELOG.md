@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1701](https://github.com/proconnect-gouv/proconnect-identite/pull/1701) [`bd4edba`](https://github.com/proconnect-gouv/proconnect-identite/commit/bd4edba10eb1b3ad5093f2ce26578d3f6ff5377c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🗃️ users_organizations.verification_type ne peut plus être null
+
 ## 1.0.0
 
 ### Major Changes
