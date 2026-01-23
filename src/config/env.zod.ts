@@ -75,7 +75,6 @@ export const featureTogglesEnvSchema = z.object({
     zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE:
     zodTrueFalseBoolean().default(true),
-  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED: zodTrueFalseBoolean().default(false),
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default(false),
   FEATURE_FRANCECONNECT_CONNECTION: zodTrueFalseBoolean().default(false),
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),
