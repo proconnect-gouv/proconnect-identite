@@ -150,8 +150,8 @@ INSERT INTO
     has_been_greeted
   )
 VALUES
-  (2, 1, false, 'verified_email_domain', true),
-  (2, 2, false, 'verified_email_domain', true),
-  (3, 1, false, 'verified_email_domain', true),
-  (3, 2, false, 'verified_email_domain', true),
-  (4, 1, false, 'verified_email_domain', true);
+  (2, 1, false, 'domain', true),
+  (2, 2, false, 'domain', true),
+  (3, 1, false, 'domain', true),
+  (3, 2, false, 'domain', true),
+  (4, 1, false, 'domain', true);
