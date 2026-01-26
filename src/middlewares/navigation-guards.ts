@@ -5,7 +5,6 @@ import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
-  FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED,
   HOST,
 } from "../config/env";
 import {
@@ -428,7 +427,6 @@ const requireUserIsFranceConnected: NavigationGuardNode = {
     if (req.session.pendingModerationOrganizationId) return { type: "next" };
     if (!req.session.mustReturnOneOrganizationInPayload)
       return { type: "next" };
-    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -533,7 +531,6 @@ const requireUserPassedCertificationDirigeant: NavigationGuardNode = {
     if (!req.session.interactionId) return { type: "next" };
     if (!req.session.mustReturnOneOrganizationInPayload)
       return { type: "next" };
-    if (FEATURE_CONSIDER_ALL_USERS_AS_CERTIFIED) return { type: "next" };
     const organizationId =
       req.session.pendingCertificationDirigeantOrganizationId;
 
