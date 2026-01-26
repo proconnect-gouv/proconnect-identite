@@ -39,7 +39,7 @@
     "fixtures:load": "npm run --silent build:db:migrate && tsx scripts/run-sql-script.ts scripts/fixtures.sql && npm run update-organization-info 0",
     "fixtures:load-ci": "tsx scripts/run-sql-script.ts",
     "lint": "prettier --write '**/*.{ts,sql}'",
-    "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate",
+    "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate -j ts",
     "start": "tsx --import ./src/instrument.ts src/index.ts",
     "test": "run-s test:*",
     "test:lint": "prettier '**/*.{ts,sql}' --list-different",
