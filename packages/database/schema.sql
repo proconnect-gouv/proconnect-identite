@@ -397,7 +397,9 @@ CREATE TABLE "public"."users_oidc_clients" (
   "created_at" timestamp with time zone NOT NULL,
   "updated_at" timestamp with time zone NOT NULL,
   "id" integer NOT NULL,
-  "organization_id" integer
+  "organization_id" integer,
+  "sp_name" character varying,
+  "user_ip_address" character varying
 );
 
 --

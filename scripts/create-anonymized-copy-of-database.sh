@@ -165,7 +165,8 @@ SELECT
 	created_at,
 	updated_at,
 	id,
-	organization_id
+	organization_id,
+	sp_name
 FROM users_oidc_clients"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_users_oidc_clients ADD PRIMARY KEY (id)"
 pg_dump --table=tmp_users_oidc_clients $SRC_DB_URL | psql $DEST_DB_URL
