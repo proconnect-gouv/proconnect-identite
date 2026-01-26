@@ -1,3 +1,8 @@
+import {
+  ModerationStatusSchema,
+  type Moderation,
+  type ModerationType,
+} from "@proconnect-gouv/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { ModerationNotFoundError } from "../config/errors";
 import { getDatabaseConnection } from "../connectors/postgres";
@@ -10,7 +15,7 @@ export const createModeration = async ({
 }: {
   user_id: number;
   organization_id: number;
-  type: Moderation["type"];
+  type: ModerationType;
   ticket_id: string | null;
 }) => {
   const connection = getDatabaseConnection();
@@ -33,7 +38,7 @@ export const findPendingModeration = async ({
 }: {
   user_id: number;
   organization_id: number;
-  type: Moderation["type"];
+  type: ModerationType;
 }) => {
   const connection = getDatabaseConnection();
 
@@ -79,7 +84,7 @@ export const findRejectedModeration = async ({
 }: {
   user_id: number;
   organization_id: number;
-  type: Moderation["type"];
+  type: ModerationType;
 }) => {
   const connection = getDatabaseConnection();
 
@@ -127,10 +132,11 @@ export const reopenModeration = async ({
 UPDATE moderations
 SET moderated_at = NULL,
     moderated_by = NULL,
+    status = $4,
     comment = COALESCE(comment, '') || ' | Réouvert le ' || NOW()::date || ' par ' || $2 || ' - ' || $3
 WHERE id = $1
 RETURNING *;`,
-    [id, userEmail, cause],
+    [id, userEmail, cause, ModerationStatusSchema.enum.reopened],
   );
 
   return rows.shift();

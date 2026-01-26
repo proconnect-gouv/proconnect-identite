@@ -4,9 +4,10 @@ import {
   getByIdFactory,
   getUsersByOrganizationFactory,
 } from "@proconnect-gouv/proconnect.identite/repositories/organization";
-import type {
-  Organization,
-  UserOrganizationLink,
+import {
+  ModerationTypeSchema,
+  type Organization,
+  type UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../../connectors/postgres";
@@ -42,11 +43,11 @@ SELECT o.*, m.id as moderation_id
 FROM moderations m
 INNER JOIN organizations o on o.id = m.organization_id
 WHERE m.user_id = $1
-AND m.type = 'organization_join_block'
+AND m.type = $2
 AND m.moderated_at IS NULL
 ORDER BY m.created_at
 `,
-      [user_id],
+      [user_id, ModerationTypeSchema.enum.organization_join_block],
     );
 
   return rows;
