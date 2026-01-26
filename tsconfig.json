@@ -20,7 +20,8 @@
     "cypress/e2e",
     "cypress/support",
     "scripts",
-    "src"
+    "src",
+    "migrations"
   ],
   "references": [
     { "path": "./packages/core/tsconfig.lib.json" },
