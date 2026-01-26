@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.identite
 
+## 1.4.0
+
+### Minor Changes
+
+- [#1694](https://github.com/proconnect-gouv/proconnect-identite/pull/1694) [`789f41f`](https://github.com/proconnect-gouv/proconnect-identite/commit/789f41fb10c20594c4336a1e800f4dfcc40f870d) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Ajout des types Moderation avec des schémas Zod pour la validation à l'exécution
+
+  Exporte `ModerationSchema`, `ModerationStatusSchema`, `ModerationTypeSchema` et leurs types TypeScript correspondants.
+
 ## 1.3.0
 
 ### Minor Changes
