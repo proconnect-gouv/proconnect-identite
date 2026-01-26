@@ -11,7 +11,7 @@ exports.up = async (pgm) => {
 exports.down = async (pgm) => {
   await pgm.db.query(`
     UPDATE users_organizations
-    SET verification_type = NULL
+    SET verification_type = ''
     WHERE verification_type = 'domain_not_verified_yet';
   `);
 };
