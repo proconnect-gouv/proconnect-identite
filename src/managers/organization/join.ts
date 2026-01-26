@@ -14,12 +14,12 @@ import {
   isSyndicatCommunal,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
+  LinkTypes,
   ModerationTypeSchema,
   type Organization,
   type User,
   type UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
-import { LinkTypes } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";
