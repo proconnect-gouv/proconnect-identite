@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.2.0
+
+### Minor Changes
+
+- [#1636](https://github.com/proconnect-gouv/proconnect-identite/pull/1636) [`e553196`](https://github.com/proconnect-gouv/proconnect-identite/commit/e553196b25db8ded9c0efe8609dce4b3cc4d8559) Thanks [@rdubigny](https://github.com/rdubigny)! - ajout des champs sp_name et user_ip_address dans la table users_oidc_clients
+
 ## 1.1.0
 
 ### Minor Changes
