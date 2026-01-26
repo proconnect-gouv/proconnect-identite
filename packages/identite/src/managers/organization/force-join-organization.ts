@@ -6,10 +6,9 @@ import type {
   LinkUserToOrganizationHandler,
 } from "#src/repositories/organization";
 import type { GetByIdHandler as GetUserByIdHandler } from "#src/repositories/user";
-import type { BaseUserOrganizationLink } from "#src/types";
+import { type BaseUserOrganizationLink, LinkTypes } from "#src/types";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { match } from "ts-pattern";
-import { UserOrganizationLinkVerificationTypeSchema } from "../../types/index.js";
 
 //
 
@@ -61,15 +60,13 @@ export function forceJoinOrganizationFactory({
               "trackdechets_postal_mail",
               "external",
               "official_contact",
-              () => UserOrganizationLinkVerificationTypeSchema.enum.domain,
+              () => LinkTypes.enum.domain,
             )
             .with(
               null,
               "blacklisted",
               "refused",
-              () =>
-                UserOrganizationLinkVerificationTypeSchema.enum
-                  .no_validation_means_available,
+              () => LinkTypes.enum.no_validation_means_available,
             )
             .exhaustive();
         },

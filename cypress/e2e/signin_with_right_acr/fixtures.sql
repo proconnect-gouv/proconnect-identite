@@ -134,9 +134,23 @@ INSERT INTO
   )
 VALUES
   (1, 1, false, null, 'domain', true),
-  (2, 1, false, null, null, true),
+  (
+    2,
+    1,
+    false,
+    null,
+    'domain_not_verified_yet',
+    true
+  ),
   (3, 1, false, null, 'domain', true),
-  (4, 1, false, null, null, true),
+  (
+    4,
+    1,
+    false,
+    null,
+    'domain_not_verified_yet',
+    true
+  ),
   (
     5,
     1,
@@ -152,6 +166,42 @@ VALUES
     CURRENT_TIMESTAMP,
     'organization_dirigeant',
     true
+  );
+
+INSERT INTO
+  franceconnect_userinfo (
+    user_id,
+    birthcountry,
+    birthdate,
+    birthplace,
+    family_name,
+    gender,
+    given_name,
+    created_at,
+    updated_at
+  )
+VALUES
+  (
+    5,
+    '99100',
+    '1990-06-01',
+    '75000',
+    'Un',
+    'male',
+    'Jean',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  ),
+  (
+    6,
+    '99100',
+    '1990-06-01',
+    '75000',
+    'Un',
+    'male',
+    'Jean',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO

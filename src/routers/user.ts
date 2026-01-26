@@ -95,8 +95,8 @@ import {
   requireBrowserIsTrusted,
   requireCredentialPromptRequirements,
   requireEmailInSession,
+  requireFranceConnectForCertificationDirigeant,
   requireIsUser,
-  requireSelectedOrganizationToBeFlaggedAsPending,
   requireUserCanAccessAdmin,
   requireUserHasAtLeastOneOrganization,
   requireUserHasConnectedRecently,
@@ -340,13 +340,13 @@ export const userRouter = () => {
 
   userRouter.get(
     "/personal-information",
-    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     getPersonalInformationsController,
   );
   userRouter.post(
     "/personal-information",
-    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     postPersonalInformationsController,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -354,7 +354,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/personal-information/franceconnect/login",
-    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/personal-information/franceconnect/login/callback`,
@@ -362,7 +362,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
-    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/personal-information`,
     ),
@@ -372,7 +372,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/logout/callback",
-    ...navigationGuardChain(requireSelectedOrganizationToBeFlaggedAsPending),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     (_req, res) =>
@@ -567,14 +567,14 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     getCertificationDirigeantController,
   );
 
   userRouter.post(
     "/certification-dirigeant/franceconnect/login",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/certification-dirigeant/franceconnect/login/callback`,
@@ -583,7 +583,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/login/callback",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/users/certification-dirigeant`,
     ),
@@ -594,7 +594,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/logout/callback",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     ...navigationGuardChain(requireUserSignInRequirements),
@@ -603,21 +603,21 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/organization-not-covered-error",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     getCertificationDirigeantOrganizationNotCoveredError,
   );
 
   userRouter.get(
     "/certification-dirigeant/close-match-error",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     getCertificationDirigeantCloseMatchError,
   );
 
   userRouter.get(
     "/certification-dirigeant/no-match-error",
-    ...navigationGuardChain(requireBrowserIsTrusted),
+    ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     getCertificationDirigeantNoMatchError,
   );

@@ -24,6 +24,7 @@ import {
   ForbiddenError,
   GouvFrDomainsForbiddenForPrivateOrg,
   OrganizationNotActiveError,
+  PendingCertificationDirigeantError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -36,6 +37,7 @@ import {
   doSuggestOrganizations,
   getOrganizationSuggestions,
   joinOrganization,
+  upsertOrganization,
 } from "../managers/organization/join";
 import {
   getOrganizationById,
@@ -132,8 +134,12 @@ export const postJoinOrganizationMiddleware = async (
     const { confirmed, siret } = await schema.parseAsync(req.body);
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
+    req.session.pendingModerationOrganizationId = undefined;
+    req.session.pendingCertificationDirigeantOrganizationId = undefined;
+
+    const organization = await upsertOrganization(siret);
     const userOrganizationLink = await joinOrganization({
-      siret,
+      organization,
       user_id,
       confirmed,
       certificationRequested: req.session.certificationDirigeantRequested,
@@ -164,10 +170,20 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
-    if (
-      error instanceof UnableToAutoJoinOrganizationError ||
-      error instanceof UserAlreadyAskedToJoinOrganizationError
-    ) {
+    if (error instanceof UnableToAutoJoinOrganizationError) {
+      req.session.pendingModerationOrganizationId = error.organizationId;
+
+      return next();
+    }
+
+    if (error instanceof PendingCertificationDirigeantError) {
+      req.session.pendingCertificationDirigeantOrganizationId =
+        error.organizationId;
+
+      return next();
+    }
+
+    if (error instanceof UserAlreadyAskedToJoinOrganizationError) {
       return res.redirect(
         `/users/unable-to-auto-join-organization?moderation_id=${error.moderationId}`,
       );

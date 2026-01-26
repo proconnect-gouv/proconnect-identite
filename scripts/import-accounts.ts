@@ -4,6 +4,7 @@ import {
   isNameValid,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
+import { LinkTypes } from "@proconnect-gouv/proconnect.identite/types";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
@@ -24,7 +25,6 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
-
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({
     INPUT_FILE: z.string().default("./input.csv"),
@@ -180,7 +180,8 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               await linkUserToOrganization({
                 organization_id: organization.id,
                 user_id: user.id,
-                verification_type: "imported_from_inclusion_connect",
+                verification_type:
+                  LinkTypes.enum.imported_from_inclusion_connect,
               });
             }
           } catch (error) {

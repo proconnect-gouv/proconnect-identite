@@ -10,6 +10,7 @@ import {
   findByEmailFactory,
   updateUserFactory,
 } from "@proconnect-gouv/proconnect.identite/repositories/user";
+import { LinkTypes } from "@proconnect-gouv/proconnect.identite/types";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
@@ -30,7 +31,6 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
-
 //
 
 const pg = getDatabaseConnection();
@@ -204,7 +204,8 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             await linkUserToOrganization({
               organization_id: organization.id,
               user_id: user.id,
-              verification_type: "imported_from_coop_mediation_numerique",
+              verification_type:
+                LinkTypes.enum.imported_from_coop_mediation_numerique,
             });
           }
         } catch (error) {

@@ -1,11 +1,8 @@
 describe("sign-in with a client not requiring any acr", () => {
+  before(cy.seed);
   beforeEach(() => {
     cy.visit("http://localhost:4000");
     cy.setRequestedAcrs();
-  });
-
-  it("should seed the database once", function () {
-    cy.seed();
   });
 
   it("should sign-in and return the ACR_VALUE_FOR_IAL1_AAL1 acr value", function () {
@@ -44,12 +41,14 @@ describe("sign-in with a client not requiring any acr", () => {
     );
   });
 
-  it("should sign-in a dirigeant return the ACR_VALUE_FOR_IAL2_AAL1 acr value", function () {
+  it("should sign-in a dirigeant return the ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT acr value", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("certification-dirigeant@yopmail.com");
 
-    cy.contains('"acr": "https://proconnect.gouv.fr/assurance/self-asserted"');
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
+    );
   });
 });
 

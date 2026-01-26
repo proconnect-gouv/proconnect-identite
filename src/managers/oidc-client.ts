@@ -1,6 +1,7 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import * as Sentry from "@sentry/node";
 import { isEmpty, isString } from "lodash-es";
+import type { IncomingHttpHeaders } from "node:http";
 import type { KoaContextWithOIDC } from "oidc-provider";
 import { addConnection, findByClientId } from "../repositories/oidc-client";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
@@ -11,11 +12,13 @@ export const recordNewConnection = async ({
   accountId,
   client,
   params,
+  requestHeaders,
 }: {
   accountId: string;
-  // tricky way to get the non exported Client type
+  // workaround to extract the unexported Client type
   client: NonNullable<KoaContextWithOIDC["oidc"]["client"]>;
   params: OIDCContextParams;
+  requestHeaders: IncomingHttpHeaders;
 }): Promise<Connection> => {
   const user_id = parseInt(accountId, 10);
 
@@ -38,9 +41,18 @@ export const recordNewConnection = async ({
     }
   }
 
+  let sp_name: string | null = null;
+  if (isString(params?.sp_name)) {
+    sp_name = params.sp_name;
+  }
+
+  const user_ip_address = requestHeaders["x-forwarded-for"]?.toString() || null;
+
   return await addConnection({
     user_id,
     oidc_client_id,
     organization_id,
+    sp_name,
+    user_ip_address,
   });
 };

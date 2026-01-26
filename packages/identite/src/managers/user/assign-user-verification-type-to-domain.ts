@@ -2,7 +2,9 @@
 
 import type { GetUsersByOrganizationHandler } from "#src/repositories/organization";
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
+import { LinkTypes, UnverifiedLinkTypes } from "#src/types";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
+import { match } from "ts-pattern";
 
 //
 
@@ -27,14 +29,12 @@ export function assignUserVerificationTypeToDomainFactory({
           const userDomain = getEmailDomain(email);
           if (
             userDomain === domain &&
-            [
-              null,
-              "no_verification_means_available",
-              "no_verification_means_for_entreprise_unipersonnelle",
-            ].includes(link_verification_type)
+            match(link_verification_type)
+              .with(...UnverifiedLinkTypes, () => true)
+              .otherwise(() => false)
           ) {
             return updateUserOrganizationLink(organization_id, id, {
-              verification_type: "domain",
+              verification_type: LinkTypes.enum.domain,
             });
           }
 

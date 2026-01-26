@@ -17,11 +17,20 @@ export class ForbiddenError extends Error {}
 
 export class UnableToAutoJoinOrganizationError extends Error {
   constructor(
-    public moderationId: number,
+    public organizationId: number,
     options?: ErrorOptions,
   ) {
-    super(`Linked to moderation ${moderationId}`, options);
+    super(`Linked to organization ${organizationId}`, options);
     this.name = "UnableToAutoJoinOrganizationError";
+  }
+}
+export class PendingCertificationDirigeantError extends Error {
+  constructor(
+    public organizationId: number,
+    options?: ErrorOptions,
+  ) {
+    super(`Linked to organization ${organizationId}`, options);
+    this.name = "PendingCertificationDirigeantError";
   }
 }
 
