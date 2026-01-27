@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import moment from "moment/moment";
 import z, { ZodError } from "zod";
-import { FEATURE_FRANCECONNECT_CONNECTION } from "../config/env";
 import notificationMessages from "../config/notification-messages";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
@@ -46,7 +45,6 @@ export const getPersonalInformationsController = async (
     const verifiedBy = await getUserVerificationLabel(user.id);
 
     return res.render("personal-information", {
-      canUseFranceConnect: FEATURE_FRANCECONNECT_CONNECTION,
       csrfToken: csrfToken(req),
       email: user.email,
       family_name: user.family_name,
@@ -96,7 +94,6 @@ export const postPersonalInformationsController = async (
     updateUserInAuthenticatedSession(req, updatedUser);
 
     return res.render("personal-information", {
-      canUseFranceConnect: FEATURE_FRANCECONNECT_CONNECTION,
       csrfToken: csrfToken(req),
       email: updatedUser.email,
       family_name: updatedUser.family_name,

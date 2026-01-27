@@ -1,6 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
-import { FEATURE_FRANCECONNECT_CONNECTION } from "../../config/env";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -32,7 +31,6 @@ export const getPersonalInformationsController = async (
     } = getUserFromAuthenticatedSession(req);
     const verifiedBy = await getUserVerificationLabel(userId);
     return res.render("user/personal-information", {
-      canUseFranceConnect: FEATURE_FRANCECONNECT_CONNECTION,
       csrfToken: csrfToken(req),
       family_name,
       given_name,
