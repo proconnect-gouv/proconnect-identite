@@ -1,8 +1,12 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
-import { LinkTypes } from "@proconnect-gouv/proconnect.identite/types";
+import {
+  LinkTypes,
+  UnverifiedLinkTypes,
+} from "@proconnect-gouv/proconnect.identite/types";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
+import { match } from "ts-pattern";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   HOST,
@@ -438,7 +442,13 @@ const requireUserIsFranceConnected: NavigationGuardNode = {
         user_id,
       ))!;
 
-      if (linkType !== LinkTypes.enum.organization_dirigeant)
+      const linkTypeIsUnverified = match(linkType)
+        .with(...UnverifiedLinkTypes, () => true)
+        .otherwise(() => false);
+      if (
+        linkType !== LinkTypes.enum.organization_dirigeant &&
+        !linkTypeIsUnverified
+      )
         return { type: "next" };
     }
 

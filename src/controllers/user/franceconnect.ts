@@ -37,10 +37,17 @@ export async function getFranceConnectController(
   next: NextFunction,
 ) {
   try {
+    const displayCertificationDirigeantContent =
+      !!req.session.certificationDirigeantRequested;
+    const pageTitle = displayCertificationDirigeantContent
+      ? "Certification dirigeant"
+      : "Vérifier votre identité";
+
     return res.render("user/franceconnect", {
       csrfToken: csrfToken(req),
-      pageTitle: "Certification dirigeant",
+      pageTitle,
       notifications: await getNotificationsFromRequest(req),
+      displayCertificationDirigeantContent,
     });
   } catch (error) {
     next(error);

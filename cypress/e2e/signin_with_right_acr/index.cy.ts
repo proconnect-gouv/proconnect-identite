@@ -10,6 +10,12 @@ describe("sign-in with a client not requiring any acr", () => {
 
     cy.login("ial1-aal1@yopmail.com");
 
+    cy.title().should("include", "Vérifier votre identité");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
+
     cy.contains('"acr": "https://proconnect.gouv.fr/assurance/self-asserted"');
   });
 
@@ -27,6 +33,12 @@ describe("sign-in with a client not requiring any acr", () => {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial1-aal2@yopmail.com");
+
+    cy.title().should("include", "Vérifier votre identité");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
 
     cy.contains('"acr": "https://proconnect.gouv.fr/assurance/self-asserted"');
   });
