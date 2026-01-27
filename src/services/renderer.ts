@@ -1,8 +1,12 @@
+import * as Sentry from "@sentry/node";
 import ejs from "ejs";
 import type { Application, NextFunction, Request, Response } from "express";
 import fs from "fs";
 import path from "path";
-import { NODE_ENV } from "../config/env";
+import {
+  FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS,
+  NODE_ENV,
+} from "../config/env";
 import {
   getUserFromAuthenticatedSession,
   isWithinAuthenticatedSession,
@@ -119,6 +123,9 @@ export const ejsLayoutMiddlewareFactory = (
           orig.call(res, "_layout", {
             ...locals,
             // @ts-ignore
+            sentryTrackingMetaTags: Sentry.getTraceMetaTags(),
+            loadThirdPartyTrackingScripts:
+              FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS,
             js: viteJsPath,
             css: viteCssPath,
             body: html,
@@ -147,6 +154,8 @@ export const renderWithEjsLayout = async (
     path.resolve(`${import.meta.dirname}/../views/_layout.ejs`),
     {
       ...params,
+      sentryTrackingMetaTags: Sentry.getTraceMetaTags(),
+      loadThirdPartyTrackingScripts: FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS,
       body: bodyHtml,
     },
   );

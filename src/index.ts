@@ -204,7 +204,6 @@ app.use(async (req, res, _next) => {
       illustration: "connection-lost.svg",
       oidcError: "invalid_request",
       interactionId: req.session?.interactionId,
-      sentryTrackingMetaTags: Sentry.getTraceMetaTags(),
     }),
   );
 });

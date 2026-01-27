@@ -27,9 +27,11 @@
     <link rel="stylesheet" href="<%= css('dsfr.css') %>">
     <script type="module" src="<%= js('app.js') %>"></script>
     <script type="module" src="<%= js('form-validation.js') %>"></script>
+    <% if (locals.loadThirdPartyTrackingScripts) { %>
     <!-- Matomo Tag Manager -->
     <script type="module" src="<%= js('matomo.js') %>"></script>
     <!-- End Matomo Tag Manager -->
     <!-- Crisp -->
     <script type="module" src="<%= js('crisp.js') %>"></script>
+    <% } %>
 </head>
