@@ -447,7 +447,7 @@ const requireUserIsFranceConnected: NavigationGuardNode = {
 
     if (isVerified) return { type: "next" };
 
-    return { type: "redirect", url: "/users/certification-dirigeant" };
+    return { type: "redirect", url: "/users/franceconnect" };
   },
 };
 
