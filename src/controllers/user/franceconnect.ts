@@ -25,9 +25,27 @@ import {
 } from "../../managers/session/authenticated";
 import { FranceConnectOidcSessionSchema } from "../../managers/session/franceconnect";
 import { updateFranceConnectUserInfo } from "../../managers/user";
+import { csrfToken } from "../../middlewares/csrf-protection";
+import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 import { logger } from "../../services/log";
 
 //
+
+export async function getFranceConnectController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    return res.render("user/franceconnect", {
+      csrfToken: csrfToken(req),
+      pageTitle: "Certification dirigeant",
+      notifications: await getNotificationsFromRequest(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export function getFranceConnectLoginCallbackMiddlewareFactory(
   exception_redirect_uri: string,
