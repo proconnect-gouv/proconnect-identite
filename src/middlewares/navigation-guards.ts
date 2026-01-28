@@ -917,13 +917,25 @@ const handlePendingCertificationFlow = async (
 };
 
 const handleOidcWithoutOrgFlow = async (prev: Pass<RequestContext>) => {
-  const context = await checkUserHasAtLeastOneOrganization(prev);
+  let context;
+  context = await checkUserHasAtLeastOneOrganization(prev);
   if (!Pass.is_passing(context)) return context;
 
+  context = await checkUserBelongsToHintedOrganization(context);
+  if (!Pass.is_passing(context)) return context;
+
+  context =
+    await checkUserHasNoPendingOfficialContactEmailVerification(context);
+  if (!Pass.is_passing(context)) return context;
+
+  context = await checkUserHasBeenGreetedForJoiningOrganization(context);
+  if (!Pass.is_passing(context)) return context;
   return context.pass("no_org_in_payload_required");
 };
 
-const handleOidcWithOrgFlow = async (prev: Pass<RequestContext>) => {
+const mustReturnOneOrganizationInPayloadGuard = async (
+  prev: Pass<RequestContext>,
+) => {
   let context;
 
   context = await checkUserHasAtLeastOneOrganization(prev);
@@ -972,13 +984,7 @@ export const requireUserSignInRequirements = createGuardMiddleware(
     const { req } = context.data;
     const { session } = req;
 
-    return match({
-      pendingModerationOrganizationId: session.pendingModerationOrganizationId,
-      interactionId: session.interactionId,
-      pendingCertificationDirigeantOrganizationId:
-        session.pendingCertificationDirigeantOrganizationId,
-      requiresOrgInPayload: !!session.mustReturnOneOrganizationInPayload,
-    })
+    return match(session)
       .with(
         { pendingModerationOrganizationId: P.number },
         ({ pendingModerationOrganizationId }) =>
@@ -994,9 +1000,9 @@ export const requireUserSignInRequirements = createGuardMiddleware(
             context.extends({ pendingCertificationDirigeantOrganizationId }),
           ),
       )
-      .with({ requiresOrgInPayload: false }, () =>
-        handleOidcWithoutOrgFlow(context),
+      .with({ mustReturnOneOrganizationInPayload: true }, () =>
+        mustReturnOneOrganizationInPayloadGuard(context),
       )
-      .otherwise(() => handleOidcWithOrgFlow(context));
+      .otherwise(() => handleOidcWithoutOrgFlow(context));
   },
 );
