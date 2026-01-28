@@ -175,11 +175,15 @@ export const requireIsUser = createGuardMiddleware(checkIsUser);
 //
 
 // redirect user to start sign-in page if no email is available in session
-const checkEmailInSession = ({
-  data: { req },
-  pass,
-  redirect,
-}: Pass<RequestContext>) => {
+const checkEmailInSession = (prev: Pass<RequestContext>) => {
+  const context = checkIsUser(prev);
+  if (!Pass.is_passing(context)) return context;
+
+  const {
+    data: { req },
+    pass,
+    redirect,
+  } = context;
   if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
     return redirect("/users/start-sign-in");
   }
