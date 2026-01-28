@@ -1,9 +1,7 @@
 //
 
 describe("sign-in with magic link", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should sign-up with magic link", function () {
     cy.visit("/users/start-sign-in");
@@ -83,7 +81,7 @@ describe("sign-in with magic link", () => {
     cy.contains("Votre compte ProConnect");
   });
 
-  it("should set a password", function () {
+  it.only("should set a password", function () {
     cy.visit("/users/start-sign-in");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");

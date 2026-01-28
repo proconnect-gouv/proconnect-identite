@@ -977,7 +977,8 @@ export const requireUserSignInRequirements = createGuardMiddleware(
       interactionId: session.interactionId,
       pendingCertificationDirigeantOrganizationId:
         session.pendingCertificationDirigeantOrganizationId,
-      requiresOrgInPayload: !!session.mustReturnOneOrganizationInPayload,
+      mustReturnOneOrganizationInPayload:
+        session.mustReturnOneOrganizationInPayload,
     })
       .with(
         { pendingModerationOrganizationId: P.number },
@@ -994,8 +995,10 @@ export const requireUserSignInRequirements = createGuardMiddleware(
             context.extends({ pendingCertificationDirigeantOrganizationId }),
           ),
       )
-      .with({ requiresOrgInPayload: false }, () =>
-        handleOidcWithoutOrgFlow(context),
+      .with(
+        { mustReturnOneOrganizationInPayload: P.nullish },
+        { mustReturnOneOrganizationInPayload: false },
+        () => handleOidcWithoutOrgFlow(context),
       )
       .otherwise(() => handleOidcWithOrgFlow(context));
   },
