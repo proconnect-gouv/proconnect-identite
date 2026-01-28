@@ -2,11 +2,13 @@ import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/securit
 import {
   LinkTypes,
   UnverifiedLinkTypes,
+  type Organization,
+  type User,
 } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
-import { match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   HOST,
@@ -61,9 +63,9 @@ import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 //
-type RequestContext = {
-  req: Request;
-};
+type RequestContext = { req: Request };
+type PendingModeration = { pendingModerationOrganizationId: number };
+
 type UserOrganizationsByUserId = Awaited<
   ReturnType<typeof getOrganizationsByUserId>
 >;
@@ -628,25 +630,23 @@ const checkUserHasPersonalInformations = async (
   return pass("personal_informations");
 };
 
-const checkModerationCreated = async (context: Pass<RequestContext>) => {
+const checkModerationCreated = async (
+  context: Pass<{
+    organization: Organization;
+    user: User;
+  }>,
+) => {
   const {
-    data: { req },
-    pass,
+    data: { organization, user },
+
     redirect,
   } = context;
-  const { pendingModerationOrganizationId: organization_id } = req.session;
-
-  if (!organization_id) return pass("no_moderation_to_create");
-
-  const user = getUserFromAuthenticatedSession(req);
-
-  const organization = (await getOrganizationById(organization_id))!;
 
   const { id: moderation_id } = await createPendingModeration({
     user,
     organization,
   });
-  req.session.pendingModerationOrganizationId = undefined;
+
   return redirect(
     `/users/unable-to-auto-join-organization?moderation_id=${moderation_id}`,
   );
@@ -848,13 +848,40 @@ const checkUserHasBeenGreetedForJoiningOrganization = async (
   return redirect("/users/welcome");
 };
 
-const handlePendingModerationFlow = async (prev: Pass<RequestContext>) => {
+const handlePendingModerationFlow = async (
+  prev: Pass<RequestContext & PendingModeration>,
+) => {
+  const { pendingModerationOrganizationId: organization_id } =
+    prev.data.req.session;
+  if (!organization_id) return prev.pass("no_moderation_to_create");
+
+  const organization = await getOrganizationById(organization_id);
+  if (!organization) {
+    prev.data.req.session.pendingModerationOrganizationId = undefined;
+    return prev
+      .pass("moderation_to_create_on_non_existing_organization")
+      .redirect(`/users/join-organization?notification=invalid_siret`);
+  }
+  const user = getUserFromAuthenticatedSession(prev.data.req);
+
+  //
+
   let context;
 
   context = await checkUserHasPersonalInformations(prev);
+
+  if (!Pass.is_passing(context)) return context;
+  const { req } = context.data;
+  context = await checkModerationCreated(
+    new Pass(context.code, {
+      organization,
+      user,
+    }),
+  );
+  req.session.pendingModerationOrganizationId = undefined;
   if (!Pass.is_passing(context)) return context;
 
-  return checkModerationCreated(context);
+  return context;
 };
 
 const handleAppDirectFlow = async (prev: Pass<RequestContext>) => {
@@ -948,14 +975,18 @@ export const requireUserSignInRequirements = createGuardMiddleware(
     const { session } = req;
 
     return match({
-      hasPendingModeration: !!session.pendingModerationOrganizationId,
+      pendingModerationOrganizationId: session.pendingModerationOrganizationId,
       hasInteraction: !!session.interactionId,
       hasPendingCertification:
         !!session.pendingCertificationDirigeantOrganizationId,
       requiresOrgInPayload: !!session.mustReturnOneOrganizationInPayload,
     })
-      .with({ hasPendingModeration: true }, () =>
-        handlePendingModerationFlow(context),
+      .with(
+        { pendingModerationOrganizationId: P.number },
+        ({ pendingModerationOrganizationId }) =>
+          handlePendingModerationFlow(
+            context.extends({ pendingModerationOrganizationId }),
+          ),
       )
       .with({ hasInteraction: false }, () => handleAppDirectFlow(context))
       .with({ hasPendingCertification: true }, () =>
