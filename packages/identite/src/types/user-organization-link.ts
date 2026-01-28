@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const WeakLinkTypes = [
   "code_sent_to_official_contact_email",
+  "domain_legit",
   "domain",
   "imported_from_coop_mediation_numerique",
   "imported_from_inclusion_connect",
