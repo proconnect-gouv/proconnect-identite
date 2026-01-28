@@ -893,7 +893,7 @@ const handleAppDirectFlow = async (prev: Pass<RequestContext>) => {
   context = await checkUserHasBeenGreetedForJoiningOrganization(context);
   if (!Pass.is_passing(context)) return context;
 
-  return context.pass("no_interaction");
+  return context.pass("app_direct_flow");
 };
 
 const handlePendingCertificationFlow = async (
@@ -976,6 +976,7 @@ export const requireUserSignInRequirements = createGuardMiddleware(
 
     return match({
       pendingModerationOrganizationId: session.pendingModerationOrganizationId,
+      interactionId: session.interactionId,
       hasInteraction: !!session.interactionId,
       hasPendingCertification:
         !!session.pendingCertificationDirigeantOrganizationId,
@@ -988,7 +989,7 @@ export const requireUserSignInRequirements = createGuardMiddleware(
             context.extends({ pendingModerationOrganizationId }),
           ),
       )
-      .with({ hasInteraction: false }, () => handleAppDirectFlow(context))
+      .with({ interactionId: P.nullish }, () => handleAppDirectFlow(context))
       .with({ hasPendingCertification: true }, () =>
         handlePendingCertificationFlow(
           context,
