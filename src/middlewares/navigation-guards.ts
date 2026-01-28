@@ -65,6 +65,9 @@ import { usesAuthHeaders } from "../services/uses-auth-headers";
 //
 type RequestContext = { req: Request };
 type PendingModeration = { pendingModerationOrganizationId: number };
+type PendingCertificationDirigeant = {
+  pendingCertificationDirigeantOrganizationId: number;
+};
 
 type UserOrganizationsByUserId = Awaited<
   ReturnType<typeof getOrganizationsByUserId>
@@ -897,19 +900,14 @@ const handleAppDirectFlow = async (prev: Pass<RequestContext>) => {
 };
 
 const handlePendingCertificationFlow = async (
-  prev: Pass<RequestContext>,
-  pendingOrgId: number,
+  prev: Pass<RequestContext & PendingCertificationDirigeant>,
 ) => {
   let context;
 
   context = await checkUserIsFranceConnected(prev);
   if (!Pass.is_passing(context)) return context;
 
-  context = await checkUserPassedCertificationDirigeant(
-    context.extends({
-      pendingCertificationDirigeantOrganizationId: pendingOrgId,
-    }),
-  );
+  context = await checkUserPassedCertificationDirigeant(context);
   if (!Pass.is_passing(context)) return context;
 
   context = await checkUserHasBeenGreetedForJoiningOrganization(context);
@@ -977,9 +975,8 @@ export const requireUserSignInRequirements = createGuardMiddleware(
     return match({
       pendingModerationOrganizationId: session.pendingModerationOrganizationId,
       interactionId: session.interactionId,
-      hasInteraction: !!session.interactionId,
-      hasPendingCertification:
-        !!session.pendingCertificationDirigeantOrganizationId,
+      pendingCertificationDirigeantOrganizationId:
+        session.pendingCertificationDirigeantOrganizationId,
       requiresOrgInPayload: !!session.mustReturnOneOrganizationInPayload,
     })
       .with(
@@ -990,11 +987,12 @@ export const requireUserSignInRequirements = createGuardMiddleware(
           ),
       )
       .with({ interactionId: P.nullish }, () => handleAppDirectFlow(context))
-      .with({ hasPendingCertification: true }, () =>
-        handlePendingCertificationFlow(
-          context,
-          session.pendingCertificationDirigeantOrganizationId!,
-        ),
+      .with(
+        { pendingCertificationDirigeantOrganizationId: P.number },
+        ({ pendingCertificationDirigeantOrganizationId }) =>
+          handlePendingCertificationFlow(
+            context.extends({ pendingCertificationDirigeantOrganizationId }),
+          ),
       )
       .with({ requiresOrgInPayload: false }, () =>
         handleOidcWithoutOrgFlow(context),
