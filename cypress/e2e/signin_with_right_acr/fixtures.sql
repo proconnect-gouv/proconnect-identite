@@ -139,7 +139,7 @@ VALUES
     1,
     false,
     null,
-    'domain_not_verified_yet',
+    'no_verification_means_for_entreprise_unipersonnelle',
     true
   ),
   (3, 1, false, null, 'domain', true),
@@ -148,7 +148,7 @@ VALUES
     1,
     false,
     null,
-    'domain_not_verified_yet',
+    'no_verification_means_for_entreprise_unipersonnelle',
     true
   ),
   (
