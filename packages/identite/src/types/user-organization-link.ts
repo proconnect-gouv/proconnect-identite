@@ -3,6 +3,7 @@ import { z } from "zod";
 export const WeakLinkTypes = [
   "code_sent_to_official_contact_email",
   "domain",
+  "domain_not_verified_yet",
   "imported_from_coop_mediation_numerique",
   "imported_from_inclusion_connect",
   "in_liste_dirigeants_rna",
@@ -24,7 +25,6 @@ export const UnverifiedLinkTypes = [
   "no_validation_means_available",
   "no_verification_means_for_entreprise_unipersonnelle",
   "no_verification_means_for_small_association",
-  "domain_not_verified_yet",
 ] as const;
 
 export const LinkTypes = z.enum([...VerifiedLinkTypes, ...UnverifiedLinkTypes]);

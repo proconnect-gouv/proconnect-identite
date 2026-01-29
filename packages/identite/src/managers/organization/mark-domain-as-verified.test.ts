@@ -40,7 +40,8 @@ describe("markDomainAsVerified", () => {
           {
             id: 42,
             email: "lion.eljonson@darkangels.world",
-            verification_type: "domain_not_verified_yet",
+            verification_type:
+              "no_verification_means_for_entreprise_unipersonnelle",
           } as User & BaseUserOrganizationLink,
         ]),
       ),
