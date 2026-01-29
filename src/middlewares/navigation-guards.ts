@@ -854,12 +854,10 @@ const userHasBeenGreetedForJoiningOrganizationGuard = async (
   return redirect("/users/welcome");
 };
 
-const pendingModerationFlowGuard = async (
+const pendingModerationGuard = async (
   prev: Pass<RequestContext & PendingModeration>,
 ) => {
-  const { pendingModerationOrganizationId: organization_id } =
-    prev.data.req.session;
-  if (!organization_id) return prev.pass("no_moderation_to_create");
+  const organization_id = prev.data.pendingModerationOrganizationId;
 
   const organization = await getOrganizationById(organization_id);
   if (!organization) {
@@ -890,7 +888,7 @@ const pendingModerationFlowGuard = async (
   return context;
 };
 
-const appDirectFlowGuard = async (prev: Pass<RequestContext>) => {
+const interactionLessGuard = async (prev: Pass<RequestContext>) => {
   let context;
 
   context = await userHasNoPendingOfficialContactEmailVerificationGuard(prev);
@@ -902,7 +900,7 @@ const appDirectFlowGuard = async (prev: Pass<RequestContext>) => {
   return context.pass("app_direct_flow");
 };
 
-const pendingCertificationFlowGuard = async (
+const pendingCertificationGuard = async (
   prev: Pass<RequestContext & PendingCertificationDirigeant>,
 ) => {
   let context;
@@ -919,14 +917,18 @@ const pendingCertificationFlowGuard = async (
   return context.pass("certification_dirigeant_complete");
 };
 
-const oidcWithoutOrgFlowGuard = async (prev: Pass<RequestContext>) => {
+const userMustNotReturnOneOrganizationInPayloadGuard = async (
+  prev: Pass<RequestContext>,
+) => {
   const context = await userHasAtLeastOneOrganizationGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("no_org_in_payload_required");
 };
 
-const oidcWithOrgFlowGuard = async (prev: Pass<RequestContext>) => {
+const userMustReturnOneOrganizationInPayloadGuard = async (
+  prev: Pass<RequestContext>,
+) => {
   let context;
 
   context = await userHasAtLeastOneOrganizationGuard(prev);
@@ -986,23 +988,23 @@ export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
       .with(
         { pendingModerationOrganizationId: P.number },
         ({ pendingModerationOrganizationId }) =>
-          pendingModerationFlowGuard(
+          pendingModerationGuard(
             context.extends({ pendingModerationOrganizationId }),
           ),
       )
-      .with({ interactionId: P.nullish }, () => appDirectFlowGuard(context))
+      .with({ interactionId: P.nullish }, () => interactionLessGuard(context))
       .with(
         { pendingCertificationDirigeantOrganizationId: P.number },
         ({ pendingCertificationDirigeantOrganizationId }) =>
-          pendingCertificationFlowGuard(
+          pendingCertificationGuard(
             context.extends({ pendingCertificationDirigeantOrganizationId }),
           ),
       )
       .with(
         { mustReturnOneOrganizationInPayload: P.nullish },
         { mustReturnOneOrganizationInPayload: false },
-        () => oidcWithoutOrgFlowGuard(context),
+        () => userMustNotReturnOneOrganizationInPayloadGuard(context),
       )
-      .otherwise(() => oidcWithOrgFlowGuard(context));
+      .otherwise(() => userMustReturnOneOrganizationInPayloadGuard(context));
   },
 );
