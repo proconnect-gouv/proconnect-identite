@@ -175,7 +175,7 @@ const checkIsUser = ({ data: { req }, pass }: Pass<RequestContext>) => {
   }
   return pass("is_user");
 };
-export const requireIsUser = createGuardMiddleware(checkIsUser);
+export const isUserGuardMiddleware = createGuardMiddleware(checkIsUser);
 
 //
 
@@ -194,7 +194,8 @@ const checkEmailInSession = (prev: Pass<RequestContext>) => {
   }
   return pass("email_in_session");
 };
-export const requireEmailInSession = createGuardMiddleware(checkEmailInSession);
+export const emailInSessionGuardMiddleware =
+  createGuardMiddleware(checkEmailInSession);
 
 //
 
@@ -218,9 +219,8 @@ const checkUserHasSeenInclusionconnectWelcomePage = (
   }
   return pass("user_has_seen_inclusionconnect_welcome_page");
 };
-export const requireCredentialPromptRequirements = createGuardMiddleware(
-  checkUserHasSeenInclusionconnectWelcomePage,
-);
+export const credentialPromptRequirementsGuardMiddleware =
+  createGuardMiddleware(checkUserHasSeenInclusionconnectWelcomePage);
 
 //
 
@@ -252,7 +252,7 @@ const checkUserIsConnected = (context: Pass<RequestContext>) => {
   return pass("user_is_connected");
 };
 
-export const requireUserIsConnected =
+export const userIsConnectedGuardMiddleware =
   createGuardMiddleware(checkUserIsConnected);
 
 //
@@ -272,7 +272,7 @@ const checkUserHasConnectedRecently = (prev: Pass<RequestContext>) => {
   }
   return pass("user_has_connected_recently");
 };
-export const requireUserHasConnectedRecently = createGuardMiddleware(
+export const userHasConnectedRecentlyGuardMiddleware = createGuardMiddleware(
   checkUserHasConnectedRecently,
 );
 
@@ -304,7 +304,8 @@ const checkUserIsVerified = async (prev: Pass<RequestContext>) => {
   return pass("user_is_verified");
 };
 
-export const requireUserIsVerified = createGuardMiddleware(checkUserIsVerified);
+export const userIsVerifiedGuardMiddleware =
+  createGuardMiddleware(checkUserIsVerified);
 
 //
 
@@ -352,11 +353,11 @@ const checkBrowserIsTrusted = async (prev: Pass<RequestContext>) => {
 
   return pass("browser_is_trusted");
 };
-export const requireBrowserIsTrusted = createGuardMiddleware(
+export const browserIsTrustedGuardMiddleware = createGuardMiddleware(
   checkBrowserIsTrusted,
 );
 
-export const requireUserCanAccessApp = requireBrowserIsTrusted;
+export const userCanAccessAppGuardMiddleware = browserIsTrustedGuardMiddleware;
 
 //
 
@@ -401,7 +402,7 @@ const checkUserTwoFactorAuthForAdmin = async (prev: Pass<RequestContext>) => {
   return pass("user_two_factor_auth_for_admin");
 };
 
-export const requireUserCanAccessAdmin = createGuardMiddleware(
+export const userCanAccessAdminGuardMiddleware = createGuardMiddleware(
   checkUserTwoFactorAuthForAdmin,
 );
 
@@ -430,16 +431,17 @@ const checkUserHasAtLeastOneOrganization = async (
   });
 };
 
-export const requireUserHasAtLeastOneOrganization = createGuardMiddleware(
-  async function requireUserHasAtLeastOneOrganization(prev) {
-    let context;
+export const userHasAtLeastOneOrganizationGuardMiddleware =
+  createGuardMiddleware(
+    async function userHasAtLeastOneOrganizationGuardMiddleware(prev) {
+      let context;
 
-    context = await checkBrowserIsTrusted(prev);
-    if (!Pass.is_passing(context)) return context;
+      context = await checkBrowserIsTrusted(prev);
+      if (!Pass.is_passing(context)) return context;
 
-    return checkUserHasAtLeastOneOrganization(context);
-  },
-);
+      return checkUserHasAtLeastOneOrganization(context);
+    },
+  );
 
 const checkUserBelongsToHintedOrganization = async <
   TContext extends RequestContext & {
@@ -517,18 +519,19 @@ const checkUserHasSelectedAnOrganization = async <
 
   return redirect("/users/select-organization");
 };
-export const requireUserHasSelectedAnOrganization = createGuardMiddleware(
-  async function requireUserHasSelectedAnOrganization(prev) {
-    let context;
+export const userHasSelectedAnOrganizationGuardMiddleware =
+  createGuardMiddleware(
+    async function userHasSelectedAnOrganizationGuardMiddleware(prev) {
+      let context;
 
-    context = await checkBrowserIsTrusted(prev);
-    if (!Pass.is_passing(context)) return context;
-    context = await checkUserHasAtLeastOneOrganization(context);
-    if (!Pass.is_passing(context)) return context;
+      context = await checkBrowserIsTrusted(prev);
+      if (!Pass.is_passing(context)) return context;
+      context = await checkUserHasAtLeastOneOrganization(context);
+      if (!Pass.is_passing(context)) return context;
 
-    return checkUserHasSelectedAnOrganization(context);
-  },
-);
+      return checkUserHasSelectedAnOrganization(context);
+    },
+  );
 
 const checkFranceConnectForCertificationDirigeant = async <
   TContext extends RequestContext & { selectedOrganizationId: number },
@@ -562,9 +565,9 @@ const checkFranceConnectForCertificationDirigeant = async <
   return pass("certification_dirigeant_setup");
 };
 
-export const requireFranceConnectForCertificationDirigeant =
+export const franceConnectForCertificationDirigeantGuardMiddleware =
   createGuardMiddleware(
-    async function requireFranceConnectForCertificationDirigeant(prev) {
+    async function franceConnectForCertificationDirigeantGuardMiddleware(prev) {
       let context;
       context = await checkBrowserIsTrusted(prev);
       if (!Pass.is_passing(context)) return context;
@@ -964,8 +967,8 @@ const handleOidcWithOrgFlow = async (prev: Pass<RequestContext>) => {
 };
 
 // check that the user goes through all requirements before issuing a session
-export const requireUserSignInRequirements = createGuardMiddleware(
-  async function requireUserSignInRequirements(prev) {
+export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
+  async function userSignInRequirementsGuardMiddleware(prev) {
     const context = await checkBrowserIsTrusted(prev);
     if (!Pass.is_passing(context)) return context;
 
