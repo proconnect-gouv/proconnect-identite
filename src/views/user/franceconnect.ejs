@@ -11,8 +11,18 @@
   <% } else { %>
   <h1 class="fr-h3">Vérifier votre identité</h1>
 
+  <p class="fr-badge fr-badge--new fr-mb-2w">Nouvelle vérification de sécurité</p>
+
   <p>
-    Vérifier votre identité avec <b>FranceConnect</b> pour <b>protéger votre compte</b> et garantir la sécurité des services auxquels vous accédez.
+    Vérifier votre identité avec <b>FranceConnect</b> pour
+    <b>renforcer la protection de votre compte</b>
+    et garantir la sécurité des services auxquels vous accédez.
+  </p>
+  <p>
+    <i>
+      Cette vérification est demandée lors de votre première connexion,
+      puis une fois tous les 3 mois.
+    </i>
   </p>
   <% } %>
   <form
@@ -21,10 +31,12 @@
   >
     <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
     <div class="fr-connect-group">
+      <% if (locals.displayCertificationDirigeantContent) { %>
       <p class="text-muted">
         FranceConnect est la solution proposée par l’État pour sécuriser et
         simplifier la connexion à vos services en ligne.
       </p>
+      <% } %>
 
       <button aria-label="S’identifier avec FranceConnect" class="fr-connect">
         <span class="fr-connect__login">S’identifier avec</span>
