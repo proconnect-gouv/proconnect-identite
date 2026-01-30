@@ -559,13 +559,6 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/franceconnect/logout/callback",
-    ...navigationGuardChain(requireUserCanAccessAdmin),
-    getFranceConnectLogoutCallbackMiddleware,
-    (_req, res) => res.redirect("/oauth/logout"),
-  );
-
-  userRouter.get(
     "/franceconnect",
     ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
@@ -577,23 +570,23 @@ export const userRouter = () => {
     ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
-      `${HOST}/users/certification-dirigeant/franceconnect/login/callback`,
+      `${HOST}/users/franceconnect/login/callback`,
     ),
   );
 
   userRouter.get(
-    "/certification-dirigeant/franceconnect/login/callback",
+    "/franceconnect/login/callback",
     ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/users/franceconnect`,
     ),
     useFranceConnectLogoutMiddlewareFactory(
-      `${HOST}/users/certification-dirigeant/franceconnect/logout/callback`,
+      `${HOST}/users/franceconnect/logout/callback`,
     ),
   );
 
   userRouter.get(
-    "/certification-dirigeant/franceconnect/logout/callback",
+    "/franceconnect/logout/callback",
     ...navigationGuardChain(requireFranceConnectForCertificationDirigeant),
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
