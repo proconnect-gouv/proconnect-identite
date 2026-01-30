@@ -309,7 +309,9 @@ export const userIsVerifiedGuardMiddleware =
 
 //
 
-const userTwoFactorAuthGuard = async (prev: Pass<RequestContext>) => {
+const userTwoFactorAuthIfRequestedGuard = async (
+  prev: Pass<RequestContext>,
+) => {
   const context = await userIsVerifiedGuard(prev);
   if (!Pass.is_passing(context)) return context;
   const {
@@ -331,13 +333,13 @@ const userTwoFactorAuthGuard = async (prev: Pass<RequestContext>) => {
     }
   }
 
-  return pass("user_maybe_two_factor_auth");
+  return pass("user_two_factor_auth_if_requested");
 };
 
 //
 
 const browserIsTrustedGuard = async (prev: Pass<RequestContext>) => {
-  const context = await userTwoFactorAuthGuard(prev);
+  const context = await userTwoFactorAuthIfRequestedGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   const {
@@ -380,7 +382,7 @@ const userHasLoggedInRecentlyGuard = async (prev: Pass<RequestContext>) => {
   return pass("user_has_logged_in_recently");
 };
 
-const userTwoFactorAuthGuardForAdmin = async (prev: Pass<RequestContext>) => {
+const userTwoFactorAuthForAdminGuard = async (prev: Pass<RequestContext>) => {
   const context = await userHasLoggedInRecentlyGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
@@ -403,7 +405,7 @@ const userTwoFactorAuthGuardForAdmin = async (prev: Pass<RequestContext>) => {
 };
 
 export const userCanAccessAdminGuardMiddleware = createGuardMiddleware(
-  userTwoFactorAuthGuardForAdmin,
+  userTwoFactorAuthForAdminGuard,
 );
 
 //
@@ -456,7 +458,7 @@ const userBelongsToHintedOrganizationGuard = async <
     redirect,
   } = context;
   if (!req.session.siretHint) {
-    return pass("no_siret_hint");
+    return pass("bypass_user_belongs_to_hinted_organization");
   }
   const hintedOrganization = await getOrganizationBySiret(
     req.session.siretHint,
@@ -533,7 +535,7 @@ export const userHasSelectedAnOrganizationGuardMiddleware =
     },
   );
 
-const franceConnectForCertificationDirigeantGuard = async <
+const setFranceConnectNeededForCertificationDirigeantGuard = async <
   TContext extends RequestContext & { selectedOrganizationId: number },
 >(
   context: Pass<TContext>,
@@ -544,11 +546,11 @@ const franceConnectForCertificationDirigeantGuard = async <
   } = context;
 
   if (req.session.pendingCertificationDirigeantOrganizationId) {
-    return pass("pending_certification_dirigeant");
+    return pass("bypass_set_france_connect_needed_for_certification_dirigeant");
   }
 
   if (!req.session.certificationDirigeantRequested) {
-    return pass("no_certification_dirigeant_requested");
+    return pass("bypass_set_france_connect_needed_for_certification_dirigeant");
   }
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
@@ -562,10 +564,10 @@ const franceConnectForCertificationDirigeantGuard = async <
       selectedOrganizationId;
   }
 
-  return pass("certification_dirigeant_setup");
+  return pass("set_france_connect_needed_for_certification_dirigeant");
 };
 
-export const franceConnectForCertificationDirigeantGuardMiddleware =
+export const setFranceConnectNeededForCertificationDirigeantGuardMiddleware =
   createGuardMiddleware(
     async function franceConnectForCertificationDirigeantGuardMiddleware(prev) {
       let context;
@@ -574,14 +576,14 @@ export const franceConnectForCertificationDirigeantGuardMiddleware =
 
       const { req } = context.data;
       if (req.session.pendingCertificationDirigeantOrganizationId) {
-        return context.pass("pending_certification_dirigeant");
+        return context.pass("bypass_pending_certification_dirigeant");
       }
 
       context = await userHasAtLeastOneOrganizationGuard(context);
       if (!Pass.is_passing(context)) return context;
       context = await userHasSelectedAnOrganizationGuard(context);
       if (!Pass.is_passing(context)) return context;
-      return franceConnectForCertificationDirigeantGuard(context);
+      return setFranceConnectNeededForCertificationDirigeantGuard(context);
     },
   );
 
@@ -610,11 +612,11 @@ const userIsFranceConnectedGuard = async <TContext extends RequestContext>(
       linkType !== LinkTypes.enum.organization_dirigeant &&
       !linkTypeIsUnverified
     )
-      return pass("user_not_requesting_dirigeant_certification");
+      return pass("bypass_user_is_france_connected");
   }
 
   const isVerified = await isUserVerifiedWithFranceconnect(user_id);
-  if (isVerified) return pass("user_franceconnect_verified");
+  if (isVerified) return pass("user_is_france_connected");
 
   return redirect("/users/franceconnect");
 };
@@ -633,7 +635,7 @@ const userHasPersonalInformationsGuard = async (
     return redirect("/users/personal-information");
   }
 
-  return pass("personal_informations");
+  return pass("user_has_personal_informations");
 };
 
 const moderationCreatedGuard = async (
@@ -678,7 +680,7 @@ const certificationDirigeantNotExpiredGuard = async <
     (await getUserOrganizationLink(organizationId, user_id))!;
 
   if (linkType !== LinkTypes.enum.organization_dirigeant)
-    return pass("not_dirigeant_link");
+    return pass("bypass_certification_dirigeant_not_expired");
 
   const expiredCertification = isExpired(
     linkVerifiedAt,
@@ -737,7 +739,7 @@ const userPassedCertificationDirigeantGuard = async (
       organization_id: organizationId,
     });
 
-    return pass("certification_dirigeant_processed").extends({
+    return pass("user_passed_certification_dirigeant").extends({
       selectedOrganizationId: organizationId,
     });
   } catch (error) {
@@ -801,12 +803,10 @@ const userHasNoPendingOfficialContactEmailVerificationGuard = async (
     );
   }
 
-  return pass("no_pending_official_contact_email_verification");
+  return pass("user_has_no_pending_official_contact_email_verification");
 };
 
-const userHasBeenGreetedForJoiningOrganizationGuard = async (
-  context: Pass<RequestContext>,
-) => {
+const userHasBeenGreetedGuard = async (context: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
@@ -854,7 +854,7 @@ const userHasBeenGreetedForJoiningOrganizationGuard = async (
   return redirect("/users/welcome");
 };
 
-const pendingModerationGuard = async (
+const processPendingModerationGuard = async (
   prev: Pass<RequestContext & PendingModeration>,
 ) => {
   const organization_id = prev.data.pendingModerationOrganizationId;
@@ -873,8 +873,8 @@ const pendingModerationGuard = async (
   let context;
 
   context = await userHasPersonalInformationsGuard(prev);
-
   if (!Pass.is_passing(context)) return context;
+
   const { req } = context.data;
   context = await moderationCreatedGuard(
     new Pass(context.code, {
@@ -885,6 +885,7 @@ const pendingModerationGuard = async (
   req.session.pendingModerationOrganizationId = undefined;
   if (!Pass.is_passing(context)) return context;
 
+  // This never happens
   return context;
 };
 
@@ -894,7 +895,7 @@ const connectToAppGuard = async (prev: Pass<RequestContext>) => {
   context = await userHasNoPendingOfficialContactEmailVerificationGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
-  context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
+  context = await userHasBeenGreetedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("ok_to_connect_to_app");
@@ -911,7 +912,7 @@ const connectToSpAsDirigeantGuard = async (
   context = await userPassedCertificationDirigeantGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
+  context = await userHasBeenGreetedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("ok_to_connect_to_sp_as_dirigeant");
@@ -929,7 +930,7 @@ const connectToSpWithMultipleOrganizationsGuard = async (
     await userHasNoPendingOfficialContactEmailVerificationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
+  context = await userHasBeenGreetedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("ok_to_connect_to_sp_with_multiple_organizations");
@@ -947,7 +948,7 @@ const connectToSp = async (prev: Pass<RequestContext>) => {
   context = await userHasSelectedAnOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await franceConnectForCertificationDirigeantGuard(context);
+  context = await setFranceConnectNeededForCertificationDirigeantGuard(context);
   context = await certificationDirigeantNotExpiredGuard(context);
   context = await userIsFranceConnectedGuard(context);
   if (!Pass.is_passing(context)) return context;
@@ -968,7 +969,7 @@ const connectToSp = async (prev: Pass<RequestContext>) => {
     await userHasNoPendingOfficialContactEmailVerificationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
+  context = await userHasBeenGreetedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("ok_to_connect_to_sp");
@@ -994,7 +995,7 @@ export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
       .with(
         { pendingModerationOrganizationId: P.number },
         ({ pendingModerationOrganizationId }) =>
-          pendingModerationGuard(
+          processPendingModerationGuard(
             context.extends({ pendingModerationOrganizationId }),
           ),
       )
