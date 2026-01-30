@@ -39,6 +39,7 @@ import {
   postSendMagicLinkController,
   postSignInWithMagicLinkController,
 } from "../controllers/user/magic-link";
+import { getOfficialContactAskWhichEmailController } from "../controllers/user/official-contact-ask-which-email";
 import {
   getOfficialContactEmailVerificationController,
   postOfficialContactEmailVerificationMiddleware,
@@ -496,6 +497,13 @@ export const userRouter = () => {
     postSelectOrganizationMiddleware,
     userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
+  );
+
+  userRouter.get(
+    "/official-contact-ask-which-email/:organization_id",
+    userHasSelectedAnOrganizationGuardMiddleware,
+    csrfProtectionMiddleware,
+    getOfficialContactAskWhichEmailController,
   );
 
   userRouter.get(

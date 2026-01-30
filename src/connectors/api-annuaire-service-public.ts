@@ -1,6 +1,6 @@
 import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import axios, { AxiosError, type AxiosResponse } from "axios";
-import { isEmpty, isString } from "lodash-es";
+import { isEmpty, isString, uniq } from "lodash-es";
 import {
   FEATURE_USE_ANNUAIRE_EMAILS,
   HTTP_CLIENT_TIMEOUT,
@@ -44,10 +44,10 @@ type ApiAnnuaireServicePublicReponse = {
   }[];
 };
 
-export const getAnnuaireServicePublicContactEmail = async (
+export const getAnnuaireServicePublicContactEmails = async (
   codeOfficielGeographique: string | null,
   codePostal: string | null,
-): Promise<string> => {
+): Promise<string[]> => {
   if (isEmpty(codeOfficielGeographique)) {
     throw new ApiAnnuaireNotFoundError();
   }
@@ -82,34 +82,45 @@ export const getAnnuaireServicePublicContactEmail = async (
     throw e;
   }
 
-  let feature: ApiAnnuaireServicePublicReponse["results"][0] | undefined;
-
-  if (features.length === 1) {
-    feature = features[0];
-  }
-
-  if (features.length > 1) {
-    if (isEmpty(codePostal)) {
-      throw new ApiAnnuaireTooManyResultsError(
-        `Without postal code, we cannot choose a mairie between ${features.length} results.`,
-      );
-    }
-
-    // Take the first match
-    feature = features.find(
-      ({ adresse: [{ code_postal: codePostalMairie }] }) =>
-        codePostalMairie === codePostal,
+  if (features.length === 0) {
+    throw new ApiAnnuaireNotFoundError(
+      `No mairie found for codeOfficielGeographique: ${codeOfficielGeographique}.`,
     );
   }
 
-  if (isEmpty(feature)) {
+  if (features.length === 1) {
+    const formattedEmail = extractFormattedEmailFromFeature(features[0]);
+    return [formattedEmail];
+  }
+
+  if (isEmpty(codePostal)) {
+    throw new ApiAnnuaireTooManyResultsError(
+      `Without postal code, we cannot choose a mairie between ${features.length} results.`,
+    );
+  }
+
+  const matchingFeatures = features.filter(
+    ({ adresse: [{ code_postal: codePostalMairie }] }) =>
+      codePostalMairie === codePostal,
+  );
+
+  if (matchingFeatures.length === 0) {
     throw new ApiAnnuaireNotFoundError(
       `No pair found for (codeOfficielGeographique: ${codeOfficielGeographique}, codePostal: ${codePostal}).`,
     );
   }
 
-  const { adresse_courriel } = feature;
+  return uniq(
+    matchingFeatures.map((feature) =>
+      extractFormattedEmailFromFeature(feature),
+    ),
+  );
+};
 
+function extractFormattedEmailFromFeature(
+  feature: ApiAnnuaireServicePublicReponse["results"][number],
+): string {
+  const { adresse_courriel } = feature;
   if (!isString(adresse_courriel)) {
     throw new ApiAnnuaireInvalidEmailError(
       `${adresse_courriel} is not a string.`,
@@ -130,6 +141,5 @@ export const getAnnuaireServicePublicContactEmail = async (
     );
     return TEST_CONTACT_EMAIL;
   }
-
   return formattedEmail;
-};
+}
