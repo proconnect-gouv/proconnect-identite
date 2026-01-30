@@ -126,6 +126,18 @@ export const rogal_dorn_org_info = {
   cached_libelle_categorie_juridique: "Entrepreneur individuel",
 } as Organization;
 
+export const communaute_de_communes_org_info = {
+  siret: "24560000100013",
+  cached_tranche_effectifs: "21",
+  cached_tranche_effectifs_unite_legale: "21",
+  cached_libelle_tranche_effectif: "50 à 99 salariés",
+  cached_activite_principale: "84.11Z",
+  cached_libelle_activite_principale:
+    "84.11Z - Administration publique générale",
+  cached_categorie_juridique: "7346",
+  cached_libelle_categorie_juridique: "Communauté de communes",
+} as Organization;
+
 export const papillon_org_info = {
   cached_activite_principale: "47.59A",
   cached_adresse:
