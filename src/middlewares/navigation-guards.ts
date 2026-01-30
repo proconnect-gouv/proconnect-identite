@@ -2,11 +2,13 @@ import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/securit
 import {
   LinkTypes,
   UnverifiedLinkTypes,
+  type Organization,
+  type User,
 } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
-import { match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   HOST,
@@ -61,9 +63,12 @@ import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 //
-type RequestContext = {
-  req: Request;
+type RequestContext = { req: Request };
+type PendingModeration = { pendingModerationOrganizationId: number };
+type PendingCertificationDirigeant = {
+  pendingCertificationDirigeantOrganizationId: number;
 };
+
 type UserOrganizationsByUserId = Awaited<
   ReturnType<typeof getOrganizationsByUserId>
 >;
@@ -162,7 +167,7 @@ const getReferrerPath = (req: Request) => {
 
 //
 
-const checkIsUser = ({ data: { req }, pass }: Pass<RequestContext>) => {
+const isUserGuard = ({ data: { req }, pass }: Pass<RequestContext>) => {
   if (usesAuthHeaders(req)) {
     throw new HttpErrors.Forbidden(
       "Access denied. The requested resource does not require authentication.",
@@ -170,30 +175,35 @@ const checkIsUser = ({ data: { req }, pass }: Pass<RequestContext>) => {
   }
   return pass("is_user");
 };
-export const requireIsUser = createGuardMiddleware(checkIsUser);
+export const isUserGuardMiddleware = createGuardMiddleware(isUserGuard);
 
 //
 
 // redirect user to start sign-in page if no email is available in session
-const checkEmailInSession = ({
-  data: { req },
-  pass,
-  redirect,
-}: Pass<RequestContext>) => {
+const emailInSessionGuard = (prev: Pass<RequestContext>) => {
+  const context = isUserGuard(prev);
+  if (!Pass.is_passing(context)) return context;
+
+  const {
+    data: { req },
+    pass,
+    redirect,
+  } = context;
   if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
     return redirect("/users/start-sign-in");
   }
   return pass("email_in_session");
 };
-export const requireEmailInSession = createGuardMiddleware(checkEmailInSession);
+export const emailInSessionGuardMiddleware =
+  createGuardMiddleware(emailInSessionGuard);
 
 //
 
 // redirect user to inclusionconnect welcome page if needed
-const checkUserHasSeenInclusionconnectWelcomePage = (
+const userHasSeenInclusionconnectWelcomePageGuard = (
   prev: Pass<RequestContext>,
 ) => {
-  const context = checkEmailInSession(prev);
+  const context = emailInSessionGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   const {
@@ -209,20 +219,19 @@ const checkUserHasSeenInclusionconnectWelcomePage = (
   }
   return pass("user_has_seen_inclusionconnect_welcome_page");
 };
-export const requireCredentialPromptRequirements = createGuardMiddleware(
-  checkUserHasSeenInclusionconnectWelcomePage,
-);
+export const credentialPromptRequirementsGuardMiddleware =
+  createGuardMiddleware(userHasSeenInclusionconnectWelcomePageGuard);
 
 //
 
 // redirect user to login page if no active session is available
-const checkUserIsConnected = (context: Pass<RequestContext>) => {
+const userIsConnectedGuard = (context: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
     redirect,
     send,
-  } = checkIsUser(context);
+  } = isUserGuard(context);
   if (req.method === "HEAD") {
     // From express documentation:
     // The app.get() function is automatically called for the HTTP HEAD method
@@ -243,13 +252,13 @@ const checkUserIsConnected = (context: Pass<RequestContext>) => {
   return pass("user_is_connected");
 };
 
-export const requireUserIsConnected =
-  createGuardMiddleware(checkUserIsConnected);
+export const userIsConnectedGuardMiddleware =
+  createGuardMiddleware(userIsConnectedGuard);
 
 //
 
-const checkUserHasConnectedRecently = (prev: Pass<RequestContext>) => {
-  const context = checkUserIsConnected(prev);
+const userHasConnectedRecentlyGuard = (prev: Pass<RequestContext>) => {
+  const context = userIsConnectedGuard(prev);
   if (!Pass.is_passing(context)) return context;
   const {
     data: { req },
@@ -263,14 +272,14 @@ const checkUserHasConnectedRecently = (prev: Pass<RequestContext>) => {
   }
   return pass("user_has_connected_recently");
 };
-export const requireUserHasConnectedRecently = createGuardMiddleware(
-  checkUserHasConnectedRecently,
+export const userHasConnectedRecentlyGuardMiddleware = createGuardMiddleware(
+  userHasConnectedRecentlyGuard,
 );
 
 //
 
-const checkUserIsVerified = async (prev: Pass<RequestContext>) => {
-  const context = checkUserIsConnected(prev);
+const userIsVerifiedGuard = async (prev: Pass<RequestContext>) => {
+  const context = userIsConnectedGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   const {
@@ -295,12 +304,13 @@ const checkUserIsVerified = async (prev: Pass<RequestContext>) => {
   return pass("user_is_verified");
 };
 
-export const requireUserIsVerified = createGuardMiddleware(checkUserIsVerified);
+export const userIsVerifiedGuardMiddleware =
+  createGuardMiddleware(userIsVerifiedGuard);
 
 //
 
-const checkUserTwoFactorAuth = async (prev: Pass<RequestContext>) => {
-  const context = await checkUserIsVerified(prev);
+const userTwoFactorAuthGuard = async (prev: Pass<RequestContext>) => {
+  const context = await userIsVerifiedGuard(prev);
   if (!Pass.is_passing(context)) return context;
   const {
     data: { req },
@@ -326,8 +336,8 @@ const checkUserTwoFactorAuth = async (prev: Pass<RequestContext>) => {
 
 //
 
-const checkBrowserIsTrusted = async (prev: Pass<RequestContext>) => {
-  const context = await checkUserTwoFactorAuth(prev);
+const browserIsTrustedGuard = async (prev: Pass<RequestContext>) => {
+  const context = await userTwoFactorAuthGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   const {
@@ -343,16 +353,16 @@ const checkBrowserIsTrusted = async (prev: Pass<RequestContext>) => {
 
   return pass("browser_is_trusted");
 };
-export const requireBrowserIsTrusted = createGuardMiddleware(
-  checkBrowserIsTrusted,
+export const browserIsTrustedGuardMiddleware = createGuardMiddleware(
+  browserIsTrustedGuard,
 );
 
-export const requireUserCanAccessApp = requireBrowserIsTrusted;
+export const userCanAccessAppGuardMiddleware = browserIsTrustedGuardMiddleware;
 
 //
 
-const checkUserHasLoggedInRecently = async (prev: Pass<RequestContext>) => {
-  const context = await checkBrowserIsTrusted(prev);
+const userHasLoggedInRecentlyGuard = async (prev: Pass<RequestContext>) => {
+  const context = await browserIsTrustedGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   const {
@@ -370,8 +380,8 @@ const checkUserHasLoggedInRecently = async (prev: Pass<RequestContext>) => {
   return pass("user_has_logged_in_recently");
 };
 
-const checkUserTwoFactorAuthForAdmin = async (prev: Pass<RequestContext>) => {
-  const context = await checkUserHasLoggedInRecently(prev);
+const userTwoFactorAuthGuardForAdmin = async (prev: Pass<RequestContext>) => {
+  const context = await userHasLoggedInRecentlyGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   const {
@@ -392,13 +402,13 @@ const checkUserTwoFactorAuthForAdmin = async (prev: Pass<RequestContext>) => {
   return pass("user_two_factor_auth_for_admin");
 };
 
-export const requireUserCanAccessAdmin = createGuardMiddleware(
-  checkUserTwoFactorAuthForAdmin,
+export const userCanAccessAdminGuardMiddleware = createGuardMiddleware(
+  userTwoFactorAuthGuardForAdmin,
 );
 
 //
 
-const checkUserHasAtLeastOneOrganization = async (
+const userHasAtLeastOneOrganizationGuard = async (
   context: Pass<RequestContext>,
 ) => {
   const {
@@ -421,18 +431,19 @@ const checkUserHasAtLeastOneOrganization = async (
   });
 };
 
-export const requireUserHasAtLeastOneOrganization = createGuardMiddleware(
-  async function requireUserHasAtLeastOneOrganization(prev) {
-    let context;
+export const userHasAtLeastOneOrganizationGuardMiddleware =
+  createGuardMiddleware(
+    async function userHasAtLeastOneOrganizationGuardMiddleware(prev) {
+      let context;
 
-    context = await checkBrowserIsTrusted(prev);
-    if (!Pass.is_passing(context)) return context;
+      context = await browserIsTrustedGuard(prev);
+      if (!Pass.is_passing(context)) return context;
 
-    return checkUserHasAtLeastOneOrganization(context);
-  },
-);
+      return userHasAtLeastOneOrganizationGuard(context);
+    },
+  );
 
-const checkUserBelongsToHintedOrganization = async <
+const userBelongsToHintedOrganizationGuard = async <
   TContext extends RequestContext & {
     userOrganizations: UserOrganizationsByUserId;
   },
@@ -471,7 +482,7 @@ const checkUserBelongsToHintedOrganization = async <
   );
 };
 
-const checkUserHasSelectedAnOrganization = async <
+const userHasSelectedAnOrganizationGuard = async <
   TContext extends RequestContext & {
     userOrganizations: UserOrganizationsByUserId;
   },
@@ -508,20 +519,21 @@ const checkUserHasSelectedAnOrganization = async <
 
   return redirect("/users/select-organization");
 };
-export const requireUserHasSelectedAnOrganization = createGuardMiddleware(
-  async function requireUserHasSelectedAnOrganization(prev) {
-    let context;
+export const userHasSelectedAnOrganizationGuardMiddleware =
+  createGuardMiddleware(
+    async function userHasSelectedAnOrganizationGuardMiddleware(prev) {
+      let context;
 
-    context = await checkBrowserIsTrusted(prev);
-    if (!Pass.is_passing(context)) return context;
-    context = await checkUserHasAtLeastOneOrganization(context);
-    if (!Pass.is_passing(context)) return context;
+      context = await browserIsTrustedGuard(prev);
+      if (!Pass.is_passing(context)) return context;
+      context = await userHasAtLeastOneOrganizationGuard(context);
+      if (!Pass.is_passing(context)) return context;
 
-    return checkUserHasSelectedAnOrganization(context);
-  },
-);
+      return userHasSelectedAnOrganizationGuard(context);
+    },
+  );
 
-const checkFranceConnectForCertificationDirigeant = async <
+const franceConnectForCertificationDirigeantGuard = async <
   TContext extends RequestContext & { selectedOrganizationId: number },
 >(
   context: Pass<TContext>,
@@ -553,11 +565,11 @@ const checkFranceConnectForCertificationDirigeant = async <
   return pass("certification_dirigeant_setup");
 };
 
-export const requireFranceConnectForCertificationDirigeant =
+export const franceConnectForCertificationDirigeantGuardMiddleware =
   createGuardMiddleware(
-    async function requireFranceConnectForCertificationDirigeant(prev) {
+    async function franceConnectForCertificationDirigeantGuardMiddleware(prev) {
       let context;
-      context = await checkBrowserIsTrusted(prev);
+      context = await browserIsTrustedGuard(prev);
       if (!Pass.is_passing(context)) return context;
 
       const { req } = context.data;
@@ -565,15 +577,15 @@ export const requireFranceConnectForCertificationDirigeant =
         return context.pass("pending_certification_dirigeant");
       }
 
-      context = await checkUserHasAtLeastOneOrganization(context);
+      context = await userHasAtLeastOneOrganizationGuard(context);
       if (!Pass.is_passing(context)) return context;
-      context = await checkUserHasSelectedAnOrganization(context);
+      context = await userHasSelectedAnOrganizationGuard(context);
       if (!Pass.is_passing(context)) return context;
-      return checkFranceConnectForCertificationDirigeant(context);
+      return franceConnectForCertificationDirigeantGuard(context);
     },
   );
 
-const checkUserIsFranceConnected = async <TContext extends RequestContext>(
+const userIsFranceConnectedGuard = async <TContext extends RequestContext>(
   context: Pass<TContext>,
 ) => {
   const {
@@ -607,7 +619,7 @@ const checkUserIsFranceConnected = async <TContext extends RequestContext>(
   return redirect("/users/franceconnect");
 };
 
-const checkUserHasPersonalInformations = async (
+const userHasPersonalInformationsGuard = async (
   context: Pass<RequestContext>,
 ) => {
   const {
@@ -624,31 +636,29 @@ const checkUserHasPersonalInformations = async (
   return pass("personal_informations");
 };
 
-const checkModerationCreated = async (context: Pass<RequestContext>) => {
+const moderationCreatedGuard = async (
+  context: Pass<{
+    organization: Organization;
+    user: User;
+  }>,
+) => {
   const {
-    data: { req },
-    pass,
+    data: { organization, user },
+
     redirect,
   } = context;
-  const { pendingModerationOrganizationId: organization_id } = req.session;
-
-  if (!organization_id) return pass("no_moderation_to_create");
-
-  const user = getUserFromAuthenticatedSession(req);
-
-  const organization = (await getOrganizationById(organization_id))!;
 
   const { id: moderation_id } = await createPendingModeration({
     user,
     organization,
   });
-  req.session.pendingModerationOrganizationId = undefined;
+
   return redirect(
     `/users/unable-to-auto-join-organization?moderation_id=${moderation_id}`,
   );
 };
 
-const checkCertificationDirigeantNotExpired = async <
+const certificationDirigeantNotExpiredGuard = async <
   TContext extends RequestContext & { selectedOrganizationId: number },
 >(
   context: Pass<TContext>,
@@ -685,7 +695,7 @@ const checkCertificationDirigeantNotExpired = async <
   return pass("certification_dirigeant_not_expired");
 };
 
-const checkUserPassedCertificationDirigeant = async (
+const userPassedCertificationDirigeantGuard = async (
   context: Pass<
     RequestContext & { pendingCertificationDirigeantOrganizationId: number }
   >,
@@ -751,7 +761,7 @@ const checkUserPassedCertificationDirigeant = async (
   }
 };
 
-const checkUserHasNoPendingOfficialContactEmailVerification = async (
+const userHasNoPendingOfficialContactEmailVerificationGuard = async (
   context: Pass<RequestContext>,
 ) => {
   const {
@@ -794,7 +804,7 @@ const checkUserHasNoPendingOfficialContactEmailVerification = async (
   return pass("no_pending_official_contact_email_verification");
 };
 
-const checkUserHasBeenGreetedForJoiningOrganization = async (
+const userHasBeenGreetedForJoiningOrganizationGuard = async (
   context: Pass<RequestContext>,
 ) => {
   const {
@@ -844,71 +854,95 @@ const checkUserHasBeenGreetedForJoiningOrganization = async (
   return redirect("/users/welcome");
 };
 
-const handlePendingModerationFlow = async (prev: Pass<RequestContext>) => {
+const pendingModerationGuard = async (
+  prev: Pass<RequestContext & PendingModeration>,
+) => {
+  const organization_id = prev.data.pendingModerationOrganizationId;
+
+  const organization = await getOrganizationById(organization_id);
+  if (!organization) {
+    prev.data.req.session.pendingModerationOrganizationId = undefined;
+    return prev
+      .pass("moderation_to_create_on_non_existing_organization")
+      .redirect(`/users/join-organization?notification=invalid_siret`);
+  }
+  const user = getUserFromAuthenticatedSession(prev.data.req);
+
+  //
+
   let context;
 
-  context = await checkUserHasPersonalInformations(prev);
+  context = await userHasPersonalInformationsGuard(prev);
+
+  if (!Pass.is_passing(context)) return context;
+  const { req } = context.data;
+  context = await moderationCreatedGuard(
+    new Pass(context.code, {
+      organization,
+      user,
+    }),
+  );
+  req.session.pendingModerationOrganizationId = undefined;
   if (!Pass.is_passing(context)) return context;
 
-  return checkModerationCreated(context);
+  return context;
 };
 
-const handleAppDirectFlow = async (prev: Pass<RequestContext>) => {
+const interactionLessGuard = async (prev: Pass<RequestContext>) => {
   let context;
 
-  context = await checkUserHasNoPendingOfficialContactEmailVerification(prev);
+  context = await userHasNoPendingOfficialContactEmailVerificationGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
-  context = await checkUserHasBeenGreetedForJoiningOrganization(context);
+  context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  return context.pass("no_interaction");
+  return context.pass("app_direct_flow");
 };
 
-const handlePendingCertificationFlow = async (
-  prev: Pass<RequestContext>,
-  pendingOrgId: number,
+const pendingCertificationGuard = async (
+  prev: Pass<RequestContext & PendingCertificationDirigeant>,
 ) => {
   let context;
 
-  context = await checkUserIsFranceConnected(prev);
+  context = await userIsFranceConnectedGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
-  context = await checkUserPassedCertificationDirigeant(
-    context.extends({
-      pendingCertificationDirigeantOrganizationId: pendingOrgId,
-    }),
-  );
+  context = await userPassedCertificationDirigeantGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await checkUserHasBeenGreetedForJoiningOrganization(context);
+  context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("certification_dirigeant_complete");
 };
 
-const handleOidcWithoutOrgFlow = async (prev: Pass<RequestContext>) => {
-  const context = await checkUserHasAtLeastOneOrganization(prev);
+const userMustNotReturnOneOrganizationInPayloadGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const context = await userHasAtLeastOneOrganizationGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("no_org_in_payload_required");
 };
 
-const handleOidcWithOrgFlow = async (prev: Pass<RequestContext>) => {
+const userMustReturnOneOrganizationInPayloadGuard = async (
+  prev: Pass<RequestContext>,
+) => {
   let context;
 
-  context = await checkUserHasAtLeastOneOrganization(prev);
+  context = await userHasAtLeastOneOrganizationGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
-  context = await checkUserBelongsToHintedOrganization(context);
+  context = await userBelongsToHintedOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await checkUserHasSelectedAnOrganization(context);
+  context = await userHasSelectedAnOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await checkFranceConnectForCertificationDirigeant(context);
-  context = await checkCertificationDirigeantNotExpired(context);
-  context = await checkUserIsFranceConnected(context);
+  context = await franceConnectForCertificationDirigeantGuard(context);
+  context = await certificationDirigeantNotExpiredGuard(context);
+  context = await userIsFranceConnectedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   const { req } = context.data;
@@ -916,7 +950,7 @@ const handleOidcWithOrgFlow = async (prev: Pass<RequestContext>) => {
     const pendingOrgId =
       req.session.pendingCertificationDirigeantOrganizationId;
 
-    context = await checkUserPassedCertificationDirigeant(
+    context = await userPassedCertificationDirigeantGuard(
       context.extends({
         pendingCertificationDirigeantOrganizationId: pendingOrgId,
       }),
@@ -925,44 +959,52 @@ const handleOidcWithOrgFlow = async (prev: Pass<RequestContext>) => {
   }
 
   context =
-    await checkUserHasNoPendingOfficialContactEmailVerification(context);
+    await userHasNoPendingOfficialContactEmailVerificationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await checkUserHasBeenGreetedForJoiningOrganization(context);
+  context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("user_sign_in_requirements_met");
 };
 
 // check that the user goes through all requirements before issuing a session
-export const requireUserSignInRequirements = createGuardMiddleware(
-  async function requireUserSignInRequirements(prev) {
-    const context = await checkBrowserIsTrusted(prev);
+export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
+  async function userSignInRequirementsGuardMiddleware(prev) {
+    const context = await browserIsTrustedGuard(prev);
     if (!Pass.is_passing(context)) return context;
 
     const { req } = context.data;
     const { session } = req;
 
     return match({
-      hasPendingModeration: !!session.pendingModerationOrganizationId,
-      hasInteraction: !!session.interactionId,
-      hasPendingCertification:
-        !!session.pendingCertificationDirigeantOrganizationId,
-      requiresOrgInPayload: !!session.mustReturnOneOrganizationInPayload,
+      pendingModerationOrganizationId: session.pendingModerationOrganizationId,
+      interactionId: session.interactionId,
+      pendingCertificationDirigeantOrganizationId:
+        session.pendingCertificationDirigeantOrganizationId,
+      mustReturnOneOrganizationInPayload:
+        session.mustReturnOneOrganizationInPayload,
     })
-      .with({ hasPendingModeration: true }, () =>
-        handlePendingModerationFlow(context),
+      .with(
+        { pendingModerationOrganizationId: P.number },
+        ({ pendingModerationOrganizationId }) =>
+          pendingModerationGuard(
+            context.extends({ pendingModerationOrganizationId }),
+          ),
       )
-      .with({ hasInteraction: false }, () => handleAppDirectFlow(context))
-      .with({ hasPendingCertification: true }, () =>
-        handlePendingCertificationFlow(
-          context,
-          session.pendingCertificationDirigeantOrganizationId!,
-        ),
+      .with({ interactionId: P.nullish }, () => interactionLessGuard(context))
+      .with(
+        { pendingCertificationDirigeantOrganizationId: P.number },
+        ({ pendingCertificationDirigeantOrganizationId }) =>
+          pendingCertificationGuard(
+            context.extends({ pendingCertificationDirigeantOrganizationId }),
+          ),
       )
-      .with({ requiresOrgInPayload: false }, () =>
-        handleOidcWithoutOrgFlow(context),
+      .with(
+        { mustReturnOneOrganizationInPayload: P.nullish },
+        { mustReturnOneOrganizationInPayload: false },
+        () => userMustNotReturnOneOrganizationInPayloadGuard(context),
       )
-      .otherwise(() => handleOidcWithOrgFlow(context));
+      .otherwise(() => userMustReturnOneOrganizationInPayloadGuard(context));
   },
 );

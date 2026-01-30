@@ -91,19 +91,19 @@ import {
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
-  requireBrowserIsTrusted,
-  requireCredentialPromptRequirements,
-  requireEmailInSession,
-  requireFranceConnectForCertificationDirigeant,
-  requireIsUser,
-  requireUserCanAccessAdmin,
-  requireUserCanAccessApp,
-  requireUserHasAtLeastOneOrganization,
-  requireUserHasConnectedRecently,
-  requireUserHasSelectedAnOrganization,
-  requireUserIsConnected,
-  requireUserIsVerified,
-  requireUserSignInRequirements,
+  browserIsTrustedGuardMiddleware,
+  credentialPromptRequirementsGuardMiddleware,
+  emailInSessionGuardMiddleware,
+  franceConnectForCertificationDirigeantGuardMiddleware,
+  isUserGuardMiddleware,
+  userCanAccessAdminGuardMiddleware,
+  userCanAccessAppGuardMiddleware,
+  userHasAtLeastOneOrganizationGuardMiddleware,
+  userHasConnectedRecentlyGuardMiddleware,
+  userHasSelectedAnOrganizationGuardMiddleware,
+  userIsConnectedGuardMiddleware,
+  userIsVerifiedGuardMiddleware,
+  userSignInRequirementsGuardMiddleware,
 } from "../middlewares/navigation-guards";
 import {
   authenticatorRateLimiterMiddleware,
@@ -124,83 +124,83 @@ export const userRouter = () => {
 
   userRouter.get(
     "/start-sign-in",
-    requireIsUser,
+    isUserGuardMiddleware,
     csrfProtectionMiddleware,
     getStartSignInController,
   );
   userRouter.post(
     "/start-sign-in",
-    requireIsUser,
+    isUserGuardMiddleware,
     csrfProtectionMiddleware,
     postStartSignInController,
   );
 
   userRouter.get(
     "/inclusionconnect-welcome",
-    requireEmailInSession,
+    emailInSessionGuardMiddleware,
     csrfProtectionMiddleware,
     getInclusionconnectWelcomeController,
   );
   userRouter.post(
     "/inclusionconnect-welcome",
-    requireEmailInSession,
+    emailInSessionGuardMiddleware,
     csrfProtectionMiddleware,
     postInclusionconnectWelcomeController,
   );
   userRouter.get(
     "/sign-in",
-    requireCredentialPromptRequirements,
+    credentialPromptRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     getSignInController,
   );
   userRouter.post(
     "/sign-in",
-    requireCredentialPromptRequirements,
+    credentialPromptRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     passwordRateLimiterMiddleware,
     postSignInMiddleware,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
   userRouter.get(
     "/sign-up",
-    requireCredentialPromptRequirements,
+    credentialPromptRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     getSignUpController,
   );
   userRouter.post(
     "/sign-up",
-    requireCredentialPromptRequirements,
+    credentialPromptRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     postSignUpController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/double-authentication-choice",
-    requireUserHasConnectedRecently,
+    userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
     getTwoFactorsAuthenticationChoiceController,
   );
 
   userRouter.get(
     "/is-totp-app-installed",
-    requireUserHasConnectedRecently,
+    userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
     getIsTotpAppInstalledController,
   );
 
   userRouter.get(
     "/totp-configuration",
-    requireUserHasConnectedRecently,
+    userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
     getTotpConfigurationController,
   );
 
   userRouter.post(
     "/totp-configuration",
-    requireUserHasConnectedRecently,
+    userHasConnectedRecentlyGuardMiddleware,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
     postTotpConfigurationController,
@@ -208,79 +208,79 @@ export const userRouter = () => {
 
   userRouter.get(
     "/2fa-successfully-configured",
-    requireUserHasConnectedRecently,
+    userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
     get2faSuccessfullyConfiguredController,
   );
 
   userRouter.post(
     "/2fa-successfully-configured",
-    requireUserHasConnectedRecently,
+    userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
     post2faSuccessfullyConfiguredMiddleware,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/2fa-sign-in",
-    requireUserIsVerified,
+    userIsVerifiedGuardMiddleware,
     csrfProtectionMiddleware,
     get2faSignInController,
   );
 
   userRouter.post(
     "/2fa-sign-in-with-totp",
-    requireUserIsVerified,
+    userIsVerifiedGuardMiddleware,
     csrfProtectionMiddleware,
     authenticatorRateLimiterMiddleware,
     postSignInWithTotpController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.post(
     "/2fa-sign-in-with-passkey",
-    requireUserIsVerified,
+    userIsVerifiedGuardMiddleware,
     csrfProtectionMiddleware,
     postVerifySecondFactorAuthenticationController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/verify-email",
-    requireUserIsConnected,
+    userIsConnectedGuardMiddleware,
     csrfProtectionMiddleware,
     getVerifyEmailController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
   userRouter.post(
     "/verify-email",
-    requireUserIsConnected,
+    userIsConnectedGuardMiddleware,
     csrfProtectionMiddleware,
     verifyEmailRateLimiterMiddleware,
     postVerifyEmailController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.post(
     "/send-email-verification",
-    requireUserIsConnected,
+    userIsConnectedGuardMiddleware,
     csrfProtectionMiddleware,
     postSendEmailVerificationController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
   userRouter.post(
     "/send-magic-link",
-    requireCredentialPromptRequirements,
+    credentialPromptRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     sendMagicLinkRateLimiterMiddleware,
     postSendMagicLinkController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
   userRouter.get("/magic-link-sent", getMagicLinkSentController);
@@ -293,22 +293,22 @@ export const userRouter = () => {
     "/sign-in-with-magic-link",
     csrfProtectionMiddleware,
     postSignInWithMagicLinkController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.post(
     "/sign-in-with-passkey",
-    requireCredentialPromptRequirements,
+    credentialPromptRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     postVerifyFirstFactorAuthenticationController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.post(
     "/passkeys/verify-registration",
-    requireUserHasConnectedRecently,
+    userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
       "/users/2fa-successfully-configured",
@@ -340,21 +340,21 @@ export const userRouter = () => {
 
   userRouter.get(
     "/personal-information",
-    requireUserCanAccessApp,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getPersonalInformationsController,
   );
   userRouter.post(
     "/personal-information",
-    requireUserCanAccessApp,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
   userRouter.post(
     "/personal-information/franceconnect/login",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/personal-information/franceconnect/login/callback`,
@@ -362,7 +362,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/personal-information`,
     ),
@@ -372,7 +372,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/logout/callback",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     (_req, res) =>
@@ -383,83 +383,83 @@ export const userRouter = () => {
 
   userRouter.get(
     "/organization-suggestions",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getOrganizationSuggestionsController,
   );
 
   userRouter.get(
     "/join-organization",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getJoinOrganizationController,
   );
   userRouter.post(
     "/join-organization",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     postJoinOrganizationMiddleware,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/join-organization-confirm",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getJoinOrganizationConfirmController,
   );
 
   userRouter.get(
     "/domain-not-allowed-for-organization",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getDomainNotAllowedForOrganizationController,
   );
 
   userRouter.get(
     "/domain-refused-for-organization",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getDomainRefusedForOrganizationController,
   );
 
   userRouter.get(
     "/unable-to-auto-join-organization",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getUnableToAutoJoinOrganizationController,
   );
   userRouter.get(
     "/moderation-rejected",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getModerationRejectedController,
   );
   userRouter.get(
     "/access-restricted-to-public-sector-email",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getAccessRestrictedToPublicSectorEmailController,
   );
 
   userRouter.get(
     "/access-restricted-to-private-sector-email",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     getAccessRestrictedToPrivateSectorEmailController,
   );
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-sign-in/:moderation_id",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory("/users/start-sign-in"),
   );
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-join-org/:moderation_id",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/users/join-organization",
@@ -468,7 +468,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation-and-redirect-to-personal-information/:moderation_id",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/users/personal-information",
@@ -476,7 +476,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/reopen-moderation/:moderation_id",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     postReopenModerationAndRedirectControllerFactory(
       "/users/personal-information",
@@ -485,66 +485,66 @@ export const userRouter = () => {
 
   userRouter.get(
     "/select-organization",
-    requireUserHasAtLeastOneOrganization,
+    userHasAtLeastOneOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
     getSelectOrganizationController,
   );
 
   userRouter.post(
     "/select-organization",
-    requireUserHasAtLeastOneOrganization,
+    userHasAtLeastOneOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
     postSelectOrganizationMiddleware,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/official-contact-email-verification/:organization_id",
-    requireUserHasSelectedAnOrganization,
+    userHasSelectedAnOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
     getOfficialContactEmailVerificationController,
   );
 
   userRouter.post(
     "/official-contact-email-verification/:organization_id",
-    requireUserHasSelectedAnOrganization,
+    userHasSelectedAnOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
     postOfficialContactEmailVerificationMiddleware,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/welcome",
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     getWelcomeController,
   );
   userRouter.get(
     "/welcome/dirigeant",
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     getWelcomeDirigeantController,
   );
 
   userRouter.post(
     "/welcome",
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     csrfProtectionMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.post(
     "/quit-organization/:id",
-    requireUserHasAtLeastOneOrganization,
+    userHasAtLeastOneOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
     postQuitUserOrganizationController,
   );
 
   userRouter.post(
     "/cancel-moderation/:moderation_id",
-    requireBrowserIsTrusted,
+    browserIsTrustedGuardMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/manage-organizations?notification=cancel_moderation_success",
@@ -553,28 +553,28 @@ export const userRouter = () => {
 
   userRouter.post(
     "/delete",
-    requireUserCanAccessAdmin,
+    userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postDeleteUserController,
   );
 
   userRouter.get(
     "/franceconnect/logout/callback",
-    requireUserCanAccessAdmin,
+    userCanAccessAdminGuardMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     (_req, res) => res.redirect("/oauth/logout"),
   );
 
   userRouter.get(
     "/franceconnect",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectController,
   );
 
   userRouter.post(
     "/franceconnect/login",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/certification-dirigeant/franceconnect/login/callback`,
@@ -583,7 +583,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/login/callback",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/users/franceconnect`,
     ),
@@ -594,30 +594,30 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/logout/callback",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
-    requireUserSignInRequirements,
+    userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
 
   userRouter.get(
     "/certification-dirigeant/organization-not-covered-error",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantOrganizationNotCoveredError,
   );
 
   userRouter.get(
     "/certification-dirigeant/close-match-error",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantCloseMatchError,
   );
 
   userRouter.get(
     "/certification-dirigeant/no-match-error",
-    requireFranceConnectForCertificationDirigeant,
+    franceConnectForCertificationDirigeantGuardMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantNoMatchError,
   );
