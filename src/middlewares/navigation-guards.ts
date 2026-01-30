@@ -888,7 +888,7 @@ const pendingModerationGuard = async (
   return context;
 };
 
-const interactionLessGuard = async (prev: Pass<RequestContext>) => {
+const connectToAppGuard = async (prev: Pass<RequestContext>) => {
   let context;
 
   context = await userHasNoPendingOfficialContactEmailVerificationGuard(prev);
@@ -897,10 +897,10 @@ const interactionLessGuard = async (prev: Pass<RequestContext>) => {
   context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  return context.pass("app_direct_flow");
+  return context.pass("ok_to_connect_to_app");
 };
 
-const pendingCertificationGuard = async (
+const connectToSpAsDirigeantGuard = async (
   prev: Pass<RequestContext & PendingCertificationDirigeant>,
 ) => {
   let context;
@@ -914,21 +914,28 @@ const pendingCertificationGuard = async (
   context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  return context.pass("certification_dirigeant_complete");
+  return context.pass("ok_to_connect_to_sp_as_dirigeant");
 };
 
-const userMustNotReturnOneOrganizationInPayloadGuard = async (
+const connectToSpWithMultipleOrganizationsGuard = async (
   prev: Pass<RequestContext>,
 ) => {
-  const context = await userHasAtLeastOneOrganizationGuard(prev);
+  let context;
+
+  context = await userHasAtLeastOneOrganizationGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
-  return context.pass("no_org_in_payload_required");
+  context =
+    await userHasNoPendingOfficialContactEmailVerificationGuard(context);
+  if (!Pass.is_passing(context)) return context;
+
+  context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
+  if (!Pass.is_passing(context)) return context;
+
+  return context.pass("ok_to_connect_to_sp_with_multiple_organizations");
 };
 
-const userMustReturnOneOrganizationInPayloadGuard = async (
-  prev: Pass<RequestContext>,
-) => {
+const connectToSp = async (prev: Pass<RequestContext>) => {
   let context;
 
   context = await userHasAtLeastOneOrganizationGuard(prev);
@@ -945,14 +952,13 @@ const userMustReturnOneOrganizationInPayloadGuard = async (
   context = await userIsFranceConnectedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  const { req } = context.data;
-  if (req.session.pendingCertificationDirigeantOrganizationId) {
-    const pendingOrgId =
-      req.session.pendingCertificationDirigeantOrganizationId;
+  const { pendingCertificationDirigeantOrganizationId } =
+    context.data.req.session;
 
+  if (pendingCertificationDirigeantOrganizationId) {
     context = await userPassedCertificationDirigeantGuard(
       context.extends({
-        pendingCertificationDirigeantOrganizationId: pendingOrgId,
+        pendingCertificationDirigeantOrganizationId,
       }),
     );
     if (!Pass.is_passing(context)) return context;
@@ -965,7 +971,7 @@ const userMustReturnOneOrganizationInPayloadGuard = async (
   context = await userHasBeenGreetedForJoiningOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  return context.pass("user_sign_in_requirements_met");
+  return context.pass("ok_to_connect_to_sp");
 };
 
 // check that the user goes through all requirements before issuing a session
@@ -992,19 +998,19 @@ export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
             context.extends({ pendingModerationOrganizationId }),
           ),
       )
-      .with({ interactionId: P.nullish }, () => interactionLessGuard(context))
+      .with({ interactionId: P.nullish }, () => connectToAppGuard(context))
       .with(
         { pendingCertificationDirigeantOrganizationId: P.number },
         ({ pendingCertificationDirigeantOrganizationId }) =>
-          pendingCertificationGuard(
+          connectToSpAsDirigeantGuard(
             context.extends({ pendingCertificationDirigeantOrganizationId }),
           ),
       )
       .with(
         { mustReturnOneOrganizationInPayload: P.nullish },
         { mustReturnOneOrganizationInPayload: false },
-        () => userMustNotReturnOneOrganizationInPayloadGuard(context),
+        () => connectToSpWithMultipleOrganizationsGuard(context),
       )
-      .otherwise(() => userMustReturnOneOrganizationInPayloadGuard(context));
+      .otherwise(() => connectToSp(context));
   },
 );
