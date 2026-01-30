@@ -95,7 +95,6 @@ import {
   credentialPromptRequirementsGuardMiddleware,
   emailInSessionGuardMiddleware,
   isUserGuardMiddleware,
-  setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
   userCanAccessAdminGuardMiddleware,
   userCanAccessAppGuardMiddleware,
   userHasAtLeastOneOrganizationGuardMiddleware,
@@ -354,7 +353,7 @@ export const userRouter = () => {
   );
   userRouter.post(
     "/personal-information/franceconnect/login",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/personal-information/franceconnect/login/callback`,
@@ -362,7 +361,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/login/callback",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/personal-information`,
     ),
@@ -372,7 +371,7 @@ export const userRouter = () => {
   );
   userRouter.get(
     "/personal-information/franceconnect/logout/callback",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     (_req, res) =>
@@ -567,14 +566,14 @@ export const userRouter = () => {
 
   userRouter.get(
     "/franceconnect",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectController,
   );
 
   userRouter.post(
     "/franceconnect/login",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     postFranceConnectLoginRedirectControllerFactory(
       `${HOST}/users/certification-dirigeant/franceconnect/login/callback`,
@@ -583,7 +582,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/login/callback",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     getFranceConnectLoginCallbackMiddlewareFactory(
       `${HOST}/users/franceconnect`,
     ),
@@ -594,7 +593,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/franceconnect/logout/callback",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getFranceConnectLogoutCallbackMiddleware,
     userSignInRequirementsGuardMiddleware,
@@ -603,21 +602,21 @@ export const userRouter = () => {
 
   userRouter.get(
     "/certification-dirigeant/organization-not-covered-error",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantOrganizationNotCoveredError,
   );
 
   userRouter.get(
     "/certification-dirigeant/close-match-error",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantCloseMatchError,
   );
 
   userRouter.get(
     "/certification-dirigeant/no-match-error",
-    setFranceConnectNeededForCertificationDirigeantGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantNoMatchError,
   );

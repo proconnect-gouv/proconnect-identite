@@ -567,26 +567,6 @@ const setFranceConnectNeededForCertificationDirigeantGuard = async <
   return pass("set_france_connect_needed_for_certification_dirigeant");
 };
 
-export const setFranceConnectNeededForCertificationDirigeantGuardMiddleware =
-  createGuardMiddleware(
-    async function franceConnectForCertificationDirigeantGuardMiddleware(prev) {
-      let context;
-      context = await browserIsTrustedGuard(prev);
-      if (!Pass.is_passing(context)) return context;
-
-      const { req } = context.data;
-      if (req.session.pendingCertificationDirigeantOrganizationId) {
-        return context.pass("bypass_pending_certification_dirigeant");
-      }
-
-      context = await userHasAtLeastOneOrganizationGuard(context);
-      if (!Pass.is_passing(context)) return context;
-      context = await userHasSelectedAnOrganizationGuard(context);
-      if (!Pass.is_passing(context)) return context;
-      return setFranceConnectNeededForCertificationDirigeantGuard(context);
-    },
-  );
-
 const userIsFranceConnectedGuard = async <TContext extends RequestContext>(
   context: Pass<TContext>,
 ) => {
