@@ -19,7 +19,7 @@ import {
   optionalBooleanSchema,
 } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
-import { getOrganizationTypeLabel } from "../../services/organization";
+import { getOrganizationTypeLabel } from "@proconnect-gouv/proconnect.identite/services/organization";
 
 export const getOfficialContactEmailVerificationController = async (
   req: Request,
