@@ -72,14 +72,6 @@ export function joinOrganization(ctx: JoinContext): JoinDecision {
     return error("organization_not_active");
   }
 
-  if (isEntrepriseUnipersonnelle(organization)) {
-    return link("no_verification_means_for_entreprise_unipersonnelle");
-  }
-
-  if (isSmallAssociation(organization)) {
-    return link("no_verification_means_for_small_association");
-  }
-
   if (!isDomainAllowedForOrganization(organization.siret, domain)) {
     return error("domain_not_allowed");
   }
@@ -90,6 +82,14 @@ export function joinOrganization(ctx: JoinContext): JoinDecision {
 
   if (domain.endsWith("gouv.fr") && !isPublicService(organization)) {
     return error("gouv_fr_domain_forbidden_for_private_org");
+  }
+
+  if (isEntrepriseUnipersonnelle(organization)) {
+    return link("no_verification_means_for_entreprise_unipersonnelle");
+  }
+
+  if (isSmallAssociation(organization)) {
+    return link("no_verification_means_for_small_association");
   }
 
   const allowsFreeEmail =
