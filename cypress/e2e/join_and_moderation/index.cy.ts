@@ -68,13 +68,6 @@ describe("join and moderation", () => {
       cy.contains("Demande en cours");
       cy.getByLabel("Corriger le nom").click();
 
-      cy.title().should("include", "Rejoindre une organisation -");
-      cy.contains("SIRET de l’organisation que vous représentez").click();
-      cy.focused().clear().type("66204244933106");
-      cy.getByLabel(
-        "Organisation correspondante au SIRET donné : Bnp paribas - Bnp paribas",
-      ).click();
-
       cy.title().should("include", "Renseigner votre identité -");
       cy.contains("Renseigner son identité");
       cy.contains("Prénom").click();
@@ -82,6 +75,13 @@ describe("join and moderation", () => {
       cy.contains("Nom").click();
       cy.focused().clear().type("Dorn");
       cy.contains("Valider").click();
+
+      cy.title().should("include", "Rejoindre une organisation -");
+      cy.contains("SIRET de l’organisation que vous représentez").click();
+      cy.focused().clear().type("66204244933106");
+      cy.getByLabel(
+        "Organisation correspondante au SIRET donné : Bnp paribas - Bnp paribas",
+      ).click();
 
       cy.contains("Demande en cours");
       cy.contains(

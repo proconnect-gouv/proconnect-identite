@@ -26,9 +26,8 @@ import {
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
-  navigationGuardChain,
-  requireUserCanAccessAdmin,
-  requireUserCanAccessApp,
+  userCanAccessAdminGuardMiddleware,
+  userCanAccessAppGuardMiddleware,
 } from "../middlewares/navigation-guards";
 import {
   authenticatorRateLimiterMiddleware,
@@ -45,7 +44,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getConnectionAndAccountController,
   );
@@ -56,7 +55,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getDoubleAuthenticationController,
   );
@@ -67,7 +66,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     getIsTotpAppInstalledController,
   );
 
@@ -77,7 +76,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getTotpConfigurationController,
   );
@@ -88,7 +87,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
     postTotpConfigurationController,
@@ -100,7 +99,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postDeleteTotpConfigurationController,
   );
@@ -111,7 +110,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
       "/connection-and-account?notification=passkey_successfully_created",
@@ -125,7 +124,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     deletePasskeyController,
   );
@@ -136,7 +135,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessAdmin),
+    userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postSetForce2faController,
   );
@@ -147,7 +146,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessApp),
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getPersonalInformationsController,
   );
@@ -158,7 +157,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessApp),
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
   );
@@ -169,7 +168,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessApp),
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getManageOrganizationsController,
   );
@@ -180,7 +179,7 @@ export const mainRouter = (app: Express) => {
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     rateLimiterMiddleware,
-    ...navigationGuardChain(requireUserCanAccessApp),
+    userCanAccessAppGuardMiddleware,
     getHomeController,
   );
 
