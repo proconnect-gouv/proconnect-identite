@@ -6,10 +6,14 @@ import {
   InvalidSiretError,
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
-import { joinOrganization as joinOrganizationDecision } from "@proconnect-gouv/proconnect.identite/managers/organization";
+import {
+  forceJoinOrganizationFactory,
+  joinOrganization as joinOrganizationDecision,
+} from "@proconnect-gouv/proconnect.identite/managers/organization";
 import {
   isDomainAllowedForOrganization,
   isPublicService,
+  isSmallAssociation,
   isSyndicatCommunal,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
@@ -77,7 +81,6 @@ import {
   isCommune,
   isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
-  isSmallAssociation,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
