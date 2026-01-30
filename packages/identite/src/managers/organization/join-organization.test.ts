@@ -41,15 +41,14 @@ suite("joinOrganization", () => {
     });
   });
 
-  test("returns link with no_validation_means_available by default", () => {
+  test("returns needs_external_verification when no early decision applies", () => {
     const result = joinOrganization({
       cached_est_active: true,
       cached_libelle_categorie_juridique: "Service central d'un ministère",
     } as Organization);
 
     assert.deepEqual(result, {
-      type: "link",
-      verification_type: "no_validation_means_available",
+      type: "needs_external_verification",
     });
   });
 });

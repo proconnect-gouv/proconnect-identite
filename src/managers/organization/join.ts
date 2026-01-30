@@ -18,7 +18,6 @@ import {
   isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
   isPublicService,
-  isSmallAssociation,
   isSyndicatCommunal,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
@@ -171,7 +170,7 @@ export const joinOrganization = async ({
 
   const decision = joinOrganizationDecision(organization);
 
-  await match(decision)
+  const earlyResult = await match(decision)
     .with({ type: "error", reason: "organization_not_active" }, () => {
       throw new OrganizationNotActiveError();
     })
@@ -182,7 +181,12 @@ export const joinOrganization = async ({
         verification_type: verification_type,
       }),
     )
+    .with({ type: "needs_external_verification" }, () => null)
     .exhaustive();
+
+  if (earlyResult) {
+    return earlyResult;
+  }
 
   const user = await getUserById(user_id);
 
@@ -244,15 +248,6 @@ export const joinOrganization = async ({
 
   if (certificationRequested) {
     throw new PendingCertificationDirigeantError(organization_id);
-  }
-
-  if (isSmallAssociation(organization)) {
-    return await linkUserToOrganization({
-      organization_id,
-      user_id,
-      verification_type:
-        LinkTypes.enum.no_verification_means_for_small_association,
-    });
   }
 
   if (

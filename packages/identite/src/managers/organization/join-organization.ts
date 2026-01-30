@@ -13,7 +13,8 @@ type VerificationType = z.infer<typeof LinkTypes>;
 
 export type JoinDecision =
   | { type: "error"; reason: "organization_not_active" }
-  | { type: "link"; verification_type: VerificationType };
+  | { type: "link"; verification_type: VerificationType }
+  | { type: "needs_external_verification" };
 
 //
 
@@ -36,8 +37,5 @@ export function joinOrganization(organization: Organization): JoinDecision {
     };
   }
 
-  return {
-    type: "link",
-    verification_type: "no_validation_means_available",
-  };
+  return { type: "needs_external_verification" };
 }
