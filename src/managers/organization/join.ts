@@ -10,6 +10,7 @@ import {
   forceJoinOrganizationFactory,
   joinOrganization as joinOrganizationDecision,
   type JoinContext,
+  type JoinErrorReason,
 } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import {
   isArmeeDomain,
@@ -155,11 +156,8 @@ export const upsertOrganization = async (siret: string) => {
 async function fetchContactEmail(
   organization: Organization,
 ): Promise<string | null> {
-  const isCommuneNotSchool =
-    isCommune(organization) &&
-    !isEtablissementScolaireDuPremierEtSecondDegre(organization);
-
   const isSchool = isEtablissementScolaireDuPremierEtSecondDegre(organization);
+  const isCommuneNotSchool = isCommune(organization) && !isSchool;
 
   if (isCommuneNotSchool) {
     try {
@@ -189,7 +187,10 @@ async function fetchContactEmail(
   return null;
 }
 
-function throwErrorForReason(reason: string, organization_id: number): never {
+function throwJoinError(
+  reason: JoinErrorReason,
+  organization_id: number,
+): never {
   switch (reason) {
     case "domain_not_allowed":
       throw new DomainNotAllowedForOrganizationError(organization_id);
@@ -201,8 +202,6 @@ function throwErrorForReason(reason: string, organization_id: number): never {
       throw new OrganizationNotActiveError();
     case "public_service_requires_professional_email":
       throw new AccessRestrictedToPublicServiceEmailError();
-    default:
-      throw new Error(`Unknown error reason: ${reason}`);
   }
 }
 
@@ -266,18 +265,17 @@ export const joinOrganization = async ({
 
   const organizationEmailDomains =
     await findEmailDomainsByOrganizationId(organization_id);
-
   const contactEmail = await fetchContactEmail(organization);
-  const contactEmailDomain = contactEmail ? getEmailDomain(contactEmail) : null;
+  const contactDomain = contactEmail ? getEmailDomain(contactEmail) : null;
 
   const context: JoinContext = {
     contactEmail,
-    contactEmailDomain,
     domain,
     featureBypassModeration: FEATURE_BYPASS_MODERATION,
-    isContactEmailFreeProvider: contactEmailDomain
-      ? isAFreeEmailProvider(contactEmailDomain)
+    isContactDomainFree: contactDomain
+      ? isAFreeEmailProvider(contactDomain)
       : true,
+    isContactEmailSameDomain: contactDomain === domain,
     isContactEmailValid: isEmailValid(contactEmail),
     isFreeEmailProvider: isAFreeEmailProvider(domain),
     organization,
@@ -290,30 +288,25 @@ export const joinOrganization = async ({
 
   return match(decision)
     .with({ type: "error" }, ({ reason }) => {
-      throwErrorForReason(reason, organization_id);
+      throwJoinError(reason, organization_id);
     })
-    .with({ type: "link" }, async (linkDecision) => {
-      const {
-        is_external,
-        needs_official_contact_email_verification,
-        should_mark_contact_domain_verified,
-        verification_type,
-      } = linkDecision;
-
-      if (should_mark_contact_domain_verified && contactEmailDomain) {
+    .with({ type: "link" }, async (d) => {
+      if (d.should_mark_contact_domain_verified && contactDomain) {
         await markDomainAsVerified({
           organization_id,
-          domain: contactEmailDomain,
+          domain: contactDomain,
           domain_verification_type: "official_contact",
         });
       }
 
-      return await linkUserToOrganization({
+      return linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type,
-        is_external,
-        needs_official_contact_email_verification,
+        verification_type:
+          d.verification_type as UserOrganizationLink["verification_type"],
+        is_external: d.is_external,
+        needs_official_contact_email_verification:
+          d.needs_official_contact_email_verification,
       });
     })
     .with({ type: "needs_confirmation" }, () => {
@@ -326,7 +319,7 @@ export const joinOrganization = async ({
         type: ModerationTypeSchema.enum.non_verified_domain,
         ticket_id: null,
       });
-      return await linkUserToOrganization({
+      return linkUserToOrganization({
         organization_id,
         user_id,
         verification_type: "domain_not_verified_yet",

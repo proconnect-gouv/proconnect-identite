@@ -13,10 +13,10 @@ function createContext(overrides: Partial<JoinContext> = {}): JoinContext {
 
   return {
     contactEmail: null,
-    contactEmailDomain: null,
     domain: "example.com",
     featureBypassModeration: false,
-    isContactEmailFreeProvider: true,
+    isContactDomainFree: true,
+    isContactEmailSameDomain: false,
     isContactEmailValid: false,
     isFreeEmailProvider: false,
     organization: {
@@ -258,9 +258,9 @@ suite("joinOrganization", () => {
           userEmail: "mairie@commune.fr",
           domain: "commune.fr",
           contactEmail: "mairie@commune.fr",
-          contactEmailDomain: "commune.fr",
+          isContactEmailSameDomain: true,
           isContactEmailValid: true,
-          isContactEmailFreeProvider: false,
+          isContactDomainFree: false,
         }),
       );
 
@@ -278,9 +278,9 @@ suite("joinOrganization", () => {
           userEmail: "autre@commune.fr",
           domain: "commune.fr",
           contactEmail: "mairie@commune.fr",
-          contactEmailDomain: "commune.fr",
+          isContactEmailSameDomain: true,
           isContactEmailValid: true,
-          isContactEmailFreeProvider: false,
+          isContactDomainFree: false,
         }),
       );
 
@@ -299,9 +299,9 @@ suite("joinOrganization", () => {
           domain: "gmail.com",
           isFreeEmailProvider: true,
           contactEmail: "mairie@commune.fr",
-          contactEmailDomain: "commune.fr",
+          isContactEmailSameDomain: false,
           isContactEmailValid: true,
-          isContactEmailFreeProvider: false,
+          isContactDomainFree: false,
         }),
       );
 
@@ -321,9 +321,9 @@ suite("joinOrganization", () => {
           domain: "gmail.com",
           isFreeEmailProvider: true,
           contactEmail: "mairie@gmail.com",
-          contactEmailDomain: "gmail.com",
+          isContactEmailSameDomain: true,
           isContactEmailValid: true,
-          isContactEmailFreeProvider: true,
+          isContactDomainFree: true,
         }),
       );
 
@@ -353,7 +353,7 @@ suite("joinOrganization", () => {
           userEmail: "directeur@ac-paris.fr",
           domain: "ac-paris.fr",
           contactEmail: "directeur@ac-paris.fr",
-          contactEmailDomain: "ac-paris.fr",
+          isContactEmailSameDomain: true,
           isContactEmailValid: true,
         }),
       );
@@ -361,6 +361,7 @@ suite("joinOrganization", () => {
       assert.deepEqual(result, {
         type: "link",
         verification_type: "official_contact_email",
+        should_mark_contact_domain_verified: false,
       });
     });
 
@@ -371,7 +372,7 @@ suite("joinOrganization", () => {
           userEmail: "prof@ac-paris.fr",
           domain: "ac-paris.fr",
           contactEmail: "directeur@ac-paris.fr",
-          contactEmailDomain: "ac-paris.fr",
+          isContactEmailSameDomain: true,
           isContactEmailValid: true,
         }),
       );
