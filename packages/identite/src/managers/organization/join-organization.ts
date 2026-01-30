@@ -1,6 +1,9 @@
 //
 
-import { isEntrepriseUnipersonnelle } from "#src/services/organization";
+import {
+  isEntrepriseUnipersonnelle,
+  isSmallAssociation,
+} from "#src/services/organization";
 import type { LinkTypes, Organization } from "#src/types";
 import type { z } from "zod";
 
@@ -23,6 +26,13 @@ export function joinOrganization(organization: Organization): JoinDecision {
     return {
       type: "link",
       verification_type: "no_verification_means_for_entreprise_unipersonnelle",
+    };
+  }
+
+  if (isSmallAssociation(organization)) {
+    return {
+      type: "link",
+      verification_type: "no_verification_means_for_small_association",
     };
   }
 

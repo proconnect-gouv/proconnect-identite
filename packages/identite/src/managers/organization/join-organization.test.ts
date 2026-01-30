@@ -28,6 +28,19 @@ suite("joinOrganization", () => {
     });
   });
 
+  test("returns link for small association", () => {
+    const result = joinOrganization({
+      cached_est_active: true,
+      cached_libelle_categorie_juridique: "Association déclarée",
+      cached_tranche_effectifs: "12",
+    } as Organization);
+
+    assert.deepEqual(result, {
+      type: "link",
+      verification_type: "no_verification_means_for_small_association",
+    });
+  });
+
   test("returns link with no_validation_means_available by default", () => {
     const result = joinOrganization({
       cached_est_active: true,
