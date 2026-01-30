@@ -1,3 +1,4 @@
+import { getOrganizationTypeLabel } from "@proconnect-gouv/proconnect.identite/services/organization";
 import { to } from "await-to-js";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
@@ -19,7 +20,6 @@ import {
   optionalBooleanSchema,
 } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
-import { getOrganizationTypeLabel } from "@proconnect-gouv/proconnect.identite/services/organization";
 
 export const getOfficialContactEmailVerificationController = async (
   req: Request,
