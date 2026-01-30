@@ -1,5 +1,6 @@
 //
 
+export * from "./get-organization-type-label.js";
 export * from "./has-less-than-fifty-employees.js";
 export * from "./is-armee-domain.js";
 export * from "./is-commune.js";
