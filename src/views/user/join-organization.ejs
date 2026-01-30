@@ -4,6 +4,16 @@
         Votre organisation de rattachement
     </h1>
     <div>
+        <div class="fr-alert fr-alert--warning fr-mb-3w">
+            <h2 class="fr-alert__title">Création de compte temporairement indisponible</h2>
+            <p>
+                En raison d’une maintenance en cours sur l’API Sirene,
+                la création de comptes via ProConnect Identité est momentanément indisponible.
+            </p>
+            <p>
+                Merci de réessayer ultérieurement.
+            </p>
+        </div>
         <form id="form-join-organization" action="/users/join-organization" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
