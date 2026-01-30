@@ -11,7 +11,12 @@ import {
   joinOrganization as joinOrganizationDecision,
 } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import {
+  hasLessThanFiftyEmployees,
+  isArmeeDomain,
+  isCommune,
   isDomainAllowedForOrganization,
+  isEducationNationaleDomain,
+  isEtablissementScolaireDuPremierEtSecondDegre,
   isPublicService,
   isSmallAssociation,
   isSyndicatCommunal,
@@ -75,13 +80,6 @@ import {
   usesAFreeEmailProvider,
 } from "../../services/email";
 import { logger } from "../../services/log";
-import {
-  hasLessThanFiftyEmployees,
-  isArmeeDomain,
-  isCommune,
-  isEducationNationaleDomain,
-  isEtablissementScolaireDuPremierEtSecondDegre,
-} from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
 

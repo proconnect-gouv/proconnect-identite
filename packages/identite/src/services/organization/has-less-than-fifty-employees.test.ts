@@ -14,7 +14,10 @@ import { describe, it } from "node:test";
 
 describe("hasLessThanFiftyEmployees", () => {
   it("should return true for organization with null tranche effectifs", () => {
-    assert.equal(hasLessThanFiftyEmployees(entreprise_unipersonnelle_org_info), true);
+    assert.equal(
+      hasLessThanFiftyEmployees(entreprise_unipersonnelle_org_info),
+      true,
+    );
   });
 
   it("should return true for organization with NN tranche effectifs", () => {
