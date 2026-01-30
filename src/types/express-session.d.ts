@@ -46,5 +46,6 @@ declare module "express-session" {
     amr?: AmrValue[];
     pendingModerationOrganizationId?: number;
     pendingCertificationDirigeantOrganizationId?: number;
+    pendingLinkTypeVerificationOrganizationId?: number;
   }
 }
