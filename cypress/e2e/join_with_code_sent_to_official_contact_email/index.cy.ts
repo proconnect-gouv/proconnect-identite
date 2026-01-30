@@ -49,7 +49,7 @@ describe("join collectivité territoriale with code send to official contact ema
     });
 
     cy.title().should("include", "Compte créé - ProConnect");
-    cy.contains("Votre compte est créé !");
+    cy.contains("Compte créé ! 🎊");
   });
 
   it("should send a code challenge for user with a free email domain", function () {
@@ -93,6 +93,6 @@ describe("join collectivité territoriale with code send to official contact ema
     });
 
     cy.title().should("include", "Compte créé - ProConnect");
-    cy.contains("Votre compte est créé !");
+    cy.contains("Compte créé ! 🎊");
   });
 });
