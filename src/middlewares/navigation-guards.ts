@@ -981,16 +981,18 @@ export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
     const context = await browserIsTrustedGuard(prev);
     if (!Pass.is_passing(context)) return context;
 
-    const { req } = context.data;
-    const { session } = req;
+    const {
+      pendingModerationOrganizationId,
+      interactionId,
+      pendingCertificationDirigeantOrganizationId,
+      mustReturnOneOrganizationInPayload,
+    } = context.data.req.session;
 
     return match({
-      pendingModerationOrganizationId: session.pendingModerationOrganizationId,
-      interactionId: session.interactionId,
-      pendingCertificationDirigeantOrganizationId:
-        session.pendingCertificationDirigeantOrganizationId,
-      mustReturnOneOrganizationInPayload:
-        session.mustReturnOneOrganizationInPayload,
+      pendingModerationOrganizationId,
+      interactionId,
+      pendingCertificationDirigeantOrganizationId,
+      mustReturnOneOrganizationInPayload,
     })
       .with(
         { pendingModerationOrganizationId: P.number },
