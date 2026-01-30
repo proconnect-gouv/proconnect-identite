@@ -26,9 +26,9 @@ describe("getAnnuaireServicePublicContactEmail", () => {
         `/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "15014" and pivot LIKE "mairie"`,
       )
       .reply(200, oneMairieData);
-    assert.equal(
+    assert.deepEqual(
       await getAnnuaireServicePublicContactEmail("15014", "15000"),
-      "administration@aurillac.fr",
+      ["administration@aurillac.fr"],
     );
   });
   it("should return valid email for two mairies with the same Code Officiel Geographique", async () => {
@@ -37,9 +37,9 @@ describe("getAnnuaireServicePublicContactEmail", () => {
         `/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "38253" and pivot LIKE "mairie"`,
       )
       .reply(200, twoMairiesData);
-    assert.equal(
+    assert.deepEqual(
       await getAnnuaireServicePublicContactEmail("38253", "38860"),
-      "accueil@mairie2alpes.fr",
+      ["accueil@mairie2alpes.fr"],
     );
   });
   it("should return the first valid email for the list a emails", async () => {
@@ -48,9 +48,9 @@ describe("getAnnuaireServicePublicContactEmail", () => {
         `/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "76401" and pivot LIKE "mairie"`,
       )
       .reply(200, multiEmailsMarieData);
-    assert.equal(
+    assert.deepEqual(
       await getAnnuaireServicePublicContactEmail("76401", "76940"),
-      "accueil@arelauneenseine.fr",
+      ["accueil@arelauneenseine.fr"],
     );
   });
 });

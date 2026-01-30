@@ -279,13 +279,25 @@ export const joinOrganization = async ({
   ) {
     let contactEmail;
     try {
-      contactEmail = await getAnnuaireServicePublicContactEmail(
+      const contactEmails = await getAnnuaireServicePublicContactEmail(
         organization.cached_code_officiel_geographique,
         organization.cached_code_postal,
       );
+      if (contactEmails.length === 1) {
+        contactEmail = contactEmails[0];
+      } else {
+        return await linkUserToOrganization({
+          organization_id,
+          user_id,
+          verification_type: "code_sent_to_official_contact_email",
+          needs_official_contact_email_verification: true,
+        });
+      }
     } catch (err) {
-      logger.error(inspect(err, { depth: 3 }));
-      Sentry.captureException(err);
+      {
+        logger.error(inspect(err, { depth: 3 }));
+        Sentry.captureException(err);
+      }
     }
 
     if (isEmailValid(contactEmail)) {
