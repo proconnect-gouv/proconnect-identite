@@ -6,10 +6,9 @@ import {
   InvalidSiretError,
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
-import { forceJoinOrganizationFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
+import { joinOrganization as joinOrganizationDecision } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import {
   isDomainAllowedForOrganization,
-  isEntrepriseUnipersonnelle,
   isPublicService,
   isSyndicatCommunal,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
@@ -24,6 +23,7 @@ import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";
 import { inspect } from "node:util";
+import { match } from "ts-pattern";
 import {
   CRISP_WEBSITE_ID,
   FEATURE_BYPASS_MODERATION,
@@ -166,14 +166,23 @@ export const joinOrganization = async ({
   confirmed: boolean;
   certificationRequested?: boolean;
 }): Promise<UserOrganizationLink> => {
-  const { siret } = organization;
+  const { id: organization_id, siret } = organization;
 
-  // Ensure the organization is active
-  if (!organization.cached_est_active) {
-    throw new OrganizationNotActiveError();
-  }
+  const decision = joinOrganizationDecision(organization);
 
-  // Ensure user_id is valid
+  await match(decision)
+    .with({ type: "error", reason: "organization_not_active" }, () => {
+      throw new OrganizationNotActiveError();
+    })
+    .with({ type: "link" }, ({ verification_type }) =>
+      linkUserToOrganization({
+        organization_id,
+        user_id,
+        verification_type: verification_type,
+      }),
+    )
+    .exhaustive();
+
   const user = await getUserById(user_id);
 
   const usersOrganizations = await findByUserId(user_id);
@@ -213,7 +222,6 @@ export const joinOrganization = async ({
     });
   }
 
-  const { id: organization_id } = organization;
   const { email } = user;
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
@@ -235,15 +243,6 @@ export const joinOrganization = async ({
 
   if (certificationRequested) {
     throw new PendingCertificationDirigeantError(organization_id);
-  }
-
-  if (isEntrepriseUnipersonnelle(organization)) {
-    return await linkUserToOrganization({
-      organization_id,
-      user_id,
-      verification_type:
-        LinkTypes.enum.no_verification_means_for_entreprise_unipersonnelle,
-    });
   }
 
   if (isSmallAssociation(organization)) {
