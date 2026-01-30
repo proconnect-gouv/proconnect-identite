@@ -34,6 +34,7 @@ import {
   getOrganizationsByUserId,
   selectOrganization,
 } from "../managers/organization/main";
+import { isCommuneWithMultipleOfficialContactEmails } from "../managers/organization/official-contact-email-verification";
 import {
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
@@ -675,6 +676,16 @@ const userHasNoPendingOfficialContactEmailVerificationGuard = async (
   }
 
   if (!isEmpty(organizationThatNeedsOfficialContactEmailVerification)) {
+    if (
+      await isCommuneWithMultipleOfficialContactEmails(
+        organizationThatNeedsOfficialContactEmailVerification,
+      )
+    ) {
+      return redirect(
+        `/users/official-contact-ask-which-email/${organizationThatNeedsOfficialContactEmailVerification.id}`,
+      );
+    }
+
     return redirect(
       `/users/official-contact-email-verification/${organizationThatNeedsOfficialContactEmailVerification.id}`,
     );

@@ -1,0 +1,36 @@
+<div>
+    <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
+    <div class="fr-mb-2w">
+        <h1 class="fr-h3">
+            Confirmer l'adresse email de contact
+        </h1>
+        <div>
+            <form id="verify-email" method="GET" action="/users/official-contact-email-verification/<%= organization_id %>" autocomplete="off">
+                <p>
+                    Un code secret va être envoyé à l'adresse email officielle.
+                </p>
+
+                <p>À quelle adresse e-mail souhaitez-vous recevoir le code ?</p>
+
+                <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+
+                <fieldset class="fr-fieldset">
+                    <legend class="fr-fieldset__legend--regular fr-fieldset__legend">
+                        Sélectionnez une adresse email
+                    </legend>
+                    <% contactEmails.forEach(function(email) { %>
+                        <div class="fr-fieldset__element">
+                            <div class="fr-radio-group">
+                                <input type="radio" id="email-<%= email %>" name="contact_email" value="<%= email %>" required>
+                                <label class="fr-label" for="email-<%= email %>"><%= email %></label>
+                            </div>
+                        </div>
+                    <% }); %>
+                </fieldset>
+                <%- include('../partials/submit-button.ejs', {label: 'Valider'}) %>
+
+            </form>
+            <%- include('../partials/go-back.ejs') %>
+        </div>
+    </div>
+</div>

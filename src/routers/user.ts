@@ -39,6 +39,7 @@ import {
   postSendMagicLinkController,
   postSignInWithMagicLinkController,
 } from "../controllers/user/magic-link";
+import { getOfficialContactAskWhichEmailController } from "../controllers/user/official-contact-ask-which-email";
 import {
   getOfficialContactEmailVerificationController,
   postOfficialContactEmailVerificationMiddleware,
@@ -106,6 +107,7 @@ import {
 } from "../middlewares/navigation-guards";
 import {
   authenticatorRateLimiterMiddleware,
+  officialContactEmailVerificationRateLimiterMiddleware,
   passwordRateLimiterMiddleware,
   rateLimiterMiddleware,
   sendMagicLinkRateLimiterMiddleware,
@@ -200,8 +202,8 @@ export const userRouter = () => {
   userRouter.post(
     "/totp-configuration",
     userHasConnectedRecentlyGuardMiddleware,
-    authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
+    authenticatorRateLimiterMiddleware,
     postTotpConfigurationController,
   );
 
@@ -499,9 +501,17 @@ export const userRouter = () => {
   );
 
   userRouter.get(
+    "/official-contact-ask-which-email/:organization_id",
+    userHasSelectedAnOrganizationGuardMiddleware,
+    csrfProtectionMiddleware,
+    getOfficialContactAskWhichEmailController,
+  );
+
+  userRouter.get(
     "/official-contact-email-verification/:organization_id",
     userHasSelectedAnOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
+    officialContactEmailVerificationRateLimiterMiddleware,
     getOfficialContactEmailVerificationController,
   );
 
