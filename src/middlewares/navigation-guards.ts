@@ -2,8 +2,6 @@ import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/securit
 import {
   LinkTypes,
   UnverifiedLinkTypes,
-  type Organization,
-  type User,
 } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
@@ -65,8 +63,8 @@ import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 //
+
 type RequestContext = { req: Request };
-type PendingModeration = { pendingModerationOrganizationId: number };
 
 type UserOrganizationsByUserId = Awaited<
   ReturnType<typeof getOrganizationsByUserId>
@@ -592,28 +590,6 @@ const userHasPersonalInformationsGuard = async (
   return pass("user_has_personal_informations");
 };
 
-const moderationCreatedGuard = async (
-  context: Pass<{
-    organization: Organization;
-    user: User;
-  }>,
-) => {
-  const {
-    data: { organization, user },
-
-    redirect,
-  } = context;
-
-  const { id: moderation_id } = await createPendingModeration({
-    user,
-    organization,
-  });
-
-  return redirect(
-    `/users/unable-to-auto-join-organization?moderation_id=${moderation_id}`,
-  );
-};
-
 const userIsCertifiedAsDirigeantGuard = async <
   TContext extends RequestContext & { selectedOrganizationId: number },
 >(
@@ -746,39 +722,30 @@ const userHasBeenGreetedGuard = async (context: Pass<RequestContext>) => {
   return redirect("/users/welcome");
 };
 
-const processPendingModerationGuard = async (
-  prev: Pass<RequestContext & PendingModeration>,
-) => {
-  const organization_id = prev.data.pendingModerationOrganizationId;
+const processPendingModerationGuard = async (prev: Pass<RequestContext>) => {
+  const {
+    data: { req },
+  } = prev;
 
-  const organization = await getOrganizationById(organization_id);
-  if (!organization) {
-    prev.data.req.session.pendingModerationOrganizationId = undefined;
-    return prev
-      .pass("moderation_to_create_on_non_existing_organization")
-      .redirect(`/users/join-organization?notification=invalid_siret`);
-  }
+  const organization_id = req.session.pendingModerationOrganizationId!;
+  const organization = (await getOrganizationById(organization_id))!;
   const user = getUserFromAuthenticatedSession(prev.data.req);
-
-  //
 
   let context;
 
   context = await userHasPersonalInformationsGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
-  const { req } = context.data;
-  context = await moderationCreatedGuard(
-    new Pass(context.code, {
-      organization,
-      user,
-    }),
-  );
-  req.session.pendingModerationOrganizationId = undefined;
-  if (!Pass.is_passing(context)) return context;
+  const { id: moderation_id } = await createPendingModeration({
+    user,
+    organization,
+  });
 
-  // This never happens
-  return context;
+  req.session.pendingModerationOrganizationId = undefined;
+
+  return context.redirect(
+    `/users/unable-to-auto-join-organization?moderation_id=${moderation_id}`,
+  );
 };
 
 const connectToAppGuard = async (prev: Pass<RequestContext>) => {
@@ -933,12 +900,8 @@ export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
       pendingCertificationDirigeantOrganizationId,
       mustReturnOneOrganizationInPayload,
     })
-      .with(
-        { pendingModerationOrganizationId: P.number },
-        ({ pendingModerationOrganizationId }) =>
-          processPendingModerationGuard(
-            context.extends({ pendingModerationOrganizationId }),
-          ),
+      .with({ pendingModerationOrganizationId: P.number }, () =>
+        processPendingModerationGuard(context),
       )
       .with({ interactionId: P.nullish }, () => connectToAppGuard(context))
       .with({ pendingCertificationDirigeantOrganizationId: P.number }, () => {
