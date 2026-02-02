@@ -11,6 +11,7 @@ export const WeakLinkTypes = [
   "official_contact_email",
   "ordre_professionnel_domain",
   "proof_received",
+  "verified_by_coop_mediation_numerique",
   // Used in the sandbox environment to bypass the verification process
   "bypassed",
 ] as const;
