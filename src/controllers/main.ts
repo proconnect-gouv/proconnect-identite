@@ -11,7 +11,7 @@ import {
 import { isTotpConfiguredForUser } from "../managers/totp";
 import {
   getUserVerificationLabel,
-  isUserVerifiedWithFranceconnect,
+  hasValidFranceConnectIdentity,
   sendUpdatePersonalInformationEmail,
   updatePersonalInformationsForDashboard,
 } from "../managers/user";
@@ -154,7 +154,7 @@ export const getConnectionAndAccountController = async (
     const passkeys = await getUserAuthenticators(email);
     const is2faCapable = await is2FACapable(user_id);
     const isVerifiedWithFranceConnect =
-      await isUserVerifiedWithFranceconnect(user_id);
+      await hasValidFranceConnectIdentity(user_id);
 
     return res.render("connection-and-account", {
       pageTitle: "Compte et connexion",
