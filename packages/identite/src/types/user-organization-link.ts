@@ -9,6 +9,7 @@ export const WeakLinkTypes = [
   "in_liste_dirigeants_rna",
   "in_liste_dirigeants_rne",
   "official_contact_email",
+  "ordre_professionnel_domain",
   "proof_received",
   // Used in the sandbox environment to bypass the verification process
   "bypassed",
