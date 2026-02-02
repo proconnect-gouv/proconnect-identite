@@ -47,8 +47,10 @@ import {
   getPartialUserFromUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
 import {
-  isUserVerifiedWithFranceconnect,
+  hasFranceConnectIdentity,
+  hasValidFranceConnectIdentity,
   needsEmailVerificationRenewal,
+  needsFranceConnectIdentityRenewal,
 } from "../managers/user";
 import { getUserOrganizationLink } from "../repositories/organization/getters";
 import {
@@ -65,9 +67,6 @@ import { usesAuthHeaders } from "../services/uses-auth-headers";
 //
 type RequestContext = { req: Request };
 type PendingModeration = { pendingModerationOrganizationId: number };
-type PendingCertificationDirigeant = {
-  pendingCertificationDirigeantOrganizationId: number;
-};
 
 type UserOrganizationsByUserId = Awaited<
   ReturnType<typeof getOrganizationsByUserId>
@@ -309,9 +308,7 @@ export const userIsVerifiedGuardMiddleware =
 
 //
 
-const userTwoFactorAuthIfRequestedGuard = async (
-  prev: Pass<RequestContext>,
-) => {
+const userTwoFactorAuthIfNeededGuard = async (prev: Pass<RequestContext>) => {
   const context = await userIsVerifiedGuard(prev);
   if (!Pass.is_passing(context)) return context;
   const {
@@ -333,13 +330,13 @@ const userTwoFactorAuthIfRequestedGuard = async (
     }
   }
 
-  return pass("user_two_factor_auth_if_requested");
+  return pass("user_two_factor_auth_if_needed");
 };
 
 //
 
 const browserIsTrustedGuard = async (prev: Pass<RequestContext>) => {
-  const context = await userTwoFactorAuthIfRequestedGuard(prev);
+  const context = await userTwoFactorAuthIfNeededGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   const {
@@ -528,6 +525,7 @@ export const userHasSelectedAnOrganizationGuardMiddleware =
 
       context = await browserIsTrustedGuard(prev);
       if (!Pass.is_passing(context)) return context;
+
       context = await userHasAtLeastOneOrganizationGuard(context);
       if (!Pass.is_passing(context)) return context;
 
@@ -535,39 +533,9 @@ export const userHasSelectedAnOrganizationGuardMiddleware =
     },
   );
 
-const setFranceConnectNeededForCertificationDirigeantGuard = async <
-  TContext extends RequestContext & { selectedOrganizationId: number },
+const userHasValidFranceConnectIdentityIfNeeded = async <
+  TContext extends RequestContext,
 >(
-  context: Pass<TContext>,
-) => {
-  const {
-    data: { req, selectedOrganizationId },
-    pass,
-  } = context;
-
-  if (req.session.pendingCertificationDirigeantOrganizationId) {
-    return pass("bypass_set_france_connect_needed_for_certification_dirigeant");
-  }
-
-  if (!req.session.certificationDirigeantRequested) {
-    return pass("bypass_set_france_connect_needed_for_certification_dirigeant");
-  }
-
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
-  const linkType = await getUserOrganizationLink(
-    selectedOrganizationId,
-    user_id,
-  );
-
-  if (linkType?.verification_type !== LinkTypes.enum.organization_dirigeant) {
-    req.session.pendingCertificationDirigeantOrganizationId =
-      selectedOrganizationId;
-  }
-
-  return pass("set_france_connect_needed_for_certification_dirigeant");
-};
-
-const userIsFranceConnectedGuard = async <TContext extends RequestContext>(
   context: Pass<TContext>,
 ) => {
   const {
@@ -578,27 +546,33 @@ const userIsFranceConnectedGuard = async <TContext extends RequestContext>(
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-  if (!req.session.pendingCertificationDirigeantOrganizationId) {
-    const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
-    const { verification_type: linkType } = (await getUserOrganizationLink(
-      selectedOrganizationId,
-      user_id,
-    ))!;
-
-    const linkTypeIsUnverified = match(linkType)
-      .with(...UnverifiedLinkTypes, () => true)
-      .otherwise(() => false);
-    if (
-      linkType !== LinkTypes.enum.organization_dirigeant &&
-      !linkTypeIsUnverified
-    )
-      return pass("bypass_user_is_france_connected");
+  if (
+    (await hasFranceConnectIdentity(user_id)) &&
+    (await needsFranceConnectIdentityRenewal(user_id))
+  ) {
+    return redirect("/users/franceconnect");
   }
 
-  const isVerified = await isUserVerifiedWithFranceconnect(user_id);
-  if (isVerified) return pass("user_is_france_connected");
+  const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
+  const { verification_type: linkType } = (await getUserOrganizationLink(
+    selectedOrganizationId,
+    user_id,
+  ))!;
 
-  return redirect("/users/franceconnect");
+  const linkTypeIsUnverified = match(linkType)
+    .with(...UnverifiedLinkTypes, () => true)
+    .otherwise(() => false);
+  const linkTypeRequiresFranceConnection =
+    linkTypeIsUnverified || linkType === LinkTypes.enum.organization_dirigeant;
+
+  if (
+    linkTypeRequiresFranceConnection &&
+    !(await hasValidFranceConnectIdentity(user_id))
+  ) {
+    return redirect("/users/franceconnect");
+  }
+
+  return pass("bypass_user_is_france_connected");
 };
 
 const userHasPersonalInformationsGuard = async (
@@ -640,7 +614,7 @@ const moderationCreatedGuard = async (
   );
 };
 
-const certificationDirigeantNotExpiredGuard = async <
+const userIsCertifiedAsDirigeantGuard = async <
   TContext extends RequestContext & { selectedOrganizationId: number },
 >(
   context: Pass<TContext>,
@@ -650,97 +624,35 @@ const certificationDirigeantNotExpiredGuard = async <
     pass,
   } = context;
 
-  if (req.session.pendingCertificationDirigeantOrganizationId) {
-    return pass("pending_certification_dirigeant");
-  }
-
   const { id: user_id } = getUserFromAuthenticatedSession(req);
-  const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
   const { verification_type: linkType, verified_at: linkVerifiedAt } =
     (await getUserOrganizationLink(organizationId, user_id))!;
 
-  if (linkType !== LinkTypes.enum.organization_dirigeant)
-    return pass("bypass_certification_dirigeant_not_expired");
-
-  const expiredCertification = isExpired(
-    linkVerifiedAt,
-    CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
-  );
-  const expiredVerification =
-    Number(franceconnectUserInfo.updated_at) > Number(linkVerifiedAt);
-
-  const renewalNeeded = expiredCertification || expiredVerification;
-
-  if (renewalNeeded)
+  if (
+    req.session.certificationDirigeantRequested &&
+    linkType !== LinkTypes.enum.organization_dirigeant
+  ) {
     req.session.pendingCertificationDirigeantOrganizationId = organizationId;
-
-  return pass("certification_dirigeant_not_expired");
-};
-
-const userPassedCertificationDirigeantGuard = async (
-  context: Pass<
-    RequestContext & { pendingCertificationDirigeantOrganizationId: number }
-  >,
-) => {
-  const {
-    data: { req, pendingCertificationDirigeantOrganizationId: organizationId },
-    pass,
-    redirect,
-  } = context;
-
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
-  const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
-  const organization = (await getOrganizationById(organizationId))!;
-
-  try {
-    await processCertificationDirigeantOrThrow(
-      organization,
-      franceconnectUserInfo,
-    );
-
-    req.session.pendingCertificationDirigeantOrganizationId = undefined;
-
-    if (await getUserOrganizationLink(organizationId, user_id)) {
-      await updateUserOrganizationLink(organization.id, user_id, {
-        verification_type: LinkTypes.enum.organization_dirigeant,
-        verified_at: new Date(),
-        has_been_greeted: false,
-      });
-    } else {
-      await linkUserToOrganization({
-        user_id,
-        organization_id: organization.id,
-        verification_type: LinkTypes.enum.organization_dirigeant,
-      });
-    }
-
-    await selectOrganization({
-      user_id,
-      organization_id: organizationId,
-    });
-
-    return pass("user_passed_certification_dirigeant").extends({
-      selectedOrganizationId: organizationId,
-    });
-  } catch (error) {
-    if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
-      return redirect(
-        "/users/certification-dirigeant/organization-not-covered-error",
-      );
-    }
-
-    if (error instanceof CertificationDirigeantCloseMatchError) {
-      return redirect(getCertificationDirigeantCloseMatchErrorUrl(error));
-    }
-
-    if (error instanceof CertificationDirigeantNoMatchError) {
-      return redirect(
-        `/users/certification-dirigeant/no-match-error?siren=${error.siren}`,
-      );
-    }
-
-    throw error;
+    return processCertificationDirigeantGuard(context);
   }
+
+  if (linkType === LinkTypes.enum.organization_dirigeant) {
+    const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
+    const expiredCertification = isExpired(
+      linkVerifiedAt,
+      CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
+    );
+    const expiredVerification =
+      Number(franceconnectUserInfo.updated_at) > Number(linkVerifiedAt);
+
+    const renewalNeeded = expiredCertification || expiredVerification;
+    if (renewalNeeded) {
+      req.session.pendingCertificationDirigeantOrganizationId = organizationId;
+      return processCertificationDirigeantGuard(context);
+    }
+  }
+
+  return pass("user_is_certified_as_dirigeant");
 };
 
 const userHasNoPendingOfficialContactEmailVerificationGuard = async (
@@ -881,21 +793,77 @@ const connectToAppGuard = async (prev: Pass<RequestContext>) => {
   return context.pass("ok_to_connect_to_app");
 };
 
-const connectToSpAsDirigeantGuard = async (
-  prev: Pass<RequestContext & PendingCertificationDirigeant>,
+const processCertificationDirigeantGuard = async (
+  prev: Pass<RequestContext>,
 ) => {
-  let context;
+  const {
+    data: { req },
+    pass,
+    redirect,
+  } = prev;
 
-  context = await userIsFranceConnectedGuard(prev);
-  if (!Pass.is_passing(context)) return context;
+  const organizationId =
+    req.session.pendingCertificationDirigeantOrganizationId!;
 
-  context = await userPassedCertificationDirigeantGuard(context);
-  if (!Pass.is_passing(context)) return context;
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  if (!(await hasValidFranceConnectIdentity(user_id))) {
+    return redirect("/users/franceconnect");
+  }
 
-  context = await userHasBeenGreetedGuard(context);
-  if (!Pass.is_passing(context)) return context;
+  const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
+  const organization = (await getOrganizationById(organizationId))!;
 
-  return context.pass("ok_to_connect_to_sp_as_dirigeant");
+  try {
+    await processCertificationDirigeantOrThrow(
+      organization,
+      franceconnectUserInfo,
+    );
+
+    req.session.pendingCertificationDirigeantOrganizationId = undefined;
+
+    if (await getUserOrganizationLink(organizationId, user_id)) {
+      await updateUserOrganizationLink(organization.id, user_id, {
+        verification_type: LinkTypes.enum.organization_dirigeant,
+        verified_at: new Date(),
+        has_been_greeted: false,
+      });
+    } else {
+      await linkUserToOrganization({
+        user_id,
+        organization_id: organization.id,
+        verification_type: LinkTypes.enum.organization_dirigeant,
+      });
+    }
+
+    await selectOrganization({
+      user_id,
+      organization_id: organizationId,
+    });
+
+    pass("user_passed_certification_dirigeant").extends({
+      selectedOrganizationId: organizationId,
+    });
+
+    return connectToSp(prev);
+  } catch (error) {
+    if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
+      return redirect(
+        "/users/certification-dirigeant/organization-not-covered-error",
+      );
+    }
+
+    if (error instanceof CertificationDirigeantCloseMatchError) {
+      return redirect(getCertificationDirigeantCloseMatchErrorUrl(error));
+    }
+
+    if (error instanceof CertificationDirigeantNoMatchError) {
+      return redirect(
+        `/users/certification-dirigeant/no-match-error?siren=${error.siren}`,
+      );
+    }
+
+    throw error;
+  }
 };
 
 const connectToSpWithMultipleOrganizationsGuard = async (
@@ -916,7 +884,9 @@ const connectToSpWithMultipleOrganizationsGuard = async (
   return context.pass("ok_to_connect_to_sp_with_multiple_organizations");
 };
 
-const connectToSp = async (prev: Pass<RequestContext>) => {
+const connectToSp = async (
+  prev: Pass<RequestContext>,
+): Promise<Redirect | Pass<RequestContext>> => {
   let context;
 
   context = await userHasAtLeastOneOrganizationGuard(prev);
@@ -928,22 +898,11 @@ const connectToSp = async (prev: Pass<RequestContext>) => {
   context = await userHasSelectedAnOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await setFranceConnectNeededForCertificationDirigeantGuard(context);
-  context = await certificationDirigeantNotExpiredGuard(context);
-  context = await userIsFranceConnectedGuard(context);
+  context = await userHasValidFranceConnectIdentityIfNeeded(context);
   if (!Pass.is_passing(context)) return context;
 
-  const { pendingCertificationDirigeantOrganizationId } =
-    context.data.req.session;
-
-  if (pendingCertificationDirigeantOrganizationId) {
-    context = await userPassedCertificationDirigeantGuard(
-      context.extends({
-        pendingCertificationDirigeantOrganizationId,
-      }),
-    );
-    if (!Pass.is_passing(context)) return context;
-  }
+  context = await userIsCertifiedAsDirigeantGuard(context);
+  if (!Pass.is_passing(context)) return context;
 
   context =
     await userHasNoPendingOfficialContactEmailVerificationGuard(context);
@@ -952,12 +911,12 @@ const connectToSp = async (prev: Pass<RequestContext>) => {
   context = await userHasBeenGreetedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  return context.pass("ok_to_connect_to_sp");
+  return prev.pass("ok_to_connect_to_sp");
 };
 
 // check that the user goes through all requirements before issuing a session
 export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
-  async function userSignInRequirementsGuardMiddleware(prev) {
+  async function userSignInRequirementsGuard(prev) {
     const context = await browserIsTrustedGuard(prev);
     if (!Pass.is_passing(context)) return context;
 
@@ -982,13 +941,9 @@ export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
           ),
       )
       .with({ interactionId: P.nullish }, () => connectToAppGuard(context))
-      .with(
-        { pendingCertificationDirigeantOrganizationId: P.number },
-        ({ pendingCertificationDirigeantOrganizationId }) =>
-          connectToSpAsDirigeantGuard(
-            context.extends({ pendingCertificationDirigeantOrganizationId }),
-          ),
-      )
+      .with({ pendingCertificationDirigeantOrganizationId: P.number }, () => {
+        return processCertificationDirigeantGuard(context);
+      })
       .with(
         { mustReturnOneOrganizationInPayload: P.nullish },
         { mustReturnOneOrganizationInPayload: false },
