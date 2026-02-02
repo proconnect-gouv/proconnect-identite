@@ -1,5 +1,15 @@
 # @proconnect-gouv/proconnect.identite
 
+## 1.5.0
+
+### Minor Changes
+
+- [#1720](https://github.com/proconnect-gouv/proconnect-identite/pull/1720) [`164a80a`](https://github.com/proconnect-gouv/proconnect-identite/commit/164a80a9b23a4fdd8f9adb11ab752608d8ec4735) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ✨ Ajout du lien « Domaine d'ordre professionnel » entre organisation et profile
+
+### Patch Changes
+
+- [#1736](https://github.com/proconnect-gouv/proconnect-identite/pull/1736) [`8c5923a`](https://github.com/proconnect-gouv/proconnect-identite/commit/8c5923a8d0384026b5c7f82a6b918d9cf9350a62) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 Ajout du type verified_by_coop_mediation_numerique
+
 ## 1.4.0
 
 ### Minor Changes
