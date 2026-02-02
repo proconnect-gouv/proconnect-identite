@@ -78,3 +78,13 @@ main {
   align-items: center;
   text-align: center;
 }
+
+.hr-personalized {
+  height: 2px !important;
+  background: linear-gradient(
+    to right,
+    var(--background-active-blue-france),
+    var(--background-action-high-blue-france-hover)
+  );
+  padding: 0 0 0.5rem;
+}
