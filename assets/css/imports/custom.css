@@ -94,3 +94,10 @@ input[readonly] {
 .go-back-link.visible {
   display: inline-flex !important;
 }
+
+/* Adds visual information to correct personal details - certif dirigeant */
+
+.info-mismatch {
+  border-left: 4px solid;
+  border-left-color: var(--text-default-warning);
+}

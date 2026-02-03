@@ -166,7 +166,7 @@ export const postJoinOrganizationMiddleware = async (
 
     if (error instanceof CertificationDirigeantNoMatchError) {
       return res.redirect(
-        `/users/certification-dirigeant/no-match-error?siren=${error.siren}`,
+        `/users/certification-dirigeant/no-match-error?siren=${error.siren}&organization_label=${encodeURIComponent(error.organization_label)}`,
       );
     }
 
@@ -464,7 +464,6 @@ export async function getCertificationDirigeantCloseMatchError(
     );
 
     return res.render("certification-dirigeant/close-match-error", {
-      illustration: "connection-lost.svg",
       interactionId: req.session.interactionId,
       matches: query.matches,
       oidcError: oidcErrorSchema().enum.login_required,
@@ -489,15 +488,16 @@ export async function getCertificationDirigeantNoMatchError(
     const query = z
       .object({
         siren: z.string().length(9),
+        organization_label: z.string().optional(),
       })
       .parse(req.query);
 
     return res.render("certification-dirigeant/no-match-error", {
-      illustration: "connection-lost.svg",
       interactionId: req.session.interactionId,
       oidcError: oidcErrorSchema().enum.login_required,
       pageTitle: "Certification impossible",
       siren: query.siren,
+      organization_label: query.organization_label,
       use_dashboard_layout: false,
     });
   } catch (e) {
