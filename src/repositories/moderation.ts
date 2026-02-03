@@ -22,10 +22,16 @@ export const createModeration = async ({
 
   const { rows }: QueryResult<Moderation> = await connection.query(
     `
-INSERT INTO moderations (user_id, organization_id, type, ticket_id)
-VALUES ($1, $2, $3, $4)
+INSERT INTO moderations (user_id, organization_id, status, type, ticket_id)
+VALUES ($1, $2, $3, $4, $5)
 RETURNING *;`,
-    [user_id, organization_id, type, ticket_id],
+    [
+      user_id,
+      organization_id,
+      ModerationStatusSchema.enum.pending,
+      type,
+      ticket_id,
+    ],
   );
 
   return rows.shift()!;
