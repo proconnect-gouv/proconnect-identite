@@ -96,8 +96,8 @@ export function certificationScore(
     // For foreigners: check country code (with conversion if needed from RNE)
     // Both should already be in COG format (99XXX)
     if (
-      identitePivot.birthcountry &&
-      sourceDirigeant.birthcountry &&
+      identitePivot.birthcountry === null ||
+      sourceDirigeant.birthcountry === null ||
       identitePivot.birthcountry === sourceDirigeant.birthcountry
     ) {
       matches.add(MatchCriteria.enum.birth_country);

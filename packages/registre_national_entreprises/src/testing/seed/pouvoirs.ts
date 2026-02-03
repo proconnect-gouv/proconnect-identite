@@ -39,3 +39,18 @@ export const RogalDornPouvoir: Pouvoir = {
     },
   },
 };
+
+export const AmberleyVailPouvoir: Pouvoir = {
+  typeDePersonne: "INDIVIDU",
+  actif: true,
+  individu: {
+    descriptionPersonne: {
+      dateDeNaissance: "29000-07-07",
+      nom: "Vail",
+      prenoms: ["Amberley"],
+      genre: "2",
+      codePostalNaissance: undefined,
+      codePaysNaissance: undefined,
+    },
+  },
+};
