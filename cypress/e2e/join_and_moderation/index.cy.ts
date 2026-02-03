@@ -94,27 +94,7 @@ describe("join and moderation", () => {
     it("will be moderated when joining organization from the app", function () {
       cy.visit("/users/join-organization");
 
-      cy.contains("Email professionnel").click();
-      cy.focused().type("rogal.dorn@imperialfists.world");
-      cy.contains("Valider").click();
-
-      cy.title().should("include", "Choisir votre mot de passe - ");
-      cy.contains("Recevoir un lien d’identification").click();
-      cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-        (email) => {
-          cy.maildevVisitMessageById(email.id);
-          cy.origin("http://localhost:1080", () => {
-            cy.contains(
-              "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-            );
-            cy.contains("Se connecter")
-              .get("a")
-              .invoke("attr", "target", "")
-              .click();
-          });
-          cy.maildevDeleteMessageById(email.id);
-        },
-      );
+      cy.magicLinkLogin("rogal.dorn@imperialfists.world");
 
       cy.title().should("include", "Rejoindre une organisation -");
       cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -145,27 +125,7 @@ describe("join and moderation", () => {
         cy.contains("S’identifier avec ProConnect").click();
       });
 
-      cy.contains("Email professionnel").click();
-      cy.focused().type("konrad.curze@nightlords.world");
-      cy.contains("Valider").click();
-
-      cy.title().should("include", "Choisir votre mot de passe - ");
-      cy.contains("Recevoir un lien d’identification").click();
-      cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-        (email) => {
-          cy.maildevVisitMessageById(email.id);
-          cy.origin("http://localhost:1080", () => {
-            cy.contains(
-              "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-            );
-            cy.contains("Se connecter")
-              .get("a")
-              .invoke("attr", "target", "")
-              .click();
-          });
-          cy.maildevDeleteMessageById(email.id);
-        },
-      );
+      cy.magicLinkLogin("konrad.curze@nightlords.world");
 
       cy.title().should("include", "Rejoindre une organisation -");
       cy.contains("SIRET de l’organisation que vous représentez").click();
