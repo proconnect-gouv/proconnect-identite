@@ -13,7 +13,7 @@ import {
   getSelectedOrganizationId,
   setSelectedOrganizationId,
 } from "../../repositories/redis/selected-organization";
-import { update } from "../../repositories/user";
+import { getFranceConnectUserInfo, update } from "../../repositories/user";
 
 export const getWelcomeController = async (
   req: Request,
@@ -95,17 +95,26 @@ export const getWelcomeDirigeantController = async (
     const userOrganisations = await getOrganizationById(selectedOrganizationId);
     if (!userOrganisations)
       throw new NotFoundError("User in organization not found");
-
+    const user_info = await getFranceConnectUserInfo(user.id);
+    const formattedBirthDate = user_info
+      ? new Date(user_info.birthdate).toLocaleDateString("fr-FR")
+      : null;
     return res.render("user/welcome-dirigeant", {
       pageTitle: "Compte certifié",
       csrfToken: csrfToken(req),
       showInclusionConnectOnboardingHelp,
-      organization: { libelle: userOrganisations.cached_libelle },
+      organization: {
+        libelle: userOrganisations.cached_libelle,
+        adresse: userOrganisations.cached_adresse,
+        siret: userOrganisations.siret,
+      },
       user: {
         email: user.email,
         family_name: user.family_name,
         given_name: user.given_name,
-        job: user.job,
+        formattedBirthDate,
+        birthPlace: user_info ? user_info.birthplace : null,
+        gender: user_info ? user_info.gender : null,
       },
     });
   } catch (error) {
