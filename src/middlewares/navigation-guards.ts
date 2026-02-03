@@ -580,8 +580,10 @@ const userHasValidFranceConnectIdentityGuard = async <
   return pass("user_has_valid_franceconnect_identity");
 };
 
-const userHasPersonalInformationsGuard = async (
-  context: Pass<RequestContext>,
+const userHasPersonalInformationsGuard = async <
+  TContext extends RequestContext,
+>(
+  context: Pass<TContext>,
 ) => {
   const {
     data: { req },
@@ -749,6 +751,9 @@ const connectToSpWithMultipleOrganizationsGuard = async (
   context = await userHasAtLeastOneOrganizationGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
+  context = await userHasPersonalInformationsGuard(prev);
+  if (!Pass.is_passing(context)) return context;
+
   context =
     await userHasNoPendingOfficialContactEmailVerificationGuard(context);
   if (!Pass.is_passing(context)) return context;
@@ -777,6 +782,9 @@ const connectToSp = async (
   if (!Pass.is_passing(context)) return context;
 
   context = await userIsCertifiedAsDirigeantGuard(context);
+  if (!Pass.is_passing(context)) return context;
+
+  context = await userHasPersonalInformationsGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   context =
