@@ -41,7 +41,7 @@ export async function getFranceConnectController(
       !!req.session.certificationDirigeantRequested;
     const pageTitle = displayCertificationDirigeantContent
       ? "Certification dirigeant"
-      : "Vérifier votre identité";
+      : "Vérifiez votre identité";
 
     return res.render("user/franceconnect", {
       csrfToken: csrfToken(req),
