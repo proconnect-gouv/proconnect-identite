@@ -122,6 +122,7 @@ SELECT
 	created_at,
 	moderated_at,
 	comment,
+	status,
 	LEFT(NULLIF(moderated_by, ''), 4) || '******' as moderated_by,
 	'**********' as ticket_id
 FROM moderations"
