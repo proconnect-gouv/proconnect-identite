@@ -18,7 +18,6 @@ import {
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
   FRANCECONNECT_ISSUER,
-  HOST,
   NODE_ENV,
   PORT,
   SESSION_COOKIE_SECRET,
@@ -27,7 +26,6 @@ import {
 import { OidcError } from "./config/errors";
 import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
-import { useFranceConnectLogoutMiddlewareFactory } from "./controllers/user/franceconnect";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
 import { apiRouter } from "./routers/api";
 import { interactionRouter } from "./routers/interaction";
@@ -179,12 +177,7 @@ app.use(async (req, _res, next) => {
   }
   next();
 });
-app.use(
-  "/oauth/logout",
-  useFranceConnectLogoutMiddlewareFactory(
-    `${HOST}/users/franceconnect/logout/callback`,
-  ),
-);
+
 app.use("/oauth", oidcProvider.callback());
 
 if (DEPLOY_ENV === "localhost") {
