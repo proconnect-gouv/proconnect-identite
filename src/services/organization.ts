@@ -7,7 +7,7 @@ import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 
 export const isSmallAssociation = ({
   cached_libelle_categorie_juridique,
-  cached_tranche_effectifs,
+  cached_tranche_effectifs_unite_legale,
 }: Organization): boolean => {
   // check that the organization has the right catégorie juridique
   const cat_jur_ok = ["Association déclarée"].includes(
@@ -16,7 +16,7 @@ export const isSmallAssociation = ({
 
   // check that the organization has the right tranche effectifs
   const tra_eff_ok = [null, "NN", "00", "01", "02", "03", "11", "12"].includes(
-    cached_tranche_effectifs,
+    cached_tranche_effectifs_unite_legale,
   );
 
   return cat_jur_ok && tra_eff_ok;
@@ -39,10 +39,10 @@ export const isCommune = (
 };
 
 export const hasLessThanFiftyEmployees = ({
-  cached_tranche_effectifs,
+  cached_tranche_effectifs_unite_legale,
 }: Organization): boolean => {
   return [null, "NN", "00", "01", "02", "03", "11", "12"].includes(
-    cached_tranche_effectifs,
+    cached_tranche_effectifs_unite_legale,
   );
 };
 

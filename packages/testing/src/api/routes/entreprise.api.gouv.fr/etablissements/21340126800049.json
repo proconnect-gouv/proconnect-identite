@@ -53,11 +53,11 @@
         "libelle": "Administration publique générale"
       },
       "tranche_effectif_salarie": {
-        "de": 50,
-        "a": 99,
-        "code": "21",
+        "de": 6,
+        "a": 9,
+        "code": "03",
         "date_reference": "2022",
-        "intitule": "50 à 99 salariés"
+        "intitule": "6 à 9 salariés"
       },
       "economie_sociale_et_solidaire": false,
       "date_creation": 378687600,
