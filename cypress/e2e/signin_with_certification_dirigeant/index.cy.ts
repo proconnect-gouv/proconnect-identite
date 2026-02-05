@@ -38,7 +38,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.getByLabel("Clamart (choisir cette organisation)").click();
 
     cy.title().should("include", "Certification impossible -");
-    cy.contains("Nous n’arrivons pas à certifier votre compte.");
+    cy.contains("Identité non trouvée ⚠️");
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
@@ -57,7 +57,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     ).click();
 
     cy.title().should("include", "Certification impossible -");
-    cy.contains("Nous n’arrivons pas à certifier votre compte.");
+    cy.contains("Identité non trouvée ⚠️");
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
@@ -83,15 +83,12 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Je suis Douglas Duteil").click();
 
     cy.title().should("include", "Compte certifié -");
-    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Douglas");
     cy.contains("Nom Duteil");
     cy.contains(
       "Email professionnel outdated-franceconnected+douglasduteil@mail.com",
     );
-    cy.contains("Rôle HyyyperProConnectDev4000");
-    cy.contains("Organisation Douglas Duteil");
-    cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
@@ -118,13 +115,10 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("Je suis Karima Aknine").click();
 
     cy.title().should("include", "Compte certifié -");
-    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Karima");
     cy.contains("Nom Aknine");
     cy.contains("Email professionnel karima.aknine@yopmail.com");
-    cy.contains("Rôle Grande cheffe de BATI-SEREIN");
-    cy.contains("Organisation Bati-serein");
-    cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
@@ -150,13 +144,10 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     ).click();
 
     cy.title().should("include", "Compte certifié -");
-    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Ulysse");
     cy.contains("Nom Tosi");
     cy.contains("Email professionnel ulysse.tosi@yopmail.com");
-    cy.contains("Rôle Grand chef de DANONE et PAPILLON");
-    cy.contains("Organisation Papillon");
-    cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
@@ -183,13 +174,10 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     ).click();
 
     cy.title().should("include", "Compte certifié - ");
-    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Stevens");
     cy.contains("Nom Cheron");
     cy.contains("Email professionnel stevens.cheron@yopmail.com");
-    cy.contains("Rôle Grand chef de HERISSON et SURICATE");
-    cy.contains("Organisation Suricate - The kilberry");
-    cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
@@ -219,15 +207,12 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.getByLabel("Douglas Duteil (choisir cette organisation)").click();
 
     cy.title().should("include", "Compte certifié -");
-    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Douglas Le Rouge");
     cy.contains("Nom Duteil");
     cy.contains(
       "Email professionnel outdated-certification+douglasduteil@mail.com",
     );
-    cy.contains("Rôle Douglas Outdated Certification");
-    cy.contains("Organisation Douglas Duteil");
-    cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
@@ -243,7 +228,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.getByLabel("Clamart (choisir cette organisation)").click();
 
     cy.title().should("include", "Certification impossible -");
-    cy.contains("Nous n’arrivons pas à certifier votre compte.");
+    cy.contains("Identité non trouvée ⚠️");
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");

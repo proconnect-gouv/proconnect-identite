@@ -15,11 +15,11 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("elia.alvernhe@yopmail.com");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -52,12 +52,10 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
 
     cy.title().should("include", "Compte certifié - ");
-    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Elia");
     cy.contains("Nom Alvernhe");
     cy.contains("Email professionnel elia.alvernhe@yopmail.com");
-    cy.contains("Organisation Jeremie Cook");
-    cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
@@ -73,11 +71,11 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("ulysse.tosi@yopmail.com");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -110,12 +108,9 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
 
     cy.title().should("include", "Compte certifié - ");
-    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Ulysse");
     cy.contains("Nom Tosi");
-    cy.contains("Email professionnel ulysse.tosi@yopmail.com");
-    cy.contains("Organisation Danone");
-    cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
@@ -131,11 +126,11 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("angela.83832482000011@yopmail.com");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -167,12 +162,10 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
 
     cy.title().should("include", "Compte certifié - ");
-    cy.contains("Vous êtes bien certifié !");
+    cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Angela Claire Louise");
     cy.contains("Nom DUBOIS");
     cy.contains("Email professionnel angela.83832482000011@yopmail.com");
-    cy.contains("Organisation Angela Gnesotto");
-    cy.contains("Statut Compte certifié");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");
@@ -188,11 +181,11 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("jean.michel@yopmail.com");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -251,11 +244,11 @@ describe("Signup on each organizations of the same siren", () => {
       cy.title().should("include", "S'inscrire ou se connecter - ");
       cy.contains("Email professionnel").click();
       cy.focused().type(`angela.${siret}@yopmail.com`);
-      cy.contains("Valider").click();
+      cy.contains("Continuer").click();
 
-      cy.title().should("include", "Choisir votre mot de passe - ");
+      cy.title().should("include", "Choisir un mot de passe - ");
       cy.contains("Mot de passe").click();
-      cy.contains("Recevoir un lien d’identification").click();
+      cy.contains("Recevoir un lien de connexion").click();
       cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
         (email) => {
           cy.maildevVisitMessageById(email.id);
@@ -288,12 +281,10 @@ describe("Signup on each organizations of the same siren", () => {
       cy.title().should("include", "Déconnexion 🎭 FranceConnect 🎭");
 
       cy.title().should("include", "Compte certifié - ");
-      cy.contains("Vous êtes bien certifié !");
+      cy.contains("Statut certifié 🎊");
       cy.contains("Prénom Angela Claire Louise");
       cy.contains("Nom DUBOIS");
       cy.contains(`Email professionnel angela.${siret}@yopmail.com`);
-      cy.contains("Organisation Thunnus thynnus iii");
-      cy.contains("Statut Compte certifié");
       cy.contains("Continuer").click();
 
       cy.title().should("equal", "standard-client - ProConnect");
@@ -320,11 +311,11 @@ describe("❎ Bad match", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("adrian.volckaert@yopmail.com");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -356,7 +347,7 @@ describe("❎ Bad match", () => {
 
     cy.title().should("include", "Certification impossible -");
     cy.contains(
-      "Votre organisation n’est pas couverte par la certification dirigeant ProConnect.",
+      "La nature juridique de votre organisation n’est pas couverte par la certification ProConnect.",
     );
     cy.contains("Continuer sur le service").click();
 
@@ -369,11 +360,11 @@ describe("❎ Bad match", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("adrian.volckaert@yopmail.com");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -404,10 +395,7 @@ describe("❎ Bad match", () => {
     cy.contains("Je suis Adrian Volckaert").click();
 
     cy.title().should("include", "Certification impossible -");
-    cy.contains("Nous n’arrivons pas à certifier votre compte.");
-    cy.contains(
-      "Vérifiez la liste des dirigeants sur l'Annuaire des Entreprises",
-    );
+    cy.contains("Identité non trouvée ⚠️");
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
@@ -419,11 +407,11 @@ describe("❎ Bad match", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.contains("Email professionnel").click();
     cy.focused().type("adrian.volckaert@yopmail.com");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ");
+    cy.title().should("include", "Choisir un mot de passe - ");
     cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
+    cy.contains("Recevoir un lien de connexion").click();
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
@@ -454,22 +442,10 @@ describe("❎ Bad match", () => {
     cy.contains("Je suis Adrian Volckaert").click();
 
     cy.title().should("include", "Certification impossible -");
-    cy.contains("Nous n’arrivons pas à certifier votre compte.");
+    cy.contains("Impossible de vous certifier ⚠️");
     cy.contains(
-      "Les informations de votre identité ne correspondent pas exactement aux registres officiels.",
+      "Des discordances ont été détectées entre votre identité FranceConnect (affichée ici) et celle connue du Registre National des Entreprises pour Herisson.",
     );
-    cy.contains(
-      "Des discordances ont été détectées entre votre identité FranceConnect (affichée ici)",
-    );
-    cy.contains(
-      "et celle connue du Registre National des Entreprises pour Herisson.",
-    );
-
-    cy.contains("Prénom ❌");
-    cy.contains("Nom ✅");
-    cy.contains("Genre ✅");
-    cy.contains("Date de naissance ✅");
-    cy.contains("Commune de naissance ✅");
 
     cy.contains("Vérifier sur l’Annuaire des Entreprises");
     cy.contains("Comment corriger les données ?");

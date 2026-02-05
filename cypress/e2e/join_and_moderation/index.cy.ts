@@ -18,9 +18,6 @@ describe("join and moderation", () => {
 
       cy.title().should("include", "Rattachement en cours -");
       cy.contains("Demande en cours");
-      cy.contains(
-        "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
-      );
     });
 
     it("will be moderated when login to an SP", function () {
@@ -41,9 +38,6 @@ describe("join and moderation", () => {
 
       cy.title().should("include", "Rattachement en cours -");
       cy.contains("Demande en cours");
-      cy.contains(
-        "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
-      );
     });
 
     it("has a moderation ongoing but no userinfo yet (testing transitional period)", function () {
@@ -69,12 +63,12 @@ describe("join and moderation", () => {
       cy.getByLabel("Corriger le nom").click();
 
       cy.title().should("include", "Renseigner votre identité -");
-      cy.contains("Renseigner son identité");
+      cy.contains("Compléter votre profil");
       cy.contains("Prénom").click();
       cy.focused().clear().type("Rogal");
       cy.contains("Nom").click();
       cy.focused().clear().type("Dorn");
-      cy.contains("Valider").click();
+      cy.contains("Continuer").click();
 
       cy.title().should("include", "Rejoindre une organisation -");
       cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -84,9 +78,6 @@ describe("join and moderation", () => {
       ).click();
 
       cy.contains("Demande en cours");
-      cy.contains(
-        "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
-      );
     });
   });
 
@@ -96,10 +87,10 @@ describe("join and moderation", () => {
 
       cy.contains("Email professionnel").click();
       cy.focused().type("rogal.dorn@imperialfists.world");
-      cy.contains("Valider").click();
+      cy.contains("Continuer").click();
 
-      cy.title().should("include", "Choisir votre mot de passe - ");
-      cy.contains("Recevoir un lien d’identification").click();
+      cy.title().should("include", "Choisir un mot de passe - ");
+      cy.contains("Recevoir un lien de connexion").click();
       cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
         (email) => {
           cy.maildevVisitMessageById(email.id);
@@ -124,18 +115,14 @@ describe("join and moderation", () => {
       ).click();
 
       cy.title().should("include", "Renseigner votre identité -");
-      cy.contains("Renseigner son identité");
       cy.contains("Prénom").click();
       cy.focused().clear().type("Rogal");
       cy.contains("Nom").click();
       cy.focused().clear().type("Dorn");
-      cy.contains("Valider").click();
+      cy.contains("Continuer").click();
 
       cy.title().should("include", "Rattachement en cours -");
       cy.contains("Demande en cours");
-      cy.contains(
-        "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
-      );
     });
 
     it("will be moderated when login to an SP", function () {
@@ -147,10 +134,10 @@ describe("join and moderation", () => {
 
       cy.contains("Email professionnel").click();
       cy.focused().type("konrad.curze@nightlords.world");
-      cy.contains("Valider").click();
+      cy.contains("Continuer").click();
 
-      cy.title().should("include", "Choisir votre mot de passe - ");
-      cy.contains("Recevoir un lien d’identification").click();
+      cy.title().should("include", "Choisir un mot de passe - ");
+      cy.contains("Recevoir un lien de connexion").click();
       cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
         (email) => {
           cy.maildevVisitMessageById(email.id);
@@ -175,18 +162,14 @@ describe("join and moderation", () => {
       ).click();
 
       cy.title().should("include", "Renseigner votre identité -");
-      cy.contains("Renseigner son identité");
       cy.contains("Prénom").click();
       cy.focused().clear().type("Konrad");
       cy.contains("Nom").click();
       cy.focused().clear().type("Curze");
-      cy.contains("Valider").click();
+      cy.contains("Continuer").click();
 
       cy.title().should("include", "Rattachement en cours -");
       cy.contains("Demande en cours");
-      cy.contains(
-        "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
-      );
     });
   });
 });
