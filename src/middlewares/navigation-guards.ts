@@ -131,13 +131,19 @@ function createGuardMiddleware(
 ): RequestHandler {
   return async (req, res, next) => {
     logger_group("👮‍♀️", req.method, req.originalUrl, fn.name);
+
     const result = await fn(new Pass("incoming_request", { req }));
-    if (result.type === "next")
-      logger.debug(
-        result.trace.map(({ code }) => code).join("\n -> "),
-        "\n => ",
-        result.code,
-      );
+
+    const event = match(result)
+      .with({ type: "next" }, ({ trace, code }) =>
+        [trace.map(({ code }) => code).join("\n -> "), "\n =>", code].join(" "),
+      )
+      .with({ type: "redirect" }, ({ trace, url }) =>
+        [trace.map(({ code }) => code).join("\n -> "), "\n =>", url].join(" "),
+      )
+      .with({ type: "send" }, () => ["SEND"].join(" "))
+      .exhaustive();
+    logger.debug(event);
     logger.trace(result);
     logger_group_end();
 
