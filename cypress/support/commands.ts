@@ -6,6 +6,7 @@ import {
   fillLoginFields,
   fillTotpFields,
   login,
+  magicLinkLogin,
   mfaLogin,
 } from "./commands/login";
 import { seed } from "./commands/seed";
@@ -22,6 +23,7 @@ declare global {
       getByLabel: typeof getByLabelCommand;
       getDescribed: typeof getDescribedCommand;
       login: typeof login;
+      magicLinkLogin: typeof magicLinkLogin;
       mfaLogin: typeof mfaLogin;
       seed: typeof seed;
       seeInField: typeof seeInFieldCommand;
@@ -35,13 +37,11 @@ declare global {
 //
 
 Cypress.Commands.overwrite("checkA11y", checkA11y);
-
 Cypress.Commands.add("fillTotpFields", fillTotpFields);
-
 Cypress.Commands.add("fillLoginFields", fillLoginFields);
 
 Cypress.Commands.add("login", login);
-
+Cypress.Commands.add("magicLinkLogin", magicLinkLogin);
 Cypress.Commands.add("mfaLogin", mfaLogin);
 
 function seeInFieldCommand(field: string, value: string) {

@@ -13,28 +13,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
   it("should welcome Elia Alvernhe as dirigeant of JEREMIE COOK", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("elia.alvernhe@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
+    cy.magicLinkLogin("elia.alvernhe@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -71,28 +50,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
   it("should welcome Ulysse Tosi as dirigeant of Danone", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("ulysse.tosi@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
+    cy.magicLinkLogin("ulysse.tosi@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -129,28 +87,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
   it("should welcome Angela Claire Louise DUBOIS as dirigeant of Angela GNESOTTO", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("angela.83832482000011@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
+    cy.magicLinkLogin("angela.83832482000011@yopmail.com");
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
     cy.focused().clear().type("83832482000011");
@@ -186,28 +123,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
   it("should come back to the certification dirigeant page if FranceConnect access denied", function () {
     cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("jean.michel@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
+    cy.magicLinkLogin("jean.michel@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -249,28 +165,7 @@ describe("Signup on each organizations of the same siren", () => {
 
       cy.visit("/");
       cy.title().should("include", "S'inscrire ou se connecter - ");
-      cy.contains("Email professionnel").click();
-      cy.focused().type(`angela.${siret}@yopmail.com`);
-      cy.contains("Valider").click();
-
-      cy.title().should("include", "Choisir votre mot de passe - ");
-      cy.contains("Mot de passe").click();
-      cy.contains("Recevoir un lien d’identification").click();
-      cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-        (email) => {
-          cy.maildevVisitMessageById(email.id);
-          cy.origin("http://localhost:1080", () => {
-            cy.contains(
-              "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-            );
-            cy.contains("Se connecter")
-              .get("a")
-              .invoke("attr", "target", "")
-              .click();
-          });
-          cy.maildevDeleteMessageById(email.id);
-        },
-      );
+      cy.magicLinkLogin(`angela.${siret}@yopmail.com`);
 
       cy.title().should("include", "Rejoindre une organisation - ");
       cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -318,28 +213,7 @@ describe("❎ Bad match", () => {
 
   it("Adrian Volckaert is not a dirigeant of DINUM", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("adrian.volckaert@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
+    cy.magicLinkLogin("adrian.volckaert@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -367,28 +241,7 @@ describe("❎ Bad match", () => {
 
   it("Adrian Volckaert is not a dirigeant of Danone", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("adrian.volckaert@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
+    cy.magicLinkLogin("adrian.volckaert@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -417,28 +270,7 @@ describe("❎ Bad match", () => {
 
   it("Adrian Volckaert maybe a dirigeant of Herisson", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("adrian.volckaert@yopmail.com");
-    cy.contains("Valider").click();
-
-    cy.title().should("include", "Choisir votre mot de passe - ");
-    cy.contains("Mot de passe").click();
-    cy.contains("Recevoir un lien d’identification").click();
-    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
-      (email) => {
-        cy.maildevVisitMessageById(email.id);
-        cy.origin("http://localhost:1080", () => {
-          cy.contains(
-            "Vous avez demandé un lien d'identification à ProConnect. Utilisez le bouton ci-dessous pour vous connecter instantanément.",
-          );
-          cy.contains("Se connecter")
-            .get("a")
-            .invoke("attr", "target", "")
-            .click();
-        });
-        cy.maildevDeleteMessageById(email.id);
-      },
-    );
+    cy.magicLinkLogin("adrian.volckaert@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation - ");
     cy.contains("SIRET de l’organisation que vous représentez").click();
