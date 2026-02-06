@@ -17,6 +17,7 @@ import {
   CertificationDirigeantNoMatchError,
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../config/errors";
+import { getAnnuaireServicePublicContactEmails } from "../connectors/api-annuaire-service-public";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import {
@@ -59,6 +60,10 @@ import { getSelectedOrganizationId } from "../repositories/redis/selected-organi
 import { getFranceConnectUserInfo } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
 import { logger } from "../services/log";
+import {
+  isCommune,
+  isEtablissementScolaireDuPremierEtSecondDegre,
+} from "../services/organization";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 //
@@ -681,6 +686,23 @@ const userHasNoPendingOfficialContactEmailVerificationGuard = async (
   }
 
   if (!isEmpty(organizationThatNeedsOfficialContactEmailVerification)) {
+    if (
+      isCommune(organizationThatNeedsOfficialContactEmailVerification) &&
+      !isEtablissementScolaireDuPremierEtSecondDegre(
+        organizationThatNeedsOfficialContactEmailVerification,
+      )
+    ) {
+      const contactEmails = await getAnnuaireServicePublicContactEmails(
+        organizationThatNeedsOfficialContactEmailVerification.cached_code_officiel_geographique,
+        organizationThatNeedsOfficialContactEmailVerification.cached_code_postal,
+      );
+
+      if (contactEmails.length > 1) {
+        return redirect(
+          `/users/official-contact-ask-which-email/${organizationThatNeedsOfficialContactEmailVerification.id}`,
+        );
+      }
+    }
     return redirect(
       `/users/official-contact-email-verification/${organizationThatNeedsOfficialContactEmailVerification.id}`,
     );
