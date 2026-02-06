@@ -23,6 +23,7 @@ import {
   UserNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
+  type FranceConnectUserInfo,
   type FranceConnectUserInfoResponse,
   type User,
 } from "@proconnect-gouv/proconnect.identite/types";
@@ -603,25 +604,17 @@ export const updatePersonalInformationsForDashboard = async (
   });
 };
 
-export async function hasValidFranceConnectIdentity(userId: number) {
-  const userFranceConnect = await getFranceConnectUserInfo(userId);
-
-  if (isEmpty(userFranceConnect)) {
+export function hasValidFranceConnectIdentity(
+  franceconnectUserInfo: FranceConnectUserInfo | undefined,
+) {
+  if (isEmpty(franceconnectUserInfo)) {
     return false;
   }
 
   return !isExpired(
-    userFranceConnect.updated_at,
+    franceconnectUserInfo.updated_at,
     FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
   );
-}
-
-export async function hasFranceConnectIdentity(userId: number) {
-  return !isEmpty(await getFranceConnectUserInfo(userId));
-}
-
-export async function needsFranceConnectIdentityRenewal(userId: number) {
-  return !(await hasValidFranceConnectIdentity(userId));
 }
 
 export async function updateFranceConnectUserInfo(
