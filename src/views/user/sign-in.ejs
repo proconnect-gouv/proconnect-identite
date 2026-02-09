@@ -6,6 +6,7 @@
         Accéder au compte
     </h1>
     <div>
+        <% if(locals.displayTestEnvWarning) { %><%- include('../partials/test-env-warning.ejs') %><% } %>
         <div class="fr-notice fr-notice--info notice--change-email fr-mb-2w">
             <div class="fr-container">
                 <p class="fr-notice__body">
@@ -73,7 +74,7 @@
         <% if (showPasskeySection) { %>
 
         <p class="fr-hr-or">ou</p>
-        
+
         <button class="fr-btn fr-mb-2w btn--fullwidth fr-btn--secondary fr-btn--icon-left fr-icon-lock-unlock-line" id="webauthn-btn-begin-authentication">
             Se connecter avec une clé d’accès
         </button>
