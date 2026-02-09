@@ -174,6 +174,7 @@ export const getSignInController = async (
       email,
       showPasskeySection: hasWebauthnConfigured,
       changeEmailButtonMustReturnToPCF: req.session.authForProconnectFederation,
+      displayTestEnvWarning: FEATURE_DISPLAY_TEST_ENV_WARNING,
       illustration: "illu-password.svg",
     });
   } catch (error) {
@@ -229,6 +230,7 @@ export const getSignUpController = async (
       loginHint: login_hint,
       email: getEmailFromUnauthenticatedSession(req),
       changeEmailButtonMustReturnToPCF: req.session.authForProconnectFederation,
+      displayTestEnvWarning: FEATURE_DISPLAY_TEST_ENV_WARNING,
     });
   } catch (error) {
     next(error);

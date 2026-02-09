@@ -4,6 +4,7 @@
         Choisir votre mot de passe
     </h1>
     <div>
+        <% if(locals.displayTestEnvWarning) { %><%- include('../partials/test-env-warning.ejs') %><% } %>
         <div class="fr-notice fr-notice--info notice--change-email fr-mb-2w">
             <div class="fr-container">
                 <p class="fr-notice__body">
