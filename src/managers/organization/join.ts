@@ -246,7 +246,7 @@ export const joinOrganization = async ({
     });
   }
 
-  if (isSmallAssociation(organization)) {
+  if (isSmallAssociation(organization) && isAFreeEmailProvider(email)) {
     return await linkUserToOrganization({
       organization_id,
       user_id,
