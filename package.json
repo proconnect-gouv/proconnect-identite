@@ -84,7 +84,7 @@
     "@simplewebauthn/browser": "^13.2.2",
     "@simplewebauthn/server": "^13.2.2",
     "await-to-js": "^3.0.0",
-    "axios": "^1.12.2",
+    "axios": "^1.13.5",
     "connect-redis": "^8.1.0",
     "console-log-level": "^1.4.1",
     "cookie-parser": "^1.4.7",
