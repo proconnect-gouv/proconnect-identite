@@ -1,16 +1,21 @@
 import { generateDicewarePassword } from "@proconnect-gouv/proconnect.core/security";
 import { OfficialContactEmailVerification } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
-import type { UserOrganizationLink } from "@proconnect-gouv/proconnect.identite/types";
+import type {
+  Organization,
+  UserOrganizationLink,
+} from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { HOST } from "../../config/env";
 import {
+  ApiAnnuaireContactEmailMismatchError,
   ApiAnnuaireError,
+  ApiAnnuaireSeveralMairiesMatchesError,
   InvalidTokenError,
   OfficialContactEmailVerificationNotNeededError,
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
-import { getAnnuaireServicePublicContactEmail } from "../../connectors/api-annuaire-service-public";
+import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
 import { sendMail } from "../../connectors/mail";
 import {
   findById as findOrganizationById,
@@ -25,14 +30,34 @@ import {
 
 const OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES = 60;
 
+export const isCommuneWithMultipleOfficialContactEmails = async (
+  organization: Organization,
+) => {
+  if (
+    !isCommune(organization) ||
+    isEtablissementScolaireDuPremierEtSecondDegre(organization)
+  ) {
+    return false;
+  }
+
+  const contactEmails = await getAnnuaireServicePublicContactEmails(
+    organization.cached_code_officiel_geographique,
+    organization.cached_code_postal,
+  );
+
+  return contactEmails.length > 1;
+};
+
 export const sendOfficialContactEmailVerificationEmail = async ({
   user_id,
   organization_id,
   checkBeforeSend,
+  selectedContactEmail,
 }: {
   user_id: number;
   organization_id: number;
   checkBeforeSend: boolean;
+  selectedContactEmail?: string;
 }): Promise<{
   codeSent: boolean;
   contactEmail: string;
@@ -69,10 +94,25 @@ export const sendOfficialContactEmailVerificationEmail = async ({
       isCommune(organization) &&
       !isEtablissementScolaireDuPremierEtSecondDegre(organization)
     ) {
-      contactEmail = await getAnnuaireServicePublicContactEmail(
+      const contactEmails = await getAnnuaireServicePublicContactEmails(
         cached_code_officiel_geographique,
         cached_code_postal,
       );
+      if (contactEmails.length > 1) {
+        if (!selectedContactEmail) {
+          throw new ApiAnnuaireSeveralMairiesMatchesError();
+        }
+
+        if (!contactEmails.includes(selectedContactEmail)) {
+          throw new ApiAnnuaireContactEmailMismatchError();
+        }
+
+        contactEmail = selectedContactEmail;
+      }
+
+      if (contactEmails.length === 1) {
+        contactEmail = contactEmails[0];
+      }
     } else if (isEtablissementScolaireDuPremierEtSecondDegre(organization)) {
       contactEmail = await getAnnuaireEducationNationaleContactEmail(siret);
     }
@@ -81,7 +121,6 @@ export const sendOfficialContactEmailVerificationEmail = async ({
   }
 
   if (!contactEmail) {
-    // This should never happen
     throw new NotFoundError();
   }
 
@@ -92,7 +131,11 @@ export const sendOfficialContactEmailVerificationEmail = async ({
       OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
     )
   ) {
-    return { codeSent: false, contactEmail, libelle };
+    return {
+      codeSent: false,
+      contactEmail,
+      libelle,
+    };
   }
 
   const official_contact_email_verification_token = generateDicewarePassword();
@@ -118,7 +161,11 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     tag: "official-contact-email-verification",
   });
 
-  return { codeSent: true, contactEmail, libelle };
+  return {
+    codeSent: true,
+    contactEmail,
+    libelle,
+  };
 };
 
 export const verifyOfficialContactEmailToken = async ({

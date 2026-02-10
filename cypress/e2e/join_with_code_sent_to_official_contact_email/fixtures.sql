@@ -51,6 +51,19 @@ VALUES
     'User1',
     '0123456789',
     'Sbire'
+  ),
+  (
+    4,
+    'eneeria@prospero.world',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Marie',
+    'Elisabeth',
+    '0123456789',
+    'Reine'
   );
 
 INSERT INTO
@@ -59,6 +72,12 @@ VALUES
   (
     1,
     '21340126800130',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  ),
+  (
+    2,
+    '20008557900015',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   );

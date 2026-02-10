@@ -29,6 +29,7 @@ export const getOfficialContactEmailVerificationController = async (
   try {
     const schema = z.object({
       query: z.object({
+        contact_email: z.email().optional(),
         new_code_sent: optionalBooleanSchema(),
       }),
       params: z.object({
@@ -37,7 +38,7 @@ export const getOfficialContactEmailVerificationController = async (
     });
 
     const {
-      query: { new_code_sent },
+      query: { new_code_sent, contact_email },
       params: { organization_id },
     } = await schema.parseAsync({
       query: req.query,
@@ -49,6 +50,7 @@ export const getOfficialContactEmailVerificationController = async (
         user_id: getUserFromAuthenticatedSession(req).id,
         organization_id,
         checkBeforeSend: true,
+        selectedContactEmail: contact_email,
       });
 
     // call to sendOfficialContactEmailVerificationEmail ensure organization exists

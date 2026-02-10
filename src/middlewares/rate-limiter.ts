@@ -81,7 +81,7 @@ export const verifyEmailRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
       storeClient: redisClient,
-      keyPrefix: "rate-limiter-send-magic-link",
+      keyPrefix: "rate-limiter-verify-email",
       points: 10, // 10 requests
       duration: 5 * 60, // per 5 minutes per email
     }),
@@ -109,6 +109,16 @@ export const sendMagicLinkRateLimiterMiddleware =
     new RateLimiterRedis({
       storeClient: redisClient,
       keyPrefix: "rate-limiter-send-magic-link",
+      points: 5, // 5 requests
+      duration: 15 * 60, // per 15 minutes per email
+    }),
+  );
+
+export const officialContactEmailVerificationRateLimiterMiddleware =
+  emailRateLimiterMiddlewareFactory(
+    new RateLimiterRedis({
+      storeClient: redisClient,
+      keyPrefix: "rate-limiter-official-contact-email-verification",
       points: 5, // 5 requests
       duration: 15 * 60, // per 15 minutes per email
     }),

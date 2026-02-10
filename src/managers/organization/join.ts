@@ -44,7 +44,7 @@ import {
   UserMustConfirmToJoinOrganizationError,
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
-import { getAnnuaireServicePublicContactEmail } from "../../connectors/api-annuaire-service-public";
+import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
 import { getOrganizationInfo } from "../../connectors/api-sirene";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
@@ -277,9 +277,9 @@ export const joinOrganization = async ({
     isCommune(organization) &&
     !isEtablissementScolaireDuPremierEtSecondDegre(organization)
   ) {
-    let contactEmail;
+    let contactEmails: string[] = [];
     try {
-      contactEmail = await getAnnuaireServicePublicContactEmail(
+      contactEmails = await getAnnuaireServicePublicContactEmails(
         organization.cached_code_officiel_geographique,
         organization.cached_code_postal,
       );
@@ -288,8 +288,17 @@ export const joinOrganization = async ({
       Sentry.captureException(err);
     }
 
-    if (isEmailValid(contactEmail)) {
-      const contactDomain = getEmailDomain(contactEmail);
+    if (contactEmails.length > 1) {
+      return await linkUserToOrganization({
+        organization_id,
+        user_id,
+        verification_type: "code_sent_to_official_contact_email",
+        needs_official_contact_email_verification: true,
+      });
+    }
+
+    if (contactEmails.length === 1 && isEmailValid(contactEmails[0])) {
+      const contactDomain = getEmailDomain(contactEmails[0]);
 
       if (!isAFreeEmailProvider(contactDomain)) {
         await markDomainAsVerified({
@@ -299,7 +308,7 @@ export const joinOrganization = async ({
         });
       }
 
-      if (contactEmail === email) {
+      if (contactEmails[0] === email) {
         return await linkUserToOrganization({
           organization_id,
           user_id,
