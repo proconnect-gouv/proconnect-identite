@@ -22,6 +22,7 @@ psql $DEST_DB_URL --command="DROP TABLE IF EXISTS users_organizations"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS users_oidc_clients"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS moderations"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS email_domains"
+psql $DEST_DB_URL --command="DROP TABLE IF EXISTS franceconnect_userinfo"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS organizations"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS users"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS oidc_clients"
@@ -110,6 +111,19 @@ psql $SRC_DB_URL --command="ALTER TABLE tmp_email_domains ADD PRIMARY KEY (id)"
 pg_dump --table=tmp_email_domains $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_email_domains RENAME TO email_domains"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_email_domains"
+
+echo "$(logPrefix) Creating anonymized copy of table franceconnect_userinfo..."
+psql $SRC_DB_URL -c "
+CREATE TABLE tmp_franceconnect_userinfo AS
+SELECT
+	user_id,
+	created_at,
+	updated_at
+FROM franceconnect_userinfo"
+psql $SRC_DB_URL --command="ALTER TABLE tmp_franceconnect_userinfo ADD PRIMARY KEY (user_id)"
+pg_dump --table=tmp_franceconnect_userinfo $SRC_DB_URL | psql $DEST_DB_URL
+psql $DEST_DB_URL --command="ALTER TABLE tmp_franceconnect_userinfo RENAME TO franceconnect_userinfo"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_franceconnect_userinfo"
 
 echo "$(logPrefix) Creating anonymized copy of table moderations..."
 psql $SRC_DB_URL -c "
