@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 1.6.2
+
+### Patch Changes
+
+- [#1766](https://github.com/proconnect-gouv/proconnect-identite/pull/1766) [`68dcd88`](https://github.com/proconnect-gouv/proconnect-identite/commit/68dcd887dafaa3124b691d18c647a9a037d87541) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - ajout de barrel file au dossier adapters
+
 ## 1.6.0
 
 ### Minor Changes
