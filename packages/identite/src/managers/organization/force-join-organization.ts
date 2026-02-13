@@ -6,7 +6,13 @@ import type {
   LinkUserToOrganizationHandler,
 } from "#src/repositories/organization";
 import type { GetByIdHandler as GetUserByIdHandler } from "#src/repositories/user";
-import { type BaseUserOrganizationLink, LinkTypes } from "#src/types";
+import {
+  EmailDomainApprovedVerificationTypes,
+  EmailDomainPendingVerificationTypes,
+  EmailDomainRejectedVerificationTypes,
+  type LinkType,
+  LinkTypes,
+} from "#src/types";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { match } from "ts-pattern";
 
@@ -46,32 +52,26 @@ export function forceJoinOrganizationFactory({
     const organizationEmailDomains =
       await findEmailDomainsByOrganizationId(organization_id);
 
+    // TODO rewrite this
     const link_verification_type = organizationEmailDomains
       .filter(({ domain: currentDomain }) => currentDomain === domain)
-      .reduce(
-        (acc, { verification_type }) => {
-          if (acc === "domain") {
-            return acc;
-          }
+      .reduce((acc, { verification_type }) => {
+        if (acc === "domain") {
+          return acc;
+        }
 
-          return match(verification_type)
-            .with(
-              "verified",
-              "trackdechets_postal_mail",
-              "external",
-              "official_contact",
-              () => LinkTypes.enum.domain,
-            )
-            .with(
-              null,
-              "blacklisted",
-              "refused",
-              () => LinkTypes.enum.no_validation_means_available,
-            )
-            .exhaustive();
-        },
-        "no_validation_means_available" as BaseUserOrganizationLink["verification_type"],
-      );
+        return match(verification_type)
+          .with(
+            ...EmailDomainApprovedVerificationTypes,
+            () => LinkTypes.enum.domain,
+          )
+          .with(
+            ...EmailDomainPendingVerificationTypes,
+            ...EmailDomainRejectedVerificationTypes,
+            () => LinkTypes.enum.no_validation_means_available,
+          )
+          .exhaustive();
+      }, "no_validation_means_available" as LinkType);
 
     return await linkUserToOrganization({
       organization_id,

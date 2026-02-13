@@ -2080,7 +2080,7 @@ VALUES
     1,
     1,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2089,7 +2089,7 @@ VALUES
     2,
     2,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2098,7 +2098,7 @@ VALUES
     3,
     3,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2107,7 +2107,7 @@ VALUES
     4,
     4,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2116,7 +2116,7 @@ VALUES
     5,
     5,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2125,7 +2125,7 @@ VALUES
     6,
     6,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2134,7 +2134,7 @@ VALUES
     7,
     7,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2143,7 +2143,7 @@ VALUES
     8,
     8,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2152,7 +2152,7 @@ VALUES
     9,
     9,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2161,7 +2161,7 @@ VALUES
     10,
     10,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2170,7 +2170,7 @@ VALUES
     11,
     11,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2179,7 +2179,7 @@ VALUES
     12,
     12,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2188,7 +2188,7 @@ VALUES
     13,
     13,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2197,7 +2197,7 @@ VALUES
     14,
     14,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2206,7 +2206,7 @@ VALUES
     15,
     15,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2215,7 +2215,7 @@ VALUES
     16,
     16,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2224,7 +2224,7 @@ VALUES
     17,
     17,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2233,7 +2233,7 @@ VALUES
     18,
     18,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2242,7 +2242,7 @@ VALUES
     19,
     19,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2251,7 +2251,7 @@ VALUES
     20,
     20,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2260,7 +2260,7 @@ VALUES
     21,
     21,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2269,7 +2269,7 @@ VALUES
     22,
     22,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2278,7 +2278,7 @@ VALUES
     23,
     23,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2287,7 +2287,7 @@ VALUES
     24,
     24,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2296,7 +2296,7 @@ VALUES
     25,
     25,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2305,7 +2305,7 @@ VALUES
     26,
     26,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2314,7 +2314,7 @@ VALUES
     27,
     27,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2323,7 +2323,7 @@ VALUES
     28,
     28,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2332,7 +2332,7 @@ VALUES
     29,
     29,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2341,7 +2341,7 @@ VALUES
     30,
     30,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2350,7 +2350,7 @@ VALUES
     31,
     31,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2359,7 +2359,7 @@ VALUES
     32,
     32,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2368,7 +2368,7 @@ VALUES
     33,
     33,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2377,7 +2377,7 @@ VALUES
     34,
     34,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2386,7 +2386,7 @@ VALUES
     35,
     35,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2395,7 +2395,7 @@ VALUES
     36,
     36,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2404,7 +2404,7 @@ VALUES
     37,
     37,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2413,7 +2413,7 @@ VALUES
     38,
     38,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2422,7 +2422,7 @@ VALUES
     39,
     39,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL
@@ -2431,7 +2431,7 @@ VALUES
     40,
     40,
     'yopmail.com',
-    null,
+    'not_verified_yet',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     NULL

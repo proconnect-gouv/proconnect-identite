@@ -167,7 +167,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             await addDomain({
               organization_id: organization.id,
               domain,
-              verification_type: null,
+              verification_type: "not_verified_yet",
             });
             i++;
             success_count++;
