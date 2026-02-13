@@ -21,16 +21,16 @@
   },
   "exports": {
     "./*": {
-      "require": {
-        "types": "./dist/*/index.d.ts",
-        "default": "./dist/*/index.js"
-      },
-      "import": {
-        "types": "./dist/*/index.d.ts",
-        "default": "./dist/*/index.js"
-      },
-      "types": "./dist/*/index.d.ts",
-      "default": "./dist/*/index.js"
+      "require": "./dist/*/index.js",
+      "import": "./dist/*/index.js",
+      "types": "./dist/*/index.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*/index.d.ts"
+      ]
     }
   },
   "scripts": {
@@ -46,6 +46,7 @@
     "leven": "^4.0.0",
     "openid-client": "^6.6.4",
     "sql-template-tag": "^5.2.1",
+    "ts-pattern": "^5.7.0",
     "zod": "^4.3.5"
   },
   "devDependencies": {
