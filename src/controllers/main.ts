@@ -17,6 +17,7 @@ import {
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { getFranceConnectUserInfo } from "../repositories/user";
 import {
   jobSchema,
   nameSchema,
@@ -153,8 +154,10 @@ export const getConnectionAndAccountController = async (
 
     const passkeys = await getUserAuthenticators(email);
     const is2faCapable = await is2FACapable(user_id);
-    const isVerifiedWithFranceConnect =
-      await hasValidFranceConnectIdentity(user_id);
+    const franceconnectUserInfo = await getFranceConnectUserInfo(user_id);
+    const isVerifiedWithFranceConnect = await hasValidFranceConnectIdentity(
+      franceconnectUserInfo,
+    );
 
     return res.render("connection-and-account", {
       pageTitle: "Compte et connexion",
