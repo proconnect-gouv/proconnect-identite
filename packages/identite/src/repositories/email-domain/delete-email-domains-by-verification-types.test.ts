@@ -29,7 +29,7 @@ describe("deleteEmailDomainsByVerificationTypesFactory", function () {
       INSERT INTO email_domains
         (domain, organization_id, verification_type)
       VALUES
-        ('darkangels.world', 1, NULL),
+        ('darkangels.world', 1, 'not_verified_yet'),
         ('darkangels.world', 1, 'verified')
       ;
     `;
@@ -37,7 +37,7 @@ describe("deleteEmailDomainsByVerificationTypesFactory", function () {
     const result = await deleteEmailDomainsByVerificationTypes({
       domain: "darkangels.world",
       organization_id: 1,
-      domain_verification_types: [null, "verified"],
+      domain_verification_types: ["not_verified_yet", "verified"],
     });
 
     assert.deepEqual(result, {

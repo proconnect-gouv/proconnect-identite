@@ -25,9 +25,9 @@ describe("findEmailDomainsByOrganizationIdFactory", () => {
 
     await pg.sql`
       INSERT INTO email_domains
-        (id, domain, organization_id, created_at, updated_at)
+        (id, domain, organization_id, created_at, updated_at, verification_type)
       VALUES
-        (1, 'darkangels.world', 1, '4444-04-04', '4444-04-04')
+        (1, 'darkangels.world', 1, '4444-04-04', '4444-04-04', 'not_verified_yet')
       ;
     `;
 
@@ -41,7 +41,7 @@ describe("findEmailDomainsByOrganizationIdFactory", () => {
         id: 1,
         organization_id: 1,
         updated_at: new Date("4444-04-04"),
-        verification_type: null,
+        verification_type: "not_verified_yet",
         verified_at: null,
       },
     ]);

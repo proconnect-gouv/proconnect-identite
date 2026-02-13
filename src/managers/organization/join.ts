@@ -14,6 +14,7 @@ import {
   isSyndicatCommunal,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
+  EmailDomainVerificationTypes,
   LinkTypes,
   ModerationTypeSchema,
   type Organization,
@@ -292,7 +293,7 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: "code_sent_to_official_contact_email",
+        verification_type: LinkTypes.enum.code_sent_to_official_contact_email,
         needs_official_contact_email_verification: true,
       });
     }
@@ -304,7 +305,8 @@ export const joinOrganization = async ({
         await markDomainAsVerified({
           organization_id,
           domain: contactDomain,
-          domain_verification_type: "official_contact",
+          domain_verification_type:
+            EmailDomainVerificationTypes.enum.official_contact,
         });
       }
 
