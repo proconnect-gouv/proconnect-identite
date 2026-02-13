@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+export const StrongLinkTypes = ["organization_dirigeant"] as const;
+
 export const WeakLinkTypes = [
   "code_sent_to_official_contact_email",
   "domain",
-  "domain_not_verified_yet",
   "imported_from_coop_mediation_numerique",
   "imported_from_inclusion_connect",
   "in_liste_dirigeants_rna",
@@ -16,11 +17,16 @@ export const WeakLinkTypes = [
   "bypassed",
 ] as const;
 
-export const StrongLinkTypes = ["organization_dirigeant"] as const;
+// This link type should be considered as unverified.
+// However, doing so would trigger a FranceConnect authentication requirement for the user.
+// Users shouldn't face inconvenience while waiting for domain review completion.
+// Instead, we should remove these unverified domains and then eliminate this special case from the codebase.
+export const SuperWeakLinkTypes = ["domain_not_verified_yet"] as const;
 
-export const VerifiedLinkTypes = [
-  ...WeakLinkTypes,
+const VerifiedLinkTypes = [
   ...StrongLinkTypes,
+  ...WeakLinkTypes,
+  ...SuperWeakLinkTypes,
 ] as const;
 
 export const UnverifiedLinkTypes = [

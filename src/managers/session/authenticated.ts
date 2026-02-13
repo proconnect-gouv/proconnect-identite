@@ -2,6 +2,7 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import {
   StrongLinkTypes,
+  SuperWeakLinkTypes,
   UnverifiedLinkTypes,
   WeakLinkTypes,
 } from "@proconnect-gouv/proconnect.identite/types";
@@ -270,7 +271,7 @@ export async function getCurrentIAL(req: Request) {
   return match(link.verification_type)
     .returnType<1 | 2 | 3>()
     .with(...StrongLinkTypes, () => 3)
-    .with(...WeakLinkTypes, () => 2)
+    .with(...WeakLinkTypes, ...SuperWeakLinkTypes, () => 2)
     .with(...UnverifiedLinkTypes, () => 1)
     .exhaustive();
 }

@@ -2,7 +2,7 @@
 
 import type { GetUsersByOrganizationHandler } from "#src/repositories/organization";
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
-import { LinkTypes, UnverifiedLinkTypes } from "#src/types";
+import { LinkTypes, SuperWeakLinkTypes, UnverifiedLinkTypes } from "#src/types";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { match } from "ts-pattern";
 
@@ -30,7 +30,7 @@ export function assignUserVerificationTypeToDomainFactory({
           if (
             userDomain === domain &&
             match(link_verification_type)
-              .with(...UnverifiedLinkTypes, () => true)
+              .with(...UnverifiedLinkTypes, ...SuperWeakLinkTypes, () => true)
               .otherwise(() => false)
           ) {
             return updateUserOrganizationLink(organization_id, id, {
