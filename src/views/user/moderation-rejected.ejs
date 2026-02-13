@@ -1,79 +1,96 @@
 <div>
-  <div class="fr-mb-2w">
-    <img src="/dist/<%= allowEditing ? 'warning' : 'alert' %>.svg" alt="" class="limited-width" />
-  </div>
-  <h1 class="fr-h2"><%= allowEditing ? "Modifications demandées" : "Demande refusée" %></h1>
+  <h1 class="fr-h5"><%= allowEditing ? "Modifications demandées" : "Demande refusée ⛔" %></h1>
+  <hr class="hr-personalized fr-mb-3w">
   <div>
     <p>
       <b> Motif : <%= rejectionReason %> <br /> </b>
       <% if (allowEditing) { %>
         Corrigez l'information pour que votre demande soit de nouveau étudiée.
       <% } else { %>
-        Nous n'avons pu établir aucun lien entre votre profil et l'organisation
-        que vous souhaitez rejoindre.
+        Nous n’avons pas pu établir de lien entre l’organisation et vous. Contactez-nous si vous avez d’autres éléments à nous fournir.
       <% } %>
     </p>
-    <% if (!allowEditing) { %>
-      <p>
-        <i>
-          Si vous avez d'autres documents à nous fournir, n'hésitez pas à nous
-          écrire.
-        </i>
-      </p>
-    <% } %>
-  </div>
-  <div class="border-shadow fr-p-2w">
-    <h2 class="fr-h4"><%= allowEditing ? "Informations à vérifier" : "Informations de votre demande refusée" %></h2>
-    <div class="fr-grid-row centered-container-mobile">
-      <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Prénom</p>
-      <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
-        <span id="prenom-display"><b><%= given_name; %></b></span>
-        <% if (allowEditing) { %>
-          <%- include(
-            '../partials/icon-edit-personal-info-form.ejs',
-            {
-              actionForUpdateModeration: `/users/reopen-moderation/${moderation_id}`,
-              messageToDisplay: "Corriger le prénom"
-            }
-          ) %>
-        <% } %>
-      </div>
-      <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Nom</p>
-      <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
-        <span>
-          <b><%= family_name; %></b>
-        </span>
-        <% if (allowEditing) { %>
-          <%- include(
-            '../partials/icon-edit-personal-info-form.ejs',
-            {
-              actionForUpdateModeration: `/users/reopen-moderation/${moderation_id}`,
-              messageToDisplay: "Corriger le nom"
-            }
-          ) %>
-        <% } %>
-      </div>
-      <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Email</p>
-      <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
-        <span><b><%= email; %></b></span>
-        <a
-          href="/users/start-sign-in"
-          class="fr-icon-edit-fill blue-france"
-          aria-label="Changer d’adresse email"
-          title="Changer d’adresse email"
-        ></a>
-      </div>
-      <p class="fr-mb-1w fr-mb-md-2w fr-mr-md-2w fr-badge fr-badge--info fr-badge--no-icon fr-col-4 centered-content">Organisation</p>
-      <div class="fr-col-md-7 fr-col-12 fr-mb-2w">
-        <span><b><%= organization_label; %></b></span>
-        <a
-          href="/users/join-organization"
-          class="fr-icon-edit-fill blue-france"
-          aria-label="Changer d’organisation"
-          title="Changer d’organisation"
-        ></a>
-      </div>
-    </div>
   </div>
 </div>
+
+<p class="fr-mb-0 fr-text--sm">Prénom</p>
+<div class="fr-grid-row fr-grid-row--middle">
+  <div class="fr-col">
+    <p class="fr-mb-2w"><b><%= given_name; %></b></p>
+  </div>
+  <div class="fr-col-auto">
+    <% if (allowEditing) { %>
+      <%- include(
+        '../partials/icon-edit-personal-info-form.ejs',
+        {
+          actionForUpdateModeration: `/users/reopen-moderation/${moderation_id}`,
+          messageToDisplay: "Corriger le prénom"
+        }
+      ) %>
+    <% } %>
+  </div>
+</div>
+
+<p class="fr-mb-0 fr-text--sm">Nom</p>
+<div class="fr-grid-row fr-grid-row--middle">
+  <div class="fr-col">
+    <p class="fr-mb-2w"><b><%= family_name; %></b></p>
+  </div>
+  <div class="fr-col-auto">
+    <% if (allowEditing) { %>
+      <%- include(
+        '../partials/icon-edit-personal-info-form.ejs',
+        {
+          actionForUpdateModeration: `/users/reopen-moderation/${moderation_id}`,
+          messageToDisplay: "Corriger le nom"
+        }
+      ) %>
+    <% } %>
+  </div>
+</div>
+
+<p class="fr-mb-0 fr-text--sm">Email</p>
+<div class="fr-grid-row fr-grid-row--middle">
+  <div class="fr-col">
+    <p class="fr-mb-2w"><b><%= email; %></b></p>
+  </div>
+  <div class="fr-col-auto">
+    <%- include(
+      '../partials/icon-edit-personal-info-form.ejs',
+      {
+        actionForUpdateModeration: `/users/start-sign-in`,
+        messageToDisplay: "Changer d’adresse email",
+      }
+    ) %>
+  </div>
+</div>
+
+<div class="fr-tile fr-tile--horizontal fr-mb-2w fr-mt-2w">
+  <div class="fr-tile__body">
+      <h2 class="fr-tile__title">
+          <%= organization_label %>
+      </h2>
+      <% if (adresse) { %>
+          <p class="fr-tile__desc fr-pb-0"><%= adresse %></p>
+      <% } %>
+      <% if (siret) { %>
+          <p class="fr-tile__desc fr-pb-0"><b>SIRET : <%= siret %></b></p>
+      <% } %>
+  </div>
+</div>
+<form
+  action="/users/cancel-moderation-and-redirect-to-join-org/<%= moderation_id %>"
+  method="post"
+>
+  <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+  <button 
+    type="submit" 
+    class="fr-btn btn--fullwidth fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary js-confirm"
+    data-confirm="Cette action annulera votre demande en cours. Voulez vous continuer ?"
+    aria-label="Corriger l'organisation de rattachement"
+    title="Corriger l'organisation de rattachement"
+  >
+    Changer d'organisation
+  </button>
+</form>
 <script type="module" src="<%= js('confirm.js') %>"></script>
