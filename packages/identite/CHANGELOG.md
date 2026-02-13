@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 1.6.0
+
+### Minor Changes
+
+- [#1764](https://github.com/proconnect-gouv/proconnect-identite/pull/1764) [`6484e64`](https://github.com/proconnect-gouv/proconnect-identite/commit/6484e64f558493b5963d32681dab645484b87693) Thanks [@rdubigny](https://github.com/rdubigny)! - Ajout d'une catégorie SuperWeakLinkTypes pour gérer les cas des domaines non vérifiés
+
 ## 1.5.0
 
 ### Minor Changes
