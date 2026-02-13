@@ -1,6 +1,10 @@
 //
 
-import type { DatabaseContext, EmailDomain } from "#src/types";
+import type {
+  DatabaseContext,
+  EmailDomain,
+  EmailDomainVerificationType,
+} from "#src/types";
 
 //
 
@@ -13,15 +17,11 @@ export function deleteEmailDomainsByVerificationTypesFactory({
     domain_verification_types,
   }: {
     organization_id: EmailDomain["organization_id"];
-    domain_verification_types: EmailDomain["verification_type"][];
+    domain_verification_types: EmailDomainVerificationType[];
     domain: EmailDomain["domain"];
   }) {
     const SQL_VERIFICATION_TYPES = domain_verification_types
-      .map((type) =>
-        type === null
-          ? "verification_type IS NULL"
-          : `verification_type = '${type}'`,
-      )
+      .map((type) => `verification_type = '${type}'`)
       .join(" OR ");
 
     return pg.query(

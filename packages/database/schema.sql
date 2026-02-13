@@ -206,7 +206,7 @@ CREATE TABLE "public"."email_domains" (
   "id" integer NOT NULL,
   "organization_id" integer NOT NULL,
   "domain" character varying(255) NOT NULL,
-  "verification_type" character varying(255),
+  "verification_type" character varying(255) NOT NULL,
   "can_be_suggested" boolean DEFAULT true NOT NULL,
   "verified_at" timestamp with time zone,
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -521,7 +521,7 @@ ADD CONSTRAINT "organizations_pkey" PRIMARY KEY ("id");
 -- Name: email_domains unique_organization_domain; Type: CONSTRAINT; Schema: public; Owner: -
 --
 ALTER TABLE ONLY "public"."email_domains"
-ADD CONSTRAINT "unique_organization_domain" UNIQUE NULLS NOT DISTINCT ("organization_id", "domain", "verification_type");
+ADD CONSTRAINT "unique_organization_domain" UNIQUE ("organization_id", "domain", "verification_type");
 
 --
 -- Name: users_oidc_clients users_oidc_clients_pkey; Type: CONSTRAINT; Schema: public; Owner: -

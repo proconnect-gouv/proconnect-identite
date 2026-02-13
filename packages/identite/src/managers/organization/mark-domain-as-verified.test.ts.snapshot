@@ -25,7 +25,8 @@ exports[`markDomainAsVerified > should update organization members > should call
           "official_contact",
           "trackdechets_postal_mail",
           "verified",
-          null
+          "external",
+          "not_verified_yet"
         ]
       }
     ],

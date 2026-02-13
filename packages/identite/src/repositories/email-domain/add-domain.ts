@@ -1,7 +1,11 @@
 //
 
 import { hashToPostgresParams } from "#src/services/postgres";
-import type { DatabaseContext, EmailDomain } from "#src/types";
+import type {
+  DatabaseContext,
+  EmailDomain,
+  EmailDomainVerificationType,
+} from "#src/types";
 import type { QueryResult } from "pg";
 
 //
@@ -14,7 +18,7 @@ export function addDomainFactory({ pg }: DatabaseContext) {
   }: {
     organization_id: number;
     domain: string;
-    verification_type: EmailDomain["verification_type"];
+    verification_type: EmailDomainVerificationType;
   }) {
     const connection = pg;
 

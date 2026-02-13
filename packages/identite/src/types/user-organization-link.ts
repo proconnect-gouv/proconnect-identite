@@ -37,6 +37,8 @@ export const UnverifiedLinkTypes = [
 
 export const LinkTypes = z.enum([...VerifiedLinkTypes, ...UnverifiedLinkTypes]);
 
+export type LinkType = z.output<typeof LinkTypes>;
+
 export const BaseUserOrganizationLinkSchema = z.object({
   is_external: z.boolean(),
   verification_type: LinkTypes,

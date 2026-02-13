@@ -1,7 +1,6 @@
 import {
   findByIdFactory,
   findByUserIdFactory,
-  getByIdFactory,
   getUsersByOrganizationFactory,
 } from "@proconnect-gouv/proconnect.identite/repositories/organization";
 import {
@@ -12,7 +11,6 @@ import {
 import type { QueryResult } from "pg";
 import { getDatabaseConnection } from "../../connectors/postgres";
 
-export const getById = getByIdFactory({ pg: getDatabaseConnection() });
 export const findById = findByIdFactory({ pg: getDatabaseConnection() });
 export const findByUserId = findByUserIdFactory({
   pg: getDatabaseConnection(),

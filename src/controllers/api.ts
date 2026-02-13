@@ -16,13 +16,7 @@ import { InseeApiRepository } from "../connectors/api-insee";
 import { RegistreNationalEntreprisesApiRepository } from "../connectors/api-rne";
 import { getOrganizationInfo } from "../connectors/api-sirene";
 import { sendModerationProcessedEmail } from "../managers/moderation";
-import { forceJoinOrganization } from "../managers/organization/join";
-import { getUserOrganizationLink } from "../repositories/organization/getters";
-import {
-  idSchema,
-  optionalBooleanSchema,
-  siretSchema,
-} from "../services/custom-zod-schemas";
+import { idSchema, siretSchema } from "../services/custom-zod-schemas";
 import { logger } from "../services/log";
 
 export const getPingApiSireneController = async (
@@ -125,44 +119,6 @@ export const getOrganizationInfoController = async (
           notificationMessages["invalid_siret"].description,
         ),
       );
-    }
-
-    next(e);
-  }
-};
-
-export const postForceJoinOrganizationController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const schema = z.object({
-      organization_id: idSchema(),
-      user_id: idSchema(),
-      is_external: optionalBooleanSchema(),
-    });
-
-    const { organization_id, user_id, is_external } = await schema.parseAsync(
-      req.query,
-    );
-
-    let userOrganizationLink = await getUserOrganizationLink(
-      organization_id,
-      user_id,
-    );
-    if (!userOrganizationLink) {
-      userOrganizationLink = await forceJoinOrganization({
-        organization_id,
-        user_id,
-        is_external,
-      });
-    }
-
-    return res.json({});
-  } catch (e) {
-    if (e instanceof ZodError) {
-      return next(new HttpErrors.BadRequest());
     }
 
     next(e);

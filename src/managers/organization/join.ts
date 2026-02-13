@@ -6,7 +6,6 @@ import {
   InvalidSiretError,
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
-import { forceJoinOrganizationFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import {
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
@@ -14,6 +13,7 @@ import {
   isSyndicatCommunal,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
+  EmailDomainVerificationTypes,
   LinkTypes,
   ModerationTypeSchema,
   type Organization,
@@ -58,7 +58,6 @@ import {
   findBySiret,
   findByUserId,
   findByVerifiedEmailDomain,
-  getById,
 } from "../../repositories/organization/getters";
 import {
   linkUserToOrganization,
@@ -224,7 +223,10 @@ export const joinOrganization = async ({
   }
 
   if (
-    some(organizationEmailDomains, { domain, verification_type: "refused" })
+    some(organizationEmailDomains, {
+      domain,
+      verification_type: EmailDomainVerificationTypes.enum.refused,
+    })
   ) {
     throw new DomainRefusedForOrganizationError(organization_id);
   }
@@ -292,7 +294,7 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: "code_sent_to_official_contact_email",
+        verification_type: LinkTypes.enum.code_sent_to_official_contact_email,
         needs_official_contact_email_verification: true,
       });
     }
@@ -304,7 +306,8 @@ export const joinOrganization = async ({
         await markDomainAsVerified({
           organization_id,
           domain: contactDomain,
-          domain_verification_type: "official_contact",
+          domain_verification_type:
+            EmailDomainVerificationTypes.enum.official_contact,
         });
       }
 
@@ -361,7 +364,10 @@ export const joinOrganization = async ({
   }
 
   if (
-    some(organizationEmailDomains, { domain, verification_type: "verified" })
+    some(organizationEmailDomains, {
+      domain,
+      verification_type: EmailDomainVerificationTypes.enum.verified,
+    })
   ) {
     return await linkUserToOrganization({
       organization_id,
@@ -371,7 +377,10 @@ export const joinOrganization = async ({
   }
 
   if (
-    some(organizationEmailDomains, { domain, verification_type: "external" })
+    some(organizationEmailDomains, {
+      domain,
+      verification_type: EmailDomainVerificationTypes.enum.external,
+    })
   ) {
     return await linkUserToOrganization({
       organization_id,
@@ -384,7 +393,8 @@ export const joinOrganization = async ({
   if (
     some(organizationEmailDomains, {
       domain,
-      verification_type: "trackdechets_postal_mail",
+      verification_type:
+        EmailDomainVerificationTypes.enum.trackdechets_postal_mail,
     })
   ) {
     return await linkUserToOrganization({
@@ -402,7 +412,12 @@ export const joinOrganization = async ({
     });
   }
 
-  if (some(organizationEmailDomains, { domain, verification_type: null })) {
+  if (
+    some(organizationEmailDomains, {
+      domain,
+      verification_type: EmailDomainVerificationTypes.enum.not_verified_yet,
+    })
+  ) {
     await createModeration({
       user_id,
       organization_id,
@@ -418,13 +433,6 @@ export const joinOrganization = async ({
 
   throw new UnableToAutoJoinOrganizationError(organization_id);
 };
-
-export const forceJoinOrganization = forceJoinOrganizationFactory({
-  findEmailDomainsByOrganizationId,
-  getUserById,
-  getById,
-  linkUserToOrganization,
-});
 
 export const greetForJoiningOrganization = async ({
   user_id,
