@@ -1,11 +1,11 @@
 //
 
+import type { Organization } from "#src/types";
 import {
   NATURE_JURIDIQUE_SERVICE_PUBLIC,
   SERVICE_PUBLIC_BLACKLIST,
   SERVICE_PUBLIC_WHITELIST,
 } from "@proconnect-gouv/proconnect.annuaire_entreprises";
-import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 
 // inspired from https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/blob/4ec29b1ef3370e0f840bd55dd6d38a4811faf18d/workflows/data_pipelines/elasticsearch/data_enrichment.py#L169-L209
 export const isPublicService = ({

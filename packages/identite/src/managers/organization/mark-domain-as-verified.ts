@@ -2,20 +2,22 @@
 
 import { NotFoundError } from "#src/errors";
 import { assignUserVerificationTypeToDomainFactory } from "#src/managers/user";
-import type { GetUsersByOrganizationHandler } from "#src/repositories/organization";
-import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import type {
   AddDomainHandler,
   DeleteEmailDomainsByVerificationTypesHandler,
-} from "@proconnect-gouv/proconnect.identite/repositories/email-domain";
-import type { FindByIdHandler } from "@proconnect-gouv/proconnect.identite/repositories/organization";
+} from "#src/repositories/email-domain";
+import type {
+  FindByIdHandler,
+  GetUsersByOrganizationHandler,
+} from "#src/repositories/organization";
+import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import {
   EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
   EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
   type EmailDomainApprovedVerificationType,
   type EmailDomainRejectedVerificationType,
   type EmailDomainVerificationType,
-} from "@proconnect-gouv/proconnect.identite/types";
+} from "#src/types";
 import { isEmpty } from "lodash-es";
 import { match } from "ts-pattern";
 
