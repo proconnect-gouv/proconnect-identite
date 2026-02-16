@@ -15,6 +15,10 @@ export function isPasswordSecure(plainPassword: string, email: string) {
     "agent connect",
     "proconnect",
     "pro connect",
+    "allons voir si la rose qui ce matin avait déclose",
+    "allons voir si la rose qui ce matin avait declose",
+    "allonsvoirsilarosequicematinavaitdéclose",
+    "allonsvoirsilarosequicematinavaitdeclose",
   ];
 
   const containsBlacklistedWord = lowerCasedBlacklistedWords.some((word) =>

@@ -1,53 +1,64 @@
-<div>
-  <div class="fr-mb-2w">
-    <img width="64" src="/dist/check.svg" alt="" />
-  </div>
+  <% const feminin = user.gender === 'female' ? 'e' : ''; %>
   <h1 class="fr-h3">
-    Vous êtes bien certifié !
+    Statut certifié 🎊
   </h1>
   <div>
     <p>
-        Vous avez reçu un email de confirmation.
+        Vous êtes bien certifié<%= feminin %> en tant que dirigeant<%= feminin %> de <b><%= organization.libelle %></b>.
     </p>
 
-    <p>
-      Prénom <br/>
+    <p class="fr-mb-0 fr-text--sm">
+      Prénom
+    </p>
+    <p class="fr-mb-2w">
       <b><%= user.given_name; %></b>
     </p>
 
-    <p>
-      Nom <br/>
+    <p class="fr-mb-0 fr-text--sm">
+      Nom
+    </p>
+    <p class="fr-mb-2w">
       <b><%= user.family_name; %></b>
     </p>
 
-    <p>
-      Email professionnel <br/>
+    <p class="fr-mb-0 fr-text--sm">
+      Email professionnel
+    </p>
+    <p class="fr-mb-2w">
       <b><%= user.email; %></b>
     </p>
-
     
-    <% if (user.job) { %> 
-    <p>
-      Rôle <br/>
-      <b><%= user.job; %></b>
+    <p class="fr-mb-0 fr-text--sm">
+      Date de naissance
     </p>
+    <p class="fr-mb-2w">
+      <b><%= user.formattedBirthDate %></b>
+    </p>
+
+    <p class="fr-mb-0 fr-text--sm">
+      Commune de naissance
+    </p>
+    <p class="fr-mb-2w">
+      <b><%= user.birthPlace %></b>
+    </p>
+    <% if (locals.organization) { %>
+      <div class="fr-tile fr-tile--horizontal fr-mb-2w">
+        <div class="fr-tile__body">
+            <h2 class="fr-tile__title">
+                <%= organization.libelle %>
+            </h2>
+            <% if (organization.adresse) { %>
+                <p class="fr-tile__desc fr-pb-0"><%= organization.adresse %></p>
+            <% } %>
+            <% if (organization.siret) { %>
+                <p class="fr-tile__desc fr-pb-0"><b>SIRET : <%= organization.siret %></b></p>
+            <% } %>
+        </div>
+      </div>
     <% } %>
-    
-    <p>
-      Organisation <br/>
-      <b><%= organization.libelle; %></b>
-    </p>
-
-    <p>
-      Statut <br/>
-      <b>Compte certifié</b>
-    </p>
-
-
     <form action="/users/welcome" method="post">
       <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
 
       <%- include('../partials/submit-button.ejs', {label: 'Continuer'}) %>
     </form>
   </div>
-</div>

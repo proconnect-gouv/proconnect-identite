@@ -65,7 +65,6 @@ export const getStartSignInController = async (
       loginHint: hintFromSession,
       csrfToken: csrfToken(req),
       displayTestEnvWarning: FEATURE_DISPLAY_TEST_ENV_WARNING,
-      illustration: "illu-password.svg",
     });
   } catch (error) {
     next(error);
@@ -219,18 +218,22 @@ export const getSignUpController = async (
   try {
     const schema = z.object({
       login_hint: emailSchema().optional(),
+      notification: z.string().optional(),
     });
 
-    const { login_hint } = await schema.parseAsync(req.query);
+    const { login_hint, notification } = await schema.parseAsync(req.query);
+
+    const isNewAccount = notification !== "new_password_needed";
 
     return res.render("user/sign-up", {
-      pageTitle: "Choisir votre mot de passe",
+      pageTitle: "Choisir un mot de passe",
       notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
       loginHint: login_hint,
       email: getEmailFromUnauthenticatedSession(req),
       changeEmailButtonMustReturnToPCF: req.session.authForProconnectFederation,
       displayTestEnvWarning: FEATURE_DISPLAY_TEST_ENV_WARNING,
+      isNewAccount,
     });
   } catch (error) {
     next(error);

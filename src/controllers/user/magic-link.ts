@@ -41,7 +41,6 @@ export const getMagicLinkSentController = async (
     return res.render("user/magic-link-sent", {
       pageTitle: "Recevoir un lien d'identification",
       email,
-      illustration: "illu-magic-link-sent.svg",
     });
   } catch (error) {
     next(error);
@@ -74,7 +73,6 @@ export const getSignInWithMagicLinkController = async (
         pageTitle: "Connexion avec un lien",
         csrfToken: csrfToken(req),
         magicLinkToken: magic_link_token,
-        illustration: "illu-password.svg",
       });
     }
 

@@ -905,7 +905,7 @@ const processCertificationDirigeantGuard = async (
 
     if (error instanceof CertificationDirigeantNoMatchError) {
       return redirect(
-        `/users/certification-dirigeant/no-match-error?siren=${error.siren}`,
+        `/users/certification-dirigeant/no-match-error?siren=${error.siren}&organization_label=${encodeURIComponent(error.organization_label)}`,
       );
     }
 

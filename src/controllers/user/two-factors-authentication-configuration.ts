@@ -39,7 +39,6 @@ export const getTwoFactorsAuthenticationChoiceController = async (
     return res.render("user/double-authentication-choice", {
       pageTitle: "Choisir un mode de double authentification",
       csrfToken: csrfToken(req),
-      illustration: "illu-2FA.svg",
       notifications: await getNotificationsFromRequest(req),
       spName: req.session.spName,
     });
@@ -63,7 +62,6 @@ export const getIsTotpAppInstalledController = async (
     return res.render("user/is-totp-app-installed", {
       pageTitle: "Installer votre outil d'authentification",
       csrfToken: csrfToken(req),
-      illustration: "illu-2FA.svg",
     });
   } catch (error) {
     next(error);
@@ -90,7 +88,6 @@ export const getTotpConfigurationController = async (
       notifications: await getNotificationsFromRequest(req),
       hasCodeError,
       csrfToken: csrfToken(req),
-      illustration: "illu-2FA.svg",
       humanReadableTotpKey,
       qrCodeDataUrl,
     });
@@ -152,7 +149,6 @@ export const get2faSuccessfullyConfiguredController = async (
     return res.render("user/2fa-successfully-configured", {
       pageTitle: "Votre double authentification est bien configurée",
       csrfToken: csrfToken(req),
-      illustration: "illu-ok.svg",
       spName: req.session.spName,
     });
   } catch (error) {

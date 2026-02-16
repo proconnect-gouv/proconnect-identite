@@ -79,7 +79,14 @@ export const processCertificationDirigeantOrThrow = async (
   }
 
   if (!ok) {
-    const error = new CertificationDirigeantNoMatchError(siren, cause);
+    const organization_label =
+      organization.cached_libelle ?? organization.siret;
+
+    const error = new CertificationDirigeantNoMatchError(
+      siren,
+      organization_label,
+      cause,
+    );
 
     captureException(error);
 

@@ -48,7 +48,7 @@ describe("direct connexion with passkey", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
     cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
     cy.title().should("include", "Accéder au compte - ProConnect");
     cy.contains("Se connecter avec une clé d’accès").click();
@@ -68,7 +68,7 @@ describe("through a service provider with 2fa for all sites", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
     cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Valider").click();
+    cy.contains("Continuer").click();
 
     cy.title().should("include", "Accéder au compte - ProConnect");
     cy.intercept("http://localhost:4000").as("redirection_done");

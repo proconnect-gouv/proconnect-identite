@@ -1,4 +1,5 @@
-/* general layout */
+/* Common footer management at the bottom for all layouts */
+
 body {
   min-height: 100vh;
   display: flex;
@@ -9,17 +10,17 @@ main {
   flex-grow: 1;
 }
 
-/* page layout container */
-.page-container {
-  max-width: 1200px;
-  width: 100%;
-  margin: 1.5rem auto 1.5rem;
+/* Connection page layout */
+
+.layout-connexion .main-connexion {
+  min-height: calc(100vh - 84.5px);
+  display: flex;
+  align-items: center;
 }
 
-@media all and (max-width: 1248px) {
-  .page-container {
-    margin: 1.5rem;
-    width: calc(100% - 3rem);
+@media all and (max-width: 991px) {
+  .layout-connexion .main-connexion {
+    min-height: calc(100vh - 171.1px);
   }
 }
 
@@ -61,53 +62,6 @@ main {
   }
 }
 
-/* onboarding layout container */
-.onboarding-container > *:first-child {
-  grid-area: content;
-  max-width: 35rem;
-  width: 100%;
-  padding: 2.5rem 2rem;
-}
-
-.onboarding-container > *:last-child {
-  grid-area: illu;
-  background: #f9f9fe;
-}
-
-.onboarding-container > *:last-child img {
-  height: 20rem;
-  margin: 1.5rem 0 1.5rem;
-}
-
-.onboarding-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "content illu";
-  align-items: center;
-  justify-items: center;
-}
-
-@media (max-width: 62em) {
-  .onboarding-container > *:first-child {
-    padding: 1rem;
-  }
-}
-
-@media all and (max-width: 992px) {
-  .onboarding-container {
-    grid-template-columns: 100%;
-    grid-template-areas: "content";
-  }
-
-  .onboarding-container > *:first-child {
-    padding: 2.5rem 1rem;
-  }
-
-  .onboarding-container > *:last-child {
-    display: none;
-  }
-}
-
 .card-button-container {
   display: flex;
   align-items: center;
@@ -123,19 +77,4 @@ main {
   justify-content: center;
   align-items: center;
   text-align: center;
-}
-
-/* Fix main overflow on footer on safari browser */
-/* https://stackoverflow.com/questions/62075401/safari-grid-in-flexbox-produces-height-overflow */
-/* selector for safari 9+ (see https://browserstrangeness.bitbucket.io/css_hacks.html#safari) */
-@supports (-webkit-hyphens: none) {
-  html,
-  body,
-  main {
-    height: 100%;
-  }
-
-  main {
-    z-index: 1;
-  }
 }

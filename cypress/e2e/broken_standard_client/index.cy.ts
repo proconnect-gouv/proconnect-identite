@@ -18,6 +18,6 @@ describe("sign-in from broken client", () => {
     cy.visit("http://localhost:4001");
     cy.get("button.proconnect-button").click();
 
-    cy.title().should("include", "Choisir votre mot de passe - ProConnect");
+    cy.title().should("include", "Choisir un mot de passe - ProConnect");
   });
 });

@@ -1,42 +1,9 @@
-<div>
-  <div class="fr-mb-2w">
-    <img src="/dist/alert.svg" alt="" />
-  </div>
-  <h1 class="fr-h2">Nous n’arrivons pas à certifier votre compte.</h1>
+<h1 class="fr-h5">Identité non trouvée ⚠️</h1>
+<hr class="hr-personalized fr-mb-3w">
+<p><b>Votre identité ne correspond à aucun dirigeant enregistré</b> pour <%= organization_label; %> dans le Registre national des entreprises.</p>
 
-  <div>
-    <div class="fr-alert fr-alert--error fr-mb-2w">
-      <p class="fr-alert__title">
-        Nous ne trouvons pas de dirigeant correspondant à votre identité pour cette entreprise.
-      </p>
-    </div>
-
-    <p>
-      <a
-        href="https://annuaire-entreprises.data.gouv.fr/dirigeants/<%= locals.siren; %>"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        Vérifiez la liste des dirigeants sur l'Annuaire des Entreprises
-      </a>
-    </p>
-
-    <p>
-      <a
-        class="fr-btn fr-btn--secondary fr-mb-2w"
-        href="https://proconnect.crisp.help/fr/article/je-souhaite-corriger-mes-donnees-pour-la-certification-dirigeant-j44541/"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        Comment corriger les données ?
-      </a>
-    </p>
-
-    <% if (locals.interactionId && locals.oidcError) { %>
-    <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn">Continuer sur le service</a>
-    <% } else { %>
-    <a href="/" class="fr-btn">Retour à l’accueil</a>
-    <% } %>
-
-  </div>
-</div>
+<% if (locals.interactionId && locals.oidcError) { %>
+  <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn btn--fullwidth">Continuer sur le service</a>
+<% } else { %>
+  <a href="/" class="fr-btn btn--fullwidth">Retour à l’accueil</a>
+<% } %>

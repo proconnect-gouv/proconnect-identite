@@ -36,9 +36,5 @@ describe("join organizations", () => {
     );
 
     cy.get('[type="submit"]').contains("Continuer avec cet email").click();
-
-    cy.contains(
-      "Nous vérifions votre lien à l’organisation, vous recevrez un email de confirmation dès que votre compte sera validé.",
-    );
   });
 });

@@ -57,7 +57,7 @@ describe("join collectivité territoriale with free contact domain", () => {
     });
 
     cy.title().should("include", "Compte créé - ProConnect");
-    cy.contains("Votre compte est créé !");
+    cy.contains("Compte créé ! 🎊");
   });
 
   it("should send a code challenge for user with a private email domain", function () {
@@ -96,6 +96,6 @@ describe("join collectivité territoriale with free contact domain", () => {
     });
 
     cy.title().should("include", "Compte créé - ProConnect");
-    cy.contains("Votre compte est créé !");
+    cy.contains("Compte créé ! 🎊");
   });
 });
