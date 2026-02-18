@@ -11,16 +11,19 @@ main {
 }
 
 /* Connection page layout */
-
-.layout-connexion .main-connexion {
-  min-height: calc(100vh - 84.5px);
-  display: flex;
-  align-items: center;
-}
-
-@media all and (max-width: 991px) {
+@media all and (min-width: 768px) and (max-width: 991px) {
   .layout-connexion .main-connexion {
     min-height: calc(100vh - 171.1px);
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media all and (min-width: 992px) {
+  .layout-connexion .main-connexion {
+    min-height: calc(100vh - 84.5px);
+    display: flex;
+    align-items: center;
   }
 }
 
