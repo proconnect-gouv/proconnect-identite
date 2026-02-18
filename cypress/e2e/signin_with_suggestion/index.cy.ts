@@ -127,3 +127,45 @@ describe("sign-in with suggestion", () => {
     cy.get('input[name="siret"]').should("have.value", "21340126800130");
   });
 });
+
+describe("sign-in with suggestion and certification", () => {
+  before(cy.seed);
+
+  it("sould sign-in with and suggest a certification dirigeant on EMMAUS SOLIDARITE", function () {
+    cy.visit("http://localhost:4000");
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.updateCustomParams((customParams) => ({
+      ...customParams,
+      siret_hint: "39234600300198",
+    }));
+    cy.setRequestedAcrs([
+      "https://proconnect.gouv.fr/assurance/certification-dirigeant",
+    ]);
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.title().should("equal", "S'inscrire ou se connecter - ProConnect");
+    cy.login("lion.eljonson@darkangels.world");
+
+    cy.title().should("equal", "Rejoindre une organisation - ProConnect");
+    cy.contains("Papillon");
+    cy.contains("Enregistrer").click();
+
+    cy.title().should("equal", "Certification dirigeant - ProConnect");
+    cy.contains("Certifier votre statut");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
+
+    cy.title().should("equal", "Compte certifié - ProConnect");
+    cy.contains("Vous êtes bien certifié en tant que dirigeant de Papillon.");
+    cy.contains("Continuer").click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains('"siret": "39234600300198"');
+    cy.contains(
+      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
+    );
+  });
+});
