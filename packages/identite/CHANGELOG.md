@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 1.7.0
+
+### Minor Changes
+
+- [#1762](https://github.com/proconnect-gouv/proconnect-identite/pull/1762) [`8d3fc90`](https://github.com/proconnect-gouv/proconnect-identite/commit/8d3fc90e8e1302ed3193b69baeecce66df0e9e1a) Thanks [@rdubigny](https://github.com/rdubigny)! - Les verification_type de la table email_domains ne peuvent plus être null. Ils prennent la valeur not_verified_yet à la place. On décommissione aussi la function forceJoinOrganization disponible via API au profil d'une logique centralisée dans Hyyypertool.
+
 ## 1.6.2
 
 ### Patch Changes
