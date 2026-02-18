@@ -1,8 +1,5 @@
-it("should seed the database once", function () {
-  cy.seed();
-});
-
-describe("sign-in with a client not requiring any acr", () => {
+describe("sign-in with a client requiring legacy acr : eidas1", () => {
+  before(cy.seed);
   beforeEach(() => {
     cy.visit("http://localhost:4000");
 
