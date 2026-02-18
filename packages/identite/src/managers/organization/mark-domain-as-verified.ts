@@ -12,12 +12,15 @@ import type {
 } from "#src/repositories/organization";
 import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import {
-  EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES,
-  EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES,
   type EmailDomainApprovedVerificationType,
+  EmailDomainApprovedVerificationTypes,
+  type EmailDomainNoPendingVerificationType,
+  EmailDomainPendingVerificationTypes,
   type EmailDomainRejectedVerificationType,
+  EmailDomainRejectedVerificationTypes,
   type EmailDomainVerificationType,
 } from "#src/types";
+
 import { isEmpty } from "lodash-es";
 import { match } from "ts-pattern";
 
@@ -50,7 +53,7 @@ export function markDomainAsVerifiedFactory({
   }: {
     organization_id: number;
     domain: string;
-    domain_verification_type: NonNullable<EmailDomainVerificationType>;
+    domain_verification_type: EmailDomainNoPendingVerificationType;
   }) {
     const organization = await findOrganizationById(organization_id);
 
@@ -60,10 +63,7 @@ export function markDomainAsVerifiedFactory({
 
     return match(domain_verification_type)
       .with(
-        EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.enum.official_contact,
-        EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.enum.trackdechets_postal_mail,
-        EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.enum.verified,
-        ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.options,
+        ...EmailDomainApprovedVerificationTypes,
         async (approved_verification_type) => {
           await assignUserVerificationTypeToDomain(organization_id, domain);
           return markDomainAsApproved({
@@ -74,10 +74,7 @@ export function markDomainAsVerifiedFactory({
         },
       )
       .with(
-        EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.enum.blacklisted,
-        EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.enum.external,
-        EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.enum.refused,
-        ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.options,
+        ...EmailDomainRejectedVerificationTypes,
         (rejected_verification_type) =>
           markDomainAsRejected({
             organization_id,
@@ -101,14 +98,15 @@ export function markDomainAsVerifiedFactory({
       organization_id,
       domain,
       domain_verification_types: [
-        ...EMAIL_DOMAIN_APPROVED_VERIFICATION_TYPES.options,
-        null,
+        ...EmailDomainApprovedVerificationTypes,
+        ...EmailDomainPendingVerificationTypes,
       ],
     });
     return addDomain({
       organization_id,
       domain,
-      verification_type: domain_verification_type,
+      verification_type:
+        domain_verification_type as EmailDomainVerificationType,
     });
   }
 
@@ -125,14 +123,15 @@ export function markDomainAsVerifiedFactory({
       organization_id,
       domain,
       domain_verification_types: [
-        null,
-        ...EMAIL_DOMAIN_REJECTED_VERIFICATION_TYPES.options,
+        ...EmailDomainPendingVerificationTypes,
+        ...EmailDomainRejectedVerificationTypes,
       ],
     });
     return addDomain({
       organization_id,
       domain,
-      verification_type: domain_verification_type,
+      verification_type:
+        domain_verification_type as EmailDomainVerificationType,
     });
   }
 }

@@ -94,7 +94,7 @@ export const email_domains = pgTable(
     id: serial().primaryKey().notNull(),
     organization_id: integer().notNull(),
     domain: varchar({ length: 255 }).notNull(),
-    verification_type: varchar({ length: 255 }),
+    verification_type: varchar({ length: 255 }).notNull(),
     can_be_suggested: boolean().default(true).notNull(),
     verified_at: timestamp({ withTimezone: true, mode: "string" }),
     created_at: timestamp({ withTimezone: true, mode: "string" })
@@ -211,43 +211,6 @@ export const franceconnect_userinfo = pgTable(
   ],
 );
 
-export const users_oidc_clients = pgTable(
-  "users_oidc_clients",
-  {
-    user_id: integer().notNull(),
-    oidc_client_id: integer().notNull(),
-    created_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-    updated_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-    id: serial().primaryKey().notNull(),
-    organization_id: integer(),
-    sp_name: varchar(),
-    user_ip_address: varchar(),
-  },
-  (table) => [
-    foreignKey({
-      columns: [table.user_id],
-      foreignColumns: [users.id],
-      name: "users_oidc_clients_user_id_fkey",
-    })
-      .onUpdate("cascade")
-      .onDelete("cascade"),
-    foreignKey({
-      columns: [table.oidc_client_id],
-      foreignColumns: [oidc_clients.id],
-      name: "users_oidc_clients_oidc_client_id_fkey",
-    })
-      .onUpdate("cascade")
-      .onDelete("cascade"),
-    foreignKey({
-      columns: [table.organization_id],
-      foreignColumns: [organizations.id],
-      name: "users_oidc_clients_organization_id_fkey",
-    })
-      .onUpdate("cascade")
-      .onDelete("set null"),
-  ],
-);
-
 export const organizations = pgTable(
   "organizations",
   {
@@ -287,6 +250,43 @@ export const organizations = pgTable(
       "btree",
       table.siret.asc().nullsLast().op("text_ops"),
     ),
+  ],
+);
+
+export const users_oidc_clients = pgTable(
+  "users_oidc_clients",
+  {
+    user_id: integer().notNull(),
+    oidc_client_id: integer().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    id: serial().primaryKey().notNull(),
+    organization_id: integer(),
+    sp_name: varchar(),
+    user_ip_address: varchar(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.user_id],
+      foreignColumns: [users.id],
+      name: "users_oidc_clients_user_id_fkey",
+    })
+      .onUpdate("cascade")
+      .onDelete("cascade"),
+    foreignKey({
+      columns: [table.oidc_client_id],
+      foreignColumns: [oidc_clients.id],
+      name: "users_oidc_clients_oidc_client_id_fkey",
+    })
+      .onUpdate("cascade")
+      .onDelete("cascade"),
+    foreignKey({
+      columns: [table.organization_id],
+      foreignColumns: [organizations.id],
+      name: "users_oidc_clients_organization_id_fkey",
+    })
+      .onUpdate("cascade")
+      .onDelete("set null"),
   ],
 );
 

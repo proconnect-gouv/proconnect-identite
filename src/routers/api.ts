@@ -10,7 +10,6 @@ import {
   getPingApiInseeController,
   getPingApiRegistreNationalEntreprisesController,
   getPingApiSireneController,
-  postForceJoinOrganizationController,
   postSendModerationProcessedEmail,
 } from "../controllers/api";
 import {
@@ -60,11 +59,6 @@ export const apiRouter = () => {
     expressBasicAuth({
       users: { [API_AUTH_USERNAME]: API_AUTH_PASSWORD },
     }),
-  );
-
-  apiAdminRouter.post(
-    "/join-organization",
-    postForceJoinOrganizationController,
   );
 
   apiAdminRouter.post(
