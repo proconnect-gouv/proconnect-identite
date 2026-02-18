@@ -28,16 +28,18 @@ VALUES
   );
 
 INSERT INTO
-  organizations (id, siret, created_at, updated_at)
+  organizations (id, cached_libelle, siret, created_at, updated_at)
 VALUES
   (
     1,
+    'Commune de lamalou-les-bains',
     '21340126800130',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   ),
   (
     2,
+    'Commune de clamart',
     '21920023500014',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
