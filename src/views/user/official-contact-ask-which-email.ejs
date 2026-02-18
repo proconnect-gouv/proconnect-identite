@@ -2,22 +2,18 @@
     <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
     <div class="fr-mb-2w">
         <h1 class="fr-h3">
-            Confirmer l'adresse email de contact
+            Confirmer votre adresse email
         </h1>
         <div>
             <form id="verify-email" method="GET" action="/users/official-contact-email-verification/<%= organization_id %>" autocomplete="off">
-                <p>
-                    Un code secret va être envoyé à l'adresse email officielle.
-                </p>
-
+                <div class="fr-alert fr-alert--info fr-mb-3w fr-col-11">
+                    <h2 class="fr-alert__title fr-h3">Un code secret va être envoyé à l'adresse email officielle</h2>
+                </div>
                 <p>À quelle adresse e-mail souhaitez-vous recevoir le code ?</p>
 
                 <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
 
                 <fieldset class="fr-fieldset">
-                    <legend class="fr-fieldset__legend--regular fr-fieldset__legend">
-                        Sélectionnez une adresse email
-                    </legend>
                     <% contactEmails.forEach(function(email) { %>
                         <div class="fr-fieldset__element">
                             <div class="fr-radio-group">

@@ -19,9 +19,8 @@ describe("join organizations", () => {
     cy.title().should("include", "Vérifier votre email -");
     // Check that the website is waiting for the user to verify their email
     cy.contains(
-      "nous avons envoyé un code à l’adresse email officielle de votre établissement scolaire",
+      "Nous vérifions que vous avez accès à l’adresse email officielle de votre établissement scolaire : rogal.dorn@imperialfists.world",
     );
-    cy.get(".email-badge-lowercase").contains("rogal.dorn@imperialfists.world");
 
     cy.maildevGetMessageBySubject(
       "[ProConnect] Authentifier un email sur ProConnect",
@@ -43,7 +42,7 @@ describe("join organizations", () => {
 
     cy.get<string>("@code").then((code) => {
       cy.log(code);
-      cy.contains("Insérer le code reçu").click();
+      cy.contains("Insérer le code à 2 mots").click();
       cy.focused().clear().type(code);
       cy.contains("Valider").click();
     });
