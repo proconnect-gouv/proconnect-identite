@@ -65,19 +65,13 @@
   </div>
 </div>
 
-<div class="fr-tile fr-tile--horizontal fr-mb-2w fr-mt-2w">
-  <div class="fr-tile__body">
-      <h2 class="fr-tile__title">
-          <%= organization_label %>
-      </h2>
-      <% if (adresse) { %>
-          <p class="fr-tile__desc fr-pb-0"><%= adresse %></p>
-      <% } %>
-      <% if (siret) { %>
-          <p class="fr-tile__desc fr-pb-0"><b>SIRET : <%= siret %></b></p>
-      <% } %>
-  </div>
-</div>
+<%- include('../partials/organization-info-tile.ejs', {
+  label: organization_label,
+  adresse,
+  siret,
+  siege_social
+  tileClass: 'fr-mt-2w'
+}) %>
 <form
   action="/users/cancel-moderation-and-redirect-to-join-org/<%= moderation_id %>"
   method="post"
