@@ -17,6 +17,6 @@ describe("join collectivité territoriale with official contact domain", () => {
     cy.contains("Enregistrer").click();
 
     cy.title().should("include", "Compte créé - ProConnect");
-    cy.contains("Compte créé ! 🎊");
+    cy.contains("Compte créé 🎊");
   });
 });

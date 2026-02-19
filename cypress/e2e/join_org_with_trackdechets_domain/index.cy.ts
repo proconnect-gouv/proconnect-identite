@@ -13,7 +13,7 @@ describe("join organizations", () => {
     cy.contains("Bnp paribas").click();
 
     // Check redirection to welcome page
-    cy.contains("Compte créé ! 🎊");
+    cy.contains("Compte créé 🎊");
 
     cy.maildevGetMessageBySubject(
       "Votre compte ProConnect a bien été créé",
