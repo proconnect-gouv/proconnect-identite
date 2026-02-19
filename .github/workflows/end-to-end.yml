@@ -48,6 +48,7 @@ jobs:
           - signin_with_certification_dirigeant
           - signin_with_email_verification
           - signin_with_email_verification_renewal
+          - signin_with_legacy_acr
           - signin_with_legacy_scope
           - signin_with_magic_link
           - signin_with_right_acr
