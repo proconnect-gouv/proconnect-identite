@@ -2,41 +2,32 @@
     <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
     <div class="fr-mb-2w">
         <h1 class="fr-h3">
-            Vérifier votre adresse email
+            Confirmer votre adresse email
         </h1>
         <div>
             <form id="verify-email" action="/users/official-contact-email-verification/<%= organization_id %>" method="post" autocomplete="off">
-                <p>
-                    Pour vérifier votre appartenance à l’organisation <%= libelle %>,
-                    nous avons envoyé un <% if (newCodeSent) { %>nouveau <% } %> code à l’adresse email officielle de votre <%= organization_type_label; %> :
-                    <span class="fr-badge fr-badge--info fr-badge--no-icon email-badge-lowercase">
-                        <%= contactEmail; %>
-                    </span>.
-                </p>
+                <div class="fr-alert fr-alert--info fr-mb-2w">
+                    <h2 class="fr-alert__title fr-h3">Code secret envoyé à l'adresse email officielle</h2>
+                    <p>Nous vérifions que vous avez accès à l'adresse email officielle de cette mairie : <b><%= contactEmail %></b></p>
+                </div>
 
                 <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
 
 
-                <div class="fr-input-group">
+                <div class="fr-input-group fr-mb-2w">
                     <label class="fr-label" for="official_contact_email_verification_token">
-                        Insérer le code reçu
+                        Insérer le code à 8 lettres
                     </label>
                     <input class="fr-input" required
                            type="text" id="official_contact_email_verification_token"
                            name="official_contact_email_verification_token"
-                           autocomplete="off">
+                           autocomplete="off"
+                           placeholder="ours-banc">
                 </div>
                 <%- include('../partials/submit-button.ejs', {label: 'Valider'}) %>
-                <div class="fr-alert fr-alert--info fr-mt-2w">
-                    <p>
-                        Cette adresse email n’est plus à jour ?
-                    </p>
-                    <p>
-                        <a class="fr-link" href="https://lannuaire.service-public.fr/" target="_blank" rel="noopener noreferrer">
-                            Modifiez-la sur l’annuaire du service public.
-                        </a>
-                    </p>
-                </div>
+                <a class="fr-btn fr-btn--tertiary btn--fullwidth fr-mt-4w" href="https://lannuaire.service-public.fr/" target="_blank" rel="noopener noreferrer">
+                    L'adresse email officielle n'est pas à jour ?
+                </a>
             </form>
             <%- include('../partials/go-back.ejs') %>
         </div>
