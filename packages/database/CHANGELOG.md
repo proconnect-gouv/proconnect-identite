@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.3.0
+
+### Minor Changes
+
+- [#1784](https://github.com/proconnect-gouv/proconnect-identite/pull/1784) [`3fab3e6`](https://github.com/proconnect-gouv/proconnect-identite/commit/3fab3e63f5deb094f819a64d4770c9ee5e980f73) Thanks [@rdubigny](https://github.com/rdubigny)! - Add not null constraint on email domain verification type.
+
 ## 1.2.0
 
 ### Minor Changes
