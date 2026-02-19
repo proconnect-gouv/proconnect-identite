@@ -1,0 +1,13 @@
+<div class="fr-tile fr-tile--horizontal fr-mb-2w fr-p-2w <%= locals.tileClass || '' %>">
+  <div class="fr-tile__body">
+    <h2 class="fr-tile__title fr-mb-0 fr-text--lg"><%= label %></h2>
+    <% if (locals.adresse) { %><p class="fr-tile__desc fr-pb-0 fr-text--sm"><%= adresse %></p><% } %>
+    <% if (locals.siret) { %><p class="fr-tile__desc fr-pb-1v"><b>SIRET : <%= siret %></b></p><% } %>
+    <% if (locals.siege_social) { %>
+      <p class="fr-tile__desc fr-pb-0">
+        <span class="fr-badge fr-badge--no-icon <%= siege_social === 'Siège social' ? 'fr-badge--info' : 'fr-badge--new' %>"><%= siege_social %></span>
+      </p>
+    <% } %>
+
+  </div>
+</div>

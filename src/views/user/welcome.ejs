@@ -17,19 +17,14 @@
         <p class="fr-mb-2w"><b><%= user.email %></b></p>
 
         <% if (locals.organization) { %>
-            <div class="fr-tile fr-tile--horizontal fr-mb-2w">
-                <div class="fr-tile__body">
-                    <h2 class="fr-tile__title">
-                        <%= organization.libelle %>
-                    </h2>
-                    <% if (organization.adresse) { %>
-                        <p class="fr-tile__desc fr-pb-0"><%= organization.adresse %></p>
-                    <% } %>
-                    <% if (organization.siret) { %>
-                        <p class="fr-tile__desc fr-pb-0"><b>SIRET : <%= organization.siret %></b></p>
-                    <% } %>
-                </div>
-            </div>
+            <% if (locals.organization) { %>
+            <%- include('../partials/organization-info-tile.ejs', {
+                label: organization.libelle,
+                adresse: organization.adresse,
+                siret: organization.siret,
+                siege_social: organization.siege_social,
+            }) %>
+            <% } %>
         <% } %>
         <form action="/users/welcome" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
