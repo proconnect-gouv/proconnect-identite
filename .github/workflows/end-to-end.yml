@@ -55,6 +55,7 @@ jobs:
           - signin_with_totp_enrollment
           - signin_with_webauthn
           - signup_entreprise_unipersonnelle
+          - signup_from_standard_client
           - signup_with_certification_dirigeant
           - update_personal_information
           - use_extra_param_sp_name
