@@ -4,6 +4,7 @@ import {
   getUsersByOrganizationFactory,
 } from "@proconnect-gouv/proconnect.identite/repositories/organization";
 import {
+  EmailDomainApprovedVerificationTypes,
   ModerationTypeSchema,
   type Organization,
   type UserOrganizationLink,
@@ -57,19 +58,18 @@ export const findByVerifiedEmailDomain = async (email_domain: string) => {
     `
 SELECT o.*
 FROM organizations o
-FULL OUTER JOIN (
+INNER JOIN email_domains ed ON ed.organization_id = o.id
+LEFT JOIN (
   SELECT
     uo.organization_id as id, count(*) as member_count
   FROM users_organizations uo
   GROUP BY uo.organization_id
 ) org_with_count on org_with_count.id = o.id
 WHERE cached_est_active = 'true'
-  AND (
-    $1 = ANY (SELECT domain FROM email_domains WHERE organization_id = o.id AND verification_type = 'verified')
-      OR $1 = ANY (SELECT domain FROM email_domains WHERE organization_id = o.id AND verification_type = 'trackdechets_postal_mail')
-    )
+  AND ed.domain = $1
+  AND ed.verification_type = ANY($2)
 ORDER BY member_count desc NULLS LAST;`,
-    [email_domain],
+    [email_domain, EmailDomainApprovedVerificationTypes],
   );
 
   return rows;
