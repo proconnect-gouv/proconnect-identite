@@ -40,6 +40,9 @@ export const getWelcomeController = async (
         libelle: userOrganisation.cached_libelle,
         siret: userOrganisation.siret,
         adresse: userOrganisation.cached_adresse,
+        siege_social: userOrganisation.cached_siege_social
+          ? "Siège social"
+          : "Établissement secondaire",
       };
     }
 
@@ -100,6 +103,9 @@ export const getWelcomeDirigeantController = async (
         libelle: userOrganisations.cached_libelle,
         adresse: userOrganisations.cached_adresse,
         siret: userOrganisations.siret,
+        siege_social: userOrganisations.cached_siege_social
+          ? "Siège social"
+          : "Établissement secondaire",
       },
       user: {
         email: user.email,
