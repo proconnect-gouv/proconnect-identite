@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.testing",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/testing#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -26,7 +26,7 @@
   "dependencies": {
     "@hono/node-server": "^1.19.7",
     "@hono/zod-validator": "^0.7.2",
-    "@proconnect-gouv/proconnect.api_entreprise": "1.1.0",
+    "@proconnect-gouv/proconnect.api_entreprise": "1.1.1",
     "hono": "^4.11.7"
   },
   "devDependencies": {

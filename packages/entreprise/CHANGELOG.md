@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.entreprise
 
+## 1.1.1
+
+### Patch Changes
+
+- [#1783](https://github.com/proconnect-gouv/proconnect-identite/pull/1783) [`d8c7658`](https://github.com/proconnect-gouv/proconnect-identite/commit/d8c7658ecc922888a4fc4772ca2b36f883034a07) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - 🐛 Correctif des chemins d'export du package
+
 ## 1.1.0
 
 ### Minor Changes
