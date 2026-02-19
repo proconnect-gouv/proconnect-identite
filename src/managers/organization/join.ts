@@ -94,6 +94,7 @@ export const doSuggestOrganizations = async ({
   });
   return suggestedOrganizations.length > 0;
 };
+
 export const getOrganizationSuggestions = async ({
   user_id,
   email,
@@ -104,6 +105,7 @@ export const getOrganizationSuggestions = async ({
   if (usesAFreeEmailProvider(email)) {
     return [];
   }
+
   const userOrganizations = await findByUserId(user_id);
   if (!isEmpty(userOrganizations)) {
     return [];
@@ -128,11 +130,7 @@ export const getOrganizationSuggestions = async ({
     return [];
   }
 
-  const userOrganizationsIds = userOrganizations.map(({ id }) => id);
-
-  return organizationsSuggestions.filter(
-    ({ id }) => !userOrganizationsIds.includes(id),
-  );
+  return organizationsSuggestions;
 };
 
 export const upsertOrganization = async (siret: string) => {
