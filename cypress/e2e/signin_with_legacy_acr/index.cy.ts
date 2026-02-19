@@ -9,7 +9,7 @@ describe("sign-in with a client requiring legacy acr : eidas1", () => {
     }));
   });
 
-  it("should sign-in an return the right acr value", function () {
+  it("should return eidas1 for a user without 2FA and unverified domain", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial1-aal1@yopmail.com");
@@ -17,7 +17,7 @@ describe("sign-in with a client requiring legacy acr : eidas1", () => {
     cy.contains('"acr": "eidas1"');
   });
 
-  it("should sign-in an return the right acr value", function () {
+  it("should return eidas1 for a user without 2FA and verified domain", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial2-aal1@yopmail.com");
@@ -25,7 +25,7 @@ describe("sign-in with a client requiring legacy acr : eidas1", () => {
     cy.contains('"acr": "eidas1"');
   });
 
-  it("should sign-in an return the right acr value", function () {
+  it("should return eidas1 for a user with 2FA and unverified domain", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial1-aal2@yopmail.com");
@@ -33,7 +33,7 @@ describe("sign-in with a client requiring legacy acr : eidas1", () => {
     cy.contains('"acr": "eidas1"');
   });
 
-  it("should sign-in an return the right acr value", function () {
+  it("should return eidas1 for a user with 2FA and verified domain", function () {
     cy.get("button#custom-connection").click({ force: true });
 
     cy.login("ial2-aal2@yopmail.com");
