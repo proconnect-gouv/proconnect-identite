@@ -10,14 +10,30 @@
 
             <p aria-hidden="true" class="fr-hint-text">Les champs notés * sont obligatoires.</p>
 
+            <% if (locals.hasFranceConnectIdentity) { %>
+            <div class="fr-select-group">
+                <label class="fr-label" for="given_name">
+                    Prénom<span aria-hidden="true"> *</span>
+                    <span class="fr-hint-text">
+                        À choisir parmi la liste de vos prénoms issus de <b>FranceConnect</b>
+                    </span>
+                </label>
+                <select class="fr-select" aria-describedby="given_name-messages" id="given_name" name="given_name">
+                    <option value="" selected disabled hidden>Sélectionner une option</option>
+                    <% locals.givenNameOptions.forEach((option) => { %>
+                        <option
+                            value="<%= option; %>"
+                            <% if (locals.given_name === option) { %>selected<% } %>
+                        >
+                            <%= option; %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            <% } else { %>
             <div class="fr-input-group">
                 <label class="fr-label" for="given_name">
                     Prénom<span aria-hidden="true"> *</span>
-                    <% if (verifiedBy) { %>
-                      <span class="fr-hint-text">
-                        Issue de votre vérification par <b><%= verifiedBy; %></b>
-                      </span>
-                    <% } %>
                 </label>
                 <input
                         class="fr-input" required type="text" name="given_name"
@@ -26,18 +42,34 @@
                         id="given_name"
                         autocomplete="given-name"
                 <% if (given_name) { %> value="<%= given_name; %>" <% } %>
-                <% if (verifiedBy) { %> readonly="readonly" <% } %>
                 >
             </div>
+            <% } %>
 
+            <% if (locals.hasFranceConnectIdentity) { %>
+            <div class="fr-select-group">
+                <label class="fr-label" for="family_name">
+                    Nom<span aria-hidden="true"> *</span>
+                    <span class="fr-hint-text">
+                    À choisir entre votre nom d’usage et votre nom de famille issus de <b>FranceConnect</b>
+                </span>
+                </label>
+                <select class="fr-select" aria-describedby="family_name-messages" id="family_name" name="family_name">
+                    <option value="" selected disabled hidden>Sélectionner une option</option>
+                    <% locals.familyNameOptions.forEach((option) => { %>
+                        <option
+                                value="<%= option; %>"
+                                <% if (locals.family_name === option) { %>selected<% } %>
+                        >
+                            <%= option; %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            <% } else { %>
             <div class="fr-input-group">
                 <label class="fr-label" for="family_name">
                     Nom<span aria-hidden="true"> *</span>
-                    <% if (verifiedBy) { %>
-                      <span class="fr-hint-text">
-                        Issue de votre vérification par <b><%= verifiedBy; %></b>
-                      </span>
-                    <% } %>
                 </label>
                 <input
                         class="fr-input" required type="text" name="family_name"
@@ -46,9 +78,9 @@
                         autocomplete="family-name"
                         id="family_name"
                 <% if (family_name) { %> value="<%= family_name; %>" <% } %>
-                <% if (verifiedBy) { %> readonly="readonly" <% } %>
                 >
             </div>
+            <% } %>
 
             <div class="fr-input-group">
                 <label class="fr-label" for="phone_number">

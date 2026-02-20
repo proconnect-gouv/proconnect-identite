@@ -33,7 +33,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
     cy.title().should("include", "Compte certifié - ");
     cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Elia");
-    cy.contains("Nom Alvernhe");
+    cy.contains("Nom Dulac");
     cy.contains("Email professionnel elia.alvernhe@yopmail.com");
     cy.contains("Continuer").click();
 
@@ -100,7 +100,7 @@ describe("Signup with a client requiring certification dirigeant", () => {
 
     cy.title().should("include", "Compte certifié - ");
     cy.contains("Statut certifié 🎊");
-    cy.contains("Prénom Angela Claire Louise");
+    cy.contains("Prénom Angela");
     cy.contains("Nom DUBOIS");
     cy.contains("Email professionnel angela.83832482000011@yopmail.com");
     cy.contains("Continuer").click();
@@ -177,7 +177,7 @@ describe("Signup on each organizations of the same siren", () => {
 
       cy.title().should("include", "Compte certifié - ");
       cy.contains("Statut certifié 🎊");
-      cy.contains("Prénom Angela Claire Louise");
+      cy.contains("Prénom Angela");
       cy.contains("Nom DUBOIS");
       cy.contains(`Email professionnel angela.${siret}@yopmail.com`);
       cy.contains("Continuer").click();

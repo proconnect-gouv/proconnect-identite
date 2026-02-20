@@ -25,11 +25,9 @@ describe("Connect FranceConnect account", () => {
     cy.contains("Nous avons bien récupéré vos données via FranceConnect.");
 
     cy.seeInField("Prénom", "Jean");
-    cy.seeInField("Nom", "De La Rose");
+    cy.seeInField("Nom", "Dulac");
 
-    cy.getByLabel("Se déconnecter - Jean De La Rose")
-      .filter(":visible")
-      .click();
+    cy.getByLabel("Se déconnecter - Jean Dulac").filter(":visible").click();
 
     cy.title().should("include", "S'inscrire ou se connecter -");
     cy.contains("Information : vous êtes maintenant déconnecté.");

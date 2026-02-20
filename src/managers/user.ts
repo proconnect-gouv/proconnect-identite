@@ -26,8 +26,7 @@ import {
   type FranceConnectUserInfoResponse,
   type User,
 } from "@proconnect-gouv/proconnect.identite/types";
-import { to } from "await-to-js";
-import { isEmpty } from "lodash-es";
+import { chain, isEmpty, uniq } from "lodash-es";
 import { AssertionError } from "node:assert";
 import {
   FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
@@ -584,25 +583,6 @@ export const updatePersonalInformationsForRegistration = async (
   });
 };
 
-export const updatePersonalInformationsForDashboard = async (
-  userId: number,
-  {
-    given_name,
-    family_name,
-    phone_number,
-    job,
-  }: Pick<User, "given_name" | "family_name" | "phone_number" | "job">,
-): Promise<User> => {
-  const isUserVerified = await getFranceConnectUserInfo(userId);
-  const names = isUserVerified ? {} : { given_name, family_name };
-
-  return update(userId, {
-    ...names,
-    phone_number,
-    job,
-  });
-};
-
 export async function hasValidFranceConnectIdentity(userId: number) {
   const userFranceConnect = await getFranceConnectUserInfo(userId);
 
@@ -628,8 +608,13 @@ export async function updateFranceConnectUserInfo(
   userId: number,
   userInfo: FranceConnectUserInfoResponse,
 ) {
-  const { family_name, given_name } = userInfo;
-  const user = await update(userId, { family_name, given_name });
+  const { family_name, preferred_username, given_name } = userInfo;
+  const newFamilyName = preferred_username || family_name;
+  const newGivenName = given_name.split(" ")[0];
+  const user = await update(userId, {
+    family_name: newFamilyName,
+    given_name: newGivenName,
+  });
   await upsetFranceconnectUserinfo({
     ...userInfo,
     user_id: userId,
@@ -637,13 +622,35 @@ export async function updateFranceConnectUserInfo(
   return user;
 }
 
-export async function getUserVerificationLabel(userId: number) {
-  const [, franceconnectUserinfo] = await to(getFranceConnectUserInfo(userId));
+export async function getGivenNameOptionsFromFranceConnectIdentity(
+  userId: number,
+): Promise<string[]> {
+  const franceconnectUserinfo = await getFranceConnectUserInfo(userId);
 
-  if (franceconnectUserinfo) {
-    undefined;
-    return "FranceConnect";
+  if (!franceconnectUserinfo) {
+    return [];
   }
 
-  return undefined;
+  return uniq([
+    franceconnectUserinfo.given_name,
+    ...franceconnectUserinfo.given_name.split(" "),
+  ]);
+}
+
+export async function getFamilyNameOptionsFromFranceConnectIdentity(
+  userId: number,
+): Promise<string[]> {
+  const franceconnectUserinfo = await getFranceConnectUserInfo(userId);
+
+  if (!franceconnectUserinfo) {
+    return [];
+  }
+
+  return chain([
+    franceconnectUserinfo.family_name,
+    franceconnectUserinfo.preferred_username,
+  ])
+    .compact()
+    .uniq()
+    .value();
 }

@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import moment from "moment/moment";
 import z, { ZodError } from "zod";
-import notificationMessages from "../config/notification-messages";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
 import {
@@ -10,13 +9,15 @@ import {
 } from "../managers/session/authenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import {
-  getUserVerificationLabel,
+  getFamilyNameOptionsFromFranceConnectIdentity,
+  getGivenNameOptionsFromFranceConnectIdentity,
+  hasFranceConnectIdentity,
   hasValidFranceConnectIdentity,
   sendUpdatePersonalInformationEmail,
-  updatePersonalInformationsForDashboard,
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { update } from "../repositories/user";
 import {
   jobSchema,
   nameSchema,
@@ -42,7 +43,11 @@ export const getPersonalInformationsController = async (
 ) => {
   try {
     const user = getUserFromAuthenticatedSession(req);
-    const verifiedBy = await getUserVerificationLabel(user.id);
+    const givenNameOptions = await getGivenNameOptionsFromFranceConnectIdentity(
+      user.id,
+    );
+    const familyNameOptions =
+      await getFamilyNameOptionsFromFranceConnectIdentity(user.id);
 
     return res.render("personal-information", {
       csrfToken: csrfToken(req),
@@ -53,7 +58,9 @@ export const getPersonalInformationsController = async (
       notifications: await getNotificationsFromRequest(req),
       pageTitle: "Informations personnelles",
       phone_number: user.phone_number,
-      verifiedBy,
+      hasFranceConnectIdentity: await hasFranceConnectIdentity(user.id),
+      givenNameOptions,
+      familyNameOptions,
     });
   } catch (error) {
     next(error);
@@ -66,20 +73,38 @@ export const postPersonalInformationsController = async (
   next: NextFunction,
 ) => {
   try {
-    const schema = z.object({
-      given_name: nameSchema(),
-      family_name: nameSchema(),
-      phone_number: phoneNumberSchema(),
-      job: jobSchema(),
-    });
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const hasFCIdentity = await hasFranceConnectIdentity(userId);
+
+    let givenNameOptions: string[] = [];
+    let familyNameOptions: string[] = [];
+    let schema;
+
+    if (hasFCIdentity) {
+      givenNameOptions =
+        await getGivenNameOptionsFromFranceConnectIdentity(userId);
+      familyNameOptions =
+        await getFamilyNameOptionsFromFranceConnectIdentity(userId);
+
+      schema = z.object({
+        given_name: z.enum(givenNameOptions),
+        family_name: z.enum(familyNameOptions),
+        phone_number: phoneNumberSchema(),
+        job: jobSchema(),
+      });
+    } else {
+      schema = z.object({
+        given_name: nameSchema(),
+        family_name: nameSchema(),
+        phone_number: phoneNumberSchema(),
+        job: jobSchema(),
+      });
+    }
 
     const { given_name, family_name, phone_number, job } =
       await schema.parseAsync(req.body);
 
-    const { id: userId } = getUserFromAuthenticatedSession(req);
-    const verifiedBy = await getUserVerificationLabel(userId);
-
-    const updatedUser = await updatePersonalInformationsForDashboard(userId, {
+    const updatedUser = await update(userId, {
       given_name,
       family_name,
       phone_number,
@@ -93,19 +118,9 @@ export const postPersonalInformationsController = async (
 
     updateUserInAuthenticatedSession(req, updatedUser);
 
-    return res.render("personal-information", {
-      csrfToken: csrfToken(req),
-      email: updatedUser.email,
-      family_name: updatedUser.family_name,
-      given_name: updatedUser.given_name,
-      job: updatedUser.job,
-      notifications: [
-        notificationMessages["personal_information_update_success"],
-      ],
-      pageTitle: "Informations personnelles",
-      phone_number: updatedUser.phone_number,
-      verifiedBy,
-    });
+    return res.redirect(
+      `/personal-information?notification=personal_information_update_success`,
+    );
   } catch (error) {
     if (error instanceof ZodError) {
       return res.redirect(
