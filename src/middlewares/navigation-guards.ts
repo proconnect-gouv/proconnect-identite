@@ -46,10 +46,8 @@ import {
   getPartialUserFromUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
 import {
-  hasFranceConnectIdentity,
   hasValidFranceConnectIdentity,
   needsEmailVerificationRenewal,
-  needsFranceConnectIdentityRenewal,
 } from "../managers/user";
 import { getUserOrganizationLink } from "../repositories/organization/getters";
 import {
@@ -553,18 +551,35 @@ const userHasValidFranceConnectIdentityGuard = async <
   const {
     data: { req },
     pass,
-    redirect,
   } = context;
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const franceconnectUserInfo = await getFranceConnectUserInfo(user_id);
+  if (!franceconnectUserInfo)
+    return pass("user_has_no_franceconnect_user_info").redirect(
+      "/users/franceconnect",
+    );
+
+  if (!hasValidFranceConnectIdentity(franceconnectUserInfo))
+    return pass("user_needs_renewal_franceconnect_info").redirect(
+      "/users/franceconnect",
+    );
+
+  return pass("user_has_valid_franceconnect_user_info").extends({
+    franceconnectUserInfo,
+  });
+};
+
+const linkTypeRequiresFranceConnectionGuard = async <
+  TContext extends RequestContext,
+>(
+  prev: Pass<TContext>,
+) => {
+  const {
+    data: { req },
+    pass,
+  } = prev;
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-  if (
-    (await hasFranceConnectIdentity(user_id)) &&
-    (await needsFranceConnectIdentityRenewal(user_id))
-  ) {
-    return redirect("/users/franceconnect");
-  }
-
   const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
   const { verification_type: linkType } = (await getUserOrganizationLink(
     selectedOrganizationId,
@@ -577,14 +592,10 @@ const userHasValidFranceConnectIdentityGuard = async <
   const linkTypeRequiresFranceConnection =
     linkTypeIsUnverified || linkType === LinkTypes.enum.organization_dirigeant;
 
-  if (
-    linkTypeRequiresFranceConnection &&
-    !(await hasValidFranceConnectIdentity(user_id))
-  ) {
-    return redirect("/users/franceconnect");
-  }
+  if (!linkTypeRequiresFranceConnection)
+    return pass("link_type_does_not_require_france_connection");
 
-  return pass("user_has_valid_franceconnect_identity");
+  return userHasValidFranceConnectIdentityGuard(prev);
 };
 
 const userHasPersonalInformationsGuard = async <
@@ -607,14 +618,16 @@ const userHasPersonalInformationsGuard = async <
 };
 
 const userIsCertifiedAsDirigeantGuard = async <
-  TContext extends RequestContext & { selectedOrganizationId: number },
+  TContext extends RequestContext & {
+    selectedOrganizationId: number;
+  },
 >(
-  context: Pass<TContext>,
+  prev: Pass<TContext>,
 ) => {
   const {
     data: { req, selectedOrganizationId: organizationId },
     pass,
-  } = context;
+  } = prev;
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
   const { verification_type: linkType, verified_at: linkVerifiedAt } =
@@ -624,12 +637,22 @@ const userIsCertifiedAsDirigeantGuard = async <
     req.session.certificationDirigeantRequested &&
     linkType !== LinkTypes.enum.organization_dirigeant
   ) {
+    const context = await userHasValidFranceConnectIdentityGuard(prev);
+    if (!Pass.is_passing(context)) return context;
+
     req.session.pendingCertificationDirigeantOrganizationId = organizationId;
     return processCertificationDirigeantGuard(context);
   }
 
   if (linkType === LinkTypes.enum.organization_dirigeant) {
-    const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
+    const context = await userHasValidFranceConnectIdentityGuard(prev);
+    if (!Pass.is_passing(context)) return context;
+
+    const {
+      data: { franceconnectUserInfo },
+      pass,
+    } = context;
+
     const expiredCertification = isExpired(
       linkVerifiedAt,
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
@@ -642,9 +665,11 @@ const userIsCertifiedAsDirigeantGuard = async <
       req.session.pendingCertificationDirigeantOrganizationId = organizationId;
       return processCertificationDirigeantGuard(context);
     }
+
+    return pass("user_is_certified_as_dirigeant");
   }
 
-  return pass("user_is_certified_as_dirigeant");
+  return pass("no_certification_as_dirigeant_needed");
 };
 
 const userHasNoPendingOfficialContactEmailVerificationGuard = async (
@@ -795,7 +820,7 @@ const connectToSp = async (
   context = await userHasSelectedAnOrganizationGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context = await userHasValidFranceConnectIdentityGuard(context);
+  context = await linkTypeRequiresFranceConnectionGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   context = await userIsCertifiedAsDirigeantGuard(context);
@@ -843,21 +868,20 @@ const processPendingModerationGuard = async (prev: Pass<RequestContext>) => {
 const processCertificationDirigeantGuard = async (
   prev: Pass<RequestContext>,
 ) => {
-  const {
-    data: { req },
-    pass,
-    redirect,
-  } = prev;
-
+  const req = prev.data.req;
   const organizationId =
     req.session.pendingCertificationDirigeantOrganizationId!;
 
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
-  if (!(await hasValidFranceConnectIdentity(user_id))) {
-    return redirect("/users/franceconnect");
-  }
+  const context = await userHasValidFranceConnectIdentityGuard(prev);
+  if (!Pass.is_passing(context)) return context;
 
-  const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
+  const {
+    data: { franceconnectUserInfo },
+    pass,
+    redirect,
+  } = context;
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+
   const organization = (await getOrganizationById(organizationId))!;
 
   try {
