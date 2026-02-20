@@ -1,7 +1,5 @@
 describe("Signup into new entreprise unipersonnelle", () => {
-  before("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("Should send email when user updates personal information", function () {
     cy.visit("/personal-information");
@@ -46,30 +44,47 @@ describe("Signup into new entreprise unipersonnelle", () => {
     });
   });
 
-  it("should no allow verified user to update given and family name", () => {
+  it("should allow user to select his names from authorized lists", () => {
     cy.visit("/personal-information");
 
-    cy.login("god-emperor@mankind.world");
+    cy.login("user@yopmail.com");
 
-    ["given_name", "family_name"].forEach((inputName) => {
-      cy.get(`input[name="${inputName}"]`).should(
-        "have.attr",
-        "readonly",
-        "readonly",
-      );
-    });
+    cy.seeInField("Prénom", "Prénom1");
+    cy.seeInField("Nom", "NOM DE NAISSANCE");
+    cy.seeInField("Profession ou rôle au sein de votre organisation", "User");
 
-    cy.contains("Issue de votre vérification par FranceConnect");
+    cy.contains("Prénom *").click();
+    cy.focused().select("Prénom2");
+
+    cy.contains("Nom *").click();
+    cy.focused().select("NOM D'USAGE");
+
     cy.contains("Profession").click();
-    cy.focused().clear().type("Guide GPS Warp");
+    cy.focused().clear().type("Simple lad");
 
-    cy.get('[type="submit"]').contains("Mettre à jour").click();
+    cy.contains("Mettre à jour").click();
 
     cy.contains("Vos informations ont été mises à jour.");
+    cy.seeInField("Prénom", "Prénom2");
+    cy.seeInField("Nom", "NOM D'USAGE");
     cy.seeInField(
       "Profession ou rôle au sein de votre organisation",
-      "Guide GPS Warp",
+      "Simple lad",
     );
+
+    cy.contains("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "🎭 FranceConnect 🎭");
+    cy.contains("Je suis Elia Alvernhe").click();
+
+    cy.seeInField("Prénom", "Elia");
+    cy.seeInField("Nom", "Dulac");
+
+    cy.contains("Nom *").click();
+    cy.focused().select("Dulac");
+
+    cy.contains("Mettre à jour").click();
+    cy.seeInField("Nom", "Dulac");
   });
 
   it("should see an empty organization page", () => {

@@ -1,14 +1,13 @@
+import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import {
-  getUserVerificationLabel,
-  updatePersonalInformationsForRegistration,
-} from "../../managers/user";
+import { hasFranceConnectIdentity } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
+import { update } from "../../repositories/user";
 import { jobSchema, nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 
@@ -26,7 +25,7 @@ export const getPersonalInformationsController = async (
       needs_inclusionconnect_onboarding_help,
       phone_number,
     } = getUserFromAuthenticatedSession(req);
-    const verifiedBy = await getUserVerificationLabel(userId);
+
     return res.render("user/personal-information", {
       csrfToken: csrfToken(req),
       family_name,
@@ -36,7 +35,7 @@ export const getPersonalInformationsController = async (
       notifications: await getNotificationsFromRequest(req),
       pageTitle: "Renseigner votre identité",
       phone_number,
-      verifiedBy,
+      hasFranceConnectIdentity: await hasFranceConnectIdentity(userId),
     });
   } catch (error) {
     next(error);
@@ -49,22 +48,38 @@ export const postPersonalInformationsController = async (
   next: NextFunction,
 ) => {
   try {
-    const schema = z.object({
-      given_name: nameSchema(),
-      family_name: nameSchema(),
-      job: jobSchema(),
-    });
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const hasFCIdentity = await hasFranceConnectIdentity(userId);
 
-    const { given_name, family_name, job } = await schema.parseAsync(req.body);
+    let updatedUser: User;
 
-    const updatedUser = await updatePersonalInformationsForRegistration(
-      getUserFromAuthenticatedSession(req).id,
-      {
+    if (hasFCIdentity) {
+      const schema = z.object({
+        job: jobSchema(),
+      });
+
+      const { job } = await schema.parseAsync(req.body);
+
+      updatedUser = await update(userId, {
+        job,
+      });
+    } else {
+      const schema = z.object({
+        given_name: nameSchema(),
+        family_name: nameSchema(),
+        job: jobSchema(),
+      });
+
+      const { given_name, family_name, job } = await schema.parseAsync(
+        req.body,
+      );
+
+      updatedUser = await update(userId, {
         given_name,
         family_name,
         job,
-      },
-    );
+      });
+    }
 
     updateUserInAuthenticatedSession(req, updatedUser);
     next();

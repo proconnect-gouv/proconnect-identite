@@ -85,7 +85,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.title().should("include", "Compte certifié -");
     cy.contains("Statut certifié 🎊");
     cy.contains("Prénom Douglas");
-    cy.contains("Nom Duteil");
+    cy.contains("Nom Dulac");
     cy.contains(
       "Email professionnel outdated-franceconnected+douglasduteil@mail.com",
     );

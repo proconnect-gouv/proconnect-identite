@@ -19,9 +19,9 @@
                 <label class="fr-label" for="given_name">
                     Prénom<span aria-hidden="true">*</span>
                     <span class="fr-sr-only">obligatoire</span>
-                    <% if (verifiedBy) { %>
+                    <% if (locals.hasFranceConnectIdentity) { %>
                       <span class="fr-hint-text">
-                        Issue de votre vérification par <b><%= verifiedBy; %></b>
+                        Issu de votre vérification par <b>FranceConnect</b>
                       </span>
                     <% } %>
                 </label>
@@ -32,16 +32,16 @@
                         id="given_name"
                         autocomplete="given-name"
                 <% if (given_name) { %>value="<%= given_name; %>"<% } %>
-                <% if (verifiedBy) { %> readonly="readonly" <% } %>
+                <% if (locals.hasFranceConnectIdentity) { %> readonly="readonly" <% } %>
                 >
             </div>
 
             <div class="fr-input-group fr-mb-2w">
                 <label class="fr-label" for="family_name">
                     Nom<span aria-hidden="true">*</span>
-                    <% if (verifiedBy) { %>
+                    <% if (locals.hasFranceConnectIdentity) { %>
                       <span class="fr-hint-text">
-                        Issue de votre vérification par <b><%= verifiedBy; %></b>
+                        Issu de votre vérification par <b>FranceConnect</b>
                       </span>
                     <% } %>
                 </label>
@@ -52,7 +52,7 @@
                         id="family_name"
                         autocomplete="family-name"
                 <% if (family_name) { %>value="<%= family_name; %>"<% } %>
-                <% if (verifiedBy) { %> readonly="readonly" <% } %>
+                <% if (locals.hasFranceConnectIdentity) { %> readonly="readonly" <% } %>
                 >
             </div>
 
@@ -64,8 +64,8 @@
                     </span>
                 </label>
                 <input
-                    class="fr-input" 
-                    type="text" 
+                    class="fr-input"
+                    type="text"
                     name="job"
                     id="job"
                     autocomplete="organization-title"
