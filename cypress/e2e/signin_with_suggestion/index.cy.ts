@@ -3,6 +3,38 @@
 describe("sign-in with suggestion", () => {
   before(cy.seed);
 
+  it("join suggested organisation", function () {
+    cy.visit("/users/join-organization");
+
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("user@example.com");
+
+    // This suggestion appears because the organization represents more than 20% of users with example.com email addresses
+    cy.contains("Commune de clamart - Mairie");
+    cy.getByLabel(
+      "Sélectionner l'organisation Commune de clamart - Mairie",
+    ).click();
+
+    cy.title().should("equal", "Vérifier votre email - ProConnect");
+    cy.contains("Vérifier votre adresse email");
+  });
+
+  it("join suggested organisation", function () {
+    cy.visit("/users/join-organization");
+
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("user@example.org");
+
+    // These suggestions appear because there are only 2 organizations with example.fr email addresses
+    cy.contains("Commune de clamart - Mairie");
+    cy.getByLabel(
+      "Sélectionner l'organisation Commune de clamart - Mairie",
+    ).click();
+
+    cy.title().should("equal", "Vérifier votre email - ProConnect");
+    cy.contains("Vérifier votre adresse email");
+  });
+
   it("should sign-up and be suggested the Ministere des armees organization", function () {
     // Visit the signup page
     cy.visit("/users/start-sign-in");
@@ -158,7 +190,7 @@ describe("sign-in with suggestion", () => {
 describe("sign-in with suggestion and certification", () => {
   before(cy.seed);
 
-  it("sould sign-in with and suggest a certification dirigeant on EMMAUS SOLIDARITE", function () {
+  it("should sign-in with and suggest a certification dirigeant on EMMAUS SOLIDARITE", function () {
     cy.visit("http://localhost:4000");
 
     cy.title().should("equal", "standard-client - ProConnect");

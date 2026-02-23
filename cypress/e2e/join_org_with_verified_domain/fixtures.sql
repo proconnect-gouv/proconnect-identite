@@ -84,7 +84,7 @@ INSERT INTO
 VALUES
   (
     1,
-    'COMMUNE DE CLAMART - Mairie',
+    'Commune de clamart - Mairie',
     '21920023500014',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -98,7 +98,7 @@ VALUES
   ),
   (
     3,
-    'CLAMART',
+    'Clamart',
     '45334017600024',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -118,12 +118,6 @@ VALUES
     'verified',
     CURRENT_TIMESTAMP
   ),
-  (
-    2,
-    'darkangels.world',
-    'verified',
-    CURRENT_TIMESTAMP
-  ),
   (3, 'randomain.fr', 'verified', CURRENT_TIMESTAMP),
   (
     2,
@@ -131,17 +125,3 @@ VALUES
     'refused',
     CURRENT_TIMESTAMP
   );
-
-INSERT INTO
-  users_organizations (
-    user_id,
-    organization_id,
-    is_external,
-    verification_type,
-    has_been_greeted
-  )
-VALUES
-  (2, 1, false, 'domain', true),
-  (3, 1, false, 'domain', true),
-  (4, 1, false, 'domain', true),
-  (5, 1, false, 'domain', true);
