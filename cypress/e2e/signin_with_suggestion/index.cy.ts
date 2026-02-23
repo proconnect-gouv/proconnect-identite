@@ -1,35 +1,46 @@
 //
 
 describe("sign-in with suggestion", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should sign-up and be suggested the Ministere des armees organization", function () {
     // Visit the signup page
     cy.visit("/users/start-sign-in");
 
-    cy.get('[name="login"]').type("user@intradef.gouv.fr");
-    cy.get('[type="submit"]').click();
+    cy.title().should("equal", "S'inscrire ou se connecter - ProConnect");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("user@intradef.gouv.fr");
+    cy.contains("Continuer").click();
 
-    cy.get('[name="password"]').type(
-      "This super secret password is hidden well!",
-    );
-    cy.get('[action="/users/sign-up"]  [type="submit"]').click();
+    cy.title().should("equal", "Choisir un mot de passe - ProConnect");
+    cy.contains("Mot de passe").click();
+    cy.focused().type("This super secret password is hidden well!");
+    cy.contains("Continuer").click();
 
-    // Check that the website is waiting for the user to verify their email
-    cy.get("#verify-email > div > p").contains("user@intradef.gouv.fr");
+    cy.title().should("equal", "Vérifier votre email - ProConnect");
+    cy.contains("Vérifiez les emails reçus par user@intradef.gouv.fr.");
 
     cy.verifyEmail();
 
-    // Fill the user's personal information
-    cy.get('[name="given_name"]').type("Loïs");
-    cy.get('[name="family_name"]').type("Lane");
-    cy.get('[type="submit"]').click();
+    cy.title().should("equal", "Accueil - ProConnect");
+    cy.contains("Organisations").click();
+    cy.contains("Rejoindre une organisation").click();
 
     // Check that the ministere des armees is suggested
-    cy.url().should("include", "users/organization-suggestions");
-    cy.get("#submit-join-organization-1").contains("Ministere des armees");
+    cy.title().should(
+      "equal",
+      "Votre organisation de rattachement - ProConnect",
+    );
+    cy.contains("Ministere des armees").click();
+
+    cy.title().should("equal", "Renseigner votre identité - ProConnect");
+    cy.contains("Prénom").click();
+    cy.focused().clear().type("Loïs");
+    cy.contains("Nom").click();
+    cy.focused().clear().type("Lane");
+    cy.contains("Continuer").click();
+
+    cy.title().should("equal", "Rattachement en cours - ProConnect");
   });
 
   it("should sign-up with siret_hint and be suggested corresponding organization", function () {
@@ -40,20 +51,33 @@ describe("sign-in with suggestion", () => {
     }));
     cy.contains("Connexion personnalisée").click({ force: true });
 
-    cy.get('[name="password"]').type(
-      "This super secret password is hidden well!",
-    );
-    cy.get('[action="/users/sign-up"]  [type="submit"]').click();
+    cy.title().should("equal", "Choisir un mot de passe - ProConnect");
+    cy.contains("Mot de passe").click();
+    cy.focused().type("This super secret password is hidden well!");
+    cy.contains("Continuer").click();
 
     cy.verifyEmail();
 
-    // Fill the user's personal information
-    cy.get('[name="given_name"]').type("Loïs");
-    cy.get('[name="family_name"]').type("Lane");
-    cy.get('[type="submit"]').click();
+    cy.title().should("equal", "Rejoindre une organisation - ProConnect");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().should("have.value", "21340126800130");
+    cy.contains("Commune de lamalou-les-bains - Mairie").click();
 
-    cy.url().should("include", "users/join-organization");
-    cy.get('input[name="siret"]').should("have.value", "21340126800130");
+    cy.title().should("equal", "Renseigner votre identité - ProConnect");
+    cy.contains("Prénom").click();
+    cy.focused().clear().type("Loïs");
+    cy.contains("Nom").click();
+    cy.focused().clear().type("Lane");
+    cy.contains("Continuer").click();
+
+    cy.title().should("equal", "Compte créé - ProConnect");
+    cy.contains("Continuer").click();
+
+    cy.title().should("equal", "proconnect-federation-client - ProConnect");
+    cy.contains('"usual_name": "Lane"');
+    cy.contains('"given_name": "Loïs"');
+    cy.contains('"email": "unused1@yopmail.com"');
+    cy.contains('"siret": "21340126800130"');
   });
 
   it("should sign-in with siret_hint and be suggested corresponding organization if not already present", function () {
@@ -67,8 +91,9 @@ describe("sign-in with suggestion", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.url().should("include", "users/join-organization");
-    cy.get('input[name="siret"]').should("have.value", "21340126800130");
+    cy.title().should("equal", "Rejoindre une organisation - ProConnect");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().should("have.value", "21340126800130");
   });
 
   it("should sign-in with siret_hint with multiple organizations and be suggested corresponding organization if not already present", function () {
@@ -82,8 +107,9 @@ describe("sign-in with suggestion", () => {
 
     cy.login("rogal.dorn@imperialfists.world");
 
-    cy.url().should("include", "users/join-organization");
-    cy.get('input[name="siret"]').should("have.value", "66204244933106");
+    cy.title().should("equal", "Rejoindre une organisation - ProConnect");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().should("have.value", "66204244933106");
   });
 
   it("should sign-in with siret_hint and select corresponding organization if already present", function () {
@@ -97,7 +123,7 @@ describe("sign-in with suggestion", () => {
 
     cy.login("konrad.curze@nightlords.world");
 
-    cy.url().should("include", "http://localhost:4001/");
+    cy.title().should("equal", "proconnect-federation-client - ProConnect");
     cy.contains('"siret": "21340126800130"');
   });
 
@@ -123,8 +149,9 @@ describe("sign-in with suggestion", () => {
 
     cy.contains("Connexion personnalisée").click({ force: true });
 
-    cy.url().should("include", "users/join-organization");
-    cy.get('input[name="siret"]').should("have.value", "21340126800130");
+    cy.title().should("equal", "Rejoindre une organisation - ProConnect");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().should("have.value", "21340126800130");
   });
 });
 
