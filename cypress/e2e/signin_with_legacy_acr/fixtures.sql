@@ -82,10 +82,11 @@ VALUES
   );
 
 INSERT INTO
-  organizations (id, siret, created_at, updated_at)
+  organizations (id, cached_libelle, siret, created_at, updated_at)
 VALUES
   (
     1,
+    'Commune de lamalou-les-bains',
     '21340126800130',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -102,9 +103,23 @@ INSERT INTO
   )
 VALUES
   (1, 1, false, null, 'domain', true),
-  (2, 1, false, null, null, true),
+  (
+    2,
+    1,
+    false,
+    null,
+    'domain_not_verified_yet',
+    true
+  ),
   (3, 1, false, null, 'domain', true),
-  (4, 1, false, null, null, true);
+  (
+    4,
+    1,
+    false,
+    null,
+    'domain_not_verified_yet',
+    true
+  );
 
 INSERT INTO
   oidc_clients (
