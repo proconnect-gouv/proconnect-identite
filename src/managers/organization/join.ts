@@ -126,11 +126,25 @@ export const getOrganizationSuggestions = async ({
 
   const organizationsSuggestions = await findByVerifiedEmailDomain(domain);
 
-  if (organizationsSuggestions.length > MAX_SUGGESTED_ORGANIZATIONS) {
+  if (organizationsSuggestions.length <= MAX_SUGGESTED_ORGANIZATIONS) {
+    return organizationsSuggestions;
+  }
+
+  // if the number of suggestions is too high,
+  // only suggest organizations that represent 20% of the total member count
+
+  const totalMemberCount = organizationsSuggestions.reduce(
+    (sum, org) => sum + (org.member_count ?? 0),
+    0,
+  );
+
+  if (totalMemberCount === 0) {
     return [];
   }
 
-  return organizationsSuggestions;
+  return organizationsSuggestions.filter(
+    (org) => (org.member_count ?? 0) / totalMemberCount >= 0.2,
+  );
 };
 
 export const upsertOrganization = async (siret: string) => {
