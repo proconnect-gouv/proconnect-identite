@@ -64,6 +64,7 @@ export const connectorEnvSchema = z.object({
   SMTP_FROM: z
     .string()
     .default("nepasrepondre@email.moncomptepro.beta.gouv.fr"),
+  SMTP_FROM_ALT: z.string().default("nepasrepondre@email.proconnect.gouv.fr"),
   SMTP_URL: z.string(),
 });
 
@@ -190,6 +191,7 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(3 * 30 * 24 * 60 * 60), // 3 months in seconds
+  USE_SMTP_FROM_ALT_FOR_DOMAINS: zCoerceArray().default([]),
   VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
     .int()

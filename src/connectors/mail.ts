@@ -1,8 +1,16 @@
 //
 
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { convert } from "html-to-text";
+import { isArray, isString } from "lodash-es";
 import { createTransport, type SendMailOptions } from "nodemailer";
-import { DEPLOY_ENV, SMTP_FROM, SMTP_URL } from "../config/env";
+import {
+  DEPLOY_ENV,
+  SMTP_FROM,
+  SMTP_FROM_ALT,
+  SMTP_URL,
+  USE_SMTP_FROM_ALT_FOR_DOMAINS,
+} from "../config/env";
 
 //
 
@@ -19,13 +27,22 @@ export function sendMail(options: SendMailBrevoOptions) {
   const tag = options.tag ? [{ key: "X-Mailin-Tag", value: options.tag }] : [];
   const subject = computeMailSubject(options.subject);
 
+  const toEmail = isArray(options?.to) ? options?.to[0] : options?.to;
+  let useAltFrom = false;
+
+  if (isString(toEmail)) {
+    const toDomain = getEmailDomain(toEmail);
+
+    useAltFrom = USE_SMTP_FROM_ALT_FOR_DOMAINS.includes(toDomain);
+  }
+
   return transporter.sendMail({
     text:
       typeof options.html === "string" ? convert(options.html) : options.text,
     headers: [...tag],
     ...options,
     subject,
-    from: SMTP_FROM,
+    from: useAltFrom ? SMTP_FROM_ALT : SMTP_FROM,
   });
 }
 

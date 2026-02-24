@@ -1,7 +1,5 @@
 describe("should suggest valid email address", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should sign-in", function () {
     cy.visit("http://localhost:4001");
