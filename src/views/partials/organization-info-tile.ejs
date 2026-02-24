@@ -1,6 +1,17 @@
-<div class="fr-tile fr-tile--horizontal fr-mb-2w fr-p-2w <%= locals.tileClass || '' %>">
+<div class="fr-tile fr-tile--horizontal fr-mb-2w fr-px-2w fr-py-1w <%= locals.tileClass || '' %>">
   <div class="fr-tile__body">
-    <h2 class="fr-tile__title fr-mb-0 fr-text--lg"><%= label %></h2>
+    <div class="fr-container fr-p-0">
+      <div class="fr-grid-row fr-grid-row--middle">
+        <div class="fr-col">
+          <h2 class="fr-tile__title fr-mb-0 fr-text--lg"><%= label %></h2>
+        </div>
+        <% if (locals.certified) { %>
+          <div class="fr-col-auto fr-text--right">
+            <p class="fr-badge fr-badge--success fr-badge--icon-left">Certifié</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
     <% if (locals.adresse) { %><p class="fr-tile__desc fr-pb-0 fr-text--sm"><%= adresse %></p><% } %>
     <% if (locals.siret) { %><p class="fr-tile__desc fr-pb-1v"><b>SIRET : <%= siret %></b></p><% } %>
     <% if (locals.siege_social) { %>
