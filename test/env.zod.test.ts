@@ -115,10 +115,12 @@ describe("env.zod", () => {
       SESSION_COOKIE_SECRET: ["proconnectsecret", "identitesecret"],
       SESSION_MAX_AGE_IN_SECONDS: 86400,
       SMTP_FROM: "nepasrepondre@email.moncomptepro.beta.gouv.fr",
+      SMTP_FROM_ALT: "nepasrepondre@email.proconnect.gouv.fr",
       SMTP_URL: "smtp://localhost:1025",
       SYMMETRIC_ENCRYPTION_KEY: "aTrueRandom32BytesLongBase64EncodedStringAA=",
       TEST_CONTACT_EMAIL: "mairie@yopmail.com",
       TRUSTED_BROWSER_COOKIE_MAX_AGE_IN_SECONDS: 7776000,
+      USE_SMTP_FROM_ALT_FOR_DOMAINS: [],
       VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES: 60,
     });
   });

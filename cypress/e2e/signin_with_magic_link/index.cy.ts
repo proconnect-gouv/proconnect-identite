@@ -1,9 +1,7 @@
 //
 
 describe("sign-in with magic link", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should sign-up with magic link", function () {
     cy.visit("/users/start-sign-in");
@@ -83,5 +81,43 @@ describe("sign-in with magic link", () => {
 
     cy.title().should("include", "Accueil - ProConnect");
     cy.contains("Votre compte ProConnect");
+  });
+
+  it("should use default sender email", function () {
+    cy.visit("/users/start-sign-in");
+
+    cy.contains("Email professionnel").click();
+    cy.focused().type("user@example.com");
+    cy.contains("Continuer").click();
+
+    cy.contains("Recevoir un lien de connexion").click();
+
+    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
+      (email) => {
+        expect(email.from?.[0].address).to.equal(
+          "nepasrepondre@email.moncomptepro.beta.gouv.fr",
+        );
+        cy.maildevDeleteMessageById(email.id);
+      },
+    );
+  });
+
+  it("should use alt sender email", function () {
+    cy.visit("/users/start-sign-in");
+
+    cy.contains("Email professionnel").click();
+    cy.focused().type("user@example.org");
+    cy.contains("Continuer").click();
+
+    cy.contains("Recevoir un lien de connexion").click();
+
+    cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
+      (email) => {
+        expect(email.from?.[0].address).to.equal(
+          "nepasrepondre@email.proconnect.gouv.fr",
+        );
+        cy.maildevDeleteMessageById(email.id);
+      },
+    );
   });
 });
