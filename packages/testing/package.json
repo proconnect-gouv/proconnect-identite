@@ -15,10 +15,21 @@
     "#src/*": "./src/*/index.ts"
   },
   "exports": {
-    "./*": "./src/*/index.ts"
+    "./*": {
+      "require": "./dist/*/index.js",
+      "import": "./dist/*/index.js",
+      "types": "./dist/*/index.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*/index.d.ts"
+      ]
+    }
   },
   "scripts": {
-    "build": "tsc --build tsconfig.lib.json",
+    "build": "tsc --build tsconfig.lib.json && node dist/scripts/copy-json.js",
     "dev:test": "tsx --watch --test src/**/*.test.ts tests/**/*.test.ts",
     "test": "npm run test:unit",
     "test:unit": "tsx --test --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
