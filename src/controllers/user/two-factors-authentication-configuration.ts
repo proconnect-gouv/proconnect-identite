@@ -7,11 +7,6 @@ import {
   getUserFromAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import {
-  deleteTemporaryForce2Fa,
-  getTemporaryForce2Fa,
-  setTemporaryForce2Fa,
-} from "../../managers/session/temporary-force-2fa";
-import {
   deleteTemporaryTotpKey,
   getTemporaryTotpKey,
   setTemporaryTotpKey,
@@ -22,10 +17,7 @@ import {
 } from "../../managers/totp";
 import { sendAddFreeTOTPEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import {
-  codeSchema,
-  optionalCheckboxSchema,
-} from "../../services/custom-zod-schemas";
+import { codeSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest, {
   getNotificationLabelFromRequest,
 } from "../../services/get-notifications-from-request";
@@ -53,12 +45,6 @@ export const getIsTotpAppInstalledController = async (
   next: NextFunction,
 ) => {
   try {
-    const schema = z.object({ force_2fa: optionalCheckboxSchema() });
-
-    const { force_2fa: temporaryForce2fa } = await schema.parseAsync(req.query);
-
-    setTemporaryForce2Fa(req, temporaryForce2fa);
-
     return res.render("user/is-totp-app-installed", {
       pageTitle: "Installer votre outil d'authentification",
       csrfToken: csrfToken(req),
@@ -114,15 +100,11 @@ export const postTotpConfigurationController = async (
       throw new NotFoundError();
     }
 
-    const temporaryForce2fa = getTemporaryForce2Fa(req);
-
     const updatedUser = await confirmTotpRegistration(
       user_id,
       temporaryTotpKey,
       totpToken,
-      temporaryForce2fa,
     );
-    deleteTemporaryForce2Fa(req);
     deleteTemporaryTotpKey(req);
     addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
 

@@ -13,9 +13,9 @@
   </div>
   <h1 class="fr-h3">Choisir votre méthode de double authentification</h1>
   <div class="fr-callout fr-icon-alert-line" id="webauthn-not-supported" hidden>
-    <h4 class="fr-callout__title">
+    <p class="fr-callout__title fr-h4">
       Impossible de créer une clé d’accès sur cet appareil
-    </h4>
+    </p>
     <p class="fr-callout__text">
       Assurez-vous que le système d’exploitation de votre appareil est à jour,
       que le verrouillage de l’écran et le Bluetooth sont activés, et que vous
@@ -55,10 +55,6 @@
           </label>
         </div>
       </div>
-      <div class="fr-checkbox-group fr-pl-1w fr-pb-2w">
-        <input type="checkbox" name="force_2fa" id="force_2fa">
-        <label class="fr-label" for="force_2fa">Je configure la 2FA sur l'ensemble des sites que j'utilise avec ProConnect<span class="fr-hint-text">Par défaut, la 2FA s'applique uniquement aux sites qui l'exigent</span></label>
-      </div>
     </fieldset>
     <button class="fr-btn btn--fullwidth" type="submit" id="webauthn-submit-button">Continuer</button>
   </form>
@@ -90,7 +86,6 @@
   >
     <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
     <input type="hidden" name="webauthn_registration_response_string" />
-    <input type="hidden" name="force_2fa" />
     <button type="submit" class="fr-btn"></button>
   </form>
   <script type="module" src="<%= js('webauthn-registration.js') %>"></script>

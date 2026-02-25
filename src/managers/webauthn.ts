@@ -155,11 +155,9 @@ export const getRegistrationOptions = async (email: string) => {
 export const verifyRegistration = async ({
   email,
   response,
-  force_2fa,
 }: {
   email: string;
   response: RegistrationResponseJSON;
-  force_2fa: boolean;
 }) => {
   const user = await findUserByEmail(email);
 
@@ -224,11 +222,8 @@ export const verifyRegistration = async ({
       user_verified,
     },
   });
-  const updatedUser = force_2fa
-    ? await enableForce2fa(user.id)
-    : await disableForce2fa(user.id);
 
-  return { userVerified: user_verified, user: updatedUser };
+  return { userVerified: user_verified, user: await enableForce2fa(user.id) };
 };
 
 export const getAuthenticationOptions = async (
