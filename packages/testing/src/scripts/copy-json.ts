@@ -1,6 +1,6 @@
 import { cp } from "fs/promises";
 
-cp("src", "dist", {
+await cp("src", "dist", {
   recursive: true,
   filter: (src) => {
     const isTsFile = src.match(/\.tsx?$/);
