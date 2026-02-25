@@ -53,22 +53,36 @@ if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
   const cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const cspConfig = {
       directives: {
-        defaultSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "stats.data.gouv.fr", "*.crisp.chat"],
+        defaultSrc: ["'self'", "client.crisp.chat"],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "stats.data.gouv.fr",
+          "client.crisp.chat",
+          "image.crisp.chat",
+          "storage.crisp.chat",
+          "wss://client.relay.crisp.chat",
+        ],
         connectSrc: [
           "'self'",
           "stats.data.gouv.fr",
-          "*.crisp.chat",
-          "wss://*.crisp.chat",
+          "client.crisp.chat",
+          "wss://client.relay.crisp.chat",
+          "storage.crisp.chat",
         ],
         frameSrc: ["'self'", "proconnect.crisp.help"],
-        scriptSrc: ["'self'", "stats.data.gouv.fr", "*.crisp.chat"],
-        styleSrc: ["'self'", "*.crisp.chat", "'unsafe-inline'"],
-        fontSrc: ["'self'", "data:", "*.crisp.chat"],
+        scriptSrc: [
+          "'self'",
+          "stats.data.gouv.fr",
+          "client.crisp.chat",
+          "blob:",
+        ],
+        styleSrc: ["'self'", "client.crisp.chat", "'unsafe-inline'"],
+        fontSrc: ["'self'", "data:"],
         // As for https://github.com/w3c/webappsec-csp/issues/8, the feature is debated
         // and seems not useful for open id provider redirection.
         // We bypass this security for now.
-        formAction: ["'self'", "*"],
+        formAction: ["'self'"],
       },
     };
 
