@@ -4,54 +4,53 @@
 <div>
   <p>Des discordances ont été détectées entre votre identité <b>FranceConnect</b> (affichée ici) et celle connue du <b><%= dataSourceLabel; %></b> pour <b><%= organization_label; %></b>.
 
-  <p class="fr-mb-2w fr-badge fr-badge--warning">Informations discordantes</p>
 
   <div class="fr-pl-1w <%= locals.matches.has('given_name') ? '' : 'info-mismatch' %>">
+    <% if (!locals.matches.has('given_name')) { %>
+      <p class="fr-badge fr-badge--warning">Informations discordantes</p>
+    <% } %>
     <p class="fr-mb-0 fr-text--sm">
       Prénom
     </p>
     <p class="fr-mb-2w">
-      <% if (!locals.matches.has('given_name')) { %>
-        <span class="fr-sr-only">Information discordante : </span>
-      <% } %>
       <b><%= user_info.given_name; %></b>
     </p>
   </div>
 
   <div class="fr-pl-1w <%= locals.matches.has('family_name') ? '' : 'info-mismatch' %>">
+    <% if (!locals.matches.has('family_name')) { %>
+      <p class="fr-badge fr-badge--warning">Informations discordantes</p>
+    <% } %>
     <p class="fr-mb-0 fr-text--sm">
       Nom
     </p>
     <p class="fr-mb-2w">
-      <% if (!locals.matches.has('family_name')) { %>
-        <span class="fr-sr-only">Information discordante : </span>
-      <% } %>
       <b><%= user_info.family_name; %></b>
     </p>
   </div>
 
   <% if (user_info.gender) { %>
   <div class="fr-pl-1w <%= locals.matches.has('gender') ? '' : 'info-mismatch' %>">
+    <% if (!locals.matches.has('gender')) { %>
+      <p class="fr-badge fr-badge--warning">Informations discordantes</p>
+    <% } %>
     <p class="fr-mb-0 fr-text--sm">
       Genre
     </p>
     <p class="fr-mb-2w">
-      <% if (!locals.matches.has('gender')) { %>
-        <span class="fr-sr-only">Information discordante : </span>
-      <% } %>
       <b><%- include('../partials/gender.ejs', {gender: user_info.gender}) %></b>
     </p>
   </div>
   <% } %>
 
   <div class="fr-pl-1w <%= locals.matches.has('birth_date') ? '' : 'info-mismatch' %>">
+    <% if (!locals.matches.has('birth_date')) { %>
+      <p class="fr-badge fr-badge--warning">Informations discordantes</p>
+    <% } %>
     <p class="fr-mb-0 fr-text--sm">
       Date de naissance
     </p>
     <p class="fr-mb-2w">
-      <% if (!locals.matches.has('birth_date')) { %>
-        <span class="fr-sr-only">Information discordante : </span>
-      <% } %>
       <b>
         <time
           datetime="<%= new Date(user_info.birthdate).toISOString() %>"
@@ -63,13 +62,13 @@
   </div>
 
   <div class="fr-pl-1w <%= locals.matches.has('birth_place') ? '' : 'info-mismatch' %>">
+    <% if (!locals.matches.has('birth_place')) { %>
+      <p class="fr-badge fr-badge--warning">Informations discordantes</p>
+    <% } %>
     <p class="fr-mb-0 fr-text--sm">
       Commune de naissance
     </p>
     <p>
-      <% if (!locals.matches.has('birth_place')) { %>
-        <span class="fr-sr-only">Information discordante : </span>
-      <% } %>
       <b><%= user_info.birthplace; %></b>
     </p>
   </div>

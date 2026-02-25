@@ -345,7 +345,7 @@ export const getUnableToAutoJoinOrganizationController = async (
     const { moderation_id } = await schema.parseAsync(req.query);
     const user = getUserFromAuthenticatedSession(req);
 
-    const { cached_libelle, siret, cached_adresse } =
+    const { cached_libelle, siret, cached_adresse, cached_siege_social } =
       await getOrganizationFromModeration({
         user,
         moderation_id,
@@ -361,6 +361,7 @@ export const getUnableToAutoJoinOrganizationController = async (
       siret,
       adresse: cached_adresse,
       moderation_id,
+      siege_social: cached_siege_social,
     });
   } catch (e) {
     if (e instanceof NotFoundError) {
@@ -385,7 +386,7 @@ export const getModerationRejectedController = async (
     const { moderation_id } = await schema.parseAsync(req.query);
     const user = getUserFromAuthenticatedSession(req);
 
-    const { cached_libelle, siret, cached_adresse } =
+    const { cached_libelle, siret, cached_adresse, cached_siege_social } =
       await getOrganizationFromModeration({
         user,
         moderation_id,
@@ -407,6 +408,7 @@ export const getModerationRejectedController = async (
       rejectionReason,
       moderation_id,
       pageTitle: allowEditing ? "Informations à corriger" : "Demande refusée",
+      siege_social: cached_siege_social,
     });
   } catch (e) {
     if (e instanceof NotFoundError) {

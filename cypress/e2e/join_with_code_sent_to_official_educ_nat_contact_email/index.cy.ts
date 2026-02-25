@@ -49,6 +49,6 @@ describe("join organizations", () => {
     });
 
     cy.title().should("include", "Compte créé -");
-    cy.contains("Compte créé ! 🎊");
+    cy.contains("Compte créé 🎊");
   });
 });
