@@ -5,25 +5,22 @@
     <div>
         <p><span class="fr-label">Sélectionnez l’organisation dont vous faites partie</span></p>
 
-        <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
+        <div class="fr-grid-row">
             <% organizationSuggestions.forEach(({ id, siret, cached_libelle, cached_adresse, cached_libelle_activite_principale, cached_siege_social }) => { %>
             <div class="fr-col-12">
-                <div id="submit-join-organization-<%= id %>" class="fr-tile fr-enlarge-link fr-tile--horizontal">
+                <div id="submit-join-organization-<%= id %>" class="fr-tile fr-enlarge-link fr-tile--horizontal fr-mb-2w fr-px-2w fr-py-1w">
                     <div class="fr-tile__body">
-                        <h2 class="fr-tile__title">
+                        <h2 class="fr-tile__title fr-mb-0 fr-text--lg">
                             <a class="fr-tile__link" href role="button" aria-label="Sélectionner l'organisation <%= cached_libelle; %>"><%= cached_libelle; %></a>
                         </h2>
-                        <p class="fr-tile__desc fr-pb-0"><%= cached_adresse; %></p>
-                        <p class="fr-tile__desc fr-pb-0"><b>SIRET <%= siret; %></b></p>
-                        <p class="fr-tile__desc<%= typeof cached_siege_social === 'boolean' ? ' fr-pb-0' : '' %>">
-                            <%= cached_libelle_activite_principale; %>
-                        </p>
+                        <p class="fr-tile__desc fr-pb-0 fr-text--sm"><%= cached_adresse; %></p>
+                        <p class="fr-tile__desc fr-pb-1v"><b>SIRET <%= siret; %></b></p>
                         <% if (typeof cached_siege_social === 'boolean') { %>
-                        <p class="fr-tile__desc">
-                            <span class="fr-badge">
-                                <%= cached_siege_social ? "Siège social" : "Établissement secondaire"; %>
-                            </span>
-                        </p>
+                            <p class="fr-tile__desc fr-pb-1w">
+                                <span class="fr-badge fr-badge--no-icon <%= cached_siege_social ? 'fr-badge--info' : 'fr-badge--new' %>">
+                                    <%= cached_siege_social ? "Siège social" : "Établissement secondaire"; %>
+                                </span>
+                            </p>
                         <% } %>
                     </div>
                 </div>
