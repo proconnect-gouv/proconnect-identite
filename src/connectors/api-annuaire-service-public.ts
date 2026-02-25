@@ -99,21 +99,8 @@ export const getAnnuaireServicePublicContactEmails = async (
     );
   }
 
-  const matchingFeatures = features.filter(
-    ({ adresse: [{ code_postal: codePostalMairie }] }) =>
-      codePostalMairie === codePostal,
-  );
-
-  if (matchingFeatures.length === 0) {
-    throw new ApiAnnuaireNotFoundError(
-      `No pair found for (codeOfficielGeographique: ${codeOfficielGeographique}, codePostal: ${codePostal}).`,
-    );
-  }
-
   return uniq(
-    matchingFeatures.map((feature) =>
-      extractFormattedEmailFromFeature(feature),
-    ),
+    features.map((feature) => extractFormattedEmailFromFeature(feature)),
   );
 };
 
