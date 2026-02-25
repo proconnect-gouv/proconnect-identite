@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.testing
 
+## 1.0.3
+
+### Patch Changes
+
+- [#1797](https://github.com/proconnect-gouv/proconnect-identite/pull/1797) [`73dd007`](https://github.com/proconnect-gouv/proconnect-identite/commit/73dd007ae50eeb2508cef307614d6e44b48da21d) Thanks [@rdubigny](https://github.com/rdubigny)! - ajout de données entreprises
+
 ## 1.0.2
 
 ### Patch Changes
