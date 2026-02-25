@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.testing
 
+## 1.0.4
+
+### Patch Changes
+
+- [#1802](https://github.com/proconnect-gouv/proconnect-identite/pull/1802) [`36662f0`](https://github.com/proconnect-gouv/proconnect-identite/commit/36662f04f0ef28b8fe9b985f9400b0d1589d163a) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - Harmonise l'export du package testing
+
 ## 1.0.3
 
 ### Patch Changes
