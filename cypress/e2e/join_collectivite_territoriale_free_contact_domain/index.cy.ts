@@ -51,7 +51,7 @@ describe("join collectivité territoriale with free contact domain", () => {
     cy.go("back");
 
     cy.get<string>("@code").then((code) => {
-      cy.contains("Insérer le code reçu").click();
+      cy.contains("Insérer le code à 2 mots").click();
       cy.focused().clear().type(code);
       cy.contains("Valider").click();
     });
@@ -90,7 +90,7 @@ describe("join collectivité territoriale with free contact domain", () => {
     cy.go("back");
 
     cy.get<string>("@code").then((code) => {
-      cy.contains("Insérer le code reçu").click();
+      cy.contains("Insérer le code à 2 mots").click();
       cy.focused().clear().type(code);
       cy.contains("Valider").click();
     });

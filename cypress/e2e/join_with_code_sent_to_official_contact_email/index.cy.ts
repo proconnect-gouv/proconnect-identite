@@ -18,9 +18,8 @@ describe("join collectivité territoriale with code send to official contact ema
 
     cy.title().should("include", "Vérifier votre email - ProConnect");
     cy.contains(
-      "nous avons envoyé un code à l’adresse email officielle de votre mairie",
+      "Nous vérifions que vous avez accès à l’adresse email officielle de votre mairie : contact@mairielamalou.fr",
     );
-    cy.get(".email-badge-lowercase").contains("contact@mairielamalou.fr");
 
     cy.maildevGetMessageBySubject(
       "[ProConnect] Authentifier un email sur ProConnect",
@@ -41,7 +40,7 @@ describe("join collectivité territoriale with code send to official contact ema
     cy.title().should("include", "Vérifier votre email -");
 
     cy.get<string>("@code").then((code) => {
-      cy.contains("Insérer le code reçu").click();
+      cy.contains("Insérer le code à 2 mots").click();
       cy.focused().clear().type(code);
       cy.contains("Valider").click();
     });
@@ -69,9 +68,8 @@ describe("join collectivité territoriale with code send to official contact ema
 
     cy.title().should("include", "Vérifier votre email - ProConnect");
     cy.contains(
-      "nous avons envoyé un code à l’adresse email officielle de votre mairie",
+      "Nous vérifions que vous avez accès à l’adresse email officielle de votre mairie : mairie.contact@carentan.fr",
     );
-    cy.get(".email-badge-lowercase").contains("mairie.contact@carentan.fr");
 
     cy.maildevGetMessageBySubject(
       "[ProConnect] Authentifier un email sur ProConnect",
@@ -92,7 +90,7 @@ describe("join collectivité territoriale with code send to official contact ema
     cy.title().should("include", "Vérifier votre email -");
 
     cy.get<string>("@code").then((code) => {
-      cy.contains("Insérer le code reçu").click();
+      cy.contains("Insérer le code à 2 mots").click();
       cy.focused().clear().type(code);
       cy.contains("Valider").click();
     });
@@ -136,7 +134,7 @@ describe("join collectivité territoriale with code send to official contact ema
     cy.title().should("include", "Vérifier votre email -");
 
     cy.get<string>("@code").then((code) => {
-      cy.contains("Insérer le code reçu").click();
+      cy.contains("Insérer le code à 2 mots").click();
       cy.focused().clear().type(code);
       cy.contains("Valider").click();
     });

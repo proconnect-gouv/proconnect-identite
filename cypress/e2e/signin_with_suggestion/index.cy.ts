@@ -16,7 +16,7 @@ describe("sign-in with suggestion", () => {
     ).click();
 
     cy.title().should("equal", "Vérifier votre email - ProConnect");
-    cy.contains("Vérifier votre adresse email");
+    cy.contains("Confirmer votre adresse email");
   });
 
   it("join suggested organisation", function () {
@@ -32,7 +32,7 @@ describe("sign-in with suggestion", () => {
     ).click();
 
     cy.title().should("equal", "Vérifier votre email - ProConnect");
-    cy.contains("Vérifier votre adresse email");
+    cy.contains("Confirmer votre adresse email");
   });
 
   it("should sign-up and be suggested the Ministere des armees organization", function () {

@@ -14,11 +14,10 @@
     </div>
     <% if (locals.adresse) { %><p class="fr-tile__desc fr-pb-0 fr-text--sm"><%= adresse %></p><% } %>
     <% if (locals.siret) { %><p class="fr-tile__desc fr-pb-1v"><b>SIRET : <%= siret %></b></p><% } %>
-    <% if (locals.siege_social) { %>
+    <% if (locals.siege_social !== undefined) { %>
       <p class="fr-tile__desc fr-pb-1w">
         <span class="fr-badge fr-badge--no-icon <%= siege_social ? 'fr-badge--info' : 'fr-badge--new' %>"><%= siege_social ? 'Siège social' : 'Établissement secondaire' %></span>
       </p>
     <% } %>
-
   </div>
 </div>
