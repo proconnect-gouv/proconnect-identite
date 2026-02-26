@@ -31,7 +31,7 @@ describe("getAnnuaireServicePublicContactEmails", () => {
       ["administration@aurillac.fr"],
     );
   });
-  it("should return valid email for two mairies with the same Code Officiel Geographique", async () => {
+  it("should return valid emails for two mairies with the same Code Officiel Geographique", async () => {
     nock("https://api-lannuaire.service-public.fr")
       .get(
         `/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "38253" and pivot LIKE "mairie"`,
@@ -39,7 +39,7 @@ describe("getAnnuaireServicePublicContactEmails", () => {
       .reply(200, twoMairiesData);
     assert.deepEqual(
       await getAnnuaireServicePublicContactEmails("38253", "38860"),
-      ["accueil@mairie2alpes.fr"],
+      ["accueil@mairie2alpes.fr", "venosc@mairie2alpes.fr"],
     );
   });
   it("should return the first valid email for the list a emails", async () => {
