@@ -55,23 +55,6 @@
                 <% if (locals.hasFranceConnectIdentity) { %> readonly="readonly" <% } %>
                 >
             </div>
-
-            <div class="fr-input-group fr-mb-2w">
-                <label class="fr-label" for="job">
-                    Rôle
-                    <span class="fr-hint-text">
-                        Votre fonction dans votre organisation
-                    </span>
-                </label>
-                <input
-                    class="fr-input"
-                    type="text"
-                    name="job"
-                    id="job"
-                    autocomplete="organization-title"
-                    <% if (job) { %> value="<%= job; %>"<% } %>
-                >
-            </div>
             <%- include('../partials/submit-button.ejs', {label: 'Continuer'}) %>
         </form>
         <%- include('../partials/go-back.ejs') %>

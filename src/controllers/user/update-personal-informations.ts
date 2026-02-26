@@ -8,7 +8,7 @@ import {
 import { hasFranceConnectIdentity } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { update } from "../../repositories/user";
-import { jobSchema, nameSchema } from "../../services/custom-zod-schemas";
+import { nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 
 export const getPersonalInformationsController = async (
@@ -54,30 +54,18 @@ export const postPersonalInformationsController = async (
     let updatedUser: User;
 
     if (hasFCIdentity) {
-      const schema = z.object({
-        job: jobSchema(),
-      });
-
-      const { job } = await schema.parseAsync(req.body);
-
-      updatedUser = await update(userId, {
-        job,
-      });
+      return next();
     } else {
       const schema = z.object({
         given_name: nameSchema(),
         family_name: nameSchema(),
-        job: jobSchema(),
       });
 
-      const { given_name, family_name, job } = await schema.parseAsync(
-        req.body,
-      );
+      const { given_name, family_name } = await schema.parseAsync(req.body);
 
       updatedUser = await update(userId, {
         given_name,
         family_name,
-        job,
       });
     }
 
