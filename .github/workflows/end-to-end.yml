@@ -89,12 +89,12 @@ jobs:
         env:
           NODE_ENV: production
       # Store tests runs in case of failure
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: cypress-${{ matrix.e2e_test }}-screenshots
           path: cypress/screenshots
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: cypress-${{ matrix.e2e_test }}-videos
