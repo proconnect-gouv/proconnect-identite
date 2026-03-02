@@ -29,7 +29,6 @@ import {
   verifyAuthentication,
   verifyRegistration,
 } from "../managers/webauthn";
-import { optionalCheckboxSchema } from "../services/custom-zod-schemas";
 import { logger } from "../services/log";
 
 export const deletePasskeyController = async (
@@ -84,10 +83,10 @@ export const postVerifyRegistrationControllerFactory =
     try {
       const schema = z.object({
         webauthn_registration_response_string: z.string(),
-        force_2fa: optionalCheckboxSchema(),
       });
-      const { webauthn_registration_response_string, force_2fa } =
-        await schema.parseAsync(req.body);
+      const { webauthn_registration_response_string } = await schema.parseAsync(
+        req.body,
+      );
 
       const response = await z
         .preprocess(
@@ -100,7 +99,6 @@ export const postVerifyRegistrationControllerFactory =
       const { userVerified, user: updatedUser } = await verifyRegistration({
         email: email,
         response,
-        force_2fa,
       });
       addAuthenticationMethodReferenceInSession(req, res, updatedUser, "pop");
       if (userVerified) {

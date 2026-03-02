@@ -44,56 +44,6 @@ describe("sign-in with totp enrollment", () => {
     cy.contains(
       '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
     );
-
-    cy.contains("Se déconnecter").click();
-
-    cy.setRequestedAcrs();
-
-    cy.get("button#custom-connection").click({ force: true });
-
-    cy.login("ial2-aal1@yopmail.com");
-
-    cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked"',
-    );
-  });
-
-  it("should follow first authentication when mfa asked (with mfa forced)", function () {
-    cy.visit("http://localhost:4000");
-
-    cy.contains("Forcer une connexion a deux facteurs").click();
-
-    cy.login("ial2-aal1-forced@yopmail.com");
-
-    cy.contains("Code à usage unique (TOTP)").click();
-
-    cy.contains(
-      "Je configure la 2FA sur l'ensemble des sites que j'utilise avec ProConnect",
-    ).click();
-
-    cy.contains("Continuer").click();
-
-    cy.contains("J'ai installé une application d'authentification").click();
-
-    cy.contains("Continuer").click();
-
-    cy.fillAndSubmitTotpForm("/users/totp-configuration");
-
-    cy.contains("Continuer").click();
-
-    cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
-    );
-
-    cy.contains("Se déconnecter").click();
-
-    cy.setRequestedAcrs();
-
-    cy.get("button#custom-connection").click({ force: true });
-
-    cy.login("ial2-aal1-forced@yopmail.com");
-
-    cy.contains("Valider avec la double authentification");
   });
 
   it("should re-authenticate after long connexion to a service provider requires mfa", function () {

@@ -83,7 +83,6 @@ export const postTotpConfigurationController = async (
       user_id,
       temporaryTotpKey,
       totpToken,
-      true,
     );
 
     deleteTemporaryTotpKey(req);
