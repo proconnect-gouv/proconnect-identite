@@ -194,6 +194,10 @@ describe("join syndicat communal", () => {
       code: "13001270100020",
       type: "Groupement de coopération sanitaire à gestion publique",
     },
+    {
+      code: "84226400400016",
+      type: "Association de droit local (Bas-Rhin, Haut-Rhin et Moselle)",
+    },
   ];
 
   beforeEach(() => {

@@ -1,6 +1,7 @@
 import type { Organization } from "#src/types";
 
 const cat_jur = [
+  "Association de droit local (Bas-Rhin, Haut-Rhin et Moselle)",
   "Centre communal d'action sociale",
   "Établissement public local social et médico-social",
   "Groupement de coopération sanitaire à gestion publique",
