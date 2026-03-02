@@ -79,7 +79,7 @@ jobs:
       - run: npm run build:workspaces
       - run: npm run migrate up
       - name: Cypress run
-        uses: cypress-io/github-action@v7.1.3
+        uses: cypress-io/github-action@v7.1.5
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets
