@@ -5,17 +5,24 @@
             <b>Erreur <%= error_code ;%></b>
             <%= error_message ;%>
         </pre>
-        <p>
-            Merci de réessayer ultérieurement.
-        </p>
+        <% if (error_code === 429) { %>
+            <p><b>Accès temporairement limité.</b></p>
+            <p class="fr-mb-2w">
+                Merci de ne pas retenter de connexion dans l’immédiat et de réessayer dans une <b>quinzaine de minutes</b>.
+            </p>
+        <% } else { %>
+            <p>
+                Merci de réessayer ultérieurement.
+            </p>
+        <% } %>
         <p>
             Vous pouvez également nous signaler cette erreur par mail à
             <a href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur%20sur%20ProConnect" target="_blank" rel="noopener noreferrer">support+identite@proconnect.gouv.fr</a>.
         </p>
     </div>
     <% if (locals.interactionId && locals.oidcError) { %>
-        <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn">Continuer sur le service</a>
+        <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn btn--fullwidth">Continuer sur le service</a>
     <% } else { %>
-        <a href="/" class="fr-btn">Retour à l’accueil</a>
+        <a href="/" class="fr-btn btn--fullwidth">Retour à l’accueil</a>
     <% } %>
 </div>
