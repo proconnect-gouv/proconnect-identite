@@ -104,12 +104,31 @@ input[readonly] {
 
 /* This is a placeholder for the upcoming stepper */
 
-.hr-personalized {
+.hr-personalized-step-one {
   height: 2px !important;
   background: linear-gradient(
     to right,
-    var(--background-active-blue-france),
-    var(--background-action-high-blue-france-hover)
+    var(--background-action-high-blue-france-hover) 0%,
+    var(--background-active-blue-france) 45%
+  );
+  padding: 0 0 0.5rem;
+}
+
+.hr-personalized-step-two {
+  height: 2px !important;
+  background: linear-gradient(
+    to right,
+    var(--background-action-high-blue-france-hover) 42%,
+    var(--background-active-blue-france) 66%
+  );
+  padding: 0 0 0.5rem;
+}
+
+.hr-personalized-step-three {
+  height: 2px !important;
+  background: linear-gradient(
+    to right,
+    var(--background-action-high-blue-france-hover) 100%
   );
   padding: 0 0 0.5rem;
 }

@@ -1,7 +1,7 @@
 <div>
     <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
     <h1 class="fr-h5 fr-mb-1w">Rejoindre votre organisation</h1>
-    <hr class="hr-personalized fr-mb-3w">
+    <hr class="hr-personalized-step-one fr-mb-3w">
     <div>
         <form id="form-join-organization" action="/users/join-organization" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
