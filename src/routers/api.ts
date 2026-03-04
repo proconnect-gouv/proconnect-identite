@@ -1,16 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
 import { Router, urlencoded } from "express";
-import expressBasicAuth from "express-basic-auth";
 import { HttpError } from "http-errors";
 import nocache from "nocache";
 import { inspect } from "node:util";
-import { API_AUTH_PASSWORD, API_AUTH_USERNAME } from "../config/env";
 import {
   getOrganizationInfoController,
   getPingApiInseeController,
   getPingApiRegistreNationalEntreprisesController,
   getPingApiSireneController,
-  postSendModerationProcessedEmail,
 } from "../controllers/api";
 import {
   getGenerateAuthenticationOptionsForFirstFactorController,
@@ -52,21 +49,6 @@ export const apiRouter = () => {
     "/webauthn/generate-authentication-options-for-second-factor",
     getGenerateAuthenticationOptionsForSecondFactorController,
   );
-
-  const apiAdminRouter = Router();
-
-  apiAdminRouter.use(
-    expressBasicAuth({
-      users: { [API_AUTH_USERNAME]: API_AUTH_PASSWORD },
-    }),
-  );
-
-  apiAdminRouter.post(
-    "/send-moderation-processed-email",
-    postSendModerationProcessedEmail,
-  );
-
-  apiRouter.use("/admin", apiAdminRouter);
 
   apiRouter.use(
     async (

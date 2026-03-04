@@ -40,8 +40,6 @@ describe("env.zod", () => {
         "https://proconnect.gouv.fr/assurance/certification-dirigeant",
       ACR_VALUE_FOR_IAL3_AAL2:
         "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
-      API_AUTH_PASSWORD: "admin",
-      API_AUTH_USERNAME: "admin",
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: 1440,
       CRISP_BASE_URL: "https://api.crisp.chat",
       CRISP_IDENTIFIER: "",
