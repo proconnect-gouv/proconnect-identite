@@ -75,11 +75,11 @@ export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
     user_id: true,
     verification_type: true,
   },
-).merge(
+).extend(
   UserOrganizationLinkSchema.pick({
     is_external: true,
     needs_official_contact_email_verification: true,
-  }).partial(),
+  }).partial().shape,
 );
 
 export type InsertUserOrganizationLink = z.output<
