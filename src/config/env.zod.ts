@@ -201,10 +201,10 @@ export const paramsEnvSchema = z.object({
 
 export const envSchema = z
   .object({})
-  .merge(connectorEnvSchema)
-  .merge(featureTogglesEnvSchema)
-  .merge(secretEnvSchema)
-  .merge(paramsEnvSchema);
+  .extend(connectorEnvSchema.shape)
+  .extend(featureTogglesEnvSchema.shape)
+  .extend(secretEnvSchema.shape)
+  .extend(paramsEnvSchema.shape);
 
 //
 
