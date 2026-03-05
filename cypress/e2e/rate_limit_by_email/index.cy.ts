@@ -17,6 +17,10 @@ describe("trigger rate limit by email", () => {
     }
 
     cy.contains("Too Many Requests");
+
+    cy.contains(
+      "Merci de ne pas retenter de connexion dans l’immédiat et de réessayer dans une quinzaine de minutes.",
+    );
   });
 
   it("should trigger email verification rate limiting", function () {
@@ -31,6 +35,9 @@ describe("trigger rate limit by email", () => {
     }
 
     cy.contains("Too Many Requests");
+    cy.contains(
+      "Merci de ne pas retenter de connexion dans l’immédiat et de réessayer dans une quinzaine de minutes.",
+    );
   });
 
   it("should trigger totp rate limiting", function () {
@@ -48,5 +55,9 @@ describe("trigger rate limit by email", () => {
     }
 
     cy.contains("Too Many Requests");
+
+    cy.contains(
+      "Merci de ne pas retenter de connexion dans l’immédiat et de réessayer dans une quinzaine de minutes.",
+    );
   });
 });

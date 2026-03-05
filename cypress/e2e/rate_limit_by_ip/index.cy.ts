@@ -7,5 +7,9 @@ describe("trigger rate limiting by ip", () => {
     }
 
     cy.contains("Too Many Requests");
+
+    cy.contains(
+      "Merci de ne pas retenter de connexion dans l’immédiat et de réessayer dans une quinzaine de minutes.",
+    );
   });
 });
