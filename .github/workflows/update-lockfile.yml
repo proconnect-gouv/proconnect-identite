@@ -2,7 +2,7 @@ name: 📦 Update package-lock.json
 
 on:
   schedule:
-    - cron: "0 3 * * 1" # Weekly on Monday at 3 AM UTC
+    - cron: "0 3 1 * *" # Monthly on the 1st at 3 AM UTC
   pull_request:
     paths:
       - ".github/workflows/update-lockfile.yml"
@@ -46,6 +46,6 @@ jobs:
           delete-branch: true
           title: "🔒 chore: update package-lock.json"
           body: |
-            Automated weekly refresh of `package-lock.json` to update transitive dependencies within their semver ranges.
+            Automated monthly refresh of `package-lock.json` to update transitive dependencies within their semver ranges.
 
             This ensures the lockfile stays up-to-date with the latest compatible versions of all dependencies.
