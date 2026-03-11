@@ -38,7 +38,7 @@
     "@hono/node-server": "^1.19.10",
     "@hono/zod-validator": "^0.7.2",
     "@proconnect-gouv/proconnect.api_entreprise": "1.1.1",
-    "hono": "^4.12.4"
+    "hono": "^4.12.7"
   },
   "devDependencies": {
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
