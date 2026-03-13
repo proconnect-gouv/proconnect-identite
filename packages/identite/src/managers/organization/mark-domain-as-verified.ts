@@ -1,16 +1,8 @@
 //
 
+import type { Context } from "#src/connectors";
 import { NotFoundError } from "#src/errors";
 import { assignUserVerificationTypeToDomainFactory } from "#src/managers/user";
-import type {
-  AddDomainHandler,
-  DeleteEmailDomainsByVerificationTypesHandler,
-} from "#src/repositories/email-domain";
-import type {
-  FindByIdHandler,
-  GetUsersByOrganizationHandler,
-} from "#src/repositories/organization";
-import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
 import {
   type EmailDomainApprovedVerificationType,
   EmailDomainApprovedVerificationTypes,
@@ -26,26 +18,14 @@ import { match } from "ts-pattern";
 
 //
 
-type FactoryDependencies = {
-  addDomain: AddDomainHandler;
-  deleteEmailDomainsByVerificationTypes: DeleteEmailDomainsByVerificationTypesHandler;
-  findOrganizationById: FindByIdHandler;
-  getUsers: GetUsersByOrganizationHandler;
-  updateUserOrganizationLink: UpdateUserOrganizationLinkHandler;
-};
-
-export function markDomainAsVerifiedFactory({
-  addDomain,
-  deleteEmailDomainsByVerificationTypes,
-  findOrganizationById,
-  getUsers,
-  updateUserOrganizationLink,
-}: FactoryDependencies) {
+export function markDomainAsVerifiedFactory(context: Context) {
   const assignUserVerificationTypeToDomain =
-    assignUserVerificationTypeToDomainFactory({
-      getUsers,
-      updateUserOrganizationLink,
-    });
+    assignUserVerificationTypeToDomainFactory(context);
+
+  const {
+    repo: { email_domains, organizations },
+  } = context;
+
   return async function markDomainAsVerified({
     organization_id,
     domain,
@@ -55,7 +35,7 @@ export function markDomainAsVerifiedFactory({
     domain: string;
     domain_verification_type: EmailDomainNoPendingVerificationType;
   }) {
-    const organization = await findOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
 
     if (isEmpty(organization)) {
       throw new NotFoundError();
@@ -94,7 +74,7 @@ export function markDomainAsVerifiedFactory({
     domain: string;
     domain_verification_type: EmailDomainApprovedVerificationType;
   }) {
-    await deleteEmailDomainsByVerificationTypes({
+    await email_domains.deleteEmailDomainsByVerificationTypes({
       organization_id,
       domain,
       domain_verification_types: [
@@ -102,7 +82,7 @@ export function markDomainAsVerifiedFactory({
         ...EmailDomainPendingVerificationTypes,
       ],
     });
-    return addDomain({
+    return email_domains.addDomain({
       organization_id,
       domain,
       verification_type:
@@ -119,7 +99,7 @@ export function markDomainAsVerifiedFactory({
     domain: string;
     domain_verification_type: EmailDomainRejectedVerificationType;
   }) {
-    await deleteEmailDomainsByVerificationTypes({
+    await email_domains.deleteEmailDomainsByVerificationTypes({
       organization_id,
       domain,
       domain_verification_types: [
@@ -127,7 +107,7 @@ export function markDomainAsVerifiedFactory({
         ...EmailDomainRejectedVerificationTypes,
       ],
     });
-    return addDomain({
+    return email_domains.addDomain({
       organization_id,
       domain,
       verification_type:

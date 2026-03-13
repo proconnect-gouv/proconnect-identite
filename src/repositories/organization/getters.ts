@@ -1,21 +1,14 @@
 import {
-  findByIdFactory,
-  findByUserIdFactory,
-  getUsersByOrganizationFactory,
-} from "@proconnect-gouv/proconnect.identite/repositories/organization";
-import {
   EmailDomainApprovedVerificationTypes,
   ModerationTypeSchema,
   type Organization,
   type UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
 import type { QueryResult } from "pg";
+import { context } from "../../connectors/context";
 import { getDatabaseConnection } from "../../connectors/postgres";
 
-export const findById = findByIdFactory({ pg: getDatabaseConnection() });
-export const findByUserId = findByUserIdFactory({
-  pg: getDatabaseConnection(),
-});
+export const { findById, findByUserId, getUsers } = context.repo.organizations;
 
 export const findBySiret = async (siret: string) => {
   const connection = getDatabaseConnection();
@@ -73,10 +66,6 @@ export const findByVerifiedEmailDomain = async (email_domain: string) => {
 
   return rows;
 };
-
-export const getUsers = getUsersByOrganizationFactory({
-  pg: getDatabaseConnection(),
-});
 
 export const getUserOrganizationLink = async (
   organization_id: number,
