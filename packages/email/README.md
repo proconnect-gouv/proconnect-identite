@@ -39,21 +39,20 @@ const info = await transporter.sendMail({
 
 ## 📦 Available Templates
 
-| Template                           | Purpose                            |
-| ---------------------------------- | ---------------------------------- |
-| `Add2fa`                           | 2FA activation confirmation        |
-| `AddAccessKey`                     | API key creation notification      |
-| `Delete2faProtection`              | 2FA removal warning                |
-| `DeleteAccessKey`                  | API key deletion notice            |
-| `DeleteAccount`                    | Account deletion confirmation      |
-| `DeleteFreeTotpMail`               | TOTP removal notification          |
-| `MagicLink`                        | Passwordless login link            |
-| `ModerationProcessed`              | Organization moderation completion |
-| `OfficialContactEmailVerification` | Official contact verification      |
-| `ResetPassword`                    | Password reset instructions        |
-| `UpdatePersonalDataMail`           | Profile update summary             |
-| `VerifyEmail`                      | Email address verification         |
-| `Welcome`                          | New user onboarding                |
+| Template                           | Purpose                       |
+| ---------------------------------- | ----------------------------- |
+| `Add2fa`                           | 2FA activation confirmation   |
+| `AddAccessKey`                     | API key creation notification |
+| `Delete2faProtection`              | 2FA removal warning           |
+| `DeleteAccessKey`                  | API key deletion notice       |
+| `DeleteAccount`                    | Account deletion confirmation |
+| `DeleteFreeTotpMail`               | TOTP removal notification     |
+| `MagicLink`                        | Passwordless login link       |
+| `OfficialContactEmailVerification` | Official contact verification |
+| `ResetPassword`                    | Password reset instructions   |
+| `UpdatePersonalDataMail`           | Profile update summary        |
+| `VerifyEmail`                      | Email address verification    |
+| `Welcome`                          | New user onboarding           |
 
 ## 🤝 Contributing
 

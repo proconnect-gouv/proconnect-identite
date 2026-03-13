@@ -15,8 +15,7 @@ import notificationMessages from "../config/notification-messages";
 import { InseeApiRepository } from "../connectors/api-insee";
 import { RegistreNationalEntreprisesApiRepository } from "../connectors/api-rne";
 import { getOrganizationInfo } from "../connectors/api-sirene";
-import { sendModerationProcessedEmail } from "../managers/moderation";
-import { idSchema, siretSchema } from "../services/custom-zod-schemas";
+import { siretSchema } from "../services/custom-zod-schemas";
 import { logger } from "../services/log";
 
 export const getPingApiSireneController = async (
@@ -119,36 +118,6 @@ export const getOrganizationInfoController = async (
           notificationMessages["invalid_siret"].description,
         ),
       );
-    }
-
-    next(e);
-  }
-};
-
-export const postSendModerationProcessedEmail = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const schema = z.object({
-      organization_id: idSchema(),
-      user_id: idSchema(),
-    });
-
-    const { organization_id, user_id } = await schema.parseAsync(req.query);
-
-    await sendModerationProcessedEmail({ organization_id, user_id });
-
-    return res.json({});
-  } catch (e) {
-    logger.error(e);
-    if (e instanceof ZodError) {
-      return next(new HttpErrors.BadRequest());
-    }
-
-    if (e instanceof NotFoundError) {
-      return next(new HttpErrors.NotFound());
     }
 
     next(e);

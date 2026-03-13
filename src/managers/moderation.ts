@@ -1,10 +1,7 @@
-import { ModerationProcessed } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
-import { HOST } from "../config/env";
 import { ForbiddenError } from "../config/errors";
-import { sendMail } from "../connectors/mail";
 import {
   deleteModeration,
   findModerationById,
@@ -12,44 +9,6 @@ import {
   reopenModeration,
 } from "../repositories/moderation";
 import { findById as findOrganizationById } from "../repositories/organization/getters";
-import { findById as findUserById } from "../repositories/user";
-
-export const sendModerationProcessedEmail = async ({
-  organization_id,
-  user_id,
-}: {
-  organization_id: number;
-  user_id: number;
-}): Promise<{ emailSent: boolean }> => {
-  const user = await findUserById(user_id);
-
-  if (isEmpty(user)) {
-    throw new NotFoundError();
-  }
-
-  const { email } = user;
-
-  const organization = await findOrganizationById(organization_id);
-
-  if (isEmpty(organization)) {
-    throw new NotFoundError();
-  }
-
-  const { cached_libelle, siret } = organization;
-
-  await sendMail({
-    to: [email],
-    subject: `[ProConnect] Demande pour rejoindre ${cached_libelle || siret}`,
-    html: ModerationProcessed({
-      baseurl: HOST,
-      libelle: cached_libelle || siret,
-      email,
-    }).toString(),
-    tag: "moderation-processed",
-  });
-
-  return { emailSent: true };
-};
 
 export const getOrganizationFromModeration = async ({
   user,
