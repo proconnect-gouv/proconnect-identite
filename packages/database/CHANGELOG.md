@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.4.0
+
+### Minor Changes
+
+- [#1839](https://github.com/proconnect-gouv/proconnect-identite/pull/1839) [`e19a159`](https://github.com/proconnect-gouv/proconnect-identite/commit/e19a1599db569874e2bf01cf7dc74505498a807c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🗃️ Ajout de la colonne sp_name dans la table modération.
+
 ## 1.3.0
 
 ### Minor Changes
