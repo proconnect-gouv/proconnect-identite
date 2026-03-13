@@ -5,7 +5,6 @@ import { ApiEntrepriseInseeRepository } from "./api-entreprise";
 
 //
 
-export const getOrganizationInfo = getOrganizationInfoFactory({
-  findBySiren: ApiEntrepriseInseeRepository.findBySiren,
-  findBySiret: ApiEntrepriseInseeRepository.findBySiret,
-});
+export const getOrganizationInfo = getOrganizationInfoFactory(
+  ApiEntrepriseInseeRepository,
+);
