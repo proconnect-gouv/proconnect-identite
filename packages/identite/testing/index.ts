@@ -4,10 +4,12 @@ import { PGlite } from "@electric-sql/pglite";
 import { noop } from "lodash-es";
 import { runner } from "node-pg-migrate";
 import { join } from "path";
+import { createContext } from "../src/connectors/index.js";
 
 //
 
 export const pg = new PGlite();
+export const context = createContext(pg as any);
 
 export function migrate() {
   return runner({

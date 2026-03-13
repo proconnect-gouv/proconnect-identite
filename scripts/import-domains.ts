@@ -11,10 +11,7 @@ import fs from "fs";
 import { isEmpty, some, toInteger } from "lodash-es";
 import { z } from "zod";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
-import {
-  addDomain,
-  findEmailDomainsByOrganizationId,
-} from "../src/repositories/email-domain";
+import { context } from "../src/connectors/context";
 import { upsert } from "../src/repositories/organization/setters";
 import { isAFreeEmailProvider } from "../src/services/email";
 import { logger } from "../src/services/log";
@@ -152,9 +149,10 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             });
 
             // 4. add domain
-            const emailDomains = await findEmailDomainsByOrganizationId(
-              organization.id,
-            );
+            const emailDomains =
+              await context.repo.email_domains.findEmailDomainsByOrganizationId(
+                organization.id,
+              );
 
             // if the domain is already register, whatever the status, we do not insert it
             if (!some(emailDomains, { domain })) {
@@ -164,7 +162,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               continue;
             }
 
-            await addDomain({
+            await context.repo.email_domains.addDomain({
               organization_id: organization.id,
               domain,
               verification_type: "not_verified_yet",

@@ -46,9 +46,9 @@ import {
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
 import { getOrganizationInfo } from "../../connectors/api-sirene";
+import { context } from "../../connectors/context";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
-import { findEmailDomainsByOrganizationId } from "../../repositories/email-domain";
 import {
   createModeration,
   findPendingModeration,
@@ -230,7 +230,9 @@ export const joinOrganization = async ({
   const { email } = user;
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
-    await findEmailDomainsByOrganizationId(organization_id);
+    await context.repo.email_domains.findEmailDomainsByOrganizationId(
+      organization_id,
+    );
 
   if (!isDomainAllowedForOrganization(siret, domain)) {
     throw new DomainNotAllowedForOrganizationError(organization_id);
