@@ -143,6 +143,7 @@ export const postJoinOrganizationMiddleware = async (
       user_id,
       confirmed,
       certificationRequested: req.session.certificationDirigeantRequested,
+      sp_name: req.session.spName,
     });
 
     if (req.session.mustReturnOneOrganizationInPayload) {

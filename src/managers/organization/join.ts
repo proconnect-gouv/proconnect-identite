@@ -171,11 +171,13 @@ export const joinOrganization = async ({
   user_id,
   confirmed = false,
   certificationRequested = false,
+  sp_name,
 }: {
   organization: Organization;
   user_id: number;
   confirmed: boolean;
   certificationRequested?: boolean;
+  sp_name?: string;
 }): Promise<UserOrganizationLink> => {
   const { siret } = organization;
 
@@ -435,6 +437,7 @@ export const joinOrganization = async ({
       organization_id,
       type: ModerationTypeSchema.enum.non_verified_domain,
       ticket_id: null,
+      sp_name,
     });
     return await linkUserToOrganization({
       organization_id,
@@ -501,9 +504,11 @@ export const greetForCertification = async ({
 export const createPendingModeration = async ({
   user,
   organization,
+  sp_name,
 }: {
   user: User;
   organization: Organization;
+  sp_name?: string;
 }) => {
   let ticket_id = null;
   const { id: user_id, email } = user;
@@ -527,6 +532,7 @@ export const createPendingModeration = async ({
   return createModeration({
     user_id,
     organization_id,
+    sp_name,
     type: ModerationTypeSchema.enum.organization_join_block,
     ticket_id,
   });

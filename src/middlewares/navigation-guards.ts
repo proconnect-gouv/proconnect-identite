@@ -829,8 +829,9 @@ const processPendingModerationGuard = async (prev: Pass<RequestContext>) => {
   if (!Pass.is_passing(context)) return context;
 
   const { id: moderation_id } = await createPendingModeration({
-    user,
     organization,
+    sp_name: req.session.spName,
+    user,
   });
 
   req.session.pendingModerationOrganizationId = undefined;

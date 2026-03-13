@@ -10,11 +10,13 @@ import { getDatabaseConnection } from "../connectors/postgres";
 export const createModeration = async ({
   user_id,
   organization_id,
+  sp_name,
   type,
   ticket_id,
 }: {
   user_id: number;
   organization_id: number;
+  sp_name?: string;
   type: ModerationType;
   ticket_id: string | null;
 }) => {
@@ -22,8 +24,8 @@ export const createModeration = async ({
 
   const { rows }: QueryResult<Moderation> = await connection.query(
     `
-INSERT INTO moderations (user_id, organization_id, status, type, ticket_id)
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO moderations (user_id, organization_id, status, type, ticket_id, sp_name)
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;`,
     [
       user_id,
@@ -31,6 +33,7 @@ RETURNING *;`,
       ModerationStatusSchema.enum.pending,
       type,
       ticket_id,
+      sp_name ?? null,
     ],
   );
 
