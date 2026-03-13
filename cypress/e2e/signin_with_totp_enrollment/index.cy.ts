@@ -44,6 +44,14 @@ describe("sign-in with totp enrollment", () => {
     cy.contains(
       '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
     );
+
+    // should not force 2fa on all services after totp enrollment triggered by a service provider
+
+    cy.contains("Se déconnecter").click();
+
+    cy.contains("S’identifier avec ProConnect").click();
+
+    cy.login("ial2-aal1@yopmail.com");
   });
 
   it("should re-authenticate after long connexion to a service provider requires mfa", function () {
