@@ -141,36 +141,6 @@ export const oidc_clients = pgTable("oidc_clients", {
   is_proconnect_federation: boolean().default(false).notNull(),
 });
 
-export const moderations = pgTable(
-  "moderations",
-  {
-    id: serial().primaryKey().notNull(),
-    user_id: integer().notNull(),
-    organization_id: integer().notNull(),
-    type: varchar().notNull(),
-    created_at: timestamp({ withTimezone: true, mode: "string" })
-      .defaultNow()
-      .notNull(),
-    moderated_at: timestamp({ withTimezone: true, mode: "string" }),
-    comment: varchar(),
-    moderated_by: varchar(),
-    ticket_id: text(),
-    status: text().default("unknown").notNull(),
-  },
-  (table) => [
-    foreignKey({
-      columns: [table.user_id],
-      foreignColumns: [users.id],
-      name: "moderations_user_id_fkey",
-    }).onDelete("cascade"),
-    foreignKey({
-      columns: [table.organization_id],
-      foreignColumns: [organizations.id],
-      name: "moderations_organization_id_fkey",
-    }).onDelete("cascade"),
-  ],
-);
-
 export const email_deliverability_whitelist = pgTable(
   "email_deliverability_whitelist",
   {
@@ -287,6 +257,37 @@ export const users_oidc_clients = pgTable(
     })
       .onUpdate("cascade")
       .onDelete("set null"),
+  ],
+);
+
+export const moderations = pgTable(
+  "moderations",
+  {
+    id: serial().primaryKey().notNull(),
+    user_id: integer().notNull(),
+    organization_id: integer().notNull(),
+    type: varchar().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+    moderated_at: timestamp({ withTimezone: true, mode: "string" }),
+    comment: varchar(),
+    moderated_by: varchar(),
+    ticket_id: text(),
+    status: text().default("unknown").notNull(),
+    sp_name: varchar(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.user_id],
+      foreignColumns: [users.id],
+      name: "moderations_user_id_fkey",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [table.organization_id],
+      foreignColumns: [organizations.id],
+      name: "moderations_organization_id_fkey",
+    }).onDelete("cascade"),
   ],
 );
 
