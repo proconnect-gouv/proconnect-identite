@@ -255,7 +255,8 @@ CREATE TABLE "public"."moderations" (
   "comment" character varying,
   "moderated_by" character varying,
   "ticket_id" "text",
-  "status" "text" DEFAULT 'unknown'::"text" NOT NULL
+  "status" "text" DEFAULT 'unknown'::"text" NOT NULL,
+  "sp_name" character varying
 );
 
 --
