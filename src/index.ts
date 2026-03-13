@@ -82,7 +82,7 @@ if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
         // As for https://github.com/w3c/webappsec-csp/issues/8, the feature is debated
         // and seems not useful for open id provider redirection.
         // We bypass this security for now.
-        formAction: ["'self'"],
+        formAction: ["'self'", "*"],
       },
     };
 
