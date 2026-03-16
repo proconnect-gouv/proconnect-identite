@@ -33,9 +33,7 @@ export const RegistreNationalEntreprisesApiClient = {
       TESTING_RNE_API_SIRENS.includes(siren)
         ? rneOpenApiTestClient
         : await get_client();
-    return findPouvoirsBySirenFactory(client, () => ({
-      signal: AbortSignal.timeout(RNE_API_HTTP_CLIENT_TIMEOUT),
-    }))(siren);
+    return findPouvoirsBySirenFactory(client)(siren);
   },
 };
 
@@ -48,5 +46,13 @@ const get_access_token = getRegistreNationalEntreprisesAccessTokenFactory({
 
 async function get_client() {
   const token = await get_access_token();
-  return createRegistreNationalEntreprisesOpenApiClient(token);
+  const client = createRegistreNationalEntreprisesOpenApiClient(token);
+  client.use({
+    onRequest({ request }) {
+      return new Request(request, {
+        signal: AbortSignal.timeout(RNE_API_HTTP_CLIENT_TIMEOUT),
+      });
+    },
+  });
+  return client;
 }

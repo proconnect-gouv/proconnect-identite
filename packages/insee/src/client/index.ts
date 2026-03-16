@@ -13,14 +13,10 @@ import createClient, { type ClientOptions } from "openapi-fetch";
  * @returns the client
  */
 export function createInseeSirenePrivateOpenApiClient(
-  token: string,
   options: ClientOptions = {},
 ) {
   return createClient<paths>({
     baseUrl: options.baseUrl ?? "https://api.insee.fr/api-sirene/prive/3.11",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
     ...options,
   });
 }

@@ -34,42 +34,53 @@ const getInseeAccessToken = getInseeAccessTokenFactory({
   username: INSEE_API_USERNAME,
 });
 
-async function getInseeOpenApiClient() {
-  const token = await getInseeAccessToken();
-  return createInseeSirenePrivateOpenApiClient(token, {
+const inseeOpenApiClient: InseeSirenePrivateOpenApiClient =
+  createInseeSirenePrivateOpenApiClient({
     baseUrl: INSEE_API_URL,
   });
-}
+inseeOpenApiClient.use({
+  async onRequest({ request }) {
+    const token = await getInseeAccessToken();
+    request.headers.set("Authorization", `Bearer ${token}`);
+    return new Request(request, {
+      signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
+    });
+  },
+});
 
-const inseeOpenApiTestClient = createInseeSirenePrivateOpenApiClient(
-  "__INSEE_API_TOKEN__",
-  {
+const inseeOpenApiTestClient: InseeSirenePrivateOpenApiClient =
+  createInseeSirenePrivateOpenApiClient({
+    headers: { Authorization: "Bearer __INSEE_API_TOKEN__" },
     fetch: (input: Request) =>
       Promise.resolve(TestingInseeApiRouter.fetch(input)),
-  },
-);
+  });
+
+const inseeClientOrigin = {
+  findBySiren: findUniteLegaleBySirenFactory(inseeOpenApiClient),
+  findBySiret: findUniteLegaleBySiretFactory(inseeOpenApiClient),
+};
+const inseeClientTest = {
+  findBySiren: findUniteLegaleBySirenFactory(inseeOpenApiTestClient),
+  findBySiret: findUniteLegaleBySiretFactory(inseeOpenApiTestClient),
+};
 
 export const InseeApiClient = {
-  async findBySiren(siren: string) {
-    const client: InseeSirenePrivateOpenApiClient =
+  findBySiren(siren: string) {
+    const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_INSEE_API_SIRENS.includes(siren)
-        ? inseeOpenApiTestClient
-        : await getInseeOpenApiClient();
+        ? inseeClientTest
+        : inseeClientOrigin;
 
-    return findUniteLegaleBySirenFactory(client, () => ({
-      signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-    }))(siren);
+    return client.findBySiren(siren);
   },
-  async findBySiret(siret: string) {
-    const client: InseeSirenePrivateOpenApiClient =
+  findBySiret(siret: string) {
+    const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_INSEE_API_SIRETS.includes(siret)
-        ? inseeOpenApiTestClient
-        : await getInseeOpenApiClient();
+        ? inseeClientTest
+        : inseeClientOrigin;
 
-    return findUniteLegaleBySiretFactory(client, () => ({
-      signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-    }))(siret);
+    return client.findBySiret(siret);
   },
 };
