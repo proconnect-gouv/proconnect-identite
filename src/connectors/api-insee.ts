@@ -41,13 +41,15 @@ async function getInseeOpenApiClient() {
   });
 }
 
-const inseeOpenApiTestClient: InseeSirenePrivateOpenApiClient =
-  createInseeSirenePrivateOpenApiClient("__INSEE_API_TOKEN__", {
+const inseeOpenApiTestClient = createInseeSirenePrivateOpenApiClient(
+  "__INSEE_API_TOKEN__",
+  {
     fetch: (input: Request) =>
       Promise.resolve(TestingInseeApiRouter.fetch(input)),
-  });
+  },
+);
 
-export const InseeApiRepository = {
+export const InseeApiClient = {
   async findBySiren(siren: string) {
     const client: InseeSirenePrivateOpenApiClient =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&

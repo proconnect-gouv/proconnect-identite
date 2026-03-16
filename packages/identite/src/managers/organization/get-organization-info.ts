@@ -2,7 +2,7 @@
 
 import { InvalidSiretError, NotFoundError } from "#src/errors";
 import { type OrganizationInfo } from "#src/types";
-import type { ApiEntrepriseInseeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
+import type { ApiEntrepriseInseeClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import {
   ApiEntrepriseConnectionError,
   ApiEntrepriseInvalidSiret,
@@ -11,9 +11,7 @@ import * as ApiEntreprise from "./adapters/api_entreprise.js";
 
 //
 
-export function getOrganizationInfoFactory(
-  config: ApiEntrepriseInseeRepository,
-) {
+export function getOrganizationInfoFactory(config: ApiEntrepriseInseeClient) {
   const { findBySiren, findBySiret } = config;
 
   return async function getOrganizationInfo(

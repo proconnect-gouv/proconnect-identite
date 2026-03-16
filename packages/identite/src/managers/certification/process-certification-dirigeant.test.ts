@@ -35,13 +35,13 @@ import { processCertificationDirigeantFactory } from "./process-certification-di
 describe("processCertificationDirigeantFactory", () => {
   it("should recognize a user as executive of a auto-entrepreneur", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeRepository: {
+      ApiEntrepriseInfogreffeClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      RegistreNationalEntreprisesApiRepository: {
+      RegistreNationalEntreprisesApiClient: {
         findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
       },
-      InseeApiRepository: {
+      InseeApiClient: {
         findBySiren: () => Promise.resolve(LiElJonsonEstablishment),
       },
     });
@@ -71,13 +71,13 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should recognize a foreign user as executive of a auto-entrepreneur", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeRepository: {
+      ApiEntrepriseInfogreffeClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      RegistreNationalEntreprisesApiRepository: {
+      RegistreNationalEntreprisesApiClient: {
         findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
       },
-      InseeApiRepository: {
+      InseeApiClient: {
         findBySiren: () => Promise.resolve(RogalDornEstablishment),
       },
     });
@@ -107,13 +107,13 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should not match another mandataire", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeRepository: {
+      ApiEntrepriseInfogreffeClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      RegistreNationalEntreprisesApiRepository: {
+      RegistreNationalEntreprisesApiClient: {
         findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
       },
-      InseeApiRepository: {
+      InseeApiClient: {
         findBySiren: () => Promise.resolve(LiElJonsonEstablishment),
       },
     });
@@ -137,14 +137,14 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should match Rogal Dorn among the executive of Papillon in RNE", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeRepository: {
+      ApiEntrepriseInfogreffeClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      RegistreNationalEntreprisesApiRepository: {
+      RegistreNationalEntreprisesApiClient: {
         findPouvoirsBySiren: () =>
           Promise.resolve([UlysseTosiPouvoir, RogalDornPouvoir]),
       },
-      InseeApiRepository: {
+      InseeApiClient: {
         findBySiren: () => Promise.reject(new Error("💣")),
       },
     });
@@ -174,14 +174,14 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should match Amberley Vail among the executive of Papillon in RNE", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeRepository: {
+      ApiEntrepriseInfogreffeClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      RegistreNationalEntreprisesApiRepository: {
+      RegistreNationalEntreprisesApiClient: {
         findPouvoirsBySiren: () =>
           Promise.resolve([UlysseTosiPouvoir, AmberleyVailPouvoir]),
       },
-      InseeApiRepository: {
+      InseeApiClient: {
         findBySiren: () => Promise.reject(new Error("💣")),
       },
     });
@@ -211,14 +211,14 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should match Rogal Dorn among the executive of Papillon in Infogreffe", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeRepository: {
+      ApiEntrepriseInfogreffeClient: {
         findMandatairesSociauxBySiren: () =>
           Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
       },
-      RegistreNationalEntreprisesApiRepository: {
+      RegistreNationalEntreprisesApiClient: {
         findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
       },
-      InseeApiRepository: {
+      InseeApiClient: {
         findBySiren: () => Promise.reject(new Error("💣")),
       },
     });
@@ -249,13 +249,13 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("❎ fail with no mandataires", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeRepository: {
+      ApiEntrepriseInfogreffeClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
-      RegistreNationalEntreprisesApiRepository: {
+      RegistreNationalEntreprisesApiClient: {
         findPouvoirsBySiren: () => Promise.resolve([]),
       },
-      InseeApiRepository: {
+      InseeApiClient: {
         findBySiren: () => Promise.reject(new Error("💣")),
       },
     });

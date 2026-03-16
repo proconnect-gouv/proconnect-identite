@@ -1,8 +1,8 @@
 //
 
 import {
-  createApiEntrepriseInfogreffeRepository,
-  createApiEntrepriseInseeRepository,
+  createApiEntrepriseInfogreffeClient,
+  createApiEntrepriseInseeClient,
 } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import {
   createApiEntrepriseOpenApiClient,
@@ -26,6 +26,13 @@ const apiEntrepriseOpenApiClient: ApiEntrepriseOpenApiClient =
   createApiEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
     baseUrl: ENTREPRISE_API_URL,
   });
+apiEntrepriseOpenApiClient.use({
+  onRequest({ request }) {
+    return new Request(request, {
+      signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
+    });
+  },
+});
 
 export const apiEntrepriseOpenApiTestClient: ApiEntrepriseOpenApiClient =
   createApiEntrepriseOpenApiClient("__ENTREPRISE_API_TOKEN__", {
@@ -34,74 +41,61 @@ export const apiEntrepriseOpenApiTestClient: ApiEntrepriseOpenApiClient =
   });
 
 const ApiEntrepriseInfogreffeRepositoryOrigin =
-  createApiEntrepriseInfogreffeRepository(
+  createApiEntrepriseInfogreffeClient(
     apiEntrepriseOpenApiClient,
     ENTREPRISE_API_TRACKING_CONTEXT,
     ENTREPRISE_API_TRACKING_RECIPIENT,
-    () => ({
-      signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-    }),
   );
-const ApiEntrepriseInfogreffeRepositoryTest =
-  createApiEntrepriseInfogreffeRepository(
-    apiEntrepriseOpenApiTestClient,
-    ENTREPRISE_API_TRACKING_CONTEXT,
-    ENTREPRISE_API_TRACKING_RECIPIENT,
-    () => ({
-      signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-    }),
-  );
+const ApiEntrepriseInfogreffeClientTest = createApiEntrepriseInfogreffeClient(
+  apiEntrepriseOpenApiTestClient,
+  ENTREPRISE_API_TRACKING_CONTEXT,
+  ENTREPRISE_API_TRACKING_RECIPIENT,
+);
 
-export const ApiEntrepriseInfogreffeRepository = {
+export const ApiEntrepriseInfogreffeClient = {
   findMandatairesSociauxBySiren(siren: string) {
-    const repo =
+    const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_ENTREPRISE_API_MANDATAIRES_SIREN.includes(siren)
-        ? ApiEntrepriseInfogreffeRepositoryTest
+        ? ApiEntrepriseInfogreffeClientTest
         : ApiEntrepriseInfogreffeRepositoryOrigin;
 
-    return repo.findMandatairesSociauxBySiren(siren);
+    return client.findMandatairesSociauxBySiren(siren);
   },
 };
 
 //
 
-const ApiEntrepriseInseeRepositoryOrigin = createApiEntrepriseInseeRepository(
+const ApiEntrepriseInseeClientOrigin = createApiEntrepriseInseeClient(
   apiEntrepriseOpenApiClient,
   ENTREPRISE_API_TRACKING_CONTEXT,
   ENTREPRISE_API_TRACKING_RECIPIENT,
-  () => ({
-    signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-  }),
 );
-const ApiEntrepriseInseeRepositoryTest = createApiEntrepriseInseeRepository(
+const ApiEntrepriseInseeClientTest = createApiEntrepriseInseeClient(
   apiEntrepriseOpenApiTestClient,
   ENTREPRISE_API_TRACKING_CONTEXT,
   ENTREPRISE_API_TRACKING_RECIPIENT,
-  () => ({
-    signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-  }),
 );
 
-export const ApiEntrepriseInseeRepository = {
+export const ApiEntrepriseInseeClient = {
   findBySiren(siren: string) {
-    const repo =
+    const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_ENTREPRISE_API_SIRETS.map((siret) =>
         siret.substring(0, 9),
       ).includes(siren)
-        ? ApiEntrepriseInseeRepositoryTest
-        : ApiEntrepriseInseeRepositoryOrigin;
+        ? ApiEntrepriseInseeClientTest
+        : ApiEntrepriseInseeClientOrigin;
 
-    return repo.findBySiren(siren);
+    return client.findBySiren(siren);
   },
   findBySiret(siret: string) {
-    const repo =
+    const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_ENTREPRISE_API_SIRETS.includes(siret)
-        ? ApiEntrepriseInseeRepositoryTest
-        : ApiEntrepriseInseeRepositoryOrigin;
+        ? ApiEntrepriseInseeClientTest
+        : ApiEntrepriseInseeClientOrigin;
 
-    return repo.findBySiret(siret);
+    return client.findBySiret(siret);
   },
 };

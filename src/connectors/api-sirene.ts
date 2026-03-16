@@ -1,10 +1,10 @@
 //
 
 import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
-import { ApiEntrepriseInseeRepository } from "./api-entreprise";
+import { ApiEntrepriseInseeClient } from "./api-entreprise";
 
 //
 
 export const getOrganizationInfo = getOrganizationInfoFactory(
-  ApiEntrepriseInseeRepository,
+  ApiEntrepriseInseeClient,
 );

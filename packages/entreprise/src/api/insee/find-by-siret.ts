@@ -5,20 +5,17 @@ import type {
   ApiEntrepriseTrackingParams,
 } from "#src/client";
 import { ApiEntrepriseError } from "#src/types";
-import type { FetchOptions } from "openapi-fetch";
 
 //
 
 export function findBySiretFactory(
   client: ApiEntrepriseOpenApiClient,
   trackingParams: ApiEntrepriseTrackingParams,
-  optionsFn: () => FetchOptions<unknown> = () => ({}),
 ) {
   return async function findBySiret(siret: string) {
     const { data, error } = await client.GET(
       "/v3/insee/sirene/etablissements/{siret}",
       {
-        ...optionsFn(),
         params: {
           path: {
             siret,

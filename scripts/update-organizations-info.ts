@@ -1,6 +1,6 @@
 //
 
-import { createApiEntrepriseInseeRepository } from "@proconnect-gouv/proconnect.api_entreprise/api";
+import { createApiEntrepriseInseeClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
@@ -18,7 +18,7 @@ import {
 //
 
 export const getOrganizationInfo = getOrganizationInfoFactory(
-  createApiEntrepriseInseeRepository(
+  createApiEntrepriseInseeClient(
     apiEntrepriseOpenApiTestClient,
     "🎭 Organization info script 🎭",
     "13002526500013",

@@ -26,7 +26,7 @@ const rneOpenApiTestClient = createRegistreNationalEntreprisesOpenApiClient(
   },
 );
 
-export const RegistreNationalEntreprisesApiRepository = {
+export const RegistreNationalEntreprisesApiClient = {
   async findPouvoirsBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&

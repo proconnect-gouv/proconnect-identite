@@ -1,49 +1,38 @@
 //
 
 import type { ApiEntrepriseOpenApiClient } from "#src/client";
-import type { FetchOptions } from "openapi-fetch";
 import { findMandatairesSociauxBySirenFactory } from "./infogreffe/index.js";
 import { findBySirenFactory } from "./insee/find-by-siren.js";
 import { findBySiretFactory } from "./insee/find-by-siret.js";
 
-export function createApiEntrepriseInseeRepository(
+export function createApiEntrepriseInseeClient(
   client: ApiEntrepriseOpenApiClient,
   context: string,
   recipient: string,
-  optionsFn: () => FetchOptions<unknown> = () => ({}),
 ) {
   return {
-    findBySiren: findBySirenFactory(
-      client,
-      {
-        context,
-        object: "findEstablishmentBySiren",
-        recipient,
-      },
-      optionsFn,
-    ),
-    findBySiret: findBySiretFactory(
-      client,
-      {
-        context,
-        object: "findEstablishmentBySiret",
-        recipient,
-      },
-      optionsFn,
-    ),
+    findBySiren: findBySirenFactory(client, {
+      context,
+      object: "findEstablishmentBySiren",
+      recipient,
+    }),
+    findBySiret: findBySiretFactory(client, {
+      context,
+      object: "findEstablishmentBySiret",
+      recipient,
+    }),
   };
 }
-export type ApiEntrepriseInseeRepository = ReturnType<
-  typeof createApiEntrepriseInseeRepository
+export type ApiEntrepriseInseeClient = ReturnType<
+  typeof createApiEntrepriseInseeClient
 >;
 
 //
 
-export function createApiEntrepriseInfogreffeRepository(
+export function createApiEntrepriseInfogreffeClient(
   client: ApiEntrepriseOpenApiClient,
   context: string,
   recipient: string,
-  optionsFn: () => FetchOptions<unknown> = () => ({}),
 ) {
   return {
     findMandatairesSociauxBySiren: findMandatairesSociauxBySirenFactory(
@@ -53,10 +42,9 @@ export function createApiEntrepriseInfogreffeRepository(
         object: "findMandatairesSociauxBySiren",
         recipient,
       },
-      optionsFn,
     ),
   };
 }
-export type ApiEntrepriseInfogreffeRepository = ReturnType<
-  typeof createApiEntrepriseInfogreffeRepository
+export type ApiEntrepriseInfogreffeClient = ReturnType<
+  typeof createApiEntrepriseInfogreffeClient
 >;
