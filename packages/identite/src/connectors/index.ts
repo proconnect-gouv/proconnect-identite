@@ -1,5 +1,11 @@
 //
 
+import type {
+  ApiEntrepriseInfogreffeRepository,
+  ApiEntrepriseInseeRepository,
+} from "@proconnect-gouv/proconnect.api_entreprise/api";
+import type { FindUniteLegaleBySirenHandler } from "@proconnect-gouv/proconnect.insee/api";
+import type { FindPouvoirsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { type Pool } from "pg";
 import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
 import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
@@ -18,8 +24,30 @@ import { upsertFranceconnectUserinfoFactory } from "../repositories/user/upsert-
 
 //
 
-export function createContext(pg: Pool) {
+export function createContext({
+  api_entreprise_infogreffe_repository,
+  api_entreprise_insee_repository,
+  api_insee_repository,
+  api_registre_national_entreprises_repository,
+  pg,
+}: {
+  api_entreprise_infogreffe_repository: ApiEntrepriseInfogreffeRepository;
+  api_entreprise_insee_repository: ApiEntrepriseInseeRepository;
+  api_insee_repository: { findBySiren: FindUniteLegaleBySirenHandler };
+  api_registre_national_entreprises_repository: {
+    findPouvoirsBySiren: FindPouvoirsBySirenHandler;
+  };
+  pg: Pool;
+}) {
   return {
+    client: {
+      entreprise: {
+        infogreffe: api_entreprise_infogreffe_repository,
+        insee: api_entreprise_insee_repository,
+      },
+      insee: api_insee_repository,
+      rne: api_registre_national_entreprises_repository,
+    },
     repository: {
       email_domains: {
         addDomain: addDomainFactory({ pg }),

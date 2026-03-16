@@ -2,6 +2,12 @@
 
 import { IdentityVectorSchema } from "#src/types";
 import {
+  api_entreprise_infogreffe,
+  api_insee,
+  api_registre_national_entreprises,
+  context,
+} from "#testing";
+import {
   AmberleyVailFranceConnectUserInfo,
   LiElJonsonFranceConnectUserInfo,
   RogalDornFranceConnectUserInfo,
@@ -32,19 +38,14 @@ import { processCertificationDirigeantFactory } from "./process-certification-di
 
 //
 
+const processCertificationDirigeant =
+  processCertificationDirigeantFactory(context);
+
 describe("processCertificationDirigeantFactory", () => {
   it("should recognize a user as executive of a auto-entrepreneur", async () => {
-    const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseClient: {
-        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
-      },
-      RegistreNationalEntreprisesApiClient: {
-        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
-      },
-      InseeApiClient: {
-        findBySiren: () => Promise.resolve(LiElJonsonEstablishment),
-      },
-    });
+    api_insee.findBySiren.mock.mockImplementationOnce(() =>
+      Promise.resolve(LiElJonsonEstablishment),
+    );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       rogal_dorn_org_info,
@@ -70,18 +71,9 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should recognize a foreign user as executive of a auto-entrepreneur", async () => {
-    const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseClient: {
-        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
-      },
-      RegistreNationalEntreprisesApiClient: {
-        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
-      },
-      InseeApiClient: {
-        findBySiren: () => Promise.resolve(RogalDornEstablishment),
-      },
-    });
-
+    api_insee.findBySiren.mock.mockImplementationOnce(() =>
+      Promise.resolve(RogalDornEstablishment),
+    );
     const certificationDirigeantResult = await processCertificationDirigeant(
       rogal_dorn_org_info,
       RogalDornFranceConnectUserInfo,
@@ -106,17 +98,9 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should not match another mandataire", async () => {
-    const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseClient: {
-        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
-      },
-      RegistreNationalEntreprisesApiClient: {
-        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
-      },
-      InseeApiClient: {
-        findBySiren: () => Promise.resolve(LiElJonsonEstablishment),
-      },
-    });
+    api_insee.findBySiren.mock.mockImplementationOnce(() =>
+      Promise.resolve(LiElJonsonEstablishment),
+    );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       rogal_dorn_org_info,
@@ -136,18 +120,9 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should match Rogal Dorn among the executive of Papillon in RNE", async () => {
-    const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseClient: {
-        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
-      },
-      RegistreNationalEntreprisesApiClient: {
-        findPouvoirsBySiren: () =>
-          Promise.resolve([UlysseTosiPouvoir, RogalDornPouvoir]),
-      },
-      InseeApiClient: {
-        findBySiren: () => Promise.reject(new Error("💣")),
-      },
-    });
+    api_registre_national_entreprises.findPouvoirsBySiren.mock.mockImplementationOnce(
+      () => Promise.resolve([UlysseTosiPouvoir, RogalDornPouvoir]),
+    );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       papillon_org_info,
@@ -173,18 +148,9 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should match Amberley Vail among the executive of Papillon in RNE", async () => {
-    const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseClient: {
-        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
-      },
-      RegistreNationalEntreprisesApiClient: {
-        findPouvoirsBySiren: () =>
-          Promise.resolve([UlysseTosiPouvoir, AmberleyVailPouvoir]),
-      },
-      InseeApiClient: {
-        findBySiren: () => Promise.reject(new Error("💣")),
-      },
-    });
+    api_registre_national_entreprises.findPouvoirsBySiren.mock.mockImplementationOnce(
+      () => Promise.resolve([UlysseTosiPouvoir, AmberleyVailPouvoir]),
+    );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       papillon_org_info,
@@ -210,18 +176,9 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should match Rogal Dorn among the executive of Papillon in Infogreffe", async () => {
-    const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseClient: {
-        findMandatairesSociauxBySiren: () =>
-          Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
-      },
-      RegistreNationalEntreprisesApiClient: {
-        findPouvoirsBySiren: () => Promise.reject(new Error("💣")),
-      },
-      InseeApiClient: {
-        findBySiren: () => Promise.reject(new Error("💣")),
-      },
-    });
+    api_entreprise_infogreffe.findMandatairesSociauxBySiren.mock.mockImplementationOnce(
+      () => Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
+    );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       papillon_org_info,
@@ -248,17 +205,9 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("❎ fail with no mandataires", async () => {
-    const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseClient: {
-        findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
-      },
-      RegistreNationalEntreprisesApiClient: {
-        findPouvoirsBySiren: () => Promise.resolve([]),
-      },
-      InseeApiClient: {
-        findBySiren: () => Promise.reject(new Error("💣")),
-      },
-    });
+    api_registre_national_entreprises.findPouvoirsBySiren.mock.mockImplementationOnce(
+      () => Promise.resolve([]),
+    );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
       papillon_org_info,
