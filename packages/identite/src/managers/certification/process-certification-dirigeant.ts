@@ -1,5 +1,6 @@
 //
 
+import type { Context } from "#src/connectors";
 import { isOrganizationCoveredByCertificationDirigeant } from "#src/services/organization";
 import {
   NullIdentityVector,
@@ -7,9 +8,6 @@ import {
   type IdentityVector,
   type Organization,
 } from "#src/types";
-import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
-import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
-import type { FindPouvoirsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { match } from "ts-pattern";
 import z from "zod/v4";
 import * as ApiEntreprise from "./adapters/api_entreprise.js";
@@ -19,17 +17,6 @@ import * as RNE from "./adapters/rne.js";
 import { certificationScore } from "./certification-score.js";
 
 //
-
-type ProcessCertificationDirigeantConfig = {
-  ApiEntrepriseClient: Pick<
-    ApiEntrepriseClient,
-    "findMandatairesSociauxBySiren"
-  >;
-  InseeApiClient: ApiInseeClient;
-  RegistreNationalEntreprisesApiClient: {
-    findPouvoirsBySiren: FindPouvoirsBySirenHandler;
-  };
-};
 
 export const CertificationDirigeantDataSource = z.enum([
   "api.insee.fr/api-sirene/private",
@@ -59,15 +46,11 @@ export function getCertificationDirigeantDataSourceLabels(
 //
 
 async function getMandatairesSociaux(
-  {
-    RegistreNationalEntreprisesApiClient,
-    ApiEntrepriseClient,
-  }: ProcessCertificationDirigeantConfig,
+  { client: { entreprise, rne } }: Context,
   siren: string,
 ) {
   try {
-    const pouvoirs =
-      await RegistreNationalEntreprisesApiClient.findPouvoirsBySiren(siren);
+    const pouvoirs = await rne.findPouvoirsBySiren(siren);
     const dirigeants = pouvoirs.map(RNE.toIdentityVector);
 
     return {
@@ -80,7 +63,7 @@ async function getMandatairesSociaux(
   } catch (error) {
     console.error(error);
     const mandataires =
-      await ApiEntrepriseClient.findMandatairesSociauxBySiren(siren);
+      await entreprise.infogreffe.findMandatairesSociauxBySiren(siren);
     const dirigeants = mandataires.map(ApiEntreprise.toIdentityVector);
 
     return {
@@ -126,10 +109,10 @@ function match_identity_to_dirigeant(
     }));
 }
 
-export function processCertificationDirigeantFactory(
-  config: ProcessCertificationDirigeantConfig,
-) {
-  const { InseeApiClient } = config;
+export function processCertificationDirigeantFactory(context: Context) {
+  const {
+    client: { insee },
+  } = context;
 
   return async function processCertificationDirigeant(
     organization: Organization,
@@ -163,7 +146,8 @@ export function processCertificationDirigeantFactory(
 
     const { dirigeants, source } = await match(preferredDataSource)
       .with("api.insee.fr/api-sirene/private", async () => ({
-        dirigeants: await InseeApiClient.findBySiren(siren)
+        dirigeants: await insee
+          .findBySiren(siren)
           .then(INSEE.toIdentityVector)
           .then((vector) => [vector]),
         source:
@@ -172,7 +156,7 @@ export function processCertificationDirigeantFactory(
           ],
       }))
       .with("registre-national-entreprises.inpi.fr/api", () =>
-        getMandatairesSociaux(config, siren),
+        getMandatairesSociaux(context, siren),
       )
       .exhaustive();
 

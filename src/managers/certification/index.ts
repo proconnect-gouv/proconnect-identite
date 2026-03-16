@@ -12,19 +12,13 @@ import {
   CertificationDirigeantNoMatchError,
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../../config/errors";
-import { ApiEntrepriseClient } from "../../connectors/api-entreprise";
-import { InseeApiClient } from "../../connectors/api-insee";
-import { RegistreNationalEntreprisesApiClient } from "../../connectors/api-rne";
+import { context } from "../../connectors/context";
 import { logger } from "../../services/log";
 
 //
 
 export const processCertificationDirigeant =
-  processCertificationDirigeantFactory({
-    ApiEntrepriseClient,
-    InseeApiClient,
-    RegistreNationalEntreprisesApiClient,
-  });
+  processCertificationDirigeantFactory(context);
 
 export const processCertificationDirigeantOrThrow = async (
   organization: Organization,
