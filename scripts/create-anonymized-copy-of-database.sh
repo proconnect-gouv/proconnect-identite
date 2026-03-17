@@ -27,6 +27,16 @@ psql $DEST_DB_URL --command="DROP TABLE IF EXISTS organizations"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS users"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS oidc_clients"
 
+echo "$(logPrefix) Cleaning tmp tables from any previously failed copy attempts..."
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_email_domains"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_franceconnect_userinfo"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_moderations"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_oidc_clients"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_organizations"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_users_oidc_clients"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_users_organizations"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_users"
+
 echo "$(logPrefix) Creating anonymized copy of table users..."
 psql $SRC_DB_URL -c "
 CREATE TABLE tmp_users AS
