@@ -44,31 +44,31 @@ export async function emptyDatabase() {
 
 const should_not_been_called = () => Promise.reject(new Error("💣"));
 
-export const api_entreprise_infogreffe = {
+export const api_entreprise_infogreffe_mock_client = {
   findMandatairesSociauxBySiren: mock.fn<FindMandatairesSociauxBySirenHandler>(
     should_not_been_called,
   ),
 };
-export const api_entreprise_insee = {
+export const api_entreprise_insee_mock_client = {
   findBySiren: mock.fn<FindBySirenHandler>(should_not_been_called),
   findBySiret: mock.fn<FindBySiretHandler>(should_not_been_called),
 };
 
-export const api_insee = {
+export const api_insee_mock_client = {
   findBySiren: mock.fn<FindUniteLegaleBySirenHandler>(should_not_been_called),
 };
 
-export const api_registre_national_entreprises = {
+export const api_registre_national_entreprises_mock_client = {
   findPouvoirsBySiren: mock.fn<FindPouvoirsBySirenHandler>(
     should_not_been_called,
   ),
 };
 
 export const context = createContext({
-  api_entreprise_infogreffe_repository: api_entreprise_infogreffe,
-  api_entreprise_insee_repository: api_entreprise_insee,
-  api_insee_repository: api_insee,
-  api_registre_national_entreprises_repository:
-    api_registre_national_entreprises,
+  api_entreprise_infogreffe_client: api_entreprise_infogreffe_mock_client,
+  api_entreprise_insee_client: api_entreprise_insee_mock_client,
+  api_insee_client: api_insee_mock_client,
+  api_registre_national_entreprises_client:
+    api_registre_national_entreprises_mock_client,
   pg: pg as Pool & PGlite,
 });
