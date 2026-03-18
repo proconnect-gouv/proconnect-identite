@@ -38,7 +38,7 @@ import {
   update,
 } from "../repositories/user";
 import { logger } from "../services/log";
-import { disableForce2fa, enableForce2fa, is2FACapable } from "./2fa";
+import { disableForce2fa, is2FACapable } from "./2fa";
 
 // Human-readable title for your website
 const rpName = APPLICATION_NAME;
@@ -167,7 +167,7 @@ export const verifyRegistration = async ({
 
   const current_challenge = user.current_challenge;
   // challenge must only be used once
-  await update(user.id, { current_challenge: null });
+  const updatedUser = await update(user.id, { current_challenge: null });
 
   let verification: VerifiedRegistrationResponse;
   try {
@@ -223,7 +223,7 @@ export const verifyRegistration = async ({
     },
   });
 
-  return { userVerified: user_verified, user: await enableForce2fa(user.id) };
+  return { userVerified: user_verified, updatedUser };
 };
 
 export const getAuthenticationOptions = async (

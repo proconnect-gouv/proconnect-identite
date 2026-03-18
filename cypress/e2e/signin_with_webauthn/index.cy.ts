@@ -1,7 +1,5 @@
 describe("add passkey authentication", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should add ctap2 internal passkey authentication", function () {
     cy.addVirtualAuthenticator({
@@ -57,7 +55,68 @@ describe("direct connexion with passkey", () => {
   });
 });
 
+describe("through a service provider with 2fa only on sites that require it", () => {
+  it("should sign-in with password", function () {
+    cy.origin("http://localhost:4000", () => {
+      cy.visit("/");
+      cy.title().should("include", "standard-client - ProConnect");
+      cy.contains("S’identifier avec ProConnect").click();
+    });
+
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("lion.eljonson@darkangels.world");
+
+    cy.origin("http://localhost:4000", () => {
+      cy.title().should("include", "standard-client - ProConnect");
+      cy.contains('"amr": [\n    "pwd"\n  ],');
+
+      cy.contains("Se déconnecter").click();
+    });
+  });
+
+  it("should sign-in with forced 2fa", function () {
+    cy.origin("http://localhost:4000", () => {
+      cy.visit("/");
+      cy.title().should("include", "standard-client - ProConnect");
+      cy.contains("Forcer une connexion a deux facteurs").click();
+    });
+
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("lion.eljonson@darkangels.world");
+
+    cy.title().should(
+      "include",
+      "Se connecter avec la double authentification - ProConnect",
+    );
+    cy.intercept("http://localhost:4000").as("redirection_done");
+    cy.contains("Se connecter avec une clé d’accès").click();
+    cy.wait("@redirection_done");
+
+    cy.origin("http://localhost:4000", () => {
+      cy.title().should("include", "standard-client - ProConnect");
+      cy.contains('"amr": [\n    "pwd",\n    "pop",\n    "mfa"\n  ],');
+      cy.contains(
+        '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
+      );
+    });
+  });
+});
+
 describe("through a service provider with 2fa for all sites", () => {
+  it("should change user 2fa preference", function () {
+    cy.visit("/connection-and-account");
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("lion.eljonson@darkangels.world");
+    cy.contains("Se connecter avec une clé d’accès").click();
+    cy.title().should("include", "Compte et connexion");
+    cy.contains("Sur tous les sites").click();
+    cy.contains("Valider").click();
+
+    cy.contains("La double authentification a été activée sur tous les sites.");
+
+    // Logout
+    cy.contains("Lion El'Jonson").click();
+  });
   it("should connect with previous passkey", function () {
     cy.origin("http://localhost:4000", () => {
       cy.visit("/");
@@ -102,72 +161,6 @@ describe("through a service provider with 2fa for all sites", () => {
     cy.origin("http://localhost:4000", () => {
       cy.title().should("include", "standard-client - ProConnect");
       cy.contains('"amr": [\n    "pwd",\n    "pop",\n    "mfa"\n  ],');
-    });
-  });
-});
-
-describe("through a service provider with 2fa only on sites that require it", () => {
-  it("should change user 2fa preference", function () {
-    cy.visit("/connection-and-account");
-
-    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.login("lion.eljonson@darkangels.world");
-    cy.contains("Se connecter avec une clé d’accès").click();
-
-    cy.title().should("include", "Compte et connexion");
-    cy.contains("Uniquement sur les sites qui l'exigent").click();
-    cy.contains("Valider").click();
-
-    cy.contains(
-      "La double authentification a été activée uniquement sur les sites qui l'exigent.",
-    );
-
-    // Logout
-    cy.contains("Lion El'Jonson").click();
-  });
-
-  it("should sign-in with password", function () {
-    cy.origin("http://localhost:4000", () => {
-      cy.visit("/");
-      cy.title().should("include", "standard-client - ProConnect");
-      cy.contains("S’identifier avec ProConnect").click();
-    });
-
-    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.login("lion.eljonson@darkangels.world");
-
-    cy.origin("http://localhost:4000", () => {
-      cy.title().should("include", "standard-client - ProConnect");
-      cy.contains('"amr": [\n    "pwd"\n  ],');
-
-      cy.contains("Se déconnecter").click();
-    });
-  });
-
-  it("should sign-in with forced 2fa", function () {
-    cy.origin("http://localhost:4000", () => {
-      cy.visit("/");
-      cy.title().should("include", "standard-client - ProConnect");
-      cy.contains("Forcer une connexion a deux facteurs").click();
-    });
-
-    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.login("lion.eljonson@darkangels.world");
-
-    cy.title().should(
-      "include",
-      "Se connecter avec la double authentification - ProConnect",
-    );
-    cy.intercept("http://localhost:4000").as("redirection_done");
-    cy.contains("Se connecter avec une clé d’accès").click();
-    cy.wait("@redirection_done");
-
-    cy.origin("http://localhost:4000", () => {
-      cy.title().should("include", "standard-client - ProConnect");
-      cy.contains('"amr": [\n    "pwd",\n    "pop",\n    "mfa"\n  ],');
-      cy.contains(
-        '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
-      );
     });
   });
 });
