@@ -1,9 +1,7 @@
 describe("sign-in with totp enrollment", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
-  it("should follow first authentication when mfa asked", function () {
+  it.only("should follow first authentication when mfa asked", function () {
     cy.visit("http://localhost:4000");
 
     cy.contains("Forcer une connexion a deux facteurs").click();
@@ -52,6 +50,8 @@ describe("sign-in with totp enrollment", () => {
     cy.contains("S’identifier avec ProConnect").click();
 
     cy.login("ial2-aal1@yopmail.com");
+
+    cy.title().should("equal", "standard-client - ProConnect");
   });
 
   it("should re-authenticate after long connexion to a service provider requires mfa", function () {

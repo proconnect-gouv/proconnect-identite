@@ -96,7 +96,7 @@ export const postVerifyRegistrationControllerFactory =
         .parseAsync(webauthn_registration_response_string);
       const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
-      const { userVerified, user: updatedUser } = await verifyRegistration({
+      const { userVerified, updatedUser } = await verifyRegistration({
         email: email,
         response,
       });

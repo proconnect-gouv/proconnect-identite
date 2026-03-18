@@ -223,7 +223,7 @@ export const verifyRegistration = async ({
     },
   });
 
-  return { userVerified: user_verified, user: updatedUser };
+  return { userVerified: user_verified, updatedUser };
 };
 
 export const getAuthenticationOptions = async (

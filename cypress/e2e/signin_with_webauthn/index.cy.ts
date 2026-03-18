@@ -1,7 +1,5 @@
 describe("add passkey authentication", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should add ctap2 internal passkey authentication", function () {
     cy.addVirtualAuthenticator({
