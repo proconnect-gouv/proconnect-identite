@@ -5,11 +5,6 @@ import {
   isPhoneNumberValid,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
-import {
-  createUserFactory,
-  findByEmailFactory,
-  updateUserFactory,
-} from "@proconnect-gouv/proconnect.identite/repositories/user";
 import { LinkTypes } from "@proconnect-gouv/proconnect.identite/types";
 import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
@@ -17,7 +12,7 @@ import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { z } from "zod";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
-import { getDatabaseConnection } from "../src/connectors/postgres";
+import { context } from "../src/connectors/context";
 import { findByUserId } from "../src/repositories/organization/getters";
 import {
   linkUserToOrganization,
@@ -33,10 +28,7 @@ import {
 } from "../src/services/script-helpers";
 //
 
-const pg = getDatabaseConnection();
-const findByEmail = findByEmailFactory({ pg });
-const create = createUserFactory({ pg });
-const update = updateUserFactory({ pg });
+const { create, findByEmail, update } = context.repository.users;
 
 //
 

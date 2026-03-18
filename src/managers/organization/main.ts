@@ -2,21 +2,14 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import { markDomainAsVerifiedFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
-import {
-  addDomain,
-  deleteEmailDomainsByVerificationTypes,
-} from "../../repositories/email-domain";
+import { context } from "../../connectors/context";
 import {
   findBySiret,
   findByUserId,
   findById as findOrganizationById,
   findPendingByUserId,
-  getUsers,
 } from "../../repositories/organization/getters";
-import {
-  deleteUserOrganization,
-  updateUserOrganizationLink,
-} from "../../repositories/organization/setters";
+import { deleteUserOrganization } from "../../repositories/organization/setters";
 import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 
 export const getOrganizationsByUserId = findByUserId;
@@ -52,13 +45,7 @@ export const quitOrganization = async ({
   return true;
 };
 
-export const markDomainAsVerified = markDomainAsVerifiedFactory({
-  addDomain,
-  deleteEmailDomainsByVerificationTypes,
-  findOrganizationById,
-  getUsers,
-  updateUserOrganizationLink,
-});
+export const markDomainAsVerified = markDomainAsVerifiedFactory(context);
 
 export const selectOrganization = async ({
   user_id,

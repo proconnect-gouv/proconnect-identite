@@ -1,89 +1,75 @@
+//
+
 import { NotFoundError } from "#src/errors";
-import {
-  type AddDomainHandler,
-  type DeleteEmailDomainsByVerificationTypesHandler,
-} from "#src/repositories/email-domain";
-import type {
-  FindByIdHandler,
-  GetUsersByOrganizationHandler,
-} from "#src/repositories/organization";
-import type { UpdateUserOrganizationLinkHandler } from "#src/repositories/user";
-import type { BaseUserOrganizationLink, Organization, User } from "#src/types";
+import { context, emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
-import { describe, it, mock } from "node:test";
+import { before, beforeEach, describe, it } from "node:test";
 import { markDomainAsVerifiedFactory } from "./mark-domain-as-verified.js";
 
 //
 
-describe("markDomainAsVerified", () => {
-  it("should update organization members", async (t) => {
-    const addDomain = mock.fn<AddDomainHandler>(() =>
-      Promise.resolve({} as any),
-    );
-    const deleteEmailDomainsByVerificationTypes =
-      mock.fn<DeleteEmailDomainsByVerificationTypesHandler>(() =>
-        Promise.resolve({} as any),
-      );
-    const updateUserOrganizationLink =
-      mock.fn<UpdateUserOrganizationLinkHandler>(() =>
-        Promise.resolve({} as any),
-      );
+const markDomainAsVerified = markDomainAsVerifiedFactory(context);
 
-    const markDomainAsVerified = markDomainAsVerifiedFactory({
-      addDomain,
-      deleteEmailDomainsByVerificationTypes,
-      findOrganizationById: mock.fn<FindByIdHandler>(() =>
-        Promise.resolve({ id: 42 } as Organization),
-      ),
-      getUsers: mock.fn<GetUsersByOrganizationHandler>(() =>
-        Promise.resolve([
-          {
-            id: 42,
-            email: "lion.eljonson@darkangels.world",
-            verification_type:
-              "no_verification_means_for_entreprise_unipersonnelle",
-          } as User & BaseUserOrganizationLink,
-        ]),
-      ),
-      updateUserOrganizationLink,
-    });
+describe("markDomainAsVerified", () => {
+  before(migrate);
+  beforeEach(emptyDatabase);
+
+  it("should update organization members", async () => {
+    await pg.sql`
+      INSERT INTO organizations
+        (id, cached_libelle, cached_nom_complet, siret, created_at, updated_at)
+      VALUES
+        (1, 'Dark Angels', 'Dark Angels Legion', '🦁', '4444-04-04', '4444-04-04')
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO users (id, email, created_at, updated_at, given_name, family_name, phone_number, job)
+      VALUES (1, 'lion.eljonson@darkangels.world', '4444-04-04', '4444-04-04', 'Lion', 'El''Jonson', '0', 'Primarque')
+    `;
+    await pg.sql`
+      INSERT INTO users_organizations
+        (user_id, organization_id, created_at, updated_at, is_external, verification_type, needs_official_contact_email_verification, official_contact_email_verification_token, official_contact_email_verification_sent_at)
+      VALUES
+        (1, 1, '4444-04-04', '4444-04-04', false, 'no_verification_means_for_entreprise_unipersonnelle', false, null, null)
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO email_domains (organization_id, domain, verification_type)
+      VALUES (1, 'darkangels.world', 'not_verified_yet')
+    `;
 
     await markDomainAsVerified({
       domain: "darkangels.world",
       domain_verification_type: "verified",
-      organization_id: 42,
+      organization_id: 1,
     });
 
-    await t.test("should call updateUserOrganizationLink with", async (t) => {
-      t.assert.snapshot(updateUserOrganizationLink.mock.calls);
-    });
+    // user verification_type should be updated to "domain"
+    const { rows: userLinks } = await pg.sql`
+      SELECT user_id, verification_type
+      FROM users_organizations
+      WHERE organization_id = 1
+    `;
+    assert.deepEqual(userLinks, [{ user_id: 1, verification_type: "domain" }]);
 
-    await t.test(
-      "should call deleteEmailDomainsByVerificationTypes with",
-      async (t) => {
-        t.assert.snapshot(deleteEmailDomainsByVerificationTypes.mock.calls);
-      },
-    );
-
-    await t.test("should call addDomain with", async (t) => {
-      t.assert.snapshot(addDomain.mock.calls);
-    });
+    // old email_domain records should be replaced with "verified"
+    const { rows: emailDomains } = await pg.sql`
+      SELECT domain, verification_type
+      FROM email_domains
+      WHERE organization_id = 1
+      ORDER BY verification_type
+    `;
+    assert.deepEqual(emailDomains, [
+      { domain: "darkangels.world", verification_type: "verified" },
+    ]);
   });
 
   it("❎ throws NotFoundError for unknown organization", async () => {
-    const markDomainAsVerified = markDomainAsVerifiedFactory({
-      addDomain: () => Promise.reject(),
-      deleteEmailDomainsByVerificationTypes: () => Promise.reject(),
-      findOrganizationById: () => Promise.resolve(undefined),
-      getUsers: () => Promise.reject(),
-      updateUserOrganizationLink: () => Promise.reject(),
-    });
-
     await assert.rejects(
       markDomainAsVerified({
         domain: "darkangels.world",
         domain_verification_type: "verified",
-        organization_id: 42,
+        organization_id: 999,
       }),
       new NotFoundError(""),
     );

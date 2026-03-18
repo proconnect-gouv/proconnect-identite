@@ -1,22 +1,19 @@
-import {
-  createUserFactory,
-  findByEmailFactory,
-  findByIdFactory,
-  getByIdFactory,
-  getFranceConnectUserInfoFactory,
-  updateUserFactory,
-  upsertFranceconnectUserinfoFactory,
-} from "@proconnect-gouv/proconnect.identite/repositories/user";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import type { QueryResult } from "pg";
+import { context } from "../connectors/context";
 import { getDatabaseConnection } from "../connectors/postgres";
 
 //
 
-export const getById = getByIdFactory({ pg: getDatabaseConnection() });
-export const findById = findByIdFactory({ pg: getDatabaseConnection() });
-
-export const findByEmail = findByEmailFactory({ pg: getDatabaseConnection() });
+export const {
+  create,
+  findByEmail,
+  findById,
+  getById,
+  getFranceConnectUserInfo,
+  update,
+  upsetFranceconnectUserinfo,
+} = context.repository.users;
 
 export const findByMagicLinkToken = async (magic_link_token: string) => {
   const connection = getDatabaseConnection();
@@ -48,10 +45,6 @@ FROM users WHERE reset_password_token = $1
   return rows.shift();
 };
 
-export const update = updateUserFactory({ pg: getDatabaseConnection() });
-
-export const create = createUserFactory({ pg: getDatabaseConnection() });
-
 export const deleteUser = async (id: number) => {
   const connection = getDatabaseConnection();
 
@@ -65,11 +58,3 @@ export const deleteUser = async (id: number) => {
 
   return (rowCount ?? 0) > 0;
 };
-
-export const getFranceConnectUserInfo = getFranceConnectUserInfoFactory({
-  pg: getDatabaseConnection(),
-});
-
-export const upsetFranceconnectUserinfo = upsertFranceconnectUserinfoFactory({
-  pg: getDatabaseConnection(),
-});
