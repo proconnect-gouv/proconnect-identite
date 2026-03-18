@@ -35,7 +35,7 @@ import { processCertificationDirigeantFactory } from "./process-certification-di
 describe("processCertificationDirigeantFactory", () => {
   it("should recognize a user as executive of a auto-entrepreneur", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeClient: {
+      ApiEntrepriseClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiClient: {
@@ -71,7 +71,7 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should recognize a foreign user as executive of a auto-entrepreneur", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeClient: {
+      ApiEntrepriseClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiClient: {
@@ -107,7 +107,7 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should not match another mandataire", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeClient: {
+      ApiEntrepriseClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiClient: {
@@ -137,7 +137,7 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should match Rogal Dorn among the executive of Papillon in RNE", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeClient: {
+      ApiEntrepriseClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiClient: {
@@ -174,7 +174,7 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should match Amberley Vail among the executive of Papillon in RNE", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeClient: {
+      ApiEntrepriseClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiClient: {
@@ -211,7 +211,7 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should match Rogal Dorn among the executive of Papillon in Infogreffe", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeClient: {
+      ApiEntrepriseClient: {
         findMandatairesSociauxBySiren: () =>
           Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
       },
@@ -249,7 +249,7 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("❎ fail with no mandataires", async () => {
     const processCertificationDirigeant = processCertificationDirigeantFactory({
-      ApiEntrepriseInfogreffeClient: {
+      ApiEntrepriseClient: {
         findMandatairesSociauxBySiren: () => Promise.reject(new Error("💣")),
       },
       RegistreNationalEntreprisesApiClient: {

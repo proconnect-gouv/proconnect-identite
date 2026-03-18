@@ -7,8 +7,8 @@ import {
   type IdentityVector,
   type Organization,
 } from "#src/types";
-import type { ApiEntrepriseInfogreffeClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
-import type { FindUniteLegaleBySirenHandler } from "@proconnect-gouv/proconnect.insee/api";
+import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
+import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
 import type { FindPouvoirsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { match } from "ts-pattern";
 import z from "zod/v4";
@@ -21,12 +21,12 @@ import { certificationScore } from "./certification-score.js";
 //
 
 type ProcessCertificationDirigeantConfig = {
-  ApiEntrepriseInfogreffeClient: Pick<
-    ApiEntrepriseInfogreffeClient,
+  ApiEntrepriseClient: Pick<
+    ApiEntrepriseClient,
     "findMandatairesSociauxBySiren"
   >;
   EQUALITY_THRESHOLD?: number;
-  InseeApiClient: { findBySiren: FindUniteLegaleBySirenHandler };
+  InseeApiClient: ApiInseeClient;
   RegistreNationalEntreprisesApiClient: {
     findPouvoirsBySiren: FindPouvoirsBySirenHandler;
   };
@@ -62,7 +62,7 @@ export function getCertificationDirigeantDataSourceLabels(
 async function getMandatairesSociaux(
   {
     RegistreNationalEntreprisesApiClient,
-    ApiEntrepriseInfogreffeClient,
+    ApiEntrepriseClient: ApiEntrepriseInfogreffeClient,
   }: ProcessCertificationDirigeantConfig,
   siren: string,
 ) {

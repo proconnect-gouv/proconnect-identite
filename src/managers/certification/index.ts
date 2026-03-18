@@ -12,7 +12,7 @@ import {
   CertificationDirigeantNoMatchError,
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../../config/errors";
-import { ApiEntrepriseInfogreffeClient } from "../../connectors/api-entreprise";
+import { ApiEntrepriseClient } from "../../connectors/api-entreprise";
 import { InseeApiClient } from "../../connectors/api-insee";
 import { RegistreNationalEntreprisesApiClient } from "../../connectors/api-rne";
 import { logger } from "../../services/log";
@@ -21,7 +21,7 @@ import { logger } from "../../services/log";
 
 export const processCertificationDirigeant =
   processCertificationDirigeantFactory({
-    ApiEntrepriseInfogreffeClient: ApiEntrepriseInfogreffeClient,
+    ApiEntrepriseClient: ApiEntrepriseClient,
     InseeApiClient: { findBySiren: InseeApiClient.findBySiren },
     RegistreNationalEntreprisesApiClient: RegistreNationalEntreprisesApiClient,
   });

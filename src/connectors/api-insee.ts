@@ -1,14 +1,10 @@
 //
 
 import {
-  findUniteLegaleBySirenFactory,
-  findUniteLegaleBySiretFactory,
+  createApiInseeClient,
   getInseeAccessTokenFactory,
 } from "@proconnect-gouv/proconnect.insee/api";
-import {
-  createInseeSirenePrivateOpenApiClient,
-  type InseeSirenePrivateOpenApiClient,
-} from "@proconnect-gouv/proconnect.insee/client";
+import { createInseeSirenePrivateOpenApiClient } from "@proconnect-gouv/proconnect.insee/client";
 import { TestingInseeApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/api.insee.fr";
 import {
   TESTING_INSEE_API_SIRENS,
@@ -33,44 +29,36 @@ const getInseeAccessToken = getInseeAccessTokenFactory({
   password: INSEE_API_PASSWORD,
   username: INSEE_API_USERNAME,
 });
-
-const inseeOpenApiClient: InseeSirenePrivateOpenApiClient =
-  createInseeSirenePrivateOpenApiClient({
-    baseUrl: INSEE_API_URL,
-  });
+const inseeOpenApiClient = createInseeSirenePrivateOpenApiClient({
+  baseUrl: INSEE_API_URL,
+});
 inseeOpenApiClient.use({
   async onRequest({ request }) {
-    const token = await getInseeAccessToken();
-    request.headers.set("Authorization", `Bearer ${token}`);
     return new Request(request, {
       signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
     });
   },
 });
 
-const inseeOpenApiTestClient: InseeSirenePrivateOpenApiClient =
-  createInseeSirenePrivateOpenApiClient({
-    headers: { Authorization: "Bearer __INSEE_API_TOKEN__" },
-    fetch: (input: Request) =>
-      Promise.resolve(TestingInseeApiRouter.fetch(input)),
-  });
+//
 
-const inseeClientOrigin = {
-  findBySiren: findUniteLegaleBySirenFactory(inseeOpenApiClient),
-  findBySiret: findUniteLegaleBySiretFactory(inseeOpenApiClient),
-};
-const inseeClientTest = {
-  findBySiren: findUniteLegaleBySirenFactory(inseeOpenApiTestClient),
-  findBySiret: findUniteLegaleBySiretFactory(inseeOpenApiTestClient),
-};
+const inseeOpenApiTestClient = createInseeSirenePrivateOpenApiClient({
+  fetch: (input: Request) =>
+    Promise.resolve(TestingInseeApiRouter.fetch(input)),
+});
+
+const ApiInsee = createApiInseeClient(inseeOpenApiClient, getInseeAccessToken);
+const ApiInseeTest = createApiInseeClient(inseeOpenApiTestClient, () =>
+  Promise.resolve("__INSEE_API_TOKEN__"),
+);
 
 export const InseeApiClient = {
   findBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_INSEE_API_SIRENS.includes(siren)
-        ? inseeClientTest
-        : inseeClientOrigin;
+        ? ApiInseeTest
+        : ApiInsee;
 
     return client.findBySiren(siren);
   },
@@ -78,8 +66,8 @@ export const InseeApiClient = {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_INSEE_API_SIRETS.includes(siret)
-        ? inseeClientTest
-        : inseeClientOrigin;
+        ? ApiInseeTest
+        : ApiInsee;
 
     return client.findBySiret(siret);
   },
