@@ -58,7 +58,7 @@ SELECT
   force_2fa
 FROM users"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_users ADD PRIMARY KEY (id)"
-pg_dump --table=tmp_users $SRC_DB_URL | psql $DEST_DB_URL
+pg_dump --no-owner --table=tmp_users $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_users RENAME TO users"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_users"
 
@@ -90,7 +90,7 @@ SELECT
   cached_code_officiel_geographique
 FROM organizations"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_organizations ADD PRIMARY KEY (id)"
-pg_dump --table=tmp_organizations $SRC_DB_URL | psql $DEST_DB_URL
+pg_dump --no-owner --table=tmp_organizations $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_organizations RENAME TO organizations"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_organizations"
 
@@ -108,7 +108,7 @@ SELECT
 	updated_at
 FROM email_domains"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_email_domains ADD PRIMARY KEY (id)"
-pg_dump --table=tmp_email_domains $SRC_DB_URL | psql $DEST_DB_URL
+pg_dump --no-owner --table=tmp_email_domains $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_email_domains RENAME TO email_domains"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_email_domains"
 
@@ -121,7 +121,7 @@ SELECT
 	updated_at
 FROM franceconnect_userinfo"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_franceconnect_userinfo ADD PRIMARY KEY (user_id)"
-pg_dump --table=tmp_franceconnect_userinfo $SRC_DB_URL | psql $DEST_DB_URL
+pg_dump --no-owner --table=tmp_franceconnect_userinfo $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_franceconnect_userinfo RENAME TO franceconnect_userinfo"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_franceconnect_userinfo"
 
@@ -140,7 +140,7 @@ SELECT
 	'**********' as ticket_id
 FROM moderations"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_moderations ADD PRIMARY KEY (id)"
-pg_dump --table=tmp_moderations $SRC_DB_URL | psql $DEST_DB_URL
+pg_dump --no-owner --table=tmp_moderations $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_moderations RENAME TO moderations"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_moderations"
 
@@ -166,7 +166,7 @@ SELECT
   is_proconnect_federation
 FROM oidc_clients"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_oidc_clients ADD PRIMARY KEY (id)"
-pg_dump --table=tmp_oidc_clients $SRC_DB_URL | psql $DEST_DB_URL
+pg_dump --no-owner --table=tmp_oidc_clients $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_oidc_clients RENAME TO oidc_clients"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_oidc_clients"
 
@@ -183,7 +183,7 @@ SELECT
 	sp_name
 FROM users_oidc_clients"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_users_oidc_clients ADD PRIMARY KEY (id)"
-pg_dump --table=tmp_users_oidc_clients $SRC_DB_URL | psql $DEST_DB_URL
+pg_dump --no-owner --table=tmp_users_oidc_clients $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_users_oidc_clients RENAME TO users_oidc_clients"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_users_oidc_clients"
 
@@ -204,7 +204,7 @@ SELECT
 	verified_at
 FROM users_organizations"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_users_organizations ADD PRIMARY KEY("user_id","organization_id")"
-pg_dump --table=tmp_users_organizations $SRC_DB_URL | psql $DEST_DB_URL
+pg_dump --no-owner --table=tmp_users_organizations $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_users_organizations RENAME TO users_organizations"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_users_organizations"
 
