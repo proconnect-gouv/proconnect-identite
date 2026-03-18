@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 1.7.1
+
+### Patch Changes
+
+- [#1858](https://github.com/proconnect-gouv/proconnect-identite/pull/1858) [`91607a8`](https://github.com/proconnect-gouv/proconnect-identite/commit/91607a8ee6193f1fad76a874a09d043ba179d826) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - Le typage de la fonction isPublicService oblige à passer tous les paramètres de Organization à la fonction, alors que seuls trois d'entre eux nous intéresse
+
 ## 1.7.0
 
 ### Minor Changes
