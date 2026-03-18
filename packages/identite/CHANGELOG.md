@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 2.0.0
+
+### Major Changes
+
+- [#1844](https://github.com/proconnect-gouv/proconnect-identite/pull/1844) [`a957ae4`](https://github.com/proconnect-gouv/proconnect-identite/commit/a957ae4c60f0c1567e02102173dae12f84f5be18) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ♻️ Utilisation d'un context global pour utiliser les managers
+
 ## 1.7.1
 
 ### Patch Changes
