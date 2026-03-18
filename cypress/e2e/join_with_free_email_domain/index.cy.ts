@@ -1,10 +1,8 @@
 //
 
-it("should seed the database once", function () {
-  cy.seed();
-});
-
 describe("join with free email domain", () => {
+  before(cy.seed);
+
   beforeEach(() => {
     cy.visit("/");
     cy.login("lion.eljonson@yopmail.com");
@@ -38,6 +36,8 @@ describe("join with free email domain", () => {
 //
 
 describe("restrict access for", () => {
+  before(cy.seed);
+
   beforeEach(() => {
     cy.visit("/");
     cy.login("lion.eljonson@yopmail.com");
@@ -160,43 +160,42 @@ describe("restrict access for", () => {
 });
 
 describe("join syndicat communal", () => {
-  const sirets = [
+  before(cy.seed);
+
+  const organizations = [
     {
-      code: "20000713600019",
-      type: "Syndicat intercommunal à vocation unique (SIVU)",
+      siret: "20000713600019",
+      categorie_juridique: "Syndicat intercommunal à vocation unique (SIVU)",
     },
     {
-      code: "20008142000024",
-      type: "Syndicat intercommunal à vocation multiple (SIVOM)",
+      siret: "20008142000024",
+      categorie_juridique: "Syndicat intercommunal à vocation multiple (SIVOM)",
     },
     {
-      code: "24590007100029",
-      type: "Syndicat intercommunal à vocation multiple (SIVOM)",
+      siret: "24590007100029",
+      categorie_juridique: "Syndicat intercommunal à vocation multiple (SIVOM)",
     },
     {
-      code: "25280033900019",
-      type: "Syndicat intercommunal à vocation multiple (SIVOM)",
+      siret: "25280033900019",
+      categorie_juridique: "Syndicat intercommunal à vocation multiple (SIVOM)",
     },
-    { code: "25320098400016", type: "Syndicat mixte fermé" },
+    { siret: "25320098400016", categorie_juridique: "Syndicat mixte fermé" },
     {
-      code: "25800404300026",
-      type: "Syndicat intercommunal à vocation unique (SIVU)",
-    },
-    {
-      code: "26090012100013",
-      type: "Établissement public local social et médico-social",
+      siret: "25800404300026",
+      categorie_juridique: "Syndicat intercommunal à vocation unique (SIVU)",
     },
     {
-      code: "26290359400014",
-      type: "Centre communal d'action sociale",
+      siret: "26090012100013",
+      categorie_juridique: "Établissement public local social et médico-social",
     },
     {
-      code: "13001270100020",
-      type: "Groupement de coopération sanitaire à gestion publique",
+      siret: "26290359400014",
+      categorie_juridique: "Centre communal d'action sociale",
     },
     {
-      code: "84226400400016",
-      type: "Association de droit local (Bas-Rhin, Haut-Rhin et Moselle)",
+      siret: "13001270100020",
+      categorie_juridique:
+        "Groupement de coopération sanitaire à gestion publique",
     },
   ];
 
@@ -209,11 +208,39 @@ describe("join syndicat communal", () => {
     cy.contains("SIRET de l’organisation que vous représentez").click();
   });
 
-  sirets.forEach(({ code, type }) => {
-    it(type, function () {
-      cy.focused().clear().type(code);
+  organizations.forEach(({ siret, categorie_juridique }) => {
+    it(categorie_juridique, function () {
+      cy.focused().clear().type(siret);
       cy.contains("Enregistrer").click();
       cy.contains("Demande en cours");
+    });
+  });
+});
+
+describe("join small association", () => {
+  before(cy.seed);
+
+  const organizations = [
+    {
+      siret: "84226400400016",
+      categorie_juridique:
+        "Association de droit local (Bas-Rhin, Haut-Rhin et Moselle)",
+    },
+  ];
+  beforeEach(() => {
+    cy.visit("/");
+    cy.login("lion.eljonson@yopmail.com");
+    cy.visit("/users/join-organization");
+
+    cy.title().should("include", "Rejoindre une organisation -");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+  });
+
+  organizations.forEach(({ siret, categorie_juridique }) => {
+    it(categorie_juridique, function () {
+      cy.focused().clear().type(siret);
+      cy.contains("Enregistrer").click();
+      cy.contains("Compte créé");
     });
   });
 });
