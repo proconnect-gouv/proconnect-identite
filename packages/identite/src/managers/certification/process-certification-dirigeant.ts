@@ -46,7 +46,7 @@ export function getCertificationDirigeantDataSourceLabels(
 //
 
 async function getMandatairesSociaux(
-  { client: { entreprise, rne } }: Context,
+  { client: { api_entreprise, rne } }: Context,
   siren: string,
 ) {
   try {
@@ -63,7 +63,7 @@ async function getMandatairesSociaux(
   } catch (error) {
     console.error(error);
     const mandataires =
-      await entreprise.infogreffe.findMandatairesSociauxBySiren(siren);
+      await api_entreprise.infogreffe.findMandatairesSociauxBySiren(siren);
     const dirigeants = mandataires.map(ApiEntreprise.toIdentityVector);
 
     return {

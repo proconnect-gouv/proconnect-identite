@@ -25,28 +25,28 @@ import { upsertFranceconnectUserinfoFactory } from "../repositories/user/upsert-
 //
 
 export function createContext({
-  api_entreprise_infogreffe_repository,
-  api_entreprise_insee_repository,
-  api_insee_repository,
-  api_registre_national_entreprises_repository,
+  api_entreprise_infogreffe_client,
+  api_entreprise_insee_client,
+  api_insee_client,
+  api_registre_national_entreprises_client,
   pg,
 }: {
-  api_entreprise_infogreffe_repository: ApiEntrepriseInfogreffeRepository;
-  api_entreprise_insee_repository: ApiEntrepriseInseeRepository;
-  api_insee_repository: { findBySiren: FindUniteLegaleBySirenHandler };
-  api_registre_national_entreprises_repository: {
+  api_entreprise_infogreffe_client: ApiEntrepriseInfogreffeRepository;
+  api_entreprise_insee_client: ApiEntrepriseInseeRepository;
+  api_insee_client: { findBySiren: FindUniteLegaleBySirenHandler };
+  api_registre_national_entreprises_client: {
     findPouvoirsBySiren: FindPouvoirsBySirenHandler;
   };
   pg: Pool;
 }) {
   return {
     client: {
-      entreprise: {
-        infogreffe: api_entreprise_infogreffe_repository,
-        insee: api_entreprise_insee_repository,
+      api_entreprise: {
+        infogreffe: api_entreprise_infogreffe_client,
+        insee: api_entreprise_insee_client,
       },
-      insee: api_insee_repository,
-      rne: api_registre_national_entreprises_repository,
+      insee: api_insee_client,
+      rne: api_registre_national_entreprises_client,
     },
     repository: {
       email_domains: {

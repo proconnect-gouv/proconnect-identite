@@ -2,9 +2,9 @@
 
 import { IdentityVectorSchema } from "#src/types";
 import {
-  api_entreprise_infogreffe,
-  api_insee,
-  api_registre_national_entreprises,
+  api_entreprise_infogreffe_mock_client,
+  api_insee_mock_client,
+  api_registre_national_entreprises_mock_client,
   context,
 } from "#testing";
 import {
@@ -43,7 +43,7 @@ const processCertificationDirigeant =
 
 describe("processCertificationDirigeantFactory", () => {
   it("should recognize a user as executive of a auto-entrepreneur", async () => {
-    api_insee.findBySiren.mock.mockImplementationOnce(() =>
+    api_insee_mock_client.findBySiren.mock.mockImplementationOnce(() =>
       Promise.resolve(LiElJonsonEstablishment),
     );
 
@@ -71,7 +71,7 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should recognize a foreign user as executive of a auto-entrepreneur", async () => {
-    api_insee.findBySiren.mock.mockImplementationOnce(() =>
+    api_insee_mock_client.findBySiren.mock.mockImplementationOnce(() =>
       Promise.resolve(RogalDornEstablishment),
     );
     const certificationDirigeantResult = await processCertificationDirigeant(
@@ -98,7 +98,7 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should not match another mandataire", async () => {
-    api_insee.findBySiren.mock.mockImplementationOnce(() =>
+    api_insee_mock_client.findBySiren.mock.mockImplementationOnce(() =>
       Promise.resolve(LiElJonsonEstablishment),
     );
 
@@ -120,7 +120,7 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should match Rogal Dorn among the executive of Papillon in RNE", async () => {
-    api_registre_national_entreprises.findPouvoirsBySiren.mock.mockImplementationOnce(
+    api_registre_national_entreprises_mock_client.findPouvoirsBySiren.mock.mockImplementationOnce(
       () => Promise.resolve([UlysseTosiPouvoir, RogalDornPouvoir]),
     );
 
@@ -148,7 +148,7 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should match Amberley Vail among the executive of Papillon in RNE", async () => {
-    api_registre_national_entreprises.findPouvoirsBySiren.mock.mockImplementationOnce(
+    api_registre_national_entreprises_mock_client.findPouvoirsBySiren.mock.mockImplementationOnce(
       () => Promise.resolve([UlysseTosiPouvoir, AmberleyVailPouvoir]),
     );
 
@@ -176,7 +176,7 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should match Rogal Dorn among the executive of Papillon in Infogreffe", async () => {
-    api_entreprise_infogreffe.findMandatairesSociauxBySiren.mock.mockImplementationOnce(
+    api_entreprise_infogreffe_mock_client.findMandatairesSociauxBySiren.mock.mockImplementationOnce(
       () => Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
     );
 
@@ -205,7 +205,7 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("❎ fail with no mandataires", async () => {
-    api_registre_national_entreprises.findPouvoirsBySiren.mock.mockImplementationOnce(
+    api_registre_national_entreprises_mock_client.findPouvoirsBySiren.mock.mockImplementationOnce(
       () => Promise.resolve([]),
     );
 
