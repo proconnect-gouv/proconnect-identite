@@ -4,4 +4,4 @@ export const {
   addDomain,
   deleteEmailDomainsByVerificationTypes,
   findEmailDomainsByOrganizationId,
-} = context.repo.email_domains;
+} = context.repository.email_domains;

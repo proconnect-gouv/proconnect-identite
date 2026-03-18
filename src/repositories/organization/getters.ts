@@ -8,7 +8,8 @@ import type { QueryResult } from "pg";
 import { context } from "../../connectors/context";
 import { getDatabaseConnection } from "../../connectors/postgres";
 
-export const { findById, findByUserId, getUsers } = context.repo.organizations;
+export const { findById, findByUserId, getUsers } =
+  context.repository.organizations;
 
 export const findBySiret = async (siret: string) => {
   const connection = getDatabaseConnection();

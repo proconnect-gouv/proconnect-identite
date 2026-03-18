@@ -150,7 +150,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
 
             // 4. add domain
             const emailDomains =
-              await context.repo.email_domains.findEmailDomainsByOrganizationId(
+              await context.repository.email_domains.findEmailDomainsByOrganizationId(
                 organization.id,
               );
 
@@ -162,7 +162,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               continue;
             }
 
-            await context.repo.email_domains.addDomain({
+            await context.repository.email_domains.addDomain({
               organization_id: organization.id,
               domain,
               verification_type: "not_verified_yet",

@@ -23,7 +23,7 @@ export function markDomainAsVerifiedFactory(context: Context) {
     assignUserVerificationTypeToDomainFactory(context);
 
   const {
-    repo: { email_domains, organizations },
+    repository: { email_domains, organizations },
   } = context;
 
   return async function markDomainAsVerified({

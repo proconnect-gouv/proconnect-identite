@@ -230,7 +230,7 @@ export const joinOrganization = async ({
   const { email } = user;
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
-    await context.repo.email_domains.findEmailDomainsByOrganizationId(
+    await context.repository.email_domains.findEmailDomainsByOrganizationId(
       organization_id,
     );
 

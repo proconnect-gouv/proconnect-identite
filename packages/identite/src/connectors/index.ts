@@ -20,7 +20,7 @@ import { upsertFranceconnectUserinfoFactory } from "../repositories/user/upsert-
 
 export function createContext(pg: Pool) {
   return {
-    repo: {
+    repository: {
       email_domains: {
         addDomain: addDomainFactory({ pg }),
         deleteEmailDomainsByVerificationTypes:

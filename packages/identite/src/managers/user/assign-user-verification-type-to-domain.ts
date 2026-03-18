@@ -8,7 +8,7 @@ import { match } from "ts-pattern";
 //
 
 export function assignUserVerificationTypeToDomainFactory({
-  repo: { organizations, users_organizations },
+  repository: { organizations, users_organizations },
 }: Context) {
   return async function assignUserVerificationTypeToDomain(
     organization_id: number,

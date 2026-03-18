@@ -28,7 +28,7 @@ import {
 } from "../src/services/script-helpers";
 //
 
-const { create, findByEmail, update } = context.repo.users;
+const { create, findByEmail, update } = context.repository.users;
 
 //
 

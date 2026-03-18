@@ -13,7 +13,7 @@ export const {
   getFranceConnectUserInfo,
   update,
   upsetFranceconnectUserinfo,
-} = context.repo.users;
+} = context.repository.users;
 
 export const findByMagicLinkToken = async (magic_link_token: string) => {
   const connection = getDatabaseConnection();
