@@ -1,7 +1,7 @@
 //
 
 import {
-  findPouvoirsBySirenFactory,
+  createRegistreNationalEntreprisesClient,
   getRegistreNationalEntreprisesAccessTokenFactory,
 } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { createRegistreNationalEntreprisesOpenApiClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/client";
@@ -16,43 +16,45 @@ import {
 
 //
 
-const rneOpenApiTestClient = createRegistreNationalEntreprisesOpenApiClient(
-  "__RNE_API_TOKEN__",
-  {
-    fetch: (input: Request) =>
-      Promise.resolve(
-        TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
-      ),
+const getRneToken = getRegistreNationalEntreprisesAccessTokenFactory({
+  password: RNE_API_PASSWORD,
+  username: RNE_API_USERNAME,
+});
+const rneClient = createRegistreNationalEntreprisesOpenApiClient();
+rneClient.use({
+  async onRequest({ request }) {
+    return new Request(request, {
+      signal: AbortSignal.timeout(RNE_API_HTTP_CLIENT_TIMEOUT),
+    });
   },
-);
+});
+
+const RegistreNationalEntreprisesClient =
+  createRegistreNationalEntreprisesClient(rneClient, getRneToken);
+
+//
+
+const rneTestClient = createRegistreNationalEntreprisesOpenApiClient({
+  fetch: (input: Request) =>
+    Promise.resolve(
+      TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
+    ),
+});
+
+const RegistreNationalEntreprisesTestClient =
+  createRegistreNationalEntreprisesClient(rneTestClient, () =>
+    Promise.resolve("__RNE_API_TOKEN__"),
+  );
+
+//
 
 export const RegistreNationalEntreprisesApiClient = {
   async findPouvoirsBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_RNE_API_SIRENS.includes(siren)
-        ? rneOpenApiTestClient
-        : await get_client();
-    return findPouvoirsBySirenFactory(client)(siren);
+        ? RegistreNationalEntreprisesTestClient
+        : RegistreNationalEntreprisesClient;
+    return client.findPouvoirsBySiren(siren);
   },
 };
-
-//
-
-const get_access_token = getRegistreNationalEntreprisesAccessTokenFactory({
-  password: RNE_API_PASSWORD,
-  username: RNE_API_USERNAME,
-});
-
-async function get_client() {
-  const token = await get_access_token();
-  const client = createRegistreNationalEntreprisesOpenApiClient(token);
-  client.use({
-    onRequest({ request }) {
-      return new Request(request, {
-        signal: AbortSignal.timeout(RNE_API_HTTP_CLIENT_TIMEOUT),
-      });
-    },
-  });
-  return client;
-}

@@ -25,7 +25,6 @@ type ProcessCertificationDirigeantConfig = {
     ApiEntrepriseClient,
     "findMandatairesSociauxBySiren"
   >;
-  EQUALITY_THRESHOLD?: number;
   InseeApiClient: ApiInseeClient;
   RegistreNationalEntreprisesApiClient: {
     findPouvoirsBySiren: FindPouvoirsBySirenHandler;
@@ -62,7 +61,7 @@ export function getCertificationDirigeantDataSourceLabels(
 async function getMandatairesSociaux(
   {
     RegistreNationalEntreprisesApiClient,
-    ApiEntrepriseClient: ApiEntrepriseInfogreffeClient,
+    ApiEntrepriseClient,
   }: ProcessCertificationDirigeantConfig,
   siren: string,
 ) {
@@ -81,7 +80,7 @@ async function getMandatairesSociaux(
   } catch (error) {
     console.error(error);
     const mandataires =
-      await ApiEntrepriseInfogreffeClient.findMandatairesSociauxBySiren(siren);
+      await ApiEntrepriseClient.findMandatairesSociauxBySiren(siren);
     const dirigeants = mandataires.map(ApiEntreprise.toIdentityVector);
 
     return {

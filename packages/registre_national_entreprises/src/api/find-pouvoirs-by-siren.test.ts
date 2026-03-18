@@ -37,12 +37,9 @@ describe("findPouvoirsBySiren", () => {
       );
     });
 
-    const client = createRegistreNationalEntreprisesOpenApiClient(
-      "__RNE_API_TOKEN__",
-      {
-        fetch,
-      },
-    );
+    const client = createRegistreNationalEntreprisesOpenApiClient({
+      fetch,
+    });
 
     const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
     const pouvoirs = await findPouvoirsBySiren("552032534");
@@ -110,12 +107,9 @@ describe("findPouvoirsBySiren", () => {
       );
     });
 
-    const client = createRegistreNationalEntreprisesOpenApiClient(
-      "__RNE_API_TOKEN__",
-      {
-        fetch,
-      },
-    );
+    const client = createRegistreNationalEntreprisesOpenApiClient({
+      fetch,
+    });
 
     const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
     const pouvoirs = await findPouvoirsBySiren("807612296");
@@ -141,18 +135,15 @@ describe("findPouvoirsBySiren", () => {
   });
 
   it("should throw RegistreNationalEntreprisesApiError on API error", async () => {
-    const client = createRegistreNationalEntreprisesOpenApiClient(
-      "__RNE_API_TOKEN__",
-      {
-        fetch: () =>
-          Promise.resolve(
-            new Response(JSON.stringify({ error: "Not found" }), {
-              status: 404,
-              headers: { "Content-Type": "application/json" },
-            }),
-          ),
-      },
-    );
+    const client = createRegistreNationalEntreprisesOpenApiClient({
+      fetch: () =>
+        Promise.resolve(
+          new Response(JSON.stringify({ error: "Not found" }), {
+            status: 404,
+            headers: { "Content-Type": "application/json" },
+          }),
+        ),
+    });
 
     const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
 
@@ -163,18 +154,15 @@ describe("findPouvoirsBySiren", () => {
   });
 
   it("should return empty array when no composition data", async () => {
-    const client = createRegistreNationalEntreprisesOpenApiClient(
-      "__RNE_API_TOKEN__",
-      {
-        fetch: () =>
-          Promise.resolve(
-            new Response(JSON.stringify({ formality: { content: {} } }), {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            }),
-          ),
-      },
-    );
+    const client = createRegistreNationalEntreprisesOpenApiClient({
+      fetch: () =>
+        Promise.resolve(
+          new Response(JSON.stringify({ formality: { content: {} } }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        ),
+    });
 
     const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
     const pouvoirs = await findPouvoirsBySiren("123456789");

@@ -21,9 +21,9 @@ import { logger } from "../../services/log";
 
 export const processCertificationDirigeant =
   processCertificationDirigeantFactory({
-    ApiEntrepriseClient: ApiEntrepriseClient,
-    InseeApiClient: { findBySiren: InseeApiClient.findBySiren },
-    RegistreNationalEntreprisesApiClient: RegistreNationalEntreprisesApiClient,
+    ApiEntrepriseClient,
+    InseeApiClient,
+    RegistreNationalEntreprisesApiClient,
   });
 
 export const processCertificationDirigeantOrThrow = async (

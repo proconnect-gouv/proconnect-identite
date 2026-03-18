@@ -13,15 +13,11 @@ import createClient, { type ClientOptions } from "openapi-fetch";
  * @returns the client
  */
 export function createRegistreNationalEntreprisesOpenApiClient(
-  token: string,
   options: ClientOptions = {},
 ) {
   return createClient<paths>({
     baseUrl:
       options.baseUrl ?? "https://registre-national-entreprises.inpi.fr/api",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
     ...options,
   });
 }
@@ -29,5 +25,3 @@ export function createRegistreNationalEntreprisesOpenApiClient(
 export type RegistreNationalEntreprisesOpenApiClient = ReturnType<
   typeof createRegistreNationalEntreprisesOpenApiClient
 >;
-
-//

@@ -47,10 +47,14 @@ const inseeOpenApiTestClient = createInseeSirenePrivateOpenApiClient({
     Promise.resolve(TestingInseeApiRouter.fetch(input)),
 });
 
+//
+
 const ApiInsee = createApiInseeClient(inseeOpenApiClient, getInseeAccessToken);
 const ApiInseeTest = createApiInseeClient(inseeOpenApiTestClient, () =>
   Promise.resolve("__INSEE_API_TOKEN__"),
 );
+
+//
 
 export const InseeApiClient = {
   findBySiren(siren: string) {
