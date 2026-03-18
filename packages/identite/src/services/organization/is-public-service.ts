@@ -12,7 +12,10 @@ export const isPublicService = ({
   cached_categorie_juridique,
   cached_etat_administratif,
   siret,
-}: Organization): boolean => {
+}: Pick<
+  Organization,
+  "cached_categorie_juridique" | "cached_etat_administratif" | "siret"
+>): boolean => {
   // Check if nature juridique is undefined/null
   if (!cached_categorie_juridique) {
     return false;
