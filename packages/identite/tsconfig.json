@@ -12,10 +12,11 @@
   },
   "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
   "references": [
-    { "path": "../annuaire_entreprises/tsconfig.lib.json" },
-    { "path": "../core/tsconfig.lib.json" },
-    { "path": "../entreprise/tsconfig.lib.json" },
-    { "path": "../insee/tsconfig.lib.json" }
+    { "path": "../annuaire_entreprises" },
+    { "path": "../core" },
+    { "path": "../entreprise" },
+    { "path": "../insee" },
+    { "path": "../registre_national_entreprises" }
   ],
   "include": ["./src/**/*", "./src/**/*.json", "testing"]
 }

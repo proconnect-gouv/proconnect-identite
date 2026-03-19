@@ -13,6 +13,7 @@ import { mock } from "node:test";
 import { join } from "path";
 import type { Pool } from "pg";
 import type { FindUniteLegaleBySirenHandler } from "../../insee/src/api/find-by-siren.js";
+import type { FindUniteLegaleBySiretHandler } from "../../insee/src/api/find-by-siret.js";
 import { createContext } from "../src/connectors/index.js";
 
 //
@@ -44,17 +45,16 @@ export async function emptyDatabase() {
 
 const should_not_been_called = () => Promise.reject(new Error("💣"));
 
-export const api_entreprise_infogreffe_mock_client = {
+export const api_entreprise_mock_client = {
+  findBySiren: mock.fn<FindBySirenHandler>(should_not_been_called),
+  findBySiret: mock.fn<FindBySiretHandler>(should_not_been_called),
   findMandatairesSociauxBySiren: mock.fn<FindMandatairesSociauxBySirenHandler>(
     should_not_been_called,
   ),
 };
-export const api_entreprise_insee_mock_client = {
-  findBySiren: mock.fn<FindBySirenHandler>(should_not_been_called),
-  findBySiret: mock.fn<FindBySiretHandler>(should_not_been_called),
-};
 
 export const api_insee_mock_client = {
+  findBySiret: mock.fn<FindUniteLegaleBySiretHandler>(should_not_been_called),
   findBySiren: mock.fn<FindUniteLegaleBySirenHandler>(should_not_been_called),
 };
 
@@ -65,8 +65,7 @@ export const api_registre_national_entreprises_mock_client = {
 };
 
 export const context = createContext({
-  api_entreprise_infogreffe_client: api_entreprise_infogreffe_mock_client,
-  api_entreprise_insee_client: api_entreprise_insee_mock_client,
+  api_entreprise_client: api_entreprise_mock_client,
   api_insee_client: api_insee_mock_client,
   api_registre_national_entreprises_client:
     api_registre_national_entreprises_mock_client,

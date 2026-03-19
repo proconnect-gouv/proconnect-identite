@@ -63,7 +63,7 @@ async function getMandatairesSociaux(
   } catch (error) {
     console.error(error);
     const mandataires =
-      await api_entreprise.infogreffe.findMandatairesSociauxBySiren(siren);
+      await api_entreprise.findMandatairesSociauxBySiren(siren);
     const dirigeants = mandataires.map(ApiEntreprise.toIdentityVector);
 
     return {

@@ -1,21 +1,17 @@
 //
 
 import { createContext } from "@proconnect-gouv/proconnect.identite/connectors";
-import {
-  ApiEntrepriseInfogreffeRepository,
-  ApiEntrepriseInseeRepository,
-} from "./api-entreprise";
-import { InseeApiRepository } from "./api-insee";
-import { RegistreNationalEntreprisesApiRepository } from "./api-rne";
+import { ApiEntrepriseClient } from "./api-entreprise";
+import { ApiInseeClient } from "./api-insee";
+import { ApiRegistreNationalEntreprisesClient } from "./api-rne";
 import { getDatabaseConnection } from "./postgres";
 
 //
 
 export const context = createContext({
-  api_entreprise_infogreffe_client: ApiEntrepriseInfogreffeRepository,
-  api_entreprise_insee_client: ApiEntrepriseInseeRepository,
-  api_insee_client: InseeApiRepository,
+  api_entreprise_client: ApiEntrepriseClient,
+  api_insee_client: ApiInseeClient,
   api_registre_national_entreprises_client:
-    RegistreNationalEntreprisesApiRepository,
+    ApiRegistreNationalEntreprisesClient,
   pg: getDatabaseConnection(),
 });
