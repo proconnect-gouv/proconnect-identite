@@ -10,6 +10,6 @@
     "types": ["node"]
   },
   "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
-  "include": ["scripts", "src"],
+  "include": ["scripts", "src", "data/*.json"],
   "references": []
 }
