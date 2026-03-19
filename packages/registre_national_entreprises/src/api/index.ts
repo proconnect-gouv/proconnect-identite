@@ -25,6 +25,6 @@ export function createRegistreNationalEntreprisesClient(
   };
 }
 
-export type RegistreNationalEntreprisesClient = ReturnType<
+export type ApiRegistreNationalEntreprisesClient = ReturnType<
   typeof createRegistreNationalEntreprisesClient
 >;

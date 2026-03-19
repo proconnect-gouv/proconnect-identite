@@ -7,8 +7,5 @@
   },
   "include": ["src", "tests"],
   "extends": "@proconnect-gouv/proconnect.devtools.typescript/hono/tsconfig.json",
-  "references": [
-    { "path": "../core/tsconfig.lib.json" },
-    { "path": "../entreprise/tsconfig.lib.json" }
-  ]
+  "references": [{ "path": "../entreprise" }]
 }

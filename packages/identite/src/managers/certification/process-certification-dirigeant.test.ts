@@ -2,7 +2,7 @@
 
 import { IdentityVectorSchema } from "#src/types";
 import {
-  api_entreprise_infogreffe_mock_client,
+  api_entreprise_mock_client,
   api_insee_mock_client,
   api_registre_national_entreprises_mock_client,
   context,
@@ -176,7 +176,7 @@ describe("processCertificationDirigeantFactory", () => {
   });
 
   it("should match Rogal Dorn among the executive of Papillon in Infogreffe", async () => {
-    api_entreprise_infogreffe_mock_client.findMandatairesSociauxBySiren.mock.mockImplementationOnce(
+    api_entreprise_mock_client.findMandatairesSociauxBySiren.mock.mockImplementationOnce(
       () => Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
     );
 
