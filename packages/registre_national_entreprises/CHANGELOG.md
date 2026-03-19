@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.registre_national_entreprises
 
+## 2.0.0
+
+### Major Changes
+
+- [#1843](https://github.com/proconnect-gouv/proconnect-identite/pull/1843) [`054f11c`](https://github.com/proconnect-gouv/proconnect-identite/commit/054f11cbb15b5ab9708ee4aefc52695a7eaabb91) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ♻️ Changement de nom des apis
+
 ## 1.1.1
 
 ### Patch Changes

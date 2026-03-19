@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.entreprise
 
+## 2.0.0
+
+### Major Changes
+
+- [#1843](https://github.com/proconnect-gouv/proconnect-identite/pull/1843) [`c07b628`](https://github.com/proconnect-gouv/proconnect-identite/commit/c07b628d7daac833faa728d814132842a6518566) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ♻️ Suppression de l'option additionnel car openapi-fetch support middlewares
+
+- [#1843](https://github.com/proconnect-gouv/proconnect-identite/pull/1843) [`f0823f8`](https://github.com/proconnect-gouv/proconnect-identite/commit/f0823f88744cda92ffafe28314de9e337d275059) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ♻️ Changement de pattern permettant une exposition totale
+
 ## 1.1.1
 
 ### Patch Changes

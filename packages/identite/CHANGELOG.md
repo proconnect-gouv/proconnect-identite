@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 3.0.0
+
+### Major Changes
+
+- [#1843](https://github.com/proconnect-gouv/proconnect-identite/pull/1843) [`c07b628`](https://github.com/proconnect-gouv/proconnect-identite/commit/c07b628d7daac833faa728d814132842a6518566) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ♻️ Changement de nom des apis
+
 ## 2.0.0
 
 ### Major Changes

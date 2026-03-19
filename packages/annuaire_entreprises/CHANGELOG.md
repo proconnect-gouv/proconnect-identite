@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.annuaire_entreprises
 
+## 1.1.4
+
+### Patch Changes
+
+- [#1864](https://github.com/proconnect-gouv/proconnect-identite/pull/1864) [`15de9df`](https://github.com/proconnect-gouv/proconnect-identite/commit/15de9df46f882b4a2ca644bb40092e3fc0805822) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - harmonisation des exports
+
 ## 1.1.3
 
 ### Patch Changes
