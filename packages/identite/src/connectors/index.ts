@@ -1,5 +1,8 @@
 //
 
+import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
+import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
+import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { type Pool } from "pg";
 import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
 import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
@@ -18,8 +21,23 @@ import { upsertFranceconnectUserinfoFactory } from "../repositories/user/upsert-
 
 //
 
-export function createContext(pg: Pool) {
+export function createContext({
+  api_entreprise_client,
+  api_insee_client,
+  api_registre_national_entreprises_client,
+  pg,
+}: {
+  api_entreprise_client: ApiEntrepriseClient;
+  api_insee_client: ApiInseeClient;
+  api_registre_national_entreprises_client: ApiRegistreNationalEntreprisesClient;
+  pg: Pool;
+}) {
   return {
+    client: {
+      api_entreprise: api_entreprise_client,
+      insee: api_insee_client,
+      rne: api_registre_national_entreprises_client,
+    },
     repository: {
       email_domains: {
         addDomain: addDomainFactory({ pg }),
