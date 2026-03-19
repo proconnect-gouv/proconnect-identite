@@ -5,20 +5,17 @@ import type {
   ApiEntrepriseTrackingParams,
 } from "#src/client";
 import { ApiEntrepriseError } from "#src/types";
-import type { FetchOptions } from "openapi-fetch";
 
 //
 
 export function findMandatairesSociauxBySirenFactory(
   client: ApiEntrepriseOpenApiClient,
   trackingParams: ApiEntrepriseTrackingParams,
-  optionsFn: () => FetchOptions<unknown> = () => ({}),
 ) {
   return async function findMandatairesSociauxBySiren(siren: string) {
     const { data, error } = await client.GET(
       "/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
       {
-        ...optionsFn(),
         params: {
           path: {
             siren,

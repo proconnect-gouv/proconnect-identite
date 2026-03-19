@@ -2,17 +2,14 @@
 
 import type { InseeSirenePrivateOpenApiClient } from "#src/client";
 import { InseeApiError } from "#src/types";
-import type { FetchOptions } from "openapi-fetch";
 
 //
 
 export function findUniteLegaleBySirenFactory(
   client: InseeSirenePrivateOpenApiClient,
-  optionsFn: () => FetchOptions<unknown> = () => ({}),
 ) {
   return async function findUniteLegaleBySiren(siren: string) {
     const { data, error } = await client.GET("/siren/{siren}", {
-      ...optionsFn(),
       params: {
         path: {
           siren,

@@ -23,12 +23,9 @@ suite("findBySirenFactory", () => {
         ),
       );
     });
-    const client = createInseeSirenePrivateOpenApiClient(
-      "__INSEE_API_TOKEN__",
-      {
-        fetch,
-      },
-    );
+    const client = createInseeSirenePrivateOpenApiClient({
+      fetch,
+    });
     const findUniteLegaleBySiret = findUniteLegaleBySirenFactory(client);
 
     const uniteLegale = await findUniteLegaleBySiret("662042449");
@@ -56,12 +53,9 @@ suite("findBySirenFactory", () => {
       );
     });
 
-    const client = createInseeSirenePrivateOpenApiClient(
-      "__INSEE_API_TOKEN__",
-      {
-        fetch,
-      },
-    );
+    const client = createInseeSirenePrivateOpenApiClient({
+      fetch,
+    });
     const findUniteLegaleBySiret = findUniteLegaleBySirenFactory(client);
 
     await assert.rejects(

@@ -19,12 +19,9 @@ suite("findBySiretFactory", () => {
         ),
       );
     });
-    const client = createInseeSirenePrivateOpenApiClient(
-      "__INSEE_API_TOKEN__",
-      {
-        fetch,
-      },
-    );
+    const client = createInseeSirenePrivateOpenApiClient({
+      fetch,
+    });
     const findUniteLegaleBySiret = findUniteLegaleBySiretFactory(client);
 
     const uniteLegale = await findUniteLegaleBySiret("662042449");

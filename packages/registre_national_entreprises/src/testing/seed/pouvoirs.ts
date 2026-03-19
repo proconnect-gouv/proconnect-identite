@@ -1,6 +1,6 @@
 //
 
-import type { FindPouvoirsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
+import type { FindPouvoirsBySirenHandler } from "#src/api";
 
 //
 

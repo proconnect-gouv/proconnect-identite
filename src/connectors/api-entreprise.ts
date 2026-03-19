@@ -1,10 +1,6 @@
 //
 
-import { findMandatairesSociauxBySirenFactory } from "@proconnect-gouv/proconnect.api_entreprise/api/infogreffe";
-import {
-  findBySirenFactory,
-  findBySiretFactory,
-} from "@proconnect-gouv/proconnect.api_entreprise/api/insee";
+import { createApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import {
   createApiEntrepriseOpenApiClient,
   type ApiEntrepriseOpenApiClient,
@@ -23,10 +19,21 @@ import {
 
 //
 
-export const apiEntrepriseOpenApiClient: ApiEntrepriseOpenApiClient =
-  createApiEntrepriseOpenApiClient(ENTREPRISE_API_TOKEN, {
+const apiEntrepriseOpenApiClient = createApiEntrepriseOpenApiClient(
+  ENTREPRISE_API_TOKEN,
+  {
     baseUrl: ENTREPRISE_API_URL,
-  });
+  },
+);
+apiEntrepriseOpenApiClient.use({
+  onRequest({ request }) {
+    return new Request(request, {
+      signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
+    });
+  },
+});
+
+//
 
 export const apiEntrepriseOpenApiTestClient: ApiEntrepriseOpenApiClient =
   createApiEntrepriseOpenApiClient("__ENTREPRISE_API_TOKEN__", {
@@ -34,67 +41,49 @@ export const apiEntrepriseOpenApiTestClient: ApiEntrepriseOpenApiClient =
       Promise.resolve(TestingApiEntrepriseRouter.fetch(input)),
   });
 
-export const ApiEntrepriseInfogreffeRepository = {
-  findMandatairesSociauxBySiren(siren: string) {
-    const client =
-      FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
-      TESTING_ENTREPRISE_API_MANDATAIRES_SIREN.includes(siren)
-        ? apiEntrepriseOpenApiTestClient
-        : apiEntrepriseOpenApiClient;
+//
 
-    return findMandatairesSociauxBySirenFactory(
-      client,
-      {
-        context: ENTREPRISE_API_TRACKING_CONTEXT,
-        object: "findMandatairesSociauxBySiren",
-        recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
-      },
-      () => ({
-        signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-      }),
-    )(siren);
-  },
-};
+const ApiEntreprise = createApiEntrepriseClient(
+  apiEntrepriseOpenApiClient,
+  ENTREPRISE_API_TRACKING_CONTEXT,
+  ENTREPRISE_API_TRACKING_RECIPIENT,
+);
+const ApiEntrepriseTest = createApiEntrepriseClient(
+  apiEntrepriseOpenApiTestClient,
+  ENTREPRISE_API_TRACKING_CONTEXT,
+  ENTREPRISE_API_TRACKING_RECIPIENT,
+);
 
-export const ApiEntrepriseInseeRepository = {
+//
+
+export const ApiEntrepriseClient = {
   findBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_ENTREPRISE_API_SIRETS.map((siret) =>
         siret.substring(0, 9),
       ).includes(siren)
-        ? apiEntrepriseOpenApiTestClient
-        : apiEntrepriseOpenApiClient;
+        ? ApiEntrepriseTest
+        : ApiEntreprise;
 
-    return findBySirenFactory(
-      client,
-      {
-        context: ENTREPRISE_API_TRACKING_CONTEXT,
-        object: "findEstablishmentBySiren",
-        recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
-      },
-      () => ({
-        signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-      }),
-    )(siren);
+    return client.findBySiren(siren);
   },
   findBySiret(siret: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
       TESTING_ENTREPRISE_API_SIRETS.includes(siret)
-        ? apiEntrepriseOpenApiTestClient
-        : apiEntrepriseOpenApiClient;
+        ? ApiEntrepriseTest
+        : ApiEntreprise;
 
-    return findBySiretFactory(
-      client,
-      {
-        context: ENTREPRISE_API_TRACKING_CONTEXT,
-        object: "findEstablishmentBySiret",
-        recipient: ENTREPRISE_API_TRACKING_RECIPIENT,
-      },
-      () => ({
-        signal: AbortSignal.timeout(HTTP_CLIENT_TIMEOUT),
-      }),
-    )(siret);
+    return client.findBySiret(siret);
+  },
+  findMandatairesSociauxBySiren(siren: string) {
+    const client =
+      FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
+      TESTING_ENTREPRISE_API_MANDATAIRES_SIREN.includes(siren)
+        ? ApiEntrepriseTest
+        : ApiEntreprise;
+
+    return client.findMandatairesSociauxBySiren(siren);
   },
 };

@@ -1,13 +1,34 @@
 //
 
-import type { FindMandatairesSociauxBySirenHandler } from "./infogreffe/index.js";
-import type { FindBySirenHandler, FindBySiretHandler } from "./insee/index.js";
+import type { ApiEntrepriseOpenApiClient } from "#src/client";
+import { findMandatairesSociauxBySirenFactory } from "./infogreffe/index.js";
+import { findBySirenFactory } from "./insee/find-by-siren.js";
+import { findBySiretFactory } from "./insee/find-by-siret.js";
 
-export interface ApiEntrepriseInseeRepository {
-  findBySiren: FindBySirenHandler;
-  findBySiret: FindBySiretHandler;
+export function createApiEntrepriseClient(
+  client: ApiEntrepriseOpenApiClient,
+  context: string,
+  recipient: string,
+) {
+  return {
+    findBySiren: findBySirenFactory(client, {
+      context,
+      object: "findEstablishmentBySiren",
+      recipient,
+    }),
+    findBySiret: findBySiretFactory(client, {
+      context,
+      object: "findEstablishmentBySiret",
+      recipient,
+    }),
+    findMandatairesSociauxBySiren: findMandatairesSociauxBySirenFactory(
+      client,
+      {
+        context,
+        object: "findMandatairesSociauxBySiren",
+        recipient,
+      },
+    ),
+  };
 }
-
-export interface ApiEntrepriseInfogreffeRepository {
-  findMandatairesSociauxBySiren: FindMandatairesSociauxBySirenHandler;
-}
+export type ApiEntrepriseClient = ReturnType<typeof createApiEntrepriseClient>;

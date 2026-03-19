@@ -1,6 +1,6 @@
 //
 
-import { findBySiretFactory } from "@proconnect-gouv/proconnect.api_entreprise/api/insee";
+import { createApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
@@ -17,16 +17,13 @@ import {
 
 //
 
-const findBySiret = findBySiretFactory(apiEntrepriseOpenApiTestClient, {
-  context: "🎭 Organization info script 🎭",
-  object: "findEstablishmentBySiret",
-  recipient: "13002526500013",
-});
-
-export const getOrganizationInfo = getOrganizationInfoFactory({
-  findBySiren: () => Promise.reject(new Error("💣")),
-  findBySiret,
-});
+export const getOrganizationInfo = getOrganizationInfoFactory(
+  createApiEntrepriseClient(
+    apiEntrepriseOpenApiTestClient,
+    "🎭 Organization info script 🎭",
+    "13002526500013",
+  ),
+);
 
 // ex: for public insee subscription the script can be run like so:
 // npm run update-organization-info 2000
