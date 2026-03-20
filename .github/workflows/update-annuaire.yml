@@ -110,7 +110,7 @@ jobs:
 
       - name: 🔀 Create Pull Request
         if: steps.data_check.outputs.needs_update == 'true' && env.DRY_RUN != 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           add-paths: |
             .changeset/*.md
