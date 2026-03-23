@@ -72,6 +72,8 @@ describe("sign-in with legacy scope", () => {
 
     cy.title().should("equal", "S'inscrire ou se connecter - ProConnect");
     cy.login("unused1@yopmail.com");
-    cy.contains("none of the requested ACRs could be obtained ");
+    cy.contains(
+      "Erreur access_denied none of the requested ACRs could be obtained ",
+    );
   });
 });

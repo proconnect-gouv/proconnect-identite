@@ -10,6 +10,7 @@ describe("sign-in from broken client", () => {
     cy.get("button.proconnect-button").click();
 
     cy.title().should("include", "Erreur 400 - ProConnect");
+    cy.contains("Erreur 400");
     cy.contains("invalid_redirect_uri");
   });
 

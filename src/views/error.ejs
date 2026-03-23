@@ -1,14 +1,12 @@
 <div>
     <div class="fr-alert fr-alert--error fr-mb-2w">
-        <% if (error_code === 429) { %>
-            <p class="fr-alert__title">Accès temporairement limité.</p>
-        <% } else { %>
-            <p class="fr-alert__title">Une erreur est survenue.</p>
-        <% } %>
+        <p class="fr-alert__title">Une erreur est survenue.</p>
         <pre class="error-code">
+            <b>Erreur <%= error_code ;%></b>
             <%= error_message ;%>
         </pre>
         <% if (error_code === 429) { %>
+            <p><b>Accès temporairement limité.</b></p>
             <p class="fr-mb-2w">
                 Merci de ne pas retenter de connexion dans l’immédiat et de réessayer dans une <b>quinzaine de minutes</b>.
             </p>
