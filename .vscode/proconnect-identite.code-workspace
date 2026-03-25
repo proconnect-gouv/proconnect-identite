@@ -1,0 +1,139 @@
+{
+  "folders": [
+    { "name": "🪪 packages/identity/", "path": "../packages/identite" },
+    { "name": "🪙 packages/core/", "path": "../packages/core" },
+    { "name": "🏗️ packages/crisp/", "path": "../packages/crisp" },
+    { "name": "🏗️ packages/debounce/", "path": "../packages/debounce" },
+    { "name": "🏗️ packages/email/", "path": "../packages/email" },
+    { "name": "🏗️ packages/entreprise/", "path": "../packages/entreprise" },
+    { "name": "🏗️ packages/insee/", "path": "../packages/insee" },
+    { "name": "⚙️ packages/devtools/", "path": "../packages/devtools" },
+    { "name": "🚥 cypress/", "path": "../cypress" },
+    { "name": "🎭 packages/testing/", "path": "../packages/testing" },
+    { "name": "/", "path": ".." },
+  ],
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "🐋 Docker Up",
+        "command": "docker compose up --build --wait",
+        "type": "shell",
+        "options": {
+          "cwd": "${workspaceFolder:/}",
+        },
+        "group": "build",
+        "runOptions": {
+          "instanceLimit": 1,
+        },
+      },
+      {
+        "label": "🧪 Run Test",
+        "command": "npm test",
+        "type": "shell",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder:/}",
+        },
+        "problemMatcher": ["$tsc-watch"],
+        "runOptions": { "instanceLimit": 1 },
+      },
+      {
+        "label": "🧪 Watch Test : Current file",
+        "command": "npm test --test-only --watch ${fileDirname}/${fileBasename}",
+        "type": "shell",
+        "group": "build",
+        "options": {},
+        "problemMatcher": ["$tsc-watch"],
+        "runOptions": { "instanceLimit": 1 },
+      },
+      {
+        "label": "🚥 Cypress Studio (open)",
+        "command": "npx cypress open",
+        "type": "shell",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder:/}",
+        },
+        "problemMatcher": ["$tsc-watch"],
+        "runOptions": { "instanceLimit": 1 },
+      },
+      {
+        "label": "🚥 Cypress Run Dev : Current file",
+        "dependsOn": [
+          "🚥 Cypress Setup Dev : Current file",
+          "🚥 Cypress Run Once : Current file",
+        ],
+        "group": "build",
+      },
+      {
+        "label": "🚥 Cypress Run Once : Current file",
+        "command": "npm run e2e:run ${fileDirnameBasename}",
+        "dependsOn": ["🚥 Cypress Setup Dev : Current file"],
+        "type": "shell",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder:/}",
+        },
+        "problemMatcher": ["$tsc-watch"],
+        "runOptions": { "instanceLimit": 1 },
+      },
+      {
+        "label": "🚥 Cypress Run Dev : Current file",
+        "command": "npm run e2e:run ${fileDirnameBasename}",
+        "dependsOn": ["🚥 Cypress Setup Dev : Current file"],
+        "type": "shell",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder:/}",
+        },
+        "problemMatcher": ["$tsc-watch"],
+        "runOptions": { "instanceLimit": 1 },
+      },
+      {
+        "label": "🚥 Cypress Setup Dev : Current file",
+        "command": "npm run e2e:setup ${fileDirnameBasename} -- --dev",
+        "dependsOn": ["🐋 Docker Up"],
+        "type": "shell",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder:/}",
+          "env": {
+            "ENABLE_DATABASE_DELETION": "True",
+            "CI": "kind of",
+          },
+        },
+        "isBackground": true,
+        "problemMatcher": ["$tsc-watch"],
+        "runOptions": { "instanceLimit": 1 },
+      },
+      {
+        "label": "🚥 Cypress Reset Database : Current file",
+        "command": "npm run delete-database && npm run migrate up && npm run fixtures:load-ci cypress/e2e/${fileDirnameBasename}/fixtures.sql && npm run update-organization-info 0",
+        "dependsOn": ["🐋 Docker Up"],
+        "type": "shell",
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder:/}",
+          "env": {
+            "ENABLE_DATABASE_DELETION": "True",
+            "CI": "kind of",
+          },
+        },
+        "problemMatcher": ["$tsc-watch"],
+        "runOptions": { "instanceLimit": 1 },
+      },
+    ],
+  },
+  "settings": {
+    "search.exclude": {
+      "**/*.code-search": true,
+      "**/bower_components": true,
+      "**/dist": true,
+      "**/node_modules": true,
+    },
+    "npm.packageManager": "bun",
+    "cSpell.language": "en,fr",
+    "cSpell.words": ["franceconnect", "oidc"],
+  },
+}
