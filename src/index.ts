@@ -234,6 +234,15 @@ app.use(function errorHandler(
         interactionId: req.session.interactionId,
       });
     }
+    if (err.statusCode === 429) {
+      return res.status(429).render("too-many-requests-error", {
+        error_message: err.message,
+        // force not to use dashboard layout in case the error is shown within a dashboard page
+        use_dashboard_layout: false,
+        oidcError: "server_error",
+        interactionId: req.session.interactionId,
+      });
+    }
     return res.status(err.statusCode || 500).render("error", {
       error_code: err.statusCode || err,
       error_message: err.message,
