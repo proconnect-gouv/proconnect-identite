@@ -1,7 +1,7 @@
 describe("sign-in with totp enrollment", () => {
   before(cy.seed);
 
-  it.only("should follow first authentication when mfa asked", function () {
+  it("should follow first authentication when mfa asked", function () {
     cy.visit("http://localhost:4000");
 
     cy.contains("Forcer une connexion a deux facteurs").click();
