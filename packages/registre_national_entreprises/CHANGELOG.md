@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.registre_national_entreprises
 
+## 3.0.0
+
+### Major Changes
+
+- [#1853](https://github.com/proconnect-gouv/proconnect-identite/pull/1853) [`a1b3e74`](https://github.com/proconnect-gouv/proconnect-identite/commit/a1b3e74c2240f69b5b0a748228bc07ff8e04b3c1) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Ajout des API INSEE et RNE au contexte global de l'application
+
 ## 2.0.0
 
 ### Major Changes
