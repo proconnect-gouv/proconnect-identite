@@ -56,7 +56,7 @@ const ApiInseeTest = createApiInseeClient(inseeOpenApiTestClient, () =>
 
 //
 
-export const InseeApiClient = {
+export const ApiInseeClient = {
   findBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&

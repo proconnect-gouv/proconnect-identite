@@ -48,7 +48,7 @@ const RegistreNationalEntreprisesTestClient =
 
 //
 
-export const RegistreNationalEntreprisesApiClient = {
+export const ApiRegistreNationalEntreprisesClient = {
   async findPouvoirsBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&

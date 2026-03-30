@@ -12,8 +12,8 @@ import HttpErrors from "http-errors";
 import { inspect } from "node:util";
 import { z, ZodError } from "zod";
 import notificationMessages from "../config/notification-messages";
-import { InseeApiClient } from "../connectors/api-insee";
-import { RegistreNationalEntreprisesApiClient } from "../connectors/api-rne";
+import { ApiInseeClient } from "../connectors/api-insee";
+import { ApiRegistreNationalEntreprisesClient } from "../connectors/api-rne";
 import { getOrganizationInfo } from "../connectors/api-sirene";
 import { siretSchema } from "../services/custom-zod-schemas";
 import { logger } from "../services/log";
@@ -40,7 +40,7 @@ export async function getPingApiInseeController(
   _next: NextFunction,
 ) {
   try {
-    await InseeApiClient.findBySiret("13002526500013"); // we use DINUM siret for the ping route
+    await ApiInseeClient.findBySiret("13002526500013"); // we use DINUM siret for the ping route
     return res.json({});
   } catch (e) {
     logger.error(inspect(e, { depth: 3 }));
@@ -57,7 +57,7 @@ export async function getPingApiRegistreNationalEntreprisesController(
   try {
     // we use Douglas DUTEIL (ONEDOES.DRAW.DOUBLEACE) siren for the ping route
     // because DINUM siren is returned as 404 by the RNE API
-    await RegistreNationalEntreprisesApiClient.findPouvoirsBySiren("828696252");
+    await ApiRegistreNationalEntreprisesClient.findPouvoirsBySiren("828696252");
     return res.json({});
   } catch (e) {
     logger.error(inspect(e, { depth: 3 }));
