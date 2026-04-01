@@ -1,5 +1,4 @@
 import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
-import axios, { AxiosError, type AxiosResponse } from "axios";
 import { isEmpty, isString, uniq } from "lodash-es";
 import {
   FEATURE_USE_ANNUAIRE_EMAILS,
@@ -13,6 +12,7 @@ import {
   ApiAnnuaireTooManyResultsError,
 } from "../config/errors";
 import { logger } from "../services/log";
+import { FetchError, request } from "./request";
 
 // more info at https://api-lannuaire.service-public.fr/api/explore/v2.1/console
 
@@ -54,15 +54,17 @@ export const getAnnuaireServicePublicContactEmails = async (
 
   let features: ApiAnnuaireServicePublicReponse["results"] = [];
   try {
-    const { data }: AxiosResponse<ApiAnnuaireServicePublicReponse> =
-      await axios({
-        method: "get",
-        url: `https://api-lannuaire.service-public.fr/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "${codeOfficielGeographique}" and pivot LIKE "mairie"`,
-        headers: {
-          accept: "application/json",
+    const { data }: { data: ApiAnnuaireServicePublicReponse } =
+      await request<ApiAnnuaireServicePublicReponse>(
+        `https://api-lannuaire.service-public.fr/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "${codeOfficielGeographique}" and pivot LIKE "mairie"`,
+        {
+          method: "get",
+          headers: {
+            accept: "application/json",
+          },
+          timeout: HTTP_CLIENT_TIMEOUT,
         },
-        timeout: HTTP_CLIENT_TIMEOUT,
-      });
+      );
 
     features = data.results.map((feature) => ({
       ...feature,
@@ -70,13 +72,8 @@ export const getAnnuaireServicePublicContactEmails = async (
       adresse: JSON.parse(feature.adresse as any),
     }));
   } catch (e) {
-    if (
-      e instanceof AxiosError &&
-      (e.code === "ECONNABORTED" ||
-        e.code === "ERR_BAD_RESPONSE" ||
-        e.code === "EAI_AGAIN")
-    ) {
-      throw new ApiAnnuaireConnectionError(undefined, { cause: e });
+    if (e instanceof FetchError) {
+      throw new ApiAnnuaireConnectionError(e.message, { cause: e });
     }
 
     throw e;

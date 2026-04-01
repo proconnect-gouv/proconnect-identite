@@ -2,11 +2,11 @@
 
 import { createApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
-import { AxiosError } from "axios";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
 import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
 import { getDatabaseConnection } from "../src/connectors/postgres";
+import { FetchError } from "../src/connectors/request";
 import { upsert } from "../src/repositories/organization/setters";
 import { logger } from "../src/services/log";
 import {
@@ -100,11 +100,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 250;
           "\x1b[0m",
         );
         logger.error(`Error while fetching data for: ${siret}`);
-        logger.error(
-          error instanceof AxiosError && !isEmpty(error.response)
-            ? error.response.data
-            : error,
-        );
+        logger.error(error instanceof FetchError ? error.message : error);
         logger.error("");
       }
 

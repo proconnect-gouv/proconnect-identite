@@ -1,7 +1,7 @@
-import axios from "axios";
 import crypto from "crypto";
 import { HTTP_CLIENT_TIMEOUT } from "../config/env";
 import { logger } from "../services/log";
+import { request } from "./request";
 
 const apiResponseParser = (rawData: string): { [k: string]: number } => {
   return rawData
@@ -24,14 +24,16 @@ export const hasPasswordBeenPwned = async (
   const hashTrailingChars = sha1Hash.substring(5);
 
   try {
-    const { data } = await axios({
-      method: "get",
-      url: `https://api.pwnedpasswords.com/range/${hashFirst5Chars}`,
-      headers: {
-        "Add-Padding": true,
+    const { data } = await request<string>(
+      `https://api.pwnedpasswords.com/range/${hashFirst5Chars}`,
+      {
+        method: "get",
+        headers: {
+          "Add-Padding": "true",
+        },
+        timeout: HTTP_CLIENT_TIMEOUT,
       },
-      timeout: HTTP_CLIENT_TIMEOUT,
-    });
+    );
 
     const parsedData = apiResponseParser(data);
 
