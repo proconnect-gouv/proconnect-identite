@@ -4,7 +4,6 @@ import {
   FEATURE_AUTHENTICATE_BROWSER,
   FEATURE_USE_SECURE_COOKIES,
   SESSION_COOKIE_SECRET,
-  TRUSTED_BROWSER_COOKIE_MAX_AGE_IN_SECONDS,
 } from "../config/env";
 
 export const setIsTrustedBrowserFromLoggedInSession = (req: Request) => {
@@ -48,7 +47,6 @@ export const setBrowserAsTrustedForUser = (
 ): void => {
   req.isTrustedBrowser = true;
   res.cookie("trusted-browser", user_id, {
-    maxAge: TRUSTED_BROWSER_COOKIE_MAX_AGE_IN_SECONDS * 1000,
     secure: FEATURE_USE_SECURE_COOKIES,
     signed: true,
     sameSite: "lax",

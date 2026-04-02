@@ -21,7 +21,6 @@ import {
   NODE_ENV,
   PORT,
   SESSION_COOKIE_SECRET,
-  SESSION_MAX_AGE_IN_SECONDS,
 } from "./config/env";
 import { OidcError } from "./config/errors";
 import { createOidcProvider } from "./config/oidc-provider";
@@ -119,7 +118,6 @@ const sessionMiddleware =
     }),
     name: "session",
     cookie: {
-      maxAge: SESSION_MAX_AGE_IN_SECONDS * 1000,
       secure: FEATURE_USE_SECURE_COOKIES,
       sameSite: "lax",
     },
