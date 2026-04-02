@@ -1,5 +1,4 @@
 import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
-import axios, { AxiosError, type AxiosResponse } from "axios";
 import { isEmpty, isString } from "lodash-es";
 import { AssertionError } from "node:assert";
 import {
@@ -13,6 +12,7 @@ import {
   ApiAnnuaireNotFoundError,
 } from "../config/errors";
 import { logger } from "../services/log";
+import { FetchError, request } from "./request";
 
 type ApiAnnuaireEducationNationaleReponse = {
   total_count: number;
@@ -196,25 +196,22 @@ export const getAnnuaireEducationNationaleContactEmail = async (
 
   let records: ApiAnnuaireEducationNationaleReponse["records"] = [];
   try {
-    const { data }: AxiosResponse<ApiAnnuaireEducationNationaleReponse> =
-      await axios({
-        method: "GET",
-        url: `https://data.education.gouv.fr/api/v2/catalog/datasets/fr-en-annuaire-education/records?where=siren_siret%3D${siret}`,
-        headers: {
-          accept: "application/json",
+    const { data }: { data: ApiAnnuaireEducationNationaleReponse } =
+      await request<ApiAnnuaireEducationNationaleReponse>(
+        `https://data.education.gouv.fr/api/v2/catalog/datasets/fr-en-annuaire-education/records?where=siren_siret%3D${siret}`,
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+          },
+          timeout: HTTP_CLIENT_TIMEOUT,
         },
-        timeout: HTTP_CLIENT_TIMEOUT,
-      });
+      );
 
     records = data.records;
   } catch (e) {
-    if (
-      e instanceof AxiosError &&
-      (e.code === "ECONNABORTED" ||
-        e.code === "ERR_BAD_RESPONSE" ||
-        e.code === "EAI_AGAIN")
-    ) {
-      throw new ApiAnnuaireConnectionError(e.code, { cause: e });
+    if (e instanceof FetchError) {
+      throw new ApiAnnuaireConnectionError(e.message, { cause: e });
     }
 
     throw e;

@@ -5,12 +5,12 @@ import {
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
 import { LinkTypes } from "@proconnect-gouv/proconnect.identite/types";
-import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { z } from "zod";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
+import { FetchError } from "../src/connectors/request";
 import { findByUserId } from "../src/repositories/organization/getters";
 import {
   linkUserToOrganization,
@@ -201,9 +201,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         logger.error("unexpected error");
         logger.error(
           "\x1b[31m",
-          error instanceof AxiosError && !isEmpty(error.response)
-            ? error.response.data
-            : error,
+          error instanceof FetchError ? error.message : error,
           "\x1b[0m",
         );
         logger.error("");
