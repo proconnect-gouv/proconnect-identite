@@ -44,7 +44,8 @@
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/oidc-provider": "^9.5.0",
     "@types/yargs": "^17.0.33",
-    "yargs": "^18.0.0"
+    "yargs": "^18.0.0",
+    "tsx": "^4.20.3"
   },
   "publishConfig": {
     "access": "public",

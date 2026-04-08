@@ -5,13 +5,13 @@ import {
 } from "@proconnect-gouv/proconnect.core/security";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
-import { AxiosError } from "axios";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, some, toInteger } from "lodash-es";
 import { z } from "zod";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import { context } from "../src/connectors/context";
+import { FetchError } from "../src/connectors/request";
 import { upsert } from "../src/repositories/organization/setters";
 import { isAFreeEmailProvider } from "../src/services/email";
 import { logger } from "../src/services/log";
@@ -180,9 +180,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
 
             logger.info(
               "\x1b[31m",
-              error instanceof AxiosError && !isEmpty(error.response)
-                ? error.response.data
-                : error,
+              error instanceof FetchError ? error.message : error,
               "\x1b[0m",
             );
             logger.info("");

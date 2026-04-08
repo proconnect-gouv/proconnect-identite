@@ -1,7 +1,7 @@
 //
 
 import type { DebounceSuccessResponse } from "#src/types";
-import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
+import { request } from "./request.js";
 
 //
 
@@ -15,19 +15,21 @@ import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
  */
 export function singleValidationFactory(
   apiKey: string,
-  config?: AxiosRequestConfig,
+  config?: { timeout?: number },
 ) {
   return async function singleValidation(email: string) {
     const {
       data: { debounce },
-    }: AxiosResponse<DebounceSuccessResponse> = await axios({
-      method: "get",
-      url: `https://api.debounce.io/v1/?email=${email}&api=${apiKey}`,
-      headers: {
-        accept: "application/json",
+    } = await request<DebounceSuccessResponse>(
+      `https://api.debounce.io/v1/?email=${email}&api=${apiKey}`,
+      {
+        method: "get",
+        headers: {
+          accept: "application/json",
+        },
+        timeout: config?.timeout,
       },
-      ...config,
-    });
+    );
 
     return debounce;
   };

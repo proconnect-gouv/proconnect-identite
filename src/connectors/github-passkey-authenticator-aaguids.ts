@@ -1,8 +1,8 @@
 import * as Sentry from "@sentry/node";
-import axios, { type AxiosResponse } from "axios";
 import { mapValues, memoize } from "lodash-es";
 import { HTTP_CLIENT_TIMEOUT } from "../config/env";
 import { logger } from "../services/log";
+import { request } from "./request";
 
 type GithubPasskeyAuthenticatorAaguidsResponse = {
   [key: string]: {
@@ -14,15 +14,16 @@ type GithubPasskeyAuthenticatorAaguidsResponse = {
 
 const fetchPasskeyAuthenticatorAaguids = async () => {
   try {
-    const { data }: AxiosResponse<GithubPasskeyAuthenticatorAaguidsResponse> =
-      await axios({
+    const { data } = await request<GithubPasskeyAuthenticatorAaguidsResponse>(
+      "https://raw.githubusercontent.com/passkeydeveloper/passkey-authenticator-aaguids/main/combined_aaguid.json",
+      {
         method: "get",
-        url: "https://raw.githubusercontent.com/passkeydeveloper/passkey-authenticator-aaguids/main/combined_aaguid.json",
         headers: {
           accept: "application/json",
         },
         timeout: HTTP_CLIENT_TIMEOUT,
-      });
+      },
+    );
 
     return mapValues(data, ({ name }) => name);
   } catch (error) {
