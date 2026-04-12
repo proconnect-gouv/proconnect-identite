@@ -10,7 +10,7 @@ import {
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
   isPublicService,
-  isSyndicatCommunal,
+  isSmallEtablissementPublic,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
   EmailDomainVerificationTypes,
@@ -277,7 +277,7 @@ export const joinOrganization = async ({
     !isCommune(organization, true) &&
     isAFreeEmailProvider(email) &&
     isPublicService(organization) &&
-    !isSyndicatCommunal(organization)
+    !isSmallEtablissementPublic(organization)
   ) {
     throw new AccessRestrictedToPublicServiceEmailError();
   }
@@ -286,7 +286,7 @@ export const joinOrganization = async ({
     isAFreeEmailProvider(email) &&
     !hasLessThanFiftyEmployees(organization) &&
     !confirmed &&
-    !isSyndicatCommunal(organization)
+    !isSmallEtablissementPublic(organization)
   ) {
     throw new UserMustConfirmToJoinOrganizationError(organization_id);
   }
