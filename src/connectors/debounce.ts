@@ -1,4 +1,7 @@
-import { singleValidationFactory } from "@proconnect-gouv/proconnect.debounce/api";
+import {
+  pingDebounceFactory,
+  singleValidationFactory,
+} from "@proconnect-gouv/proconnect.debounce/api";
 import {
   DEBOUNCE_API_KEY,
   FEATURE_CHECK_EMAIL_DELIVERABILITY,
@@ -12,6 +15,10 @@ type EmailDebounceInfo = {
 };
 
 export const singleValidation = singleValidationFactory(DEBOUNCE_API_KEY, {
+  timeout: HTTP_CLIENT_TIMEOUT,
+});
+
+export const pingDebounce = pingDebounceFactory(DEBOUNCE_API_KEY, {
   timeout: HTTP_CLIENT_TIMEOUT,
 });
 

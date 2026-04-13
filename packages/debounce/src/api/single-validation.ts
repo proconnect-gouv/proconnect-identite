@@ -35,6 +35,29 @@ export function singleValidationFactory(
   };
 }
 
+export function pingDebounceFactory(
+  apiKey: string,
+  config?: { timeout?: number },
+) {
+  return async function pingDebounce() {
+    const mockEmail = "user@example.com";
+    const {
+      data: { debounce },
+    } = await request<DebounceSuccessResponse>(
+      `https://api.debounce.io/v1/?email=${mockEmail}&api=${apiKey}`,
+      {
+        method: "get",
+        headers: {
+          accept: "application/json",
+        },
+        timeout: config?.timeout,
+      },
+    );
+
+    return debounce;
+  };
+}
+
 export type SingleValidationHandler = ReturnType<
   typeof singleValidationFactory
 >;

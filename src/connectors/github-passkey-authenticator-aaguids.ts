@@ -12,6 +12,16 @@ type GithubPasskeyAuthenticatorAaguidsResponse = {
   };
 };
 
+export const pingGithubPasskeyAuthenticatorAaguids =
+  async (): Promise<void> => {
+    try {
+      await fetchPasskeyAuthenticatorAaguids();
+    } catch (error) {
+      logger.error(error);
+      throw new Error("Error from github call");
+    }
+  };
+
 const fetchPasskeyAuthenticatorAaguids = async () => {
   try {
     const { data } = await request<GithubPasskeyAuthenticatorAaguidsResponse>(

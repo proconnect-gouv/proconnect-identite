@@ -14,6 +14,15 @@ const apiResponseParser = (rawData: string): { [k: string]: number } => {
     }, {});
 };
 
+export const pingPwnedPasswords = async (): Promise<void> => {
+  try {
+    await hasPasswordBeenPwned("password");
+  } catch (error) {
+    logger.error(error);
+    throw new Error("Error from pwnedpasswords API");
+  }
+};
+
 export const hasPasswordBeenPwned = async (
   plainPassword: string,
 ): Promise<boolean> => {
