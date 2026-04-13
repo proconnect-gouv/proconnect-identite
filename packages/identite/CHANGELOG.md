@@ -1,5 +1,15 @@
 # @proconnect-gouv/proconnect.identite
 
+## 5.0.0
+
+### Major Changes
+
+- [#1890](https://github.com/proconnect-gouv/proconnect-identite/pull/1890) [`33390bc`](https://github.com/proconnect-gouv/proconnect-identite/commit/33390bce208d6b7871ee4d7f7aeeb4307d8765fc) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - renomme is-syndicat-communal en is-small-etablissement-public
+
+### Patch Changes
+
+- [#1896](https://github.com/proconnect-gouv/proconnect-identite/pull/1896) [`a047317`](https://github.com/proconnect-gouv/proconnect-identite/commit/a0473170cd8a6d51fefde56724588fa232a00c51) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 Les peerDependencies sont optionnelles et le devtools.typescript est retiré des dépendances
+
 ## 4.0.0
 
 ### Major Changes
