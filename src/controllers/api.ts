@@ -12,9 +12,13 @@ import HttpErrors from "http-errors";
 import { inspect } from "node:util";
 import { z, ZodError } from "zod";
 import notificationMessages from "../config/notification-messages";
+import { pingAnnuaireEducationNationale } from "../connectors/api-annuaire-education-nationale";
 import { ApiInseeClient } from "../connectors/api-insee";
 import { ApiRegistreNationalEntreprisesClient } from "../connectors/api-rne";
 import { getOrganizationInfo } from "../connectors/api-sirene";
+import { pingDebounce } from "../connectors/debounce";
+import { pingGithubPasskeyAuthenticatorAaguids } from "../connectors/github-passkey-authenticator-aaguids";
+import { pingPwnedPasswords } from "../connectors/pwnedpasswords";
 import { siretSchema } from "../services/custom-zod-schemas";
 import { logger } from "../services/log";
 
@@ -41,6 +45,66 @@ export async function getPingApiInseeController(
 ) {
   try {
     await ApiInseeClient.findBySiret("13002526500013"); // we use DINUM siret for the ping route
+    return res.json({});
+  } catch (e) {
+    logger.error(inspect(e, { depth: 3 }));
+    Sentry.captureException(e);
+    return res.status(502).json({ message: "Bad Gateway" });
+  }
+}
+
+export async function getPingApiDebounceController(
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  try {
+    await pingDebounce(); // we use a mock email for the ping route
+    return res.json({});
+  } catch (e) {
+    logger.error(inspect(e, { depth: 3 }));
+    Sentry.captureException(e);
+    return res.status(502).json({ message: "Bad Gateway" });
+  }
+}
+
+export async function getPingPwnedPasswordsController(
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  try {
+    await pingPwnedPasswords(); // we use a mock password for the ping route
+    return res.json({});
+  } catch (e) {
+    logger.error(inspect(e, { depth: 3 }));
+    Sentry.captureException(e);
+    return res.status(502).json({ message: "Bad Gateway" });
+  }
+}
+
+export async function getPingGithubPasskeyAuthenticatorAaguidsController(
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  try {
+    await pingGithubPasskeyAuthenticatorAaguids();
+    return res.json({});
+  } catch (e) {
+    logger.error(inspect(e, { depth: 3 }));
+    Sentry.captureException(e);
+    return res.status(502).json({ message: "Bad Gateway" });
+  }
+}
+
+export async function getPingApiAnnuaireEducationNationaleController(
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
+  try {
+    await pingAnnuaireEducationNationale(); // we use a mock siret for the ping route
     return res.json({});
   } catch (e) {
     logger.error(inspect(e, { depth: 3 }));

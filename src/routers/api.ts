@@ -5,9 +5,13 @@ import nocache from "nocache";
 import { inspect } from "node:util";
 import {
   getOrganizationInfoController,
+  getPingApiAnnuaireEducationNationaleController,
+  getPingApiDebounceController,
   getPingApiInseeController,
   getPingApiRegistreNationalEntreprisesController,
   getPingApiSireneController,
+  getPingGithubPasskeyAuthenticatorAaguidsController,
+  getPingPwnedPasswordsController,
 } from "../controllers/api";
 import {
   getGenerateAuthenticationOptionsForFirstFactorController,
@@ -27,6 +31,16 @@ export const apiRouter = () => {
   apiRouter.use(apiRateLimiterMiddleware);
 
   apiRouter.get("/insee/ping", getPingApiInseeController);
+  apiRouter.get("/debounce/ping", getPingApiDebounceController);
+  apiRouter.get("/pwned-passwords/ping", getPingPwnedPasswordsController);
+  apiRouter.get(
+    "/github-passkey-authenticator-aaguids/ping",
+    getPingGithubPasskeyAuthenticatorAaguidsController,
+  );
+  apiRouter.get(
+    "/annuaire-education-nationale/ping",
+    getPingApiAnnuaireEducationNationaleController,
+  );
   apiRouter.get("/rne/ping", getPingApiRegistreNationalEntreprisesController);
   apiRouter.get("/sirene/ping", getPingApiSireneController);
 

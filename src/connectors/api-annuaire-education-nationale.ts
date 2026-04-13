@@ -180,6 +180,42 @@ type ApiAnnuaireEducationNationaleReponse = {
   }[];
 };
 
+const getAnnuaireEducationNationaleRecords = async (
+  siret: string,
+): Promise<ApiAnnuaireEducationNationaleReponse["records"]> => {
+  try {
+    const { data }: { data: ApiAnnuaireEducationNationaleReponse } =
+      await request<ApiAnnuaireEducationNationaleReponse>(
+        `https://data.education.gouv.fr/api/v2/catalog/datasets/fr-en-annuaire-education/records?where=siren_siret%3D${siret}`,
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+          },
+          timeout: HTTP_CLIENT_TIMEOUT,
+        },
+      );
+
+    return data.records;
+  } catch (e) {
+    if (e instanceof FetchError) {
+      throw new ApiAnnuaireConnectionError(e.message, { cause: e });
+    }
+
+    throw e;
+  }
+};
+
+export const pingAnnuaireEducationNationale = async (): Promise<void> => {
+  try {
+    const mockSiret = "19470001900012";
+    await getAnnuaireEducationNationaleContactEmail(mockSiret);
+  } catch (error) {
+    logger.error(error);
+    throw new Error("Error from annuaire education nationale API");
+  }
+};
+
 export const getAnnuaireEducationNationaleContactEmail = async (
   siret: string | null,
 ): Promise<string> => {
@@ -194,28 +230,7 @@ export const getAnnuaireEducationNationaleContactEmail = async (
     });
   }
 
-  let records: ApiAnnuaireEducationNationaleReponse["records"] = [];
-  try {
-    const { data }: { data: ApiAnnuaireEducationNationaleReponse } =
-      await request<ApiAnnuaireEducationNationaleReponse>(
-        `https://data.education.gouv.fr/api/v2/catalog/datasets/fr-en-annuaire-education/records?where=siren_siret%3D${siret}`,
-        {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-          },
-          timeout: HTTP_CLIENT_TIMEOUT,
-        },
-      );
-
-    records = data.records;
-  } catch (e) {
-    if (e instanceof FetchError) {
-      throw new ApiAnnuaireConnectionError(e.message, { cause: e });
-    }
-
-    throw e;
-  }
+  const records = await getAnnuaireEducationNationaleRecords(siret as string);
 
   let record: ApiAnnuaireEducationNationaleReponse["records"][0] | undefined;
 
