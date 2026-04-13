@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.entreprise
 
+## 2.1.0
+
+### Minor Changes
+
+- [#1897](https://github.com/proconnect-gouv/proconnect-identite/pull/1897) [`fff1869`](https://github.com/proconnect-gouv/proconnect-identite/commit/fff1869650e1c8e02e17671898a6e6d3217a15f2) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Add tranche effect unite legale labels array
+
 ## 2.0.0
 
 ### Major Changes
