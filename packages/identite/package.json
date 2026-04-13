@@ -68,9 +68,25 @@
     "@proconnect-gouv/proconnect.annuaire_entreprises": "^1.1.4",
     "@proconnect-gouv/proconnect.api_entreprise": "^2.0.0",
     "@proconnect-gouv/proconnect.core": "^1.0.0",
-    "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@proconnect-gouv/proconnect.insee": "^2.0.0",
     "@proconnect-gouv/proconnect.registre_national_entreprises": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@proconnect-gouv/proconnect.annuaire_entreprises": {
+      "optional": true
+    },
+    "@proconnect-gouv/proconnect.api_entreprise": {
+      "optional": true
+    },
+    "@proconnect-gouv/proconnect.core": {
+      "optional": true
+    },
+    "@proconnect-gouv/proconnect.insee": {
+      "optional": true
+    },
+    "@proconnect-gouv/proconnect.registre_national_entreprises": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public",
