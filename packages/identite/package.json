@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.identite",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/identite#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -52,7 +52,7 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.12",
     "@proconnect-gouv/proconnect.annuaire_entreprises": "^1.1.4",
-    "@proconnect-gouv/proconnect.api_entreprise": "^2.0.0",
+    "@proconnect-gouv/proconnect.api_entreprise": "^2.1.0",
     "@proconnect-gouv/proconnect.core": "^1.0.0",
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@proconnect-gouv/proconnect.insee": "^2.0.0",
@@ -66,7 +66,7 @@
   },
   "peerDependencies": {
     "@proconnect-gouv/proconnect.annuaire_entreprises": "^1.1.4",
-    "@proconnect-gouv/proconnect.api_entreprise": "^2.0.0",
+    "@proconnect-gouv/proconnect.api_entreprise": "^2.1.0",
     "@proconnect-gouv/proconnect.core": "^1.0.0",
     "@proconnect-gouv/proconnect.insee": "^2.0.0",
     "@proconnect-gouv/proconnect.registre_national_entreprises": "^3.0.0"
