@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.entreprise
 
+## 2.2.0
+
+### Minor Changes
+
+- [#1901](https://github.com/proconnect-gouv/proconnect-identite/pull/1901) [`3bed9d7`](https://github.com/proconnect-gouv/proconnect-identite/commit/3bed9d70aa5cf97c6a8f1af3e8d8777da9863a00) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Add missing export of tranche-effectifs-unite-legale.js to index.ts
+
 ## 2.1.0
 
 ### Minor Changes
