@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.debounce
 
+## 1.0.1
+
+### Patch Changes
+
+- [#1879](https://github.com/proconnect-gouv/proconnect-identite/pull/1879) [`64c12ba`](https://github.com/proconnect-gouv/proconnect-identite/commit/64c12bab1152970195acc6f03ee8ae9d5ae325c8) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - remplace axios par fetch natif
+
 ## 1.0.0
 
 ### Major Changes
