@@ -15,7 +15,8 @@ async function request<responseT>(
       signal: AbortSignal.timeout(options?.timeout ?? 30_000),
     });
     if (!res.ok) {
-      throw new FetchError(res.statusText);
+      const response = await res.text();
+      throw new FetchError(response);
     }
     const contentType = res.headers.get("content-type");
     if (contentType?.includes("application/json")) {
@@ -23,6 +24,9 @@ async function request<responseT>(
     }
     return { data: (await res.text()) as unknown as responseT };
   } catch (error) {
+    if (error instanceof FetchError) {
+      throw error;
+    }
     throw new FetchError(
       error instanceof Error ? error.message : String(error),
     );
