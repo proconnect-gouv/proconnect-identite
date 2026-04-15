@@ -1,3 +1,5 @@
+import axios from "axios";
+
 class FetchError extends Error {}
 
 async function request<responseT>(
@@ -9,24 +11,14 @@ async function request<responseT>(
   },
 ): Promise<{ data: responseT }> {
   try {
-    const res = await fetch(url, {
+    const res = await axios({
+      url,
       headers: options?.headers,
       method: options?.method,
-      signal: AbortSignal.timeout(options?.timeout ?? 30_000),
+      timeout: options?.timeout ?? 30000,
     });
-    if (!res.ok) {
-      const response = await res.text();
-      throw new FetchError(response);
-    }
-    const contentType = res.headers.get("content-type");
-    if (contentType?.includes("application/json")) {
-      return { data: (await res.json()) as responseT };
-    }
-    return { data: (await res.text()) as unknown as responseT };
+    return { data: res.data as responseT };
   } catch (error) {
-    if (error instanceof FetchError) {
-      throw error;
-    }
     throw new FetchError(
       error instanceof Error ? error.message : String(error),
     );
