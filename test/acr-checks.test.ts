@@ -3,7 +3,6 @@ import { describe, it } from "node:test";
 import {
   certificationDirigeantRequested,
   isAcrSatisfied,
-  isThereAnyRequestedAcr,
   twoFactorsAuthRequested,
 } from "../src/services/acr-checks";
 
@@ -174,75 +173,6 @@ describe("isAcrSatisfied", () => {
       ),
       false,
     );
-  });
-});
-
-describe("isThereAnyRequestedAcr", () => {
-  it("should return false for acr non-related prompt", () => {
-    const prompt = {
-      name: "random",
-      reasons: ["random"],
-      details: { random: "random" },
-    };
-
-    assert.equal(isThereAnyRequestedAcr(prompt), false);
-  });
-
-  it("should return true for prompt with no acr required", () => {
-    const prompt = { name: "login", reasons: ["no_session"], details: {} };
-
-    assert.equal(isThereAnyRequestedAcr(prompt), false);
-  });
-
-  it("should return false for legacy acr", () => {
-    const prompt = {
-      name: "login",
-      reasons: ["essential_acrs"],
-      details: {
-        acr: {
-          essential: true,
-          value: "eidas1",
-        },
-      },
-    };
-
-    assert.equal(isThereAnyRequestedAcr(prompt), false);
-  });
-
-  it("should return true for non legacy acr", () => {
-    const prompt = {
-      name: "login",
-      reasons: ["essential_acrs"],
-      details: {
-        acr: {
-          essential: true,
-          values: [
-            "eidas1",
-            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-          ],
-        },
-      },
-    };
-
-    assert.equal(isThereAnyRequestedAcr(prompt), true);
-  });
-
-  it("should return true for mfa requested identity", () => {
-    const prompt = {
-      name: "login",
-      reasons: ["essential_acrs"],
-      details: {
-        acr: {
-          essential: true,
-          values: [
-            "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
-            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-          ],
-        },
-      },
-    };
-
-    assert.equal(isThereAnyRequestedAcr(prompt), true);
   });
 });
 

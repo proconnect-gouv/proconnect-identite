@@ -19,7 +19,6 @@ import { findByClientId } from "../repositories/oidc-client";
 import {
   certificationDirigeantRequested,
   isAcrSatisfied,
-  isThereAnyRequestedAcr,
   twoFactorsAuthRequested,
 } from "../services/acr-checks";
 import { oidcErrorSchema, siretSchema } from "../services/custom-zod-schemas";
@@ -115,20 +114,7 @@ export const interactionEndControllerFactory =
         ? epochTime(user.last_sign_in_at)
         : undefined;
 
-      const { prompt, params } = await oidcProvider.interactionDetails(
-        req,
-        res,
-      );
-
-      // Previously, OIDC clients were required to include `acr_values=eidas1` as a query parameter in the /authorize request.
-      // Some clients may still expect the returned ACR to be "eidas1" for successful authentication.
-      // We maintain this legacy behavior until all OIDC clients have been properly migrated.
-      if (
-        params?.["acr_values"] === "eidas1" &&
-        !isThereAnyRequestedAcr(prompt)
-      ) {
-        currentAcr = "eidas1";
-      }
+      const { prompt } = await oidcProvider.interactionDetails(req, res);
 
       let result: OidcInteractionResults = {
         login: {
