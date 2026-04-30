@@ -234,6 +234,7 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.title().should("include", "Error");
     cy.contains("AuthorizationResponseError");
     cy.contains("login_required");
+    cy.contains("Certification dirigeant: no match error");
   });
 });
 

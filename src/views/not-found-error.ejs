@@ -2,7 +2,7 @@
     <h1 class="fr-h3">Page non trouvée</h1>
     <p>Nous n’arrivons pas à trouver la page que vous souhaitez afficher.</p>
     <% if (locals.interactionId && locals.oidcError) { %>
-        <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn">Continuer</a>
+        <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>&error_description=<%= locals.oidcErrorDescription %>" class="fr-btn">Continuer</a>
     <% } else { %>
         <a href="/" class="fr-btn">Retour à l’accueil</a>
     <% } %>

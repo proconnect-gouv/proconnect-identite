@@ -188,11 +188,19 @@ export const interactionErrorControllerFactory =
 
       const schema = z.object({
         error: oidcErrorSchema(),
+        // Human-readable ASCII encoded text description of the error.
+        error_description: z
+          .string()
+          .regex(/^[\x20-\x7E]*$/)
+          .optional(),
       });
 
-      const { error } = await schema.parseAsync(req.query);
+      const { error, error_description } = await schema.parseAsync(req.query);
 
-      await oidcProvider.interactionFinished(req, res, { error });
+      await oidcProvider.interactionFinished(req, res, {
+        error,
+        error_description,
+      });
     } catch (error) {
       next(error);
     }

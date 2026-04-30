@@ -19,6 +19,7 @@ jobs:
       matrix:
         e2e_test:
           - activate_totp
+          - authorize_error
           - broken_standard_client
           - check_email_deliverability
           - connect_franceconnect_account
