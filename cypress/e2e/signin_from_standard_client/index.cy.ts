@@ -1,9 +1,7 @@
 //
 
 describe("sign-in from standard client", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should sign-in without org selection when having only one organization", function () {
     cy.visit("http://localhost:4000");

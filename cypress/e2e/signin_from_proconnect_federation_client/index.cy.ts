@@ -1,8 +1,6 @@
 //
 
-it("should seed the database once", function () {
-  cy.seed();
-});
+before(cy.seed);
 
 describe("sign-in from proconnect federation client", () => {
   it("should sign-in", () => {

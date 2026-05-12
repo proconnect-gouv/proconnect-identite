@@ -1,9 +1,7 @@
 //
 
 describe("join collectivité territoriale with code send to official contact email", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should send a code challenge for user with a private email domain", function () {
     cy.visit("/users/join-organization");

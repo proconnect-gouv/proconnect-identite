@@ -1,9 +1,7 @@
 //
 
 describe("join organizations", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("join suggested organisation", function () {
     cy.visit("/users/join-organization");

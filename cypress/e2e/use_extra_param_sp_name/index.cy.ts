@@ -1,7 +1,5 @@
 describe("display sp name", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should display sp name on mfa choice page", function () {
     cy.visit("http://localhost:4001/");

@@ -1,9 +1,7 @@
 //
 
 describe("join collectivité territoriale with free contact domain", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should directly accept the same email address", function () {
     cy.visit("/users/join-organization");

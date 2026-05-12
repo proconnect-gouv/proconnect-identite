@@ -1,9 +1,7 @@
 //
 
 describe("join organizations", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("join big company with free email provider", function () {
     cy.visit("/users/start-sign-in");

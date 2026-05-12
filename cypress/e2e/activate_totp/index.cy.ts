@@ -1,7 +1,5 @@
 describe("add 2fa authentication", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should add 2fa authentication on account user", function () {
     cy.visit("/connection-and-account");
