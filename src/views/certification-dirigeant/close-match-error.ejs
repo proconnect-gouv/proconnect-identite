@@ -92,7 +92,7 @@
   </a>
 
   <% if (locals.interactionId && locals.oidcError) { %>
-  <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>" class="fr-btn fr-btn--tertiary btn--fullwidth">Continuer sur le service</a>
+  <a href="/interaction/<%= interactionId ;%>/error?error=<%= locals.oidcError %>&error_description=<%= locals.oidcErrorDescription %>" class="fr-btn fr-btn--tertiary btn--fullwidth">Continuer sur le service</a>
   <% } else { %>
   <a href="/" class="fr-btn fr-btn--tertiary btn--fullwidth">Retour à l’accueil</a>
   <% } %>

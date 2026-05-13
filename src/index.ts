@@ -209,6 +209,7 @@ app.use(async (req, res, _next) => {
     await renderWithEjsLayout("not-found-error", {
       pageTitle: "Page introuvable",
       oidcError: "invalid_request",
+      oidcErrorDescription: "Page not found",
       interactionId: req.session?.interactionId,
     }),
   );
@@ -224,13 +225,13 @@ app.use(function errorHandler(
   _next: NextFunction,
 ) {
   logger.error(inspect(err, { depth: 3 }));
-
   if (err instanceof HttpErrors.HttpError) {
     if (err.statusCode === 404) {
       return res.status(404).render("not-found-error", {
         // force not to use dashboard layout in case the error is shown within a dashboard page
         use_dashboard_layout: false,
         oidcError: "invalid_request",
+        oidcErrorDescription: "Page not found",
         interactionId: req.session.interactionId,
       });
     }
@@ -240,6 +241,7 @@ app.use(function errorHandler(
         // force not to use dashboard layout in case the error is shown within a dashboard page
         use_dashboard_layout: false,
         oidcError: "server_error",
+        oidcErrorDescription: "Too many requests",
         interactionId: req.session.interactionId,
       });
     }
@@ -249,6 +251,7 @@ app.use(function errorHandler(
       // force not to use dashboard layout in case the error is shown within a dashboard page
       use_dashboard_layout: false,
       oidcError: "server_error",
+      oidcErrorDescription: HttpErrors(err.statusCode || 500).message,
       interactionId: req.session.interactionId,
     });
   }
@@ -260,6 +263,7 @@ app.use(function errorHandler(
       // force not to use dashboard layout in case the error is shown within a dashboard page
       use_dashboard_layout: false,
       oidcError: "invalid_request",
+      oidcErrorDescription: "Bad request",
       interactionId: req.session.interactionId,
     });
   }
@@ -271,6 +275,7 @@ app.use(function errorHandler(
       // force not to use dashboard layout in case the error is shown within a dashboard page
       use_dashboard_layout: false,
       oidcError: err.error,
+      oidcErrorDescription: err.error_description,
       interactionId: req.session.interactionId,
     });
   }
@@ -281,6 +286,7 @@ app.use(function errorHandler(
     // force not to use dashboard layout in case the error is shown within a dashboard page
     use_dashboard_layout: false,
     oidcError: "server_error",
+    oidcErrorDescription: "Unexpected error",
     interactionId: req.session.interactionId,
   });
 });

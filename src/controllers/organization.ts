@@ -429,6 +429,8 @@ export async function getCertificationDirigeantOrganizationNotCoveredError(
       "certification-dirigeant/organization-not-covered-error",
       {
         oidcError: oidcErrorSchema().enum.login_required,
+        oidcErrorDescription:
+          "Certification dirigeant: organization not covered",
         interactionId: req.session.interactionId,
         pageTitle: "Certification impossible",
         use_dashboard_layout: false,
@@ -470,6 +472,7 @@ export async function getCertificationDirigeantCloseMatchError(
       interactionId: req.session.interactionId,
       matches: query.matches,
       oidcError: oidcErrorSchema().enum.login_required,
+      oidcErrorDescription: "Certification dirigeant: close match error",
       organization_label: query.organization_label,
       pageTitle: "Certification impossible",
       siren: query.siren,
@@ -498,6 +501,7 @@ export async function getCertificationDirigeantNoMatchError(
     return res.render("certification-dirigeant/no-match-error", {
       interactionId: req.session.interactionId,
       oidcError: oidcErrorSchema().enum.login_required,
+      oidcErrorDescription: "Certification dirigeant: no match error",
       pageTitle: "Certification impossible",
       siren: query.siren,
       organization_label: query.organization_label,
