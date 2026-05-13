@@ -16,9 +16,11 @@ describe("join organization with rejected moderation", () => {
 
     cy.title().should("include", "Demande refusée - ProConnect");
     cy.contains("Demande refusée");
-    cy.contains("Motif : Nom de domaine introuvable");
     cy.contains(
       "Nous n’avons pas pu établir de lien entre l’organisation et vous.",
+    );
+    cy.contains(
+      "Pour plus d'information, consultez le mail que nous vous avons envoyé.",
     );
     cy.contains("Changer d'organisation").click();
 
@@ -46,7 +48,9 @@ describe("join organization with rejected moderation", () => {
 
     cy.title().should("include", "Informations à corriger - ProConnect");
     cy.contains("Modifications demandées");
-    cy.contains("Motif : Inversion Nom et Prénom");
+    cy.contains(
+      "Pour plus d'information, consultez le mail que nous vous avons envoyé.",
+    );
     cy.getByLabel("Corriger le nom").click();
 
     cy.title().should("include", "Renseigner votre identité - ProConnect");
@@ -78,9 +82,11 @@ describe("join organization with rejected moderation", () => {
 
     cy.title().should("include", "Demande refusée - ProConnect");
     cy.contains("Demande refusée");
-    cy.contains("Motif : Raison non spécifiée");
     cy.contains(
       "Nous n’avons pas pu établir de lien entre l’organisation et vous.",
+    );
+    cy.contains(
+      "Pour plus d'information, consultez le mail que nous vous avons envoyé.",
     );
     cy.getByLabel("Changer d’adresse email").click();
 
