@@ -1,9 +1,7 @@
 //
 
 describe("sign-in from broken client", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should fail with invalid redirect uri", function () {
     cy.visit("http://localhost:4000");

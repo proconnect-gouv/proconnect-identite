@@ -1,9 +1,7 @@
 //
 
 describe("join organizations", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("join collectivité territoriale with official contact email", function () {
     cy.visit("/users/join-organization");

@@ -1,9 +1,7 @@
 //
 
 describe("sign-in with email verification renewal", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("should sign-in with email verification needed", () => {
     // Visit the signup page

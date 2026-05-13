@@ -1,8 +1,6 @@
 //
 
-it("should seed the database once", function () {
-  cy.seed();
-});
+before(cy.seed);
 
 describe("join with gouv.fr domain", () => {
   beforeEach(() => {

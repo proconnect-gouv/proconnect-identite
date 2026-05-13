@@ -1,9 +1,7 @@
 //
 
 describe("Signup into new entreprise unipersonnelle", () => {
-  it("should seed the database once", function () {
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("creates a user", function () {
     cy.origin("http://localhost:4000", () => {
