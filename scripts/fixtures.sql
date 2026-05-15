@@ -3664,6 +3664,25 @@ VALUES
     'ES256',
     'ES256',
     'ES256'
+  ),
+  (
+    38,
+    'ProConnect Federation - Preprod',
+    'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',
+    'f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4',
+    ARRAY[
+      'https://federation-preprod.proconnect.gouv.fr/api/v2/oidc-callback'
+    ],
+    ARRAY[
+      'https://federation-preprod.proconnect.gouv.fr/api/v2/client/logout-callback'
+    ],
+    'openid uid given_name usual_name email phone siret is_service_public is_public_service',
+    'https://www.federation-preprod.proconnect.gouv.fr/',
+    'Dispositif d’identification des agents de la fonction publique.',
+    'ES256',
+    'ES256',
+    'ES256',
+    'ES256'
   )
 ON CONFLICT (id) DO UPDATE
 SET
@@ -3718,4 +3737,4 @@ UPDATE oidc_clients
 SET
   is_proconnect_federation = true
 WHERE
-  id = 15;
+  id IN (15, 38);
