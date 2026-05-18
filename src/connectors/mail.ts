@@ -45,7 +45,10 @@ export function sendMail(options: SendMailBrevoOptions) {
     headers: [...tag],
     ...options,
     subject,
-    from: useAltFrom ? SMTP_FROM_ALT : SMTP_FROM,
+    from: {
+      name: "ProConnect",
+      address: useAltFrom ? SMTP_FROM_ALT : SMTP_FROM,
+    },
   });
 }
 
