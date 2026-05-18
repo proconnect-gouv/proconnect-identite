@@ -2,6 +2,7 @@
   <h1 class="fr-h5"><%= allowEditing ? "Modifications demandées" : "Demande refusée ⛔" %></h1>
   <hr class="hr-personalized-step-three fr-mb-3w">
   <div>
+    <p class="fr-mb-2w"><b> Motif : <%= end_user_reason %></b></p>
     <p class="fr-mb-2w">
       <% if (allowEditing) { %>
         Corrigez l'information pour que votre demande soit de nouveau étudiée.
