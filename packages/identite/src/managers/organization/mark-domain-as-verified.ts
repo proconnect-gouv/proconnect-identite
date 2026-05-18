@@ -5,7 +5,7 @@ import { NotFoundError } from "#src/errors";
 import { assignUserVerificationTypeToDomainFactory } from "#src/managers/user";
 import {
   type EmailDomainApprovedVerificationType,
-  EmailDomainApprovedVerificationTypes,
+  EmailDomainApprovedVerificationValues,
   type EmailDomainNoPendingVerificationType,
   EmailDomainPendingVerificationTypes,
   type EmailDomainRejectedVerificationType,
@@ -43,7 +43,7 @@ export function markDomainAsVerifiedFactory(context: Context) {
 
     return match(domain_verification_type)
       .with(
-        ...EmailDomainApprovedVerificationTypes,
+        ...EmailDomainApprovedVerificationValues,
         async (approved_verification_type) => {
           await assignUserVerificationTypeToDomain(organization_id, domain);
           return markDomainAsApproved({
@@ -78,7 +78,7 @@ export function markDomainAsVerifiedFactory(context: Context) {
       organization_id,
       domain,
       domain_verification_types: [
-        ...EmailDomainApprovedVerificationTypes,
+        ...EmailDomainApprovedVerificationValues,
         ...EmailDomainPendingVerificationTypes,
       ],
     });

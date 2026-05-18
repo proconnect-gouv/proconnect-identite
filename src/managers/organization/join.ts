@@ -13,6 +13,7 @@ import {
   isSmallEtablissementPublic,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
+  EmailDomainApprovedVerificationTypes,
   EmailDomainVerificationTypes,
   LinkTypes,
   ModerationTypeSchema,
@@ -382,43 +383,19 @@ export const joinOrganization = async ({
     }
   }
 
-  if (
-    some(organizationEmailDomains, {
-      domain,
-      verification_type: EmailDomainVerificationTypes.enum.verified,
-    })
-  ) {
-    return await linkUserToOrganization({
-      organization_id,
-      user_id,
-      verification_type: LinkTypes.enum.domain,
-    });
-  }
+  const approvedDomain = organizationEmailDomains.find(
+    ({ domain: organization_domain, verification_type }) =>
+      organization_domain === domain &&
+      EmailDomainApprovedVerificationTypes.safeParse(verification_type).success,
+  );
 
-  if (
-    some(organizationEmailDomains, {
-      domain,
-      verification_type: EmailDomainVerificationTypes.enum.external,
-    })
-  ) {
+  if (approvedDomain) {
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      is_external: true,
-      verification_type: LinkTypes.enum.domain,
-    });
-  }
-
-  if (
-    some(organizationEmailDomains, {
-      domain,
-      verification_type:
-        EmailDomainVerificationTypes.enum.trackdechets_postal_mail,
-    })
-  ) {
-    return await linkUserToOrganization({
-      organization_id,
-      user_id,
+      is_external:
+        approvedDomain.verification_type ===
+        EmailDomainVerificationTypes.enum.external,
       verification_type: LinkTypes.enum.domain,
     });
   }

@@ -1,11 +1,15 @@
 import { z } from "zod";
 
-export const EmailDomainApprovedVerificationTypes = [
+export const EmailDomainApprovedVerificationValues = [
   "official_contact",
   "trackdechets_postal_mail",
   "verified",
   "external", // domain used by external employees (eg. ext.numerique.gouv.fr)
 ] as const;
+
+export const EmailDomainApprovedVerificationTypes = z.enum(
+  EmailDomainApprovedVerificationValues,
+);
 
 export type EmailDomainApprovedVerificationType = z.output<
   typeof EmailDomainApprovedVerificationTypes
@@ -30,7 +34,7 @@ export type EmailDomainRejectedVerificationType = z.output<
 >;
 
 export const EmailDomainNoPendingVerificationTypes = z.enum([
-  ...EmailDomainApprovedVerificationTypes,
+  ...EmailDomainApprovedVerificationValues,
   ...EmailDomainRejectedVerificationTypes,
 ]);
 
@@ -39,7 +43,7 @@ export type EmailDomainNoPendingVerificationType = z.output<
 >;
 
 export const EmailDomainVerificationTypes = z.enum([
-  ...EmailDomainApprovedVerificationTypes,
+  ...EmailDomainApprovedVerificationValues,
   ...EmailDomainPendingVerificationTypes,
   ...EmailDomainRejectedVerificationTypes,
 ]);
