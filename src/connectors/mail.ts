@@ -8,6 +8,7 @@ import {
   DEPLOY_ENV,
   SMTP_FROM,
   SMTP_FROM_ALT,
+  SMTP_FROM_ALT_RATIO_PERCENT,
   SMTP_URL,
   USE_SMTP_FROM_ALT_FOR_DOMAINS,
 } from "../config/env";
@@ -33,7 +34,9 @@ export function sendMail(options: SendMailBrevoOptions) {
   if (isString(toEmail)) {
     const toDomain = getEmailDomain(toEmail);
 
-    useAltFrom = USE_SMTP_FROM_ALT_FOR_DOMAINS.includes(toDomain);
+    useAltFrom =
+      USE_SMTP_FROM_ALT_FOR_DOMAINS.includes(toDomain) ||
+      toEmail.length % 4 < (SMTP_FROM_ALT_RATIO_PERCENT / 100) * 4;
   }
 
   return transporter.sendMail({
@@ -42,7 +45,10 @@ export function sendMail(options: SendMailBrevoOptions) {
     headers: [...tag],
     ...options,
     subject,
-    from: useAltFrom ? SMTP_FROM_ALT : SMTP_FROM,
+    from: {
+      name: "ProConnect",
+      address: useAltFrom ? SMTP_FROM_ALT : SMTP_FROM,
+    },
   });
 }
 

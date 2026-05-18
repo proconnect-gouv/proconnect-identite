@@ -189,6 +189,7 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(3 * 30 * 24 * 60 * 60), // 3 months in seconds
+  SMTP_FROM_ALT_RATIO_PERCENT: z.coerce.number().min(0).max(100).default(25),
   USE_SMTP_FROM_ALT_FOR_DOMAINS: zCoerceArray().default([]),
   VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
