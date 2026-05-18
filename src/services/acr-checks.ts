@@ -86,20 +86,6 @@ export const certificationDirigeantRequested = (prompt: PromptDetail) => {
   );
 };
 
-export const isThereAnyRequestedAcr = (prompt: PromptDetail) => {
-  return areAcrsRequestedInPrompt({
-    prompt,
-    acrs: [
-      ACR_VALUE_FOR_IAL1_AAL1,
-      ACR_VALUE_FOR_IAL1_AAL2,
-      ACR_VALUE_FOR_IAL2_AAL1,
-      ACR_VALUE_FOR_IAL2_AAL2,
-      ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
-      ACR_VALUE_FOR_IAL3_AAL2,
-    ],
-  });
-};
-
 export const isAcrSatisfied = (prompt: PromptDetail, currentAcr: string) => {
   // if no acr is required it is satisfied
   if (!containsEssentialAcrs(prompt)) {
