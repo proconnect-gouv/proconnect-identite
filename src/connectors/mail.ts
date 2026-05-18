@@ -8,6 +8,7 @@ import {
   DEPLOY_ENV,
   SMTP_FROM,
   SMTP_FROM_ALT,
+  SMTP_FROM_ALT_RATIO_PERCENT,
   SMTP_URL,
   USE_SMTP_FROM_ALT_FOR_DOMAINS,
 } from "../config/env";
@@ -33,7 +34,14 @@ export function sendMail(options: SendMailBrevoOptions) {
   if (isString(toEmail)) {
     const toDomain = getEmailDomain(toEmail);
 
-    useAltFrom = USE_SMTP_FROM_ALT_FOR_DOMAINS.includes(toDomain);
+    useAltFrom =
+      USE_SMTP_FROM_ALT_FOR_DOMAINS.includes(toDomain) ||
+      // We use length + modulo for reproducibility when we want to debug users.
+      // We also use length + modulo for testability, so the same test case always returns the same result.
+      // We use the length of the email for simplicity: the length is easy to compute and can be calculated by hand.
+      // We use modulo 4 to mitigate uneven distribution: the distribution might be more uneven with a higher modulus.
+      // We use a percentage for the sake of readability: it is easier to manipulate a percentage than a modulo from an external perspective.
+      toEmail.length % 4 < (SMTP_FROM_ALT_RATIO_PERCENT / 100) * 4;
   }
 
   return transporter.sendMail({
