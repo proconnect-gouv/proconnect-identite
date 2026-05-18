@@ -81,7 +81,8 @@ INSERT INTO
     moderated_at,
     comment,
     moderated_by,
-    ticket_id
+    ticket_id,
+    allow_editing
   )
 VALUES
   (
@@ -93,7 +94,8 @@ VALUES
     NULL,
     NULL,
     NULL,
-    NULL
+    NULL,
+    FALSE
   );
 
 INSERT INTO

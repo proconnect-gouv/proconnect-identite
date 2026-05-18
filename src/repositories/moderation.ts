@@ -24,8 +24,8 @@ export const createModeration = async ({
 
   const { rows }: QueryResult<Moderation> = await connection.query(
     `
-INSERT INTO moderations (user_id, organization_id, status, type, ticket_id, sp_name)
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO moderations (user_id, organization_id, status, type, ticket_id, sp_name, allow_editing)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING *;`,
     [
       user_id,
@@ -34,6 +34,7 @@ RETURNING *;`,
       type,
       ticket_id,
       sp_name ?? null,
+      false,
     ],
   );
 
@@ -105,8 +106,8 @@ WHERE user_id = $1
   AND organization_id = $2
   AND type = $3
   AND moderated_at IS NOT NULL
-  AND comment LIKE '%Rejeté par%';`,
-    [user_id, organization_id, type],
+  AND status = $4;`,
+    [user_id, organization_id, type, ModerationStatusSchema.enum.rejected],
   );
 
   return rows.shift();

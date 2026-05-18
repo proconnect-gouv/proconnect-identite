@@ -56,10 +56,6 @@ import {
 } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
-import {
-  allowsPersonalInfoEditing,
-  extractRejectionReason,
-} from "../services/moderation";
 
 export const getJoinOrganizationController = async (
   req: Request,
@@ -393,17 +389,11 @@ export const getModerationRejectedController = async (
         moderation_id,
       });
 
-    const { comment, allow_editing, end_user_reason } =
+    const { allow_editing, end_user_reason } =
       await getModerationById(moderation_id);
-    const rejectionReason =
-      end_user_reason !== "Raison transmise par mail"
-        ? end_user_reason
-        : extractRejectionReason(comment);
-    const allowEditing =
-      allow_editing ?? allowsPersonalInfoEditing(rejectionReason);
 
     return res.render("user/moderation-rejected", {
-      allowEditing,
+      allow_editing,
       csrfToken: csrfToken(req),
       email: user.email,
       family_name: user.family_name,
@@ -411,9 +401,9 @@ export const getModerationRejectedController = async (
       organization_label: cached_libelle,
       siret,
       adresse: cached_adresse,
-      rejectionReason,
+      end_user_reason,
       moderation_id,
-      pageTitle: allowEditing ? "Informations à corriger" : "Demande refusée",
+      pageTitle: allow_editing ? "Informations à corriger" : "Demande refusée",
       siege_social: cached_siege_social,
     });
   } catch (e) {

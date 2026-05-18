@@ -16,6 +16,7 @@ describe("join organization with rejected moderation", () => {
 
     cy.title().should("include", "Demande refusée - ProConnect");
     cy.contains("Demande refusée");
+    cy.contains("Motif : Nom de domaine introuvable");
     cy.contains(
       "Nous n’avons pas pu établir de lien entre l’organisation et vous.",
     );
@@ -48,6 +49,7 @@ describe("join organization with rejected moderation", () => {
 
     cy.title().should("include", "Informations à corriger - ProConnect");
     cy.contains("Modifications demandées");
+    cy.contains("Motif : Inversion Nom et Prénom");
     cy.contains(
       "Pour plus d'information, consultez le mail que nous vous avons envoyé.",
     );
@@ -69,7 +71,7 @@ describe("join organization with rejected moderation", () => {
     );
   });
 
-  it("should show default reason when moderation comment has no standard format", function () {
+  it("should show default reason when moderation has no reason", function () {
     cy.visit("/users/join-organization");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
@@ -82,6 +84,7 @@ describe("join organization with rejected moderation", () => {
 
     cy.title().should("include", "Demande refusée - ProConnect");
     cy.contains("Demande refusée");
+    cy.contains("Motif : Raison transmise par mail");
     cy.contains(
       "Nous n’avons pas pu établir de lien entre l’organisation et vous.",
     );
