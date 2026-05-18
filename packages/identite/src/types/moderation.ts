@@ -30,6 +30,7 @@ export const ModerationSchema = z.object({
   comment: z.string().nullable(),
   moderated_by: z.string().nullable(),
   status: ModerationStatusSchema,
+  end_user_reason: z.string(),
 });
 
 export type Moderation = z.output<typeof ModerationSchema>;

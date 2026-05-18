@@ -60,8 +60,9 @@ INSERT INTO
     type,
     created_at,
     moderated_at,
-    comment,
-    moderated_by
+    end_user_reason,
+    moderated_by,
+    status
   )
 VALUES
   (
@@ -71,8 +72,9 @@ VALUES
     'organization_join_block',
     CURRENT_TIMESTAMP - INTERVAL '2 days',
     CURRENT_TIMESTAMP - INTERVAL '1 day',
-    'Rejeté par moderator@yopmail.com | Raison : "Nom de domaine introuvable"',
-    'moderator@yopmail.com'
+    'Nom de domaine introuvable',
+    'moderator@yopmail.com',
+    'rejected'
   ),
   (
     2,
@@ -81,8 +83,9 @@ VALUES
     'organization_join_block',
     CURRENT_TIMESTAMP - INTERVAL '2 days',
     CURRENT_TIMESTAMP - INTERVAL '1 day',
-    'Rejeté par moderator@yopmail.com | Raison : "Inversion Nom et Prénom"',
-    'moderator@yopmail.com'
+    'Inversion Nom et Prénom',
+    'moderator@yopmail.com',
+    'rejected'
   ),
   (
     3,
@@ -91,6 +94,7 @@ VALUES
     'organization_join_block',
     CURRENT_TIMESTAMP - INTERVAL '2 days',
     CURRENT_TIMESTAMP - INTERVAL '1 day',
-    'Rejeté par moderator@yopmail.com | Documents insuffisants',
-    'moderator@yopmail.com'
+    DEFAULT,
+    'moderator@yopmail.com',
+    'rejected'
   );
