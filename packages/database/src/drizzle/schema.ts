@@ -276,6 +276,7 @@ export const moderations = pgTable(
     ticket_id: text(),
     status: text().default("unknown").notNull(),
     sp_name: varchar(),
+    end_user_reason: text().default("Raison transmise par mail").notNull(),
   },
   (table) => [
     foreignKey({
