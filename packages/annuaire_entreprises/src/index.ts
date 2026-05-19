@@ -1,5 +1,6 @@
 //
 
+import administrations from "#data/administration-grist" with { type: "json" };
 import administration_nature_juridique from "#data/administration_nature_juridique" with { type: "json" };
 import administration_siren_blacklist from "#data/administration_siren_blacklist" with { type: "json" };
 import administration_siren_whitelist from "#data/administration_siren_whitelist" with { type: "json" };
@@ -12,6 +13,9 @@ export const NATURE_JURIDIQUE_SERVICE_PUBLIC = Object.keys(
   administration_nature_juridique,
 );
 
+// Source: https://grist.numerique.gouv.fr/o/docs/1e4iraESY7dQ/Liste-des-administrations
+export const ADMINISTRATIONS = administrations;
+
 // SIREN blacklist - entities that are never considered public services
 // Source: https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/blob/f1e56ac476b0b1730115f7b1f0667e8509ee5379/helpers/labels/administration_siren_blacklist.json (2025-09-30)
 export const SERVICE_PUBLIC_BLACKLIST = Object.keys(
@@ -20,6 +24,6 @@ export const SERVICE_PUBLIC_BLACKLIST = Object.keys(
 
 // SIREN whitelist for specific public services
 // Source: https://github.com/annuaire-entreprises-data-gouv-fr/search-infra/blob/f1e56ac476b0b1730115f7b1f0667e8509ee5379/helpers/labels/administration_siren_whitelist.json (2025-09-30)
-export const SERVICE_PUBLIC_WHITELIST = Object.keys(
+export const ADMINISTRATION_ETAT_WHITELIST = Object.keys(
   administration_siren_whitelist,
 );
