@@ -7,9 +7,9 @@ import {
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
+  computeIsServicePublic,
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
-  isPublicService,
   isSmallEtablissementPublic,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
@@ -247,7 +247,10 @@ export const joinOrganization = async ({
     throw new DomainRefusedForOrganizationError(organization_id);
   }
 
-  if (domain.endsWith("gouv.fr") && !isPublicService(organization)) {
+  if (
+    domain.endsWith("gouv.fr") &&
+    !computeIsServicePublic(organization).isServicePublic
+  ) {
     throw new GouvFrDomainsForbiddenForPrivateOrg();
   }
 
@@ -276,7 +279,7 @@ export const joinOrganization = async ({
   if (
     !isCommune(organization, true) &&
     isAFreeEmailProvider(email) &&
-    isPublicService(organization) &&
+    computeIsServicePublic(organization).isServicePublic &&
     !isSmallEtablissementPublic(organization)
   ) {
     throw new AccessRestrictedToPublicServiceEmailError();
