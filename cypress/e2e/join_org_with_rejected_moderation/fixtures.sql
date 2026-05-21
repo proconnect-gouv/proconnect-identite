@@ -62,7 +62,8 @@ INSERT INTO
     moderated_at,
     end_user_reason,
     moderated_by,
-    status
+    status,
+    allow_editing
   )
 VALUES
   (
@@ -74,7 +75,8 @@ VALUES
     CURRENT_TIMESTAMP - INTERVAL '1 day',
     'Nom de domaine introuvable',
     'moderator@yopmail.com',
-    'rejected'
+    'rejected',
+    false
   ),
   (
     2,
@@ -85,7 +87,8 @@ VALUES
     CURRENT_TIMESTAMP - INTERVAL '1 day',
     'Inversion Nom et Prénom',
     'moderator@yopmail.com',
-    'rejected'
+    'rejected',
+    true
   ),
   (
     3,
@@ -96,5 +99,6 @@ VALUES
     CURRENT_TIMESTAMP - INTERVAL '1 day',
     DEFAULT,
     'moderator@yopmail.com',
-    'rejected'
+    'rejected',
+    false
   );

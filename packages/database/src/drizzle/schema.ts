@@ -279,6 +279,7 @@ export const moderations = pgTable(
     end_user_reason: varchar({ length: 255 })
       .default("Raison transmise par mail")
       .notNull(),
+    allow_editing: boolean().default(false).notNull(),
   },
   (table) => [
     foreignKey({
