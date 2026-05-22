@@ -3668,7 +3668,7 @@ VALUES
   (
     38,
     'ProConnect Federation - PreProd',
-    'ZmR4N3E5djJrOHc1aDNyNnQxdTRuOHlqNWw2bTN2OGN3OXg0ejdxMnM1aDh0NnkzcTlrNHYybDd3NXI4dTFuM2o2bTl4NGM3ejJ0NXE4djFsMzY5bWg0czdyMnU1dDhORkpkWQ==',
+    '71144ab3-ee1a-4401-b7b3-79b44f7daeeb',
     '7ae4fef2aab63fb78d777fe657b7536f',
     ARRAY[
       'https://federation-preprod.proconnect.gouv.fr/api/v2/oidc-callback'
