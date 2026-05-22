@@ -15,9 +15,8 @@ const commit = (await readFile(commitPath, "utf-8")).trim();
 console.log(`📦 Fetching data from search-infra@${commit.slice(0, 7)}`);
 
 const files = [
-  "administration_nature_juridique.json",
-  "administration_siren_blacklist.json",
-  "administration_siren_whitelist.json",
+  "administration_whitelist.json",
+  "administration_blacklist.json",
 ];
 
 const baseUrl = `https://raw.githubusercontent.com/annuaire-entreprises-data-gouv-fr/search-infra/${commit}/helpers/labels`;
