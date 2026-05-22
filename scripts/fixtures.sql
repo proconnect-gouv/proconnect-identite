@@ -3166,7 +3166,7 @@ VALUES
   ),
   (
     15,
-    'ProConnect Federation',
+    'ProConnect Federation - Bac à Sable',
     '36112b36ddcbe735b406c69e59f87fc5a96eed87923e42777f76f705c3a55e1e7a98a38a6e500640d4ce366124dc0a537cfaa967b6ef51fa99b2ca8edb8bff66',
     '85be6a293bfe2fa6ced0b246b83893a062635e577848bbbbb268da8ca0cc5844c2f5f2cbc8888891b4ac2b21a7599e47344c651a66d04f8cc34a454a5d0f1693',
     ARRAY[
@@ -3656,6 +3656,25 @@ VALUES
     ],
     ARRAY[
       'https://fca.integ01.dev-agentconnect.fr/api/v2/client/logout-callback'
+    ],
+    'openid uid given_name usual_name email phone siret is_service_public is_public_service',
+    'https://www.proconnect.gouv.fr/',
+    'Dispositif d’identification des agents de la fonction publique.',
+    'ES256',
+    'ES256',
+    'ES256',
+    'ES256'
+  ),
+  (
+    38,
+    'ProConnect Federation - PreProd',
+    'ZmR4N3E5djJrOHc1aDNyNnQxdTRuOHlqNWw2bTN2OGN3OXg0ejdxMnM1aDh0NnkzcTlrNHYybDd3NXI4dTFuM2o2bTl4NGM3ejJ0NXE4djFsMzY5bWg0czdyMnU1dDhORkpkWQ==',
+    'cDl0NXI4djN4MmwxazZ5OXc0dTdoM2oxbnI1cTV2OG0yYzR4N3Q5bDZ3MXU4aTNrNnI0djJ5OXM1aGd1N201djh0MWs5bjN4Nmw0YzJ3N3I=',
+    ARRAY[
+      'https://federation-preprod.proconnect.gouv.fr/api/v2/oidc-callback'
+    ],
+    ARRAY[
+      'https://federation-preprod.proconnect.gouv.fr/api/v2/client/logout-callback'
     ],
     'openid uid given_name usual_name email phone siret is_service_public is_public_service',
     'https://www.proconnect.gouv.fr/',
