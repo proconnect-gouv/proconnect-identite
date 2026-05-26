@@ -34,7 +34,6 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.lib.json",
-    "prebuild:data": "npx --yes del-cli data/*.json",
     "build:data": "tsx scripts/build-data.ts",
     "postbuild:data": "prettier --write data",
     "check": "npm run build -- --noEmit",
