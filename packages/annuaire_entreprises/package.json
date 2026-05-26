@@ -35,6 +35,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.lib.json",
     "build:data": "tsx scripts/build-data.ts",
+    "update:grist": "tsx scripts/update-grist.ts",
     "postbuild:data": "prettier --write data",
     "check": "npm run build -- --noEmit",
     "dev": "npm run build -- --watch --preserveWatchOutput",
