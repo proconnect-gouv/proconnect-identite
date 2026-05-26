@@ -60,7 +60,7 @@ export const reopenModerationWithUserEdit = async ({
 }) => {
   const moderation = await getModerationById(moderation_id);
 
-  if (user.id !== moderation.user_id) {
+  if (user.id !== moderation.user_id || !moderation.allow_editing) {
     throw new ForbiddenError();
   }
 
