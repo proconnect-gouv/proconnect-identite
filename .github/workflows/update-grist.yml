@@ -7,6 +7,8 @@ on:
     paths:
       - "packages/annuaire_entreprises/scripts/update-grist.ts"
       - ".github/workflows/update-grist.yml"
+  workflow_dispatch:
+
 jobs:
   update:
     name: 🔄 Update data files
