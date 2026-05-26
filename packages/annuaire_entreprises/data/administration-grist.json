@@ -1,1 +1,548 @@
-[]
+[
+  {
+    "codeJuridique": 4110,
+    "libelle": "Établissement public national à caractère industriel ou commercial doté d'un comptable public",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 4120,
+    "libelle": "Établissement public national à caractère industriel ou commercial non doté d'un comptable public",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 4140,
+    "libelle": "Établissement public local à caractère industriel ou commercial",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 4150,
+    "libelle": "Régie d'une collectivité locale à caractère industriel ou commercial",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 4160,
+    "libelle": "Institution Banque de France",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 5430,
+    "libelle": "SARL d'aménagement foncier et d'équipement rural (SAFER)",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 5530,
+    "libelle": "SA d'aménagement foncier et d'équipement rural (SAFER) à conseil d'administration",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 5630,
+    "libelle": "Safer anonyme à directoire",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 7111,
+    "libelle": "Autorité constitutionnelle",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7112,
+    "libelle": "Autorité administrative ou publique indépendante",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7113,
+    "libelle": "Ministère",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7120,
+    "libelle": "Service central d'un Ministère",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7150,
+    "libelle": "Service du Ministère de la Défense",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7160,
+    "libelle": "Service déconcentré à compétence nationale d'un Ministère (hors Défense)",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7171,
+    "libelle": "Service déconcentré de l'État à compétence (inter) régionale",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7172,
+    "libelle": "Service déconcentré de l'État à compétence (inter) départementale",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7179,
+    "libelle": "(Autre) Service déconcentré de l'État à compétence territoriale",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7190,
+    "libelle": "Ecole nationale non dotée de la personnalité morale",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7210,
+    "libelle": "Commune et commune nouvelle",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7220,
+    "libelle": "Département",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7225,
+    "libelle": "Collectivité et territoire d'Outre-Mer",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7229,
+    "libelle": "(Autre) Collectivité territoriale",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7230,
+    "libelle": "Région",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7312,
+    "libelle": "Commune associée et commune déléguée",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7313,
+    "libelle": "Section de commune",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7314,
+    "libelle": "Ensemble urbain",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7331,
+    "libelle": "Établissement public local d'enseignement",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7340,
+    "libelle": "Pôle métropolitain",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7341,
+    "libelle": "Secteur de commune",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7342,
+    "libelle": "District urbain",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7343,
+    "libelle": "Communauté urbaine",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7344,
+    "libelle": "Métropole",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7345,
+    "libelle": "Syndicat intercommunal à vocation multiple (SIVOM)",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 7346,
+    "libelle": "Communauté de communes",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7347,
+    "libelle": "Communauté de villes",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7348,
+    "libelle": "Communauté d'agglomération",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7351,
+    "libelle": "Institution interdépartementale ou entente",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7352,
+    "libelle": "Institution interrégionale ou entente",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7353,
+    "libelle": "Syndicat intercommunal à vocation unique (SIVU)",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7354,
+    "libelle": "Syndicat mixte fermé",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7355,
+    "libelle": "Syndicat mixte ouvert",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7356,
+    "libelle": "Commission syndicale pour la gestion des biens indivis des communes",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7357,
+    "libelle": "Pôle d'équilibre territorial et rural (PETR)",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7361,
+    "libelle": "Centre communal d'action sociale",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7362,
+    "libelle": "Caisse des écoles",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7363,
+    "libelle": "Caisse de crédit municipal",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 7365,
+    "libelle": "Syndicat inter hospitalier",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7366,
+    "libelle": "Établissement public local social et médico-social",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7367,
+    "libelle": "Centre Intercommunal daction sociale (CIAS)",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7371,
+    "libelle": "Office public d'habitation à loyer modéré (OPHLM)",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7372,
+    "libelle": "Service départemental d'incendie et de secours (SDIS)",
+    "isAdministrationEtat": true,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7373,
+    "libelle": "Établissement public local culturel",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7378,
+    "libelle": "Régie dune collectivité locale à caractère administratif",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7379,
+    "libelle": "(Autre) Établissement public administratif local",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7381,
+    "libelle": "Organisme consulaire",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7382,
+    "libelle": "Établissement public national ayant fonction d'administration centrale",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7383,
+    "libelle": "Établissement public national à caractère scientifique culturel et professionnel",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7384,
+    "libelle": "Autre établissement public national d'enseignement",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7385,
+    "libelle": "Autre établissement public national administratif à compétence territoriale limitée",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7389,
+    "libelle": "Établissement public national à caractère administratif",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7410,
+    "libelle": "Groupement d'intérêt public (GIP)",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 7430,
+    "libelle": "Établissement public des cultes d'Alsace-Lorraine",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7450,
+    "libelle": "Etablissement public administratif cercle et foyer dans les armées",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7470,
+    "libelle": "Groupement de coopération sanitaire à gestion publique",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 8110,
+    "libelle": "Régime général de la Sécurité Sociale",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 8120,
+    "libelle": "Régime spécial de Sécurité Sociale",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 8140,
+    "libelle": "Mutualité sociale agricole",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 8150,
+    "libelle": "Régime maladie des non-salariés non agricoles",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 8160,
+    "libelle": "Régime vieillesse ne dépendant pas du régime général de la Sécurité Sociale",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 8170,
+    "libelle": "Régime d'assurance chômage",
+    "isAdministrationEtat": true,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7321,
+    "libelle": "Association syndicale autorisée",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 7322,
+    "libelle": "Association foncière urbaine",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 7323,
+    "libelle": "Association foncière de remembrement",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 7490,
+    "libelle": "Autre personne morale de droit administratif",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 8450,
+    "libelle": "Ordre professionnel ou assimilé",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7364,
+    "libelle": "Etablissement d'hospitalisation",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": true
+  },
+  {
+    "codeJuridique": 7349,
+    "libelle": "Autre établissement public local de coopération non spécialisé ou entente",
+    "isAdministrationEtat": false,
+    "isCollectivite": true,
+    "isServicePublicAdministratif": false
+  },
+  {
+    "codeJuridique": 5546,
+    "libelle": "SA de HLM à conseil administration",
+    "isAdministrationEtat": false,
+    "isCollectivite": false,
+    "isServicePublicAdministratif": false
+  }
+]
