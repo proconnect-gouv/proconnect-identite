@@ -1,5 +1,14 @@
 # @proconnect-gouv/proconnect.identite
 
+## 7.0.1
+
+### Patch Changes
+
+- [`c7e2d88`](https://github.com/proconnect-gouv/proconnect-identite/commit/c7e2d8870de0da81999001100e39e321eaffe740) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 Correction de l'import de `pg` en `import type` dans `contexts.ts` pour éviter que le barrel `types` n'embarque `pg` dans les bundles navigateur.
+
+- Updated dependencies [[`144fbc3`](https://github.com/proconnect-gouv/proconnect-identite/commit/144fbc324c404bf505b379fdbaca1a5bac85adec)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@1.1.5
+
 ## 7.0.0
 
 ### Patch Changes

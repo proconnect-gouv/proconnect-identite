@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.debounce
 
+## 1.0.2
+
+### Patch Changes
+
+- [#1904](https://github.com/proconnect-gouv/proconnect-identite/pull/1904) [`711aa2f`](https://github.com/proconnect-gouv/proconnect-identite/commit/711aa2fd16b19f6ff2baf5da4a40aaf2a313a42b) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - correction de memory leak
+
+- [#1900](https://github.com/proconnect-gouv/proconnect-identite/pull/1900) [`dc33a64`](https://github.com/proconnect-gouv/proconnect-identite/commit/dc33a6428431f5cca6e7d0d554c5a141f8872935) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - ajoute une fonction de ping pour le package debounce
+
 ## 1.0.1
 
 ### Patch Changes
