@@ -7,13 +7,18 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+
       - name: Check npm identity
         run: npm whoami
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Check access to @proconnect-gouv scope
-        run: npm access list packages @proconnect-gouv --registry https://registry.npmjs.org
+        run: npm access list packages @proconnect-gouv
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         continue-on-error: true
