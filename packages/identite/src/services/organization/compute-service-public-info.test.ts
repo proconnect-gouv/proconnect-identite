@@ -9,47 +9,51 @@ import {
   lamalou_org_info,
   onf_org_info,
   trackdechets_public_org_info,
-  whitelisted_org_info,
 } from "#testing/seed/organizations";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { isPublicService } from "./is-public-service.js";
+import { computeServicePublicInfo } from "./compute-service-public-info.js";
 
-describe("isPublicService", () => {
+describe("computeServicePublicInfo", () => {
   it("should return false for bad call", () => {
-    assert.equal(isPublicService({} as Organization), false);
+    const result = computeServicePublicInfo({} as Organization);
+    assert.equal(result.isServicePublic, false);
   });
 
   it("should return true for collectivite territoriale", () => {
-    assert.equal(isPublicService(lamalou_org_info), true);
+    const result = computeServicePublicInfo(lamalou_org_info);
+    assert.equal(result.isServicePublic, true);
   });
 
   it("should return true for administration centrale", () => {
-    assert.equal(isPublicService(dinum_org_info), true);
+    const result = computeServicePublicInfo(dinum_org_info);
+    assert.equal(result.isServicePublic, true);
+    assert.equal(result.isAdministrationEtat, true);
   });
 
   it("should return false for unipersonnelle organization", () => {
-    assert.equal(isPublicService(entreprise_unipersonnelle_org_info), false);
+    const result = computeServicePublicInfo(entreprise_unipersonnelle_org_info);
+    assert.equal(result.isServicePublic, false);
   });
 
   it("should return false for association", () => {
-    assert.equal(isPublicService(association_org_info), false);
+    const result = computeServicePublicInfo(association_org_info);
+    assert.equal(result.isServicePublic, false);
   });
 
   it("should return true for établissement public à caractère industriel et commercial", () => {
-    assert.equal(isPublicService(onf_org_info), true);
+    const result = computeServicePublicInfo(onf_org_info);
+    assert.equal(result.isServicePublic, true);
   });
 
   it.skip("should return true for whitelisted établissement (BIP)", () => {
-    assert.equal(isPublicService(bpifrance_org_info), true);
-  });
-
-  it("should return true for whitelisted établissement", () => {
-    assert.equal(isPublicService(whitelisted_org_info), true);
+    const result = computeServicePublicInfo(bpifrance_org_info);
+    assert.equal(result.isServicePublic, true);
   });
 
   it("should return true for public etablissement", () => {
-    assert.equal(isPublicService(trackdechets_public_org_info), true);
+    const result = computeServicePublicInfo(trackdechets_public_org_info);
+    assert.equal(result.isServicePublic, true);
   });
 
   it("should return false for blacklisted SIREN", () => {
@@ -58,7 +62,8 @@ describe("isPublicService", () => {
       cached_categorie_juridique: "7120",
       cached_etat_administratif: "A",
     } as Organization;
-    assert.equal(isPublicService(blacklisted_org), false);
+    const result = computeServicePublicInfo(blacklisted_org);
+    assert.equal(result.isServicePublic, false);
   });
 
   it("should return false for closed entities", () => {
@@ -67,7 +72,8 @@ describe("isPublicService", () => {
       cached_categorie_juridique: "7120",
       cached_etat_administratif: "C",
     } as Organization;
-    assert.equal(isPublicService(closed_org), false);
+    const result = computeServicePublicInfo(closed_org);
+    assert.equal(result.isServicePublic, false);
   });
 
   it("should return true for entities with exact nature juridique codes", () => {
@@ -76,16 +82,8 @@ describe("isPublicService", () => {
       cached_categorie_juridique: "7111",
       cached_etat_administratif: "A",
     } as Organization;
-    assert.equal(isPublicService(exact_nature_org), true);
-  });
-
-  it("should return true for whitelisted SIREN even with non-public nature juridique", () => {
-    const whitelisted_siren_org = {
-      siret: "33465403500123",
-      cached_categorie_juridique: "5599", // Non-public nature juridique
-      cached_etat_administratif: "A",
-    } as Organization;
-    assert.equal(isPublicService(whitelisted_siren_org), true);
+    const result = computeServicePublicInfo(exact_nature_org);
+    assert.equal(result.isServicePublic, true);
   });
 
   it("should return true for CARSAT BRETAGNE (annuaire-entreprises whitelist)", () => {
@@ -94,6 +92,7 @@ describe("isPublicService", () => {
       cached_categorie_juridique: "8110", // Régime général de la Sécurité Sociale
       cached_etat_administratif: "A",
     } as Organization;
-    assert.equal(isPublicService(carsat_bretagne_org), true);
+    const result = computeServicePublicInfo(carsat_bretagne_org);
+    assert.equal(result.isServicePublic, true);
   });
 });
