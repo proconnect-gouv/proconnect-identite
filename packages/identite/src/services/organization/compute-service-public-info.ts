@@ -7,7 +7,7 @@ import {
   ADMINISTRATIONS,
 } from "@proconnect-gouv/proconnect.annuaire_entreprises";
 
-export const computeIsServicePublic = ({
+export const computeServicePublicInfo = ({
   cached_categorie_juridique,
   siret,
   cached_etat_administratif,

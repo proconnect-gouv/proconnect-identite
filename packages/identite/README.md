@@ -44,7 +44,7 @@ Stateless business logic for organization validation and PostgreSQL utilities.
 ```typescript
 import {
   isEntrepriseUnipersonnelle,
-  computeIsServicePublic,
+  computeServicePublicInfo,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import { hashToPostgresParams } from "@proconnect-gouv/proconnect.identite/services/postgres";
 ```

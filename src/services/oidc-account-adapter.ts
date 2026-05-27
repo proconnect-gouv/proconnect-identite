@@ -1,6 +1,6 @@
 //
 
-import { computeIsServicePublic } from "@proconnect-gouv/proconnect.identite/services/organization";
+import { computeServicePublicInfo } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
   UserClaimsSchema,
   type UserClaims,
@@ -98,9 +98,9 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
           is_commune: isCommune(organization),
           is_external: organization.is_external,
           is_service_public:
-            computeIsServicePublic(organization).isServicePublic,
+            computeServicePublicInfo(organization).isServicePublic,
           is_public_service:
-            computeIsServicePublic(organization).isServicePublic,
+            computeServicePublicInfo(organization).isServicePublic,
         };
       } else {
         return {
@@ -120,9 +120,9 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
               label,
               is_commune: isCommune(organization),
               is_service_public:
-                computeIsServicePublic(organization).isServicePublic,
+                computeServicePublicInfo(organization).isServicePublic,
               is_public_service:
-                computeIsServicePublic(organization).isServicePublic,
+                computeServicePublicInfo(organization).isServicePublic,
             };
           }),
         };

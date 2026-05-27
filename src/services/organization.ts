@@ -1,6 +1,6 @@
 import { isDomainValid } from "@proconnect-gouv/proconnect.core/security";
 import {
-  computeIsServicePublic,
+  computeServicePublicInfo,
   isEntrepriseUnipersonnelle,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
@@ -139,7 +139,7 @@ export const getOrganizationTypeLabel = (organization: Organization) => {
       return "mairie";
     }
 
-    if (computeIsServicePublic(organization).isServicePublic) {
+    if (computeServicePublicInfo(organization).isServicePublic) {
       return "service";
     }
   }
