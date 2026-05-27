@@ -1,6 +1,6 @@
 //
 
-import Pg from "pg";
+import type Pg from "pg";
 
 //
 
