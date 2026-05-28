@@ -1,5 +1,12 @@
 # @proconnect-gouv/proconnect.annuaire_entreprises
 
+## 2.0.0
+
+### Major Changes
+
+- [#1952](https://github.com/proconnect-gouv/proconnect-identite/pull/1952) [`969ed75`](https://github.com/proconnect-gouv/proconnect-identite/commit/969ed759bc129a2807074c50cba690cd47639bfc) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - - évolution du calcul du statut "administration" et ajout des statuts "collectivite territoriale", "administration d'état" et "service public administratif"
+  - renommage de la fonction `isPublicService` en `computeServicePublicInfo`
+
 ## 1.1.5
 
 ### Patch Changes
