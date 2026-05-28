@@ -39,9 +39,8 @@ export function sendMail(options: SendMailBrevoOptions) {
       // We use length + modulo for reproducibility when we want to debug users.
       // We also use length + modulo for testability, so the same test case always returns the same result.
       // We use the length of the email for simplicity: the length is easy to compute and can be calculated by hand.
-      // We use modulo 4 to mitigate uneven distribution: the distribution might be more uneven with a higher modulus.
       // We use a percentage for the sake of readability: it is easier to manipulate a percentage than a modulo from an external perspective.
-      toEmail.length % 4 < (SMTP_FROM_ALT_RATIO_PERCENT / 100) * 4;
+      toEmail.length % 10 < (SMTP_FROM_ALT_RATIO_PERCENT / 100) * 10;
   }
 
   return transporter.sendMail({

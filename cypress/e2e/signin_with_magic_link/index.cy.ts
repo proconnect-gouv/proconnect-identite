@@ -121,11 +121,11 @@ describe("sign-in with magic link", () => {
     );
   });
 
-  it("should use alt sender email when email length is a multiple of 4", function () {
+  it("should use alt sender email when email length is a multiple of 10", function () {
     cy.visit("/users/start-sign-in");
 
     cy.contains("Email professionnel").click();
-    cy.focused().type("user@example.com");
+    cy.focused().type("user1234@example.com");
     cy.contains("Continuer").click();
 
     cy.contains("Recevoir un lien de connexion").click();
