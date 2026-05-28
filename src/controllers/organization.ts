@@ -393,9 +393,14 @@ export const getModerationRejectedController = async (
         moderation_id,
       });
 
-    const { comment } = await getModerationById(moderation_id);
-    const rejectionReason = extractRejectionReason(comment);
-    const allowEditing = allowsPersonalInfoEditing(rejectionReason);
+    const { comment, allow_editing, end_user_reason } =
+      await getModerationById(moderation_id);
+    const rejectionReason =
+      end_user_reason !== "Raison transmise par mail"
+        ? end_user_reason
+        : extractRejectionReason(comment);
+    const allowEditing =
+      allow_editing ?? allowsPersonalInfoEditing(rejectionReason);
 
     return res.render("user/moderation-rejected", {
       allowEditing,
