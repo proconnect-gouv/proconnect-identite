@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.5.0
+
+### Minor Changes
+
+- [#1954](https://github.com/proconnect-gouv/proconnect-identite/pull/1954) [`3afca9b`](https://github.com/proconnect-gouv/proconnect-identite/commit/3afca9b8ba11ffbbeaae5834a6b8cabe810c55db) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - ✨ Ajoute le champ end_user_reason, qui correspond à la raison de refus d'une modération et le champs allow_editing qui autorise ou non l'utilisateur à éditer ses informations personnelles
+
 ## 1.4.0
 
 ### Minor Changes
