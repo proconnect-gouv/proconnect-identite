@@ -147,7 +147,9 @@ SELECT
 	moderated_at,
 	status,
 	LEFT(NULLIF(moderated_by, ''), 4) || '******' as moderated_by,
-	'**********' as ticket_id
+	'**********' as ticket_id,
+  end_user_reason,
+  allow_editing
 FROM moderations"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_moderations ADD PRIMARY KEY (id)"
 pg_dump --no-owner --table=tmp_moderations $SRC_DB_URL | psql $DEST_DB_URL
