@@ -1,5 +1,14 @@
 # @proconnect-gouv/proconnect.identite
 
+## 8.1.1
+
+### Patch Changes
+
+- [#1956](https://github.com/proconnect-gouv/proconnect-identite/pull/1956) [`c6edfcd`](https://github.com/proconnect-gouv/proconnect-identite/commit/c6edfcde00c5c5ff0eed2d72f3f9f44d89d8b77a) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - ajout temporaire des JSON et du calcul legacy is-service-public pour pouvoir utiliser les deux versions du calcul en même temps
+
+- Updated dependencies [[`c6edfcd`](https://github.com/proconnect-gouv/proconnect-identite/commit/c6edfcde00c5c5ff0eed2d72f3f9f44d89d8b77a)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@2.0.1
+
 ## 8.1.0
 
 ### Minor Changes
