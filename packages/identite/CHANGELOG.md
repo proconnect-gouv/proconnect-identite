@@ -1,5 +1,12 @@
 # @proconnect-gouv/proconnect.identite
 
+## 9.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`39588a4`](https://github.com/proconnect-gouv/proconnect-identite/commit/39588a45f4e9737b5577ad0c7a8635a88b59cff0)]:
+  - @proconnect-gouv/proconnect.registre_national_entreprises@4.0.0
+
 ## 8.1.1
 
 ### Patch Changes

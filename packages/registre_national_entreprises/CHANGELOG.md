@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.registre_national_entreprises
 
+## 4.0.0
+
+### Major Changes
+
+- [#1963](https://github.com/proconnect-gouv/proconnect-identite/pull/1963) [`39588a4`](https://github.com/proconnect-gouv/proconnect-identite/commit/39588a45f4e9737b5577ad0c7a8635a88b59cff0) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - publication du package registre_national_entreprises
+
 ## 3.0.0
 
 ### Major Changes
