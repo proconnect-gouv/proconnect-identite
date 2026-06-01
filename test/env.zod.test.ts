@@ -26,20 +26,6 @@ describe("env.zod", () => {
     const env = envSchema.parse(sample_env);
 
     assert.deepEqual(env, {
-      ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT:
-        "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-      ACR_VALUE_FOR_IAL1_AAL1:
-        "https://proconnect.gouv.fr/assurance/self-asserted",
-      ACR_VALUE_FOR_IAL1_AAL2:
-        "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
-      ACR_VALUE_FOR_IAL2_AAL1:
-        "https://proconnect.gouv.fr/assurance/consistency-checked",
-      ACR_VALUE_FOR_IAL2_AAL2:
-        "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-      ACR_VALUE_FOR_IAL3_AAL1:
-        "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-      ACR_VALUE_FOR_IAL3_AAL2:
-        "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: 1440,
       CRISP_BASE_URL: "https://api.crisp.chat",
       CRISP_IDENTIFIER: "",

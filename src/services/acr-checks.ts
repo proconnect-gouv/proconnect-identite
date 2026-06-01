@@ -1,14 +1,6 @@
 import { containsEssentialAcrs } from "@proconnect-gouv/proconnect.core/services/oidc";
 import { get, intersection, isArray, isEmpty } from "lodash-es";
 import type { PromptDetail } from "oidc-provider";
-import {
-  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
-  ACR_VALUE_FOR_IAL1_AAL1,
-  ACR_VALUE_FOR_IAL1_AAL2,
-  ACR_VALUE_FOR_IAL2_AAL1,
-  ACR_VALUE_FOR_IAL2_AAL2,
-  ACR_VALUE_FOR_IAL3_AAL2,
-} from "../config/env";
 
 const areAcrsRequestedInPrompt = ({
   prompt,
@@ -51,17 +43,17 @@ export const twoFactorsAuthRequested = (prompt: PromptDetail) => {
     areAcrsRequestedInPrompt({
       prompt,
       acrs: [
-        ACR_VALUE_FOR_IAL1_AAL2,
-        ACR_VALUE_FOR_IAL2_AAL2,
-        ACR_VALUE_FOR_IAL3_AAL2,
+        "eidas0-mfa",
+        "eidas1-mfa",
+        "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
       ],
     }) &&
     !areAcrsRequestedInPrompt({
       prompt,
       acrs: [
-        ACR_VALUE_FOR_IAL1_AAL1,
-        ACR_VALUE_FOR_IAL2_AAL1,
-        ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
+        "eidas0",
+        "eidas1",
+        "https://proconnect.gouv.fr/assurance/certification-dirigeant",
       ],
     })
   );
@@ -72,16 +64,11 @@ export const certificationDirigeantRequested = (prompt: PromptDetail) => {
     containsEssentialAcrs(prompt) &&
     areAcrsRequestedInPrompt({
       prompt,
-      acrs: [ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT, ACR_VALUE_FOR_IAL3_AAL2],
+      acrs: ["https://proconnect.gouv.fr/assurance/certification-dirigeant"],
     }) &&
     !areAcrsRequestedInPrompt({
       prompt,
-      acrs: [
-        ACR_VALUE_FOR_IAL1_AAL1,
-        ACR_VALUE_FOR_IAL1_AAL2,
-        ACR_VALUE_FOR_IAL2_AAL1,
-        ACR_VALUE_FOR_IAL2_AAL2,
-      ],
+      acrs: ["eidas0", "eidas0-mfa", "eidas1", "eidas1-mfa"],
     })
   );
 };
@@ -90,12 +77,13 @@ export const isThereAnyRequestedAcr = (prompt: PromptDetail) => {
   return areAcrsRequestedInPrompt({
     prompt,
     acrs: [
-      ACR_VALUE_FOR_IAL1_AAL1,
-      ACR_VALUE_FOR_IAL1_AAL2,
-      ACR_VALUE_FOR_IAL2_AAL1,
-      ACR_VALUE_FOR_IAL2_AAL2,
-      ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
-      ACR_VALUE_FOR_IAL3_AAL2,
+      "eidas0",
+      "eidas0-mfa",
+      "eidas1",
+      "eidas1-mfa",
+      // This is a legacy ACR level.
+      // It should be removed once the certification dirigeant is controlled with the `roles` claims.
+      "https://proconnect.gouv.fr/assurance/certification-dirigeant",
     ],
   });
 };

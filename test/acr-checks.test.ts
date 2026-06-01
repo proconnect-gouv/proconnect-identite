@@ -31,7 +31,7 @@ describe("twoFactorsAuthRequested", () => {
       details: {
         acr: {
           essential: true,
-          value: "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
+          value: "eidas1-mfa",
         },
       },
     };
@@ -46,7 +46,7 @@ describe("twoFactorsAuthRequested", () => {
       details: {
         acr: {
           essential: true,
-          value: "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
+          value: "eidas0-mfa",
         },
       },
     };
@@ -61,10 +61,7 @@ describe("twoFactorsAuthRequested", () => {
       details: {
         acr: {
           essential: true,
-          values: [
-            "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
-            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-          ],
+          values: ["eidas0-mfa", "eidas1-mfa"],
         },
       },
     };
@@ -79,10 +76,7 @@ describe("twoFactorsAuthRequested", () => {
       details: {
         acr: {
           essential: true,
-          values: [
-            "https://proconnect.gouv.fr/assurance/consistency-checked",
-            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-          ],
+          values: ["eidas1", "eidas1-mfa"],
         },
       },
     };
@@ -114,25 +108,13 @@ describe("isAcrSatisfied", () => {
       details: { random: "random" },
     };
 
-    assert.equal(
-      isAcrSatisfied(
-        prompt,
-        "https://proconnect.gouv.fr/assurance/self-asserted",
-      ),
-      true,
-    );
+    assert.equal(isAcrSatisfied(prompt, "eidas0"), true);
   });
 
   it("should return true for prompt with no acr required", () => {
     const prompt = { name: "login", reasons: ["no_session"], details: {} };
 
-    assert.equal(
-      isAcrSatisfied(
-        prompt,
-        "https://proconnect.gouv.fr/assurance/self-asserted",
-      ),
-      true,
-    );
+    assert.equal(isAcrSatisfied(prompt, "eidas0"), true);
   });
 
   it("should return true for consistency checked identity", () => {
@@ -142,18 +124,12 @@ describe("isAcrSatisfied", () => {
       details: {
         acr: {
           essential: true,
-          value: "https://proconnect.gouv.fr/assurance/consistency-checked",
+          value: "eidas1",
         },
       },
     };
 
-    assert.equal(
-      isAcrSatisfied(
-        prompt,
-        "https://proconnect.gouv.fr/assurance/consistency-checked",
-      ),
-      true,
-    );
+    assert.equal(isAcrSatisfied(prompt, "eidas1"), true);
   });
   it("should return false for self-asserted identity", () => {
     const prompt = {
@@ -162,18 +138,12 @@ describe("isAcrSatisfied", () => {
       details: {
         acr: {
           essential: true,
-          value: "https://proconnect.gouv.fr/assurance/consistency-checked",
+          value: "eidas1",
         },
       },
     };
 
-    assert.equal(
-      isAcrSatisfied(
-        prompt,
-        "https://proconnect.gouv.fr/assurance/self-asserted",
-      ),
-      false,
-    );
+    assert.equal(isAcrSatisfied(prompt, "eidas0"), false);
   });
 });
 
@@ -216,10 +186,7 @@ describe("isThereAnyRequestedAcr", () => {
       details: {
         acr: {
           essential: true,
-          values: [
-            "eidas1",
-            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-          ],
+          values: ["eidas1", "eidas1-mfa"],
         },
       },
     };
@@ -234,10 +201,7 @@ describe("isThereAnyRequestedAcr", () => {
       details: {
         acr: {
           essential: true,
-          values: [
-            "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
-            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-          ],
+          values: ["eidas0-mfa", "eidas1-mfa"],
         },
       },
     };
@@ -271,10 +235,10 @@ describe("certificationDirigeantRequested", () => {
           essential: true,
           values: [
             "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-            "https://proconnect.gouv.fr/assurance/consistency-checked",
-            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
-            "https://proconnect.gouv.fr/assurance/self-asserted",
-            "https://proconnect.gouv.fr/assurance/self-asserted-2fa",
+            "eidas1",
+            "eidas1-mfa",
+            "eidas0",
+            "eidas0-mfa",
           ],
         },
       },
@@ -292,8 +256,8 @@ describe("certificationDirigeantRequested", () => {
           essential: true,
           values: [
             "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-            "https://proconnect.gouv.fr/assurance/consistency-checked",
-            "https://proconnect.gouv.fr/assurance/consistency-checked-2fa",
+            "eidas1",
+            "eidas1-mfa",
           ],
         },
       },
