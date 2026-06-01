@@ -16,45 +16,43 @@ services:
       - "6379:6379"
 
   demo-test-client:
-    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:3353ab82e80d955ef3d5bb016b658fb84eb2a32eefeb29a2bac5067563ac1c2a # latest
+    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:62584dcb4565c3127fb544168bdf12432f726e01c7903b98d9b37533af67dd8a # latest
     environment:
       PORT: 3001
       # default env var can be found at https://github.com/proconnect-gouv/proconnect-test-client/blob/main/.env
+      CLIENT_ID: client_id
       HOST: http://localhost:3001
-      PC_CLIENT_ID: client_id
-      PC_PROVIDER: http://localhost:3000/
+      PROVIDER: http://localhost:3000/
     network_mode: "host"
 
   standard-client:
-    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:3353ab82e80d955ef3d5bb016b658fb84eb2a32eefeb29a2bac5067563ac1c2a # latest
+    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:62584dcb4565c3127fb544168bdf12432f726e01c7903b98d9b37533af67dd8a # latest
     environment:
       PORT: 4000
-      SITE_TITLE: standard-client
+      CLIENT_ID: standard_client_id
+      CLIENT_SECRET: standard_client_secret
       HOST: http://localhost:4000
-      PC_CLIENT_ID: standard_client_id
-      PC_CLIENT_SECRET: standard_client_secret
-      PC_PROVIDER: http://localhost:3000
-      PC_SCOPES: openid email profile organization
-      ACR_VALUE_FOR_2FA: "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"
+      PROVIDER: http://localhost:3000
+      SCOPES: openid email profile organization
+      SITE_TITLE: standard-client
       STYLESHEET_URL:
     network_mode: "host"
 
   proconnect-federation-client:
-    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:3353ab82e80d955ef3d5bb016b658fb84eb2a32eefeb29a2bac5067563ac1c2a # latest
+    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:62584dcb4565c3127fb544168bdf12432f726e01c7903b98d9b37533af67dd8a # latest
     environment:
       PORT: 4001
       SITE_TITLE: proconnect-federation-client
-      HOST: http://localhost:4001
-      PC_CLIENT_ID: proconnect_federation_client_id
-      PC_CLIENT_SECRET: proconnect_federation_client_secret
-      PC_PROVIDER: http://localhost:3000
-      PC_SCOPES: openid uid given_name usual_name email siren siret organizational_unit belonging_population phone chorusdt is_service_public is_public_service
-      PC_ID_TOKEN_SIGNED_RESPONSE_ALG: ES256
-      PC_USERINFO_SIGNED_RESPONSE_ALG: ES256
-      STYLESHEET_URL:
-      LOGIN_HINT: unused1@yopmail.com
-      ACR_VALUES: eidas1
+      CLIENT_ID: proconnect_federation_client_id
+      CLIENT_SECRET: proconnect_federation_client_secret
       EXTRA_PARAM_SP_NAME: ProConnect Test
+      HOST: http://localhost:4001
+      ID_TOKEN_SIGNED_RESPONSE_ALG: ES256
+      LOGIN_HINT: unused1@yopmail.com
+      PROVIDER: http://localhost:3000
+      SCOPES: openid uid given_name usual_name email siren siret organizational_unit belonging_population phone chorusdt is_service_public is_public_service
+      STYLESHEET_URL:
+      USERINFO_SIGNED_RESPONSE_ALG: ES256
     network_mode: "host"
 
   maildev:
