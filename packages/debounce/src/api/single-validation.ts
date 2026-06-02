@@ -21,7 +21,7 @@ export function singleValidationFactory(
     const {
       data: { debounce },
     } = await request<DebounceSuccessResponse>(
-      `https://api.debounce.io/v1/?email=${email}&api=${apiKey}`,
+      `https://api.debounce.io/v1/?email=${encodeURIComponent(email)}&api=${encodeURIComponent(apiKey)}`,
       {
         method: "get",
         headers: {
