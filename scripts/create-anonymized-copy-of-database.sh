@@ -23,6 +23,7 @@ psql $DEST_DB_URL --command="DROP TABLE IF EXISTS users_oidc_clients"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS moderations"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS email_domains"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS franceconnect_userinfo"
+psql $DEST_DB_URL --command="DROP TABLE IF EXISTS authenticators"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS organizations"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS users"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS oidc_clients"
@@ -30,6 +31,7 @@ psql $DEST_DB_URL --command="DROP TABLE IF EXISTS oidc_clients"
 echo "$(logPrefix) Cleaning tmp tables from any previously failed copy attempts..."
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_email_domains"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_franceconnect_userinfo"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_authenticators"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_moderations"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_oidc_clients"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_organizations"
@@ -134,6 +136,25 @@ psql $SRC_DB_URL --command="ALTER TABLE tmp_franceconnect_userinfo ADD PRIMARY K
 pg_dump --no-owner --table=tmp_franceconnect_userinfo $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_franceconnect_userinfo RENAME TO franceconnect_userinfo"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_franceconnect_userinfo"
+
+echo "$(logPrefix) Creating anonymized copy of table authenticators..."
+psql $SRC_DB_URL -c "
+CREATE TABLE tmp_authenticators AS
+SELECT
+  credential_device_type
+  credential_backed_up
+  transports
+  user_id
+  display_name
+  created_at
+  last_used_at
+  usage_count
+  user_verified
+FROM authenticators"
+psql $SRC_DB_URL --command="ALTER TABLE tmp_authenticators ADD PRIMARY KEY (user_id)"
+pg_dump --no-owner --table=tmp_authenticators $SRC_DB_URL | psql $DEST_DB_URL
+psql $DEST_DB_URL --command="ALTER TABLE tmp_authenticators RENAME TO authenticators"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_authenticators"
 
 echo "$(logPrefix) Creating anonymized copy of table moderations..."
 psql $SRC_DB_URL -c "
