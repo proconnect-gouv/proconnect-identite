@@ -1,9 +1,8 @@
 //
 
 import type { Context } from "#src/connectors";
-import { LinkTypes, SuperWeakLinkTypes, UnverifiedLinkTypes } from "#src/types";
+import { LinkEnum, SuperWeakLinkEnum, UnverifiedLinkEnum } from "#src/types";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
-import { match } from "ts-pattern";
 
 //
 
@@ -22,12 +21,11 @@ export function assignUserVerificationTypeToDomainFactory({
           const userDomain = getEmailDomain(email);
           if (
             userDomain === domain &&
-            match(link_verification_type)
-              .with(...UnverifiedLinkTypes, ...SuperWeakLinkTypes, () => true)
-              .otherwise(() => false)
+            (UnverifiedLinkEnum.safeParse(link_verification_type).success ||
+              SuperWeakLinkEnum.safeParse(link_verification_type).success)
           ) {
             return users_organizations.update(organization_id, id, {
-              verification_type: LinkTypes.enum.domain,
+              verification_type: LinkEnum.enum.domain,
             });
           }
 

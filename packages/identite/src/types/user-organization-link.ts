@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-export const StrongLinkTypes = ["organization_dirigeant"] as const;
+export const StrongLinkValues = ["organization_dirigeant"] as const;
 
-export const WeakLinkTypes = [
+export const WeakLinkValues = [
   "code_sent_to_official_contact_email",
   "domain",
   "imported_from_coop_mediation_numerique",
@@ -17,31 +17,40 @@ export const WeakLinkTypes = [
   "bypassed",
 ] as const;
 
-// This link type should be considered as unverified.
+// This link value should be considered as unverified.
 // However, doing so would trigger a FranceConnect authentication requirement for the user.
 // Users shouldn't face inconvenience while waiting for domain review completion.
 // Instead, we should remove these unverified domains and then eliminate this special case from the codebase.
-export const SuperWeakLinkTypes = ["domain_not_verified_yet"] as const;
+export const SuperWeakLinkValues = ["domain_not_verified_yet"] as const;
 
-const VerifiedLinkTypes = [
-  ...StrongLinkTypes,
-  ...WeakLinkTypes,
-  ...SuperWeakLinkTypes,
+export const SuperWeakLinkEnum = z.enum(SuperWeakLinkValues);
+
+export const VerifiedLinkValues = [
+  ...StrongLinkValues,
+  ...WeakLinkValues,
+  ...SuperWeakLinkValues,
 ] as const;
 
-export const UnverifiedLinkTypes = [
+export const VerifiedLinkEnum = z.enum(VerifiedLinkValues);
+
+export const UnverifiedLinkValues = [
   "no_validation_means_available",
   "no_verification_means_for_entreprise_unipersonnelle",
   "no_verification_means_for_small_association",
 ] as const;
 
-export const LinkTypes = z.enum([...VerifiedLinkTypes, ...UnverifiedLinkTypes]);
+export const UnverifiedLinkEnum = z.enum(UnverifiedLinkValues);
 
-export type LinkType = z.output<typeof LinkTypes>;
+export const LinkEnum = z.enum([
+  ...VerifiedLinkValues,
+  ...UnverifiedLinkValues,
+]);
+
+export type LinkType = z.output<typeof LinkEnum>;
 
 export const BaseUserOrganizationLinkSchema = z.object({
   is_external: z.boolean(),
-  verification_type: LinkTypes,
+  verification_type: LinkEnum,
   // updated when verification_type is changed
   verified_at: z.date().or(z.literal(null)),
   has_been_greeted: z.boolean(),

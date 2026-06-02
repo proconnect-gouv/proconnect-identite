@@ -7,9 +7,9 @@ import {
   type EmailDomainApprovedVerificationType,
   EmailDomainApprovedVerificationValues,
   type EmailDomainNoPendingVerificationType,
-  EmailDomainPendingVerificationTypes,
+  EmailDomainPendingVerificationValues,
   type EmailDomainRejectedVerificationType,
-  EmailDomainRejectedVerificationTypes,
+  EmailDomainRejectedVerificationValues,
   type EmailDomainVerificationType,
 } from "#src/types";
 
@@ -54,7 +54,7 @@ export function markDomainAsVerifiedFactory(context: Context) {
         },
       )
       .with(
-        ...EmailDomainRejectedVerificationTypes,
+        ...EmailDomainRejectedVerificationValues,
         (rejected_verification_type) =>
           markDomainAsRejected({
             organization_id,
@@ -79,7 +79,7 @@ export function markDomainAsVerifiedFactory(context: Context) {
       domain,
       domain_verification_types: [
         ...EmailDomainApprovedVerificationValues,
-        ...EmailDomainPendingVerificationTypes,
+        ...EmailDomainPendingVerificationValues,
       ],
     });
     return email_domains.addDomain({
@@ -103,8 +103,8 @@ export function markDomainAsVerifiedFactory(context: Context) {
       organization_id,
       domain,
       domain_verification_types: [
-        ...EmailDomainPendingVerificationTypes,
-        ...EmailDomainRejectedVerificationTypes,
+        ...EmailDomainPendingVerificationValues,
+        ...EmailDomainRejectedVerificationValues,
       ],
     });
     return email_domains.addDomain({

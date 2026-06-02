@@ -5,7 +5,7 @@ import {
   isPhoneNumberValid,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
-import { LinkTypes } from "@proconnect-gouv/proconnect.identite/types";
+import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
@@ -197,7 +197,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               organization_id: organization.id,
               user_id: user.id,
               verification_type:
-                LinkTypes.enum.imported_from_coop_mediation_numerique,
+                LinkEnum.enum.imported_from_coop_mediation_numerique,
             });
           }
         } catch (error) {
