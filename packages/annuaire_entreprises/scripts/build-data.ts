@@ -17,6 +17,7 @@ console.log(`📦 Fetching data from search-infra@${commit.slice(0, 7)}`);
 const files = [
   "administration_whitelist.json",
   "administration_blacklist.json",
+  "operateurs_lolf.json",
 ];
 
 const baseUrl = `https://raw.githubusercontent.com/annuaire-entreprises-data-gouv-fr/search-infra/${commit}/helpers/labels`;
