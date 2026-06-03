@@ -1,5 +1,24 @@
 # @proconnect-gouv/proconnect.identite
 
+## 9.1.0
+
+### Minor Changes
+
+- [#1934](https://github.com/proconnect-gouv/proconnect-identite/pull/1934) [`169a4a5`](https://github.com/proconnect-gouv/proconnect-identite/commit/169a4a5927ef29b90c9a155433c9b2a5cfff2ca6) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ♻️ Les exports `*Types` sont renommés selon une convention uniforme : tableaux `as const` → `*Values`, schémas Zod → `*Enum`.
+
+  | Avant                                   | Après                                                                           |
+  | --------------------------------------- | ------------------------------------------------------------------------------- |
+  | `LinkTypes`                             | `LinkEnum`                                                                      |
+  | `StrongLinkTypes`                       | `StrongLinkValues`                                                              |
+  | `WeakLinkTypes`                         | `WeakLinkValues`                                                                |
+  | `SuperWeakLinkTypes`                    | `SuperWeakLinkValues` + `SuperWeakLinkEnum`                                     |
+  | `UnverifiedLinkTypes`                   | `UnverifiedLinkValues` + `UnverifiedLinkEnum`                                   |
+  | `EmailDomainApprovedVerificationTypes`  | `EmailDomainApprovedVerificationEnum`                                           |
+  | `EmailDomainPendingVerificationTypes`   | `EmailDomainPendingVerificationValues` + `EmailDomainPendingVerificationEnum`   |
+  | `EmailDomainRejectedVerificationTypes`  | `EmailDomainRejectedVerificationValues` + `EmailDomainRejectedVerificationEnum` |
+  | `EmailDomainNoPendingVerificationTypes` | `EmailDomainNoPendingVerificationEnum`                                          |
+  | `EmailDomainVerificationTypes`          | `EmailDomainVerificationEnum`                                                   |
+
 ## 9.0.0
 
 ### Patch Changes
