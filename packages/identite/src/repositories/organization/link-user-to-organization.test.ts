@@ -1,4 +1,4 @@
-import { LinkTypes } from "#src/types";
+import { LinkEnum } from "#src/types";
 import { emptyDatabase, migrate, pg } from "#testing";
 import { before, beforeEach, mock, suite, test } from "node:test";
 import { linkUserToOrganizationFactory } from "./link-user-to-organization.js";
@@ -33,7 +33,7 @@ suite("linkUserToOrganizationFactory", () => {
     const userOrganizationLink = await linkUserToOrganization({
       organization_id: 1,
       user_id: 1,
-      verification_type: LinkTypes.enum.domain_not_verified_yet,
+      verification_type: LinkEnum.enum.domain_not_verified_yet,
     });
 
     t.assert.snapshot(userOrganizationLink);
@@ -58,7 +58,7 @@ suite("linkUserToOrganizationFactory", () => {
     const userOrganizationLink = await linkUserToOrganization({
       organization_id: 1,
       user_id: 1,
-      verification_type: LinkTypes.enum.organization_dirigeant,
+      verification_type: LinkEnum.enum.organization_dirigeant,
     });
 
     t.assert.snapshot(userOrganizationLink);

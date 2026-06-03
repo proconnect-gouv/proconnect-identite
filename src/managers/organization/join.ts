@@ -13,8 +13,8 @@ import {
   isSmallEtablissementPublic,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
-  EmailDomainVerificationTypes,
-  LinkTypes,
+  EmailDomainVerificationEnum,
+  LinkEnum,
   ModerationTypeSchema,
   type Organization,
   type User,
@@ -24,6 +24,7 @@ import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";
 import { inspect } from "node:util";
+import { EmailDomainApprovedVerificationEnum } from "../../../packages/identite/src/types";
 import {
   CRISP_WEBSITE_ID,
   FEATURE_BYPASS_MODERATION,
@@ -241,7 +242,7 @@ export const joinOrganization = async ({
   if (
     some(organizationEmailDomains, {
       domain,
-      verification_type: EmailDomainVerificationTypes.enum.refused,
+      verification_type: EmailDomainVerificationEnum.enum.refused,
     })
   ) {
     throw new DomainRefusedForOrganizationError(organization_id);
@@ -263,7 +264,7 @@ export const joinOrganization = async ({
       organization_id,
       user_id,
       verification_type:
-        LinkTypes.enum.no_verification_means_for_entreprise_unipersonnelle,
+        LinkEnum.enum.no_verification_means_for_entreprise_unipersonnelle,
     });
   }
 
@@ -272,7 +273,7 @@ export const joinOrganization = async ({
       organization_id,
       user_id,
       verification_type:
-        LinkTypes.enum.no_verification_means_for_small_association,
+        LinkEnum.enum.no_verification_means_for_small_association,
     });
   }
 
@@ -313,7 +314,7 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: LinkTypes.enum.code_sent_to_official_contact_email,
+        verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
         needs_official_contact_email_verification: true,
       });
     }
@@ -326,7 +327,7 @@ export const joinOrganization = async ({
           organization_id,
           domain: contactDomain,
           domain_verification_type:
-            EmailDomainVerificationTypes.enum.official_contact,
+            EmailDomainVerificationEnum.enum.official_contact,
         });
       }
 
@@ -334,7 +335,7 @@ export const joinOrganization = async ({
         return await linkUserToOrganization({
           organization_id,
           user_id,
-          verification_type: LinkTypes.enum.official_contact_email,
+          verification_type: LinkEnum.enum.official_contact_email,
         });
       }
 
@@ -342,14 +343,14 @@ export const joinOrganization = async ({
         return await linkUserToOrganization({
           organization_id,
           user_id,
-          verification_type: LinkTypes.enum.domain,
+          verification_type: LinkEnum.enum.domain,
         });
       }
 
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: LinkTypes.enum.code_sent_to_official_contact_email,
+        verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
         needs_official_contact_email_verification: true,
       });
     }
@@ -368,7 +369,7 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: LinkTypes.enum.official_contact_email,
+        verification_type: LinkEnum.enum.official_contact_email,
       });
     }
 
@@ -376,50 +377,26 @@ export const joinOrganization = async ({
       return await linkUserToOrganization({
         organization_id,
         user_id,
-        verification_type: LinkTypes.enum.code_sent_to_official_contact_email,
+        verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
         needs_official_contact_email_verification: true,
       });
     }
   }
 
-  if (
-    some(organizationEmailDomains, {
-      domain,
-      verification_type: EmailDomainVerificationTypes.enum.verified,
-    })
-  ) {
-    return await linkUserToOrganization({
-      organization_id,
-      user_id,
-      verification_type: LinkTypes.enum.domain,
-    });
-  }
+  const approvedEmailDomain = organizationEmailDomains.find(
+    ({ domain: organization_domain, verification_type }) =>
+      organization_domain === domain &&
+      EmailDomainApprovedVerificationEnum.safeParse(verification_type).success,
+  );
 
-  if (
-    some(organizationEmailDomains, {
-      domain,
-      verification_type: EmailDomainVerificationTypes.enum.external,
-    })
-  ) {
+  if (approvedEmailDomain) {
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      is_external: true,
-      verification_type: LinkTypes.enum.domain,
-    });
-  }
-
-  if (
-    some(organizationEmailDomains, {
-      domain,
-      verification_type:
-        EmailDomainVerificationTypes.enum.trackdechets_postal_mail,
-    })
-  ) {
-    return await linkUserToOrganization({
-      organization_id,
-      user_id,
-      verification_type: LinkTypes.enum.domain,
+      is_external:
+        approvedEmailDomain.verification_type ===
+        EmailDomainVerificationEnum.enum.external,
+      verification_type: LinkEnum.enum.domain,
     });
   }
 
@@ -427,14 +404,14 @@ export const joinOrganization = async ({
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: LinkTypes.enum.bypassed,
+      verification_type: LinkEnum.enum.bypassed,
     });
   }
 
   if (
     some(organizationEmailDomains, {
       domain,
-      verification_type: EmailDomainVerificationTypes.enum.not_verified_yet,
+      verification_type: EmailDomainVerificationEnum.enum.not_verified_yet,
     })
   ) {
     await createModeration({
@@ -447,7 +424,7 @@ export const joinOrganization = async ({
     return await linkUserToOrganization({
       organization_id,
       user_id,
-      verification_type: LinkTypes.enum.domain_not_verified_yet,
+      verification_type: LinkEnum.enum.domain_not_verified_yet,
     });
   }
 

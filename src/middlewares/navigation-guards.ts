@@ -1,12 +1,10 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
-import {
-  LinkTypes,
-  UnverifiedLinkTypes,
-} from "@proconnect-gouv/proconnect.identite/types";
+import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { match, P } from "ts-pattern";
+import { UnverifiedLinkEnum } from "../../packages/identite/src/types";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   HOST,
@@ -571,11 +569,9 @@ const userHasValidFranceConnectIdentityGuard = async <
     user_id,
   ))!;
 
-  const linkTypeIsUnverified = match(linkType)
-    .with(...UnverifiedLinkTypes, () => true)
-    .otherwise(() => false);
   const linkTypeRequiresFranceConnection =
-    linkTypeIsUnverified || linkType === LinkTypes.enum.organization_dirigeant;
+    UnverifiedLinkEnum.safeParse(linkType).success ||
+    linkType === LinkEnum.enum.organization_dirigeant;
 
   if (
     linkTypeRequiresFranceConnection &&
@@ -622,13 +618,13 @@ const userIsCertifiedAsDirigeantGuard = async <
 
   if (
     req.session.certificationDirigeantRequested &&
-    linkType !== LinkTypes.enum.organization_dirigeant
+    linkType !== LinkEnum.enum.organization_dirigeant
   ) {
     req.session.pendingCertificationDirigeantOrganizationId = organizationId;
     return processCertificationDirigeantGuard(context);
   }
 
-  if (linkType === LinkTypes.enum.organization_dirigeant) {
+  if (linkType === LinkEnum.enum.organization_dirigeant) {
     const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
     const expiredCertification = isExpired(
       linkVerifiedAt,
@@ -728,7 +724,7 @@ const userHasBeenGreetedGuard = async (context: Pass<RequestContext>) => {
   if (!isEmpty(organizationThatNeedsGreetings)) {
     if (
       organizationThatNeedsGreetings.verification_type ===
-      LinkTypes.enum.organization_dirigeant
+      LinkEnum.enum.organization_dirigeant
     ) {
       await greetForCertification({
         user_id,
@@ -871,7 +867,7 @@ const processCertificationDirigeantGuard = async (
 
     if (await getUserOrganizationLink(organizationId, user_id)) {
       await updateUserOrganizationLink(organization.id, user_id, {
-        verification_type: LinkTypes.enum.organization_dirigeant,
+        verification_type: LinkEnum.enum.organization_dirigeant,
         verified_at: new Date(),
         has_been_greeted: false,
       });
@@ -879,7 +875,7 @@ const processCertificationDirigeantGuard = async (
       await linkUserToOrganization({
         user_id,
         organization_id: organization.id,
-        verification_type: LinkTypes.enum.organization_dirigeant,
+        verification_type: LinkEnum.enum.organization_dirigeant,
       });
     }
 

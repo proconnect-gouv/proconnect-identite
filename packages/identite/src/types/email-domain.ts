@@ -1,58 +1,70 @@
 import { z } from "zod";
 
-export const EmailDomainApprovedVerificationTypes = [
+export const EmailDomainApprovedVerificationValues = [
   "official_contact",
   "trackdechets_postal_mail",
   "verified",
   "external", // domain used by external employees (eg. ext.numerique.gouv.fr)
 ] as const;
 
+export const EmailDomainApprovedVerificationEnum = z.enum(
+  EmailDomainApprovedVerificationValues,
+);
+
 export type EmailDomainApprovedVerificationType = z.output<
-  typeof EmailDomainApprovedVerificationTypes
+  typeof EmailDomainApprovedVerificationEnum
 >;
 
 // domain is not verified, but users are still permitted to use it
-export const EmailDomainPendingVerificationTypes = [
+export const EmailDomainPendingVerificationValues = [
   "not_verified_yet",
 ] as const;
 
+export const EmailDomainPendingVerificationEnum = z.enum(
+  EmailDomainPendingVerificationValues,
+);
+
 export type EmailDomainPendingVerificationType = z.output<
-  typeof EmailDomainPendingVerificationTypes
+  typeof EmailDomainPendingVerificationEnum
 >;
 
-export const EmailDomainRejectedVerificationTypes = [
+export const EmailDomainRejectedVerificationValues = [
   "blacklisted", // unused
   "refused",
 ] as const;
 
+export const EmailDomainRejectedVerificationEnum = z.enum(
+  EmailDomainRejectedVerificationValues,
+);
+
 export type EmailDomainRejectedVerificationType = z.output<
-  typeof EmailDomainRejectedVerificationTypes
+  typeof EmailDomainRejectedVerificationEnum
 >;
 
-export const EmailDomainNoPendingVerificationTypes = z.enum([
-  ...EmailDomainApprovedVerificationTypes,
-  ...EmailDomainRejectedVerificationTypes,
+export const EmailDomainNoPendingVerificationEnum = z.enum([
+  ...EmailDomainApprovedVerificationValues,
+  ...EmailDomainRejectedVerificationValues,
 ]);
 
 export type EmailDomainNoPendingVerificationType = z.output<
-  typeof EmailDomainNoPendingVerificationTypes
+  typeof EmailDomainNoPendingVerificationEnum
 >;
 
-export const EmailDomainVerificationTypes = z.enum([
-  ...EmailDomainApprovedVerificationTypes,
-  ...EmailDomainPendingVerificationTypes,
-  ...EmailDomainRejectedVerificationTypes,
+export const EmailDomainVerificationEnum = z.enum([
+  ...EmailDomainApprovedVerificationValues,
+  ...EmailDomainPendingVerificationValues,
+  ...EmailDomainRejectedVerificationValues,
 ]);
 
 export type EmailDomainVerificationType = z.output<
-  typeof EmailDomainVerificationTypes
+  typeof EmailDomainVerificationEnum
 >;
 
 export const EmailDomainSchema = z.object({
   id: z.number(),
   organization_id: z.number(),
   domain: z.string(),
-  verification_type: EmailDomainVerificationTypes,
+  verification_type: EmailDomainVerificationEnum,
   // Unused.
   can_be_suggested: z.boolean(),
   // Can be updated when verification_type changes.

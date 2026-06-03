@@ -1,5 +1,5 @@
 import {
-  EmailDomainApprovedVerificationTypes,
+  EmailDomainApprovedVerificationValues,
   ModerationTypeSchema,
   type Organization,
   type UserOrganizationLink,
@@ -62,7 +62,7 @@ export const findByVerifiedEmailDomain = async (email_domain: string) => {
         AND ed.verification_type = ANY ($2)
       GROUP BY o.id
       ORDER BY member_count DESC NULLS LAST;`,
-      [email_domain, EmailDomainApprovedVerificationTypes],
+      [email_domain, EmailDomainApprovedVerificationValues],
     );
 
   return rows;

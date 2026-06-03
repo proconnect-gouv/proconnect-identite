@@ -1,10 +1,10 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import {
-  StrongLinkTypes,
-  SuperWeakLinkTypes,
-  UnverifiedLinkTypes,
-  WeakLinkTypes,
+  StrongLinkValues,
+  SuperWeakLinkValues,
+  UnverifiedLinkValues,
+  WeakLinkValues,
 } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import type { Request, Response } from "express";
@@ -270,9 +270,9 @@ export async function getCurrentIAL(req: Request) {
 
   return match(link.verification_type)
     .returnType<1 | 2 | 3>()
-    .with(...StrongLinkTypes, () => 3)
-    .with(...WeakLinkTypes, ...SuperWeakLinkTypes, () => 2)
-    .with(...UnverifiedLinkTypes, () => 1)
+    .with(...StrongLinkValues, () => 3)
+    .with(...WeakLinkValues, ...SuperWeakLinkValues, () => 2)
+    .with(...UnverifiedLinkValues, () => 1)
     .exhaustive();
 }
 
