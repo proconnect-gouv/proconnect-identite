@@ -3,6 +3,7 @@
 import type { Organization } from "#src/types";
 import {
   ADMINISTRATION_BLACKLIST,
+  ADMINISTRATION_ETAT_WHITELIST,
   ADMINISTRATION_WHITELIST,
   ADMINISTRATIONS,
 } from "@proconnect-gouv/proconnect.annuaire_entreprises";
@@ -35,6 +36,10 @@ export const computeServicePublicInfo = ({
   // Closed entities are not considered public services
   if (cached_etat_administratif === "C") {
     return { isServicePublic: false };
+  }
+
+  if (ADMINISTRATION_ETAT_WHITELIST.includes(siren)) {
+    return { isServicePublic: true, isAdministrationEtat: true };
   }
 
   // Check if entity is in whitelist (takes priority)
