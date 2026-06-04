@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.5.1
+
+### Patch Changes
+
+- [#1931](https://github.com/proconnect-gouv/proconnect-identite/pull/1931) [`40be4f7`](https://github.com/proconnect-gouv/proconnect-identite/commit/40be4f7cdd4ce339637e28155a4163edfc14848c) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - 🗃️ Renseigne allow_editing à true pour les modérations avec un motif de refus connu
+
 ## 1.5.0
 
 ### Minor Changes
