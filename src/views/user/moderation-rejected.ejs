@@ -1,9 +1,10 @@
 <div>
-  <h1 class="fr-h5"><%= allowEditing ? "Modifications demandées" : "Demande refusée ⛔" %></h1>
+  <h1 class="fr-h5"><%= allow_editing ? "Modifications demandées" : "Demande refusée ⛔" %></h1>
   <hr class="hr-personalized-step-three fr-mb-3w">
   <div>
+    <p class="fr-mb-2w"><b>Motif : <%= end_user_reason %></b></p>
     <p class="fr-mb-2w">
-      <% if (allowEditing) { %>
+      <% if (allow_editing) { %>
         Corrigez l'information pour que votre demande soit de nouveau étudiée.
       <% } else { %>
         Nous n’avons pas pu établir de lien entre l’organisation et vous. Contactez-nous si vous avez d’autres éléments à nous fournir.
@@ -19,7 +20,7 @@
     <p class="fr-mb-2w"><b><%= given_name; %></b></p>
   </div>
   <div class="fr-col-auto">
-    <% if (allowEditing) { %>
+    <% if (allow_editing) { %>
       <%- include(
         '../partials/icon-edit-personal-info-form.ejs',
         {
@@ -37,7 +38,7 @@
     <p class="fr-mb-2w"><b><%= family_name; %></b></p>
   </div>
   <div class="fr-col-auto">
-    <% if (allowEditing) { %>
+    <% if (allow_editing) { %>
       <%- include(
         '../partials/icon-edit-personal-info-form.ejs',
         {
