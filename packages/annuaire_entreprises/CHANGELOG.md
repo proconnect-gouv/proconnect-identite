@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.annuaire_entreprises
 
+## 2.0.2
+
+### Patch Changes
+
+- [#1969](https://github.com/proconnect-gouv/proconnect-identite/pull/1969) [`8b22b17`](https://github.com/proconnect-gouv/proconnect-identite/commit/8b22b17fabfaf82ce8cabf0dcb154041216d9c1d) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - ajout de whitelist d'administrations d'état
+
 ## 2.0.1
 
 ### Patch Changes
