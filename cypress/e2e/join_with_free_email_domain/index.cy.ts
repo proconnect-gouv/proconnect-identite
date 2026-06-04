@@ -244,3 +244,48 @@ describe("join small association", () => {
     });
   });
 });
+
+describe("join small organization", () => {
+  before(cy.seed);
+
+  const organizations = [
+    {
+      siret: "41782415800014",
+      categorie_juridique: "Exploitation agricole à responsabilité limitée",
+    },
+    {
+      siret: "80894789900015",
+      categorie_juridique:
+        "Groupement agricole d'exploitation en commun (GAEC)",
+    },
+    {
+      siret: "33156427800017",
+      categorie_juridique: "Groupement foncier agricole",
+    },
+    {
+      siret: "83932047000017",
+      categorie_juridique: "Société civile d'exploitation agricole",
+    },
+    {
+      siret: "79271377800019",
+      categorie_juridique: "Société civile immobilière",
+    },
+  ];
+
+  beforeEach(() => {
+    cy.visit("/");
+    cy.login("lion.eljonson@yopmail.com");
+    cy.visit("/users/join-organization");
+
+    cy.title().should("include", "Rejoindre une organisation -");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+  });
+
+  organizations.forEach(({ siret, categorie_juridique }) => {
+    it(categorie_juridique, function () {
+      cy.focused().clear().type(siret);
+      cy.contains("Enregistrer").click();
+      cy.contains("Compte créé");
+    });
+  });
+});

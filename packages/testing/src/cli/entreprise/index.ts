@@ -28,7 +28,7 @@ export function EntrepriseCommandFactory({
           },
           rootDir: {
             type: "string",
-            default: join(import.meta.dirname, "../.."),
+            default: join(import.meta.dirname, "../../../src"),
           },
           url: { type: "string", default: ENTREPRISE_API_URL },
         })

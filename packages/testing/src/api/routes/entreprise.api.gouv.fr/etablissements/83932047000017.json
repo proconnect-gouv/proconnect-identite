@@ -1,0 +1,100 @@
+{
+  "data": {
+    "siret": "83932047000017",
+    "siege_social": true,
+    "etat_administratif": "A",
+    "date_fermeture": null,
+    "enseigne": null,
+    "activite_principale": {
+      "code": "01.45Z",
+      "nomenclature": "NAFRev2",
+      "libelle": "Élevage d'ovins et de caprins"
+    },
+    "tranche_effectif_salarie": {
+      "de": 1,
+      "a": 2,
+      "code": "01",
+      "date_reference": "2023",
+      "intitule": "1 ou 2 salariés"
+    },
+    "diffusable_commercialement": true,
+    "status_diffusion": "diffusible",
+    "date_creation": 1519858800,
+    "unite_legale": {
+      "siren": "839320470",
+      "rna": null,
+      "siret_siege_social": "83932047000017",
+      "type": "personne_morale",
+      "personne_morale_attributs": {
+        "raison_sociale": "SOCIETE CIVILE D EXPLOITATION AGRICOLE BOURDON",
+        "sigle": "SCEA"
+      },
+      "personne_physique_attributs": {
+        "pseudonyme": null,
+        "prenom_usuel": null,
+        "prenom_1": null,
+        "prenom_2": null,
+        "prenom_3": null,
+        "prenom_4": null,
+        "nom_usage": null,
+        "nom_naissance": null,
+        "sexe": null
+      },
+      "categorie_entreprise": null,
+      "status_diffusion": "diffusible",
+      "diffusable_commercialement": true,
+      "forme_juridique": {
+        "code": "6597",
+        "libelle": "Société civile d'exploitation agricole"
+      },
+      "activite_principale": {
+        "code": "01.45Z",
+        "nomenclature": "NAFRev2",
+        "libelle": "Élevage d'ovins et de caprins"
+      },
+      "tranche_effectif_salarie": {
+        "de": 1,
+        "a": 2,
+        "code": "01",
+        "date_reference": "2023",
+        "intitule": "1 ou 2 salariés"
+      },
+      "economie_sociale_et_solidaire": null,
+      "date_creation": 1519858800,
+      "etat_administratif": "A"
+    },
+    "adresse": {
+      "status_diffusion": "diffusible",
+      "complement_adresse": null,
+      "numero_voie": null,
+      "indice_repetition_voie": null,
+      "type_voie": null,
+      "libelle_voie": "VILLENEUVE",
+      "code_postal": "53220",
+      "libelle_commune": "PONTMAIN",
+      "libelle_commune_etranger": null,
+      "distribution_speciale": null,
+      "code_commune": "53181",
+      "code_cedex": null,
+      "libelle_cedex": null,
+      "code_pays_etranger": null,
+      "libelle_pays_etranger": null,
+      "acheminement_postal": {
+        "l1": "SOCIETE CIVILE D EXPLOITATION AGRICOLE BOURDON",
+        "l2": "",
+        "l3": "",
+        "l4": "VILLENEUVE",
+        "l5": "",
+        "l6": "53220 PONTMAIN",
+        "l7": "FRANCE"
+      }
+    }
+  },
+  "links": {
+    "unite_legale": "https://entreprise.api.gouv.fr/v3/insee/sirene/unites_legales/839320470"
+  },
+  "meta": {
+    "date_derniere_mise_a_jour": 1764889200,
+    "redirect_from_siret": null
+  }
+}
