@@ -108,7 +108,7 @@ export const postStartSignInController = async (
   } catch (error) {
     if (error instanceof InvalidEmailError) {
       const didYouMeanQueryParam = error?.didYouMean
-        ? `&did_you_mean=${error.didYouMean}`
+        ? `&did_you_mean=${encodeURIComponent(error.didYouMean)}`
         : "";
 
       setEmailInUnauthenticatedSession(req, req.body.login);
