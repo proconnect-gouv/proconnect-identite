@@ -236,6 +236,26 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("login_required");
     cy.contains("Certification dirigeant: no match error");
   });
+
+  it("should not auto-select the organization after a failed certification", function () {
+    cy.login("outdated-certification+ex-dirigeant@unipersonnelle.com");
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Clamart (choisir cette organisation)").click();
+
+    cy.title().should("include", "Certification impossible -");
+    cy.contains("Identité non trouvée ⚠️");
+
+    // Re-initiate the authorization request without re-logging in.
+    cy.origin("http://localhost:4000", function () {
+      cy.visit("/");
+      cy.contains("Forcer une connexion par certification dirigeant").click();
+    });
+
+    // The previously-selected organization must NOT be auto-selected:
+    // the user is asked to choose its organization again.
+    cy.title().should("include", "Choisir une organisation -");
+  });
 });
 
 describe("connected user should go through the certification flow", function () {

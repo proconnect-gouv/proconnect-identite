@@ -54,7 +54,10 @@ import {
   linkUserToOrganization,
   updateUserOrganizationLink,
 } from "../repositories/organization/setters";
-import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
+import {
+  deleteSelectedOrganizationId,
+  getSelectedOrganizationId,
+} from "../repositories/redis/selected-organization";
 import { getFranceConnectUserInfo } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
 import { logger } from "../services/log";
@@ -890,6 +893,9 @@ const processCertificationDirigeantGuard = async (
 
     return connectToSp(prev);
   } catch (error) {
+    req.session.pendingCertificationDirigeantOrganizationId = undefined;
+    await deleteSelectedOrganizationId(user_id);
+
     if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
       return redirect(
         "/users/certification-dirigeant/organization-not-covered-error",

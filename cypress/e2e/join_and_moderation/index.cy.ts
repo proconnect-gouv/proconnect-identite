@@ -132,4 +132,31 @@ describe("join and moderation", () => {
       cy.contains("Demande en cours");
     });
   });
+
+  describe("denied access", () => {
+    it("does not auto-select the organization after a denied access", function () {
+      cy.origin("http://localhost:4000", () => {
+        cy.visit("/");
+        cy.title().should("include", "standard-client - ProConnect");
+        cy.contains("S’identifier avec ProConnect").click();
+      });
+
+      cy.magicLinkLogin("denied-access+rogal.dorn@vip.gouv.fr");
+
+      cy.title().should("include", "Rejoindre une organisation -");
+      cy.contains("SIRET de l’organisation que vous représentez").click();
+      cy.focused().clear().type("31723624800017");
+      cy.contains("Enregistrer").click();
+
+      cy.title().should("include", "Email non autorisé -");
+      cy.contains("Email non autorisé");
+
+      cy.origin("http://localhost:4000", () => {
+        cy.visit("/");
+        cy.contains("S’identifier avec ProConnect").click();
+      });
+
+      cy.title().should("include", "Rejoindre une organisation -");
+    });
+  });
 });
