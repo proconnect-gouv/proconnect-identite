@@ -37,6 +37,7 @@ export const UnverifiedLinkValues = [
   "no_validation_means_available",
   "no_verification_means_for_entreprise_unipersonnelle",
   "no_verification_means_for_small_association",
+  "no_verification_means_for_small_organization",
 ] as const;
 
 export const UnverifiedLinkEnum = z.enum(UnverifiedLinkValues);

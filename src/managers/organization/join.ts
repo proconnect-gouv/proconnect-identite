@@ -78,6 +78,7 @@ import {
   isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
   isSmallAssociation,
+  isSmallOrganization,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
@@ -274,6 +275,15 @@ export const joinOrganization = async ({
       user_id,
       verification_type:
         LinkEnum.enum.no_verification_means_for_small_association,
+    });
+  }
+
+  if (isSmallOrganization(organization) && isAFreeEmailProvider(email)) {
+    return await linkUserToOrganization({
+      organization_id,
+      user_id,
+      verification_type:
+        LinkEnum.enum.no_verification_means_for_small_organization,
     });
   }
 
