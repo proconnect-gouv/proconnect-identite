@@ -14,6 +14,7 @@ const cat_jur = [
   "Établissement public local culturel",
   "Établissement public local social et médico-social",
   "Groupement de coopération sanitaire à gestion publique",
+  "Pôle d'équilibre territorial et rural (PETR)",
   "Syndicat intercommunal à vocation multiple (SIVOM)",
   "Syndicat intercommunal à vocation unique (SIVU)",
   "Syndicat mixte fermé",

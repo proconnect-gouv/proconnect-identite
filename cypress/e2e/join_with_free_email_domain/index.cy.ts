@@ -197,6 +197,10 @@ describe("join syndicat communal", () => {
       categorie_juridique:
         "Groupement de coopération sanitaire à gestion publique",
     },
+    {
+      siret: "20004969000023",
+      categorie_juridique: "Pôle d'équilibre territorial et rural (PETR)",
+    },
   ];
 
   beforeEach(() => {
