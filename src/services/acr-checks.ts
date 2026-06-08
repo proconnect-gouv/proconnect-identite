@@ -37,28 +37,6 @@ const areAcrsRequestedInPrompt = ({
   return false;
 };
 
-export const twoFactorsAuthRequested = (prompt: PromptDetail) => {
-  return (
-    containsEssentialAcrs(prompt) &&
-    areAcrsRequestedInPrompt({
-      prompt,
-      acrs: [
-        "eidas0-mfa",
-        "eidas1-mfa",
-        "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
-      ],
-    }) &&
-    !areAcrsRequestedInPrompt({
-      prompt,
-      acrs: [
-        "eidas0",
-        "eidas1",
-        "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-      ],
-    })
-  );
-};
-
 export const certificationDirigeantRequested = (prompt: PromptDetail) => {
   return (
     containsEssentialAcrs(prompt) &&
@@ -88,9 +66,17 @@ export const isThereAnyRequestedAcr = (prompt: PromptDetail) => {
   });
 };
 
-export const isAcrSatisfied = (prompt: PromptDetail, currentAcr: string) => {
-  // if no acr is required it is satisfied
-  if (!containsEssentialAcrs(prompt)) {
+export const isAcrSatisfied = (
+  prompt: PromptDetail | undefined,
+  currentAcr: string | null,
+) => {
+  // if currentAcr is null, the user does not meet the minimum required authentication level
+  if (!currentAcr) {
+    return false;
+  }
+
+  // if no acr is required, it is satisfied
+  if (!prompt || !containsEssentialAcrs(prompt)) {
     return true;
   }
 

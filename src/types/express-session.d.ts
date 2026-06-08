@@ -1,3 +1,4 @@
+import type { PromptDetail } from "oidc-provider";
 import type { CertificationSession } from "../managers/session/certification";
 import type { FranceConnectOidcSession } from "../managers/session/franceconnect";
 
@@ -9,7 +10,7 @@ export interface UnauthenticatedSessionData {
   hasWebauthnConfigured?: boolean;
   interactionId?: string;
   mustReturnOneOrganizationInPayload?: boolean;
-  twoFactorsAuthRequested?: boolean;
+  prompt?: PromptDetail;
   referrerPath?: string;
   authForProconnectFederation?: boolean;
   certificationDirigeantRequested?: boolean;

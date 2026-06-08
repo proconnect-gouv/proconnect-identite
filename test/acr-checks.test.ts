@@ -4,101 +4,7 @@ import {
   certificationDirigeantRequested,
   isAcrSatisfied,
   isThereAnyRequestedAcr,
-  twoFactorsAuthRequested,
 } from "../src/services/acr-checks";
-
-describe("twoFactorsAuthRequested", () => {
-  it("should return false for random prompt", () => {
-    const prompt = {
-      name: "random",
-      reasons: ["random"],
-      details: { random: "random" },
-    };
-
-    assert.equal(twoFactorsAuthRequested(prompt), false);
-  });
-
-  it("should return false for prompt with no acr required", () => {
-    const prompt = { name: "login", reasons: ["no_session"], details: {} };
-
-    assert.equal(twoFactorsAuthRequested(prompt), false);
-  });
-
-  it("should return true for new session", () => {
-    const prompt = {
-      name: "login",
-      reasons: ["no_session", "essential_acr"],
-      details: {
-        acr: {
-          essential: true,
-          value: "eidas1-mfa",
-        },
-      },
-    };
-
-    assert.equal(twoFactorsAuthRequested(prompt), true);
-  });
-
-  it("should return true for self asserted identity", () => {
-    const prompt = {
-      name: "login",
-      reasons: ["essential_acr"],
-      details: {
-        acr: {
-          essential: true,
-          value: "eidas0-mfa",
-        },
-      },
-    };
-
-    assert.equal(twoFactorsAuthRequested(prompt), true);
-  });
-
-  it("should return true for existing session", () => {
-    const prompt = {
-      name: "login",
-      reasons: ["essential_acrs"],
-      details: {
-        acr: {
-          essential: true,
-          values: ["eidas0-mfa", "eidas1-mfa"],
-        },
-      },
-    };
-
-    assert.equal(twoFactorsAuthRequested(prompt), true);
-  });
-
-  it("should return false if non 2fa acr are requested", () => {
-    const prompt = {
-      name: "login",
-      reasons: ["essential_acrs"],
-      details: {
-        acr: {
-          essential: true,
-          values: ["eidas1", "eidas1-mfa"],
-        },
-      },
-    };
-
-    assert.equal(twoFactorsAuthRequested(prompt), false);
-  });
-
-  it("should return false for unknown acr", () => {
-    const prompt = {
-      name: "login",
-      reasons: ["essential_acrs"],
-      details: {
-        acr: {
-          essential: true,
-          value: "eidas2",
-        },
-      },
-    };
-
-    assert.equal(twoFactorsAuthRequested(prompt), false);
-  });
-});
 
 describe("isAcrSatisfied", () => {
   it("should return true for acr non-related prompt", () => {
@@ -120,7 +26,7 @@ describe("isAcrSatisfied", () => {
   it("should return true for consistency checked identity", () => {
     const prompt = {
       name: "login",
-      reasons: ["essential_acr"],
+      reasons: ["no_session", "essential_acr"],
       details: {
         acr: {
           essential: true,

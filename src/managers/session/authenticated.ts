@@ -68,7 +68,7 @@ export const createAuthenticatedSession = async (
     nonce,
     referrerPath,
     state,
-    twoFactorsAuthRequested,
+    prompt,
     certificationDirigeantRequested,
     spName,
     siretHint,
@@ -94,7 +94,7 @@ export const createAuthenticatedSession = async (
         req.session.interactionId = interactionId;
         req.session.mustReturnOneOrganizationInPayload =
           mustReturnOneOrganizationInPayload;
-        req.session.twoFactorsAuthRequested = twoFactorsAuthRequested;
+        req.session.prompt = prompt;
         req.session.referrerPath = referrerPath;
         req.session.authForProconnectFederation = authForProconnectFederation;
         req.session.certificationDirigeantRequested =
@@ -262,7 +262,7 @@ export async function getCurrentIAL(req: Request) {
 export async function getCurrentAAL(req: Request) {
   const currentAmrValues = req.session.amr!;
 
-  return currentAmrValues.includes("mfa") ? 1 : 0;
+  return currentAmrValues.includes("mfa") ? 2 : 1;
 }
 
 // get the current Organization Assurance Level
@@ -298,10 +298,17 @@ export async function getCurrentOAL(req: Request) {
     .exhaustive();
 }
 
-export async function getCurrentAcr(req: Request) {
-  const ial = await getCurrentIAL(req);
-  const aal = await getCurrentAAL(req);
-  const oal = await getCurrentOAL(req);
+export async function getCurrentAcr(
+  req: Request,
+  {
+    forcedIAL,
+    forcedAAL,
+    forcedOAL,
+  }: { forcedIAL?: 0 | 1; forcedAAL?: 1 | 2; forcedOAL?: 0 | 1 | 2 } = {},
+) {
+  const ial = forcedIAL || (await getCurrentIAL(req));
+  const aal = forcedAAL || (await getCurrentAAL(req));
+  const oal = forcedOAL || (await getCurrentOAL(req));
 
   return (
     match({
@@ -309,17 +316,22 @@ export async function getCurrentAcr(req: Request) {
       aal,
       oal,
     })
-      .with({ ial: 0, oal: 0 }, () => {
-        throw new Error("Identity and Organization assurance level too low");
-      })
       .with(
-        { ial: 1, aal: 0, oal: 0 },
-        { ial: 0, aal: 0, oal: 1 },
+        // Identity and Organization assurance levels too low
+        { ial: 0, oal: 0 },
+        // Le cas IAL=0 & OAL=2 correspond à une certification dirigeant/employé sans FranceConnection
+        // IAL must be at least 1 for OAL to equal 2
+        { ial: 0, oal: 2 },
+        () => null,
+      )
+      .with(
+        { ial: 0, aal: 1, oal: 1 },
+        { ial: 1, aal: 1, oal: 0 },
         () => "eidas0",
       )
       .with(
-        { ial: 1, aal: 1, oal: 0 },
-        { ial: 0, aal: 1, oal: 1 },
+        { ial: 0, aal: 2, oal: 1 },
+        { ial: 1, aal: 2, oal: 0 },
         () => "eidas0-mfa",
       )
       // This is a legacy ACR level.
@@ -329,12 +341,8 @@ export async function getCurrentAcr(req: Request) {
         { ial: 1, oal: 2 },
         () => "https://proconnect.gouv.fr/assurance/certification-dirigeant",
       )
-      .with({ ial: 1, aal: 0, oal: P.union(1, 2) }, () => "eidas1")
-      .with({ ial: 1, aal: 1, oal: P.union(1, 2) }, () => "eidas1-mfa")
-      .with({ ial: 0, oal: 2 }, () => {
-        // Cas d'une certification dirigeant/employé sans FranceConnection
-        throw new Error("not possible");
-      })
+      .with({ ial: 1, aal: 1, oal: P.union(1, 2) }, () => "eidas1")
+      .with({ ial: 1, aal: 2, oal: P.union(1, 2) }, () => "eidas1-mfa")
       .exhaustive()
   );
 }

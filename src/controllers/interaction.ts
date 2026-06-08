@@ -20,7 +20,6 @@ import {
   certificationDirigeantRequested,
   isAcrSatisfied,
   isThereAnyRequestedAcr,
-  twoFactorsAuthRequested,
 } from "../services/acr-checks";
 import { oidcErrorSchema, siretSchema } from "../services/custom-zod-schemas";
 import epochTime from "../services/epoch-time";
@@ -43,7 +42,7 @@ export const interactionStartControllerFactory =
       req.session.interactionId = interactionId;
       req.session.mustReturnOneOrganizationInPayload =
         mustReturnOneOrganizationInPayload(scope);
-      req.session.twoFactorsAuthRequested = twoFactorsAuthRequested(prompt);
+      req.session.prompt = prompt;
       req.session.spName = sp_name || undefined;
 
       const oidcClient = await findByClientId(client_id);
@@ -133,7 +132,7 @@ export const interactionEndControllerFactory =
       let result: OidcInteractionResults = {
         login: {
           accountId: user.id.toString(),
-          acr: currentAcr,
+          acr: currentAcr || undefined,
           amr,
           ts,
         },
