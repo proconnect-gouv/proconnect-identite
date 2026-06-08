@@ -28,7 +28,9 @@ for (const file of files) {
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Failed to fetch ${file}: ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch ${file} at ${url}: ${response.statusText}`,
+    );
   }
 
   const content = await response.text();
