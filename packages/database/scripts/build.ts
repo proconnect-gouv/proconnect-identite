@@ -32,6 +32,16 @@ await $`docker compose exec -T db pg_dump ${[
   "--schema-only",
   "--username=proconnect-identite",
 ]} > schema.sql`;
+
+{
+  let file_content = await readFile(
+    resolve(database_workspace, "schema.sql"),
+    "utf8",
+  );
+  file_content = file_content.replace(/^\\(un)?restrict\s.*\n/gm, "");
+  await writeFile(resolve(database_workspace, "schema.sql"), file_content);
+}
+
 await $({ cwd: database_workspace })`prettier --write schema.sql`;
 
 await $`drizzle-kit pull`;
