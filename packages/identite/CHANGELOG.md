@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 9.1.3
+
+### Patch Changes
+
+- [#1985](https://github.com/proconnect-gouv/proconnect-identite/pull/1985) [`9cfb337`](https://github.com/proconnect-gouv/proconnect-identite/commit/9cfb3370ef88ba44235eae83b26d6dbd7c31b139) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🔧 Simplification du type du paramètre de `isOrganizationCoveredByCertificationDirigeant` : `Organization` → `Pick<Organization, "cached_categorie_juridique">`
+
 ## 9.1.2
 
 ### Patch Changes
