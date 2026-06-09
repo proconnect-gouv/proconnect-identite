@@ -276,7 +276,7 @@ export const moderations = pgTable(
     ticket_id: text(),
     status: text().default("unknown").notNull(),
     sp_name: varchar(),
-    allow_editing: boolean().notNull(),
+    allow_editing: boolean().default(false).notNull(),
     end_user_reason: varchar({ length: 255 })
       .default("Raison transmise par mail")
       .notNull(),

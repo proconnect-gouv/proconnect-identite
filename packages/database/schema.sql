@@ -260,7 +260,7 @@ CREATE TABLE "public"."moderations" (
   "ticket_id" "text",
   "status" "text" DEFAULT 'unknown'::"text" NOT NULL,
   "sp_name" character varying,
-  "allow_editing" boolean NOT NULL,
+  "allow_editing" boolean DEFAULT false NOT NULL,
   "end_user_reason" character varying(255) DEFAULT 'Raison transmise par mail'::character varying NOT NULL
 );
 
