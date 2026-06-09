@@ -47,47 +47,6 @@ export const authenticators = pgTable(
   ],
 );
 
-export const users = pgTable(
-  "users",
-  {
-    id: serial().primaryKey().notNull(),
-    email: varchar().notNull(),
-    encrypted_password: varchar(),
-    reset_password_token: varchar(),
-    reset_password_sent_at: timestamp({ withTimezone: true, mode: "string" }),
-    sign_in_count: integer().default(0).notNull(),
-    last_sign_in_at: timestamp({ withTimezone: true, mode: "string" }),
-    created_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-    updated_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-    email_verified: boolean().default(false).notNull(),
-    verify_email_token: varchar(),
-    verify_email_sent_at: timestamp({ withTimezone: true, mode: "string" }),
-    given_name: varchar(),
-    family_name: varchar(),
-    phone_number: varchar(),
-    job: varchar(),
-    magic_link_token: varchar(),
-    magic_link_sent_at: timestamp({ withTimezone: true, mode: "string" }),
-    email_verified_at: timestamp({ withTimezone: true, mode: "string" }),
-    current_challenge: varchar(),
-    needs_inclusionconnect_welcome_page: boolean().default(false).notNull(),
-    needs_inclusionconnect_onboarding_help: boolean().default(false).notNull(),
-    encrypted_totp_key: varchar(),
-    totp_key_verified_at: timestamp({ withTimezone: true, mode: "string" }),
-    force_2fa: boolean().default(false).notNull(),
-  },
-  (table) => [
-    uniqueIndex("index_users_on_email").using(
-      "btree",
-      table.email.asc().nullsLast().op("text_ops"),
-    ),
-    uniqueIndex("index_users_on_reset_password_token").using(
-      "btree",
-      table.reset_password_token.asc().nullsLast().op("text_ops"),
-    ),
-  ],
-);
-
 export const email_domains = pgTable(
   "email_domains",
   {
@@ -292,6 +251,47 @@ export const moderations = pgTable(
       foreignColumns: [organizations.id],
       name: "moderations_organization_id_fkey",
     }).onDelete("cascade"),
+  ],
+);
+
+export const users = pgTable(
+  "users",
+  {
+    id: serial().primaryKey().notNull(),
+    email: varchar().notNull(),
+    encrypted_password: varchar(),
+    reset_password_token: varchar(),
+    reset_password_sent_at: timestamp({ withTimezone: true, mode: "string" }),
+    sign_in_count: integer().default(0).notNull(),
+    last_sign_in_at: timestamp({ withTimezone: true, mode: "string" }),
+    created_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    email_verified: boolean().default(false).notNull(),
+    verify_email_token: varchar(),
+    verify_email_sent_at: timestamp({ withTimezone: true, mode: "string" }),
+    given_name: varchar(),
+    family_name: varchar(),
+    phone_number: varchar(),
+    job: varchar(),
+    magic_link_token: varchar(),
+    magic_link_sent_at: timestamp({ withTimezone: true, mode: "string" }),
+    email_verified_at: timestamp({ withTimezone: true, mode: "string" }),
+    current_challenge: varchar(),
+    needs_inclusionconnect_welcome_page: boolean().default(false).notNull(),
+    needs_inclusionconnect_onboarding_help: boolean().default(false).notNull(),
+    encrypted_totp_key: varchar(),
+    totp_key_verified_at: timestamp({ withTimezone: true, mode: "string" }),
+    force_2fa: boolean().default(false).notNull(),
+    deleted_at: timestamp({ withTimezone: true, mode: "string" }),
+  },
+  (table) => [
+    uniqueIndex("index_users_on_reset_password_token").using(
+      "btree",
+      table.reset_password_token.asc().nullsLast().op("text_ops"),
+    ),
+    uniqueIndex("users_email_unique_active_idx")
+      .using("btree", table.email.asc().nullsLast().op("text_ops"))
+      .where(sql`(deleted_at IS NULL)`),
   ],
 );
 

@@ -66,9 +66,9 @@ DROP CONSTRAINT IF EXISTS "email_domains_organization_id_fkey";
 ALTER TABLE IF EXISTS ONLY "public"."authenticators"
 DROP CONSTRAINT IF EXISTS "authenticators_user_id_fkey";
 
-DROP INDEX IF EXISTS "public"."index_users_on_reset_password_token";
+DROP INDEX IF EXISTS "public"."users_email_unique_active_idx";
 
-DROP INDEX IF EXISTS "public"."index_users_on_email";
+DROP INDEX IF EXISTS "public"."index_users_on_reset_password_token";
 
 DROP INDEX IF EXISTS "public"."index_organizations_on_siret";
 
@@ -379,7 +379,8 @@ CREATE TABLE "public"."users" (
   "needs_inclusionconnect_onboarding_help" boolean DEFAULT false NOT NULL,
   "encrypted_totp_key" character varying,
   "totp_key_verified_at" timestamp with time zone,
-  "force_2fa" boolean DEFAULT false NOT NULL
+  "force_2fa" boolean DEFAULT false NOT NULL,
+  "deleted_at" timestamp with time zone
 );
 
 --
@@ -558,14 +559,16 @@ CREATE UNIQUE INDEX "index_authenticators_on_credential_id" ON "public"."authent
 CREATE UNIQUE INDEX "index_organizations_on_siret" ON "public"."organizations" USING "btree" ("siret");
 
 --
--- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
---
-CREATE UNIQUE INDEX "index_users_on_email" ON "public"."users" USING "btree" ("email");
-
---
 -- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
 --
 CREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "public"."users" USING "btree" ("reset_password_token");
+
+--
+-- Name: users_email_unique_active_idx; Type: INDEX; Schema: public; Owner: -
+--
+CREATE UNIQUE INDEX "users_email_unique_active_idx" ON "public"."users" USING "btree" ("email")
+WHERE
+  ("deleted_at" IS NULL);
 
 --
 -- Name: authenticators authenticators_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -

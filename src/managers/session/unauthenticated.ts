@@ -1,7 +1,7 @@
 import type { Request } from "express";
 import { isEmpty } from "lodash-es";
 import { NoEmailFoundInUnauthenticatedSessionError } from "../../config/errors";
-import { findByEmail, update } from "../../repositories/user";
+import { findActiveByEmail, update } from "../../repositories/user";
 
 export const getAndRemoveLoginHintFromUnauthenticatedSession = (
   req: Request,
@@ -78,7 +78,7 @@ export const updatePartialUserFromUnauthenticatedSession = async (
   req.session.needsInclusionconnectWelcomePage =
     needs_inclusionconnect_welcome_page;
 
-  const user = await findByEmail(req.session.email);
+  const user = await findActiveByEmail(req.session.email);
 
   if (isEmpty(user)) {
     return null;

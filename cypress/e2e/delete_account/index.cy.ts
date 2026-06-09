@@ -3,7 +3,7 @@
 describe("delete account", () => {
   before(cy.seed);
 
-  it("should delete account", function () {
+  it("should delete account and recreate one", function () {
     cy.visit("/connection-and-account");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
@@ -23,5 +23,14 @@ describe("delete account", () => {
       );
       cy.maildevDeleteMessageById(email.id);
     });
+
+    cy.visit("/connection-and-account");
+
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+
+    cy.get('[name="login"]').type("lion.eljonson@darkangels.world");
+    cy.get('[type="submit"]').click();
+
+    cy.contains("Choisir un mot de passe");
   });
 });

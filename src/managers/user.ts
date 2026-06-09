@@ -52,10 +52,10 @@ import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import { findEmailInDeliverabilityWhiteList } from "../repositories/email-deliverability-whitelist";
 import {
   create,
-  findByEmail,
+  findActiveByEmail,
+  findActiveByResetPasswordToken,
   findByMagicLinkToken,
-  findByResetPasswordToken,
-  getById,
+  getActiveById,
   getFranceConnectUserInfo,
   update,
   upsetFranceconnectUserinfo,
@@ -72,7 +72,7 @@ export const startLogin = async (
   hasWebauthnConfigured: boolean;
   needsInclusionconnectWelcomePage: boolean;
 }> => {
-  const user = await findByEmail(email);
+  const user = await findActiveByEmail(email);
   const userExists = !isEmpty(user);
 
   if (userExists) {
@@ -119,7 +119,7 @@ export const loginWithPassword = async (
   email: string,
   password: string,
 ): Promise<User> => {
-  const user = await findByEmail(email);
+  const user = await findActiveByEmail(email);
   if (isEmpty(user)) {
     throw new NotFoundError();
   }
@@ -137,7 +137,7 @@ export const signupWithPassword = async (
   email: string,
   password: string,
 ): Promise<User> => {
-  const user = await findByEmail(email);
+  const user = await findActiveByEmail(email);
 
   if (!isEmpty(user) && !isEmpty(user.encrypted_password)) {
     throw new EmailUnavailableError();
@@ -176,7 +176,7 @@ export const sendEmailAddressVerificationEmail = async ({
   isBrowserTrusted: boolean;
   force?: boolean;
 }): Promise<{ codeSent: boolean; updatedUser: User }> => {
-  const user = await findByEmail(email);
+  const user = await findActiveByEmail(email);
 
   if (isEmpty(user)) {
     throw new UserNotFoundError();
@@ -221,7 +221,7 @@ export const sendEmailAddressVerificationEmail = async ({
 };
 
 export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await getActiveById(user_id);
 
   return sendMail({
     to: [email],
@@ -241,7 +241,7 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
 }: {
   user_id: number;
 }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await getActiveById(user_id);
 
   return sendMail({
     to: [email],
@@ -258,7 +258,7 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
 };
 
 export const sendDisable2faMail = async ({ user_id }: { user_id: number }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await getActiveById(user_id);
 
   return sendMail({
     to: [email],
@@ -277,7 +277,7 @@ export const sendDeleteAccessKeyMail = async ({
 }: {
   user_id: number;
 }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await getActiveById(user_id);
 
   return sendMail({
     to: [email],
@@ -297,7 +297,7 @@ export const sendAddFreeTOTPEmail = async ({
 }: {
   user_id: number;
 }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await getActiveById(user_id);
 
   return sendMail({
     to: [email],
@@ -317,7 +317,7 @@ export const sendActivateAccessKeyMail = async ({
 }: {
   user_id: number;
 }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await getActiveById(user_id);
 
   return sendMail({
     to: [email],
@@ -389,7 +389,7 @@ export const verifyEmail = async (
   email: string,
   token: string,
 ): Promise<User> => {
-  const user = await findByEmail(email);
+  const user = await findActiveByEmail(email);
 
   if (isEmpty(user)) {
     throw new UserNotFoundError();
@@ -419,7 +419,7 @@ export const verifyEmail = async (
 export const needsEmailVerificationRenewal = async (
   email: string,
 ): Promise<boolean> => {
-  const user = await findByEmail(email);
+  const user = await findActiveByEmail(email);
 
   if (isEmpty(user)) {
     throw new UserNotFoundError();
@@ -435,7 +435,7 @@ export const sendSendMagicLinkEmail = async (
   email: string,
   host: string,
 ): Promise<boolean> => {
-  let user = await findByEmail(email);
+  let user = await findActiveByEmail(email);
 
   if (isEmpty(user)) {
     user = await create({
@@ -496,7 +496,7 @@ export const sendResetPasswordEmail = async (
   email: string,
   host: string,
 ): Promise<boolean> => {
-  const user = await findByEmail(email);
+  const user = await findActiveByEmail(email);
 
   if (isEmpty(user)) {
     // failing silently as we do not want to give info on whether the user exists or not
@@ -532,7 +532,7 @@ export const changePassword = async (
     throw new InvalidTokenError();
   }
 
-  const user = await findByResetPasswordToken(token);
+  const user = await findActiveByResetPasswordToken(token);
 
   if (isEmpty(user)) {
     throw new InvalidTokenError();

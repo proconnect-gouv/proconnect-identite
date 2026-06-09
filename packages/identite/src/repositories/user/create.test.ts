@@ -44,6 +44,7 @@ suite("createUserFactory", () => {
       updated_at: new Date("4444-04-04"),
       verify_email_sent_at: null,
       verify_email_token: null,
+      deleted_at: null,
     });
   });
 });

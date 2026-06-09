@@ -8,8 +8,11 @@ import { getDatabaseConnection } from "../connectors/postgres";
 export const {
   create,
   findByEmail,
+  findActiveByEmail,
+  findActiveById,
   findById,
   getById,
+  getActiveById,
   getFranceConnectUserInfo,
   update,
   upsetFranceconnectUserinfo,
@@ -21,7 +24,7 @@ export const findByMagicLinkToken = async (magic_link_token: string) => {
   const { rows }: QueryResult<User> = await connection.query(
     `
 SELECT *
-FROM users WHERE magic_link_token = $1
+FROM users WHERE magic_link_token = $1 AND deleted_at IS NULL
 `,
     [magic_link_token],
   );
@@ -29,7 +32,7 @@ FROM users WHERE magic_link_token = $1
   return rows.shift();
 };
 
-export const findByResetPasswordToken = async (
+export const findActiveByResetPasswordToken = async (
   reset_password_token: string,
 ) => {
   const connection = getDatabaseConnection();
@@ -37,7 +40,7 @@ export const findByResetPasswordToken = async (
   const { rows }: QueryResult<User> = await connection.query(
     `
 SELECT *
-FROM users WHERE reset_password_token = $1
+FROM users WHERE reset_password_token = $1 AND deleted_at IS NULL
 `,
     [reset_password_token],
   );
@@ -45,12 +48,13 @@ FROM users WHERE reset_password_token = $1
   return rows.shift();
 };
 
-export const deleteUser = async (id: number) => {
+export const softDeleteUser = async (id: number) => {
   const connection = getDatabaseConnection();
 
   const { rowCount } = await connection.query(
     `
-        DELETE FROM users
+        UPDATE users
+        SET deleted_at = NOW()
         WHERE id = $1
         RETURNING *`,
     [id],
