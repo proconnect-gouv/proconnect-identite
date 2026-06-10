@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.6.0
+
+### Minor Changes
+
+- [#1981](https://github.com/proconnect-gouv/proconnect-identite/pull/1981) [`ebebea3`](https://github.com/proconnect-gouv/proconnect-identite/commit/ebebea3c34852a1629729c1391509385bd17647e) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🗃️ le champ allow_editing sur la table modérations est falsy par défaut
+
 ## 1.5.1
 
 ### Patch Changes
