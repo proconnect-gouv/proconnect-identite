@@ -56,9 +56,7 @@ describe("sign-in with a client not requiring any acr", () => {
 
     cy.login("certification-dirigeant@yopmail.com");
 
-    cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/certification-dirigeant"',
-    );
+    cy.contains('"acr": "eidas1"');
   });
 });
 
@@ -156,24 +154,19 @@ describe("sign-in with a client requiring acr levels", () => {
     );
   });
 
-  // TODO
-  it("should sign-in and return acr eidas2 when asked", function () {
-    cy.setRequestedAcrs(["eidas0-mfa", "eidas1-mfa", "eidas2", "eidas3"]);
+  it("should sign-in and return mfa acr even if certification-dirigeant is available for user", function () {
+    cy.setRequestedAcrs([
+      "eidas0-mfa",
+      "eidas1-mfa",
+      "eidas2",
+      "eidas3",
+      "https://proconnect.gouv.fr/assurance/certification-dirigeant",
+    ]);
 
     cy.get("button#custom-connection").click({ force: true });
 
     cy.mfaLogin("certification-dirigeant-aal2@yopmail.com");
 
-    cy.contains("Erreur access_denied");
-
-    cy.contains("none of the requested ACRs could be obtained");
-
-    // cy.getByLabel(
-    //   "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
-    // ).click();
-    //
-    // cy.contains(
-    //   '"acr": "eidas1-mfa"',
-    // );
+    cy.contains('"acr": "eidas1-mfa"');
   });
 });

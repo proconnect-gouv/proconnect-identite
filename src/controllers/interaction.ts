@@ -5,6 +5,7 @@ import Provider, { errors } from "oidc-provider";
 import { z } from "zod";
 import { OidcError } from "../config/errors";
 import {
+  doesAcrSatisfiesCertificationDirigeantRequirements,
   getCurrentAcr,
   getSessionStandardizedAuthenticationMethodsReferences,
   getUserFromAuthenticatedSession,
@@ -107,8 +108,6 @@ export const interactionEndControllerFactory =
     try {
       const user = getUserFromAuthenticatedSession(req);
 
-      let currentAcr = await getCurrentAcr(req);
-
       const amr = getSessionStandardizedAuthenticationMethodsReferences(req);
       const ts = user.last_sign_in_at
         ? epochTime(user.last_sign_in_at)
@@ -119,14 +118,24 @@ export const interactionEndControllerFactory =
         res,
       );
 
-      // Previously, OIDC clients were required to include `acr_values=eidas1` as a query parameter in the /authorize request.
-      // Some clients may still expect the returned ACR to be "eidas1" for successful authentication.
-      // We maintain this legacy behavior until all OIDC clients have been properly migrated.
+      let currentAcr: string | null;
+
       if (
         params?.["acr_values"] === "eidas1" &&
         !isThereAnyRequestedAcr(prompt)
       ) {
+        // Previously, OIDC clients were required to include `acr_values=eidas1` as a query parameter in the /authorize request.
+        // Some clients may still expect the returned ACR to be "eidas1" for successful authentication.
+        // We maintain this legacy behavior until all OIDC clients have been properly migrated.
         currentAcr = "eidas1";
+      } else if (
+        certificationDirigeantRequested(prompt) &&
+        (await doesAcrSatisfiesCertificationDirigeantRequirements(req))
+      ) {
+        currentAcr =
+          "https://proconnect.gouv.fr/assurance/certification-dirigeant";
+      } else {
+        currentAcr = await getCurrentAcr(req);
       }
 
       let result: OidcInteractionResults = {

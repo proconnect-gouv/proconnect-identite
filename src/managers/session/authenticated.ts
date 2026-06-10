@@ -298,6 +298,17 @@ export async function getCurrentOAL(req: Request) {
     .exhaustive();
 }
 
+export async function doesAcrSatisfiesCertificationDirigeantRequirements(
+  req: Request,
+) {
+  const ial = await getCurrentIAL(req);
+  const oal = await getCurrentOAL(req);
+
+  return match({ ial, oal })
+    .with({ ial: 1, oal: 2 }, () => true)
+    .otherwise(() => false);
+}
+
 export async function getCurrentAcr(
   req: Request,
   {
@@ -310,39 +321,30 @@ export async function getCurrentAcr(
   const aal = forcedAAL || (await getCurrentAAL(req));
   const oal = forcedOAL || (await getCurrentOAL(req));
 
-  return (
-    match({
-      ial,
-      aal,
-      oal,
-    })
-      .with(
-        // Identity and Organization assurance levels too low
-        { ial: 0, oal: 0 },
-        // Le cas IAL=0 & OAL=2 correspond à une certification dirigeant/employé sans FranceConnection
-        // IAL must be at least 1 for OAL to equal 2
-        { ial: 0, oal: 2 },
-        () => null,
-      )
-      .with(
-        { ial: 0, aal: 1, oal: 1 },
-        { ial: 1, aal: 1, oal: 0 },
-        () => "eidas0",
-      )
-      .with(
-        { ial: 0, aal: 2, oal: 1 },
-        { ial: 1, aal: 2, oal: 0 },
-        () => "eidas0-mfa",
-      )
-      // This is a legacy ACR level.
-      // It should be removed once the certification dirigeant is controlled with the `roles` claims.
-      // Once implemented, OAL 2 will be treated as eidas1 and eidas1-mfa.
-      .with(
-        { ial: 1, oal: 2 },
-        () => "https://proconnect.gouv.fr/assurance/certification-dirigeant",
-      )
-      .with({ ial: 1, aal: 1, oal: P.union(1, 2) }, () => "eidas1")
-      .with({ ial: 1, aal: 2, oal: P.union(1, 2) }, () => "eidas1-mfa")
-      .exhaustive()
-  );
+  return match({
+    ial,
+    aal,
+    oal,
+  })
+    .with(
+      // Identity and Organization assurance levels too low
+      { ial: 0, oal: 0 },
+      // Le cas IAL=0 & OAL=2 correspond à une certification dirigeant/employé sans FranceConnection
+      // IAL must be at least 1 for OAL to equal 2
+      { ial: 0, oal: 2 },
+      () => null,
+    )
+    .with(
+      { ial: 0, aal: 1, oal: 1 },
+      { ial: 1, aal: 1, oal: 0 },
+      () => "eidas0",
+    )
+    .with(
+      { ial: 0, aal: 2, oal: 1 },
+      { ial: 1, aal: 2, oal: 0 },
+      () => "eidas0-mfa",
+    )
+    .with({ ial: 1, aal: 1, oal: P.union(1, 2) }, () => "eidas1")
+    .with({ ial: 1, aal: 2, oal: P.union(1, 2) }, () => "eidas1-mfa")
+    .exhaustive();
 }
