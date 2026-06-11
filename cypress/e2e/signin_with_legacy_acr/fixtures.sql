@@ -18,38 +18,6 @@ INSERT INTO
 VALUES
   (
     1,
-    'ial2-aal2@yopmail.com',
-    true,
-    CURRENT_TIMESTAMP,
-    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP,
-    'Jean',
-    'IAL2 AAL2',
-    '0123456789',
-    'Sbire',
-    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
-    CURRENT_TIMESTAMP,
-    false
-  ),
-  (
-    2,
-    'ial1-aal2@yopmail.com',
-    true,
-    CURRENT_TIMESTAMP,
-    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP,
-    'Jean',
-    'IAL1 AAL2',
-    '0123456789',
-    'Sbire',
-    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
-    CURRENT_TIMESTAMP,
-    false
-  ),
-  (
-    3,
     'ial2-aal1@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
@@ -65,28 +33,27 @@ VALUES
     false
   ),
   (
-    4,
-    'ial1-aal1@yopmail.com',
+    2,
+    'certification-dirigeant@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     'Jean',
-    'IAL1 AAL1',
+    'Certification',
     '0123456789',
-    'Sbire',
+    'Dirigeant',
     null,
     null,
     false
   );
 
 INSERT INTO
-  organizations (id, cached_libelle, siret, created_at, updated_at)
+  organizations (id, siret, created_at, updated_at)
 VALUES
   (
     1,
-    'Commune de lamalou-les-bains',
     '21340126800130',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -107,18 +74,34 @@ VALUES
     2,
     1,
     false,
-    null,
-    'domain_not_verified_yet',
+    CURRENT_TIMESTAMP,
+    'organization_dirigeant',
     true
-  ),
-  (3, 1, false, null, 'domain', true),
+  );
+
+INSERT INTO
+  franceconnect_userinfo (
+    user_id,
+    birthcountry,
+    birthdate,
+    birthplace,
+    family_name,
+    gender,
+    given_name,
+    created_at,
+    updated_at
+  )
+VALUES
   (
-    4,
-    1,
-    false,
-    null,
-    'domain_not_verified_yet',
-    true
+    2,
+    '99100',
+    '1990-06-01',
+    '75000',
+    'Un',
+    'male',
+    'Jean',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO

@@ -10,16 +10,8 @@ import * as Sentry from "@sentry/node";
 import type { Request, Response } from "express";
 import { Session, type SessionData } from "express-session";
 import { isEmpty } from "lodash-es";
-import { match } from "ts-pattern";
-import {
-  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
-  ACR_VALUE_FOR_IAL1_AAL1,
-  ACR_VALUE_FOR_IAL1_AAL2,
-  ACR_VALUE_FOR_IAL2_AAL1,
-  ACR_VALUE_FOR_IAL2_AAL2,
-  ACR_VALUE_FOR_IAL3_AAL2,
-  RECENT_LOGIN_INTERVAL_IN_SECONDS,
-} from "../../config/env";
+import { match, P } from "ts-pattern";
+import { RECENT_LOGIN_INTERVAL_IN_SECONDS } from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
 import { getUserOrganizationLink } from "../../repositories/organization/getters";
 import {
@@ -41,6 +33,7 @@ import {
   setBrowserAsTrustedForUser,
   setIsTrustedBrowserFromLoggedInSession,
 } from "../browser-authentication";
+import { hasValidFranceConnectIdentity } from "../user";
 export const isWithinAuthenticatedSession = (
   session: Session & Partial<SessionData>,
 ): session is Session & Partial<SessionData> & AuthenticatedSessionData => {
@@ -75,7 +68,7 @@ export const createAuthenticatedSession = async (
     nonce,
     referrerPath,
     state,
-    twoFactorsAuthRequested,
+    prompt,
     certificationDirigeantRequested,
     spName,
     siretHint,
@@ -101,7 +94,7 @@ export const createAuthenticatedSession = async (
         req.session.interactionId = interactionId;
         req.session.mustReturnOneOrganizationInPayload =
           mustReturnOneOrganizationInPayload;
-        req.session.twoFactorsAuthRequested = twoFactorsAuthRequested;
+        req.session.prompt = prompt;
         req.session.referrerPath = referrerPath;
         req.session.authForProconnectFederation = authForProconnectFederation;
         req.session.certificationDirigeantRequested =
@@ -248,10 +241,39 @@ export const destroyAuthenticatedSession = async (
   });
 };
 
-// get the current Identity Assurance Level (e.g. self-asserted, consistency-checked, certified)
+// Get the current Identity Assurance Level
+// 0: Déclaratif
+// 1: Faible (eg. FranceConnect niveau eidas1)
+// 2: Substantiel (eg. FranceConnect niveau eidas2) (not available yet)
+// 3: Élevé (eg. FranceConnect niveau eidas3) (not available yet)
 export async function getCurrentIAL(req: Request) {
+  const user = getUserFromAuthenticatedSession(req);
+
+  const hasValidFCIdentity = await hasValidFranceConnectIdentity(user.id);
+
+  return hasValidFCIdentity ? 1 : 0;
+}
+
+// get the current Authentication Assurance Level
+// 0: Simple (mot de passe)
+// 1: MFA (auto-géré)
+// 2. MFA (géré par l'organisation) (not available yet)
+// 3. MFA matérielle (géré par l'organisation) (not available yet)
+export async function getCurrentAAL(req: Request) {
+  const currentAmrValues = req.session.amr!;
+
+  return currentAmrValues.includes("mfa") ? 2 : 1;
+}
+
+// get the current Organization Assurance Level
+// 0: Déclaratif
+// 1: Modération
+// 2: Lien certifié par une source officielle
+export async function getCurrentOAL(req: Request) {
   if (!req.session.mustReturnOneOrganizationInPayload) {
-    // identity is always considered as self-asserted for legacy payloads
+    // The OAL should reflect the minimum verification level across all organizations associated with the user.
+    // This calculation is complex, and support for multiple organizations should be deprecated soon.
+    // We return a "moderated" OAL to avoid triggering the safeguard that prevents both OAL and IAL from being zero simultaneously.
     return 1;
   }
 
@@ -269,58 +291,60 @@ export async function getCurrentIAL(req: Request) {
   }
 
   return match(link.verification_type)
-    .returnType<1 | 2 | 3>()
-    .with(...StrongLinkValues, () => 3)
-    .with(...WeakLinkValues, ...SuperWeakLinkValues, () => 2)
-    .with(...UnverifiedLinkValues, () => 1)
+    .returnType<0 | 1 | 2>()
+    .with(...UnverifiedLinkValues, () => 0)
+    .with(...WeakLinkValues, ...SuperWeakLinkValues, () => 1)
+    .with(...StrongLinkValues, () => 2)
     .exhaustive();
 }
 
-// get the current Authentication Assurance Level (e.g. password, 2 factor, carte agent, etc.)
-export async function getCurrentAAL(req: Request) {
-  const currentAmrValues = req.session.amr!;
+export async function doesAcrSatisfiesCertificationDirigeantRequirements(
+  req: Request,
+) {
+  const ial = await getCurrentIAL(req);
+  const oal = await getCurrentOAL(req);
 
-  if (currentAmrValues.includes("hwk")) {
-    return 3;
-  }
-
-  if (currentAmrValues.includes("mfa")) {
-    return 2;
-  }
-
-  return 1;
+  return match({ ial, oal })
+    .with({ ial: 1, oal: 2 }, () => true)
+    .otherwise(() => false);
 }
 
-export async function getCurrentAcr(req: Request) {
-  const ial = await getCurrentIAL(req);
-  const aal = await getCurrentAAL(req);
+export async function getCurrentAcr(
+  req: Request,
+  {
+    forcedIAL,
+    forcedAAL,
+    forcedOAL,
+  }: { forcedIAL?: 0 | 1; forcedAAL?: 1 | 2; forcedOAL?: 0 | 1 | 2 } = {},
+) {
+  const ial = forcedIAL || (await getCurrentIAL(req));
+  const aal = forcedAAL || (await getCurrentAAL(req));
+  const oal = forcedOAL || (await getCurrentOAL(req));
 
-  return (
-    match({
-      ial,
-      aal,
-    })
-      // ial: "carte agent" & aal: "carte agent" => acr: "eidas3"
-      .with({ ial: 3, aal: 3 }, () => {
-        throw new Error("not implemented");
-      })
-      // ial: "certified" (FC + source authentique) & aal: "mfa" => acr: "certification-dirigeant-mfa" (alias "eidas2")
-      .with({ ial: 3, aal: 2 }, () => ACR_VALUE_FOR_IAL3_AAL2)
-      // ial: "consistency-checked" & aal: "mfa" => acr: "consistency-checked-mfa"
-      .with({ ial: 2, aal: 2 }, () => ACR_VALUE_FOR_IAL2_AAL2)
-      // ial: "self-asserted" & aal: "mfa" => acr: "self-asserted-mfa"
-      .with({ ial: 1, aal: 2 }, () => ACR_VALUE_FOR_IAL1_AAL2)
-      // ial: "certified" (FC + source authentique) & aal: "pwd" => acr: "certification-dirigeant" (alias "eidas1")
-      .with({ ial: 3, aal: 1 }, () => ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT)
-      // ial: "consistency-checked" & aal: "pwd" => acr: "consistency-checked"
-      .with({ ial: 2, aal: 1 }, () => ACR_VALUE_FOR_IAL2_AAL1)
-      // ial: "self-asserted" & aal: "pwd" => acr: "self-asserted"
-      .with({ ial: 1, aal: 1 }, () => ACR_VALUE_FOR_IAL1_AAL1)
-      // ial: 1 "self-asserted" & all: 3 "carte-agent" => server_error (HTTP error code 500)
-      // ial: 2 "consistency-checked" & all: 3 "carte-agent" => server_error (HTTP error code 500)
-      .with({ ial: 1, aal: 3 }, { ial: 2, aal: 3 }, () => {
-        throw new Error("not possible");
-      })
-      .exhaustive()
-  );
+  return match({
+    ial,
+    aal,
+    oal,
+  })
+    .with(
+      // Identity and Organization assurance levels too low
+      { ial: 0, oal: 0 },
+      // Le cas IAL=0 & OAL=2 correspond à une certification dirigeant/employé sans FranceConnection
+      // IAL must be at least 1 for OAL to equal 2
+      { ial: 0, oal: 2 },
+      () => null,
+    )
+    .with(
+      { ial: 0, aal: 1, oal: 1 },
+      { ial: 1, aal: 1, oal: 0 },
+      () => "eidas0",
+    )
+    .with(
+      { ial: 0, aal: 2, oal: 1 },
+      { ial: 1, aal: 2, oal: 0 },
+      () => "eidas0-mfa",
+    )
+    .with({ ial: 1, aal: 1, oal: P.union(1, 2) }, () => "eidas1")
+    .with({ ial: 1, aal: 2, oal: P.union(1, 2) }, () => "eidas1-mfa")
+    .exhaustive();
 }

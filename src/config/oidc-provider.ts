@@ -12,11 +12,6 @@ import { oidcProviderAdapterFactory } from "../services/oidc-provider-adapter";
 import { renderWithEjsLayout } from "../services/renderer";
 import { connectionCountMiddleware } from "./../middlewares/connection-count";
 import {
-  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
-  ACR_VALUE_FOR_IAL1_AAL1,
-  ACR_VALUE_FOR_IAL1_AAL2,
-  ACR_VALUE_FOR_IAL2_AAL1,
-  ACR_VALUE_FOR_IAL2_AAL2,
   FEATURE_USE_SECURE_COOKIES,
   HOST,
   JWKS,
@@ -92,12 +87,13 @@ export const oidcProviderConfiguration = ({
   tokenTtlInSeconds = 60 * 60,
 }): Configuration => ({
   acrValues: [
-    "eidas1", // legacy acr value
-    ACR_VALUE_FOR_IAL1_AAL1,
-    ACR_VALUE_FOR_IAL1_AAL2,
-    ACR_VALUE_FOR_IAL2_AAL1,
-    ACR_VALUE_FOR_IAL2_AAL2,
-    ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
+    "eidas0",
+    "eidas0-mfa",
+    "eidas1",
+    "eidas1-mfa",
+    // This is a legacy ACR level.
+    // It should be removed once the certification dirigeant is controlled with the `roles` claims.
+    "https://proconnect.gouv.fr/assurance/certification-dirigeant",
   ],
   claims: {
     amr: null,

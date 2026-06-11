@@ -1,12 +1,12 @@
 describe("sign-in with totp enrollment", () => {
-  before(cy.seed);
+  beforeEach(cy.seed);
 
   it("should follow first authentication when mfa asked", function () {
     cy.visit("http://localhost:4000");
 
     cy.contains("Forcer une connexion a deux facteurs").click();
 
-    cy.login("ial2-aal1@yopmail.com");
+    cy.login("ial0-aal1-oal1@yopmail.com");
 
     // Test of the generic formula when sp_name is not returned
     cy.contains(
@@ -39,19 +39,18 @@ describe("sign-in with totp enrollment", () => {
     cy.contains("Votre double authentification est bien configurée");
     cy.contains("Continuer").click();
 
-    cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
-    );
+    cy.contains('"acr": "eidas0-mfa"');
 
     // should not force 2fa on all services after totp enrollment triggered by a service provider
 
     cy.contains("Se déconnecter").click();
 
-    cy.contains("S’identifier avec ProConnect").click();
+    cy.setRequestedAcrs();
+    cy.get("button#custom-connection").click({ force: true });
 
-    cy.login("ial2-aal1@yopmail.com");
+    cy.login("ial0-aal1-oal1@yopmail.com");
 
-    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains('"acr": "eidas0"');
   });
 
   it("should re-authenticate after long connexion to a service provider requires mfa", function () {
@@ -59,7 +58,7 @@ describe("sign-in with totp enrollment", () => {
 
     cy.contains("Forcer une connexion a deux facteurs").click();
 
-    cy.login("ial2-aal2@yopmail.com");
+    cy.login("ial0-aal1-oal1@yopmail.com");
 
     cy.contains("Code à usage unique (TOTP)").click();
 
@@ -72,7 +71,7 @@ describe("sign-in with totp enrollment", () => {
 
     // totp enrollment
 
-    cy.login("ial2-aal2@yopmail.com");
+    cy.login("ial0-aal1-oal1@yopmail.com");
 
     cy.contains("Code à usage unique (TOTP)").click();
 
@@ -91,8 +90,34 @@ describe("sign-in with totp enrollment", () => {
     cy.contains("Votre double authentification est bien configurée");
     cy.contains("Continuer").click();
 
-    cy.contains(
-      '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
-    );
+    cy.contains('"acr": "eidas0-mfa"');
+  });
+
+  it("should upgrade AAL and IAL of user if asked by the SP", function () {
+    cy.visit("http://localhost:4000");
+
+    cy.setRequestedAcrs(["eidas1-mfa", "eidas2", "eidas3"]);
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("ial0-aal1-oal1@yopmail.com");
+
+    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Continuer").click();
+
+    cy.contains("Installer votre outil d’authentification");
+    cy.contains("J'ai installé une application d'authentification").click();
+    cy.contains("Continuer").click();
+
+    cy.contains("Scanner ce QRcode avec votre application");
+    cy.fillAndSubmitTotpForm("/users/totp-configuration");
+    cy.contains("Continuer").click();
+
+    cy.title().should("include", "Vérifier votre identité");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
+
+    cy.contains('"acr": "eidas1-mfa"');
   });
 });
