@@ -16,7 +16,7 @@ import {
   linkUserToOrganization,
   upsert,
 } from "../src/repositories/organization/setters";
-import { create, findByEmail, update } from "../src/repositories/user";
+import { create, findActiveByEmail, update } from "../src/repositories/user";
 import { logger } from "../src/services/log";
 import {
   getNumberOfLineInFile,
@@ -135,7 +135,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         }
 
         // 1. add user if it does not exist
-        let user = await findByEmail(email);
+        let user = await findActiveByEmail(email);
         if (isEmpty(user)) {
           user = await create({ email });
           await update(user.id, {

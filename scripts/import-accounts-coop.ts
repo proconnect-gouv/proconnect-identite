@@ -28,7 +28,7 @@ import {
 } from "../src/services/script-helpers";
 //
 
-const { create, findByEmail, update } = context.repository.users;
+const { create, findActiveByEmail, update } = context.repository.users;
 
 //
 
@@ -163,7 +163,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         }
 
         // 1. add user if it does not exist
-        let user = await findByEmail(email);
+        let user = await findActiveByEmail(email);
         if (isEmpty(user)) {
           user = await create({ email });
           await update(user.id, {

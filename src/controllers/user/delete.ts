@@ -4,7 +4,7 @@ import {
   getUserFromAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import { sendDeleteUserEmail } from "../../managers/user";
-import { deleteUser } from "../../repositories/user";
+import { softDeleteUser } from "../../repositories/user";
 import { logger } from "../../services/log";
 
 export const postDeleteUserController = async (
@@ -17,7 +17,7 @@ export const postDeleteUserController = async (
 
     await sendDeleteUserEmail({ user_id: id });
 
-    await deleteUser(id);
+    await softDeleteUser(id);
     logger.info(`user ${email} successfully deleted`);
 
     await destroyAuthenticatedSession(req);

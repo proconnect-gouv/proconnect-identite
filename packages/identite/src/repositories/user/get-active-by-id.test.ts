@@ -1,15 +1,16 @@
 //
 
+import { UserNotFoundError } from "#src/errors";
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, mock, suite, test } from "node:test";
-import { findByIdFactory } from "./find-by-id.js";
+import { getActiveByIdFactory } from "./get-active-by-id.js";
 
 //
 
-const findById = findByIdFactory({ pg: pg as any });
+const getActiveById = getActiveByIdFactory({ pg: pg as any });
 
-suite("findByIdFactory", () => {
+suite("getActiveByIdFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
@@ -25,7 +26,7 @@ suite("findByIdFactory", () => {
       ;
     `;
 
-    const user = await findById(1);
+    const user = await getActiveById(1);
 
     assert.deepEqual(user, {
       created_at: new Date("4444-04-04"),
@@ -58,8 +59,18 @@ suite("findByIdFactory", () => {
   });
 
   test("❎ fail to find the God-Emperor of Mankind", async () => {
-    const user = await findById(42);
+    await pg.sql`
+      INSERT INTO users
+        (id, email, created_at, updated_at, given_name, family_name, phone_number, job, deleted_at)
+      VALUES
+        (1, 'lion.eljonson@darkangels.world', '4444-04-04', '4444-04-04', 'lion', 'el''jonson', 'i', 'primarque', '4444-04-04'),
+        (2, 'perturabo@ironwarriors.world', '4444-04-04', '4444-04-04', 'lion', 'el''jonson', 'iv', 'primarque', null)
+      ;
+    `;
 
-    assert.equal(user, undefined);
+    await assert.rejects(
+      getActiveById(1),
+      new UserNotFoundError("User not found"),
+    );
   });
 });

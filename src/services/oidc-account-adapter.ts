@@ -11,13 +11,13 @@ import { isEmpty, omitBy } from "lodash-es";
 import type { FindAccount } from "oidc-provider";
 import { findByUserId as getUsersOrganizations } from "../repositories/organization/getters";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
-import { findById as findUserById } from "../repositories/user";
+import { findActiveById as findActiveUserById } from "../repositories/user";
 import { logger } from "./log";
 import { mustReturnOneOrganizationInPayload } from "./must-return-one-organization-in-payload";
 import { isCommune } from "./organization";
 
 export const findAccount: FindAccount = async (_ctx, sub) => {
-  const user = await findUserById(parseInt(sub, 10));
+  const user = await findActiveUserById(parseInt(sub, 10));
 
   if (isEmpty(user)) {
     return;
