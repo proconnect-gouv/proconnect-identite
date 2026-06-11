@@ -86,6 +86,7 @@ export async function createOidcProvider() {
 
 //
 
+
 export const oidcProviderConfiguration = ({
   sessionTtlInSeconds = 14 * 24 * 60 * 60,
   shortTokenTtlInSeconds = 10 * 60,
@@ -175,32 +176,37 @@ export const oidcProviderConfiguration = ({
     const oidcContextParams = ctx.oidc.params as OIDCContextParams;
     const grantId = ctx.oidc.session.grantIdFor(ctx.oidc.client.clientId);
 
-    let grant;
+    // Check whether an existing (non-expired) grant exists only to preserve
+    // its expiry — we always create a fresh grant so that scopes/claims
+    // reflect exactly what the current request asks for and never accumulate
+    // from prior requests (which would leak affiliation data like siret/label
+    // to clients that no longer request the organization scope).
+    const existingGrant = grantId
+      ? await ctx.oidc.provider.Grant.find(grantId)
+      : undefined;
 
-    if (grantId) {
-      grant = await ctx.oidc.provider.Grant.find(grantId);
-      // if the grant has expired, the grant can be undefined at this point.
-      if (grant) {
-        // Keep grant expiry aligned with session expiry to prevent consent
-        // prompt being requested when the grant is about to expire.
-        // The original code is overkill as session length is extended on every
-        // interaction.
-        grant.exp = epochTime() + sessionTtlInSeconds;
-        await grant.save();
-      }
-    }
+    const grant = new ctx.oidc.provider.Grant({
+      clientId: ctx.oidc.client.clientId,
+      accountId: ctx.oidc.session.accountId,
+    });
 
-    if (!grant) {
-      grant = new ctx.oidc.provider.Grant({
-        clientId: ctx.oidc.client.clientId,
-        accountId: ctx.oidc.session.accountId,
-      });
-    }
+    // Keep grant expiry aligned with session expiry to prevent consent
+    // prompt being requested when the grant is about to expire.
+    grant.exp = existingGrant?.exp ?? epochTime() + sessionTtlInSeconds;
 
-    // event existing grant should be updated, as requested scopes might
-    // be different
     grant.addOIDCScope(oidcContextParams.scope);
-    grant.addOIDCClaims(Array.from(ctx.oidc.requestParamClaims || []));
+
+    // Only grant leaf claims that belong to scopes the client is authorised for,
+    // preventing clients from receiving restricted claims (e.g. uid) via the
+    // claims parameter when they lack the corresponding scope.
+    const claimsHelper = new ctx.oidc.provider.Claims({}, { ctx });
+    claimsHelper.scope(ctx.oidc.client.scope as string);
+    grant.addOIDCClaims(
+      Array.from(ctx.oidc.requestParamClaims || []).filter(
+        (c) => c in claimsHelper.filter,
+      ),
+    );
+
     await grant.save();
     return grant;
   },
