@@ -74,6 +74,8 @@ DROP INDEX IF EXISTS "public"."index_organizations_on_siret";
 
 DROP INDEX IF EXISTS "public"."index_authenticators_on_credential_id";
 
+DROP INDEX IF EXISTS "public"."idx_users_oidc_clients_user_id_created_at";
+
 ALTER TABLE IF EXISTS ONLY "public"."users"
 DROP CONSTRAINT IF EXISTS "users_pkey";
 
@@ -546,6 +548,11 @@ ADD CONSTRAINT "users_organizations_pkey" PRIMARY KEY ("user_id", "organization_
 --
 ALTER TABLE ONLY "public"."users"
 ADD CONSTRAINT "users_pkey" PRIMARY KEY ("id");
+
+--
+-- Name: idx_users_oidc_clients_user_id_created_at; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_users_oidc_clients_user_id_created_at" ON "public"."users_oidc_clients" USING "btree" ("user_id", "created_at" DESC);
 
 --
 -- Name: index_authenticators_on_credential_id; Type: INDEX; Schema: public; Owner: -
