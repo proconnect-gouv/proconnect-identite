@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.7.0
+
+### Minor Changes
+
+- [#1989](https://github.com/proconnect-gouv/proconnect-identite/pull/1989) [`a1431c3`](https://github.com/proconnect-gouv/proconnect-identite/commit/a1431c3663e7eeeaebd71265195accee8466f326) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🚀 Ajout d'un index composite sur les connexions des utilisateurs
+
+  Ajoute un index `(user_id, created_at DESC)` sur la table `users_oidc_clients` pour accélérer la requête de listing des connexions d'un utilisateur triée par date de création, évitant un parcours séquentiel de la table.
+
 ## 1.6.0
 
 ### Minor Changes
