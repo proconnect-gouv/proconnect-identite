@@ -3,6 +3,7 @@ import {
   bigint,
   boolean,
   foreignKey,
+  index,
   integer,
   pgTable,
   primaryKey,
@@ -236,6 +237,11 @@ export const users_oidc_clients = pgTable(
     user_ip_address: varchar(),
   },
   (table) => [
+    index("idx_users_oidc_clients_user_id_created_at").using(
+      "btree",
+      table.user_id.asc().nullsLast().op("int4_ops"),
+      table.created_at.desc().nullsFirst().op("int4_ops"),
+    ),
     foreignKey({
       columns: [table.user_id],
       foreignColumns: [users.id],
