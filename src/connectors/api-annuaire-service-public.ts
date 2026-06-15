@@ -7,9 +7,7 @@ import {
 } from "../config/env";
 import {
   ApiAnnuaireConnectionError,
-  ApiAnnuaireInvalidEmailError,
   ApiAnnuaireNotFoundError,
-  ApiAnnuaireTooManyResultsError,
 } from "../config/errors";
 import { logger } from "../services/log";
 import { FetchError, request } from "./request";
@@ -24,7 +22,7 @@ type ApiAnnuaireServicePublicReponse = {
       valeur: string;
     }[];
     nom: string;
-    adresse_courriel?: string;
+    adresse_courriel?: string | null;
     pivot: {
       type_service_local: string;
     }[];
@@ -46,7 +44,6 @@ type ApiAnnuaireServicePublicReponse = {
 
 export const getAnnuaireServicePublicContactEmails = async (
   codeOfficielGeographique: string | null,
-  codePostal: string | null,
 ): Promise<string[]> => {
   if (isEmpty(codeOfficielGeographique)) {
     throw new ApiAnnuaireNotFoundError();
@@ -79,45 +76,36 @@ export const getAnnuaireServicePublicContactEmails = async (
     throw e;
   }
 
-  if (features.length === 0) {
-    throw new ApiAnnuaireNotFoundError(
-      `No mairie found for codeOfficielGeographique: ${codeOfficielGeographique}.`,
-    );
-  }
-
-  if (features.length === 1) {
-    const formattedEmail = extractFormattedEmailFromFeature(features[0]);
-    return [formattedEmail];
-  }
-
-  if (isEmpty(codePostal)) {
-    throw new ApiAnnuaireTooManyResultsError(
-      `Without postal code, we cannot choose a mairie between ${features.length} results.`,
-    );
-  }
-
-  return uniq(
-    features.map((feature) => extractFormattedEmailFromFeature(feature)),
+  const formattedEmails = uniq(
+    features
+      .map((feature) => extractFormattedEmailFromFeature(feature))
+      .filter(isString),
   );
+
+  if (formattedEmails.length === 0) {
+    throw new ApiAnnuaireNotFoundError(
+      `No valid email found for: ${codeOfficielGeographique}.`,
+      {
+        cause: features,
+      },
+    );
+  }
+
+  return formattedEmails;
 };
 
 function extractFormattedEmailFromFeature(
   feature: ApiAnnuaireServicePublicReponse["results"][number],
-): string {
+) {
   const { adresse_courriel } = feature;
-  if (!isString(adresse_courriel)) {
-    throw new ApiAnnuaireInvalidEmailError(
-      `${adresse_courriel} is not a string.`,
-    );
-  }
+
+  if (!adresse_courriel) return;
+
+  if (!isString(adresse_courriel)) return;
 
   const [formattedEmail] = adresse_courriel.toLowerCase().trim().split(";");
 
-  if (!isEmailValid(formattedEmail)) {
-    throw new ApiAnnuaireInvalidEmailError(
-      `${formattedEmail} is not a valid email address.`,
-    );
-  }
+  if (!isEmailValid(formattedEmail)) return;
 
   if (!FEATURE_USE_ANNUAIRE_EMAILS) {
     logger.info(
