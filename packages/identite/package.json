@@ -50,7 +50,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.1",
+    "@electric-sql/pglite": "^0.3.12",
     "@proconnect-gouv/proconnect.annuaire_entreprises": "^2.0.2",
     "@proconnect-gouv/proconnect.api_entreprise": "^2.2.0",
     "@proconnect-gouv/proconnect.core": "^1.0.0",
