@@ -36,7 +36,6 @@ export const getOfficialContactAskWhichEmailController = async (
 
     const contactEmails = await getAnnuaireServicePublicContactEmails(
       organization.cached_code_officiel_geographique,
-      organization.cached_code_postal,
     );
 
     return res.render("user/official-contact-ask-which-email", {

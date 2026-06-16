@@ -313,7 +313,6 @@ export const joinOrganization = async ({
     try {
       contactEmails = await getAnnuaireServicePublicContactEmails(
         organization.cached_code_officiel_geographique,
-        organization.cached_code_postal,
       );
     } catch (err) {
       logger.error(inspect(err, { depth: 3 }));

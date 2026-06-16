@@ -42,7 +42,6 @@ export const isCommuneWithMultipleOfficialContactEmails = async (
 
   const contactEmails = await getAnnuaireServicePublicContactEmails(
     organization.cached_code_officiel_geographique,
-    organization.cached_code_postal,
   );
 
   return contactEmails.length > 1;
@@ -83,7 +82,6 @@ export const sendOfficialContactEmailVerificationEmail = async ({
 
   const {
     cached_code_officiel_geographique,
-    cached_code_postal,
     siret,
     cached_libelle: libelle,
   } = organization;
@@ -96,7 +94,6 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     ) {
       const contactEmails = await getAnnuaireServicePublicContactEmails(
         cached_code_officiel_geographique,
-        cached_code_postal,
       );
       if (contactEmails.length > 1) {
         if (!selectedContactEmail) {
