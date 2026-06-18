@@ -110,6 +110,7 @@ import {
   officialContactEmailVerificationRateLimiterMiddleware,
   passwordRateLimiterMiddleware,
   rateLimiterMiddleware,
+  sendEmailVerificationRateLimiterMiddleware,
   sendMagicLinkRateLimiterMiddleware,
   verifyEmailRateLimiterMiddleware,
 } from "../middlewares/rate-limiter";
@@ -271,6 +272,7 @@ export const userRouter = () => {
     "/send-email-verification",
     userIsConnectedGuardMiddleware,
     csrfProtectionMiddleware,
+    sendEmailVerificationRateLimiterMiddleware,
     postSendEmailVerificationController,
     userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
