@@ -122,6 +122,10 @@ export const oidcProviderConfiguration = ({
     // This scope will be deprecated
     is_service_public: ["is_service_public"],
   },
+  clientAuthMethods: ["client_secret_post", "private_key_jwt"],
+  clientDefaults: {
+    token_endpoint_auth_method: "client_secret_post",
+  },
   extraParams: ["sp_name", "siret_hint"],
   features: {
     claimsParameter: { enabled: true },
