@@ -9,6 +9,6 @@ export function clearInteractionSession(req: Request) {
   req.session.certificationDirigeantRequested = undefined;
   req.session.interactionId = undefined;
   req.session.mustReturnOneOrganizationInPayload = undefined;
-  req.session.twoFactorsAuthRequested = undefined;
+  req.session.prompt = undefined;
   req.session.spName = undefined;
 }

@@ -18,46 +18,14 @@ INSERT INTO
 VALUES
   (
     1,
-    'ial2-aal2@yopmail.com',
+    'ial0-aal1-oal1@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     'Jean',
-    'IAL2 AAL2',
-    '0123456789',
-    'Sbire',
-    null,
-    null,
-    false
-  ),
-  (
-    2,
-    'ial2-aal1@yopmail.com',
-    true,
-    CURRENT_TIMESTAMP,
-    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP,
-    'Jean',
-    'IAL2 AAL1',
-    '0123456789',
-    'Sbire',
-    null,
-    null,
-    false
-  ),
-  (
-    3,
-    'ial2-aal1-forced@yopmail.com',
-    true,
-    CURRENT_TIMESTAMP,
-    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP,
-    'Jean',
-    'IAL2 AAL1',
+    'IAL0 AAL1 OAL1',
     '0123456789',
     'Sbire',
     null,
@@ -85,9 +53,7 @@ INSERT INTO
     has_been_greeted
   )
 VALUES
-  (1, 1, false, null, 'domain', true),
-  (2, 1, false, null, 'domain', true),
-  (3, 1, false, null, 'domain', true);
+  (1, 1, false, null, 'domain', true);
 
 INSERT INTO
   oidc_clients (

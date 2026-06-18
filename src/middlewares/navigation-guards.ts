@@ -4,7 +4,6 @@ import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { match, P } from "ts-pattern";
-import { UnverifiedLinkEnum } from "../../packages/identite/src/types";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   HOST,
@@ -34,6 +33,7 @@ import {
 } from "../managers/organization/main";
 import { isCommuneWithMultipleOfficialContactEmails } from "../managers/organization/official-contact-email-verification";
 import {
+  getCurrentAcr,
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
   isWithinAuthenticatedSession,
@@ -59,6 +59,7 @@ import {
   getSelectedOrganizationId,
 } from "../repositories/redis/selected-organization";
 import { getFranceConnectUserInfo } from "../repositories/user";
+import { isAcrSatisfied } from "../services/acr-checks";
 import { isExpired } from "../services/is-expired";
 import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
@@ -324,11 +325,23 @@ const userIsTwoFactorAuthenticatedGuard = async (
     redirect,
   } = context;
   const { id: user_id } = getUserFromAuthenticatedSession(req);
+  // Note:
+  // - forcedIAL is set to 1 since the user can elevate it to level 1 when necessary
+  // - forcedOAL is set to 1 to maintain a consistent value set that doesn't impact the AAL.
+  const isAcrCurrentlySatisfied = isAcrSatisfied(
+    req.session.prompt,
+    await getCurrentAcr(req, { forcedIAL: 1, forcedOAL: 1 }),
+  );
+  const wouldRequestedAcrBeSatisfiedIfAccountHasMfaSetup = isAcrSatisfied(
+    req.session.prompt,
+    await getCurrentAcr(req, { forcedIAL: 1, forcedAAL: 2, forcedOAL: 1 }),
+  );
 
   if (
-    ((await shouldForce2faForUser(user_id)) ||
-      req.session.twoFactorsAuthRequested) &&
-    !isWithinTwoFactorAuthenticatedSession(req)
+    (!isAcrCurrentlySatisfied &&
+      wouldRequestedAcrBeSatisfiedIfAccountHasMfaSetup) ||
+    ((await shouldForce2faForUser(user_id)) &&
+      !isWithinTwoFactorAuthenticatedSession(req))
   ) {
     if (await is2FACapable(user_id)) {
       return redirect("/users/2fa-sign-in");
@@ -565,19 +578,22 @@ const userHasValidFranceConnectIdentityGuard = async <
   ) {
     return redirect("/users/franceconnect");
   }
+  // Note:
+  // - forcedAAL is set to 2 since the user can elevate it to level 2 when necessary.
+  const isAcrCurrentlySatisfied = isAcrSatisfied(
+    req.session.prompt,
+    await getCurrentAcr(req, { forcedAAL: 2 }),
+  );
+  const wouldRequestedAcrBeSatisfiedIfAccountHasFCSetup = isAcrSatisfied(
+    req.session.prompt,
+    await getCurrentAcr(req, { forcedIAL: 1, forcedAAL: 2 }),
+  );
 
-  const selectedOrganizationId = (await getSelectedOrganizationId(user_id))!;
-  const { verification_type: linkType } = (await getUserOrganizationLink(
-    selectedOrganizationId,
-    user_id,
-  ))!;
-
-  const linkTypeRequiresFranceConnection =
-    UnverifiedLinkEnum.safeParse(linkType).success ||
-    linkType === LinkEnum.enum.organization_dirigeant;
+  const requestedAcrRequiresFranceConnection =
+    !isAcrCurrentlySatisfied && wouldRequestedAcrBeSatisfiedIfAccountHasFCSetup;
 
   if (
-    linkTypeRequiresFranceConnection &&
+    requestedAcrRequiresFranceConnection &&
     !(await hasValidFranceConnectIdentity(user_id))
   ) {
     return redirect("/users/franceconnect");

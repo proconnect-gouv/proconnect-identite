@@ -18,46 +18,46 @@ INSERT INTO
 VALUES
   (
     1,
-    'ial2-aal2@yopmail.com',
+    'ial0-aal1-oal1@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     'Jean',
-    'IAL2 AAL2',
+    'IAL1 AAL1 OAL1',
     '0123456789',
     'Sbire',
-    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
-    CURRENT_TIMESTAMP,
+    null,
+    null,
     false
   ),
   (
     2,
-    'ial1-aal2@yopmail.com',
+    'ial0-aal1-oal0@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     'Jean',
-    'IAL1 AAL2',
+    'IAL0 AAL1 0AL0',
     '0123456789',
     'Sbire',
-    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
-    CURRENT_TIMESTAMP,
+    null,
+    null,
     false
   ),
   (
     3,
-    'ial2-aal1@yopmail.com',
+    'ial1-aal1-oal1@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     'Jean',
-    'IAL2 AAL1',
+    'IAL1 AAL1 OAL1',
     '0123456789',
     'Sbire',
     null,
@@ -66,22 +66,38 @@ VALUES
   ),
   (
     4,
-    'ial1-aal1@yopmail.com',
+    'ial0-aal2-oal1@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     'Jean',
-    'IAL1 AAL1',
+    'IAL0 AAL2 OAL1',
     '0123456789',
     'Sbire',
-    null,
-    null,
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
     false
   ),
   (
     5,
+    'ial1-aal2-oal1@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'IAL1 AAL1 OAL1',
+    '0123456789',
+    'Sbire',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    false
+  ),
+  (
+    6,
     'certification-dirigeant@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
@@ -97,7 +113,7 @@ VALUES
     false
   ),
   (
-    6,
+    7,
     'certification-dirigeant-aal2@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
@@ -143,16 +159,10 @@ VALUES
     true
   ),
   (3, 1, false, null, 'domain', true),
+  (4, 1, false, null, 'domain', true),
+  (5, 1, false, null, 'domain', true),
   (
-    4,
-    1,
-    false,
-    null,
-    'no_verification_means_for_entreprise_unipersonnelle',
-    true
-  ),
-  (
-    5,
+    6,
     1,
     false,
     CURRENT_TIMESTAMP,
@@ -160,7 +170,7 @@ VALUES
     true
   ),
   (
-    6,
+    7,
     1,
     false,
     CURRENT_TIMESTAMP,
@@ -182,6 +192,17 @@ INSERT INTO
   )
 VALUES
   (
+    3,
+    '99100',
+    '1990-06-01',
+    '75000',
+    'Un',
+    'male',
+    'Jean',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  ),
+  (
     5,
     '99100',
     '1990-06-01',
@@ -194,6 +215,17 @@ VALUES
   ),
   (
     6,
+    '99100',
+    '1990-06-01',
+    '75000',
+    'Un',
+    'male',
+    'Jean',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  ),
+  (
+    7,
     '99100',
     '1990-06-01',
     '75000',

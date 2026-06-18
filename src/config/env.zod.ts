@@ -107,29 +107,6 @@ export const secretEnvSchema = z.object({
 
 export const paramsEnvSchema = z.object({
   ACCESS_LOG_PATH: z.string().optional(),
-  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: z
-    .string()
-    .default("https://proconnect.gouv.fr/assurance/certification-dirigeant"),
-  ACR_VALUE_FOR_IAL1_AAL1: z
-    .string()
-    .default("https://proconnect.gouv.fr/assurance/self-asserted"),
-  ACR_VALUE_FOR_IAL1_AAL2: z
-    .string()
-    .default("https://proconnect.gouv.fr/assurance/self-asserted-2fa"),
-  ACR_VALUE_FOR_IAL2_AAL1: z
-    .string()
-    .default("https://proconnect.gouv.fr/assurance/consistency-checked"),
-  ACR_VALUE_FOR_IAL2_AAL2: z
-    .string()
-    .default("https://proconnect.gouv.fr/assurance/consistency-checked-2fa"),
-  ACR_VALUE_FOR_IAL3_AAL1: z
-    .string()
-    .default("https://proconnect.gouv.fr/assurance/certification-dirigeant"),
-  ACR_VALUE_FOR_IAL3_AAL2: z
-    .string()
-    .default(
-      "https://proconnect.gouv.fr/assurance/certification-dirigeant-2fa",
-    ),
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()

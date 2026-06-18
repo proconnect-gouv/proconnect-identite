@@ -23,6 +23,7 @@ services:
       CLIENT_ID: client_id
       HOST: http://localhost:3001
       PROVIDER: http://localhost:3000/
+      ACR_VALUES_FOR_MFA: "eidas0-mfa,eidas1-mfa,eidas2,eidas3"
     network_mode: "host"
 
   standard-client:
@@ -36,6 +37,7 @@ services:
       SCOPES: openid email profile organization
       SITE_TITLE: standard-client
       STYLESHEET_URL:
+      ACR_VALUES_FOR_MFA: "eidas0-mfa,eidas1-mfa,eidas2,eidas3"
     network_mode: "host"
 
   proconnect-federation-client:
@@ -53,6 +55,7 @@ services:
       SCOPES: openid uid given_name usual_name email siren siret organizational_unit belonging_population phone chorusdt is_service_public is_public_service
       STYLESHEET_URL:
       USERINFO_SIGNED_RESPONSE_ALG: ES256
+      ACR_VALUES_FOR_MFA: "eidas0-mfa,eidas1-mfa,eidas2,eidas3"
     network_mode: "host"
 
   maildev:

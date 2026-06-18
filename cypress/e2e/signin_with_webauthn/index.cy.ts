@@ -95,9 +95,7 @@ describe("through a service provider with 2fa only on sites that require it", ()
     cy.origin("http://localhost:4000", () => {
       cy.title().should("include", "standard-client - ProConnect");
       cy.contains('"amr": [\n    "pwd",\n    "pop",\n    "mfa"\n  ],');
-      cy.contains(
-        '"acr": "https://proconnect.gouv.fr/assurance/consistency-checked-2fa"',
-      );
+      cy.contains('"acr": "eidas0-mfa"');
     });
   });
 });
