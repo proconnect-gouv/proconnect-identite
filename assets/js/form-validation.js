@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", function () {
   var forms = document.querySelectorAll("form");
 
   forms.forEach(function (form) {
-    var submitButton = form.querySelector("button.fr-btn");
+    var submitButton = form.querySelector(
+      "button.fr-btn:not(.disabled-with-countdown)",
+    );
 
     if (!submitButton) {
       return;

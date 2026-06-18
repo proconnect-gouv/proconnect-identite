@@ -26,6 +26,9 @@ describe("sign-in with email verification renewal", () => {
 
     cy.login("rogal.dorn@imperialfists.world");
 
+    // Wait for form-validation.js to attempt to enable buttons on the page.
+    cy.wait(500);
+
     cy.get('[action="/users/send-email-verification"]')
       .contains("Recevoir un nouveau code")
       .should("be.disabled");

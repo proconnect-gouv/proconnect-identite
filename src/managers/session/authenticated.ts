@@ -256,9 +256,9 @@ export async function getCurrentIAL(req: Request) {
 
 // get the current Authentication Assurance Level
 // 0: Simple (mot de passe)
-// 1: MFA (auto-géré)
-// 2. MFA (géré par l'organisation) (not available yet)
-// 3. MFA matérielle (géré par l'organisation) (not available yet)
+// 1: MFA faible
+// 2. MFA forte (not available yet)
+// 3. MFA forte matérielle (not available yet)
 export async function getCurrentAAL(req: Request) {
   const currentAmrValues = req.session.amr!;
 

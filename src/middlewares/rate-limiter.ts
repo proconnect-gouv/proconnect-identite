@@ -104,6 +104,16 @@ export const resetPasswordRateLimiter = new RateLimiterRedis({
   duration: 15 * 60, // per 15 minutes per email
 });
 
+export const sendEmailVerificationRateLimiterMiddleware =
+  emailRateLimiterMiddlewareFactory(
+    new RateLimiterRedis({
+      storeClient: redisClient,
+      keyPrefix: "rate-limiter-send-email-verification",
+      points: 5, // 5 requests
+      duration: 15 * 60, // per 15 minutes per email
+    }),
+  );
+
 export const sendMagicLinkRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
