@@ -53,31 +53,12 @@ if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
   const cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const cspConfig = {
       directives: {
-        defaultSrc: ["'self'", "client.crisp.chat"],
-        imgSrc: [
-          "'self'",
-          "data:",
-          "stats.data.gouv.fr",
-          "client.crisp.chat",
-          "image.crisp.chat",
-          "storage.crisp.chat",
-          "wss://client.relay.crisp.chat",
-        ],
-        connectSrc: [
-          "'self'",
-          "stats.data.gouv.fr",
-          "client.crisp.chat",
-          "wss://client.relay.crisp.chat",
-          "storage.crisp.chat",
-        ],
-        frameSrc: ["'self'", "proconnect.crisp.help"],
-        scriptSrc: [
-          "'self'",
-          "stats.data.gouv.fr",
-          "client.crisp.chat",
-          "blob:",
-        ],
-        styleSrc: ["'self'", "client.crisp.chat", "'unsafe-inline'"],
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "stats.data.gouv.fr"],
+        connectSrc: ["'self'", "stats.data.gouv.fr"],
+        frameSrc: ["'self'"],
+        scriptSrc: ["'self'", "stats.data.gouv.fr", "blob:"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
         fontSrc: ["'self'", "data:"],
         // As for https://github.com/w3c/webappsec-csp/issues/8, the feature is debated
         // and seems not useful for open id provider redirection.
