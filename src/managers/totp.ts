@@ -3,7 +3,7 @@ import { Secret, TOTP } from "otpauth";
 import qrcode from "qrcode";
 import { APPLICATION_NAME, SYMMETRIC_ENCRYPTION_KEY } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
-import { getById, update } from "../repositories/user";
+import { getActiveById, update } from "../repositories/user";
 import {
   decryptSymmetric,
   encryptSymmetric,
@@ -52,7 +52,7 @@ export const confirmTotpRegistration = async (
   totpToken: string,
 ) => {
   // ASSERTION: user exists
-  await getById(user_id);
+  await getActiveById(user_id);
 
   if (!temporaryTotpKey) {
     throw new InvalidTotpTokenError();
@@ -82,9 +82,10 @@ export const confirmTotpRegistration = async (
 };
 
 export const deleteTotpConfiguration = async (user_id: number) => {
-  let user = await getById(user_id);
+  // ASSERTION: user exists
+  await getActiveById(user_id);
 
-  user = await update(user_id, {
+  let user = await update(user_id, {
     encrypted_totp_key: null,
     totp_key_verified_at: null,
   });
@@ -97,12 +98,12 @@ export const deleteTotpConfiguration = async (user_id: number) => {
 };
 
 export const isTotpConfiguredForUser = async (user_id: number) => {
-  const user = await getById(user_id);
+  const user = await getActiveById(user_id);
   return !isEmpty(user.encrypted_totp_key);
 };
 
 export const authenticateWithTotp = async (user_id: number, token: string) => {
-  const user = await getById(user_id);
+  const user = await getActiveById(user_id);
   const decryptedTotpKey = decryptSymmetric(
     SYMMETRIC_ENCRYPTION_KEY,
     user.encrypted_totp_key,

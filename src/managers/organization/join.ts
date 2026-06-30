@@ -65,7 +65,7 @@ import {
   updateUserOrganizationLink,
   upsert,
 } from "../../repositories/organization/setters";
-import { getById as getUserById } from "../../repositories/user";
+import { getActiveById as getActiveUserById } from "../../repositories/user";
 import {
   isAFreeEmailProvider,
   usesAFreeEmailProvider,
@@ -189,7 +189,7 @@ export const joinOrganization = async ({
   }
 
   // Ensure user_id is valid
-  const user = await getUserById(user_id);
+  const user = await getActiveUserById(user_id);
 
   const usersOrganizations = await findByUserId(user_id);
   if (some(usersOrganizations, ["id", organization.id])) {
@@ -454,7 +454,7 @@ export const greetForJoiningOrganization = async ({
 
   if (isEmpty(organization)) throw new OrganizationNotFoundError();
 
-  const { given_name, family_name, email } = await getUserById(user_id);
+  const { given_name, family_name, email } = await getActiveUserById(user_id);
 
   // Welcome the user when he joins is first organization as he may now be able to connect
   await sendMail({

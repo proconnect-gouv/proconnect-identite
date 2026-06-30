@@ -11,8 +11,11 @@ import { findByIdFactory as findOrganizationByIdFactory } from "../repositories/
 import { findByUserIdFactory } from "../repositories/organization/find-by-user-id.js";
 import { getUsersByOrganizationFactory } from "../repositories/organization/get-users-by-organization.js";
 import { createUserFactory } from "../repositories/user/create.js";
+import { findActiveByEmailFactory } from "../repositories/user/find-active-by-email.js";
+import { findActiveByIdFactory as findActiveUserByIdFactory } from "../repositories/user/find-active-by-id.js";
 import { findByEmailFactory } from "../repositories/user/find-by-email.js";
 import { findByIdFactory as findUserByIdFactory } from "../repositories/user/find-by-id.js";
+import { getActiveByIdFactory } from "../repositories/user/get-active-by-id.js";
 import { getByIdFactory } from "../repositories/user/get-by-id.js";
 import { getFranceConnectUserInfoFactory } from "../repositories/user/get-franceconnect-user-info.js";
 import { updateUserOrganizationLinkFactory } from "../repositories/user/update-user-organization-link.js";
@@ -57,8 +60,11 @@ export function createContext({
       users: {
         create: createUserFactory({ pg }),
         findByEmail: findByEmailFactory({ pg }),
+        findActiveByEmail: findActiveByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
+        findActiveById: findActiveUserByIdFactory({ pg }),
         getById: getByIdFactory({ pg }),
+        getActiveById: getActiveByIdFactory({ pg }),
         getFranceConnectUserInfo: getFranceConnectUserInfoFactory({ pg }),
         update: updateUserFactory({ pg }),
         upsetFranceconnectUserinfo: upsertFranceconnectUserinfoFactory({ pg }),

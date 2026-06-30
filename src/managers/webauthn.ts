@@ -33,8 +33,8 @@ import {
   updateAuthenticator,
 } from "../repositories/authenticator";
 import {
-  findByEmail as findUserByEmail,
-  getById,
+  findActiveByEmail as findActiveUserByEmail,
+  getActiveById,
   update,
 } from "../repositories/user";
 import { logger } from "../services/log";
@@ -49,14 +49,14 @@ const origin = HOST;
 
 export const isWebauthnConfiguredForUser = async (user_id: number) => {
   // ASSERTION: user exists
-  await getById(user_id);
+  await getActiveById(user_id);
 
   const authenticators = await getAuthenticatorsByUserId(user_id);
   return !isEmpty(authenticators);
 };
 
 export const getUserAuthenticators = async (email: string) => {
-  const user = await findUserByEmail(email);
+  const user = await findActiveUserByEmail(email);
 
   if (isEmpty(user)) {
     throw new NotFoundError();
@@ -89,7 +89,7 @@ export const deleteUserAuthenticator = async (
   email: string,
   credential_id: string,
 ) => {
-  const user = await findUserByEmail(email);
+  const user = await findActiveUserByEmail(email);
 
   if (isEmpty(user)) {
     throw new NotFoundError();
@@ -109,7 +109,7 @@ export const deleteUserAuthenticator = async (
 };
 
 export const getRegistrationOptions = async (email: string) => {
-  const user = await findUserByEmail(email);
+  const user = await findActiveUserByEmail(email);
 
   if (isEmpty(user)) {
     throw new NotFoundError();
@@ -159,7 +159,7 @@ export const verifyRegistration = async ({
   email: string;
   response: RegistrationResponseJSON;
 }) => {
-  const user = await findUserByEmail(email);
+  const user = await findActiveUserByEmail(email);
 
   if (isEmpty(user) || !user.current_challenge) {
     throw new NotFoundError();
@@ -234,7 +234,7 @@ export const getAuthenticationOptions = async (
     throw new NotFoundError();
   }
 
-  const user = await findUserByEmail(email);
+  const user = await findActiveUserByEmail(email);
 
   if (isEmpty(user)) {
     throw new UserNotFoundError();
@@ -275,7 +275,7 @@ export const verifyAuthentication = async ({
     throw new NotFoundError();
   }
 
-  const user = await findUserByEmail(email);
+  const user = await findActiveUserByEmail(email);
 
   if (isEmpty(user) || !user.current_challenge) {
     throw new NotFoundError();
