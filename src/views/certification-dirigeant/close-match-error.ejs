@@ -5,8 +5,8 @@
   <p>Des discordances ont été détectées entre votre identité <b>FranceConnect</b> (affichée ici) et celle connue du <b><%= dataSourceLabel; %></b> pour <b><%= organization_label; %></b>.
 
 
-  <div class="fr-pl-1w <%= locals.matches.has('given_name') ? '' : 'info-mismatch' %>">
-    <% if (!locals.matches.has('given_name')) { %>
+  <div class="fr-pl-1w <%= locals.matches.has('first_name') ? '' : 'info-mismatch' %>">
+    <% if (!locals.matches.has('first_name')) { %>
       <p class="fr-badge fr-badge--warning">Informations discordantes</p>
     <% } %>
     <p class="fr-mb-0 fr-text--sm">

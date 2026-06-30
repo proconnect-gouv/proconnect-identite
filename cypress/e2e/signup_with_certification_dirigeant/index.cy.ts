@@ -256,7 +256,7 @@ describe("❎ Bad match", () => {
     cy.contains("login_required");
   });
 
-  it("Adrian Volckaert maybe a dirigeant of Herisson", () => {
+  it("Adrian Volckaert maybe a dirigeant of Herisson (mismatch on given_name)", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.magicLinkLogin("adrian.volckaert@yopmail.com");
 
@@ -279,8 +279,57 @@ describe("❎ Bad match", () => {
       "Des discordances ont été détectées entre votre identité FranceConnect (affichée ici) et celle connue du Registre National des Entreprises pour Herisson.",
     );
 
+    cy.contains("Prénom").siblings().contains("Informations discordantes");
+    cy.contains("Nom")
+      .siblings()
+      .should("not.contain", "Informations discordantes");
+    cy.contains("Date de naissance")
+      .siblings()
+      .should("not.contain", "Informations discordantes");
+    cy.contains("Commune de naissance")
+      .siblings()
+      .should("not.contain", "Informations discordantes");
+
     cy.contains("Vérifier sur l’Annuaire des Entreprises");
     cy.contains("Comment corriger les données ?");
+
+    cy.contains("Continuer").click();
+
+    cy.title().should("include", "Error");
+    cy.contains("AuthorizationResponseError");
+    cy.contains("login_required");
+  });
+
+  it("Adrian Volckaert has matching first_name but wrong family_name for Suricate", () => {
+    cy.title().should("include", "S'inscrire ou se connecter - ");
+    cy.magicLinkLogin("adrian.volckaert@yopmail.com");
+
+    cy.title().should("include", "Rejoindre une organisation - ");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("52169091700021");
+    cy.getByLabel(
+      "Organisation correspondante au SIRET donné : Suricate - The kilberry",
+    ).click();
+
+    cy.title().should("include", "Certification dirigeant -");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Adrian Volckaert").click();
+
+    cy.title().should("include", "Certification impossible -");
+    cy.contains("Impossible de vous certifier ⚠️");
+
+    cy.contains("Prénom")
+      .siblings()
+      .should("not.contain", "Informations discordantes");
+    cy.contains("Nom").siblings().contains("Informations discordantes");
+    cy.contains("Date de naissance")
+      .siblings()
+      .should("not.contain", "Informations discordantes");
+    cy.contains("Commune de naissance")
+      .siblings()
+      .should("not.contain", "Informations discordantes");
 
     cy.contains("Continuer").click();
 
