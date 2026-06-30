@@ -7,7 +7,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.mfaLogin("unused1@yopmail.com");
 
-    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
+    cy.contains('"amr": [\n    "pwd",\n    "otp",\n    "mfa"\n  ],');
   });
 
   it("should sign-in with password and no TOTP", function () {
@@ -31,7 +31,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.mfaLogin("lion.eljonson@darkangels.world");
 
-    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
+    cy.contains('"amr": [\n    "pwd",\n    "otp",\n    "mfa"\n  ],');
   });
 
   it("should sign-in with TOTP when forced by SP, password only otherwise", function () {
@@ -52,7 +52,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.mfaLogin("lion.eljonson@darkangels.world");
 
-    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
+    cy.contains('"amr": [\n    "pwd",\n    "otp",\n    "mfa"\n  ],');
   });
 
   it("should only show totp step when already logged", function () {
@@ -71,7 +71,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.fillTotpFields();
 
-    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
+    cy.contains('"amr": [\n    "pwd",\n    "otp",\n    "mfa"\n  ],');
   });
 
   it("should display error message", function () {
@@ -100,6 +100,6 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.fillTotpFields();
 
-    cy.contains('"amr": [\n    "pwd",\n    "totp",\n    "mfa"\n  ],');
+    cy.contains('"amr": [\n    "pwd",\n    "otp",\n    "mfa"\n  ],');
   });
 });

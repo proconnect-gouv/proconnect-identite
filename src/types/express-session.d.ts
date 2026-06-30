@@ -21,12 +21,12 @@ export type AmrValue =
   // Standard values are described here https://datatracker.ietf.org/doc/html/rfc8176#section-2
   | "hwk"
   | "pwd"
-  | "totp"
   | "pop"
   | "mfa"
   // "email-link" is described as "mail" here https://docs.partenaires.franceconnect.gouv.fr/fs/fs-technique/fs-technique-amr/
   | "email-link"
-  // "email-otp" and "uv" is used in ProConnect Identité for internal usage
+  // The following values are used in ProConnect Identité for internal usage
+  | "totp"
   | "email-otp"
   | "uv";
 

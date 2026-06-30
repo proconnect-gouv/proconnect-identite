@@ -220,6 +220,10 @@ export const getSessionStandardizedAuthenticationMethodsReferences = (
     amr === "email-link" ? "mail" : amr,
   );
 
+  standardizedAmr = standardizedAmr.map((amr) =>
+    amr === "totp" ? "otp" : amr,
+  );
+
   return standardizedAmr;
 };
 
