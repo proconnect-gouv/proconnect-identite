@@ -71,7 +71,9 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.fillTotpFields();
 
-    cy.contains('"amr": [\n    "pwd",\n    "otp",\n    "mfa"\n  ],');
+    cy.contains(
+      '"amr": [\n    "pwd",\n    "mail",\n    "otp",\n    "mfa"\n  ],',
+    );
   });
 
   it("should display error message", function () {
@@ -100,6 +102,8 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.fillTotpFields();
 
-    cy.contains('"amr": [\n    "pwd",\n    "otp",\n    "mfa"\n  ],');
+    cy.contains(
+      '"amr": [\n    "pwd",\n    "mail",\n    "otp",\n    "mfa"\n  ],',
+    );
   });
 });

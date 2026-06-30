@@ -212,17 +212,18 @@ export const getSessionStandardizedAuthenticationMethodsReferences = (
 
   let standardizedAmr: string[] = [...req.session.amr];
 
-  standardizedAmr = standardizedAmr.filter(
-    (amr) => amr !== "uv" && amr !== "email-otp",
-  );
+  standardizedAmr = standardizedAmr.filter((amr) => amr !== "uv");
 
   standardizedAmr = standardizedAmr.map((amr) =>
-    amr === "email-link" ? "mail" : amr,
+    amr === "email-link" || amr === "email-otp" ? "mail" : amr,
   );
 
   standardizedAmr = standardizedAmr.map((amr) =>
     amr === "totp" ? "otp" : amr,
   );
+
+  // remove duplicate values
+  standardizedAmr = [...new Set(standardizedAmr)];
 
   return standardizedAmr;
 };
