@@ -1,4 +1,4 @@
-import { purgeCSSPlugin } from "@fullhuman/postcss-purgecss";
+import purgeCSSPlugin from "@fullhuman/postcss-purgecss";
 
 export const plugins = [
   purgeCSSPlugin({
