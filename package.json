@@ -160,5 +160,8 @@
   },
   "engines": {
     "node": "^24.11.0"
+  },
+  "allowScripts": {
+    "cypress": true
   }
 }

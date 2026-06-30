@@ -1,0 +1,27 @@
+{
+  "id": "🎭 RNE SURICATE Company ID",
+  "siren": "521690917",
+  "formality": {
+    "content": {
+      "personneMorale": {
+        "composition": {
+          "pouvoirs": [
+            {
+              "typeDePersonne": "INDIVIDU",
+              "actif": true,
+              "individu": {
+                "descriptionPersonne": {
+                  "dateDeNaissance": "1979-11-12",
+                  "nom": "Cheron",
+                  "prenoms": ["Stevens"],
+                  "genre": "1"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "diffusionINSEE": "O"
+  }
+}
