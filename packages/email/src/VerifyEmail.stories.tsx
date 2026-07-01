@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import VerifyEmail, { type Props } from "./VerifyEmail";
+import VerifyEmail, { type Props } from "./VerifyEmail.js";
 
 //
 

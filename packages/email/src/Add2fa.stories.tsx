@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import Add2fa, { type Props } from "./Add2fa";
+import Add2fa, { type Props } from "./Add2fa.js";
 
 //
 

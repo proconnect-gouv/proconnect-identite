@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import MagicLink, { type Props } from "./MagicLink";
+import MagicLink, { type Props } from "./MagicLink.js";
 
 //
 

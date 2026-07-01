@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import Delete2faProtection, { type Props } from "./Delete2faProtection";
+import Delete2faProtection, { type Props } from "./Delete2faProtection.js";
 
 //
 

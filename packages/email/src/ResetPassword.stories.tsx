@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import ResetPassword, { type Props } from "./ResetPassword";
+import ResetPassword, { type Props } from "./ResetPassword.js";
 
 //
 

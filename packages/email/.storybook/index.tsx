@@ -7,8 +7,8 @@ import type {
   Renderer,
   StoryAnnotations,
 } from "@storybook/csf";
-import { ChangeView } from "./ChangeView";
-import { SendEmailFormWebComponent } from "./SendEmailFormWebComponent";
+import { ChangeView } from "./ChangeView.js";
+import { SendEmailFormWebComponent } from "./SendEmailFormWebComponent.js";
 
 //
 

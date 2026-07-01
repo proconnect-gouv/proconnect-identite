@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import Welcome, { type Props } from "./Welcome";
+import Welcome, { type Props } from "./Welcome.js";
 
 //
 

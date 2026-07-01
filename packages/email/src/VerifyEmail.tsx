@@ -1,7 +1,7 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout";
-import { Badge, Em, Text } from "./components";
+import { Layout, type LayoutProps } from "./_layout.js";
+import { Badge, Em, Text } from "./components/index.js";
 
 //
 
