@@ -1,7 +1,7 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout";
-import { Text } from "./components";
+import { Layout, type LayoutProps } from "./_layout.js";
+import { Text } from "./components/index.js";
 
 export default function UpdatePersonalDataMail(props: Props) {
   const { baseurl, family_name, given_name, updatedFields } = props;

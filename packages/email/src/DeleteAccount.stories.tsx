@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import DeleteAccount, { type Props } from "./DeleteAccount";
+import DeleteAccount, { type Props } from "./DeleteAccount.js";
 
 //
 

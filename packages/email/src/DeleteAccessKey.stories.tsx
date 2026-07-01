@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import DeleteAccessKey, { type Props } from "./DeleteAccessKey";
+import DeleteAccessKey, { type Props } from "./DeleteAccessKey.js";
 
 //
 

@@ -3,7 +3,7 @@
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
 import OfficialContactEmailVerification, {
   type Props,
-} from "./OfficialContactEmailVerification";
+} from "./OfficialContactEmailVerification.js";
 
 //
 
