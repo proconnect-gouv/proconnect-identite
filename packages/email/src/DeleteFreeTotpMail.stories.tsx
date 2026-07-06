@@ -1,7 +1,7 @@
 //
 
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
-import DeleteFreeTotpMail, { type Props } from "./DeleteFreeTotpMail";
+import DeleteFreeTotpMail, { type Props } from "./DeleteFreeTotpMail.js";
 
 //
 

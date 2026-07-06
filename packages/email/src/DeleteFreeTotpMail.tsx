@@ -1,7 +1,7 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout";
-import { Link, Text } from "./components";
+import { Layout, type LayoutProps } from "./_layout.js";
+import { Link, Text } from "./components/index.js";
 
 //
 

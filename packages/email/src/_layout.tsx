@@ -1,7 +1,7 @@
 //
 
 import type { PropsWithChildren } from "@kitajs/html";
-import { Html, ProConnectLogo, Section, Text } from "./components";
+import { Html, ProConnectLogo, Section, Text } from "./components/index.js";
 
 //
 

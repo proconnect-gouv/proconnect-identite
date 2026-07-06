@@ -1,7 +1,7 @@
 //
 
 import type { PropsWithChildren } from "@kitajs/html";
-import { blueFranceSun_113, fontFamily } from "./style";
+import { blueFranceSun_113, fontFamily } from "./style.js";
 
 //
 

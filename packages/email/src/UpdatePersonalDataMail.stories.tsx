@@ -5,7 +5,7 @@ import type {
   Renderer,
   StoryAnnotations,
 } from "@storybook/csf";
-import UpdatePersonalDataMail, { type Props } from "./UpdatePersonalDataMail";
+import UpdatePersonalDataMail, { type Props } from "./UpdatePersonalDataMail.js";
 
 //
 export default {
