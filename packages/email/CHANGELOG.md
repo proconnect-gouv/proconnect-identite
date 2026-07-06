@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.0.1
+
+### Patch Changes
+
+- [#2017](https://github.com/proconnect-gouv/proconnect-identite/pull/2017) [`dc34297`](https://github.com/proconnect-gouv/proconnect-identite/commit/dc34297083123a05821167baddf51a781f807308) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 📦 Rend le package installable de manière autonome hors du monorepo
+
+  Passe la résolution de modules TypeScript en `NodeNext` et ajoute les extensions `.js` explicites sur les imports relatifs (requis par Node ESM). Marque le package public (`private: false`), limite le tarball publié au dossier `dist` via `files`, et déplace `@kitajs/ts-html-plugin` en dépendance de développement.
+
 ## 1.0.0
 
 ### Major Changes

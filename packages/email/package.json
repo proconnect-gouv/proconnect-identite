@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.email",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/email#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
@@ -12,7 +12,9 @@
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "require": {
