@@ -138,7 +138,7 @@
     "@types/oidc-provider": "^9.5.0",
     "@types/pg": "^8.15.5",
     "@types/qrcode": "^1.5.5",
-    "axe-core": "^4.11.1",
+    "axe-core": "^4.12.1",
     "concurrently": "^10.0.3",
     "copy-and-watch": "^0.1.8",
     "csv": "^6.4.1",
