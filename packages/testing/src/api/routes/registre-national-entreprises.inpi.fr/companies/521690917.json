@@ -1,0 +1,42 @@
+{
+  "id": "🎭 RNE SURICATE Company ID",
+  "siren": "521690917",
+  "formality": {
+    "content": {
+      "personneMorale": {
+        "composition": {
+          "pouvoirs": [
+            {
+              "typeDePersonne": "INDIVIDU",
+              "actif": true,
+              "individu": {
+                "descriptionPersonne": {
+                  "dateDeNaissance": "1979-11-12",
+                  "nom": "Cheron",
+                  "prenoms": ["Stevens"],
+                  "genre": "1"
+                }
+              }
+            },
+            {
+              "typeDePersonne": "INDIVIDU",
+              "actif": true,
+              "individu": {
+                "descriptionPersonne": {
+                  "dateDeNaissance": "1984-06-05",
+                  "nom": "DURAND",
+                  "prenoms": ["ADRIAN"],
+                  "genre": "1",
+                  "lieuDeNaissance": "75111",
+                  "codePostalNaissance": "75011",
+                  "paysNaissance": "FRANCE"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "diffusionINSEE": "O"
+  }
+}
