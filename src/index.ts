@@ -58,7 +58,6 @@ if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
         connectSrc: ["'self'", "stats.data.gouv.fr"],
         frameSrc: ["'self'"],
         scriptSrc: ["'self'", "stats.data.gouv.fr", "blob:"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
         fontSrc: ["'self'", "data:"],
         // As for https://github.com/w3c/webappsec-csp/issues/8, the feature is debated
         // and seems not useful for open id provider redirection.
