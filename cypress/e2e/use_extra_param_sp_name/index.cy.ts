@@ -13,7 +13,7 @@ describe("display sp name", () => {
     cy.title().should("include", "Choisir un mode de double authentification");
 
     cy.contains(
-      "ProConnect Test demande la mise en place d'une double authentification pour améliorer la sécurité de votre compte",
+      "En plus du mot de passe, une étape de sécurité supplémentaire sera demandée à chaque nouvelle session sur ProConnect Test.",
     );
   });
 });

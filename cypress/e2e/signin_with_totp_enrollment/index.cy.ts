@@ -10,7 +10,7 @@ describe("sign-in with totp enrollment", () => {
 
     // Test of the generic formula when sp_name is not returned
     cy.contains(
-      "Le service auquel vous souhaitez accéder demande la mise en place d'une double authentification pour améliorer la sécurité de votre compte.",
+      "En plus du mot de passe, une étape de sécurité supplémentaire sera demandée à chaque nouvelle session sur ce service.",
     );
 
     cy.contains("Code à usage unique (TOTP)").click();
