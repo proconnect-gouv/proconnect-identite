@@ -154,7 +154,7 @@
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-sql": "^0.19.2",
     "tld-extract": "^2.1.0",
-    "typescript": "^5.8.3",
+    "typescript": "^6.0.3",
     "vite": "^7.3.2",
     "zx": "^8.8.4"
   },
