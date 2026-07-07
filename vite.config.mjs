@@ -33,11 +33,6 @@ export default defineConfig(() => {
   const config = {
     // base is same as outDir because our express app serves it under /dist, not /
     base: "/dist",
-    css: {
-      lightningcss: {
-        errorRecovery: true,
-      },
-    },
     build: {
       manifest: true,
       rollupOptions: {
