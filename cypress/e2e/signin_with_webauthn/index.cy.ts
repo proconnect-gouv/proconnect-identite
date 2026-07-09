@@ -17,7 +17,7 @@ describe("add passkey authentication", () => {
     cy.contains("Configurer la double authentification").click();
 
     cy.title().should("include", "Double authentification - ProConnect");
-    cy.contains("Choisir votre méthode de double authentification");
+    cy.contains("Choisir votre méthode de connexion renforcée");
     cy.contains("Clé d'accès (passkey)").click();
     cy.contains("Continuer").click();
 

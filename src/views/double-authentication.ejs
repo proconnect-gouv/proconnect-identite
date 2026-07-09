@@ -2,7 +2,7 @@
     <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <h1 class="fr-h3">
-            Choisir votre méthode de double authentification
+            Choisir votre méthode de connexion renforcée
         </h1>
         <div class="fr-callout fr-icon-alert-line" id="webauthn-not-supported" hidden>
             <h4 class="fr-callout__title">
@@ -25,25 +25,22 @@
             method="get"
         >
         <fieldset
-            class="fr-fieldset fr-mb-0"
+            class="fr-fieldset fr-mb-0 fr-p-0 fr-mx-0 fr-px-0"
             aria-labelledby="radio-legend radio-messages"
             >
-            <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-legend">
-                Méthode d'authentification
-            </legend>
-            <div id="totp-option" class="fr-fieldset__element">
+            <div id="totp-option" class="fr-fieldset__element border fr-p-2w">
                 <div class="fr-radio-group">
                 <input type="radio" id="radio-totp" name="radio-2fa" required />
                 <label class="fr-label" for="radio-totp">
-                    Code à usage unique (TOTP)
+                    Code à usage unique (TOTP)<span class="fr-hint-text">Générez un code via une application smartphone ou un logiciel sur votre ordinateur.</span>
                 </label>
                 </div>
             </div>
-            <div id="webauthn-btn-begin-registration" class="fr-fieldset__element">
+            <div id="webauthn-btn-begin-registration" class="fr-fieldset__element border fr-p-2w">
                 <div class="fr-radio-group">
                 <input type="radio" id="radio-passkey" name="radio-2fa" required />
                 <label class="fr-label" for="radio-passkey">
-                    Clé d'accès (passkey)
+                    Clé d'accès (passkey)<span class="fr-hint-text">Utilisez la biométrie ou le code PIN de votre session d’ordinateur.</span>
                 </label>
                 </div>
             </div>

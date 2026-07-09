@@ -12,7 +12,7 @@ describe("add 2fa authentication", () => {
       .contains("Configurer la double authentification")
       .click();
 
-    cy.contains("Choisir votre méthode de double authentification");
+    cy.contains("Choisir votre méthode de connexion renforcée");
 
     cy.contains("Code à usage unique (TOTP)").click();
 

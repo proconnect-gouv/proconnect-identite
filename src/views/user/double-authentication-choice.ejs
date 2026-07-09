@@ -2,16 +2,12 @@
   <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
   <div class="fr-alert fr-alert--info fr-mb-5w">
     <p>
-      <% if (locals.spName) { %>
-        <%= locals.spName; %>
-      <% } else { %>
-        Le service auquel vous souhaitez accéder
-      <% } %>
-      demande la mise en place d'une <b>double authentification</b>
-      pour améliorer la sécurité de votre compte.
+      <p>
+      En plus du mot de passe, une <b>étape de sécurité supplémentaire</b> sera demandée à chaque nouvelle session sur <%= locals.spName ? locals.spName : "ce service" %>.
+    </p>
     </p>
   </div>
-  <h1 class="fr-h3">Choisir votre méthode de double authentification</h1>
+  <h1 class="fr-h3">Choisir votre méthode de connexion renforcée</h1>
   <div class="fr-callout fr-icon-alert-line" id="webauthn-not-supported" hidden>
     <p class="fr-callout__title fr-h4">
       Impossible de créer une clé d’accès sur cet appareil
@@ -33,25 +29,22 @@
     method="get"
   >
     <fieldset
-      class="fr-fieldset fr-mb-0"
+      class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
       aria-labelledby="radio-legend radio-messages"
     >
-      <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-legend">
-        Méthode d'authentification
-      </legend>
-      <div id="totp-option" class="fr-fieldset__element">
+      <div id="totp-option" class="fr-fieldset__element border fr-p-2w">
         <div class="fr-radio-group">
           <input type="radio" id="radio-totp" name="radio-2fa" required/>
           <label class="fr-label" for="radio-totp">
-            Code à usage unique (TOTP)
+            Code à usage unique (TOTP)<span class="fr-hint-text">Générez un code via une application smartphone ou un logiciel sur votre ordinateur.</span>
           </label>
         </div>
       </div>
-      <div id="webauthn-btn-begin-registration" class="fr-fieldset__element">
+      <div id="webauthn-btn-begin-registration" class="fr-fieldset__element border fr-p-2w">
         <div class="fr-radio-group">
           <input type="radio" id="radio-passkey" name="radio-2fa" required/>
           <label class="fr-label" for="radio-passkey">
-            Clé d'accès (passkey)
+            Clé d'accès (passkey)<span class="fr-hint-text">Utilisez la biométrie ou le code PIN de votre session d’ordinateur.</span>
           </label>
         </div>
       </div>
