@@ -4,6 +4,7 @@ import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { format } from "prettier";
 import type { Argv, CommandModule } from "yargs";
+import { z } from "zod";
 
 //
 
@@ -35,6 +36,17 @@ export function AnnuaireCommandFactory({
 
 //
 
+const AnnuaireRecordsSchema = z.object({
+  total_count: z.number(),
+  results: z.array(
+    z.object({
+      nom: z.string(),
+      adresse_courriel: z.string().nullish(),
+      code_insee_commune: z.string(),
+    }),
+  ),
+});
+
 const AddMairiesCommand: CommandModule<
   AnnuaireCommandOptions,
   AnnuaireCommandOptions & { code_insee: string }
@@ -56,14 +68,31 @@ const AddMairiesCommand: CommandModule<
       { headers: { accept: "application/json" } },
     );
     if (!response.ok) throw new Error(await response.text());
-    const content = (await response.json()) as { total_count: number };
+    const content = AnnuaireRecordsSchema.parse(await response.json());
     if (content.total_count === 0) {
       throw new Error(`No mairie found for code insee ${code_insee}`);
     }
 
+    // Only keep what the api-annuaire-service-public connector reads, so the
+    // daily drift check does not fire on noise (phone numbers, GPS
+    // coordinates, opening hours...)
+    const normalized = {
+      total_count: content.total_count,
+      results: content.results.map(
+        ({ nom, adresse_courriel, code_insee_commune }) => ({
+          nom,
+          adresse_courriel,
+          code_insee_commune,
+          // the real API returns `adresse` as a JSON string that the
+          // connector JSON.parses
+          adresse: "[]",
+        }),
+      ),
+    };
+
     await writeFile(
       filename,
-      await format(JSON.stringify(content), { parser: "json" }),
+      await format(JSON.stringify(normalized), { parser: "json" }),
     );
     console.log("wrote", filename);
   },
