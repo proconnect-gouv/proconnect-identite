@@ -1,0 +1,94 @@
+name: 🔬 Check testing fixtures drift
+
+on:
+  schedule:
+    - cron: "23 5 * * *" # Daily at 5:23 AM UTC
+  pull_request:
+    paths:
+      - "packages/testing/src/api/routes/api-lannuaire.service-public.fr/**"
+      - "packages/testing/src/cli/annuaire/**"
+      - ".github/workflows/check-testing-fixtures-drift.yml"
+  workflow_dispatch:
+
+jobs:
+  annuaire:
+    name: 🏛️ Annuaire Service-Public records
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v7
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: "npm"
+          node-version-file: package.json
+
+      - name: 📥 Install dependencies
+        run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+          NPM_CONFIG_AUDIT: false
+          NPM_CONFIG_FUND: false
+          NPM_CONFIG_UPDATE_NOTIFIER: false
+
+      - name: 🏗️ Build testing package
+        run: npm run build --workspace packages/testing
+
+      - name: 🔄 Regenerate records from the real API
+        run: |
+          for record in packages/testing/src/api/routes/api-lannuaire.service-public.fr/records/*.json; do
+            npx tsx scripts/testing.ts annuaire add "$(basename "$record" .json)" \
+              --url https://api-lannuaire.service-public.fr
+          done
+
+      - name: 🔬 Detect divergence between mocked data and the real API
+        id: drift
+        run: |
+          if ! git diff --exit-code -- packages/testing/src/api/routes/api-lannuaire.service-public.fr; then
+            {
+              echo "diff<<PROCONNECT_EOF"
+              git diff -- packages/testing/src/api/routes/api-lannuaire.service-public.fr
+              echo "PROCONNECT_EOF"
+            } >> "$GITHUB_OUTPUT"
+            echo "drifted=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 🚨 Open an issue with fix suggestions
+        if: steps.drift.outputs.drifted == 'true' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIFF: ${{ steps.drift.outputs.diff }}
+        run: |
+          title="🔬 Annuaire Service-Public mocked data is out of sync with the real API"
+          body="The daily fixtures drift check found that the real API responses no longer match \`packages/testing/src/api/routes/api-lannuaire.service-public.fr/records\`.
+
+          ## Suggested fix
+
+          1. Regenerate the drifted records:
+             \`\`\`bash
+             npx tsx scripts/testing.ts annuaire add <code_insee> --url https://api-lannuaire.service-public.fr
+             \`\`\`
+          2. Update the e2e specs relying on them (e.g. \`cypress/e2e/join_with_code_sent_to_official_contact_email\`): a commune whose mairies no longer expose distinct emails cannot exercise the mairie selection page anymore.
+          3. If the drift is deliberate history (a fixture kept to reach an otherwise unreachable page), close this issue with a comment.
+
+          ## Diff
+
+          \`\`\`diff
+          $DIFF
+          \`\`\`
+
+          _Opened by the [check-testing-fixtures-drift](../actions/workflows/check-testing-fixtures-drift.yml) workflow._"
+          existing=$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi
+
+      - name: 🔬 Fail when mocked data diverges from the real API
+        if: steps.drift.outputs.drifted == 'true'
+        run: exit 1
