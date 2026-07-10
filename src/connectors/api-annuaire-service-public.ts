@@ -1,7 +1,6 @@
 import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import { isEmpty, isString, uniq } from "lodash-es";
 import {
-  ANNUAIRE_SERVICE_PUBLIC_API_URL,
   FEATURE_USE_ANNUAIRE_EMAILS,
   HTTP_CLIENT_TIMEOUT,
   TEST_CONTACT_EMAIL,
@@ -54,7 +53,7 @@ export const getAnnuaireServicePublicContactEmails = async (
   try {
     const { data }: { data: ApiAnnuaireServicePublicReponse } =
       await request<ApiAnnuaireServicePublicReponse>(
-        `${ANNUAIRE_SERVICE_PUBLIC_API_URL}/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "${codeOfficielGeographique}" and pivot LIKE "mairie"`,
+        `https://api-lannuaire.service-public.fr/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=code_insee_commune LIKE "${codeOfficielGeographique}" and pivot LIKE "mairie"`,
         {
           method: "get",
           headers: {

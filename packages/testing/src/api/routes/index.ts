@@ -1,7 +1,6 @@
 //
 
 import { Hono } from "hono";
-import { TestingAnnuaireServicePublicRouter } from "./api-lannuaire.service-public.fr/index.js";
 import { TestingInseeApiRouter } from "./api.insee.fr/index.js";
 import { TestingApiEntrepriseRouter } from "./entreprise.api.gouv.fr/index.js";
 import {
@@ -17,7 +16,6 @@ export type TestingBindings = {
 } & FranceConnectBindings;
 export const router = new Hono<{ Bindings: TestingBindings }>()
   .get("/healthz", ({ text }) => text("ok"))
-  .route("/api-lannuaire.service-public.fr", TestingAnnuaireServicePublicRouter)
   .route("/api.insee.fr", TestingInseeApiRouter)
   .route("/entreprise.api.gouv.fr", TestingApiEntrepriseRouter)
   .route("/oidc.franceconnect.gouv.fr", TestingOidcFranceConnectRouter)

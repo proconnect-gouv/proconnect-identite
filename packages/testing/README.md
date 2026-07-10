@@ -80,23 +80,7 @@ This command:
 3. Saves the result as a JSON file in `src/api/routes/entreprise.api.gouv.fr/etablissements/`
 4. Formats the JSON with Prettier
 
-#### Adding Annuaire Service-Public Test Data
-
-Fetch the real mairies of a commune and save them as test data:
-
-```bash
-npx tsx scripts/testing.ts annuaire add 34126 --url https://api-lannuaire.service-public.fr
-```
-
-The `--url` override is needed because `.env.development` points
-`ANNUAIRE_SERVICE_PUBLIC_API_URL` to the local mock. The result is saved in
-`src/api/routes/api-lannuaire.service-public.fr/records/{code_insee}.json`.
-
 ### Available Mock Endpoints
-
-#### Annuaire Service-Public API (`/api-lannuaire.service-public.fr`)
-
-- `GET /api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records?where=...` - Mairies of a commune, looked up by the `code_insee_commune` in the `where` clause
 
 #### Entreprise API (`/entreprise.api.gouv.fr`)
 
@@ -138,8 +122,6 @@ Mock data is organized as:
 
 ```
 src/api/routes/
-├── api-lannuaire.service-public.fr/
-│   └── records/                 # Mairies JSON files by code INSEE commune
 ├── entreprise.api.gouv.fr/
 │   ├── etablissements/          # Establishment JSON files by SIRET
 │   │   └── discover.page.tsx    # HTML browser for establishments

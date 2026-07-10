@@ -3,10 +3,6 @@ import { z } from "zod";
 import { create_jwks } from "./jwks";
 
 export const connectorEnvSchema = z.object({
-  ANNUAIRE_SERVICE_PUBLIC_API_URL: z
-    .string()
-    .url()
-    .default("https://api-lannuaire.service-public.fr"),
   CRISP_BASE_URL: z.string().url().default("https://api.crisp.chat"),
   CRISP_IDENTIFIER: z.string().default(""),
   CRISP_KEY: z.string().default(""),
