@@ -35,8 +35,8 @@ jobs:
           NPM_CONFIG_FUND: false
           NPM_CONFIG_UPDATE_NOTIFIER: false
 
-      - name: 🏗️ Build testing package
-        run: npm run build --workspace packages/testing
+      - name: 🏗️ Build workspaces
+        run: npm run build:workspaces
 
       - name: 🔄 Regenerate records from the real API
         run: |
@@ -44,6 +44,10 @@ jobs:
             npx tsx scripts/testing.ts annuaire add "$(basename "$record" .json)" \
               --url https://api-lannuaire.service-public.fr
           done
+          # 50099 is deliberately historical: it keeps a distinct email for
+          # "Mairie - Les Veys" so the mairie selection page stays reachable
+          # in e2e tests. Real data deduplicated to one email on 2026-07.
+          git checkout -- packages/testing/src/api/routes/api-lannuaire.service-public.fr/records/50099.json
 
       - name: 🔬 Detect divergence between mocked data and the real API
         id: drift
