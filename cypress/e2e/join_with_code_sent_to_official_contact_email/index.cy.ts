@@ -55,18 +55,18 @@ describe("join collectivité territoriale with code send to official contact ema
 
     cy.title().should("include", "Rejoindre une organisation - ProConnect");
     cy.contains("SIRET de l’organisation que vous représentez").click();
-    cy.focused().clear().type("20008557900015");
+    cy.focused().clear().type("20006541500016");
     cy.contains("Enregistrer").click();
 
     cy.contains("À quelle adresse e-mail souhaitez-vous recevoir le code ?");
 
-    cy.contains("mairie.contact@carentan.fr").click();
+    cy.contains("mairie-beaumont@lahague.com").click();
 
     cy.contains("Valider").click();
 
     cy.title().should("include", "Vérifier votre email - ProConnect");
     cy.contains(
-      "Nous vérifions que vous avez accès à l’adresse email officielle de votre mairie : mairie.contact@carentan.fr",
+      "Nous vérifions que vous avez accès à l’adresse email officielle de votre mairie : mairie-beaumont@lahague.com",
     );
 
     cy.maildevGetMessageBySubject(
@@ -76,7 +76,7 @@ describe("join collectivité territoriale with code send to official contact ema
         cy.maildevVisitMessageById(email.id);
         cy.maildevDeleteMessageById(email.id);
         cy.contains(
-          "Marie Elisabeth (eneeria@prospero.world) souhaite rejoindre votre organisation « Commune de carentan-les-marais - Mairie » sur ProConnect.",
+          "Marie Elisabeth (eneeria@prospero.world) souhaite rejoindre votre organisation « Commune de la hague - Mairie » sur ProConnect.",
         );
         return cy.get("em:nth-child(1)").invoke("text");
       })

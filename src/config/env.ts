@@ -14,6 +14,7 @@ if (!parsedEnv.success) throw fromZodError(parsedEnv.error, {});
 
 export const {
   ACCESS_LOG_PATH,
+  ANNUAIRE_SERVICE_PUBLIC_API_URL,
   APPLICATION_NAME,
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   CRISP_BASE_URL,
