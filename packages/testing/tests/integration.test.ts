@@ -44,6 +44,48 @@ describe("GET /healthz --> 200 OK", async () => {
 });
 
 //
+//#region /api-lannuaire.service-public.fr
+//
+
+describe("api-lannuaire.service-public.fr", () => {
+  const records_path =
+    "/api-lannuaire.service-public.fr/api/explore/v2.1/catalog/datasets/api-lannuaire-administration/records";
+
+  it("GET /api/explore/v2.1/.../records --> 200 OK with the commune mairies", async () => {
+    using http = await HttpTestingServer();
+    const where = encodeURIComponent(
+      'code_insee_commune LIKE "34126" and pivot LIKE "mairie"',
+    );
+    const response = await http.fetch(`${records_path}?where=${where}`);
+    equal(response.status, 200);
+    const body = (await response.json()) as {
+      total_count: number;
+      results: { adresse_courriel: string }[];
+    };
+    equal(body.total_count, 1);
+    equal(body.results[0].adresse_courriel, "contact@mairielamalou.fr");
+  });
+
+  it("GET /api/explore/v2.1/.../records --> 200 OK empty for an unknown commune", async () => {
+    using http = await HttpTestingServer();
+    const where = encodeURIComponent(
+      'code_insee_commune LIKE "00000" and pivot LIKE "mairie"',
+    );
+    const response = await http.fetch(`${records_path}?where=${where}`);
+    equal(response.status, 200);
+    const body = (await response.json()) as {
+      total_count: number;
+      results: { adresse_courriel: string }[];
+    };
+    equal(body.total_count, 0);
+    equal(body.results.length, 0);
+  });
+});
+
+//
+//#endregion
+
+//
 //#region /entreprise.api.gouv.fr
 //
 
