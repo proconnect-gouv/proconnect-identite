@@ -26,6 +26,8 @@ describe("env.zod", () => {
     const env = envSchema.parse(sample_env);
 
     assert.deepEqual(env, {
+      ANNUAIRE_SERVICE_PUBLIC_API_URL:
+        "https://api-lannuaire.service-public.fr",
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: 1440,
       CRISP_BASE_URL: "https://api.crisp.chat",
       CRISP_IDENTIFIER: "",
