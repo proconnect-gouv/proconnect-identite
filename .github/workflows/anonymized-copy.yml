@@ -6,6 +6,9 @@ on:
       - scripts/create-anonymized-copy-of-database.sh
       - .github/workflows/anonymized-copy.yml
 
+permissions:
+  contents: read
+
 env:
   DATABASE_URL: postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite
   PGDATABASE: proconnect-identite
