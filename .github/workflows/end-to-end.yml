@@ -4,6 +4,7 @@ on:
   push:
 
 env:
+  ANNUAIRE_SERVICE_PUBLIC_API_URL: http://localhost:3000/___testing___/api-lannuaire.service-public.fr
   CYPRESS_RECORD: true
   DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
