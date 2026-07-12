@@ -141,17 +141,17 @@ echo "$(logPrefix) Creating anonymized copy of table authenticators..."
 psql $SRC_DB_URL -c "
 CREATE TABLE tmp_authenticators AS
 SELECT
-  credential_device_type
-  credential_backed_up
-  transports
-  user_id
-  display_name
-  created_at
-  last_used_at
-  usage_count
+  credential_device_type,
+  credential_backed_up,
+  transports,
+  user_id,
+  display_name,
+  created_at,
+  last_used_at,
+  usage_count,
   user_verified
 FROM authenticators"
-psql $SRC_DB_URL --command="ALTER TABLE tmp_authenticators ADD PRIMARY KEY (user_id)"
+psql $SRC_DB_URL --command="CREATE INDEX ON tmp_authenticators (user_id)"
 pg_dump --no-owner --table=tmp_authenticators $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_authenticators RENAME TO authenticators"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_authenticators"

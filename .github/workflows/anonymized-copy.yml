@@ -1,0 +1,77 @@
+name: 🕵️ Anonymized copy script test
+
+on:
+  push:
+    paths:
+      - scripts/create-anonymized-copy-of-database.sh
+      - .github/workflows/anonymized-copy.yml
+
+permissions:
+  contents: read
+
+env:
+  DATABASE_URL: postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite
+  PGDATABASE: proconnect-identite
+  PGHOST: 127.0.0.1
+  PGPASSWORD: proconnect-identite
+  PGPORT: 5432
+  PGUSER: proconnect-identite
+
+jobs:
+  test:
+    name: 🧪 Run the script against a real postgres
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.9
+        env:
+          POSTGRES_USER: ${{ env.PGUSER }}
+          POSTGRES_PASSWORD: ${{ env.PGPASSWORD }}
+          POSTGRES_DB: ${{ env.PGDATABASE }}
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          cache: "npm"
+          node-version-file: package.json
+      # pg_dump must match the server major version; ubuntu-latest ships client 16
+      - name: 🐘 Install postgresql-client-17
+        run: sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y && sudo apt-get install -y postgresql-client-17
+      - name: 📦 Install dependencies
+        run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+          NPM_CONFIG_AUDIT: false
+          NPM_CONFIG_FUND: false
+          NPM_CONFIG_UPDATE_NOTIFIER: false
+      - name: 🏗️ Build workspaces
+        run: npm run build:workspaces
+      - name: 🗃️ Migrate database
+        run: npm run migrate up
+      - name: 🌱 Load fixtures
+        run: npm run fixtures:load-ci -- scripts/fixtures.sql
+      - name: 🎯 Create metabase database
+        run: |
+          psql --dbname=postgres --command="CREATE DATABASE metabase"
+          # the script grants SELECT to this role at the end, as in production
+          psql --dbname=postgres --command="CREATE ROLE metabase"
+      - name: 🕵️ Create the anonymized copy
+        run: sh scripts/create-anonymized-copy-of-database.sh
+        env:
+          APP: proconnect-identite
+          SCALINGO_POSTGRESQL_URL: postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite
+          METABASE_DB_URL: postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/metabase
+      - name: 🔍 Check each copied table has the same row count as the source
+        run: |
+          for table in users organizations email_domains franceconnect_userinfo authenticators moderations oidc_clients users_oidc_clients users_organizations; do
+            src=$(psql --dbname=proconnect-identite --tuples-only --no-align --command="SELECT count(*) FROM $table")
+            dest=$(psql --dbname=metabase --tuples-only --no-align --command="SELECT count(*) FROM $table")
+            if [ "$src" = "$dest" ]; then
+              echo "✅ $table: $src rows copied"
+            else
+              echo "::error::❌ $table: expected $src rows in the anonymized copy, found $dest"
+              exit 1
+            fi
+          done
