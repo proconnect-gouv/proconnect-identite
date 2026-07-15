@@ -1,5 +1,5 @@
 {
-  "total_count": 4,
+  "total_count": 2,
   "results": [
     {
       "nom": "Mairie - La Hague",
@@ -8,20 +8,8 @@
       "adresse": "[]"
     },
     {
-      "nom": "Mairie déléguée - Éculleville",
-      "adresse_courriel": "mairie-eculleville@lahague.com",
-      "code_insee_commune": "50041",
-      "adresse": "[]"
-    },
-    {
       "nom": "Mairie déléguée - Beaumont-Hague",
       "adresse_courriel": "mairie-beaumont@lahague.com",
-      "code_insee_commune": "50041",
-      "adresse": "[]"
-    },
-    {
-      "nom": "Mairie déléguée - Acqueville",
-      "adresse_courriel": "mairie-acqueville@lahague.com",
       "code_insee_commune": "50041",
       "adresse": "[]"
     }
