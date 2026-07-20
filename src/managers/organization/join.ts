@@ -319,17 +319,12 @@ export const joinOrganization = async ({
       Sentry.captureException(err);
     }
 
-    if (contactEmails.length > 1) {
-      return await linkUserToOrganization({
-        organization_id,
-        user_id,
-        verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
-        needs_official_contact_email_verification: true,
-      });
-    }
+    for (const contactEmail in contactEmails) {
+      if (!isEmailValid(contactEmail)) {
+        continue;
+      }
 
-    if (contactEmails.length === 1 && isEmailValid(contactEmails[0])) {
-      const contactDomain = getEmailDomain(contactEmails[0]);
+      const contactDomain = getEmailDomain(contactEmail);
 
       if (!isAFreeEmailProvider(contactDomain)) {
         await markDomainAsVerified({
@@ -340,7 +335,7 @@ export const joinOrganization = async ({
         });
       }
 
-      if (contactEmails[0] === email) {
+      if (contactEmail === email) {
         return await linkUserToOrganization({
           organization_id,
           user_id,
@@ -355,7 +350,9 @@ export const joinOrganization = async ({
           verification_type: LinkEnum.enum.domain,
         });
       }
+    }
 
+    if (some(contactEmails, isEmailValid) && isAFreeEmailProvider(email)) {
       return await linkUserToOrganization({
         organization_id,
         user_id,
