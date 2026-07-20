@@ -16,7 +16,7 @@ describe("join with gouv.fr domain", () => {
       "Sélectionner l'organisation Direction interministerielle du numerique (DINUM)",
     ).click();
 
-    cy.title().should("include", "Compte créé -");
+    cy.title().should("include", "Compte créé - ProConnect");
     cy.contains("Compte créé 🎊");
   });
 });

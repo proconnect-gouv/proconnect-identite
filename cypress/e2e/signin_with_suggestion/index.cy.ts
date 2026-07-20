@@ -15,8 +15,8 @@ describe("sign-in with suggestion", () => {
       "Sélectionner l'organisation Commune de clamart - Mairie",
     ).click();
 
-    cy.title().should("equal", "Vérifier votre email - ProConnect");
-    cy.contains("Confirmer votre adresse email");
+    cy.title().should("include", "Compte créé - ProConnect");
+    cy.contains("Compte créé 🎊");
   });
 
   it("join suggested organisation", function () {
@@ -31,8 +31,8 @@ describe("sign-in with suggestion", () => {
       "Sélectionner l'organisation Commune de clamart - Mairie",
     ).click();
 
-    cy.title().should("equal", "Vérifier votre email - ProConnect");
-    cy.contains("Confirmer votre adresse email");
+    cy.title().should("include", "Compte créé - ProConnect");
+    cy.contains("Compte créé 🎊");
   });
 
   it("should sign-up and be suggested the Ministere des armees organization", function () {

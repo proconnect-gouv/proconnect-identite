@@ -15,7 +15,7 @@ INSERT INTO
 VALUES
   (
     1,
-    'random@yopmail.com',
+    'free-official-contact@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',

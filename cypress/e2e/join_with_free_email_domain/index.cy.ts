@@ -17,7 +17,7 @@ describe("join with free email domain", () => {
 
     cy.contains("Enregistrer").click();
 
-    cy.title().should("include", "Compte créé -");
+    cy.title().should("include", "Compte créé - ProConnect");
     cy.contains("Compte créé 🎊");
   });
 

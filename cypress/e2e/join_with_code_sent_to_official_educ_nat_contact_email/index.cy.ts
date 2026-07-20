@@ -45,7 +45,7 @@ describe("join organizations", () => {
       cy.contains("Valider").click();
     });
 
-    cy.title().should("include", "Compte créé -");
+    cy.title().should("include", "Compte créé - ProConnect");
     cy.contains("Compte créé 🎊");
   });
 });

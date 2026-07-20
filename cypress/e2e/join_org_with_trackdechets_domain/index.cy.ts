@@ -11,6 +11,7 @@ describe("join organizations", () => {
     cy.contains("Bnp paribas").click();
 
     // Check redirection to welcome page
+    cy.title().should("include", "Compte créé - ProConnect");
     cy.contains("Compte créé 🎊");
 
     cy.maildevGetMessageBySubject(
