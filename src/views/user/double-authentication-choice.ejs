@@ -34,7 +34,7 @@
     >
       <div id="totp-option" class="fr-fieldset__element border fr-p-2w">
         <div class="fr-radio-group">
-          <input type="radio" id="radio-totp" name="radio-2fa" required/>
+          <input type="radio" id="radio-totp" name="radio-2fa" value="totp" required/>
           <label class="fr-label" for="radio-totp">
             Code à usage unique (TOTP)<span class="fr-hint-text">Générez un code via une application smartphone ou un logiciel sur votre ordinateur.</span>
           </label>
@@ -42,12 +42,22 @@
       </div>
       <div id="webauthn-btn-begin-registration" class="fr-fieldset__element border fr-p-2w">
         <div class="fr-radio-group">
-          <input type="radio" id="radio-passkey" name="radio-2fa" required/>
+          <input type="radio" id="radio-passkey" name="radio-2fa" value="passkey" required/>
           <label class="fr-label" for="radio-passkey">
             Clé d'accès (passkey)<span class="fr-hint-text">Utilisez la biométrie ou le code PIN de votre session d’ordinateur.</span>
           </label>
         </div>
       </div>
+
+      <div id="dont-know-option" class="fr-fieldset__element border fr-p-2w">
+        <div class="fr-radio-group">
+          <input type="radio" id="radio-dont-know" name="radio-2fa" value="dont-know" required/>
+          <label class="fr-label" for="radio-dont-know">
+            Je ne sais pas<span class="fr-hint-text">Laissez-nous vous guider vers la meilleure méthode pour vous.</span>
+          </label>
+        </div>
+      </div>
+      
     </fieldset>
     <button class="fr-btn btn--fullwidth" type="submit" id="webauthn-submit-button">Continuer</button>
   </form>

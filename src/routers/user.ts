@@ -61,6 +61,8 @@ import {
 import {
   get2faSuccessfullyConfiguredController,
   getIsTotpAppInstalledController,
+  getMfaDecisionHelperController,
+  getMfaDecisionHelperPasskeyController,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
@@ -624,6 +626,20 @@ export const userRouter = () => {
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantNoMatchError,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperController,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper/passkey",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperPasskeyController,
   );
 
   return userRouter;

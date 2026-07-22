@@ -15,7 +15,7 @@ document.addEventListener(
     // Start registration when the user clicks a button
 
     const onRegisterClick = async (e) => {
-      if (passKeyOption.checked) {
+      if (!passKeyOption || passKeyOption.checked) {
         e.preventDefault();
         await registerPassKey();
       }
