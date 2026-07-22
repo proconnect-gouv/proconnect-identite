@@ -1,0 +1,16 @@
+<div>
+  <h1 class="fr-h5 fr-mb-1w">Trouver la meilleure méthode de 2FA</h1>
+  <hr class="hr-personalized-step-three fr-mb-3w" />
+
+  <%- include('totp-recommendation.ejs', {
+    description: "Une application smartphone génère un code qui change toutes les 30 secondes.",
+    toolTypeLabel: "l'application",
+    tools: [
+      { name: "Proton Authenticator", url: "https://proton.me/fr/authenticator/download", details: ["Application opensource."] },
+      { name: "2FAS", url: "https://2fas.com/auth/", details: ["Application opensource."] },
+      { name: "FreeOTP", url: "https://freeotp.github.io/", details: ["Application opensource."] },
+    ]
+  }) %>
+
+  <%- include('../../partials/go-back.ejs'); %>
+</div>

@@ -61,6 +61,13 @@ import {
 import {
   get2faSuccessfullyConfiguredController,
   getIsTotpAppInstalledController,
+  getMfaDecisionHelperController,
+  getMfaDecisionHelperOtherController,
+  getMfaDecisionHelperOtherExternalHelpNeededController,
+  getMfaDecisionHelperOtherSmartphoneAppController,
+  getMfaDecisionHelperOtherSmartphoneController,
+  getMfaDecisionHelperOtherSoftwareController,
+  getMfaDecisionHelperPasskeyController,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
@@ -624,6 +631,55 @@ export const userRouter = () => {
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getCertificationDirigeantNoMatchError,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperController,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper/passkey",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperPasskeyController,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper/other",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperOtherController,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper/other/software",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperOtherSoftwareController,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper/other/external-help-needed",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperOtherExternalHelpNeededController,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper/other/smartphone",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperOtherSmartphoneController,
+  );
+
+  userRouter.get(
+    "/mfa-decision-helper/other/smartphone/app",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperOtherSmartphoneAppController,
   );
 
   return userRouter;

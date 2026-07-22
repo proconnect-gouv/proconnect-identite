@@ -1,0 +1,48 @@
+<div>
+  <h1 class="fr-h5 fr-mb-1w">Trouver la meilleure méthode de 2FA</h1>
+  <hr class="hr-personalized-step-two fr-mb-3w" />
+
+  <form action="/users/mfa-decision-helper/other" method="get">
+    <fieldset
+      class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
+      aria-labelledby="can-install-software-legend"
+    >
+      <legend
+        id="can-install-software-legend"
+        class="fr-fieldset__legend fr-text--regular fr-h4 fr-mb-1w"
+      >
+        Avez-vous le droit d'installer des logiciels ou extension de navigateur
+        sur votre poste ?
+      </legend>
+
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input
+            type="radio"
+            id="can-install-software-yes"
+            name="can-install-software"
+            value="yes"
+            required
+          />
+          <label class="fr-label" for="can-install-software-yes">Oui</label>
+        </div>
+      </div>
+
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input
+            type="radio"
+            id="can-install-software-no"
+            name="can-install-software"
+            value="no"
+            required
+          />
+          <label class="fr-label" for="can-install-software-no">Non</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <button class="fr-btn btn--fullwidth" type="submit">Continuer</button>
+  </form>
+  <%- include('../../partials/go-back.ejs'); %>
+</div>

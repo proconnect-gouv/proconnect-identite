@@ -45,6 +45,10 @@ export const getIsTotpAppInstalledController = async (
   next: NextFunction,
 ) => {
   try {
+    if (req.query["radio-2fa"] === "dont-know") {
+      return res.redirect("/users/mfa-decision-helper");
+    }
+
     return res.render("user/is-totp-app-installed", {
       pageTitle: "Installer votre outil d'authentification",
       csrfToken: csrfToken(req),
@@ -69,6 +73,8 @@ export const getTotpConfigurationController = async (
     const notificationLabel = await getNotificationLabelFromRequest(req);
     const hasCodeError = notificationLabel === "invalid_totp_token";
 
+    const { "totp-tool-type": totpToolType } = req.query;
+
     return res.render("user/totp-configuration", {
       pageTitle: "Configurer un code à usage unique",
       notifications: await getNotificationsFromRequest(req),
@@ -76,6 +82,7 @@ export const getTotpConfigurationController = async (
       csrfToken: csrfToken(req),
       humanReadableTotpKey,
       qrCodeDataUrl,
+      totpToolType,
     });
   } catch (error) {
     next(error);
@@ -145,6 +152,146 @@ export const post2faSuccessfullyConfiguredMiddleware = async (
 ) => {
   try {
     return next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { "device-type": deviceType } = req.query;
+
+    if (deviceType === "mac" || deviceType === "windows-hello") {
+      return res.redirect("/users/mfa-decision-helper/passkey");
+    }
+
+    if (deviceType === "other") {
+      return res.redirect("/users/mfa-decision-helper/other");
+    }
+
+    return res.render("user/mfa-decision-helper/index", {
+      pageTitle: "Trouver la meilleure méthode de 2FA",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperPasskeyController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/mfa-decision-helper/passkey", {
+      pageTitle: "Passkey de votre ordinateur",
+      csrfToken: csrfToken(req),
+      notifications: await getNotificationsFromRequest(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperOtherController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { "can-install-software": canInstallSoftware } = req.query;
+
+    if (canInstallSoftware === "yes") {
+      return res.redirect("/users/mfa-decision-helper/other/software");
+    }
+
+    if (canInstallSoftware === "no") {
+      return res.redirect("/users/mfa-decision-helper/other/smartphone");
+    }
+
+    return res.render("user/mfa-decision-helper/other", {
+      pageTitle: "Choisir la meilleure méthode pour vous",
+      csrfToken: csrfToken(req),
+      notifications: await getNotificationsFromRequest(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperOtherSoftwareController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/mfa-decision-helper/other-software", {
+      pageTitle: "Codes à usage unique (TOTP)",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperOtherExternalHelpNeededController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/mfa-decision-helper/other-external-help-needed", {
+      pageTitle: "Intervention extérieure nécessaire",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperOtherSmartphoneController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { "can-install-app-on-smartphone": canInstallAppOnSmartphone } =
+      req.query;
+
+    if (canInstallAppOnSmartphone === "yes") {
+      return res.redirect("/users/mfa-decision-helper/other/smartphone/app");
+    }
+
+    if (canInstallAppOnSmartphone === "no") {
+      return res.redirect(
+        "/users/mfa-decision-helper/other/external-help-needed",
+      );
+    }
+
+    return res.render("user/mfa-decision-helper/other-smartphone", {
+      pageTitle: "Choisir la meilleure méthode pour vous",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperOtherSmartphoneAppController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/mfa-decision-helper/other-smartphone-app", {
+      pageTitle: "Codes à usage unique (TOTP)",
+      csrfToken: csrfToken(req),
+    });
   } catch (error) {
     next(error);
   }

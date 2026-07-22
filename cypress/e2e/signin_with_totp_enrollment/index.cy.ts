@@ -17,13 +17,15 @@ describe("sign-in with totp enrollment", () => {
 
     cy.contains("Continuer").click();
 
-    cy.contains("Installer votre outil d’authentification");
+    cy.contains("Configurer votre outil TOTP");
 
-    cy.contains("J'ai installé une application d'authentification").click();
+    cy.contains("Quel outil utilisez-vous ?");
 
-    cy.contains("Continuer").click();
+    cy.contains("J'ai une application sur mon smartphone").click();
 
-    cy.contains("Scanner ce QRcode avec votre application");
+    cy.contains("Confirmer").click();
+
+    cy.contains("Scannez le QR Code avec votre smartphone");
 
     const invalidTotpCode = "123456";
 
@@ -77,13 +79,15 @@ describe("sign-in with totp enrollment", () => {
 
     cy.contains("Continuer").click();
 
-    cy.contains("Installer votre outil d’authentification");
+    cy.contains("Configurer votre outil TOTP");
 
-    cy.contains("J'ai installé une application d'authentification").click();
+    cy.contains("Quel outil utilisez-vous ?");
 
-    cy.contains("Continuer").click();
+    cy.contains("J'ai une application sur mon smartphone").click();
 
-    cy.contains("Scanner ce QRcode avec votre application");
+    cy.contains("Confirmer").click();
+
+    cy.contains("Scannez le QR Code avec votre smartphone");
 
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
@@ -104,11 +108,12 @@ describe("sign-in with totp enrollment", () => {
     cy.contains("Code à usage unique (TOTP)").click();
     cy.contains("Continuer").click();
 
-    cy.contains("Installer votre outil d’authentification");
-    cy.contains("J'ai installé une application d'authentification").click();
-    cy.contains("Continuer").click();
+    cy.contains("Configurer votre outil TOTP");
+    cy.contains("Quel outil utilisez-vous ?");
+    cy.contains("J'ai une application sur mon smartphone").click();
+    cy.contains("Confirmer").click();
+    cy.contains("Scannez le QR Code avec votre smartphone");
 
-    cy.contains("Scanner ce QRcode avec votre application");
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
     cy.contains("Continuer").click();
 
