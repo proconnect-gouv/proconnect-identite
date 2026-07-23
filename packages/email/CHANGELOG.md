@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.0.2
+
+### Patch Changes
+
+- [#2045](https://github.com/proconnect-gouv/proconnect-identite/pull/2045) [`9b7a924`](https://github.com/proconnect-gouv/proconnect-identite/commit/9b7a924c9d902bf766905efc8a223cc8d1793010) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - suppression d'une typo dans l'email de vérification d'adresse e-mail
+
 ## 1.0.1
 
 ### Patch Changes
