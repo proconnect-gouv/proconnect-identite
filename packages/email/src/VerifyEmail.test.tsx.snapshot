@@ -148,8 +148,8 @@ exports[`VerifyEmail > should render 1`] = `
                                     "
                                   >
                                     Pour vérifier votre adresse e-mail, merci de
-                                    de copier-coller ou de renseigner ce code
-                                    dans l’interface de connexion ProConnect.<br /><em
+                                    copier-coller ou de renseigner ce code dans
+                                    l’interface de connexion ProConnect.<br /><em
                                       style="
                                         color: #000091;
                                         font-family:

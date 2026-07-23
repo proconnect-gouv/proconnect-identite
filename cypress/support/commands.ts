@@ -120,7 +120,7 @@ function verifyEmailCommand() {
       cy.maildevVisitMessageById(email.id);
       cy.origin("http://localhost:1080", () => {
         cy.contains(
-          "Pour vérifier votre adresse e-mail, merci de de copier-coller ou de renseigner ce code dans l’interface de connexion ProConnect.",
+          "Pour vérifier votre adresse e-mail, merci de copier-coller ou de renseigner ce code dans l’interface de connexion ProConnect.",
         );
       });
       cy.go("back");

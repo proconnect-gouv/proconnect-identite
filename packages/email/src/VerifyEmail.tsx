@@ -12,7 +12,7 @@ export default function VerifyEmail(props: Props) {
       <Text>Bonjour,</Text>
       <br />
       <Text>
-        Pour vérifier votre adresse e-mail, merci de de copier-coller ou de
+        Pour vérifier votre adresse e-mail, merci de copier-coller ou de
         renseigner ce code dans l’interface de connexion ProConnect.
         <br />
         <Em>Ce code est valable 1h.</Em>
