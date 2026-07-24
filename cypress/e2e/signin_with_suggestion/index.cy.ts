@@ -50,7 +50,7 @@ describe("sign-in with suggestion", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "Vérifier votre email - ProConnect");
-    cy.contains("Vérifiez les emails reçus par user@intradef.gouv.fr.");
+    cy.contains("Vérifiez les emails envoyés par user@intradef.gouv.fr.");
 
     cy.verifyEmail();
 
