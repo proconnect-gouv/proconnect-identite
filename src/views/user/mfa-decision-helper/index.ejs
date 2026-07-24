@@ -1,0 +1,68 @@
+<div>
+  <h1 class="fr-h5 fr-mb-1w">Trouver la meilleure méthode de 2FA</h1>
+  <hr class="hr-personalized-step-one fr-mb-3w" />
+
+  <form action="/users/mfa-decision-helper" method="get">
+    <fieldset
+      class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
+      aria-labelledby="device-type-legend"
+    >
+      <legend
+        id="device-type-legend"
+        class="fr-fieldset__legend fr-text--regular fr-h4 fr-mb-1w"
+      >
+        Travaillez-vous avec :
+      </legend>
+
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input
+            type="radio"
+            id="device-type-mac"
+            name="device-type"
+            value="mac"
+            required
+          />
+          <label class="fr-label" for="device-type-mac">
+            un ordinateur Mac
+          </label>
+        </div>
+      </div>
+
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input
+            type="radio"
+            id="device-type-windows-hello"
+            name="device-type"
+            value="windows-hello"
+            required
+          />
+          <label class="fr-label" for="device-type-windows-hello">
+            Windows Hello<span class="fr-hint-text"
+              >Vous ouvrez votre session avec un code PIN ou de la
+              biométrie</span
+            >
+          </label>
+        </div>
+      </div>
+
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input
+            type="radio"
+            id="device-type-other"
+            name="device-type"
+            value="other"
+            required
+          />
+          <label class="fr-label" for="device-type-other"> Autre </label>
+        </div>
+      </div>
+    </fieldset>
+
+    <button class="fr-btn btn--fullwidth" type="submit">Continuer</button>
+  </form>
+
+  <%- include('../../partials/go-back.ejs'); %>
+</div>

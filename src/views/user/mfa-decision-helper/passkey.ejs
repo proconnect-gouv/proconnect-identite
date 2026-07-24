@@ -1,0 +1,57 @@
+<div>
+  <%- include('../../partials/notifications.ejs', {notifications: notifications}) %>
+
+  <h1 class="fr-h5 fr-mb-1w">Trouver la meilleure méthode de 2FA</h1>
+  <hr class="hr-personalized-step-three fr-mb-3w" />
+
+  <div class="fr-callout fr-icon-alert-line" id="webauthn-not-supported" hidden>
+    <p class="fr-callout__title fr-h4">
+      Impossible de créer une clé d’accès sur cet appareil
+    </p>
+    <p class="fr-callout__text">
+      Assurez-vous que le système d’exploitation de votre appareil est à jour,
+      que le verrouillage de l’écran et le Bluetooth sont activés, et que vous
+      utilisez un navigateur compatible.
+    </p>
+  </div>
+
+  <div
+    class="fr-alert fr-alert--error fr-mb-2w"
+    id="webauthn-alert-error"
+    hidden
+  ></div>
+
+  <div class="fr-badge fr-badge--new fr-mb-3w">
+    Recommandé pour vous
+  </div>
+
+  <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+    <img src="/dist/passkey.svg" alt="" class="limited-width fr-mr-2w" />
+    <h2 class="fr-h6 fr-mb-0">Passkey de votre ordinateur</h2>
+  </div>
+  <p>
+    Le plus rapide et le plus simple : déverrouillez avec votre empreinte, votre visage ou le code PIN de votre ordinateur.
+  </p>
+
+  <button
+    class="fr-btn btn--fullwidth"
+    id="webauthn-submit-button"
+    type="button"
+  >
+    Continuer avec la passkey
+  </button>
+
+  <%- include('../../partials/go-back.ejs'); %>
+
+  <form
+    id="webauthn-registration-response-form"
+    action="/users/passkeys/verify-registration"
+    method="post"
+    hidden
+  >
+    <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+    <input type="hidden" name="webauthn_registration_response_string" />
+    <button type="submit" class="fr-btn"></button>
+  </form>
+  <script type="module" src="<%= js('webauthn-registration.js') %>"></script>
+</div>

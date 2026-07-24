@@ -45,6 +45,10 @@ export const getIsTotpAppInstalledController = async (
   next: NextFunction,
 ) => {
   try {
+    if (req.query["radio-2fa"] === "dont-know") {
+      return res.redirect("/users/mfa-decision-helper");
+    }
+
     return res.render("user/is-totp-app-installed", {
       pageTitle: "Installer votre outil d'authentification",
       csrfToken: csrfToken(req),
@@ -145,6 +149,48 @@ export const post2faSuccessfullyConfiguredMiddleware = async (
 ) => {
   try {
     return next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { "device-type": deviceType } = req.query;
+
+    if (deviceType === "mac" || deviceType === "windows-hello") {
+      return res.redirect("/users/mfa-decision-helper/passkey");
+    }
+
+    if (deviceType === "other") {
+      // TODO: sous-arbre à construire plus tard
+      return res.redirect("/users/mfa-decision-helper");
+    }
+
+    return res.render("user/mfa-decision-helper/index", {
+      pageTitle: "Trouver la meilleure méthode de 2FA",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMfaDecisionHelperPasskeyController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/mfa-decision-helper/passkey", {
+      pageTitle: "Passkey de votre ordinateur",
+      csrfToken: csrfToken(req),
+      notifications: await getNotificationsFromRequest(req),
+    });
   } catch (error) {
     next(error);
   }
