@@ -111,7 +111,7 @@ export const oidcProviderConfiguration = ({
       // This claim will be deprecated
       "is_service_public",
     ],
-    // This scope will be deprecated
+    // This scope is deprecated
     organizations: ["organizations"],
     // Additional scopes for ProConnect Federation use only
     uid: ["uid"],
@@ -218,7 +218,7 @@ export const oidcProviderConfiguration = ({
     "email",
     "profile",
     "organization",
-    // This scope will be deprecated
+    // This scope is deprecated
     "organizations",
     // Additional scopes for ProConnect Federation use only
     "uid",

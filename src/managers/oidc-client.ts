@@ -6,7 +6,6 @@ import type { KoaContextWithOIDC } from "oidc-provider";
 import { addConnection, findByClientId } from "../repositories/oidc-client";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { logger } from "../services/log";
-import { mustReturnOneOrganizationInPayload } from "../services/must-return-one-organization-in-payload";
 
 export const recordNewConnection = async ({
   accountId,
@@ -30,15 +29,12 @@ export const recordNewConnection = async ({
   const oidc_client_id = oidc_client.id;
 
   let organization_id: BaseConnection["organization_id"] = null;
-  const scope = params?.scope;
-  if (isString(scope) && mustReturnOneOrganizationInPayload(scope)) {
-    try {
-      organization_id = await getSelectedOrganizationId(user_id);
-    } catch (err) {
-      // This is unexpected, we silently fail and log it in sentry
-      logger.error(err);
-      Sentry.captureException(err);
-    }
+  try {
+    organization_id = await getSelectedOrganizationId(user_id);
+  } catch (err) {
+    // This is unexpected, we silently fail and log it in sentry
+    logger.error(err);
+    Sentry.captureException(err);
   }
 
   let sp_name: string | null = null;

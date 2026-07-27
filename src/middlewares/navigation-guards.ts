@@ -677,11 +677,11 @@ const userHasNoPendingOfficialContactEmailVerificationGuard = async (
 
   let organizationThatNeedsOfficialContactEmailVerification;
 
-  if (req.session.mustReturnOneOrganizationInPayload) {
-    const selectedOrganizationId = await getSelectedOrganizationId(
-      getUserFromAuthenticatedSession(req).id,
-    );
+  const selectedOrganizationId = await getSelectedOrganizationId(
+    getUserFromAuthenticatedSession(req).id,
+  );
 
+  if (selectedOrganizationId) {
     organizationThatNeedsOfficialContactEmailVerification =
       userOrganizations.find(
         ({ id, needs_official_contact_email_verification }) =>
@@ -727,9 +727,9 @@ const userHasBeenGreetedGuard = async (context: Pass<RequestContext>) => {
 
   let organizationThatNeedsGreetings;
 
-  if (req.session.mustReturnOneOrganizationInPayload) {
-    const selectedOrganizationId = await getSelectedOrganizationId(user_id);
+  const selectedOrganizationId = await getSelectedOrganizationId(user_id);
 
+  if (selectedOrganizationId) {
     organizationThatNeedsGreetings = userOrganizations.find(
       ({ id, has_been_greeted }) =>
         !has_been_greeted && id === selectedOrganizationId,
@@ -773,27 +773,6 @@ const connectToAppGuard = async (prev: Pass<RequestContext>) => {
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("ok_to_connect_to_app");
-};
-
-const connectToSpWithMultipleOrganizationsGuard = async (
-  prev: Pass<RequestContext>,
-) => {
-  let context;
-
-  context = await userHasAtLeastOneOrganizationGuard(prev);
-  if (!Pass.is_passing(context)) return context;
-
-  context = await userHasPersonalInformationsGuard(prev);
-  if (!Pass.is_passing(context)) return context;
-
-  context =
-    await userHasNoPendingOfficialContactEmailVerificationGuard(context);
-  if (!Pass.is_passing(context)) return context;
-
-  context = await userHasBeenGreetedGuard(context);
-  if (!Pass.is_passing(context)) return context;
-
-  return context.pass("ok_to_connect_to_sp_with_multiple_organizations");
 };
 
 const connectToSp = async (
@@ -942,26 +921,19 @@ export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
       pendingModerationOrganizationId,
       interactionId,
       pendingCertificationDirigeantOrganizationId,
-      mustReturnOneOrganizationInPayload,
     } = context.data.req.session;
 
     return match({
       pendingModerationOrganizationId,
       interactionId,
       pendingCertificationDirigeantOrganizationId,
-      mustReturnOneOrganizationInPayload,
     })
       .with({ pendingModerationOrganizationId: P.number }, () =>
         processPendingModerationGuard(context),
       )
       .with({ interactionId: P.nullish }, () => connectToAppGuard(context))
-      .with({ pendingCertificationDirigeantOrganizationId: P.number }, () => {
-        return processCertificationDirigeantGuard(context);
-      })
-      .with(
-        { mustReturnOneOrganizationInPayload: P.nullish },
-        { mustReturnOneOrganizationInPayload: false },
-        () => connectToSpWithMultipleOrganizationsGuard(context),
+      .with({ pendingCertificationDirigeantOrganizationId: P.number }, () =>
+        processCertificationDirigeantGuard(context),
       )
       .otherwise(() => connectToSp(context));
   },
