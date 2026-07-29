@@ -1,14 +1,14 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Badge, Em, Text } from "./components/index.js";
 
 //
 
 export default function VerifyEmail(props: Props) {
-  const { baseurl, token } = props;
+  const { token } = props;
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text>Bonjour,</Text>
       <br />
       <Text>
@@ -30,4 +30,4 @@ export default function VerifyEmail(props: Props) {
 
 //
 
-export type Props = LayoutProps & { token: string };
+export type Props = { token: string };

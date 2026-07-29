@@ -1,18 +1,18 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Link, Text } from "./components/index.js";
 
 //
 
 export default function DeleteAccount(props: Props) {
-  const { baseurl, given_name, family_name, support_email } = props;
+  const { given_name, family_name, support_email } = props;
   const mailtoParams = new URLSearchParams({
     subject: "Erreur - Delete account",
   });
   const mailtoHref = `mailto:${support_email}?${mailtoParams.toString()}`;
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text safe>
         Bonjour {given_name} {family_name},
       </Text>
@@ -37,7 +37,7 @@ export default function DeleteAccount(props: Props) {
 
 //
 
-export type Props = LayoutProps & {
+export type Props = {
   given_name: string;
   family_name: string;
   support_email: string;

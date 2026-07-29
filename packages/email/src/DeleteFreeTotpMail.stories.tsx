@@ -12,6 +12,5 @@ export default {
     given_name: "Marie",
     family_name: "Dupont",
     support_email: "support+identite@proconnect.gouv.fr",
-    baseurl: "http://localhost:3000",
   },
 } as ComponentAnnotations<Renderer, Props>;

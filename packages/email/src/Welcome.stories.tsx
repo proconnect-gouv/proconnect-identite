@@ -9,7 +9,7 @@ export default {
   title: "Welcome",
   render: Welcome,
   args: {
-    baseurl: "#/../src/Welcome.stories.tsx",
+    base_url: "#/../src/Welcome.stories.tsx",
     family_name: "Dupont",
     given_name: "Marie",
   } as Props,

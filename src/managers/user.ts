@@ -30,7 +30,6 @@ import { chain, isEmpty, uniq } from "lodash-es";
 import { AssertionError } from "node:assert";
 import {
   FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
-  HOST,
   MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
   MAX_DURATION_BETWEEN_TWO_EMAIL_ADDRESS_VERIFICATION_IN_MINUTES,
   RESET_PASSWORD_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
@@ -211,7 +210,6 @@ export const sendEmailAddressVerificationEmail = async ({
     to: [user.email],
     subject: "Vérification de votre adresse email",
     html: VerifyEmail({
-      baseurl: HOST,
       token: verify_email_token,
     }).toString(),
     tag: "verify-email",
@@ -227,7 +225,6 @@ export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
     to: [email],
     subject: "Suppression de compte",
     html: DeleteAccount({
-      baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
       support_email: "support+identite@proconnect.gouv.fr",
@@ -248,7 +245,6 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
     subject:
       "Suppression d'une application d'authentification à double facteur",
     html: DeleteFreeTotpMail({
-      baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
       support_email: "support+identite@proconnect.gouv.fr",
@@ -264,7 +260,6 @@ export const sendDisable2faMail = async ({ user_id }: { user_id: number }) => {
     to: [email],
     subject: "Désactivation de la validation avec la double authentification",
     html: Delete2faProtection({
-      baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
     }).toString(),
@@ -283,7 +278,6 @@ export const sendDeleteAccessKeyMail = async ({
     to: [email],
     subject: "Alerte de sécurité",
     html: DeleteAccessKey({
-      baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
       support_email: "support+identite@proconnect.gouv.fr",
@@ -303,7 +297,6 @@ export const sendAddFreeTOTPEmail = async ({
     to: [email],
     subject: "Double authentification activée",
     html: Add2fa({
-      baseurl: HOST,
       email,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
@@ -323,7 +316,6 @@ export const sendActivateAccessKeyMail = async ({
     to: [email],
     subject: "Alerte de sécurité",
     html: AddAccessKey({
-      baseurl: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
       support_email: "support+identite@proconnect.gouv.fr",
@@ -375,7 +367,6 @@ export const sendUpdatePersonalInformationEmail = async ({
       to: [email],
       subject: "Mise à jour de vos données personnelles",
       html: UpdatePersonalDataMail({
-        baseurl: HOST,
         family_name,
         given_name,
         updatedFields: updatedFields,
@@ -454,7 +445,6 @@ export const sendSendMagicLinkEmail = async (
     to: [user.email],
     subject: "Lien de connexion à ProConnect",
     html: MagicLink({
-      baseurl: host,
       magic_link: `${host}/users/sign-in-with-magic-link?magic_link_token=${magicLinkToken}`,
     }).toString(),
     tag: "magic-link",
@@ -514,7 +504,6 @@ export const sendResetPasswordEmail = async (
     to: [user.email],
     subject: "Instructions pour la réinitialisation du mot de passe",
     html: ResetPassword({
-      baseurl: host,
       reset_password_link: `${host}/users/change-password?reset_password_token=${resetPasswordToken}`,
     }).toString(),
     tag: "reset-password",

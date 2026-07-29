@@ -1,14 +1,14 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Text } from "./components/index.js";
 
 //
 
 export default function Delete2faProtection(props: Props) {
-  const { baseurl, given_name, family_name } = props;
+  const { given_name, family_name } = props;
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text safe>
         Bonjour {given_name} {family_name},
       </Text>
@@ -25,7 +25,7 @@ export default function Delete2faProtection(props: Props) {
 
 //
 
-export type Props = LayoutProps & {
+export type Props = {
   given_name: string;
   family_name: string;
 };

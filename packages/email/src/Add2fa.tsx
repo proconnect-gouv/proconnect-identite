@@ -1,14 +1,14 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Text } from "./components/index.js";
 
 //
 
 export default function Add2fa(props: Props) {
-  const { baseurl, email, family_name, given_name } = props;
+  const { email, family_name, given_name } = props;
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text safe>
         Bonjour {given_name} {family_name},
       </Text>
@@ -25,7 +25,7 @@ export default function Add2fa(props: Props) {
 
 //
 
-export type Props = LayoutProps & {
+export type Props = {
   email: string;
   family_name: string;
   given_name: string;

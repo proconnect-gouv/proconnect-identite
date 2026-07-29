@@ -29,7 +29,6 @@ const info = await transporter.sendMail({
   to: "user@example.com",
   subject: "[ProConnect] Delete free TOTP",
   html: DeleteFreeTotpMail({
-    baseurl: "https://identite.proconnect.gouv.fr",
     given_name: "Marie",
     family_name: "Dupont",
     support_email: "support@example.com",

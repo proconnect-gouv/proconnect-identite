@@ -5,14 +5,15 @@ import type {
   Renderer,
   StoryAnnotations,
 } from "@storybook/csf";
-import UpdatePersonalDataMail, { type Props } from "./UpdatePersonalDataMail.js";
+import UpdatePersonalDataMail, {
+  type Props,
+} from "./UpdatePersonalDataMail.js";
 
 //
 export default {
   title: "Update Personal Data",
   render: UpdatePersonalDataMail,
   args: {
-    baseurl: "http://localhost:3000",
     given_name: "Maarie",
     family_name: "Duupont",
     updatedFields: {
