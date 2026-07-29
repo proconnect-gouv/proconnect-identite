@@ -1,12 +1,12 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Text } from "./components/index.js";
 
 export default function UpdatePersonalDataMail(props: Props) {
-  const { baseurl, family_name, given_name, updatedFields } = props;
+  const { family_name, given_name, updatedFields } = props;
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text safe>
         Bonjour {given_name} {family_name},
       </Text>
@@ -51,7 +51,7 @@ export default function UpdatePersonalDataMail(props: Props) {
 
 //
 
-export type Props = LayoutProps & {
+export type Props = {
   family_name: string | null;
   given_name: string | null;
   updatedFields: Partial<{

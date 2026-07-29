@@ -6,7 +6,6 @@ import type {
   UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
-import { HOST } from "../../config/env";
 import {
   ApiAnnuaireContactEmailMismatchError,
   ApiAnnuaireError,
@@ -148,7 +147,6 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     to: [contactEmail],
     subject: `[ProConnect] Authentifier un email sur ProConnect`,
     html: OfficialContactEmailVerification({
-      baseurl: HOST,
       given_name: given_name ?? "",
       family_name: family_name ?? "",
       email,

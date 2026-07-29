@@ -11,6 +11,5 @@ export default {
   args: {
     given_name: "Marie",
     family_name: "Dupont",
-    baseurl: "http://localhost:3000",
   } as Props,
 } as ComponentAnnotations<Renderer, Props>;

@@ -5,10 +5,6 @@ import { Html, ProConnectLogo, Section, Text } from "./components/index.js";
 
 //
 
-export interface LayoutProps {
-  baseurl: string;
-}
-
 export function VSpacing({ height }: { height: number }) {
   return (
     <Section style={`font-size:${height}px; line-height:${height}px;`}>
@@ -16,7 +12,7 @@ export function VSpacing({ height }: { height: number }) {
     </Section>
   );
 }
-export function Layout({ children }: PropsWithChildren<LayoutProps>) {
+export function Layout({ children }: PropsWithChildren) {
   return (
     <Html>
       <Section

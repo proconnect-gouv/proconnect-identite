@@ -50,13 +50,9 @@ touch src/MyNewTemplate.test.tsx
 ```typescript
 // 1. Component with typed props
 export default function MyNewTemplate(props: Props) {
-  const { baseurl, ...otherProps } = props;
-  return <Layout baseurl={baseurl}>...</Layout>
+  return <Layout>...</Layout>
 }
 
-export type Props = LayoutProps & {
-  // Add component-specific props here
-};
 
 // 2. Storybook story with realistic data
 import type { ComponentAnnotations, Renderer } from "@storybook/csf";
@@ -66,7 +62,6 @@ export default {
   title: "My New Template",
   render: MyNewTemplate,
   args: {
-    baseurl: "http://localhost:3000",
     /* ... realistic test data ... */
   } satisfies Props,
 } as ComponentAnnotations<Renderer, Props>;

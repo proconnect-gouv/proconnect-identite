@@ -1,14 +1,14 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Button, Em, Text } from "./components/index.js";
 
 //
 
 export default function ResetPassword(props: Props) {
-  const { baseurl, reset_password_link } = props;
+  const { reset_password_link } = props;
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text safe>Bonjour,</Text>
       <br />
       <Text>
@@ -36,6 +36,6 @@ export default function ResetPassword(props: Props) {
 
 //
 
-export type Props = LayoutProps & {
+export type Props = {
   reset_password_link: string;
 };

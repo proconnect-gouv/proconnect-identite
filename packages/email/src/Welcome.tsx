@@ -1,14 +1,14 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Em, Link, Text } from "./components/index.js";
 
 //
 
 export default function Welcome(props: Props) {
-  const { baseurl, family_name, given_name } = props;
+  const { base_url, family_name, given_name } = props;
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text safe>
         Bonjour {given_name} {family_name},
       </Text>
@@ -21,8 +21,8 @@ export default function Welcome(props: Props) {
         <br />
         <br />À tout moment, retrouvez les informations de votre compte
         ProConnect sur{" "}
-        <Link href={baseurl} target="_blank">
-          {baseurl}
+        <Link href={base_url} target="_blank">
+          {base_url}
         </Link>
         .
       </Text>
@@ -32,7 +32,8 @@ export default function Welcome(props: Props) {
 
 //
 
-export type Props = LayoutProps & {
+export type Props = {
+  base_url: string;
   family_name: string;
   given_name: string;
 };

@@ -461,7 +461,7 @@ export const greetForJoiningOrganization = async ({
     to: [email],
     subject: "Votre compte ProConnect a bien été créé",
     html: Welcome({
-      baseurl: HOST,
+      base_url: HOST,
       family_name: family_name ?? "",
       given_name: given_name ?? "",
     }).toString(),

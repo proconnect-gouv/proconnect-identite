@@ -1,15 +1,15 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Badge, Em, Text } from "./components/index.js";
 
 //
 
 export default function OfficialContactEmailVerification(props: Props) {
-  const { baseurl, given_name, email, family_name, libelle, token } = props;
+  const { given_name, email, family_name, libelle, token } = props;
 
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text>Bonjour,</Text>
       <br />
       <Text>
@@ -35,7 +35,7 @@ export default function OfficialContactEmailVerification(props: Props) {
 
 //
 
-export type Props = LayoutProps & {
+export type Props = {
   email: string;
   family_name: string;
   given_name: string;

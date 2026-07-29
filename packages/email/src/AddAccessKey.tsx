@@ -1,19 +1,19 @@
 //
 
-import { Layout, type LayoutProps } from "./_layout.js";
+import { Layout } from "./_layout.js";
 import { Link, Text } from "./components/index.js";
 
 //
 
 export default function AddAccessKey(props: Props) {
-  const { baseurl, family_name, given_name, support_email } = props;
+  const { family_name, given_name, support_email } = props;
   const mailtoParams = new URLSearchParams({
     subject: "Erreur - Add Access Key",
   });
   const mailtoHref = `mailto:${support_email}?${mailtoParams.toString()}`;
 
   return (
-    <Layout baseurl={baseurl}>
+    <Layout>
       <Text safe>
         Bonjour {given_name} {family_name},
       </Text>
@@ -33,7 +33,7 @@ export default function AddAccessKey(props: Props) {
 
 //
 
-export type Props = LayoutProps & {
+export type Props = {
   family_name: string;
   given_name: string;
   support_email: string;
