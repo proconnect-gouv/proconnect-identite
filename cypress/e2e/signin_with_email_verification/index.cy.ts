@@ -14,9 +14,7 @@ describe("sign-in with email verification renewal", () => {
       "Information : pour garantir la sécurité de votre compte, nous avons besoin d’authentifier votre navigateur.",
     );
 
-    cy.contains(
-      "Vérifiez les emails envoyés par lion.eljonson@darkangels.world",
-    );
+    cy.contains("Vérifiez les emails envoyés à lion.eljonson@darkangels.world");
 
     cy.verifyEmail();
 
@@ -44,9 +42,7 @@ describe("sign-in with email verification renewal", () => {
       .contains("Recevoir un nouveau code")
       .click();
 
-    cy.contains(
-      "Vérifiez les emails envoyés par rogal.dorn@imperialfists.world",
-    );
+    cy.contains("Vérifiez les emails envoyés à rogal.dorn@imperialfists.world");
 
     cy.verifyEmail();
 
