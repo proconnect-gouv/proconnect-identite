@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.1.0
+
+### Minor Changes
+
+- [#2057](https://github.com/proconnect-gouv/proconnect-identite/pull/2057) [`b0a51d1`](https://github.com/proconnect-gouv/proconnect-identite/commit/b0a51d19633f8908c9886425ea8bad2aa526aae1) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - suppression du paramètre baseurl passé à tous les templates de mails
+
 ## 1.0.2
 
 ### Patch Changes
