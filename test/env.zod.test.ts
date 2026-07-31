@@ -100,7 +100,7 @@ describe("env.zod", () => {
       SENTRY_DSN: "",
       SESSION_COOKIE_SECRET: ["proconnectsecret", "identitesecret"],
       SESSION_MAX_AGE_IN_SECONDS: 86400,
-      SMTP_FROM: "nepasrepondre@email.moncomptepro.beta.gouv.fr",
+      SMTP_FROM: "nepasrepondre@email.proconnect.gouv.fr",
       SMTP_FROM_ALT: "nepasrepondre@email.proconnect.gouv.fr",
       SMTP_FROM_ALT_RATIO_PERCENT: 10,
       SMTP_URL: "smtp://localhost:1025",

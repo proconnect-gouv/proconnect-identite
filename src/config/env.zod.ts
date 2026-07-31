@@ -63,9 +63,7 @@ export const connectorEnvSchema = z.object({
     .nonnegative()
     .default(1_000 * 3), // 3 seconds in milliseconds;
   SENTRY_DSN: z.string().default(""),
-  SMTP_FROM: z
-    .string()
-    .default("nepasrepondre@email.moncomptepro.beta.gouv.fr"),
+  SMTP_FROM: z.string().default("nepasrepondre@email.proconnect.gouv.fr"),
   SMTP_FROM_ALT: z.string().default("nepasrepondre@email.proconnect.gouv.fr"),
   SMTP_URL: z.string(),
 });
