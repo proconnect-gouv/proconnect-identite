@@ -144,5 +144,14 @@
             </p>
           </div>
         </form>
+
+        <% if (locals.hasFranceConnectIdentity) { %>
+        <form action="/personal-information/franceconnect/disconnect" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+          <button class="fr-btn fr-btn--secondary" type="submit">
+            Se déconnecter de FranceConnect
+          </button>
+        </form>
+        <% } %>
     </div>
 </div>

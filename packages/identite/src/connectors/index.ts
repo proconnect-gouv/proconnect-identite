@@ -11,6 +11,7 @@ import { findByIdFactory as findOrganizationByIdFactory } from "../repositories/
 import { findByUserIdFactory } from "../repositories/organization/find-by-user-id.js";
 import { getUsersByOrganizationFactory } from "../repositories/organization/get-users-by-organization.js";
 import { createUserFactory } from "../repositories/user/create.js";
+import { deleteFranceConnectUserInfoFactory } from "../repositories/user/delete-franceconnect-userinfo.js";
 import { findByEmailFactory } from "../repositories/user/find-by-email.js";
 import { findByIdFactory as findUserByIdFactory } from "../repositories/user/find-by-id.js";
 import { getByIdFactory } from "../repositories/user/get-by-id.js";
@@ -56,6 +57,7 @@ export function createContext({
       },
       users: {
         create: createUserFactory({ pg }),
+        deleteFranceConnectUserInfo: deleteFranceConnectUserInfoFactory({ pg }),
         findByEmail: findByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
         getById: getByIdFactory({ pg }),
