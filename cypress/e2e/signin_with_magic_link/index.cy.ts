@@ -95,7 +95,7 @@ describe("sign-in with magic link", () => {
     cy.maildevGetMessageBySubject("Lien de connexion à ProConnect").then(
       (email) => {
         expect(email.from?.[0].address).to.equal(
-          "nepasrepondre@email.moncomptepro.beta.gouv.fr",
+          "nepasrepondre@email.proconnect.gouv.fr",
         );
         cy.maildevDeleteMessageById(email.id);
       },
