@@ -777,7 +777,7 @@ const connectToAppGuard = async (prev: Pass<RequestContext>) => {
 
 const connectToSp = async (
   prev: Pass<RequestContext>,
-): Promise<Redirect | Pass<RequestContext>> => {
+): Promise<GuardResult<string, RequestContext>> => {
   let context;
 
   context = await userHasAtLeastOneOrganizationGuard(prev);
@@ -805,7 +805,7 @@ const connectToSp = async (
   context = await userHasBeenGreetedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  return prev.pass("ok_to_connect_to_sp");
+  return context.pass("ok_to_connect_to_sp");
 };
 
 const processPendingModerationGuard = async (prev: Pass<RequestContext>) => {
@@ -886,7 +886,7 @@ const processCertificationDirigeantGuard = async (
       selectedOrganizationId: organizationId,
     });
 
-    return connectToSp(prev);
+    return userSignInRequirementsGuard(prev);
   } catch (error) {
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
     await deleteSelectedOrganizationId(user_id);
@@ -911,30 +911,34 @@ const processCertificationDirigeantGuard = async (
   }
 };
 
+async function userSignInRequirementsGuard(
+  prev: Pass<RequestContext>,
+): Promise<GuardResult<string, RequestContext>> {
+  const context = await browserIsTrustedGuard(prev);
+  if (!Pass.is_passing(context)) return context;
+
+  const {
+    pendingModerationOrganizationId,
+    interactionId,
+    pendingCertificationDirigeantOrganizationId,
+  } = context.data.req.session;
+
+  return match({
+    pendingModerationOrganizationId,
+    interactionId,
+    pendingCertificationDirigeantOrganizationId,
+  })
+    .with({ pendingModerationOrganizationId: P.number }, () =>
+      processPendingModerationGuard(context),
+    )
+    .with({ interactionId: P.nullish }, () => connectToAppGuard(context))
+    .with({ pendingCertificationDirigeantOrganizationId: P.number }, () =>
+      processCertificationDirigeantGuard(context),
+    )
+    .otherwise(() => connectToSp(context));
+}
+
 // check that the user goes through all requirements before issuing a session
 export const userSignInRequirementsGuardMiddleware = createGuardMiddleware(
-  async function userSignInRequirementsGuard(prev) {
-    const context = await browserIsTrustedGuard(prev);
-    if (!Pass.is_passing(context)) return context;
-
-    const {
-      pendingModerationOrganizationId,
-      interactionId,
-      pendingCertificationDirigeantOrganizationId,
-    } = context.data.req.session;
-
-    return match({
-      pendingModerationOrganizationId,
-      interactionId,
-      pendingCertificationDirigeantOrganizationId,
-    })
-      .with({ pendingModerationOrganizationId: P.number }, () =>
-        processPendingModerationGuard(context),
-      )
-      .with({ interactionId: P.nullish }, () => connectToAppGuard(context))
-      .with({ pendingCertificationDirigeantOrganizationId: P.number }, () =>
-        processCertificationDirigeantGuard(context),
-      )
-      .otherwise(() => connectToSp(context));
-  },
+  userSignInRequirementsGuard,
 );
