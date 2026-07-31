@@ -29,7 +29,8 @@ describe("sign-up from standard client", () => {
     cy.focused().clear().type("Pierre");
     cy.contains("Continuer").click();
 
-    cy.title().should("equal", "Compte créé - ProConnect");
+    cy.title().should("include", "Compte créé - ProConnect");
+    cy.contains("Compte créé 🎊");
     cy.contains("Continuer").click();
 
     cy.title().should("equal", "standard-client - ProConnect");

@@ -17,6 +17,7 @@ describe("join organizations", () => {
     ).click();
 
     cy.title().should("include", "Compte créé - ProConnect");
+    cy.contains("Compte créé 🎊");
     cy.contains("Continue").click();
 
     cy.title().should("include", "Accueil - ProConnect");
