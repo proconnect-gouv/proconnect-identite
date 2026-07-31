@@ -142,12 +142,10 @@ export const postJoinOrganizationMiddleware = async (
       sp_name: req.session.spName,
     });
 
-    if (req.session.mustReturnOneOrganizationInPayload) {
-      await selectOrganization({
-        user_id,
-        organization_id: userOrganizationLink.organization_id,
-      });
-    }
+    await selectOrganization({
+      user_id,
+      organization_id: userOrganizationLink.organization_id,
+    });
 
     next();
   } catch (error) {

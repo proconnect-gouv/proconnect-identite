@@ -2,7 +2,6 @@ import { to } from "await-to-js";
 import { interactionPolicy } from "oidc-provider";
 import { getOrganizationById } from "../managers/organization/main";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
-import { mustReturnOneOrganizationInPayload } from "./must-return-one-organization-in-payload";
 
 //
 
@@ -26,12 +25,7 @@ policy.add(
           getSelectedOrganizationId(user_id),
         );
 
-        if (
-          mustReturnOneOrganizationInPayload(
-            [...oidc.requestParamScopes].join(" "),
-          ) &&
-          !selectedOrganizationId
-        ) {
+        if (!selectedOrganizationId) {
           return Check.REQUEST_PROMPT;
         }
 

@@ -9,7 +9,6 @@ export interface UnauthenticatedSessionData {
   needsInclusionconnectWelcomePage?: boolean;
   hasWebauthnConfigured?: boolean;
   interactionId?: string;
-  mustReturnOneOrganizationInPayload?: boolean;
   prompt?: PromptDetail;
   referrerPath?: string;
   authForProconnectFederation?: boolean;

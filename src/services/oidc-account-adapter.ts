@@ -13,7 +13,6 @@ import { findByUserId as getUsersOrganizations } from "../repositories/organizat
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { findById as findUserById } from "../repositories/user";
 import { logger } from "./log";
-import { mustReturnOneOrganizationInPayload } from "./must-return-one-organization-in-payload";
 import { isCommune } from "./organization";
 
 export const findAccount: FindAccount = async (_ctx, sub) => {
@@ -25,7 +24,7 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
 
   return {
     accountId: sub,
-    async claims(_use: any, scope: string) {
+    async claims(_use: any, _scope: string) {
       const {
         id,
         email,
@@ -61,72 +60,49 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
       );
 
       const organizations = await getUsersOrganizations(id);
-      if (mustReturnOneOrganizationInPayload(scope)) {
-        const [selectedOrganizationIdErr, selectedOrganizationId] = await to(
-          getSelectedOrganizationId(id),
-        );
 
-        if (selectedOrganizationIdErr) {
-          // This Error will be silently swallowed by oidc-provider.
-          // We add additional logs to keep traces.
-          logger.error(selectedOrganizationIdErr);
-          Sentry.captureException(selectedOrganizationIdErr);
-          // this will result in a 400 Bad Request
-          // Response: {
-          //    "error": "invalid_grant",
-          //    "error_description": "grant request is invalid"
-          // }
-          throw selectedOrganizationIdErr;
-        }
+      const [selectedOrganizationIdErr, selectedOrganizationId] = await to(
+        getSelectedOrganizationId(id),
+      );
 
-        const organization = organizations.find(
-          ({ id }) => id === selectedOrganizationId,
-        );
-
-        if (isEmpty(organization)) {
-          // see comments on above error management
-          const err = Error("organization should be set");
-          logger.error(err);
-          Sentry.captureException(err);
-          throw err;
-        }
-
-        return {
-          ...personalClaims,
-          label: organization.cached_libelle,
-          siret: organization.siret,
-          is_commune: isCommune(organization),
-          is_external: organization.is_external,
-          is_service_public:
-            computeServicePublicInfo(organization).isServicePublic,
-          is_public_service:
-            computeServicePublicInfo(organization).isServicePublic,
-        };
-      } else {
-        return {
-          ...personalClaims,
-          organizations: organizations.map((organization) => {
-            const {
-              id,
-              siret,
-              is_external,
-              cached_libelle: label,
-            } = organization;
-
-            return {
-              id,
-              siret,
-              is_external,
-              label,
-              is_commune: isCommune(organization),
-              is_service_public:
-                computeServicePublicInfo(organization).isServicePublic,
-              is_public_service:
-                computeServicePublicInfo(organization).isServicePublic,
-            };
-          }),
-        };
+      if (selectedOrganizationIdErr) {
+        // This Error will be silently swallowed by oidc-provider.
+        // We add additional logs to keep traces.
+        logger.error(selectedOrganizationIdErr);
+        Sentry.captureException(selectedOrganizationIdErr);
+        // this will result in a 400 Bad Request
+        // Response: {
+        //    "error": "invalid_grant",
+        //    "error_description": "grant request is invalid"
+        // }
+        throw selectedOrganizationIdErr;
       }
+
+      const organization = organizations.find(
+        ({ id }) => id === selectedOrganizationId,
+      );
+
+      if (isEmpty(organization)) {
+        // see comments on above error management
+        const err = Error("organization should be set");
+        logger.error(err);
+        Sentry.captureException(err);
+        throw err;
+      }
+
+      return {
+        ...personalClaims,
+        label: organization.cached_libelle,
+        siret: organization.siret,
+        is_commune: isCommune(organization),
+        is_external: organization.is_external,
+        is_service_public:
+          computeServicePublicInfo(organization).isServicePublic,
+        is_public_service:
+          computeServicePublicInfo(organization).isServicePublic,
+        // we left this for retro-compatibility purposes, this should be removed in the future
+        organizations: [],
+      };
     },
   };
 };

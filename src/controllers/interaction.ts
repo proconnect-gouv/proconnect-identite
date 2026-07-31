@@ -24,7 +24,6 @@ import {
 } from "../services/acr-checks";
 import { oidcErrorSchema, siretSchema } from "../services/custom-zod-schemas";
 import epochTime from "../services/epoch-time";
-import { mustReturnOneOrganizationInPayload } from "../services/must-return-one-organization-in-payload";
 
 export const interactionStartControllerFactory =
   (oidcProvider: Provider) =>
@@ -35,14 +34,12 @@ export const interactionStartControllerFactory =
         params,
         prompt,
       } = await oidcProvider.interactionDetails(req, res);
-      const { client_id, login_hint, siret_hint, scope, sp_name } =
+      const { client_id, login_hint, siret_hint, sp_name } =
         params as OIDCContextParams;
 
       req.session.certificationDirigeantRequested =
         certificationDirigeantRequested(prompt);
       req.session.interactionId = interactionId;
-      req.session.mustReturnOneOrganizationInPayload =
-        mustReturnOneOrganizationInPayload(scope);
       req.session.prompt = prompt;
       req.session.spName = sp_name || undefined;
 

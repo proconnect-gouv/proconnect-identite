@@ -64,7 +64,6 @@ export const createAuthenticatedSession = async (
   const {
     authForProconnectFederation,
     interactionId,
-    mustReturnOneOrganizationInPayload,
     nonce,
     referrerPath,
     state,
@@ -92,8 +91,6 @@ export const createAuthenticatedSession = async (
         req.session.user = updatedUser;
         // we restore previous session navigation values
         req.session.interactionId = interactionId;
-        req.session.mustReturnOneOrganizationInPayload =
-          mustReturnOneOrganizationInPayload;
         req.session.prompt = prompt;
         req.session.referrerPath = referrerPath;
         req.session.authForProconnectFederation = authForProconnectFederation;
@@ -275,13 +272,6 @@ export async function getCurrentAAL(req: Request) {
 // 1: Modération
 // 2: Lien certifié par une source officielle
 export async function getCurrentOAL(req: Request) {
-  if (!req.session.mustReturnOneOrganizationInPayload) {
-    // The OAL should reflect the minimum verification level across all organizations associated with the user.
-    // This calculation is complex, and support for multiple organizations should be deprecated soon.
-    // We return a "moderated" OAL to avoid triggering the safeguard that prevents both OAL and IAL from being zero simultaneously.
-    return 1;
-  }
-
   const user = getUserFromAuthenticatedSession(req);
   const selectedOrganizationId = await getSelectedOrganizationId(user.id);
 
