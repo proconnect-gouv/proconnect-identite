@@ -33,6 +33,7 @@ import { getUsersByOrganizationFactory } from "../repositories/organization/get-
 import { linkUserToOrganizationFactory } from "../repositories/organization/link-user-to-organization.js";
 import { upsertFactory } from "../repositories/organization/upsert.js";
 import { createUserFactory } from "../repositories/user/create.js";
+import { deleteFranceConnectUserInfoFactory } from "../repositories/user/delete-franceconnect-userinfo.js";
 import { deleteUserFactory } from "../repositories/user/delete.js";
 import { findByEmailFactory } from "../repositories/user/find-by-email.js";
 import { findByIdFactory as findUserByIdFactory } from "../repositories/user/find-by-id.js";
@@ -113,6 +114,7 @@ export function createContext({
       users: {
         create: createUserFactory({ pg }),
         delete: deleteUserFactory({ pg }),
+        deleteFranceConnectUserInfo: deleteFranceConnectUserInfoFactory({ pg }),
         findByEmail: findByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
         findByMagicLinkToken: findByMagicLinkTokenFactory({ pg }),

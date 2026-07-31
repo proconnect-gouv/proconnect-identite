@@ -20,6 +20,7 @@ import {
   getManageOrganizationsController,
   getPersonalInformationsController,
   getPolitiqueDeConfidentialiteController,
+  postDisconnectFranceConnectController,
   postPersonalInformationsController,
 } from "../controllers/main";
 import {
@@ -244,6 +245,17 @@ export const mainRouter = (app: Express) => {
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
+  );
+
+  mainRouter.post(
+    "/personal-information/franceconnect/disconnect",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    postDisconnectFranceConnectController,
   );
 
   mainRouter.get(

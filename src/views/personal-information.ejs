@@ -1,6 +1,6 @@
 <div class="dashboard-container">
     <%- include('partials/sidemenu.ejs', {activeLink: 'personal-information'}) %>
-    <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+    <div class="dashboard-content fr-mb-12w fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <%- include('partials/notifications.ejs', {notifications: notifications}) %>
         <h1 class="fr-h2">
             Vos informations personnelles
@@ -10,7 +10,7 @@
 
             <p aria-hidden="true" class="fr-hint-text">Les champs notés * sont obligatoires.</p>
 
-            <% if (locals.hasFranceConnectIdentity) { %>
+            <% if (locals.franceConnect_last_update) { %>
             <div class="fr-select-group">
                 <label class="fr-label" for="given_name">
                     Prénom<span aria-hidden="true"> *</span>
@@ -46,7 +46,7 @@
             </div>
             <% } %>
 
-            <% if (locals.hasFranceConnectIdentity) { %>
+            <% if (locals.franceConnect_last_update) { %>
             <div class="fr-select-group">
                 <label class="fr-label" for="family_name">
                     Nom<span aria-hidden="true"> *</span>
@@ -120,7 +120,21 @@
             </button>
         </form>
 
+        <h1 class="fr-h3 fr-mt-4w">Identité FranceConnect</h1>
+
+        <% if (locals.franceConnect_last_update) { %>
+
+        <p>
+          Vous avez utilisé votre identité FranceConnect pour pré-remplir vos informations personnelles. <br/>
+          <em>Dernière connexion FranceConnect :
+          le <%= locals.franceConnect_last_update.toLocaleString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }); %>
+          à <%= locals.franceConnect_last_update.toLocaleTimeString("fr-FR"); %></em>
+        </p>
+
+        <h2 class="fr-h6">Mettre à jour votre identité FranceConnect</h2>
+
         <p class="fr-mt-4w">Si votre état civil a été modifié, vous pouvez mettre à jour vos informations en récupérant vos données via FranceConnect.</p>
+
 
         <form action="/users/personal-information/franceconnect/login" method="post">
           <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
@@ -144,5 +158,44 @@
             </p>
           </div>
         </form>
+
+        <h2 class="fr-h6">Supprimer le lien entre FranceConnect et votre compte ProConnect</h2>
+
+        <form action="/personal-information/franceconnect/disconnect" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+          <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-link-unlink" type="submit">
+            Délier les comptes
+          </button>
+        </form>
+
+        <% } else { %>
+
+        <p>
+          Vous pouvez utiliser votre identité FranceConnect pour pré-remplir vos informations personnelles.
+        </p>
+
+        <form action="/users/personal-information/franceconnect/login" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+
+          <div class="fr-connect-group">
+            <p class="text-muted">
+              FranceConnect est la solution proposée par l’État pour sécuriser et simplifier la connexion à vos services en ligne.
+            </p>
+
+            <button class="fr-connect">
+              <span class="fr-connect__login">S’identifier avec</span>
+              <span class="fr-connect__brand">FranceConnect</span>
+            </button>
+            <p>
+              <a
+                href="https://franceconnect.gouv.fr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Qu’est-ce que FranceConnect ?</a
+              >
+            </p>
+          </div>
+        </form>
+        <% } %>
     </div>
 </div>

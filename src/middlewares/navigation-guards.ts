@@ -45,8 +45,8 @@ import {
   getPartialUserFromUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
 import {
-  hasFranceConnectIdentity,
   hasValidFranceConnectIdentity,
+  lastFranceConnectIdentityUpdate,
   needsEmailVerificationRenewal,
   needsFranceConnectIdentityRenewal,
 } from "../managers/user";
@@ -574,7 +574,7 @@ const userHasValidFranceConnectIdentityGuard = async <
   const { id: user_id } = getUserFromAuthenticatedSession(req);
 
   if (
-    (await hasFranceConnectIdentity(user_id)) &&
+    (await lastFranceConnectIdentityUpdate(user_id)) &&
     (await needsFranceConnectIdentityRenewal(user_id))
   ) {
     return redirect("/users/franceconnect");
