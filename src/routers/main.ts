@@ -3,6 +3,13 @@ import nocache from "nocache";
 import {
   getDoubleAuthenticationController,
   getIsTotpAppInstalledController,
+  getMfaDecisionHelperCanInstallSoftwareController,
+  getMfaDecisionHelperCanInstallSoftwareExternalHelpNeededController,
+  getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController,
+  getMfaDecisionHelperCanInstallSoftwareSmartphoneController,
+  getMfaDecisionHelperCanInstallSoftwareSoftwareController,
+  getMfaDecisionHelperController,
+  getMfaDecisionHelperPasskeyController,
   postSetForce2faController,
 } from "../controllers/2fa";
 import {
@@ -68,6 +75,83 @@ export const mainRouter = (app: Express) => {
     rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     getIsTotpAppInstalledController,
+  );
+
+  mainRouter.get(
+    "/mfa-decision-helper",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperController,
+  );
+
+  mainRouter.get(
+    "/mfa-decision-helper/passkey",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperPasskeyController,
+  );
+
+  mainRouter.get(
+    "/mfa-decision-helper/can-install-software",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperCanInstallSoftwareController,
+  );
+
+  mainRouter.get(
+    "/mfa-decision-helper/can-install-software/software",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperCanInstallSoftwareSoftwareController,
+  );
+
+  mainRouter.get(
+    "/mfa-decision-helper/can-install-software/smartphone",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperCanInstallSoftwareSmartphoneController,
+  );
+
+  mainRouter.get(
+    "/mfa-decision-helper/can-install-software/smartphone/app",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController,
+  );
+
+  mainRouter.get(
+    "/mfa-decision-helper/can-install-software/external-help-needed",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    rateLimiterMiddleware,
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMfaDecisionHelperCanInstallSoftwareExternalHelpNeededController,
   );
 
   mainRouter.get(

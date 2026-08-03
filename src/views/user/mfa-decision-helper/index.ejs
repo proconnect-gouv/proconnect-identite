@@ -1,6 +1,5 @@
 <div>
-  <h1 class="fr-h5 fr-mb-1w">Trouver la meilleure méthode de 2FA</h1>
-  <hr class="hr-personalized-step-one fr-mb-3w" />
+  <%- include('../../partials/mfa-decision-helper-header.ejs', { step: "one" }); %>
 
   <form action="/users/mfa-decision-helper" method="get">
     <fieldset

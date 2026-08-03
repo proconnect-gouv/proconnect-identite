@@ -1,8 +1,7 @@
 <div>
-  <h1 class="fr-h5 fr-mb-1w">Trouver la meilleure méthode de 2FA</h1>
-  <hr class="hr-personalized-step-two fr-mb-3w" />
+  <%- include('../../../partials/mfa-decision-helper-header.ejs', { step: "three" }); %>
 
-  <form action="/users/mfa-decision-helper/other" method="get">
+  <form action="/users/mfa-decision-helper/can-install-software" method="get">
     <fieldset
       class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
       aria-labelledby="can-install-software-legend"
@@ -11,7 +10,7 @@
         id="can-install-software-legend"
         class="fr-fieldset__legend fr-text--regular fr-h4 fr-mb-1w"
       >
-        Avez-vous le droit d'installer des logiciels ou extension de navigateur
+        Avez-vous le droit d'installer des logiciels ou extensions de navigateur
         sur votre poste ?
       </legend>
 
@@ -44,5 +43,5 @@
 
     <button class="fr-btn btn--fullwidth" type="submit">Continuer</button>
   </form>
-  <%- include('../../partials/go-back.ejs'); %>
+  <%- include('../../../partials/go-back.ejs'); %>
 </div>

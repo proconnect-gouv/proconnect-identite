@@ -61,12 +61,12 @@ import {
 import {
   get2faSuccessfullyConfiguredController,
   getIsTotpAppInstalledController,
+  getMfaDecisionHelperCanInstallSoftwareController,
+  getMfaDecisionHelperCanInstallSoftwareExternalHelpNeededController,
+  getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController,
+  getMfaDecisionHelperCanInstallSoftwareSmartphoneController,
+  getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
-  getMfaDecisionHelperOtherController,
-  getMfaDecisionHelperOtherExternalHelpNeededController,
-  getMfaDecisionHelperOtherSmartphoneAppController,
-  getMfaDecisionHelperOtherSmartphoneController,
-  getMfaDecisionHelperOtherSoftwareController,
   getMfaDecisionHelperPasskeyController,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
@@ -648,38 +648,38 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/mfa-decision-helper/other",
+    "/mfa-decision-helper/can-install-software",
     userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
-    getMfaDecisionHelperOtherController,
+    getMfaDecisionHelperCanInstallSoftwareController,
   );
 
   userRouter.get(
-    "/mfa-decision-helper/other/software",
+    "/mfa-decision-helper/can-install-software/software",
     userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
-    getMfaDecisionHelperOtherSoftwareController,
+    getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   );
 
   userRouter.get(
-    "/mfa-decision-helper/other/external-help-needed",
+    "/mfa-decision-helper/can-install-software/external-help-needed",
     userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
-    getMfaDecisionHelperOtherExternalHelpNeededController,
+    getMfaDecisionHelperCanInstallSoftwareExternalHelpNeededController,
   );
 
   userRouter.get(
-    "/mfa-decision-helper/other/smartphone",
+    "/mfa-decision-helper/can-install-software/smartphone",
     userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
-    getMfaDecisionHelperOtherSmartphoneController,
+    getMfaDecisionHelperCanInstallSoftwareSmartphoneController,
   );
 
   userRouter.get(
-    "/mfa-decision-helper/other/smartphone/app",
+    "/mfa-decision-helper/can-install-software/smartphone/app",
     userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
-    getMfaDecisionHelperOtherSmartphoneAppController,
+    getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController,
   );
 
   return userRouter;

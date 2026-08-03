@@ -165,12 +165,12 @@ export const getMfaDecisionHelperController = async (
   try {
     const { "device-type": deviceType } = req.query;
 
-    if (deviceType === "mac" || deviceType === "windows-hello") {
-      return res.redirect("/users/mfa-decision-helper/passkey");
-    }
-
-    if (deviceType === "other") {
-      return res.redirect("/users/mfa-decision-helper/other");
+    switch (deviceType) {
+      case "mac":
+      case "windows-hello":
+        return res.redirect("/users/mfa-decision-helper/passkey");
+      case "other":
+        return res.redirect("/users/mfa-decision-helper/can-install-software");
     }
 
     return res.render("user/mfa-decision-helper/index", {
@@ -198,7 +198,7 @@ export const getMfaDecisionHelperPasskeyController = async (
   }
 };
 
-export const getMfaDecisionHelperOtherController = async (
+export const getMfaDecisionHelperCanInstallSoftwareController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -206,15 +206,18 @@ export const getMfaDecisionHelperOtherController = async (
   try {
     const { "can-install-software": canInstallSoftware } = req.query;
 
-    if (canInstallSoftware === "yes") {
-      return res.redirect("/users/mfa-decision-helper/other/software");
+    switch (canInstallSoftware) {
+      case "yes":
+        return res.redirect(
+          "/users/mfa-decision-helper/can-install-software/software",
+        );
+      case "no":
+        return res.redirect(
+          "/users/mfa-decision-helper/can-install-software/smartphone",
+        );
     }
 
-    if (canInstallSoftware === "no") {
-      return res.redirect("/users/mfa-decision-helper/other/smartphone");
-    }
-
-    return res.render("user/mfa-decision-helper/other", {
+    return res.render("user/mfa-decision-helper/can-install-software/index", {
       pageTitle: "Choisir la meilleure méthode pour vous",
       csrfToken: csrfToken(req),
       notifications: await getNotificationsFromRequest(req),
@@ -224,75 +227,79 @@ export const getMfaDecisionHelperOtherController = async (
   }
 };
 
-export const getMfaDecisionHelperOtherSoftwareController = async (
+export const getMfaDecisionHelperCanInstallSoftwareSoftwareController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    return res.render("user/mfa-decision-helper/other-software", {
-      pageTitle: "Codes à usage unique (TOTP)",
-      csrfToken: csrfToken(req),
-    });
+    return res.render(
+      "user/mfa-decision-helper/can-install-software/software",
+      {
+        pageTitle: "Codes à usage unique (TOTP)",
+        csrfToken: csrfToken(req),
+      },
+    );
   } catch (error) {
     next(error);
   }
 };
 
-export const getMfaDecisionHelperOtherExternalHelpNeededController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.render("user/mfa-decision-helper/other-external-help-needed", {
-      pageTitle: "Intervention extérieure nécessaire",
-      csrfToken: csrfToken(req),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getMfaDecisionHelperOtherSmartphoneController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { "can-install-app-on-smartphone": canInstallAppOnSmartphone } =
-      req.query;
-
-    if (canInstallAppOnSmartphone === "yes") {
-      return res.redirect("/users/mfa-decision-helper/other/smartphone/app");
-    }
-
-    if (canInstallAppOnSmartphone === "no") {
-      return res.redirect(
-        "/users/mfa-decision-helper/other/external-help-needed",
+export const getMfaDecisionHelperCanInstallSoftwareExternalHelpNeededController =
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      return res.render(
+        "user/mfa-decision-helper/can-install-software/external-help-needed",
+        {
+          pageTitle: "Intervention extérieure nécessaire",
+          csrfToken: csrfToken(req),
+        },
       );
+    } catch (error) {
+      next(error);
     }
+  };
 
-    return res.render("user/mfa-decision-helper/other-smartphone", {
-      pageTitle: "Choisir la meilleure méthode pour vous",
-      csrfToken: csrfToken(req),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+export const getMfaDecisionHelperCanInstallSoftwareSmartphoneController =
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { "can-install-app-on-smartphone": canInstallAppOnSmartphone } =
+        req.query;
 
-export const getMfaDecisionHelperOtherSmartphoneAppController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.render("user/mfa-decision-helper/other-smartphone-app", {
-      pageTitle: "Codes à usage unique (TOTP)",
-      csrfToken: csrfToken(req),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      switch (canInstallAppOnSmartphone) {
+        case "yes":
+          return res.redirect(
+            "/users/mfa-decision-helper/can-install-software/smartphone/app",
+          );
+        case "no":
+          return res.redirect(
+            "/users/mfa-decision-helper/can-install-software/external-help-needed",
+          );
+      }
+
+      return res.render(
+        "user/mfa-decision-helper/can-install-software/smartphone",
+        {
+          pageTitle: "Choisir la meilleure méthode pour vous",
+          csrfToken: csrfToken(req),
+        },
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+export const getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController =
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      return res.render(
+        "user/mfa-decision-helper/can-install-software/smartphone-app",
+        {
+          pageTitle: "Codes à usage unique (TOTP)",
+          csrfToken: csrfToken(req),
+        },
+      );
+    } catch (error) {
+      next(error);
+    }
+  };

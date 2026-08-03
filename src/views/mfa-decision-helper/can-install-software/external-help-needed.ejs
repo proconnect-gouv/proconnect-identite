@@ -1,0 +1,18 @@
+<div class="dashboard-container">
+  <%- include('../../partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
+  <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+    <%- include('../../partials/mfa-decision-helper-header.ejs', { step: "three" }); %>
+
+    <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+      <img src="/dist/error.svg" alt="" class="limited-width fr-mr-2w" />
+      <h2 class="fr-h6 fr-mb-0">Intervention extérieure nécessaire</h2>
+    </div>
+
+    <p>
+      Nous n’avons pas de solution dans l’immédiat : contactez votre service
+      informatique pour qu’ils vous fournissent des outils de 2FA.
+    </p>
+
+    <%- include('../../partials/go-back.ejs'); %>
+  </div>
+</div>

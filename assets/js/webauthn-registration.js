@@ -4,7 +4,9 @@ import {
 } from "@simplewebauthn/browser";
 
 const notSupportedElement = document.getElementById("webauthn-not-supported");
-const submitButton = document.getElementById("webauthn-submit-button");
+const webauthnRegistrationButton = document.getElementById(
+  "webauthn-registration-button",
+);
 const errorAlertElement = document.getElementById("webauthn-alert-error");
 
 document.addEventListener(
@@ -15,6 +17,8 @@ document.addEventListener(
     // Start registration when the user clicks a button
 
     const onRegisterClick = async (e) => {
+      // passKeyOption is null on the mfa-decision-helper "passkey" page (no radio
+      // there, it's the only option). On other pages, only proceed if it's checked.
       if (!passKeyOption || passKeyOption.checked) {
         e.preventDefault();
         await registerPassKey();
@@ -26,7 +30,7 @@ document.addEventListener(
     if (!browserSupportsWebAuthn()) {
       notSupportedElement.style.display = "block";
     } else {
-      submitButton.addEventListener("click", onRegisterClick);
+      webauthnRegistrationButton.addEventListener("click", onRegisterClick);
     }
   },
   false,
@@ -42,7 +46,7 @@ const registerPassKey = async () => {
 
   // Reset success/error messages
   clearDisplay();
-  submitButton.disabled = true;
+  webauthnRegistrationButton.disabled = true;
 
   let attResp;
 
@@ -65,7 +69,7 @@ const registerPassKey = async () => {
     }
 
     errorAlertElement.scrollIntoView({ behavior: "smooth" });
-    submitButton.disabled = false;
+    webauthnRegistrationButton.disabled = false;
 
     throw error;
   }
