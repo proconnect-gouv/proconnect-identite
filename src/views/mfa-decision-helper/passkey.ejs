@@ -3,7 +3,7 @@
   <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
     <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
 
-    <%- include('../partials/mfa-decision-helper-header.ejs', { step: "three" }); %>s
+    <%- include('../partials/mfa-decision-helper-header.ejs', { step: "three" }); %>
 
     <div class="fr-callout fr-icon-alert-line" id="webauthn-not-supported" hidden>
       <p class="fr-callout__title fr-h4">
@@ -41,9 +41,8 @@
     >
       Continuer avec la passkey
     </button>
-
-    <%- include('../partials/go-back.ejs'); %>
-
+    
+    <%- include('../partials/mfa-helper-restart.ejs'); %>
     <form
       id="webauthn-registration-response-form"
       action="/passkeys/verify-registration"
