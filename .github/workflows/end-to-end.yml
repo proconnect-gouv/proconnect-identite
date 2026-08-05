@@ -38,6 +38,8 @@ jobs:
           - join_with_free_email_domain
           - join_with_gouv_domain
           - join_with_official_contact_email
+          - mfa_decision_helper_account
+          - mfa_decision_helper_signin
           - quit-organization
           - rate_limit_by_email
           - rate_limit_by_ip
