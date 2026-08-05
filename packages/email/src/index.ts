@@ -8,6 +8,7 @@ export { default as DeleteAccount } from "./DeleteAccount.js";
 export { default as DeleteFreeTotpMail } from "./DeleteFreeTotpMail.js";
 export { default as MagicLink } from "./MagicLink.js";
 export { default as OfficialContactEmailVerification } from "./OfficialContactEmailVerification.js";
+export { default as OtpEmail } from "./OtpEmail.js";
 export { default as ResetPassword } from "./ResetPassword.js";
 export { default as UpdatePersonalDataMail } from "./UpdatePersonalDataMail.js";
 export { default as VerifyEmail } from "./VerifyEmail.js";
