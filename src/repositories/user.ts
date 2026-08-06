@@ -7,6 +7,7 @@ import { getDatabaseConnection } from "../connectors/postgres";
 
 export const {
   create,
+  deleteFranceConnectUserInfo,
   findByEmail,
   findById,
   getById,
