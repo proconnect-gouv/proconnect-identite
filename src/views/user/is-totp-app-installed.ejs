@@ -1,21 +1,69 @@
 <div>
-  <%- include('../partials/stepper.ejs', {currentStep: "1", stepsTitle: "Installer votre outil d’authentification", nextStepTitle:"Configurer votre code à usage unique" }); %>
-  <p>Pour utiliser un code à usage unique, vous pouvez utiliser l’application d’authentification de votre choix ou un gestionnaire de mot de passe compatible.</p>
-  <p class="fr-text--xs fr-mb-1w">Exemple d'application d'authentification à télécharger sur votre téléphone :</p>
-  <ul class="fr-text--xs">
-      <li>2FAS (open source)</li>
-      <li>Google Authenticator</li>
-      <li>Microsoft Authenticator</li>
-  </ul>
+  <%- include('../partials/stepper.ejs', {currentStep: "1", stepsTitle: "Configurer votre outil TOTP", nextStepTitle:"Configurer votre application TOTP" }); %>
   <form action="/users/totp-configuration" class="checkbox-container" method="get">
-    <div class="fr-checkbox-group">
-      <input name="is-totp-installed" id="is-totp-installed" type="checkbox" aria-describedby="is-totp-installed" required>
-      <label class="fr-label" for="is-totp-installed">
-          J'ai installé une application d'authentification
-      </label>
+    <fieldset
+      class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
+      aria-labelledby="totp-tool-type-legend"
+    >
+      <legend id="totp-tool-type-legend" class="fr-fieldset__legend fr-text--regular">
+        Quel outil utilisez-vous ?
+      </legend>
+
+      <div class="fr-radio-group fr-mb-2w">
+        <input
+          type="radio"
+          id="totp-tool-type-smartphone"
+          name="totp-tool-type"
+          value="smartphone"
+          required
+        />
+        <label class="fr-label" for="totp-tool-type-smartphone">
+          J'ai une application sur mon smartphone
+        </label>
+      </div>
+
+      <div class="fr-radio-group">
+        <input
+          type="radio"
+          id="totp-tool-type-computer"
+          name="totp-tool-type"
+          value="computer"
+          required
+        />
+        <label class="fr-label" for="totp-tool-type-computer">
+          J'ai un logiciel ou une extension sur mon ordinateur
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="fr-p-2w fr-mt-2w fr-grid-row fr-background-alt--blue-france">
+        <div class="fr-col-1 fr-px-1w">
+            <img class="fr-responsive-img" src="/dist/light.svg" alt="" />
+        </div>
+        <div class="fr-col">
+        <p class="fr-mb-1w">
+            <b>Quelle application ou logiciel installer</b> pour générer les codes à chaque session ? 
+        </p>
+        <a
+            class="fr-text-action-high--blue-france"
+            href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Consulter notre guide</a
+        >
+        </div>
     </div>
-    <button type="submit" class="fr-btn fr-my-3w" id="continue-button" href="/users/totp-configuration" role="button" aria-disabled="true">
-      Continuer
+
+    <button
+      type="submit"
+      class="fr-btn fr-mt-3w btn--fullwidth"
+      id="continue-button"
+      role="button"
+      aria-disabled="true"
+    >
+      Confirmer
     </button>
   </form>
+  <%- include('../partials/go-back.ejs'); %>
+
 </div>

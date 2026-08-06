@@ -47,6 +47,8 @@ export const getTotpConfigurationController = async (
     const notificationLabel = await getNotificationLabelFromRequest(req);
     const hasCodeError = notificationLabel === "invalid_totp_token";
 
+    const { "totp-tool-type": totpToolType } = req.query;
+
     return res.render("totp-configuration", {
       pageTitle: "Configuration TOTP",
       notifications: await getNotificationsFromRequest(req),
@@ -55,6 +57,7 @@ export const getTotpConfigurationController = async (
       isAuthenticatorAlreadyConfigured: await isTotpConfiguredForUser(user_id),
       humanReadableTotpKey,
       qrCodeDataUrl,
+      totpToolType,
     });
   } catch (error) {
     next(error);
@@ -95,8 +98,12 @@ export const postTotpConfigurationController = async (
     );
   } catch (error) {
     if (error instanceof InvalidTotpTokenError) {
+      const { "totp-tool-type": totpToolType } = req.body;
+      const totpToolTypeParam = totpToolType
+        ? `&totp-tool-type=${encodeURIComponent(totpToolType)}`
+        : "";
       return res.redirect(
-        "/totp-configuration?notification=invalid_totp_token",
+        `/totp-configuration?notification=invalid_totp_token${totpToolTypeParam}`,
       );
     }
 

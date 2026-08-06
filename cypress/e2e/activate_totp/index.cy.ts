@@ -16,17 +16,17 @@ describe("add 2fa authentication", () => {
 
     cy.contains("Code à usage unique (TOTP)").click();
 
-    cy.get("#webauthn-submit-button").contains("Continuer").click();
+    cy.get("#webauthn-registration-button").contains("Continuer").click();
 
-    cy.contains("Installer votre outil d’authentification");
+    cy.contains("Configurer votre outil TOTP");
 
-    cy.get('label[for="is-totp-installed"]').click();
+    cy.contains("Quel outil utilisez-vous ?");
 
-    cy.get("#is-totp-installed").should("be.checked");
+    cy.contains("J'ai une application sur mon smartphone").click();
 
-    cy.get("#continue-button")
-      .should("not.have.attr", "aria-disabled", "true")
-      .click();
+    cy.contains("Confirmer").click();
+
+    cy.contains("Scannez le QR Code avec votre smartphone");
 
     cy.get("[name=totpToken]").type("123456");
     cy.get('[action="/totp-configuration"] [type="submit"]').click();

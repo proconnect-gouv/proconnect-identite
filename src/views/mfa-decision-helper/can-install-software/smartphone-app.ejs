@@ -1,0 +1,19 @@
+<div class="dashboard-container">
+  <%- include('../../partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
+  <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+    <%- include('../../partials/mfa-decision-helper-header.ejs', { step: "three" }); %>
+
+    <%- include('../totp-recommendation.ejs', {
+      description: "Une application smartphone génère un code qui change toutes les 30 secondes.",
+      toolTypeLabel: "l'application",
+      tools: [
+        { name: "Proton Authenticator", url: "https://proton.me/fr/authenticator/download", details: ["Application opensource."] },
+        { name: "2FAS", url: "https://2fas.com/auth/", details: ["Application opensource."] },
+        { name: "FreeOTP", url: "https://freeotp.github.io/", details: ["Application opensource."] },
+      ]
+    }) %>
+
+    <%- include('../../partials/mfa-helper-restart.ejs'); %>
+
+  </div>
+</div>

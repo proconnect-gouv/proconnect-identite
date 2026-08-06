@@ -1,0 +1,53 @@
+<div class="dashboard-container">
+  <%- include('../../partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
+  <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+    <%- include('../../partials/mfa-decision-helper-header.ejs', { step: "two" }); %>
+
+    <form action="/mfa-decision-helper/can-install-software/smartphone" method="get">
+      <fieldset
+        class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
+        aria-labelledby="can-install-app-on-smartphone-legend"
+      >
+        <legend
+          id="can-install-app-on-smartphone-legend"
+          class="fr-fieldset__legend fr-text--regular fr-h4 fr-mb-1w"
+        >
+          Pouvez-vous installer une application sur un smartphone ?
+        </legend>
+
+        <div class="fr-fieldset__element">
+          <div class="fr-radio-group">
+            <input
+              type="radio"
+              id="can-install-app-on-smartphone-yes"
+              name="can-install-app-on-smartphone"
+              value="yes"
+              required
+            />
+            <label class="fr-label" for="can-install-app-on-smartphone-yes"
+              >Oui</label
+            >
+          </div>
+        </div>
+
+        <div class="fr-fieldset__element">
+          <div class="fr-radio-group">
+            <input
+              type="radio"
+              id="can-install-app-on-smartphone-no"
+              name="can-install-app-on-smartphone"
+              value="no"
+              required
+            />
+            <label class="fr-label" for="can-install-app-on-smartphone-no"
+              >Non</label
+            >
+          </div>
+        </div>
+      </fieldset>
+
+      <button class="fr-btn btn--fullwidth" type="submit">Continuer</button>
+    </form>
+    <%- include('../../partials/mfa-helper-restart.ejs'); %>
+  </div>
+</div>
