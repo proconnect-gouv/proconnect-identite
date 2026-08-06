@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.1.1
+
+### Patch Changes
+
+- [#2066](https://github.com/proconnect-gouv/proconnect-identite/pull/2066) [`01e1bc8`](https://github.com/proconnect-gouv/proconnect-identite/commit/01e1bc89c7c2f9ed82a2f68424eaed5570ad705d) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - ajout d'un template "OTP e-mail"
+
 ## 1.1.0
 
 ### Minor Changes
