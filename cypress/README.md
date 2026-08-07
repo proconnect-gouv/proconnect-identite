@@ -15,7 +15,7 @@ docker compose up --wait
 This will open a server on `http://localhost:3000`:
 
 ```bash
-ENABLE_DATABASE_DELETION=True npm run e2e:dev
+ENABLE_DATABASE_DELETION=True npm run test:e2e:dev
 ```
 
 You will be prompted to select the test case.
@@ -25,7 +25,7 @@ You will be prompted to select the test case.
 Open Cypress with the configuration from `cypress.config.ts`:
 
 ```bash
-npm run e2e:studio
+npm run test:e2e:studio
 ```
 
 > Alias for `npx cypress open`
