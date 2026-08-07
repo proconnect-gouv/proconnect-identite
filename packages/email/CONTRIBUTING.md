@@ -122,7 +122,7 @@ npm run test:unit -- --test-update-snapshots src/MyNewTemplate.test.tsx
 npm test
 
 # Type check all files
-npm run type-check
+npm run type:check
 
 # Launch Storybook for visual testing
 npm run storybook
