@@ -504,7 +504,7 @@ export const createPendingModeration = async ({
 
   if (CRISP_WEBSITE_ID) {
     ticket_id = await startCripsConversation({
-      content: unableToAutoJoinOrganizationMd(),
+      content: unableToAutoJoinOrganizationMd({ siret, cached_libelle }),
       email,
       subject: `[ProConnect] Demande pour rejoindre ${cached_libelle || siret}`,
     });
