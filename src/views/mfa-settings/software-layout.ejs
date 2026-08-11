@@ -1,0 +1,13 @@
+<%- include('../partials/mfa-decision-helper-header.ejs', { step: "three" }); %>
+
+<%- include(totpRecommendationPath, {
+  description: "Un logiciel ou une extension de navigateur génère un code qui change toutes les 30 secondes.",
+  toolTypeLabel: "le logiciel",
+  tools: [
+    { name: "Proton Authenticator", url: "https://proton.me/fr/authenticator/download", details: ["Logiciel opensource sur Mac/Windows.", "Sans création de compte."] },
+    { name: "Bitwarden", url: "https://bitwarden.com/fr-fr/download/", details: ["Extension de navigateur opensource.", "Nécessite une création de compte."] },
+    { name: "KeePassXC", url: "https://keepassxc.org/download/#macos", details: ["Logiciel Mac/Windows avec plugin navigateur opensource.", "Sans création de compte."] },
+  ]
+}) %>
+
+<%- include('../partials/mfa-helper-restart.ejs'); %>

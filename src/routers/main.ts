@@ -57,7 +57,7 @@ export const mainRouter = (app: Express) => {
   );
 
   mainRouter.get(
-    "/double-authentication",
+    "/double-authentication-choice",
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
