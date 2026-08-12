@@ -34,10 +34,8 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.lib.json",
-    "build:data": "tsx scripts/build-data.ts",
-    "update:grist": "tsx scripts/update-grist.ts",
-    "postupdate:grist": "prettier --write data/administration-grist.json",
-    "postbuild:data": "prettier --write data",
+    "sync:grist": "tsx scripts/sync-grist.ts",
+    "postsync:grist": "prettier --write data",
     "check": "npm run build -- --noEmit",
     "dev": "npm run build -- --watch --preserveWatchOutput",
     "dev:test": "tsx --watch --test src/**/*.test.ts",
