@@ -20,6 +20,27 @@ describe("join and moderation", () => {
       cy.contains("Demande en cours");
     });
 
+    it("can cancel the moderation demand and receives a confirmation email", function () {
+      cy.visit("/manage-organizations");
+
+      cy.login("lion.eljonson@darkangels.world");
+
+      cy.title().should("include", "Organisations -");
+      cy.contains("Annuler ma demande de rattachement").click();
+
+      cy.contains("Votre demande de rattachement a bien été annulée.");
+
+      cy.maildevGetMessageBySubject(
+        "Annulation de votre demande de rattachement",
+      ).then((email) => {
+        cy.maildevVisitMessageById(email.id);
+        cy.contains(
+          "Nous vous confirmons que votre demande de rattachement à l'organisation « Bnp paribas - Bnp paribas » a bien été annulée.",
+        );
+        cy.maildevDeleteMessageById(email.id);
+      });
+    });
+
     it("will be moderated when login to an SP", function () {
       cy.origin("http://localhost:4000", () => {
         cy.visit("/");
