@@ -1,5 +1,16 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.0.0
+
+### Major Changes
+
+- [#1984](https://github.com/proconnect-gouv/proconnect-identite/pull/1984) [`e8f9cad`](https://github.com/proconnect-gouv/proconnect-identite/commit/e8f9cad9f1ea03229d1c019b6649ae553e3c2a5d) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - suppression de l'ancien script de calcul de is_service_public et des fichiers liés
+
+### Patch Changes
+
+- Updated dependencies [[`e8f9cad`](https://github.com/proconnect-gouv/proconnect-identite/commit/e8f9cad9f1ea03229d1c019b6649ae553e3c2a5d)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@3.0.0
+
 ## 9.1.3
 
 ### Patch Changes
