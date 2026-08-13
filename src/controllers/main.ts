@@ -14,10 +14,10 @@ import {
   hasFranceConnectIdentity,
   hasValidFranceConnectIdentity,
   sendUpdatePersonalInformationEmail,
+  updatePersonalInformations,
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { update } from "../repositories/user";
 import {
   jobSchema,
   nameSchema,
@@ -104,7 +104,7 @@ export const postPersonalInformationsController = async (
     const { given_name, family_name, phone_number, job } =
       await schema.parseAsync(req.body);
 
-    const updatedUser = await update(userId, {
+    const updatedUser = await updatePersonalInformations(userId, {
       given_name,
       family_name,
       phone_number,

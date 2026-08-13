@@ -13,7 +13,6 @@ CREATE TABLE activity_logs (
     target_type character varying,
     target_id integer,
     context jsonb,
-    transaction_id xid8 NOT NULL DEFAULT pg_current_xact_id(),
     created_at timestamp with time zone NOT NULL DEFAULT NOW()
 );
 `);
@@ -24,10 +23,6 @@ CREATE INDEX idx_activity_logs_actor_email_created_at
   await pgm.db.query(`
 CREATE INDEX idx_activity_logs_target
   ON activity_logs (target_type, target_id);
-`);
-  await pgm.db.query(`
-CREATE INDEX idx_activity_logs_transaction_id
-  ON activity_logs (transaction_id);
 `);
 }
 

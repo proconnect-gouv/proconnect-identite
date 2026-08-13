@@ -15,6 +15,7 @@ import {
   uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
+import { bytea } from "./orm/columes/bytea.js";
 
 export const authenticators = pgTable(
   "authenticators",
@@ -313,7 +314,6 @@ export const activity_logs = pgTable(
     target_type: varchar(),
     target_id: integer(),
     context: jsonb(),
-    transaction_id: xid8("transaction_id").notNull(),
     created_at: timestamp({ withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
@@ -328,10 +328,6 @@ export const activity_logs = pgTable(
       "btree",
       table.target_type.asc().nullsLast().op("int4_ops"),
       table.target_id.asc().nullsLast().op("int4_ops"),
-    ),
-    index("idx_activity_logs_transaction_id").using(
-      "btree",
-      table.transaction_id.asc().nullsLast().op("xid8_ops"),
     ),
     foreignKey({
       columns: [table.actor_user_id],
@@ -384,6 +380,3 @@ export const users_organizations = pgTable(
     }),
   ],
 );
-
-import { bytea } from "./orm/columes/bytea.js";
-import { xid8 } from "./orm/columes/xid8.js";

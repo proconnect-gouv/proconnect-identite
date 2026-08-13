@@ -79,8 +79,6 @@ DROP INDEX IF EXISTS "public"."index_authenticators_on_credential_id";
 
 DROP INDEX IF EXISTS "public"."idx_users_oidc_clients_user_id_created_at";
 
-DROP INDEX IF EXISTS "public"."idx_activity_logs_transaction_id";
-
 DROP INDEX IF EXISTS "public"."idx_activity_logs_target";
 
 DROP INDEX IF EXISTS "public"."idx_activity_logs_actor_email_created_at";
@@ -208,7 +206,6 @@ CREATE TABLE "public"."activity_logs" (
   "target_type" character varying,
   "target_id" integer,
   "context" "jsonb",
-  "transaction_id" "xid8" DEFAULT "pg_current_xact_id" () NOT NULL,
   "created_at" timestamp with time zone DEFAULT "now" () NOT NULL
 );
 
@@ -619,11 +616,6 @@ CREATE INDEX "idx_activity_logs_actor_email_created_at" ON "public"."activity_lo
 -- Name: idx_activity_logs_target; Type: INDEX; Schema: public; Owner: -
 --
 CREATE INDEX "idx_activity_logs_target" ON "public"."activity_logs" USING "btree" ("target_type", "target_id");
-
---
--- Name: idx_activity_logs_transaction_id; Type: INDEX; Schema: public; Owner: -
---
-CREATE INDEX "idx_activity_logs_transaction_id" ON "public"."activity_logs" USING "btree" ("transaction_id");
 
 --
 -- Name: idx_users_oidc_clients_user_id_created_at; Type: INDEX; Schema: public; Owner: -
