@@ -234,6 +234,26 @@ export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
   });
 };
 
+export const deleteUserAccount = async ({
+  id,
+  email,
+}: {
+  id: number;
+  email: string;
+}) => {
+  return withTransaction(async (client) => {
+    const { repository } = context.createChild({ pg: client });
+    await repository.activity({
+      action: "user_self_deleted",
+      context: {},
+      actor_user_id: id,
+      actor_email: email,
+      actor_type: "user",
+    });
+    await repository.users.delete(id);
+  });
+};
+
 export const sendDeleteFreeTOTPApplicationEmail = async ({
   user_id,
 }: {
@@ -570,6 +590,40 @@ export const updatePersonalInformationsForRegistration = async (
   return update(userId, {
     ...names,
     job,
+  });
+};
+
+export const updatePersonalInformations = async (
+  userId: number,
+  fields: Partial<
+    Pick<User, "given_name" | "family_name" | "phone_number" | "job">
+  >,
+): Promise<User> => {
+  return withTransaction(async (client) => {
+    const { repository } = context.createChild({ pg: client });
+    const userBefore = await repository.users.getById(userId);
+    const user = await repository.users.update(userId, fields);
+    await repository.activity({
+      action: "personal_info_edited",
+      context: {
+        before: {
+          given_name: userBefore.given_name,
+          family_name: userBefore.family_name,
+          phone_number: userBefore.phone_number,
+          job: userBefore.job,
+        },
+        after: {
+          given_name: user.given_name,
+          family_name: user.family_name,
+          phone_number: user.phone_number,
+          job: user.job,
+        },
+      },
+      actor_user_id: userId,
+      actor_email: user.email,
+      actor_type: "user",
+    });
+    return user;
   });
 };
 

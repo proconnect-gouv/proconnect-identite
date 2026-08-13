@@ -15,6 +15,8 @@ import {
   uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
+import { bytea } from "./orm/columes/bytea.js";
+import { xid8 } from "./orm/columes/xid8.js";
 
 export const authenticators = pgTable(
   "authenticators",
@@ -384,6 +386,3 @@ export const users_organizations = pgTable(
     }),
   ],
 );
-
-import { bytea } from "./orm/columes/bytea.js";
-import { xid8 } from "./orm/columes/xid8.js";

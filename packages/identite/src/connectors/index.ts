@@ -8,10 +8,13 @@ import { createActivityFactory } from "../repositories/activity/create.js";
 import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
 import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
 import { findEmailDomainsByOrganizationIdFactory } from "../repositories/email-domain/find-email-domains-by-organization-id.js";
+import { deleteModerationFactory } from "../repositories/moderation/delete-moderation.js";
+import { reopenModerationFactory } from "../repositories/moderation/reopen-moderation.js";
 import { findByIdFactory as findOrganizationByIdFactory } from "../repositories/organization/find-by-id.js";
 import { findByUserIdFactory } from "../repositories/organization/find-by-user-id.js";
 import { getUsersByOrganizationFactory } from "../repositories/organization/get-users-by-organization.js";
 import { createUserFactory } from "../repositories/user/create.js";
+import { deleteUserFactory } from "../repositories/user/delete.js";
 import { findByEmailFactory } from "../repositories/user/find-by-email.js";
 import { findByIdFactory as findUserByIdFactory } from "../repositories/user/find-by-id.js";
 import { getByIdFactory } from "../repositories/user/get-by-id.js";
@@ -60,11 +63,16 @@ export function createContext({
         findByUserId: findByUserIdFactory({ pg }),
         getUsers: getUsersByOrganizationFactory({ pg }),
       },
+      moderations: {
+        delete: deleteModerationFactory({ pg }),
+        reopen: reopenModerationFactory({ pg }),
+      },
       users_organizations: {
         update: updateUserOrganizationLinkFactory({ pg }),
       },
       users: {
         create: createUserFactory({ pg }),
+        delete: deleteUserFactory({ pg }),
         findByEmail: findByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
         getById: getByIdFactory({ pg }),
