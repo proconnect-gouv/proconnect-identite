@@ -30,7 +30,7 @@ document.addEventListener(
     }
 
     // Start registration when the user clicks a button
-    const onAuthenticateClick = async () => {
+    const onAuthenticateClickAndDOMContentLoad = async () => {
       // Reset success/error messages
       errorElement.style.display = "none";
       errorElement.innerText = "";
@@ -62,8 +62,11 @@ document.addEventListener(
       authenticationResponseStringInputElement.value = JSON.stringify(asseResp);
       authenticationResponseForm.requestSubmit();
     };
-
-    beginElement.addEventListener("click", onAuthenticateClick);
+    onAuthenticateClickAndDOMContentLoad();
+    beginElement.addEventListener(
+      "click",
+      onAuthenticateClickAndDOMContentLoad,
+    );
   },
   false,
 );
