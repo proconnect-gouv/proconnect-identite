@@ -1,9 +1,10 @@
 //
 
+import type { Queryable } from "#src/types";
 import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
 import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
-import { type Pool } from "pg";
+import { createActivityFactory } from "../repositories/activity/create.js";
 import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
 import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
 import { findEmailDomainsByOrganizationIdFactory } from "../repositories/email-domain/find-email-domains-by-organization-id.js";
@@ -30,15 +31,23 @@ export function createContext({
   api_entreprise_client: ApiEntrepriseClient;
   api_insee_client: ApiInseeClient;
   api_registre_national_entreprises_client: ApiRegistreNationalEntreprisesClient;
-  pg: Pool;
+  pg: Queryable;
 }) {
   return {
+    createChild: ({ pg: child_pg }: { pg: Queryable }) =>
+      createContext({
+        api_entreprise_client,
+        api_insee_client,
+        api_registre_national_entreprises_client,
+        pg: child_pg,
+      }),
     client: {
       api_entreprise: api_entreprise_client,
       insee: api_insee_client,
       rne: api_registre_national_entreprises_client,
     },
     repository: {
+      activity: createActivityFactory({ pg }),
       email_domains: {
         addDomain: addDomainFactory({ pg }),
         deleteEmailDomainsByVerificationTypes:

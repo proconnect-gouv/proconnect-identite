@@ -45,8 +45,10 @@ import {
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
+import { context } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
+import { withTransaction } from "../connectors/postgres";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import { findEmailInDeliverabilityWhiteList } from "../repositories/email-deliverability-whitelist";
 import {
@@ -57,7 +59,6 @@ import {
   getById,
   getFranceConnectUserInfo,
   update,
-  upsetFranceconnectUserinfo,
 } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
 import { isWebauthnConfiguredForUser } from "./webauthn";
@@ -600,15 +601,25 @@ export async function updateFranceConnectUserInfo(
   const { family_name, preferred_username, given_name } = userInfo;
   const newFamilyName = preferred_username || family_name;
   const newGivenName = given_name.split(" ")[0];
-  const user = await update(userId, {
-    family_name: newFamilyName,
-    given_name: newGivenName,
+  return withTransaction(async (client) => {
+    const { repository } = context.createChild({ pg: client });
+    const user = await repository.users.update(userId, {
+      family_name: newFamilyName,
+      given_name: newGivenName,
+    });
+    await repository.users.upsetFranceconnectUserinfo({
+      ...userInfo,
+      user_id: userId,
+    });
+    await repository.activity({
+      action: "franceconnect_data_sync",
+      context: {},
+      actor_user_id: userId,
+      actor_email: user.email,
+      actor_type: "user",
+    });
+    return user;
   });
-  await upsetFranceconnectUserinfo({
-    ...userInfo,
-    user_id: userId,
-  });
-  return user;
 }
 
 export async function getGivenNameOptionsFromFranceConnectIdentity(

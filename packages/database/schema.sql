@@ -66,6 +66,9 @@ DROP CONSTRAINT IF EXISTS "email_domains_organization_id_fkey";
 ALTER TABLE IF EXISTS ONLY "public"."authenticators"
 DROP CONSTRAINT IF EXISTS "authenticators_user_id_fkey";
 
+ALTER TABLE IF EXISTS ONLY "public"."activity_logs"
+DROP CONSTRAINT IF EXISTS "activity_logs_actor_user_id_fkey";
+
 DROP INDEX IF EXISTS "public"."index_users_on_reset_password_token";
 
 DROP INDEX IF EXISTS "public"."index_users_on_email";
@@ -75,6 +78,12 @@ DROP INDEX IF EXISTS "public"."index_organizations_on_siret";
 DROP INDEX IF EXISTS "public"."index_authenticators_on_credential_id";
 
 DROP INDEX IF EXISTS "public"."idx_users_oidc_clients_user_id_created_at";
+
+DROP INDEX IF EXISTS "public"."idx_activity_logs_transaction_id";
+
+DROP INDEX IF EXISTS "public"."idx_activity_logs_target";
+
+DROP INDEX IF EXISTS "public"."idx_activity_logs_actor_email_created_at";
 
 ALTER TABLE IF EXISTS ONLY "public"."users"
 DROP CONSTRAINT IF EXISTS "users_pkey";
@@ -109,6 +118,9 @@ DROP CONSTRAINT IF EXISTS "email_deliverability_whitelist_pkey";
 ALTER TABLE IF EXISTS ONLY "public"."authenticators"
 DROP CONSTRAINT IF EXISTS "authenticators_pkey";
 
+ALTER TABLE IF EXISTS ONLY "public"."activity_logs"
+DROP CONSTRAINT IF EXISTS "activity_logs_pkey";
+
 ALTER TABLE IF EXISTS "public"."users_oidc_clients"
 ALTER COLUMN "id"
 DROP DEFAULT;
@@ -130,6 +142,10 @@ ALTER COLUMN "id"
 DROP DEFAULT;
 
 ALTER TABLE IF EXISTS "public"."email_domains"
+ALTER COLUMN "id"
+DROP DEFAULT;
+
+ALTER TABLE IF EXISTS "public"."activity_logs"
 ALTER COLUMN "id"
 DROP DEFAULT;
 
@@ -165,6 +181,10 @@ DROP TABLE IF EXISTS "public"."email_deliverability_whitelist";
 
 DROP TABLE IF EXISTS "public"."authenticators";
 
+DROP SEQUENCE IF EXISTS "public"."activity_logs_id_seq";
+
+DROP TABLE IF EXISTS "public"."activity_logs";
+
 --
 -- Name: SCHEMA "public"; Type: COMMENT; Schema: -; Owner: -
 --
@@ -175,6 +195,34 @@ SET
 
 SET
   default_table_access_method = "heap";
+
+--
+-- Name: activity_logs; Type: TABLE; Schema: public; Owner: -
+--
+CREATE TABLE "public"."activity_logs" (
+  "id" integer NOT NULL,
+  "action" character varying NOT NULL,
+  "actor_user_id" integer,
+  "actor_email" character varying,
+  "actor_type" character varying DEFAULT 'system'::character varying NOT NULL,
+  "target_type" character varying,
+  "target_id" integer,
+  "context" "jsonb",
+  "transaction_id" "xid8" DEFAULT "pg_current_xact_id" () NOT NULL,
+  "created_at" timestamp with time zone DEFAULT "now" () NOT NULL
+);
+
+--
+-- Name: activity_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+CREATE SEQUENCE "public"."activity_logs_id_seq" AS integer START
+WITH
+  1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+
+--
+-- Name: activity_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+ALTER SEQUENCE "public"."activity_logs_id_seq" OWNED BY "public"."activity_logs"."id";
 
 --
 -- Name: authenticators; Type: TABLE; Schema: public; Owner: -
@@ -440,6 +488,13 @@ CREATE TABLE "public"."users_organizations" (
 );
 
 --
+-- Name: activity_logs id; Type: DEFAULT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."activity_logs"
+ALTER COLUMN "id"
+SET DEFAULT "nextval" ('"public"."activity_logs_id_seq"'::"regclass");
+
+--
 -- Name: email_domains id; Type: DEFAULT; Schema: public; Owner: -
 --
 ALTER TABLE ONLY "public"."email_domains"
@@ -482,6 +537,12 @@ ALTER COLUMN "id"
 SET DEFAULT "nextval" (
   '"public"."users_oidc_clients_id_seq"'::"regclass"
 );
+
+--
+-- Name: activity_logs activity_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."activity_logs"
+ADD CONSTRAINT "activity_logs_pkey" PRIMARY KEY ("id");
 
 --
 -- Name: authenticators authenticators_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -550,6 +611,21 @@ ALTER TABLE ONLY "public"."users"
 ADD CONSTRAINT "users_pkey" PRIMARY KEY ("id");
 
 --
+-- Name: idx_activity_logs_actor_email_created_at; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_activity_logs_actor_email_created_at" ON "public"."activity_logs" USING "btree" ("actor_email", "created_at");
+
+--
+-- Name: idx_activity_logs_target; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_activity_logs_target" ON "public"."activity_logs" USING "btree" ("target_type", "target_id");
+
+--
+-- Name: idx_activity_logs_transaction_id; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_activity_logs_transaction_id" ON "public"."activity_logs" USING "btree" ("transaction_id");
+
+--
 -- Name: idx_users_oidc_clients_user_id_created_at; Type: INDEX; Schema: public; Owner: -
 --
 CREATE INDEX "idx_users_oidc_clients_user_id_created_at" ON "public"."users_oidc_clients" USING "btree" ("user_id", "created_at" DESC);
@@ -573,6 +649,12 @@ CREATE UNIQUE INDEX "index_users_on_email" ON "public"."users" USING "btree" ("e
 -- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
 --
 CREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "public"."users" USING "btree" ("reset_password_token");
+
+--
+-- Name: activity_logs activity_logs_actor_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."activity_logs"
+ADD CONSTRAINT "activity_logs_actor_user_id_fkey" FOREIGN KEY ("actor_user_id") REFERENCES "public"."users" ("id") ON DELETE SET NULL;
 
 --
 -- Name: authenticators authenticators_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
