@@ -1,4 +1,4 @@
-exports[`toOrganizationInfo > AppleEuropeInc 1`] = `
+exports[`toApiEntrepriseOrganizationInfo > AppleEuropeInc 1`] = `
 {
   "activitePrincipale": "70.22Z",
   "adresse": "100 west ten wilmington delawa, 99404, ETATS-UNIS",
@@ -22,7 +22,7 @@ exports[`toOrganizationInfo > AppleEuropeInc 1`] = `
 }
 `;
 
-exports[`toOrganizationInfo > Commune de clamart - Mairie 1`] = `
+exports[`toApiEntrepriseOrganizationInfo > Commune de clamart - Mairie 1`] = `
 {
   "activitePrincipale": "84.11Z",
   "adresse": "1 place maurice gunsbourg, 92140 Clamart",
@@ -46,7 +46,7 @@ exports[`toOrganizationInfo > Commune de clamart - Mairie 1`] = `
 }
 `;
 
-exports[`toOrganizationInfo > Papillon 1`] = `
+exports[`toApiEntrepriseOrganizationInfo > Papillon 1`] = `
 {
   "activitePrincipale": "47.59A",
   "adresse": "5-7, 5 rue du moulin aux moines, 72650 La chapelle-saint-aubin",
@@ -70,7 +70,7 @@ exports[`toOrganizationInfo > Papillon 1`] = `
 }
 `;
 
-exports[`toOrganizationInfo > RogalDornEntrepreneur 1`] = `
+exports[`toApiEntrepriseOrganizationInfo > RogalDornEntrepreneur 1`] = `
 {
   "activitePrincipale": "62.02A",
   "adresse": "06155 Vallauris",
