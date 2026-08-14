@@ -175,6 +175,14 @@ export interface components {
           personneMorale?: {
             composition?: components["schemas"]["Composition"];
           };
+          personnePhysique?: {
+            etablissementPrincipal?: {
+              descriptionEtablissement?: {
+                nomCommercial?: string;
+              };
+            };
+            identite?: {};
+          };
         };
         /** @description Diffusion dans l'INSEE */
         diffusionINSEE?: string;

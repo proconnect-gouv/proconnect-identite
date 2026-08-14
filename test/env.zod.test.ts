@@ -97,6 +97,7 @@ describe("env.zod", () => {
       RNE_API_HTTP_CLIENT_TIMEOUT: 3000,
       RNE_API_PASSWORD: "🎭 Mocked RNE API Password",
       RNE_API_USERNAME: "🎭 Mocked RNE API Username",
+      RNE_API_BASE_URL: "https://registre-national-entreprises.inpi.fr/api",
       SENTRY_DSN: "",
       SESSION_COOKIE_SECRET: ["proconnectsecret", "identitesecret"],
       SESSION_MAX_AGE_IN_SECONDS: 86400,

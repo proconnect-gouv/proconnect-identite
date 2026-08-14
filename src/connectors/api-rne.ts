@@ -4,7 +4,10 @@ import {
   createRegistreNationalEntreprisesClient,
   getRegistreNationalEntreprisesAccessTokenFactory,
 } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
-import { createRegistreNationalEntreprisesOpenApiClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/client";
+import {
+  createRegistreNationalEntreprisesOpenApiClient,
+  type RegistreNationalEntreprisesOpenApiClient,
+} from "@proconnect-gouv/proconnect.registre_national_entreprises/client";
 import { TestingRegistreNationalEntreprisesOpenApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/registre-national-entreprises.inpi.fr";
 import { TESTING_RNE_API_SIRENS } from "@proconnect-gouv/proconnect.testing/api/routes/registre-national-entreprises.inpi.fr/companies";
 import {
@@ -34,15 +37,16 @@ const RegistreNationalEntreprisesClient =
 
 //
 
-const rneTestClient = createRegistreNationalEntreprisesOpenApiClient({
-  fetch: (input: Request) =>
-    Promise.resolve(
-      TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
-    ),
-});
+export const rneOpenApiTestClient: RegistreNationalEntreprisesOpenApiClient =
+  createRegistreNationalEntreprisesOpenApiClient({
+    fetch: (input: Request) =>
+      Promise.resolve(
+        TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
+      ),
+  });
 
-const RegistreNationalEntreprisesTestClient =
-  createRegistreNationalEntreprisesClient(rneTestClient, () =>
+export const RegistreNationalEntreprisesTestClient =
+  createRegistreNationalEntreprisesClient(rneOpenApiTestClient, () =>
     Promise.resolve("__RNE_API_TOKEN__"),
   );
 
@@ -56,5 +60,13 @@ export const ApiRegistreNationalEntreprisesClient = {
         ? RegistreNationalEntreprisesTestClient
         : RegistreNationalEntreprisesClient;
     return client.findPouvoirsBySiren(siren);
+  },
+  async findCompanyBySiren(siren: string) {
+    const client =
+      FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
+      TESTING_RNE_API_SIRENS.includes(siren)
+        ? RegistreNationalEntreprisesTestClient
+        : RegistreNationalEntreprisesClient;
+    return client.findCompanyBySiren(siren);
   },
 };
