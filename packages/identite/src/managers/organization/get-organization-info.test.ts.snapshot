@@ -18,7 +18,33 @@ exports[`getOrganizationInfo > should return valid payload for diffusible siren 
   "siret": "20007184300060",
   "statutDiffusion": "diffusible",
   "trancheEffectifs": "22",
-  "trancheEffectifsUniteLegale": "22"
+  "trancheEffectifsUniteLegale": "22",
+  "denominationUsuelleEtablissementPrincipal": null
+}
+`;
+
+exports[`getOrganizationInfo > should return valid payload for diffusible siren with RNE info 1`] = `
+{
+  "activitePrincipale": "55.20Z",
+  "adresse": "4 lieu-dit bechemoure, 87200 Saint-martin-de-jussac",
+  "categorieJuridique": "1000",
+  "codeOfficielGeographique": "87164",
+  "codePostal": "87200",
+  "enseigne": "",
+  "estActive": true,
+  "estDiffusible": true,
+  "etatAdministratif": "A",
+  "libelle": "Fergus Macdonald",
+  "libelleActivitePrincipale": "55.20Z - Hébergement touristique et autre hébergement de courte durée",
+  "libelleCategorieJuridique": "Entrepreneur individuel",
+  "libelleTrancheEffectif": "Unités non employeuses",
+  "nomComplet": "Fergus Macdonald",
+  "siegeSocial": true,
+  "siret": "84951084700015",
+  "statutDiffusion": "diffusible",
+  "trancheEffectifs": "NN",
+  "trancheEffectifsUniteLegale": "NN",
+  "denominationUsuelleEtablissementPrincipal": "FMPI"
 }
 `;
 
@@ -42,7 +68,8 @@ exports[`getOrganizationInfo > should return valid payload for diffusible siret 
   "siret": "20007184300060",
   "statutDiffusion": "diffusible",
   "trancheEffectifs": "22",
-  "trancheEffectifsUniteLegale": "22"
+  "trancheEffectifsUniteLegale": "22",
+  "denominationUsuelleEtablissementPrincipal": null
 }
 `;
 
@@ -66,6 +93,7 @@ exports[`getOrganizationInfo > should show partial data for partially non diffus
   "siret": "94957325700019",
   "statutDiffusion": "partiellement_diffusible",
   "trancheEffectifs": null,
-  "trancheEffectifsUniteLegale": null
+  "trancheEffectifsUniteLegale": null,
+  "denominationUsuelleEtablissementPrincipal": null
 }
 `;

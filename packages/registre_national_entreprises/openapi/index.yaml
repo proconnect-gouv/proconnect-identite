@@ -108,6 +108,12 @@ components:
         paysNaissance:
           type: string
           description: Pays de naissance (pour les étrangers)
+        codeInseeGeographique:
+          type: string
+          description: Code INSEE géographique de naissance
+        codePaysNaissance:
+          type: string
+          description: Pays de naissance
     Individu:
       type: object
       properties:
@@ -176,6 +182,17 @@ components:
                   properties:
                     composition:
                       $ref: "#/components/schemas/Composition"
+                personnePhysique:
+                  type: object
+                  properties:
+                    etablissementPrincipal:
+                      type: object
+                      properties:
+                        descriptionEtablissement:
+                          type: object
+                          properties:
+                            nomCommercial:
+                              type: string
             diffusionINSEE:
               type: string
               description: Diffusion dans l'INSEE
