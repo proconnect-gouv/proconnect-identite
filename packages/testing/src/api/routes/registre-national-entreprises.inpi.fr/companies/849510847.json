@@ -1,0 +1,117 @@
+{
+  "updatedAt": "2026-06-23T21:56:31+02:00",
+  "nombreRepresentantsActifs": 0,
+  "nombreEtablissementsOuverts": 0,
+  "nombreBeneficiairesEffectifsActifs": 0,
+  "id": "63ad7fc3e0e85a58e309a199",
+  "formality": {
+    "siren": "849510847",
+    "indicateurStructureEtablissement": false,
+    "content": {
+      "succursaleOuFiliale": "AVEC_ETABLISSEMENT",
+      "formeExerciceActivitePrincipale": "COMMERCIALE",
+      "natureCreation": {
+        "dateCreation": "2019-03-01",
+        "societeEtrangere": false,
+        "formeJuridique": "1000",
+        "microEntreprise": false,
+        "etablieEnFrance": true,
+        "salarieEnFrance": true,
+        "relieeEntrepriseAgricole": false,
+        "entrepriseAgricole": false,
+        "eirl": false
+      },
+      "personnePhysique": {
+        "etablissementPrincipal": {
+          "descriptionEtablissement": {
+            "rolePourEntreprise": "3",
+            "pays": "FRANCE",
+            "codePays": "FRA",
+            "siret": "84951084700015",
+            "activiteNonSedentaire": false,
+            "nomCommercial": "FMPI",
+            "indicateurEtablissementPrincipal": true,
+            "statutPourFormalite": "5",
+            "codeApe": "5520Z",
+            "etablissementValidated": false,
+            "etablissementRdd": true
+          },
+          "adresse": {
+            "roleAdressePresent": false,
+            "codePostalPresent": true,
+            "communePresent": true,
+            "codeInseeCommunePresent": true,
+            "typeVoiePresent": true,
+            "voiePresent": true,
+            "voieCodifieePresent": false,
+            "numVoiePresent": true,
+            "indiceRepetitionPresent": false,
+            "distributionSpecialePresent": false,
+            "communeAnciennePresent": false,
+            "rgpdPresent": false,
+            "datePriseEffetAdressePresent": false,
+            "complementLocalisationPresent": false,
+            "communeDeRattachementPresent": false,
+            "caracteristiquesPresent": true,
+            "indicateurValidationBANPresent": true,
+            "cedexPresent": false,
+            "pays": "FRANCE",
+            "codePays": "FRA",
+            "codePostal": "87200",
+            "commune": "SAINT-MARTIN-DE-JUSSAC",
+            "codeInseeCommune": "87164",
+            "typeVoie": "LD",
+            "voie": "BECHEMOURE",
+            "numVoie": "4",
+            "caracteristiques": { "ambulant": false }
+          },
+          "activites": [
+            {
+              "categoryCode": "07020100",
+              "activiteId": "f1811cd8-1a04-46a6-a0d7-c8a839168862",
+              "indicateurPrincipal": true,
+              "indicateurProlongement": false,
+              "dateDebut": "2019-03-01",
+              "exerciceActivite": "P",
+              "indicateurNonSedentaire": false,
+              "formeExercice": "COMMERCIALE",
+              "categorisationActivite1": "07",
+              "categorisationActivite2": "02",
+              "categorisationActivite3": "01",
+              "descriptionDetaillee": "Gîte rural chambres d'hotes",
+              "indicateurActiviteeApe": false,
+              "indicateurArtisteAuteur": false,
+              "indicateurMarinProfessionnel": false,
+              "rolePrincipalPourEntreprise": true,
+              "codeApe": "5520Z",
+              "activiteRattacheeEirl": false,
+              "origine": { "typeOrigine": "1" }
+            }
+          ],
+          "registreAnterieur": {
+            "raa": { "estPresent": false },
+            "rnm": { "estPresent": false },
+            "rncs": {
+              "estPresent": true,
+              "dateDebut": "2019-03-01T00:00:00+01:00"
+            }
+          }
+        }
+      },
+      "registreAnterieur": {
+        "raa": { "estPresent": false },
+        "rnm": { "estPresent": false },
+        "rncs": {
+          "estPresent": true,
+          "dateImmatriculation": "2019-03-27T00:00:00+01:00"
+        }
+      }
+    },
+    "diffusionINSEE": "O",
+    "typePersonne": "P",
+    "codeAPE": "5520Z",
+    "diffusionCommerciale": true,
+    "formeJuridique": "1000"
+  },
+  "siren": "849510847"
+}

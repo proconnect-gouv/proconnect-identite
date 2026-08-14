@@ -1,6 +1,7 @@
 //
 
 import type { RegistreNationalEntreprisesOpenApiClient } from "#src/client";
+import { findCompanyBySirenFactory } from "./find-company-by-siren.js";
 import { findPouvoirsBySirenFactory } from "./find-pouvoirs-by-siren.js";
 import type { GetRegistreNationalEntreprisesAccessTokenHandler } from "./get-rne-access-token.js";
 
@@ -22,6 +23,7 @@ export function createRegistreNationalEntreprisesClient(
   });
   return {
     findPouvoirsBySiren: findPouvoirsBySirenFactory(client),
+    findCompanyBySiren: findCompanyBySirenFactory(client),
   };
 }
 

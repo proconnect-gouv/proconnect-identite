@@ -5,6 +5,7 @@ import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
 import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
+import { RegistreNationalEntreprisesTestClient } from "../src/connectors/api-rne";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { FetchError } from "../src/connectors/request";
 import { upsert } from "../src/repositories/organization/setters";
@@ -16,13 +17,15 @@ import {
 } from "../src/services/script-helpers";
 
 //
+const DINUM_SIRET = "13002526500013";
 
 export const getOrganizationInfo = getOrganizationInfoFactory(
   createApiEntrepriseClient(
     apiEntrepriseOpenApiTestClient,
     "🎭 Organization info script 🎭",
-    "13002526500013",
+    DINUM_SIRET,
   ),
+  RegistreNationalEntreprisesTestClient,
 );
 
 // ex: for public insee subscription the script can be run like so:

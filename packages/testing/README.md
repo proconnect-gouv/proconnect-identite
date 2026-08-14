@@ -58,6 +58,8 @@ For regular use, do not follow the next exports instructions. Create a `.env.dev
 ```
 ENTREPRISE_API_TOKEN="your api key"
 ENTREPRISE_API_URL="https://entreprise.api.gouv.fr
+RNE_API_USERNAME="your username"
+RNE_API_PASSWORD="your password"
 ```
 
 Comment it out by default and uncomment it when you want to extract data.
@@ -66,6 +68,8 @@ Comment it out by default and uncomment it when you want to extract data.
 # Set up environment variables
 export ENTREPRISE_API_TOKEN="your-api-token"
 export ENTREPRISE_API_URL="https://entreprise.api.gouv.fr"
+export RNE_API_USERNAME="your username"
+export RNE_API_PASSWORD="your password"
 export ENTREPRISE_API_TRACKING_CONTEXT="testing"
 export ENTREPRISE_API_TRACKING_RECIPIENT="your-siret"
 
