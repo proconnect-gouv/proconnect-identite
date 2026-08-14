@@ -1,1 +1,1898 @@
-{}
+[
+  {
+    "siren": "784523318",
+    "denomination": "ASSOCIATION COORDINATION TECHNIQUE AGRICOLE (ACTA)"
+  },
+  {
+    "siren": "340709211",
+    "denomination": "ATOUT FRANCE AGENCE FRANCAISE DE DEVELOPPEMENT TOURISTIQUE"
+  },
+  {
+    "siren": "582056149",
+    "denomination": "BRGM (BRGM)"
+  },
+  {
+    "siren": "775671464",
+    "denomination": "CINEMATHEQUE FRANCAISE"
+  },
+  {
+    "siren": "331596270",
+    "denomination": "CTRE COOP INTERNAT RECHERCHE AGRO DEV (CIRAD)"
+  },
+  {
+    "siren": "341372522",
+    "denomination": "CENTRE NATIONAL ARTS DU CIRQUE"
+  },
+  {
+    "siren": "196931331",
+    "denomination": "CONSERVATOIRE NATIONAL SUPERIEUR DE MUSIQUE ET DE DANSE DE LYON (CNSMDL)"
+  },
+  {
+    "siren": "196500482",
+    "denomination": "UNIVERSITE DE TECHNOLOGIE DE TARBES"
+  },
+  {
+    "siren": "197535016",
+    "denomination": "ECOLE NATIONALE DES PONTS ET CHAUSSEES"
+  },
+  {
+    "siren": "306664863",
+    "denomination": "ENSEMBLE INTER CONTEMPORAIN"
+  },
+  {
+    "siren": "775664105",
+    "denomination": "FONDATION MAISON DES SCIENCES DE L HOMME"
+  },
+  {
+    "siren": "784308249",
+    "denomination": "FONDATION NATIONALE SCIENCES POLITIQUES"
+  },
+  {
+    "siren": "130021256",
+    "denomination": "FRANCE UNIVERSITE NUMERIQUE (FUN)"
+  },
+  {
+    "siren": "180080012",
+    "denomination": "INST NAT DE LA PROPRIETE INDUSTRIELLE (INPI)"
+  },
+  {
+    "siren": "784616989",
+    "denomination": "INSTITUT D OPTIQUE"
+  },
+  {
+    "siren": "788105245",
+    "denomination": "LES ARTS DECORATIFS"
+  },
+  {
+    "siren": "853318459",
+    "denomination": "PASS CULTURE"
+  },
+  {
+    "siren": "938230612",
+    "denomination": "UNIVERSITE BOURGOGNE EUROPE"
+  },
+  {
+    "siren": "196917751",
+    "denomination": "UNIVERSITE LUMIERE LYON 2"
+  },
+  {
+    "siren": "199115684",
+    "denomination": "ECOLE POLYTECHNIQUE"
+  },
+  {
+    "siren": "338840564",
+    "denomination": "ASS COORDINA TECHN INDUSTRIE AGRO ALIMEN (ACTIA)"
+  },
+  {
+    "siren": "130021322",
+    "denomination": "COMMUNAUTE D'UNIVERSITES ET ETABLISSEMENTS DE TOULOUSE (COMUE)"
+  },
+  {
+    "siren": "192901197",
+    "denomination": "BRETAGNE INP"
+  },
+  {
+    "siren": "130003320",
+    "denomination": "ACADEMIE DES TECHNOLOGIES"
+  },
+  {
+    "siren": "130030851",
+    "denomination": "AGENCE DES COMMUNICATIONS MOBILES OPERATIONNELLES DE SECURITE ET DE SECOURS (ACMOSS)"
+  },
+  {
+    "siren": "180092553",
+    "denomination": "AGENCE DE FINANCEMENT DES INFRASTRUCTURES DE TRANSPORT DE FRANCE (AFITFRANCE)"
+  },
+  {
+    "siren": "824228142",
+    "denomination": "AGENCE NATIONALE POUR LA FORMATION PROFESSIONNELLE DES ADULTES (AFPA)"
+  },
+  {
+    "siren": "180046187",
+    "denomination": "ACADEMIE DE FRANCE A ROME"
+  },
+  {
+    "siren": "185911781",
+    "denomination": "AGENCE DE L EAU ARTOIS PICARDIE"
+  },
+  {
+    "siren": "180043127",
+    "denomination": "AGENCE MUTUALISATION UNIVERSITES ETS ENSEIGNEMENT SUP OU RECHERCHE ET SUPPORT A L ENSEIGNEMENT SUP OU LA RECHERCHE (AMUE)"
+  },
+  {
+    "siren": "130008030",
+    "denomination": "AGENCE REGIONALE DE SANTE DE GUADELOUPE, SAINT-MARTIN ET SAINT-BARTHELEMY (ARS)"
+  },
+  {
+    "siren": "187512512",
+    "denomination": "AGENCE ERASMUS+FRANCE/EDUCATION FORMATION"
+  },
+  {
+    "siren": "130008071",
+    "denomination": "AGENCE REGIONALE DE SANTE AUVERGNE-RHONE-ALPES (ARS)"
+  },
+  {
+    "siren": "130007933",
+    "denomination": "AGENCE REGIONALE DE SANTE BOURGOGNE-FRANCHE-COMTE (ARS)"
+  },
+  {
+    "siren": "130007966",
+    "denomination": "AGENCE REGIONALE DE SANTE DE BRETAGNE (ARS)"
+  },
+  {
+    "siren": "130007990",
+    "denomination": "AGENCE REGIONALE DE SANTE DE CORSE (ARS)"
+  },
+  {
+    "siren": "130007859",
+    "denomination": "AGENCE REGIONALE SANTE DE GUYANE (ARS)"
+  },
+  {
+    "siren": "130026057",
+    "denomination": "AGENCE REGIONALE DE SANTE DE LA REUNION (ARS)"
+  },
+  {
+    "siren": "130007883",
+    "denomination": "AGENCE REGIONALE DE SANTE DE MARTINIQUE (ARS)"
+  },
+  {
+    "siren": "130025927",
+    "denomination": "AGENCE REGIONALE DE SANTE MAYOTTE (ARS)"
+  },
+  {
+    "siren": "130007842",
+    "denomination": "AGENCE REGIONALE DE SANTE DU CENTRE-VAL DE LOIRE (ARS)"
+  },
+  {
+    "siren": "130007834",
+    "denomination": "AGENCE REGIONALE DE SANTE GRAND EST (ARS)"
+  },
+  {
+    "siren": "130007974",
+    "denomination": "AGENCE REGIONALE DE SANTE HAUTS-DE-FRANCE (ARS)"
+  },
+  {
+    "siren": "130008014",
+    "denomination": "AGENCE REGIONALE SANTE ILE DE FRANCE (ARS)"
+  },
+  {
+    "siren": "130007909",
+    "denomination": "AGENCE REGIONALE DE SANTE NORMANDIE (ARS)"
+  },
+  {
+    "siren": "130007867",
+    "denomination": "AGENCE REGIONALE DE SANTE NOUVELLE-AQUITAINE (ARS)"
+  },
+  {
+    "siren": "130008048",
+    "denomination": "AGENCE REGIONALE DE SANTE OCCITANIE (ARS)"
+  },
+  {
+    "siren": "130008006",
+    "denomination": "AGENCE REGIONALE DE SANTE PAYS DE LOIRE (ARS)"
+  },
+  {
+    "siren": "130014442",
+    "denomination": "AGENCE DE GESTION ET DE RECOUVREMENT DES AVOIRS SAISIS ET CONFISQUES (AGRASC)"
+  },
+  {
+    "siren": "130020464",
+    "denomination": "AGENCE NATIONALE DE CONTROLE DU LOGEMENT SOCIAL (ANCOLS)"
+  },
+  {
+    "siren": "130026032",
+    "denomination": "AGENCE NATIONALE DE LA COHESION DES TERRITOIRES (ANCT)"
+  },
+  {
+    "siren": "390199669",
+    "denomination": "AGENCE NAT GESTION DECHETS RADIOACTIFS (ANDRA)"
+  },
+  {
+    "siren": "180053027",
+    "denomination": "AGENCE NATIONALE DES FREQUENCES (ANF)"
+  },
+  {
+    "siren": "180092538",
+    "denomination": "AGENCE NATIONALE POUR LA GARANTIE DES DROITS DES MINEURS (ANGDM)"
+  },
+  {
+    "siren": "130002504",
+    "denomination": "AGENCE NATIONALE DE LA RECHERCHE (ANR)"
+  },
+  {
+    "siren": "130025281",
+    "denomination": "AGENCE NATIONALE DU SPORT"
+  },
+  {
+    "siren": "130024417",
+    "denomination": "AGENCE DU NUMERIQUE DE LA SECURITE CIVILE (ANSC)"
+  },
+  {
+    "siren": "130014541",
+    "denomination": "AGENCE NATIONALE DE TRAITEMENT AUTOMATISE DES INFRACTIONS (ANTAI)"
+  },
+  {
+    "siren": "130003262",
+    "denomination": "AGENCE NATIONALE DES TITRES SECURISES (ANTS)"
+  },
+  {
+    "siren": "130011844",
+    "denomination": "AGENCE DU SERVICE CIVIQUE"
+  },
+  {
+    "siren": "130006372",
+    "denomination": "AGENCE DE SERVICES ET DE PAIEMENT (ASP)"
+  },
+  {
+    "siren": "180044067",
+    "denomination": "BIBLIOTHEQUE NATIONALE ET UNIVERSITAIRE DE STRASBOURG (BNU)"
+  },
+  {
+    "siren": "187512702",
+    "denomination": "BIBLIOTHEQUE UNIVERSITAIRE DES LANGUES ET CIVILISATIONS (BULAC)"
+  },
+  {
+    "siren": "180046252",
+    "denomination": "BIBLIOTHEQUE NATIONALE DE FRANCE (BNF)"
+  },
+  {
+    "siren": "451930051",
+    "denomination": "BUSINESS FRANCE (BUSINESS FRANCE)"
+  },
+  {
+    "siren": "752195438",
+    "denomination": "CAMPUS FRANCE"
+  },
+  {
+    "siren": "195903497",
+    "denomination": "CENTRALE LILLE INSTITUT"
+  },
+  {
+    "siren": "130020761",
+    "denomination": "CENTRALESUPELEC"
+  },
+  {
+    "siren": "180044018",
+    "denomination": "CENTRE NATIONAL DES OEUVRES UNIVERSITAIRES ET SCOLAIRES (CNOUS)"
+  },
+  {
+    "siren": "181300088",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "188002000",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "183300086",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "186306973",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "182020107",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "189400047",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "183801562",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "185911500",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "188719009",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "186901567",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "183400084",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "185422102",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "184401321",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "180600041",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "130024425",
+    "denomination": "CENTRE REGIONAL DES OEUVRES UNIVERSITAIRES ET SCOLAIRES DE NORMANDIE (CROUS)"
+  },
+  {
+    "siren": "184500213",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "187500061",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "188600050",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "185102001",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "183500032",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "186706446",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "183100072",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "187800081",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "180092272",
+    "denomination": "CAISSE DE GARANTIE DU LOGEMENT LOCATIF SOCIAL (CGLLS)"
+  },
+  {
+    "siren": "692039514",
+    "denomination": "CHAILLOT-THEATRE NATIONAL DE LA DANSE (T.N.C.)"
+  },
+  {
+    "siren": "187500079",
+    "denomination": "CHANCELLERIE DES UNIVERSITES DE PARIS"
+  },
+  {
+    "siren": "130021918",
+    "denomination": "CLERMONT AUVERGNE INP"
+  },
+  {
+    "siren": "180046013",
+    "denomination": "CENTRE DES MONUMENTS NATIONAUX (CMN)"
+  },
+  {
+    "siren": "180046054",
+    "denomination": "CENTRE NATIONAL DES ARTS PLASTIQUES (CNAP)"
+  },
+  {
+    "siren": "130015712",
+    "denomination": "CONSEIL NATIONAL DES ACTIVITES PRIVEES DE SECURITE (CNAPS)"
+  },
+  {
+    "siren": "417822632",
+    "denomination": "CENTRE NATIONAL DE LA DANSE (CND)"
+  },
+  {
+    "siren": "180046047",
+    "denomination": "CENTRE NATIONAL DU LIVRE (CNL)"
+  },
+  {
+    "siren": "882539786",
+    "denomination": "CENTRE NATIONAL DE LA MUSIQUE (CNM) (CNM)"
+  },
+  {
+    "siren": "180092355",
+    "denomination": "CNPF SERVICES GENERAUX (CNPF)"
+  },
+  {
+    "siren": "180089013",
+    "denomination": "CENTRE NATIONAL DE LA RECHERCHE SCIENTIFIQUE (CNRS)"
+  },
+  {
+    "siren": "197534951",
+    "denomination": "CONSERVATOIRE NATIONAL SUPERIEUR DE MUSIQUE ET DE DANSE DE PARIS (CNSMDP)"
+  },
+  {
+    "siren": "197534803",
+    "denomination": "COLLEGE DE FRANCE"
+  },
+  {
+    "siren": "302977145",
+    "denomination": "COMEDIE FRANCAISE"
+  },
+  {
+    "siren": "180000028",
+    "denomination": "CONSEIL NATIONAL DES COMMUNES COMPAGNON DE LA LIBERATION (CNCCL)"
+  },
+  {
+    "siren": "197534712",
+    "denomination": "CONSERVATOIRE NATIONAL DES ARTS ET METIERS (CNAM)"
+  },
+  {
+    "siren": "130025976",
+    "denomination": "CY CERGY PARIS UNIVERSITE"
+  },
+  {
+    "siren": "196901870",
+    "denomination": "ECOLE CENTRALE DE LYON (ECL)"
+  },
+  {
+    "siren": "191333400",
+    "denomination": "ECOLE CENTRALE DE MARSEILLE (CENTRALE MARSEILLE)"
+  },
+  {
+    "siren": "194401006",
+    "denomination": "ECOLE CENTRALE DE NANTES"
+  },
+  {
+    "siren": "197537426",
+    "denomination": "ECOLE DES HAUTES ETUDES EN SCIENCES SOCIALES (EHESS)"
+  },
+  {
+    "siren": "197546872",
+    "denomination": "ECOLE DU LOUVRE"
+  },
+  {
+    "siren": "180044091",
+    "denomination": "ECOLE FRANCAISE DE ROME"
+  },
+  {
+    "siren": "195600853",
+    "denomination": "INSTITUT NATIONAL DU NAUTISME"
+  },
+  {
+    "siren": "197534787",
+    "denomination": "ECOLE NATIONALE DES CHARTES (ENC)"
+  },
+  {
+    "siren": "197400682",
+    "denomination": "ECOLE NATIONALE DES SPORTS DE MONTAGNE"
+  },
+  {
+    "siren": "193500899",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE BRETAGNE (ENSA)"
+  },
+  {
+    "siren": "196312870",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE CLERMONT-FERRAND (ENSA)"
+  },
+  {
+    "siren": "193801412",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE GRENOBLE (ENSA)"
+  },
+  {
+    "siren": "196901847",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE LYON (ENSA)"
+  },
+  {
+    "siren": "199322306",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE PARIS-EST (ENSA)"
+  },
+  {
+    "siren": "191302363",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE MARSEILLE (ENSA)"
+  },
+  {
+    "siren": "193401320",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE MONTPELLIER (ENSA)"
+  },
+  {
+    "siren": "195401351",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE NANCY (EAN)"
+  },
+  {
+    "siren": "194401048",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE NANTES (ENSA)"
+  },
+  {
+    "siren": "197601644",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE NORMANDIE (ENSA)"
+  },
+  {
+    "siren": "197518772",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE PARIS-BELLEVILLE (ENSA)"
+  },
+  {
+    "siren": "197518756",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE PARIS LA VILLETTE (ENSA)"
+  },
+  {
+    "siren": "180092215",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE PARIS-MALAQUAIS (ENSA)"
+  },
+  {
+    "siren": "180092207",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE PARIS-VAL DE SEINE (ENSA)"
+  },
+  {
+    "siren": "194216149",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE SAINT-ETIENNE (ENSA)"
+  },
+  {
+    "siren": "196701866",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE STRASBOURG (ENSA)"
+  },
+  {
+    "siren": "193101508",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE TOULOUSE (ENSA)"
+  },
+  {
+    "siren": "197804123",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE DE VERSAILLES (ENSA)"
+  },
+  {
+    "siren": "193301991",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARCHITECTURE ET DE PAYSAGE DE BORDEAUX (ENSA)"
+  },
+  {
+    "siren": "193401122",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE CHIMIE DE MONTPELLIER"
+  },
+  {
+    "siren": "130021421",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE CHIMIE DE PARIS"
+  },
+  {
+    "siren": "193500774",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE CHIMIE (ENSCR)"
+  },
+  {
+    "siren": "191333426",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE LA PHOTOGRAPHIE (ENSP)"
+  },
+  {
+    "siren": "192500825",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE MECANIQUE ET DES MICROTECHNIQUES (ENSMM)"
+  },
+  {
+    "siren": "195903380",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DES ARTS ET INDUSTRIES TEXTILES (ENSAIT)"
+  },
+  {
+    "siren": "197534720",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ARTS ET METIERS (ENSAM) (ENSAM)"
+  },
+  {
+    "siren": "197507734",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DES ARTS ET TECHNIQUES DU THEATRE (ENSATT)"
+  },
+  {
+    "siren": "193302031",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DES SCIENCES AGRONOMIQUES DE BORDEAUX AQUITAINE BORDEAUX SCIENCES AGRO"
+  },
+  {
+    "siren": "197820194",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE PAYSAGE DE VERSAILLES (ENSP)"
+  },
+  {
+    "siren": "191417203",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'INGENIEURS DE CAEN (ENSICAEN)"
+  },
+  {
+    "siren": "197506611",
+    "denomination": "ECOLE NATIONALE SUPERIEURE LOUIS LUMIERE"
+  },
+  {
+    "siren": "198600736",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE MECANIQUE ET D'AEROTECHNIQUE DE POITIERS (ENSMA)"
+  },
+  {
+    "siren": "193101532",
+    "denomination": "ECOLE NATIONALE VETERINAIRE DE TOULOUSE (ENVT)"
+  },
+  {
+    "siren": "150000966",
+    "denomination": "ECOLE NAVALE"
+  },
+  {
+    "siren": "130008121",
+    "denomination": "ECOLE NORMALE SUPERIEURE DE LYON (ENS)"
+  },
+  {
+    "siren": "130018484",
+    "denomination": "ECOLE NORMALE SUPERIEURE DE RENNES (ENS)"
+  },
+  {
+    "siren": "199406075",
+    "denomination": "ECOLE NORMALE SUPERIEURE PARIS-SACLAY (ENS)"
+  },
+  {
+    "siren": "197534597",
+    "denomination": "ECOLE NORMALE SUPERIEURE (ENS)"
+  },
+  {
+    "siren": "197534860",
+    "denomination": "ECOLE PRATIQUE DES HAUTES ETUDES (EPHE)"
+  },
+  {
+    "siren": "180092231",
+    "denomination": "ETABLISSEMENT DE COMMUNICATION ET DE PRODUCTION AUDIOVISUELLE DE LA DEFENSE (ECPAD)"
+  },
+  {
+    "siren": "180065021",
+    "denomination": "ETABLISSEMENT NATIONAL DES INVALIDES DE LA MARINE (ENIM)"
+  },
+  {
+    "siren": "193322393",
+    "denomination": "ECOLE NATIONALE DE LA MAGISTRATURE (ENM)"
+  },
+  {
+    "siren": "197534704",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DES ARTS DECORATIFS (ENSAD)"
+  },
+  {
+    "siren": "197536675",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DES BEAUX-ARTS (ENSBA)"
+  },
+  {
+    "siren": "331118760",
+    "denomination": "ECOLE NAT SUPER CREATION INDUSTRIELLE (ENSCI - LES ATELIERS) (ENSCI)"
+  },
+  {
+    "siren": "130013097",
+    "denomination": "ECOLE NATIONALE SUPERIEURE MARITIME (ENSM)"
+  },
+  {
+    "siren": "196901896",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE LA POLICE (ENSP)"
+  },
+  {
+    "siren": "197500036",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE TECHNIQUES AVANCEES (ENSTA)"
+  },
+  {
+    "siren": "190608364",
+    "denomination": "EPA VILLA ARSON"
+  },
+  {
+    "siren": "180092140",
+    "denomination": "MUSEE DU QUAI BRANLY - JACQUES CHIRAC"
+  },
+  {
+    "siren": "884439035",
+    "denomination": "ETABLISSEMENT PUBLIC DU MONT-SAINT-MICHEL (ETABLISSEMENT PUBLIC NATIONAL DU MONT-SAINT-MICHEL)"
+  },
+  {
+    "siren": "130002728",
+    "denomination": "ETABLISSEMENT PUBLIC DU PALAIS DE LA PORTE DOREE"
+  },
+  {
+    "siren": "391406956",
+    "denomination": "ETS PUBLIC PARC GRANDE HALLE VILLETTE"
+  },
+  {
+    "siren": "200090777",
+    "denomination": "ETABLISSEMENT PUBLIC CHARGE DE LA CONSERVATION ET DE LA RESTAURATION DE LA CATHEDRALE NOTRE-DAME DE PARIS"
+  },
+  {
+    "siren": "130001316",
+    "denomination": "ETABLISSEMENT PUBLIC DE SECURITE FERROVIAIRE (EPSF)"
+  },
+  {
+    "siren": "180046260",
+    "denomination": "ETABLISSEMENT PUBLIC DU CHATEAU DU MUSEE ET DU DOMAINE NATIONAL DE VERSAILLES"
+  },
+  {
+    "siren": "130016371",
+    "denomination": "ETABLISSEMENT PUBLIC CAMPUS CONDORCET"
+  },
+  {
+    "siren": "130006513",
+    "denomination": "ETABLISSEMENT PUBLIC DU CHATEAU DE FONTAINEBLEAU"
+  },
+  {
+    "siren": "130015001",
+    "denomination": "ETABLISSEMENT PUBLIC DU MARAIS POITEVIN"
+  },
+  {
+    "siren": "180043069",
+    "denomination": "FRANCE EDUCATION INTERNATIONAL (FEI)"
+  },
+  {
+    "siren": "130022551",
+    "denomination": "FONDS NATIONAL DES AIDES A LA PIERRE (FNAP)"
+  },
+  {
+    "siren": "130024565",
+    "denomination": "FRANCE COMPETENCES"
+  },
+  {
+    "siren": "130006364",
+    "denomination": "ETABLISSEMENT NATIONAL DES PRODUITS DE L AGRICULTURE ET DE LA MER FRANCEAGRIMER (FRANCEAGRIMER)"
+  },
+  {
+    "siren": "189100142",
+    "denomination": "GENOPOLE"
+  },
+  {
+    "siren": "185722949",
+    "denomination": "GEODERIS"
+  },
+  {
+    "siren": "130030133",
+    "denomination": "PLATEFORME DE L'INCLUSION"
+  },
+  {
+    "siren": "775729155",
+    "denomination": "IFP ENERGIES NOUVELLES (IFP)"
+  },
+  {
+    "siren": "197546864",
+    "denomination": "INSTITUT DES HAUTES ETUDES DE DEFENSE NATIONALE (IHEDN)"
+  },
+  {
+    "siren": "187512777",
+    "denomination": "INSTITUT NATIONAL DU CANCER (INCA)"
+  },
+  {
+    "siren": "180007023",
+    "denomination": "INSTITUTION NATIONALE DES INVALIDES"
+  },
+  {
+    "siren": "197512346",
+    "denomination": "INSTITUT NATIONAL DU PATRIMOINE"
+  },
+  {
+    "siren": "180070039",
+    "denomination": "INSTITUT NATIONAL DE RECHERCHE POUR L'AGRICULTURE L'ALIMENTATION ET L'ENVIRONNEMENT (INRAE)"
+  },
+  {
+    "siren": "180092264",
+    "denomination": "INSTITUT NATIONAL DE RECHERCHES ARCHEOLOGIQUES PREVENTIVES (INRAP)"
+  },
+  {
+    "siren": "180089047",
+    "denomination": "INSTITUT NATIONAL DE RECHERCHE EN INFORMATIQUE ET EN AUTOMATIQUE (INRIA)"
+  },
+  {
+    "siren": "180036048",
+    "denomination": "INSTITUT NATIONAL DE LA SANTE ET DE LA RECHERCHE MEDICALE (INSERM)"
+  },
+  {
+    "siren": "197534639",
+    "denomination": "INSTITUT NATIONAL DU SERVICE PUBLIC (INSP)"
+  },
+  {
+    "siren": "195958764",
+    "denomination": "INSTITUT D'ETUDES POLITIQUES DE LILLE (IEP)"
+  },
+  {
+    "siren": "130008584",
+    "denomination": "INSTITUT ENSEIGNEMENT SUPERIEUR ET RECHERCHE EN ALIMENTATION SANTE ANIMALE SCIENCES AGRONOMIQUES ET ENVIRONNEMENT (VET AGRO SUP)"
+  },
+  {
+    "siren": "197534282",
+    "denomination": "INSTITUT DE PHYSIQUE DU GLOBE DE PARIS"
+  },
+  {
+    "siren": "529715922",
+    "denomination": "INSTITUT FRANCAIS"
+  },
+  {
+    "siren": "180092025",
+    "denomination": "INSTITUT MINES-TELECOM (IMT)"
+  },
+  {
+    "siren": "197534886",
+    "denomination": "INSTITUT NATIONAL DES LANGUES ET CIVILISATIONS ORIENTALES (INALCO)"
+  },
+  {
+    "siren": "130018336",
+    "denomination": "INSTITUT NATIONAL DES SCIENCES APPLIQUEES CENTRE VAL DE LOIRE (INSA)"
+  },
+  {
+    "siren": "130025752",
+    "denomination": "INSTITUT NATIONAL DES SCIENCES APPLIQUEES HAUTS-DE-FRANCE"
+  },
+  {
+    "siren": "196901920",
+    "denomination": "INSTITUT NATIONAL DES SCIENCES APPLIQUEES DE LYON (INSA)"
+  },
+  {
+    "siren": "193500972",
+    "denomination": "INSTITUT NATIONAL DES SCIENCES APPLIQUEES DE RENNES (INSA)"
+  },
+  {
+    "siren": "197601651",
+    "denomination": "INSTITUT NATIONAL DES SCIENCES APPLIQUEES DE ROUEN (INSA)"
+  },
+  {
+    "siren": "196727671",
+    "denomination": "INSTITUT NATIONAL DES SCIENCES APPLIQUEES DE STRASBOURG (INSA)"
+  },
+  {
+    "siren": "193101524",
+    "denomination": "INSTITUT NATIONAL DES SCIENCES APPLIQUEES DE TOULOUSE (INSA)"
+  },
+  {
+    "siren": "193113818",
+    "denomination": "INSTITUT NATIONAL POLYTECHNIQUE DE TOULOUSE (INPT)"
+  },
+  {
+    "siren": "198112013",
+    "denomination": "INSTITUT NATIONAL UNIVERSITAIRE JEAN-FRANCOIS CHAMPOLLION (INU)"
+  },
+  {
+    "siren": "130006356",
+    "denomination": "INSTITUT POLYTECHNIQUE DE BORDEAUX (IPB)"
+  },
+  {
+    "siren": "193819125",
+    "denomination": "INSTITUT POLYTECHNIQUE DE GRENOBLE (IPG)"
+  },
+  {
+    "siren": "199306036",
+    "denomination": "INSTITUT SUPERIEUR DE MECANIQUE DE PARIS (ISAE-SUPMECA)"
+  },
+  {
+    "siren": "180089369",
+    "denomination": "INSTITUT POLAIRE FRANCAIS - PAUL-EMILE VICTOR (IPEV)"
+  },
+  {
+    "siren": "130025620",
+    "denomination": "INSTITUT POLYTECHNIQUE DE PARIS"
+  },
+  {
+    "siren": "180006025",
+    "denomination": "INSTITUT DE RECHERCHE POUR LE DEVELOPPEMENT (IRD)"
+  },
+  {
+    "siren": "939106274",
+    "denomination": "MANUFACTURES NATIONALES - SEVRES ET MOBILIER NATIONAL"
+  },
+  {
+    "siren": "180060030",
+    "denomination": "METEO-FRANCE"
+  },
+  {
+    "siren": "197534936",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DES MINES DE PARIS (MINES PARIS)"
+  },
+  {
+    "siren": "130002645",
+    "denomination": "MUSEE NATIONAL DU SPORT"
+  },
+  {
+    "siren": "180046237",
+    "denomination": "ETABLISSEMENT PUBLIC DU MUSEE DU LOUVRE"
+  },
+  {
+    "siren": "180092454",
+    "denomination": "ETABLISSEMENT PUBLIC DU MUSEE DES ARTS ASIATIQUES GUIMET"
+  },
+  {
+    "siren": "130023088",
+    "denomination": "ETABLISSEMENT PUBLIC DU MUSEE NATIONAL JEAN JACQUES HENNER ET DU MUSEE NATIONAL GUSTAVE MOREAU"
+  },
+  {
+    "siren": "180090029",
+    "denomination": "MUSEE NATIONAL DE LA MARINE"
+  },
+  {
+    "siren": "130012172",
+    "denomination": "MUSEE NATIONAL PICASSO PARIS"
+  },
+  {
+    "siren": "180044174",
+    "denomination": "MUSEUM NATIONAL D HISTOIRE NATURELLE (MNHN)"
+  },
+  {
+    "siren": "130029747",
+    "denomination": "NANTES UNIVERSITE"
+  },
+  {
+    "siren": "932491574",
+    "denomination": "NIMES UNIVERSITE"
+  },
+  {
+    "siren": "197534969",
+    "denomination": "OBSERVATOIRE DE PARIS"
+  },
+  {
+    "siren": "130025919",
+    "denomination": "OFFICE FRANCAIS DE LA BIODIVERSITE (OFB)"
+  },
+  {
+    "siren": "180036105",
+    "denomination": "OBSERVATOIRE FRANCAIS DES DROGUES ET DES TENDANCES ADDICTIVES (OFDT)"
+  },
+  {
+    "siren": "180006033",
+    "denomination": "OFFICE FRANCAIS DE PROTECTION DES REFUGIES ET APATRIDES (OFPRA)"
+  },
+  {
+    "siren": "180007015",
+    "denomination": "OFFICE NATIONAL DES COMBATTANTS ET DES VICTIMES DE GUERRE (ONACVG)"
+  },
+  {
+    "siren": "662043116",
+    "denomination": "OFFICE NATIONAL DES FORETS (ONF)"
+  },
+  {
+    "siren": "480179258",
+    "denomination": "THEATRE NATIONAL DE L'OPERA COMIQUE (TNOC)"
+  },
+  {
+    "siren": "784396079",
+    "denomination": "OPERA NATIONAL DE PARIS"
+  },
+  {
+    "siren": "180092082",
+    "denomination": "OPERATEUR DU PATRIMOINE ET DES PROJETS IMMOBILIERS DE LA CULTURE (OPPIC)"
+  },
+  {
+    "siren": "200008431",
+    "denomination": "PARC AMAZONIEN DE GUYANE"
+  },
+  {
+    "siren": "130025935",
+    "denomination": "PARC NATIONAL DE FORETS"
+  },
+  {
+    "siren": "189710080",
+    "denomination": "PARC NATIONAL DE LA GUADELOUPE"
+  },
+  {
+    "siren": "200008357",
+    "denomination": "PARC NATIONAL DE LA REUNION"
+  },
+  {
+    "siren": "188300057",
+    "denomination": "PARC NATIONAL DE PORT CROS"
+  },
+  {
+    "siren": "184800050",
+    "denomination": "PARC NATIONAL DES CEVENNES"
+  },
+  {
+    "siren": "180503013",
+    "denomination": "PARC NATIONAL DES ECRINS"
+  },
+  {
+    "siren": "186500047",
+    "denomination": "PARC NATIONAL DES PYRENEES"
+  },
+  {
+    "siren": "180600058",
+    "denomination": "PARC NATIONAL DU MERCANTOUR"
+  },
+  {
+    "siren": "187300033",
+    "denomination": "PARC NATIONAL DE LA VANOISE"
+  },
+  {
+    "siren": "130016793",
+    "denomination": "ETABLISSEMENT PUBLIC DU PARC NATIONAL DES CALANQUES"
+  },
+  {
+    "siren": "130005481",
+    "denomination": "FRANCE TRAVAIL"
+  },
+  {
+    "siren": "525046017",
+    "denomination": "SOCIETE DES GRANDS PROJETS (SOCIETE DES GRANDS PROJETS) (SGP)"
+  },
+  {
+    "siren": "130003981",
+    "denomination": "SERVICE HYDROGRAPHIQUE ET OCEANOGRAPHIQUE DE LA MARINE (SHOM)"
+  },
+  {
+    "siren": "941636342",
+    "denomination": "SOCIETE DE LIVRAISON DES OUVRAGES OLYMPIQUES ALPES 2030 (SOLIDEO ALPES 2030)"
+  },
+  {
+    "siren": "130023385",
+    "denomination": "SORBONNE UNIVERSITE"
+  },
+  {
+    "siren": "784804593",
+    "denomination": "THEATRE NATIONAL DE LA COLLINE"
+  },
+  {
+    "siren": "588502310",
+    "denomination": "THEATRE NATIONAL DE STRASBOURG (TNS)"
+  },
+  {
+    "siren": "519587851",
+    "denomination": "ETABLISSEMENT PUBLIC PALAIS DE LA DECOUVERTE ET CITE DES SCIENCES ET DE L'INDUSTRIE (EPPDCSI)"
+  },
+  {
+    "siren": "198013443",
+    "denomination": "UNIVERSITE AMIENS PICARDIE JULES VERNE"
+  },
+  {
+    "siren": "198406852",
+    "denomination": "AVIGNON UNIVERSITE"
+  },
+  {
+    "siren": "193317666",
+    "denomination": "UNIVERSITE BORDEAUX MONTAIGNE BORDEAUX III"
+  },
+  {
+    "siren": "941298317",
+    "denomination": "UNIVERSITE DE BREST"
+  },
+  {
+    "siren": "196917744",
+    "denomination": "UNIVERSITE CLAUDE BERNARD LYON 1"
+  },
+  {
+    "siren": "130028061",
+    "denomination": "UNIVERSITE CLERMONT AUVERGNE (UCA)"
+  },
+  {
+    "siren": "130025661",
+    "denomination": "UNIVERSITE COTE D'AZUR"
+  },
+  {
+    "siren": "196244016",
+    "denomination": "UNIVERSITE D ARTOIS"
+  },
+  {
+    "siren": "130018351",
+    "denomination": "UNIVERSITE DE BORDEAUX"
+  },
+  {
+    "siren": "195617188",
+    "denomination": "UNIVERSITE DE BRETAGNE SUD (UBS)"
+  },
+  {
+    "siren": "191414085",
+    "denomination": "UNIVERSITE DE CAEN NORMANDIE"
+  },
+  {
+    "siren": "197308588",
+    "denomination": "UNIVERSITE SAVOIE MONT BLANC"
+  },
+  {
+    "siren": "192026649",
+    "denomination": "UNIVERSITE DE CORSE P PAOLI"
+  },
+  {
+    "siren": "130020597",
+    "denomination": "UNIVERSITE DE GUYANE"
+  },
+  {
+    "siren": "199870015",
+    "denomination": "UNIVERSITE DE LA POLYNESIE FRANCAISE"
+  },
+  {
+    "siren": "199744780",
+    "denomination": "UNIVERSITE DE LA REUNION"
+  },
+  {
+    "siren": "191700327",
+    "denomination": "LA ROCHELLE UNIVERSITE"
+  },
+  {
+    "siren": "130029754",
+    "denomination": "UNIVERSITE DE LILLE"
+  },
+  {
+    "siren": "198706699",
+    "denomination": "UNIVERSITE DE LIMOGES"
+  },
+  {
+    "siren": "130015506",
+    "denomination": "UNIVERSITE DE LORRAINE"
+  },
+  {
+    "siren": "130016314",
+    "denomination": "UNIVERSITE DE MAYOTTE"
+  },
+  {
+    "siren": "932490899",
+    "denomination": "UNIVERSITE DE MONTPELLIER PAUL-VALERY (UMPV)"
+  },
+  {
+    "siren": "130029796",
+    "denomination": "UNIVERSITE DE MONTPELLIER"
+  },
+  {
+    "siren": "196811665",
+    "denomination": "UNIVERSITE DE HAUTE ALSACE"
+  },
+  {
+    "siren": "130003221",
+    "denomination": "UNIVERSITE DE NOUVELLE CALEDONIE"
+  },
+  {
+    "siren": "199318270",
+    "denomination": "UNIVERSITE DE PARIS VIII.PARIS VINCENNES"
+  },
+  {
+    "siren": "196604375",
+    "denomination": "UNIVERSITE DE PERPIGNAN VIA DOMITIA (UPVD)"
+  },
+  {
+    "siren": "198608564",
+    "denomination": "UNIVERSITE DE POITIERS"
+  },
+  {
+    "siren": "195112966",
+    "denomination": "UNIVERSITE DE REIMS CHAMPAGNE-ARDENNE (URCA)"
+  },
+  {
+    "siren": "130030513",
+    "denomination": "UNIVERSITE DE RENNES"
+  },
+  {
+    "siren": "197619042",
+    "denomination": "UNIVERSITE DE ROUEN-NORMANDIE"
+  },
+  {
+    "siren": "938501681",
+    "denomination": "UNIVERSITE JEAN MONNET (EPSCP)"
+  },
+  {
+    "siren": "130005457",
+    "denomination": "UNIVERSITE DE STRASBOURG"
+  },
+  {
+    "siren": "196012231",
+    "denomination": "UNIVERSITE DE TECHNOLOGIE DE COMPIEGNE (UTC)"
+  },
+  {
+    "siren": "191010602",
+    "denomination": "UNIVERSITE DE TECHNOLOGIE DE TROYES (UTT)"
+  },
+  {
+    "siren": "198307662",
+    "denomination": "UNIVERSITE DE TOULON"
+  },
+  {
+    "siren": "938271392",
+    "denomination": "UNIVERSITE DE TOULOUSE"
+  },
+  {
+    "siren": "193708005",
+    "denomination": "UNIVERSITE DE TOURS"
+  },
+  {
+    "siren": "199715855",
+    "denomination": "UNIVERSITE DES ANTILLES"
+  },
+  {
+    "siren": "197627623",
+    "denomination": "UNIVERSITE LE HAVRE NORMANDIE"
+  },
+  {
+    "siren": "195944038",
+    "denomination": "UNIVERSITE DU LITTORAL COTE D'OPALE"
+  },
+  {
+    "siren": "130026081",
+    "denomination": "UNIVERSITE GRENOBLE ALPES"
+  },
+  {
+    "siren": "130026123",
+    "denomination": "UNIVERSITE GUSTAVE EIFFEL"
+  },
+  {
+    "siren": "197209166",
+    "denomination": "UNIVERSITE DU MANS"
+  },
+  {
+    "siren": "196924377",
+    "denomination": "UNIVERSITE LYON 3 JEAN MOULIN"
+  },
+  {
+    "siren": "938106564",
+    "denomination": "UNIVERSITE MARIE ET LOUIS PASTEUR (UMLP)"
+  },
+  {
+    "siren": "197517170",
+    "denomination": "UNIVERSITE PARIS 1 PANTHEON-SORBONNE"
+  },
+  {
+    "siren": "197546922",
+    "denomination": "UNIVERSITE PARIS DAUPHINE"
+  },
+  {
+    "siren": "199411117",
+    "denomination": "UNIVERSITE PARIS EST CRETEIL VAL DE MARNE (UPEC)"
+  },
+  {
+    "siren": "197517196",
+    "denomination": "UNIVERSITE PARIS III SORBONNE NOUVELLE"
+  },
+  {
+    "siren": "130026149",
+    "denomination": "UNIVERSITE PSL"
+  },
+  {
+    "siren": "199212044",
+    "denomination": "UNIVERSITE PARIS NANTERRE"
+  },
+  {
+    "siren": "199312380",
+    "denomination": "UNIV PARIS XIII PARIS-NORD VILLETANEUSE"
+  },
+  {
+    "siren": "130029952",
+    "denomination": "UNIVERSITE PARIS-PANTHEON-ASSAS"
+  },
+  {
+    "siren": "130026024",
+    "denomination": "UNIVERSITE PARIS-SACLAY"
+  },
+  {
+    "siren": "130025745",
+    "denomination": "UNIVERSITE POLYTECHNIQUE HAUTS-DE-FRANCE (UPHF)"
+  },
+  {
+    "siren": "193509379",
+    "denomination": "UNIVERSITE RENNES  II  HAUTE BRETAGNE"
+  },
+  {
+    "siren": "199003567",
+    "denomination": "UNIVERSITE DE TECHNOLOGIE DE BELFORT-MONTBELIARD (UTBM)"
+  },
+  {
+    "siren": "130030612",
+    "denomination": "UNIVERSITE TOULOUSE CAPITOLE"
+  },
+  {
+    "siren": "193113834",
+    "denomination": "UNIVERSITE TOULOUSE II"
+  },
+  {
+    "siren": "197819444",
+    "denomination": "UNIVERSITE DE VERSAILLES-SAINT-QUENTIN-EN-YVELINES (UVSQ)"
+  },
+  {
+    "siren": "130017791",
+    "denomination": "VOIES NAVIGABLES DE FRANCE (VNF)"
+  },
+  {
+    "siren": "180044034",
+    "denomination": "ACADEMIE DES SCIENCES D'OUTRE-MER"
+  },
+  {
+    "siren": "385290309",
+    "denomination": "AGENCE DE L ENVIRONNEMENT ET DE LA MAITRISE DE L ENERGIE (ADEME)"
+  },
+  {
+    "siren": "180006082",
+    "denomination": "AGENCE POUR L'ENSEIGNEMENT FRANCAIS A L'ETRANGER (AEFE)"
+  },
+  {
+    "siren": "180044224",
+    "denomination": "AGENCE BIBLIOGRAPHIQUE DE L'ENSEIGNEMENT SUPERIEUR (ABES)"
+  },
+  {
+    "siren": "183100064",
+    "denomination": "AGENCE DE L'EAU ADOUR GARONNE"
+  },
+  {
+    "siren": "184503019",
+    "denomination": "AGENCE DE L'EAU LOIRE-BRETAGNE"
+  },
+  {
+    "siren": "185703014",
+    "denomination": "AGENCE DE L'EAU RHIN MEUSE"
+  },
+  {
+    "siren": "186901559",
+    "denomination": "AGENCE DE L'EAU RHONE-MEDITERRANEE-CORSE"
+  },
+  {
+    "siren": "187500095",
+    "denomination": "AGENCE DE L'EAU SEINE-NORMANDIE"
+  },
+  {
+    "siren": "130007982",
+    "denomination": "AGENCE REGIONALE DE SANTE DE PROVENCE ALPES COTE D'AZUR (ARS)"
+  },
+  {
+    "siren": "180037012",
+    "denomination": "AGENCE NATIONALE POUR L AMELIORATION DES CONDITIONS DE TRAVAIL (ANACT)"
+  },
+  {
+    "siren": "180067027",
+    "denomination": "AGENCE NATIONALE DE L'HABITAT (ANAH)"
+  },
+  {
+    "siren": "130012024",
+    "denomination": "AGENCE NATIONALE DE SECURITE SANITAIRE DE L ALIMENTATION DE L ENVIRONNEMENT ET DU TRAVAIL (ANSES)"
+  },
+  {
+    "siren": "180092256",
+    "denomination": "AGENCE PUBLIQUE POUR L'IMMOBILIER DE LA JUSTICE (APIJ)"
+  },
+  {
+    "siren": "180043093",
+    "denomination": "BIBLIOTHEQUE PUBLIQUE D'INFORMATION (BPI)"
+  },
+  {
+    "siren": "478184906",
+    "denomination": "CITE ARCHITECTURE ET PATRIMOINE"
+  },
+  {
+    "siren": "775685019",
+    "denomination": "COMMISSARIAT A L' ENERGIE ATOMIQUE ET AUX ENERGIES ALTERNATIVES (CEA)"
+  },
+  {
+    "siren": "180005019",
+    "denomination": "CONSERVATOIRE DE L'ESPACE LITTORAL ET DES RIVAGES LACUSTRES"
+  },
+  {
+    "siren": "193415940",
+    "denomination": "CENTRE INFORMATIQUE NATIONAL DE L'ENSEIGNEMENT SUPERIEUR (CINES)"
+  },
+  {
+    "siren": "180044232",
+    "denomination": "CENTRE TECHNIQUE DU LIVRE DE L'ENSEIGNEMENT SUPERIEUR (CTLES)"
+  },
+  {
+    "siren": "130018310",
+    "denomination": "CENTRE D'ETUDES ET D'EXPERTISE SUR LES RISQUES L'ENVIRONNEMENT LA MOBILITE ET L'AMENAGEMENT (CEREMA)"
+  },
+  {
+    "siren": "180043036",
+    "denomination": "CENTRE D'ETUDES ET DE RECHERCHES SUR LES QUALIFICATIONS (CEREQ)"
+  },
+  {
+    "siren": "180046021",
+    "denomination": "CENTRE NATIONAL D'ART ET DE CULTURE GEORGES POMPIDOU"
+  },
+  {
+    "siren": "180046039",
+    "denomination": "CENTRE NATIONAL DU CINEMA ET DE L'IMAGE ANIMEE (CNC)"
+  },
+  {
+    "siren": "197529050",
+    "denomination": "CENTRE NATIONAL D'ENSEIGNEMENT A DISTANCE (CNED)"
+  },
+  {
+    "siren": "775665912",
+    "denomination": "CENTRE NATIONAL D'ETUDES SPATIALES (CNES)"
+  },
+  {
+    "siren": "197534696",
+    "denomination": "CONSERVATOIRE NATIONAL SUPERIEUR D'ART DRAMATIQUE (CNSAD)"
+  },
+  {
+    "siren": "130021330",
+    "denomination": "COMMUNAUTE UNIVERSITES ET ETABLISSEMENTS NORMANDIE UNIVERSITE (COMUE)"
+  },
+  {
+    "siren": "130030620",
+    "denomination": "ECOLE D'ECONOMIE ET DE SCIENCES SOCIALES QUANTITATIVES DE TOULOUSE - TSE (TSE)"
+  },
+  {
+    "siren": "130024540",
+    "denomination": "ECOLE DE L'AIR ET DE L'ESPACE"
+  },
+  {
+    "siren": "180044083",
+    "denomination": "ECOLE FRANCAISE D'ARCHEOLOGIE D'ATHENES"
+  },
+  {
+    "siren": "180044117",
+    "denomination": "ECOLE FRANCAISE D'EXTREME ORIENT (EFEO)"
+  },
+  {
+    "siren": "196701890",
+    "denomination": "ECOLE NATIONALE DU GENIE DE L'EAU ET DE L'ENVIRONNEMENT DE STRASBOURG (ENGEES)"
+  },
+  {
+    "siren": "130002140",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'INFORMATIQUE POUR L'INDUSTRIE ET L'ENTREPRISE (ENSIIE)"
+  },
+  {
+    "siren": "180092389",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ART DE BOURGES"
+  },
+  {
+    "siren": "180092405",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ART DE CERGY"
+  },
+  {
+    "siren": "180092413",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ART DE DIJON"
+  },
+  {
+    "siren": "180092397",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ART ET DE DESIGN DE LIMOGES (ENSAD)"
+  },
+  {
+    "siren": "180092371",
+    "denomination": "ECOLE NATIONALE SUPERIEURE D'ART ET DE DESIGN DE NANCY (ENSAD)"
+  },
+  {
+    "siren": "193101433",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE FORMATION DE L'ENSEIGNEMENT AGRICOLE (ENSFEA)"
+  },
+  {
+    "siren": "199513763",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE L'ELECTRONIQUE ET DE SES APPLICATIONS (ENSEA)"
+  },
+  {
+    "siren": "196924591",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DES SCIENCES DE L'INFORMATION ET DES BIBLIOTHEQUES (ENSSIB)"
+  },
+  {
+    "siren": "130008535",
+    "denomination": "ECOLE NATIONALE VETERINAIRE AGROALIMENTAIRE ET DE L'ALIMENTATION NANTES ATLANTIQUE (ONIRIS)"
+  },
+  {
+    "siren": "199406083",
+    "denomination": "ECOLE NATIONALE VETERINAIRE D'ALFORT (ENVA)"
+  },
+  {
+    "siren": "193112562",
+    "denomination": "ECOLE NATIONALE DE L'AVIATION CIVILE (ENAC)"
+  },
+  {
+    "siren": "180092199",
+    "denomination": "ECOLE NATIONALE D'ADMINISTRATION PENITENTIAIRE (ENAP)"
+  },
+  {
+    "siren": "421506445",
+    "denomination": "ECOLE NATIONAL SUPRIEURE DES METIERS DE L'IMAGE ET DU SON"
+  },
+  {
+    "siren": "130002884",
+    "denomination": "ECOLE NATIONALE DES TRAVAUX PUBLICS DE L'ETAT (ENTPE)"
+  },
+  {
+    "siren": "180092058",
+    "denomination": "ETABLISSEMENT PUBLIC D'AMENAGEMENT UNIVERSITAIRE DE LA REGION ILE-DE-FRANCE (EPAURIF)"
+  },
+  {
+    "siren": "180092595",
+    "denomination": "ETABLISSEMENT PUBLIC D'INSERTION DE LA DEFENSE (EPIDE)"
+  },
+  {
+    "siren": "130014228",
+    "denomination": "GROUPE DES ECOLES NATIONALES D ECONOMIE ET STATISTIQUE (GROUPE ENSAE-ENSAI)"
+  },
+  {
+    "siren": "187512553",
+    "denomination": "AGENCE FRANCAISE POUR LE DEVELOPPEMENT ET LA PROMOTION DE L'AGRICULTURE BIOLOGIQUE"
+  },
+  {
+    "siren": "180000010",
+    "denomination": "GRANDE CHANCELLERIE DE LA LEGION D'HONNEUR"
+  },
+  {
+    "siren": "130010440",
+    "denomination": "INSTITUT FRANCAIS DU CHEVAL ET DE L'EQUITATION (IFCE)"
+  },
+  {
+    "siren": "330715368",
+    "denomination": "INSTITUT FRANCAIS DE RECHERCHE POUR L EXPLOITATION DE LA MER (IFREMER)"
+  },
+  {
+    "siren": "180067019",
+    "denomination": "INSTITUT NATIONAL DE L'INFORMATION GEOGRAPHIQUE ET FORESTIERE (IGN)"
+  },
+  {
+    "siren": "130002702",
+    "denomination": "INSTITUT NATIONAL DE L'ORIGINE ET DE LA QUALITE (INAO)"
+  },
+  {
+    "siren": "180037020",
+    "denomination": "INSTITUT NATIONAL D'ETUDES DEMOGRAPHIQUES (INED)"
+  },
+  {
+    "siren": "381984921",
+    "denomination": "INSTITUT NATIONAL DE L'ENVIRONNEMENT INDUSTRIEL ET DES RISQUES (INERIS)"
+  },
+  {
+    "siren": "180092033",
+    "denomination": "INSTITUT NATIONAL DE FORMATION DES PERSONNELS DU MINISTERE DE L'AGRICULTURE (INFOMA)"
+  },
+  {
+    "siren": "130010804",
+    "denomination": "INSTITUT NATIONAL DU SPORT DE L EXPERTISE ET DE LA PERFORMANCE (INSEP)"
+  },
+  {
+    "siren": "197500028",
+    "denomination": "INSTITUT D'ADMINISTRATION DES ENTREPRISES DE PARIS (IAE)"
+  },
+  {
+    "siren": "191333467",
+    "denomination": "INSTITUT D'ETUDES POLITIQUES D'AIX-EN-PROVENCE (IEP)"
+  },
+  {
+    "siren": "193301926",
+    "denomination": "INSTITUT D'ETUDES POLITIQUES DE BORDEAUX - SCIENCES PO BORDEAUX (IEP)"
+  },
+  {
+    "siren": "193801347",
+    "denomination": "INSTITUT D'ETUDES POLITIQUES DE GRENOBLE (IEP)"
+  },
+  {
+    "siren": "193523172",
+    "denomination": "INSTITUT D'ETUDES POLITIQUES DE RENNES (IEP)"
+  },
+  {
+    "siren": "193113867",
+    "denomination": "INSTITUT D'ETUDES POLITIQUES DE TOULOUSE (IEP)"
+  },
+  {
+    "siren": "196901730",
+    "denomination": "INSTITUT D'ETUDES POLITIQUES DE LYON (IEP)"
+  },
+  {
+    "siren": "197534316",
+    "denomination": "INSTITUT D'ETUDES POLITIQUES DE PARIS - SCIENCES PO (IEP)"
+  },
+  {
+    "siren": "130002850",
+    "denomination": "INSTITUT NATIONAL DES SCIENCES ET INDUSTRIES DU VIVANT ET DE L'ENVIRONNEMENT (AGROPARISTECH)"
+  },
+  {
+    "siren": "180046195",
+    "denomination": "INSTITUT FRANCAIS D'ARCHEOLOGIE ORIENTALE DU CAIRE (IFAO)"
+  },
+  {
+    "siren": "197546880",
+    "denomination": "INSTITUT NATIONAL D' HISTOIRE DE L'ART (INHA)"
+  },
+  {
+    "siren": "130026222",
+    "denomination": "INSTITUT NATIONAL D'ENSEIGNEMENT SUPERIEUR POUR L'AGRICULTURE L'ALIMENTATION ET L'ENVIRONNEMENT"
+  },
+  {
+    "siren": "130000383",
+    "denomination": "INSTITUT NATIONAL SUPERIEUR DE FORMATION ET DE RECHERCHE POUR L'EDUCATION INCLUSIVE (INSEI)"
+  },
+  {
+    "siren": "192020907",
+    "denomination": "INSTITUT REGIONAL D'ADMINISTRATION (IRA)"
+  },
+  {
+    "siren": "195936489",
+    "denomination": "INSTITUT REGIONAL D'ADMINISTRATION (IRA)"
+  },
+  {
+    "siren": "196918619",
+    "denomination": "INSTITUT REGIONAL D'ADMINISTRATION (IRA)"
+  },
+  {
+    "siren": "195726476",
+    "denomination": "INSTITUT REGIONAL D'ADMINISTRATION (IRA)"
+  },
+  {
+    "siren": "194416186",
+    "denomination": "INSTITUT REGIONAL D'ADMINISTRATION (IRA)"
+  },
+  {
+    "siren": "130000136",
+    "denomination": "INSTITUT NATIONAL DU TRAVAIL DE L'EMPLOI ET DE LA FORMATION PROFESSIONNELLE (INTEFP)"
+  },
+  {
+    "siren": "130004278",
+    "denomination": "INSTITUT SUPERIEUR DE L'AERONAUTIQUE ET DE L'ESPACE (ISAE)"
+  },
+  {
+    "siren": "130021959",
+    "denomination": "AGENCE DE L'OUTRE-MER POUR LA MOBILITE (LADOM)"
+  },
+  {
+    "siren": "313320244",
+    "denomination": "LABORATOIRE  NATIONAL DE METROLOGIE ET D'ESSAIS"
+  },
+  {
+    "siren": "130017890",
+    "denomination": "MUSEE DES CIVILISATIONS DE L'EUROPE ET DE LA MEDITERRANEE (MUCEM)"
+  },
+  {
+    "siren": "180092447",
+    "denomination": "ETABLISSEMENT PUBLIC DU MUSEE D'ORSAY ET DU MUSEE DE L'ORANGERIE - VALERY GISCARD D'ESTAING"
+  },
+  {
+    "siren": "180090052",
+    "denomination": "MUSEE DE L'AIR ET DE L'ESPACE"
+  },
+  {
+    "siren": "180090011",
+    "denomination": "MUSEE DE L'ARMEE"
+  },
+  {
+    "siren": "190615633",
+    "denomination": "OBSERVATOIRE DE LA COTE D'AZUR"
+  },
+  {
+    "siren": "130006547",
+    "denomination": "OFFICE DE DEVELOPPEMENT DE L'ECONOMIE AGRICOLE D'OUTRE-MER (ODEADOM)"
+  },
+  {
+    "siren": "180034027",
+    "denomination": "OFFICE FRANCAIS DE L'IMMIGRATION ET DE L'INTEGRATION (OFII)"
+  },
+  {
+    "siren": "775722879",
+    "denomination": "OFF NAT ETUDES RECHERCHES AEROSPATIALES (ONERA)"
+  },
+  {
+    "siren": "180043028",
+    "denomination": "OFFICE NATIONAL D'INFORMATION SUR LES ENSEIGNEMENTS ET LES PROFESSIONS (ONISEP)"
+  },
+  {
+    "siren": "180089476",
+    "denomination": "RESEAU NATIONAL DE TELECOMMUNICATION POUR LA TECHNOLOGIE D ENSEIGNEMENT ET LA RECHERCHE (RENATER)"
+  },
+  {
+    "siren": "784276180",
+    "denomination": "THEATRE NATIONAL DE L'ODEON (TNO)"
+  },
+  {
+    "siren": "130015332",
+    "denomination": "UNIVERSITE D'AIX MARSEILLE"
+  },
+  {
+    "siren": "194909701",
+    "denomination": "UNIVERSITE D'ANGERS"
+  },
+  {
+    "siren": "199119751",
+    "denomination": "UNIVERSITE D'EVRY VAL D'ESSONNE"
+  },
+  {
+    "siren": "194508552",
+    "denomination": "UNIVERSITE D'ORLEANS"
+  },
+  {
+    "siren": "196402515",
+    "denomination": "UNIVERSITE DE PAU ET DES PAYS DE L'ADOUR (UPPA)"
+  },
+  {
+    "siren": "189710023",
+    "denomination": "CENTRE REGIONAL OEUVRES UNIV SCOLAIRES (CROUS)"
+  },
+  {
+    "siren": "130024433",
+    "denomination": "CENTRE REGIONAL DES OEUVRES UNIVERSITAIRES ET SCOLAIRES DE BOURGOGNE-FRANCHE-COMTE (CROUS)"
+  },
+  {
+    "siren": "189740012",
+    "denomination": "CENTRE REGIONAL DES OEUVRES UNIVERSITAIRES ET SCOLAIRES DE LA REUNION ET DE MAYOTTE (CROUS)"
+  },
+  {
+    "siren": "692041585",
+    "denomination": "ETABLISSEMENT PUBLIC DE LA REUNION DES MUSEES NATIONAUX ET DU GRAND PALAIS DES CHAMPS-ELYSEES (RMN)"
+  },
+  {
+    "siren": "391718970",
+    "denomination": "LA CITE DE LA MUSIQUE - PHILHARMONIE DE PARIS"
+  },
+  {
+    "siren": "130030190",
+    "denomination": "LES ENTREPRISES S'ENGAGENT"
+  },
+  {
+    "siren": "180089500",
+    "denomination": "INSTITUT ROBERT BADINTER"
+  },
+  {
+    "siren": "180044125",
+    "denomination": "CASA DE VELAZQUEZ DE MADRID"
+  },
+  {
+    "siren": "130025737",
+    "denomination": "UNIVERSITE PARIS CITE"
+  },
+  {
+    "siren": "180035016",
+    "denomination": "AGENCE CENTRALE DES ORGANISMES DE SECURITE SOCIALE (ACOSS)"
+  },
+  {
+    "siren": "180020174",
+    "denomination": "CAISSE D'AMORTISSEMENT DE LA DETTE SOCIALE (CADES)"
+  },
+  {
+    "siren": "499147775",
+    "denomination": "CAISSE D ASSURANCE MALADIE DES INDUSTRIES ELECTRIQUE ET GAZIERE (CAMIEG)"
+  },
+  {
+    "siren": "775685316",
+    "denomination": "CAISSE AUTONOME NATIONALE SECURITE SOCIALE MINES (CANSSM)"
+  },
+  {
+    "siren": "775671985",
+    "denomination": "CAISSE AUTONOME DE RETRAITE DES CHIRURGIENS DENTISTES ET DES SAGES-FEMMES"
+  },
+  {
+    "siren": "775691215",
+    "denomination": "CAISSE AUTONOME RETRAITE MEDECINS FRANCE (CARMF)"
+  },
+  {
+    "siren": "775672009",
+    "denomination": "CAISSE RETRAITE PREVOYANCE"
+  },
+  {
+    "siren": "784442964",
+    "denomination": "CAISS AUTONOM RETR VETERINAIRE"
+  },
+  {
+    "siren": "784718371",
+    "denomination": "CAISSE ALLOC VIEILL AGENTS GENERAUX (CAVAMAC)"
+  },
+  {
+    "siren": "784411035",
+    "denomination": "CAISSE ALLOC VIEILLESSE EXPERT COMPTABLE"
+  },
+  {
+    "siren": "430019125",
+    "denomination": "CAISSE ASSUR VIEILLE INVAL MALA CULTES (CAVIMAC)"
+  },
+  {
+    "siren": "784394728",
+    "denomination": "CAISSE ALLOCAT VIEILLESSE OFFIC MINISTER"
+  },
+  {
+    "siren": "784338881",
+    "denomination": "CAISSE ASSURANCE VIEILLESSE PHARMACIE (CAVP)"
+  },
+  {
+    "siren": "77566343803654.0",
+    "denomination": "CCAS RATP"
+  },
+  {
+    "siren": "332123892",
+    "denomination": "CAISSE FRANCAIS DE L ETRANGER"
+  },
+  {
+    "siren": "321944191",
+    "denomination": "CAISSE INTERPROF PREVOYANCE ASSUR VIEILL"
+  },
+  {
+    "siren": "180035081",
+    "denomination": "CENTRE DES LIAISONS EUROPEENNES ET INTERNATIONALES DE SECURITE SOCIALE (CLEISS)"
+  },
+  {
+    "siren": "180035065",
+    "denomination": "CAISSE NATIONALE DES ALLOCATIONS FAMILIALES (CNAF)"
+  },
+  {
+    "siren": "180035024",
+    "denomination": "CAISSE NATIONALE DE L'ASSURANCE MALADIE (CNAM)"
+  },
+  {
+    "siren": "180035032",
+    "denomination": "CAISSE NATIONALE D'ASSURANCE VIEILLESSE (CNAV)"
+  },
+  {
+    "siren": "775670516",
+    "denomination": "CAISSE NATIONALE VIEIL PROFESS LIBERALES"
+  },
+  {
+    "siren": "784275919",
+    "denomination": "CAISSE NATIONALE BARREAUX FRANCAIS (CNBF)"
+  },
+  {
+    "siren": "478650385",
+    "denomination": "CAISSE NAT INDUSTRIES ELECT GAZIERES (CNIEG)"
+  },
+  {
+    "siren": "180090045",
+    "denomination": "CAISSE NATIONALE MILITAIRE DE SECURITE SOCIALE (CNMSS)"
+  },
+  {
+    "siren": "180035040",
+    "denomination": "CAISSE NATIONALE DE RETRAITES DES AGENTS DES COLLECTIVITES LOCALES (CNRACL)"
+  },
+  {
+    "siren": "180092561",
+    "denomination": "CAISSE NATIONALE DE SOLIDARITE POUR L'AUTONOMIE (CNSA)"
+  },
+  {
+    "siren": "784338899",
+    "denomination": "CAISSE DE PREVOYANCE ET DE RETRAITE DES NOTAIRES (CPRN)"
+  },
+  {
+    "siren": "341246122",
+    "denomination": "CAISSE PREVOYANCE ET RETRAITE PERS FERROVIAIRE (CPRPF)"
+  },
+  {
+    "siren": "784394710",
+    "denomination": "CAISSE RETRAITE OPERA PARIS"
+  },
+  {
+    "siren": "775671886",
+    "denomination": "CAISS RETR PREV CLERCS EMPLOYES NOTAIRES (CRPCEN)"
+  },
+  {
+    "siren": "314603507",
+    "denomination": "CAISSE RETRAIT PERSON COMEDIE FRANCAIS"
+  },
+  {
+    "siren": "785422304",
+    "denomination": "CAISSE RETRAITE PERSONNEL NAVIGANT (CRPN)"
+  },
+  {
+    "siren": "490364015",
+    "denomination": "CAISSE DE RETRAITE DU PERSONNEL DE LA RATP (CRP RATP)"
+  },
+  {
+    "siren": "194218798",
+    "denomination": "ECOLE NATIONALE SUPERIEURE DE SECURITE SOCIALE (EN3S)"
+  },
+  {
+    "siren": "180065021",
+    "denomination": "ETABLISSEMENT NATIONAL DES INVALIDES DE LA MARINE (ENIM)"
+  },
+  {
+    "siren": "180092488",
+    "denomination": "ETABLISSEMENT DE RETRAITE ADDITIONNELLE DE LA FONCTION PUBLIQUE (ERAFP)"
+  },
+  {
+    "siren": "180092322",
+    "denomination": "FONDS D'INDEMNISATION DES VICTIMES DE L'AMIANTE (FIVA)"
+  },
+  {
+    "siren": "180092462",
+    "denomination": "FONDS DE RESERVE POUR LES RETRAITES (FRR)"
+  },
+  {
+    "siren": "130024094",
+    "denomination": "FONDS SPECIAL DES PENSIONS DES OUVRIERS DES ETABLISSEMENTS INDUSTRIELS DE L'ETAT (FSPOEIE)"
+  },
+  {
+    "siren": "391722881",
+    "denomination": "GIE SESAM VITALE"
+  },
+  {
+    "siren": "187512496",
+    "denomination": "MODERNISATION DES DECLARATIONS SOCIALES (MDS)"
+  },
+  {
+    "siren": "187512728",
+    "denomination": "GIP UNION RETRAITE"
+  },
+  {
+    "siren": "784301525",
+    "denomination": "IRCANTEC"
+  },
+  {
+    "siren": "454057498",
+    "denomination": "INSTIT RETRAITE COMPLEME ENSEIG ET CRATI"
+  },
+  {
+    "siren": "302990445",
+    "denomination": "CAISSE CENTRALE DE MUTUALITE SOCIALE AGRICOLE (CCMSA)"
+  },
+  {
+    "siren": "180092330",
+    "denomination": "OFFICE NATIONAL D'INDEMNISATION DES ACCIDENTS MEDICAUX DES AFFECTIONS IATROGENES ET DES INFECTIONS NOSOCOMIALES (ONIAM)"
+  },
+  {
+    "siren": "130024243",
+    "denomination": "FONDS RETRAITE ADDITIONNELLE DE LA FONCTION PUBLIQUE (RAFP)"
+  },
+  {
+    "siren": "784621435",
+    "denomination": "U C A N S S (UCANSS)"
+  }
+]

@@ -13,14 +13,19 @@ type administrationGristRecord = {
   };
 };
 
-export function fetchAdministrationGristRecordsFactory({
+type administrationListGristRecord = {
+  id: number;
+  fields: { siren: string; denomination: string };
+};
+
+export function fetchCodeJuridiqueToAdministrationGristRecordsFactory({
   documentUrl,
   apiKey,
 }: {
   documentUrl: string;
   apiKey: string;
 }) {
-  return async function fetchAdministrationGristRecords() {
+  return async function fetchCodeJuridiqueToAdministrationGristRecords() {
     const { data } = await request<{ records: administrationGristRecord[] }>(
       documentUrl,
       {
@@ -36,6 +41,26 @@ export function fetchAdministrationGristRecordsFactory({
       isCollectivite: record.fields.Collectivites,
       isServicePublicAdministratif:
         record.fields.Mission_de_service_public_administratif,
+    }));
+  };
+}
+
+export function fetchAdministrationListGristRecordsFactory({
+  documentUrl,
+  apiKey,
+}: {
+  documentUrl: string;
+  apiKey: string;
+}) {
+  return async function fetchAdministrationListGristRecords() {
+    const { data } = await request<{
+      records: administrationListGristRecord[];
+    }>(documentUrl, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    return data.records.map((record) => ({
+      siren: record.fields.siren,
+      denomination: record.fields.denomination,
     }));
   };
 }

@@ -1,12 +1,12 @@
-name: 🏢 Update Grist
+name: 🏢 Sync Grist
 
 on:
   schedule:
     - cron: "0 2 * * *" # Daily at 2 AM UTC
   pull_request:
     paths:
-      - "packages/annuaire_entreprises/scripts/update-grist.ts"
-      - ".github/workflows/update-grist.yml"
+      - "packages/annuaire_entreprises/scripts/sync-grist.ts"
+      - ".github/workflows/sync-grist.yml"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
       pull-requests: write
     env:
       ADMINISTRATION_GRIST_API_KEY: ${{ secrets.ADMINISTRATION_GRIST_API_KEY }}
-      ADMINISTRATION_GRIST_URL: ${{ secrets.ADMINISTRATION_GRIST_URL }}
+      ADMINISTRATION_GRIST_DOC_ID: ${{ secrets.ADMINISTRATION_GRIST_DOC_ID }}
       DRY_RUN: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: 📥 Checkout repository
@@ -39,13 +39,13 @@ jobs:
           NPM_CONFIG_UPDATE_NOTIFIER: false
 
       - name: 🔄 Rebuild Administration Grist file
-        run: npm run update:grist
+        run: npm run sync:grist
         working-directory: packages/annuaire_entreprises
 
       - name: 🔍 Check for data changes
         id: data_check
         run: |
-          if git diff --quiet packages/annuaire_entreprises/data/administration-grist.json; then
+          if git diff --quiet packages/annuaire_entreprises/data/*.json; then
             echo "needs_update=false" >> $GITHUB_OUTPUT
           else
             echo "needs_update=true" >> $GITHUB_OUTPUT
@@ -66,16 +66,16 @@ jobs:
         if: steps.data_check.outputs.needs_update == 'true'
         run: |
           echo "::group::📊 Data changes"
-          git diff --stat packages/annuaire_entreprises/data/administration-grist.json
+          git diff --stat packages/annuaire_entreprises/data/*.json
           echo ""
-          git diff packages/annuaire_entreprises/data/administration-grist.json
+          git diff packages/annuaire_entreprises/data/*.json
           echo "::endgroup::"
 
       - name: 📝 Create changeset
         if: steps.data_check.outputs.needs_update == 'true'
         run: |
           mkdir -p .changeset
-          cat << EOF > .changeset/update-grist-${{ steps.date.outputs.today }}.md
+          cat << EOF > .changeset/sync-grist-${{ steps.date.outputs.today }}.md
           ---
           "@proconnect-gouv/proconnect.annuaire_entreprises": patch
           ---
@@ -89,15 +89,15 @@ jobs:
         with:
           add-paths: |
             .changeset/*.md
-            packages/annuaire_entreprises/data/administration-grist.json
+            packages/annuaire_entreprises/data/*.json
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          branch: github-actions/update-grist-${{ steps.date.outputs.today }}
-          commit-message: "⬆️ Mise à jour du Grist contenant la liste des administrations"
+          branch: github-actions/sync-grist-${{ steps.date.outputs.today }}
+          commit-message: "⬆️ Synchronisation du Grist contenant la liste des administrations"
           delete-branch: true
-          title: "⬆️ Mise à jour du Grist contenant la liste des administrations"
+          title: "⬆️ Synchronisation du Grist contenant la liste des administrations"
           body: |
             <div align=center><img src="https://github.com/annuaire-entreprises-data-gouv-fr/site/raw/main/public/images/annuaire-entreprises-paysage-large.gif" /></div>
 
             ---
 
-            Automated update of `@annuaire-entreprises-data-gouv-fr/search-infra` from ${{ steps.current.outputs.short_commit }} to ${{ steps.latest.outputs.short_commit }}.
+            Automated sync of Grist containing the list of administrations.
