@@ -42,6 +42,7 @@ suite("findByIdFactory", () => {
       cached_statut_diffusion: null,
       cached_tranche_effectifs_unite_legale: null,
       cached_tranche_effectifs: null,
+      cached_denomination_usuelle_etablissement_principal: null,
       created_at: new Date("1967-12-19"),
       organization_info_fetched_at: null,
       id: 1,

@@ -17,6 +17,8 @@ describe("env.zod", () => {
         "http://localhost:3000/___testing___/entreprise.api.gouv.fr",
       FRANCECONNECT_ISSUER:
         "http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2",
+      RNE_API_BASE_URL:
+        "http://localhost:3000/___testing___/registre-national-entreprises.inpi.fr",
       JWKS,
       SESSION_COOKIE_SECRET: "proconnectsecret,identitesecret",
       SMTP_URL: "smtp://localhost:1025",
@@ -97,6 +99,8 @@ describe("env.zod", () => {
       RNE_API_HTTP_CLIENT_TIMEOUT: 3000,
       RNE_API_PASSWORD: "🎭 Mocked RNE API Password",
       RNE_API_USERNAME: "🎭 Mocked RNE API Username",
+      RNE_API_BASE_URL:
+        "http://localhost:3000/___testing___/registre-national-entreprises.inpi.fr",
       SENTRY_DSN: "",
       SESSION_COOKIE_SECRET: ["proconnectsecret", "identitesecret"],
       SESSION_MAX_AGE_IN_SECONDS: 86400,
