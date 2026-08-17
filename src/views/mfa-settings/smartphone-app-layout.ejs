@@ -1,4 +1,4 @@
-<%- include('../partials/mfa-decision-helper-header.ejs', { step: "three" }); %>
+<%- include('/partials/mfa-decision-helper-header.ejs', { step: "three" }); %>
 
 <%- include(totpRecommendationPath, {
   description: "Une application smartphone génère un code qui change toutes les 30 secondes.",
@@ -10,4 +10,4 @@
   ]
 }) %>
 
-<%- include('../partials/mfa-helper-restart.ejs'); %>
+<%- include('/partials/mfa-helper-restart.ejs'); %>
