@@ -1,6 +1,9 @@
 //
 
-import type { VirtualAuthenticatorOptions } from "./types";
+import type {
+  SetUserVerifiedParams,
+  VirtualAuthenticatorOptions,
+} from "./types";
 
 declare global {
   namespace Cypress {
@@ -13,6 +16,7 @@ declare global {
        * cy.get("@authenticator").getFirstCertification();
        */
       getFirstCertification: () => ReturnType<typeof getFirstCertification>;
+      setUserVerified: typeof setUserVerified;
     }
   }
 }
@@ -25,6 +29,7 @@ Cypress.Commands.add(
   { prevSubject: true },
   getFirstCertification,
 );
+Cypress.Commands.add("setUserVerified", setUserVerified);
 
 //
 
@@ -62,6 +67,15 @@ function addVirtualAuthenticator(options: VirtualAuthenticatorOptions) {
       .then((result) => {
         return result.authenticatorId as string;
       }),
+  );
+}
+
+function setUserVerified(setUserVerifiedParams: SetUserVerifiedParams) {
+  return cy.wrap(
+    Cypress.automation("remote:debugger:protocol", {
+      command: "WebAuthn.setUserVerified",
+      params: setUserVerifiedParams,
+    }),
   );
 }
 
