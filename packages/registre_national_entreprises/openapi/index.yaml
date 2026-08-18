@@ -176,6 +176,17 @@ components:
                   properties:
                     composition:
                       $ref: "#/components/schemas/Composition"
+                personnePhysique:
+                  type: object
+                  properties:
+                    etablissementPrincipal:
+                      type: object
+                      properties:
+                        descriptionEtablissement:
+                          type: object
+                          properties:
+                            nomCommercial:
+                              type: string
             diffusionINSEE:
               type: string
               description: Diffusion dans l'INSEE
