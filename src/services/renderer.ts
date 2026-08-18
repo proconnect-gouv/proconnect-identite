@@ -83,7 +83,7 @@ export const render = (absolutePath: string, params: any) => {
     ejs.renderFile(
       absolutePath,
       { ...params, js: viteJsPath, css: viteCssPath },
-      { root: viewsPath },
+      {},
       (err, str) => {
         if (err) {
           return reject(err);
