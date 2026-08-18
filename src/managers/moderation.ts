@@ -2,11 +2,11 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
+import { context } from "../connectors/context";
+import { withTransaction } from "../connectors/postgres";
 import {
-  deleteModeration,
   findModerationById,
   getModerationById,
-  reopenModeration,
 } from "../repositories/moderation";
 import { findById as findOrganizationById } from "../repositories/organization/getters";
 
@@ -48,7 +48,19 @@ export const cancelModeration = async ({
     throw new ForbiddenError();
   }
 
-  return await deleteModeration(moderation_id);
+  return withTransaction(async (client) => {
+    const { repository } = context.createChild({ pg: client });
+    await repository.moderations.delete(moderation_id);
+    await repository.activity({
+      action: "moderation_cancelled",
+      context: { moderation_snapshot: moderation },
+      actor_user_id: user.id,
+      actor_email: user.email,
+      actor_type: "user",
+      target_type: "moderations",
+      target_id: moderation_id,
+    });
+  });
 };
 
 export const reopenModerationWithUserEdit = async ({
@@ -64,9 +76,22 @@ export const reopenModerationWithUserEdit = async ({
     throw new ForbiddenError();
   }
 
-  return await reopenModeration({
-    id: moderation_id,
-    userEmail: user.email,
-    cause: "Edition des informations personnelles",
+  return withTransaction(async (client) => {
+    const { repository } = context.createChild({ pg: client });
+    const reopened = await repository.moderations.reopen({
+      id: moderation_id,
+      userEmail: user.email,
+      cause: "Edition des informations personnelles",
+    });
+    await repository.activity({
+      action: "moderation_reopened",
+      context: {},
+      actor_user_id: user.id,
+      actor_email: user.email,
+      actor_type: "user",
+      target_type: "moderations",
+      target_id: moderation_id,
+    });
+    return reopened;
   });
 };

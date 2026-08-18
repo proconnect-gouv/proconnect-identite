@@ -45,8 +45,10 @@ import {
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
+import { context } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
+import { withTransaction } from "../connectors/postgres";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import { findEmailInDeliverabilityWhiteList } from "../repositories/email-deliverability-whitelist";
 import {
@@ -57,7 +59,6 @@ import {
   getById,
   getFranceConnectUserInfo,
   update,
-  upsetFranceconnectUserinfo,
 } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
 import { isWebauthnConfiguredForUser } from "./webauthn";
@@ -230,6 +231,26 @@ export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
       support_email: "support+identite@proconnect.gouv.fr",
     }).toString(),
     tag: "delete-account",
+  });
+};
+
+export const deleteUserAccount = async ({
+  id,
+  email,
+}: {
+  id: number;
+  email: string;
+}) => {
+  return withTransaction(async (client) => {
+    const { repository } = context.createChild({ pg: client });
+    await repository.activity({
+      action: "user_self_deleted",
+      context: {},
+      actor_user_id: id,
+      actor_email: email,
+      actor_type: "user",
+    });
+    await repository.users.delete(id);
   });
 };
 
@@ -572,6 +593,40 @@ export const updatePersonalInformationsForRegistration = async (
   });
 };
 
+export const updatePersonalInformations = async (
+  userId: number,
+  fields: Partial<
+    Pick<User, "given_name" | "family_name" | "phone_number" | "job">
+  >,
+): Promise<User> => {
+  return withTransaction(async (client) => {
+    const { repository } = context.createChild({ pg: client });
+    const userBefore = await repository.users.getById(userId);
+    const user = await repository.users.update(userId, fields);
+    await repository.activity({
+      action: "personal_info_edited",
+      context: {
+        before: {
+          given_name: userBefore.given_name,
+          family_name: userBefore.family_name,
+          phone_number: userBefore.phone_number,
+          job: userBefore.job,
+        },
+        after: {
+          given_name: user.given_name,
+          family_name: user.family_name,
+          phone_number: user.phone_number,
+          job: user.job,
+        },
+      },
+      actor_user_id: userId,
+      actor_email: user.email,
+      actor_type: "user",
+    });
+    return user;
+  });
+};
+
 export async function hasValidFranceConnectIdentity(userId: number) {
   const userFranceConnect = await getFranceConnectUserInfo(userId);
 
@@ -600,15 +655,25 @@ export async function updateFranceConnectUserInfo(
   const { family_name, preferred_username, given_name } = userInfo;
   const newFamilyName = preferred_username || family_name;
   const newGivenName = given_name.split(" ")[0];
-  const user = await update(userId, {
-    family_name: newFamilyName,
-    given_name: newGivenName,
+  return withTransaction(async (client) => {
+    const { repository } = context.createChild({ pg: client });
+    const user = await repository.users.update(userId, {
+      family_name: newFamilyName,
+      given_name: newGivenName,
+    });
+    await repository.users.upsetFranceconnectUserinfo({
+      ...userInfo,
+      user_id: userId,
+    });
+    await repository.activity({
+      action: "franceconnect_data_sync",
+      context: {},
+      actor_user_id: userId,
+      actor_email: user.email,
+      actor_type: "user",
+    });
+    return user;
   });
-  await upsetFranceconnectUserinfo({
-    ...userInfo,
-    user_id: userId,
-  });
-  return user;
 }
 
 export async function getGivenNameOptionsFromFranceConnectIdentity(

@@ -5,9 +5,11 @@ import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import { hasFranceConnectIdentity } from "../../managers/user";
+import {
+  hasFranceConnectIdentity,
+  updatePersonalInformations,
+} from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import { update } from "../../repositories/user";
 import { nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 
@@ -63,7 +65,7 @@ export const postPersonalInformationsController = async (
 
       const { given_name, family_name } = await schema.parseAsync(req.body);
 
-      updatedUser = await update(userId, {
+      updatedUser = await updatePersonalInformations(userId, {
         given_name,
         family_name,
       });
