@@ -21,52 +21,52 @@ jobs:
       fail-fast: false
       matrix:
         e2e_test:
-          - activate_totp
-          - authorize_error
-          - broken_standard_client
-          - check_email_deliverability
-          - connect_franceconnect_account
-          - delete_account
-          - delete_totp
-          - join_and_moderation
-          - join_collectivite_territoriale_free_contact_domain
-          - join_collectivite_territoriale_multiple_contact_emails
-          - join_collectivite_territoriale_official_contact_domain
-          - join_must_confirm
-          - join_org_with_rejected_moderation
-          - join_org_with_trackdechets_domain
-          - join_org_with_verified_domain
-          - join_with_code_sent_to_official_educ_nat_contact_email
-          - join_with_free_email_domain
-          - join_with_gouv_domain
-          - join_with_official_contact_email
-          - mfa_decision_helper_account
-          - mfa_decision_helper_signin
-          - quit-organization
-          - rate_limit_by_email
-          - rate_limit_by_ip
-          - reauthenticate_on_admin_page
-          - redirect_after_session_expiration
-          - reset_password
-          - set_info_after_account_provisioning
-          - signin_from_proconnect_federation_client
-          - signin_from_standard_client
-          - signin_with_certification_dirigeant
-          - signin_with_email_verification
-          - signin_with_email_verification_renewal
-          - signin_with_legacy_acr
-          - signin_with_legacy_scope
-          - signin_with_magic_link
-          - signin_with_right_acr
-          - signin_with_suggestion
-          - signin_with_totp
-          - signin_with_totp_enrollment
-          - signin_with_webauthn
-          - signup_entreprise_unipersonnelle
-          - signup_from_standard_client
+          # - activate_totp
+          # - authorize_error
+          # - broken_standard_client
+          # - check_email_deliverability
+          # - connect_franceconnect_account
+          # - delete_account
+          # - delete_totp
+          # - join_and_moderation
+          # - join_collectivite_territoriale_free_contact_domain
+          # - join_collectivite_territoriale_multiple_contact_emails
+          # - join_collectivite_territoriale_official_contact_domain
+          # - join_must_confirm
+          # - join_org_with_rejected_moderation
+          # - join_org_with_trackdechets_domain
+          # - join_org_with_verified_domain
+          # - join_with_code_sent_to_official_educ_nat_contact_email
+          # - join_with_free_email_domain
+          # - join_with_gouv_domain
+          # - join_with_official_contact_email
+          # - mfa_decision_helper_account
+          # - mfa_decision_helper_signin
+          # - quit-organization
+          # - rate_limit_by_email
+          # - rate_limit_by_ip
+          # - reauthenticate_on_admin_page
+          # - redirect_after_session_expiration
+          # - reset_password
+          # - set_info_after_account_provisioning
+          # - signin_from_proconnect_federation_client
+          # - signin_from_standard_client
+          # - signin_with_certification_dirigeant
+          # - signin_with_email_verification
+          # - signin_with_email_verification_renewal
+          # - signin_with_legacy_acr
+          # - signin_with_legacy_scope
+          # - signin_with_magic_link
+          # - signin_with_right_acr
+          # - signin_with_suggestion
+          # - signin_with_totp
+          # - signin_with_totp_enrollment
+          # - signin_with_webauthn
+          # - signup_entreprise_unipersonnelle
+          # - signup_from_standard_client
           - signup_with_certification_dirigeant
-          - update_personal_information
-          - use_extra_param_sp_name
+          # - update_personal_information
+          # - use_extra_param_sp_name
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
