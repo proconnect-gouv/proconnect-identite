@@ -1,7 +1,9 @@
+import { CancelModeration } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
+import { sendMail } from "../connectors/mail";
 import {
   deleteModeration,
   findModerationById,
@@ -48,7 +50,25 @@ export const cancelModeration = async ({
     throw new ForbiddenError();
   }
 
-  return await deleteModeration(moderation_id);
+  const organization = await findOrganizationById(moderation.organization_id);
+  if (!organization) {
+    throw new NotFoundError();
+  }
+
+  const result = await deleteModeration(moderation_id);
+
+  await sendMail({
+    to: [user.email],
+    subject: "Annulation de votre demande de rattachement",
+    html: CancelModeration({
+      given_name: user.given_name ?? "",
+      family_name: user.family_name ?? "",
+      libelle: organization.cached_libelle || organization.siret,
+    }).toString(),
+    tag: "cancel-moderation",
+  });
+
+  return result;
 };
 
 export const reopenModerationWithUserEdit = async ({

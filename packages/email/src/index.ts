@@ -2,6 +2,7 @@
 
 export { default as Add2fa } from "./Add2fa.js";
 export { default as AddAccessKey } from "./AddAccessKey.js";
+export { default as CancelModeration } from "./CancelModeration.js";
 export { default as Delete2faProtection } from "./Delete2faProtection.js";
 export { default as DeleteAccessKey } from "./DeleteAccessKey.js";
 export { default as DeleteAccount } from "./DeleteAccount.js";
