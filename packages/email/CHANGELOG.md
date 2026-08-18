@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.2.0
+
+### Minor Changes
+
+- [#2079](https://github.com/proconnect-gouv/proconnect-identite/pull/2079) [`20d3064`](https://github.com/proconnect-gouv/proconnect-identite/commit/20d30643f5f65e817b8282d5581633e951e88af1) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ajout d'un template "annulation de demande de rattachement"
+
 ## 1.1.1
 
 ### Patch Changes
