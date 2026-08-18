@@ -87,4 +87,6 @@ export const {
   VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
 } = parsedEnv.data;
 
+console.log("PARSED ENV", parsedEnv.data);
+
 export const WEBSITE_IDENTIFIER = new URL(HOST).hostname;
