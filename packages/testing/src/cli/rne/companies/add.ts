@@ -41,11 +41,14 @@ export const AddCompanyCommand: CommandModule<
       // Protection against some staging endpoint magic
       assert.equal(content.siren, siren);
 
-      const safeContent = anonymize(content);
-      await writeFile(filename, await format(safeContent, { parser: "json" }));
+      const reducedContent = reduceContent(content);
+      await writeFile(
+        filename,
+        await format(reducedContent, { parser: "json" }),
+      );
       console.log("wrote", filename);
 
-      return new Response(safeContent);
+      return new Response(reducedContent);
     }
 
     const rneOpenApiClient: RegistreNationalEntreprisesOpenApiClient =
@@ -65,22 +68,21 @@ export const AddCompanyCommand: CommandModule<
   },
 };
 
-function anonymize(content: ReponseCompany) {
-  if (!content.formality?.content?.personnePhysique) {
-    return JSON.stringify(content);
-  }
-  const anonymizedContent: ReponseCompany = {
-    ...content,
+function reduceContent(content: ReponseCompany) {
+  const reducedContent = {
     formality: {
-      ...content.formality,
       content: {
-        ...content.formality.content,
-        personnePhysique: {
-          etablissementPrincipal:
-            content.formality.content.personnePhysique.etablissementPrincipal,
-        },
+        personnePhysique: content.formality?.content?.personnePhysique
+          ? {
+              etablissementPrincipal: {
+                descriptionEtablissement:
+                  content.formality?.content?.personnePhysique
+                    ?.etablissementPrincipal?.descriptionEtablissement,
+              },
+            }
+          : undefined,
       },
     },
   };
-  return JSON.stringify(anonymizedContent);
+  return JSON.stringify(reducedContent);
 }
