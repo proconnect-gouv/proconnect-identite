@@ -1,23 +1,6 @@
 {
-  "updatedAt": "2026-07-16T18:14:40+02:00",
-  "nombreRepresentantsActifs": 0,
-  "nombreEtablissementsOuverts": 0,
-  "nombreBeneficiairesEffectifsActifs": 0,
-  "id": "6445bca75fd29a01870d921d",
   "formality": {
-    "siren": "828696252",
-    "indicateurStructureEtablissement": false,
     "content": {
-      "succursaleOuFiliale": "AVEC_ETABLISSEMENT",
-      "formeExerciceActivitePrincipale": "GESTION_DE_BIENS",
-      "natureCreation": {
-        "dateCreation": "2017-04-01",
-        "formeJuridique": "1000",
-        "microEntreprise": false,
-        "relieeEntrepriseAgricole": false,
-        "entrepriseAgricole": false,
-        "eirl": false
-      },
       "personnePhysique": {
         "etablissementPrincipal": {
           "descriptionEtablissement": {
@@ -30,116 +13,9 @@
             "codeApe": "6820A",
             "etablissementValidated": false,
             "etablissementRdd": true
-          },
-          "adresse": {
-            "roleAdressePresent": false,
-            "codePostalPresent": true,
-            "communePresent": true,
-            "codeInseeCommunePresent": true,
-            "typeVoiePresent": true,
-            "voiePresent": true,
-            "voieCodifieePresent": false,
-            "numVoiePresent": true,
-            "indiceRepetitionPresent": false,
-            "distributionSpecialePresent": false,
-            "communeAnciennePresent": false,
-            "rgpdPresent": false,
-            "datePriseEffetAdressePresent": false,
-            "complementLocalisationPresent": false,
-            "communeDeRattachementPresent": false,
-            "caracteristiquesPresent": true,
-            "indicateurValidationBANPresent": true,
-            "cedexPresent": false,
-            "pays": "FRANCE",
-            "codePays": "FRA",
-            "codePostal": "93130",
-            "commune": "Noisy-le-Sec",
-            "codeInseeCommune": "93053",
-            "typeVoie": "RUE",
-            "voie": "Emile Zola",
-            "numVoie": "7",
-            "caracteristiques": { "domiciliataire": false }
-          },
-          "activites": [
-            {
-              "categoryCode": "07060101",
-              "activiteId": "c2be5631-ab52-476d-b478-b7890061ac97",
-              "indicateurPrincipal": true,
-              "indicateurProlongement": false,
-              "dateDebut": "2026-01-01",
-              "exerciceActivite": "P",
-              "indicateurNonSedentaire": false,
-              "formeExercice": "GESTION_DE_BIENS",
-              "categorisationActivite1": "07",
-              "categorisationActivite2": "06",
-              "categorisationActivite3": "01",
-              "categorisationActivite4": "01",
-              "descriptionDetaillee": "Location meublée",
-              "indicateurActiviteeApe": false,
-              "precisionActivite": "20",
-              "indicateurArtisteAuteur": false,
-              "indicateurMarinProfessionnel": false,
-              "rolePrincipalPourEntreprise": true,
-              "codeApe": "6820A",
-              "activiteRattacheeEirl": false,
-              "origine": { "typeOrigine": "1" },
-              "isLocationGeranceOrGeranceMandat": false,
-              "activiteMicro": false,
-              "metierArt": false
-            }
-          ],
-          "isTransfer": false,
-          "isLocationGeranceOrGeranceMandat": false
+          }
         }
       }
-    },
-    "diffusionINSEE": "O",
-    "typePersonne": "P",
-    "codeAPE": "6820A",
-    "diffusionCommerciale": true,
-    "historique": [
-      {
-        "dateIntegration": "2026-01-02T10:03:12+01:00",
-        "codeEvenement": "54P",
-        "libelleEvenement": "Ouverture d’un nouvel établissement",
-        "numeroLiasse": "J00203095146",
-        "patchId": "6445bca75fd29a01870d921c_7",
-        "dateEffet": "2026-01-01",
-        "cheminDateEffet": "content.personnePhysique.autresEtablissements[0].dateEffetOuvertureEtablissement",
-        "cheminDateEffetId": "content.personnePhysique.autresEtablissements[82869625200026].dateEffetOuvertureEtablissement"
-      },
-      {
-        "dateIntegration": "2026-01-20T21:11:44+01:00",
-        "codeEvenement": "11P",
-        "libelleEvenement": "Transfert de l’entreprise",
-        "numeroLiasse": "J00209117076",
-        "patchId": "6445bca75fd29a01870d921c_8",
-        "dateEffet": "2026-01-01",
-        "cheminDateEffet": "content.personnePhysique.autresEtablissements[0].descriptionEtablissement.dateEffetTransfert",
-        "cheminDateEffetId": "content.personnePhysique.autresEtablissements[82869625200018].descriptionEtablissement.dateEffetTransfert"
-      },
-      {
-        "dateIntegration": "2026-01-20T21:11:44+01:00",
-        "codeEvenement": "11P",
-        "libelleEvenement": "Transfert de l’entreprise",
-        "numeroLiasse": "J00209117076",
-        "patchId": "6445bca75fd29a01870d921c_8",
-        "dateEffet": "2026-01-01",
-        "cheminDateEffet": "content.personnePhysique.etablissementPrincipal.descriptionEtablissement.dateEffetTransfert",
-        "cheminDateEffetId": "content.personnePhysique.etablissementPrincipal.descriptionEtablissement.dateEffetTransfert"
-      },
-      {
-        "dateIntegration": "2026-02-24T13:14:34+01:00",
-        "codeEvenement": "80P",
-        "libelleEvenement": "Fermeture d’un établissement",
-        "numeroLiasse": "J00219663564",
-        "patchId": "6445bca75fd29a01870d921c_9",
-        "dateEffet": "2025-09-01",
-        "cheminDateEffet": "content.personnePhysique.autresEtablissements[0].descriptionEtablissement.dateEffetFermeture",
-        "cheminDateEffetId": "content.personnePhysique.autresEtablissements[82869625200018].descriptionEtablissement.dateEffetFermeture"
-      }
-    ],
-    "formeJuridique": "1000"
-  },
-  "siren": "828696252"
+    }
+  }
 }
