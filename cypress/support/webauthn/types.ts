@@ -40,3 +40,10 @@ export interface VirtualAuthenticatorOptions {
   /** Credentials created by this authenticator will have the backup state (BS) flag set to this value. Defaults to false. */
   defaultBackupState?: boolean;
 }
+
+export interface SetUserVerifiedParams {
+  /** The authenticator ID. */
+  authenticatorId: string;
+  /** Whether User Verification should succeed or fail for the authenticator. */
+  isUserVerified: boolean;
+}
