@@ -51,11 +51,6 @@ import { context } from "../../connectors/context";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
 import {
-  createModeration,
-  findPendingModeration,
-  findRejectedModeration,
-} from "../../repositories/moderation";
-import {
   findBySiret,
   findByUserId,
   findByVerifiedEmailDomain,
@@ -82,6 +77,12 @@ import {
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
 import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
+
+const {
+  create: createModeration,
+  findPending: findPendingModeration,
+  findRejected: findRejectedModeration,
+} = context.repository.moderations;
 
 export const doSuggestOrganizations = async ({
   user_id,

@@ -31,6 +31,7 @@ import {
   UserModerationRejectedError,
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
+import { context } from "../connectors/context";
 import { getCertificationDirigeantCloseMatchErrorUrl } from "../managers/certification";
 import { getOrganizationFromModeration } from "../managers/moderation";
 import {
@@ -46,7 +47,6 @@ import {
 } from "../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { getModerationById } from "../repositories/moderation";
 import { getFranceConnectUserInfo } from "../repositories/user";
 import {
   idSchema,
@@ -56,6 +56,8 @@ import {
 } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
+
+const { getById: getModerationById } = context.repository.moderations;
 
 export const getJoinOrganizationController = async (
   req: Request,
