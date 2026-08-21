@@ -45,10 +45,10 @@ import {
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
+import { context } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
-import { findEmailInDeliverabilityWhiteList } from "../repositories/email-deliverability-whitelist";
 import {
   create,
   findByEmail,
@@ -61,6 +61,9 @@ import {
 } from "../repositories/user";
 import { isExpired } from "../services/is-expired";
 import { isWebauthnConfiguredForUser } from "./webauthn";
+
+const { findEmailInDeliverabilityWhiteList } =
+  context.repository.email_deliverability_whitelist;
 
 export const startLogin = async (
   email: string,

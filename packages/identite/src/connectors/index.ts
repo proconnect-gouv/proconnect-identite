@@ -9,6 +9,7 @@ import { deleteAuthenticatorFactory } from "../repositories/authenticator/delete
 import { findAuthenticatorFactory } from "../repositories/authenticator/find-authenticator.js";
 import { getAuthenticatorsByUserIdFactory } from "../repositories/authenticator/get-authenticators-by-user-id.js";
 import { updateAuthenticatorFactory } from "../repositories/authenticator/update-authenticator.js";
+import { findEmailInDeliverabilityWhiteListFactory } from "../repositories/email-deliverability-whitelist/find-email-in-deliverability-white-list.js";
 import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
 import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
 import { findEmailDomainsByOrganizationIdFactory } from "../repositories/email-domain/find-email-domains-by-organization-id.js";
@@ -69,6 +70,10 @@ export function createContext({
         findAuthenticator: findAuthenticatorFactory({ pg }),
         getAuthenticatorsByUserId: getAuthenticatorsByUserIdFactory({ pg }),
         updateAuthenticator: updateAuthenticatorFactory({ pg }),
+      },
+      email_deliverability_whitelist: {
+        findEmailInDeliverabilityWhiteList:
+          findEmailInDeliverabilityWhiteListFactory({ pg }),
       },
       email_domains: {
         addDomain: addDomainFactory({ pg }),
