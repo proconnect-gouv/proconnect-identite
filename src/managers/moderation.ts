@@ -3,14 +3,16 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
+import { context } from "../connectors/context";
 import { sendMail } from "../connectors/mail";
-import {
-  deleteModeration,
-  findModerationById,
-  getModerationById,
-  reopenModeration,
-} from "../repositories/moderation";
 import { findById as findOrganizationById } from "../repositories/organization/getters";
+
+const {
+  delete: deleteModeration,
+  findById: findModerationById,
+  getById: getModerationById,
+  reopen: reopenModeration,
+} = context.repository.moderations;
 
 export const getOrganizationFromModeration = async ({
   user,

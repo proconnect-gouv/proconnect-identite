@@ -12,6 +12,13 @@ import { updateAuthenticatorFactory } from "../repositories/authenticator/update
 import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
 import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
 import { findEmailDomainsByOrganizationIdFactory } from "../repositories/email-domain/find-email-domains-by-organization-id.js";
+import { createModerationFactory } from "../repositories/moderation/create-moderation.js";
+import { deleteModerationFactory } from "../repositories/moderation/delete-moderation.js";
+import { findModerationByIdFactory } from "../repositories/moderation/find-moderation-by-id.js";
+import { findPendingModerationFactory } from "../repositories/moderation/find-pending-moderation.js";
+import { findRejectedModerationFactory } from "../repositories/moderation/find-rejected-moderation.js";
+import { getModerationByIdFactory } from "../repositories/moderation/get-moderation-by-id.js";
+import { reopenModerationFactory } from "../repositories/moderation/reopen-moderation.js";
 import { deleteUserOrganizationFactory } from "../repositories/organization/delete-user-organization.js";
 import { findByIdFactory as findOrganizationByIdFactory } from "../repositories/organization/find-by-id.js";
 import { findBySiretFactory } from "../repositories/organization/find-by-siret.js";
@@ -67,6 +74,15 @@ export function createContext({
           deleteEmailDomainsByVerificationTypesFactory({ pg }),
         findEmailDomainsByOrganizationId:
           findEmailDomainsByOrganizationIdFactory({ pg }),
+      },
+      moderations: {
+        create: createModerationFactory({ pg }),
+        delete: deleteModerationFactory({ pg }),
+        findById: findModerationByIdFactory({ pg }),
+        findPending: findPendingModerationFactory({ pg }),
+        findRejected: findRejectedModerationFactory({ pg }),
+        getById: getModerationByIdFactory({ pg }),
+        reopen: reopenModerationFactory({ pg }),
       },
       organizations: {
         deleteUserOrganization: deleteUserOrganizationFactory({ pg }),
