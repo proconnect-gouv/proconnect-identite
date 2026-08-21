@@ -3,12 +3,14 @@ import { Secret, TOTP } from "otpauth";
 import qrcode from "qrcode";
 import { APPLICATION_NAME, SYMMETRIC_ENCRYPTION_KEY } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
-import { getById, update } from "../repositories/user";
+import { context } from "../connectors/context";
 import {
   decryptSymmetric,
   encryptSymmetric,
 } from "../services/symmetric-encryption";
 import { disableForce2fa, is2FACapable } from "./2fa";
+
+const { getById, update } = context.repository.users;
 
 export const generateTotpRegistrationOptions = async (
   email: string,

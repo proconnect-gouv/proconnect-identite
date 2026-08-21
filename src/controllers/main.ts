@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import moment from "moment/moment";
 import z, { ZodError } from "zod";
+import { context } from "../connectors/context";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
 import {
@@ -17,13 +18,14 @@ import {
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { update } from "../repositories/user";
 import {
   jobSchema,
   nameSchema,
   phoneNumberSchema,
 } from "../services/custom-zod-schemas";
 import { getNotificationsFromRequest } from "../services/get-notifications-from-request";
+
+const { update } = context.repository.users;
 
 export const getHomeController = async (
   req: Request,

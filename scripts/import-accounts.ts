@@ -10,13 +10,8 @@ import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { z } from "zod";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
+import { context } from "../src/connectors/context";
 import { FetchError } from "../src/connectors/request";
-import { findByUserId } from "../src/repositories/organization/getters";
-import {
-  linkUserToOrganization,
-  upsert,
-} from "../src/repositories/organization/setters";
-import { create, findByEmail, update } from "../src/repositories/user";
 import { logger } from "../src/services/log";
 import {
   getNumberOfLineInFile,
@@ -25,6 +20,10 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
+
+const { findByUserId, linkUserToOrganization, upsert } =
+  context.repository.organizations;
+const { create, findByEmail, update } = context.repository.users;
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({
     INPUT_FILE: z.string().default("./input.csv"),

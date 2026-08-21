@@ -49,7 +49,10 @@ import { context } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
-import {
+import { isExpired } from "../services/is-expired";
+import { isWebauthnConfiguredForUser } from "./webauthn";
+
+const {
   create,
   findByEmail,
   findByMagicLinkToken,
@@ -58,9 +61,7 @@ import {
   getFranceConnectUserInfo,
   update,
   upsetFranceconnectUserinfo,
-} from "../repositories/user";
-import { isExpired } from "../services/is-expired";
-import { isWebauthnConfiguredForUser } from "./webauthn";
+} = context.repository.users;
 
 const { findEmailInDeliverabilityWhiteList } =
   context.repository.email_deliverability_whitelist;

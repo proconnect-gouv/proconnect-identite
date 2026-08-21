@@ -3,14 +3,15 @@ import { markDomainAsVerifiedFactory } from "@proconnect-gouv/proconnect.identit
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { context } from "../../connectors/context";
-import {
+import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
+
+const {
   findBySiret,
   findByUserId,
-  findById as findOrganizationById,
+  findById: findOrganizationById,
   findPendingByUserId,
-} from "../../repositories/organization/getters";
-import { deleteUserOrganization } from "../../repositories/organization/setters";
-import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
+  deleteUserOrganization,
+} = context.repository.organizations;
 
 export const getOrganizationsByUserId = findByUserId;
 export const getOrganizationById = findOrganizationById;

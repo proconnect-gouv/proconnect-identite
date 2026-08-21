@@ -47,7 +47,6 @@ import {
 } from "../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { getFranceConnectUserInfo } from "../repositories/user";
 import {
   idSchema,
   oidcErrorSchema,
@@ -56,6 +55,8 @@ import {
 } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
+
+const { getFranceConnectUserInfo } = context.repository.users;
 
 const { getById: getModerationById } = context.repository.moderations;
 

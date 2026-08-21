@@ -12,7 +12,6 @@ import { z } from "zod";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import { context } from "../src/connectors/context";
 import { FetchError } from "../src/connectors/request";
-import { upsert } from "../src/repositories/organization/setters";
 import { isAFreeEmailProvider } from "../src/services/email";
 import { logger } from "../src/services/log";
 import {
@@ -22,6 +21,8 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
+
+const { upsert } = context.repository.organizations;
 
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({

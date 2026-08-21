@@ -1,7 +1,9 @@
 import type { Request } from "express";
 import { isEmpty } from "lodash-es";
 import { NoEmailFoundInUnauthenticatedSessionError } from "../../config/errors";
-import { findByEmail, update } from "../../repositories/user";
+import { context } from "../../connectors/context";
+
+const { findByEmail, update } = context.repository.users;
 
 export const getAndRemoveLoginHintFromUnauthenticatedSession = (
   req: Request,

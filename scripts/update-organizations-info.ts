@@ -5,15 +5,17 @@ import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
 import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
+import { context } from "../src/connectors/context";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { FetchError } from "../src/connectors/request";
-import { upsert } from "../src/repositories/organization/setters";
 import { logger } from "../src/services/log";
 import {
   getDurationInMilliseconds,
   humanReadableDuration,
   isOrganizationInfo,
 } from "../src/services/script-helpers";
+
+const { upsert } = context.repository.organizations;
 
 //
 

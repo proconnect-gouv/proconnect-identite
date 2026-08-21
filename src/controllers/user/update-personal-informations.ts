@@ -1,15 +1,17 @@
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
+import { context } from "../../connectors/context";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import { hasFranceConnectIdentity } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import { update } from "../../repositories/user";
 import { nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
+
+const { update } = context.repository.users;
 
 export const getPersonalInformationsController = async (
   req: Request,

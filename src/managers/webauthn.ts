@@ -26,11 +26,6 @@ import {
 } from "../config/errors";
 import { context } from "../connectors/context";
 import { getAuthenticatorFriendlyName } from "../connectors/github-passkey-authenticator-aaguids";
-import {
-  findByEmail as findUserByEmail,
-  getById,
-  update,
-} from "../repositories/user";
 import { logger } from "../services/log";
 import { disableForce2fa, is2FACapable } from "./2fa";
 
@@ -41,6 +36,11 @@ const {
   getAuthenticatorsByUserId,
   updateAuthenticator,
 } = context.repository.authenticators;
+const {
+  findByEmail: findUserByEmail,
+  getById,
+  update,
+} = context.repository.users;
 
 // Human-readable title for your website
 const rpName = APPLICATION_NAME;

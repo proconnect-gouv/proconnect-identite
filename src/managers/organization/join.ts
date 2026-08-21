@@ -51,17 +51,6 @@ import { context } from "../../connectors/context";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
 import {
-  findBySiret,
-  findByUserId,
-  findByVerifiedEmailDomain,
-} from "../../repositories/organization/getters";
-import {
-  linkUserToOrganization,
-  updateUserOrganizationLink,
-  upsert,
-} from "../../repositories/organization/setters";
-import { getById as getUserById } from "../../repositories/user";
-import {
   isAFreeEmailProvider,
   usesAFreeEmailProvider,
 } from "../../services/email";
@@ -83,6 +72,12 @@ const {
   findPending: findPendingModeration,
   findRejected: findRejectedModeration,
 } = context.repository.moderations;
+const { findBySiret, findByUserId, findByVerifiedEmailDomain } =
+  context.repository.organizations;
+const { linkUserToOrganization, upsert } = context.repository.organizations;
+const { update: updateUserOrganizationLink } =
+  context.repository.users_organizations;
+const { getById: getUserById } = context.repository.users;
 
 export const doSuggestOrganizations = async ({
   user_id,

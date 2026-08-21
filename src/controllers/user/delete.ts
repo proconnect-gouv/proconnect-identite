@@ -1,11 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
+import { context } from "../../connectors/context";
 import {
   destroyAuthenticatedSession,
   getUserFromAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import { sendDeleteUserEmail } from "../../managers/user";
-import { deleteUser } from "../../repositories/user";
 import { logger } from "../../services/log";
+
+const { delete: deleteUser } = context.repository.users;
 
 export const postDeleteUserController = async (
   req: Request,

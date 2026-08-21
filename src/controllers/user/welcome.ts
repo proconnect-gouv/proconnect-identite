@@ -1,6 +1,7 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { isEmpty } from "lodash-es";
+import { context } from "../../connectors/context";
 import { getOrganizationById } from "../../managers/organization/main";
 import {
   getUserFromAuthenticatedSession,
@@ -8,7 +9,8 @@ import {
 } from "../../managers/session/authenticated";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { getSelectedOrganizationId } from "../../repositories/redis/selected-organization";
-import { getFranceConnectUserInfo, update } from "../../repositories/user";
+
+const { getFranceConnectUserInfo, update } = context.repository.users;
 
 export const getWelcomeController = async (
   req: Request,
