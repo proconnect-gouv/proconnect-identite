@@ -120,10 +120,8 @@ export interface components {
       lieuDeNaissance?: string;
       /** @description Code postal de naissance (commune de naissance pour les français) */
       codePostalNaissance?: string;
-      /** @description Code INSEE géographique de naissance */
-      codeInseeGeographique?: string;
-      /** @description Pays de naissance */
-      codePaysNaissance?: string;
+      /** @description Pays de naissance (pour les étrangers) */
+      paysNaissance?: string;
     };
     Individu: {
       descriptionPersonne?: components["schemas"]["DescriptionPersonne"];
@@ -174,6 +172,13 @@ export interface components {
         content?: {
           personneMorale?: {
             composition?: components["schemas"]["Composition"];
+          };
+          personnePhysique?: {
+            etablissementPrincipal?: {
+              descriptionEtablissement?: {
+                nomCommercial?: string;
+              };
+            };
           };
         };
         /** @description Diffusion dans l'INSEE */
