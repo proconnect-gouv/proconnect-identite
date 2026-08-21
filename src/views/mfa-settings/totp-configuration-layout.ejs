@@ -1,0 +1,91 @@
+<%- include('/partials/notifications.ejs', {notifications: notifications}) %>
+<%- include('/partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre application TOTP", nextStepTitle: nextStepTitle }); %>
+
+<% if (locals.isAuthenticatorAlreadyConfigured) { %>
+    <h2>Changer d’application d’authentification</h2>
+    <p>
+        Vous ne pourrez pas vous connecter à votre compte ProConnect avec votre ancienne
+        application d’authentification.
+    </p>
+<% } %>
+
+<% if (totpToolType === "smartphone") { %>
+    <p class="fr-mb-0">Scannez le QR Code avec votre smartphone</p>
+<% } else { %>
+    <p class="fr-mb-0">Scannez le QR Code</p>
+<% } %>
+
+<img src="<%= locals.qrCodeDataUrl; %>" alt="Code QR à utiliser dans l’appli FreeOTP">
+<form action="<%= totpConfigurationUrl %>" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
+    <input type="hidden" name="totp-tool-type" value="<%= locals.totpToolType; %>">
+    <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
+        <label class="fr-label" for="totpToken">
+            Insérer ensuite le code généré par l’application
+        </label>
+        <input
+                class="fr-input"
+                type="text"
+                name="totpToken"
+                pattern="^(\s*\d){6}$"
+                title="code composé de 6 chiffres"
+                autocomplete="one-time-code"
+                required
+                placeholder="ex : 123 456"
+                <% if (locals.hasCodeError) { %>
+                autofocus
+                aria-describedby="email-error"
+                <% } %>
+        >
+        <% if (locals.hasCodeError) { %>
+            <p class="fr-error-text" id="email-error" role="alert">
+                Code invalide. 
+                <a href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/#2-comment-faire-si-le-code-a-usage-unique-ne-fonctionne-pas"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Consultez notre page d’aide.
+                </a>
+            </p>
+        <% } %>
+    </div>
+
+    <div class="card-button-container">
+        <a class="fr-btn fr-btn--tertiary" href="<%= cancelUrl %>">
+        Annuler</a>
+        <button class="fr-btn" type="submit">Valider le code</button>
+    </div>
+</form>
+<div class="fr-accordion fr-mt-3w">
+    <h3 class="fr-accordion__title">
+        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="vous-ne-pouvez-pas-scanner">
+            Vous ne pouvez pas scanner le code ?
+        </button>
+    </h3>
+    <div class="fr-collapse" id="vous-ne-pouvez-pas-scanner">
+        <b>
+            <p>Pour configurer manuellement votre application d’authentification mobile :</p>
+            <p>Clé/secret : <span id="humanReadableTotpKey"><%= locals.humanReadableTotpKey; %></span></p>
+            <p>Type : TOTP</p>
+            <p>Algorithme : SHA1</p>
+        </b>
+        <a href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-icon-question-fill fr-btn--icon-left" target="_blank" rel="noopener noreferrer">Consulter notre page d'aide sur la double authentification</a>
+    </div>
+</div>
+
+<div class="fr-p-2w fr-mt-2w fr-grid-row fr-background-alt--blue-france">
+    <div class="fr-col-1 fr-px-1w">
+        <img class="fr-responsive-img" src="/dist/light.svg" alt="" />
+    </div>
+    <div class="fr-col">
+        <p class="fr-mb-1w">
+            <b>Comment configurer mon application TOTP ?</b>
+        </p>
+        <a class="fr-text-action-high--blue-france"
+            href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Lire la page d'aide</a
+        >
+    </div>
+</div>
