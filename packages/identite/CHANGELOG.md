@@ -1,5 +1,23 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.0.1
+
+### Patch Changes
+
+- [#2094](https://github.com/proconnect-gouv/proconnect-identite/pull/2094) [`0afc6b7`](https://github.com/proconnect-gouv/proconnect-identite/commit/0afc6b76accb00b2e1ca38e86c78041f2478b256) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add authenticator factories and Authenticator/BaseAuthenticator types to package
+
+- [#2097](https://github.com/proconnect-gouv/proconnect-identite/pull/2097) [`71acb32`](https://github.com/proconnect-gouv/proconnect-identite/commit/71acb32f32b482184d754ac072cba4cb74066b8c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add findEmailInDeliverabilityWhiteListFactory
+
+- [#2095](https://github.com/proconnect-gouv/proconnect-identite/pull/2095) [`1c684a3`](https://github.com/proconnect-gouv/proconnect-identite/commit/1c684a39934267e41905f665f12620b8710ed417) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add moderation factories and ModerationNotFoundError to package
+
+- [#2096](https://github.com/proconnect-gouv/proconnect-identite/pull/2096) [`9e04136`](https://github.com/proconnect-gouv/proconnect-identite/commit/9e04136e70f8c8dfcfd1e6d1211069378f4b621c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add oidc-client factories and OidcClient/BaseConnection/Connection types to package
+
+- [#2093](https://github.com/proconnect-gouv/proconnect-identite/pull/2093) [`a397677`](https://github.com/proconnect-gouv/proconnect-identite/commit/a397677b9f26b9a45131afff072b42e1c2b81594) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add findBySiretFactory, findPendingByUserIdFactory, findByVerifiedEmailDomainFactory, getUserOrganizationLinkFactory
+
+- [#2090](https://github.com/proconnect-gouv/proconnect-identite/pull/2090) [`32c84ff`](https://github.com/proconnect-gouv/proconnect-identite/commit/32c84ff83ceabe1183279d25747086db55e76684) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add deleteUserFactory, findByMagicLinkTokenFactory and findByResetPasswordTokenFactory
+
+- [#2089](https://github.com/proconnect-gouv/proconnect-identite/pull/2089) [`6234667`](https://github.com/proconnect-gouv/proconnect-identite/commit/62346672fac844e82c2bc830c0e712a97e52498e) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add deleteUserOrganizationFactory and wire upsert/linkUserToOrganization into connectors context
+
 ## 10.0.0
 
 ### Major Changes
