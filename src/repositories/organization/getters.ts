@@ -1,97 +1,11 @@
-import {
-  EmailDomainApprovedVerificationValues,
-  ModerationTypeSchema,
-  type Organization,
-  type UserOrganizationLink,
-} from "@proconnect-gouv/proconnect.identite/types";
-import type { QueryResult } from "pg";
 import { context } from "../../connectors/context";
-import { getDatabaseConnection } from "../../connectors/postgres";
 
-export const { findById, findByUserId, getUsers } =
-  context.repository.organizations;
-
-export const findBySiret = async (siret: string) => {
-  const connection = getDatabaseConnection();
-
-  const { rows }: QueryResult<Organization> = await connection.query(
-    `
-SELECT *
-FROM organizations
-WHERE siret = $1
-`,
-    [siret],
-  );
-
-  return rows.shift();
-};
-
-export const findPendingByUserId = async (user_id: number) => {
-  const connection = getDatabaseConnection();
-
-  const { rows }: QueryResult<Organization & { moderation_id: number }> =
-    await connection.query(
-      `
-SELECT o.*, m.id as moderation_id
-FROM moderations m
-INNER JOIN organizations o on o.id = m.organization_id
-WHERE m.user_id = $1
-AND m.type = $2
-AND m.moderated_at IS NULL
-ORDER BY m.created_at
-`,
-      [user_id, ModerationTypeSchema.enum.organization_join_block],
-    );
-
-  return rows;
-};
-export const findByVerifiedEmailDomain = async (email_domain: string) => {
-  const connection = getDatabaseConnection();
-
-  const { rows }: QueryResult<Organization & { member_count: number }> =
-    await connection.query(
-      `
-      SELECT o.*, count(u.id)::int as member_count
-      FROM organizations o
-             INNER JOIN email_domains ed ON ed.organization_id = o.id
-             LEFT JOIN users_organizations uo ON uo.organization_id = o.id
-             LEFT JOIN users u ON u.id = uo.user_id
-        AND substring(u.email FROM '@(.+)$') = $1
-      WHERE o.cached_est_active = 'true'
-        AND ed.domain = $1
-        AND ed.verification_type = ANY ($2)
-      GROUP BY o.id
-      ORDER BY member_count DESC NULLS LAST;`,
-      [email_domain, EmailDomainApprovedVerificationValues],
-    );
-
-  return rows;
-};
-
-export const getUserOrganizationLink = async (
-  organization_id: number,
-  user_id: number,
-) => {
-  const connection = getDatabaseConnection();
-
-  const { rows }: QueryResult<UserOrganizationLink> = await connection.query(
-    `
-SELECT
-  user_id,
-  organization_id,
-  is_external,
-  created_at,
-  updated_at,
-  verification_type,
-  verified_at,
-  has_been_greeted,
-  needs_official_contact_email_verification,
-  official_contact_email_verification_token,
-  official_contact_email_verification_sent_at
-FROM users_organizations
-WHERE organization_id = $1 AND user_id = $2`,
-    [organization_id, user_id],
-  );
-
-  return rows.shift();
-};
+export const {
+  findById,
+  findBySiret,
+  findByUserId,
+  findByVerifiedEmailDomain,
+  findPendingByUserId,
+  getUserOrganizationLink,
+  getUsers,
+} = context.repository.organizations;
