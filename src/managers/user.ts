@@ -51,6 +51,7 @@ import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import { findEmailInDeliverabilityWhiteList } from "../repositories/email-deliverability-whitelist";
 import {
   create,
+  deleteFranceConnectUserInfo,
   findByEmail,
   findByMagicLinkToken,
   findByResetPasswordToken,
@@ -587,6 +588,10 @@ export async function hasValidFranceConnectIdentity(userId: number) {
 
 export async function hasFranceConnectIdentity(userId: number) {
   return !isEmpty(await getFranceConnectUserInfo(userId));
+}
+
+export async function disconnectFranceConnectIdentity(userId: number) {
+  return deleteFranceConnectUserInfo(userId);
 }
 
 export async function needsFranceConnectIdentityRenewal(userId: number) {

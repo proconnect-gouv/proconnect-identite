@@ -120,6 +120,10 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     type: "success",
     description: "Nous avons bien récupéré vos données via FranceConnect.",
   },
+  personal_information_franceconnect_disconnected_success: {
+    type: "success",
+    description: "Vous êtes maintenant déconnecté de FranceConnect.",
+  },
   official_contact_email_verification_not_needed: {
     type: "error",
     description:

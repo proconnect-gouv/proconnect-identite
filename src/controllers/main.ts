@@ -9,6 +9,7 @@ import {
 } from "../managers/session/authenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import {
+  disconnectFranceConnectIdentity,
   getFamilyNameOptionsFromFranceConnectIdentity,
   getGivenNameOptionsFromFranceConnectIdentity,
   hasFranceConnectIdentity,
@@ -128,6 +129,24 @@ export const postPersonalInformationsController = async (
       );
     }
 
+    next(error);
+  }
+};
+
+export const postDisconnectFranceConnectController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+
+    await disconnectFranceConnectIdentity(userId);
+
+    return res.redirect(
+      "/personal-information?notification=personal_information_franceconnect_disconnected_success",
+    );
+  } catch (error) {
     next(error);
   }
 };
