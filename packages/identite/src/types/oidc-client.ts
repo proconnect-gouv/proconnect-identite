@@ -1,6 +1,6 @@
-// properties of OidcClients are defined here: https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata
-// properties id, client_description, created_at, updated_at are non-standard properties
-interface OidcClient {
+//
+
+export interface OidcClient {
   id: number;
   client_description: string | null;
   created_at: Date;
