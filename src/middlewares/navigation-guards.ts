@@ -14,6 +14,7 @@ import {
   CertificationDirigeantNoMatchError,
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../config/errors";
+import { context } from "../connectors/context";
 import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import {
@@ -49,20 +50,20 @@ import {
   needsEmailVerificationRenewal,
   needsFranceConnectIdentityRenewal,
 } from "../managers/user";
-import { getUserOrganizationLink } from "../repositories/organization/getters";
-import {
-  linkUserToOrganization,
-  updateUserOrganizationLink,
-} from "../repositories/organization/setters";
 import {
   deleteSelectedOrganizationId,
   getSelectedOrganizationId,
 } from "../repositories/redis/selected-organization";
-import { getFranceConnectUserInfo } from "../repositories/user";
 import { isAcrSatisfied } from "../services/acr-checks";
 import { isExpired } from "../services/is-expired";
 import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
+
+const { getFranceConnectUserInfo } = context.repository.users;
+const { getUserOrganizationLink, linkUserToOrganization } =
+  context.repository.organizations;
+const { update: updateUserOrganizationLink } =
+  context.repository.users_organizations;
 
 //
 

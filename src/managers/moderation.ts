@@ -5,7 +5,8 @@ import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
 import { context } from "../connectors/context";
 import { sendMail } from "../connectors/mail";
-import { findById as findOrganizationById } from "../repositories/organization/getters";
+
+const { findById: findOrganizationById } = context.repository.organizations;
 
 const {
   delete: deleteModeration,

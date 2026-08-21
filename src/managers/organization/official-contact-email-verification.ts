@@ -15,17 +15,18 @@ import {
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
+import { context } from "../../connectors/context";
 import { sendMail } from "../../connectors/mail";
-import {
-  findById as findOrganizationById,
-  getUsers,
-} from "../../repositories/organization/getters";
-import { updateUserOrganizationLink } from "../../repositories/organization/setters";
 import { isExpired } from "../../services/is-expired";
 import {
   isCommune,
   isEtablissementScolaireDuPremierEtSecondDegre,
 } from "../../services/organization";
+
+const { findById: findOrganizationById, getUsers } =
+  context.repository.organizations;
+const { update: updateUserOrganizationLink } =
+  context.repository.users_organizations;
 
 const OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES = 60;
 

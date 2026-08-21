@@ -13,11 +13,6 @@ import { z } from "zod";
 import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import { context } from "../src/connectors/context";
 import { FetchError } from "../src/connectors/request";
-import { findByUserId } from "../src/repositories/organization/getters";
-import {
-  linkUserToOrganization,
-  upsert,
-} from "../src/repositories/organization/setters";
 import { logger } from "../src/services/log";
 import {
   getNumberOfLineInFile,
@@ -26,6 +21,9 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
+
+const { findByUserId, linkUserToOrganization, upsert } =
+  context.repository.organizations;
 //
 
 const { create, findByEmail, update } = context.repository.users;

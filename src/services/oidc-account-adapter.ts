@@ -9,11 +9,14 @@ import * as Sentry from "@sentry/node";
 import { to } from "await-to-js";
 import { isEmpty, omitBy } from "lodash-es";
 import type { FindAccount } from "oidc-provider";
-import { findByUserId as getUsersOrganizations } from "../repositories/organization/getters";
+import { context } from "../connectors/context";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
-import { findById as findUserById } from "../repositories/user";
 import { logger } from "./log";
 import { isCommune } from "./organization";
+
+const { findById: findUserById } = context.repository.users;
+const { findByUserId: getUsersOrganizations } =
+  context.repository.organizations;
 
 export const findAccount: FindAccount = async (_ctx, sub) => {
   const user = await findUserById(parseInt(sub, 10));

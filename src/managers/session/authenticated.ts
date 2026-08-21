@@ -13,12 +13,11 @@ import { isEmpty } from "lodash-es";
 import { match, P } from "ts-pattern";
 import { RECENT_LOGIN_INTERVAL_IN_SECONDS } from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
-import { getUserOrganizationLink } from "../../repositories/organization/getters";
+import { context } from "../../connectors/context";
 import {
   deleteSelectedOrganizationId,
   getSelectedOrganizationId,
 } from "../../repositories/redis/selected-organization";
-import { update } from "../../repositories/user";
 import { isExpiredInSeconds } from "../../services/is-expired";
 import {
   addAuthenticationMethodReference,
@@ -34,6 +33,10 @@ import {
   setIsTrustedBrowserFromLoggedInSession,
 } from "../browser-authentication";
 import { hasValidFranceConnectIdentity } from "../user";
+
+const { getUserOrganizationLink } = context.repository.organizations;
+const { update } = context.repository.users;
+
 export const isWithinAuthenticatedSession = (
   session: Session & Partial<SessionData>,
 ): session is Session & Partial<SessionData> & AuthenticatedSessionData => {

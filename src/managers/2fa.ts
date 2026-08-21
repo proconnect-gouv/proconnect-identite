@@ -1,7 +1,9 @@
 import { UserIsNot2faCapableError } from "../config/errors";
-import { getById, update } from "../repositories/user";
+import { context } from "../connectors/context";
 import { isTotpConfiguredForUser } from "./totp";
 import { isWebauthnConfiguredForUser } from "./webauthn";
+
+const { getById, update } = context.repository.users;
 
 export const shouldForce2faForUser = async (user_id: number) => {
   const user = await getById(user_id);
