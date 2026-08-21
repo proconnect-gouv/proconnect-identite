@@ -1,5 +1,6 @@
 //
 
+export * from "./authenticator.js";
 export * from "./claims.js";
 export * from "./contexts.js";
 export * from "./email-domain.js";

@@ -4,6 +4,11 @@ import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entrep
 import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
 import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { type Pool } from "pg";
+import { createAuthenticatorFactory } from "../repositories/authenticator/create-authenticator.js";
+import { deleteAuthenticatorFactory } from "../repositories/authenticator/delete-authenticator.js";
+import { findAuthenticatorFactory } from "../repositories/authenticator/find-authenticator.js";
+import { getAuthenticatorsByUserIdFactory } from "../repositories/authenticator/get-authenticators-by-user-id.js";
+import { updateAuthenticatorFactory } from "../repositories/authenticator/update-authenticator.js";
 import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
 import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
 import { findEmailDomainsByOrganizationIdFactory } from "../repositories/email-domain/find-email-domains-by-organization-id.js";
@@ -49,6 +54,13 @@ export function createContext({
       rne: api_registre_national_entreprises_client,
     },
     repository: {
+      authenticators: {
+        createAuthenticator: createAuthenticatorFactory({ pg }),
+        deleteAuthenticator: deleteAuthenticatorFactory({ pg }),
+        findAuthenticator: findAuthenticatorFactory({ pg }),
+        getAuthenticatorsByUserId: getAuthenticatorsByUserIdFactory({ pg }),
+        updateAuthenticator: updateAuthenticatorFactory({ pg }),
+      },
       email_domains: {
         addDomain: addDomainFactory({ pg }),
         deleteEmailDomainsByVerificationTypes:

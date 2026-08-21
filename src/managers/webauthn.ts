@@ -24,14 +24,8 @@ import {
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
+import { context } from "../connectors/context";
 import { getAuthenticatorFriendlyName } from "../connectors/github-passkey-authenticator-aaguids";
-import {
-  createAuthenticator,
-  deleteAuthenticator,
-  findAuthenticator,
-  getAuthenticatorsByUserId,
-  updateAuthenticator,
-} from "../repositories/authenticator";
 import {
   findByEmail as findUserByEmail,
   getById,
@@ -39,6 +33,14 @@ import {
 } from "../repositories/user";
 import { logger } from "../services/log";
 import { disableForce2fa, is2FACapable } from "./2fa";
+
+const {
+  createAuthenticator,
+  deleteAuthenticator,
+  findAuthenticator,
+  getAuthenticatorsByUserId,
+  updateAuthenticator,
+} = context.repository.authenticators;
 
 // Human-readable title for your website
 const rpName = APPLICATION_NAME;
