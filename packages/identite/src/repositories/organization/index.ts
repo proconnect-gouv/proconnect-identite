@@ -1,5 +1,6 @@
 //
 
+export * from "./delete-user-organization.js";
 export * from "./find-by-id.js";
 export * from "./find-by-user-id.js";
 export * from "./get-users-by-organization.js";

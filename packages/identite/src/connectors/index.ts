@@ -7,9 +7,12 @@ import { type Pool } from "pg";
 import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
 import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
 import { findEmailDomainsByOrganizationIdFactory } from "../repositories/email-domain/find-email-domains-by-organization-id.js";
+import { deleteUserOrganizationFactory } from "../repositories/organization/delete-user-organization.js";
 import { findByIdFactory as findOrganizationByIdFactory } from "../repositories/organization/find-by-id.js";
 import { findByUserIdFactory } from "../repositories/organization/find-by-user-id.js";
 import { getUsersByOrganizationFactory } from "../repositories/organization/get-users-by-organization.js";
+import { linkUserToOrganizationFactory } from "../repositories/organization/link-user-to-organization.js";
+import { upsertFactory } from "../repositories/organization/upsert.js";
 import { createUserFactory } from "../repositories/user/create.js";
 import { findByEmailFactory } from "../repositories/user/find-by-email.js";
 import { findByIdFactory as findUserByIdFactory } from "../repositories/user/find-by-id.js";
@@ -47,9 +50,12 @@ export function createContext({
           findEmailDomainsByOrganizationIdFactory({ pg }),
       },
       organizations: {
+        deleteUserOrganization: deleteUserOrganizationFactory({ pg }),
         findById: findOrganizationByIdFactory({ pg }),
         findByUserId: findByUserIdFactory({ pg }),
         getUsers: getUsersByOrganizationFactory({ pg }),
+        linkUserToOrganization: linkUserToOrganizationFactory({ pg }),
+        upsert: upsertFactory({ pg }),
       },
       users_organizations: {
         update: updateUserOrganizationLinkFactory({ pg }),

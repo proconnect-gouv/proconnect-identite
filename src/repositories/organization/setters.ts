@@ -1,35 +1,7 @@
-import {
-  linkUserToOrganizationFactory,
-  upsertFactory,
-} from "@proconnect-gouv/proconnect.identite/repositories/organization";
-import { updateUserOrganizationLinkFactory } from "@proconnect-gouv/proconnect.identite/repositories/user";
-import { getDatabaseConnection } from "../../connectors/postgres";
+import { context } from "../../connectors/context";
 
-export const upsert = upsertFactory({ pg: getDatabaseConnection() });
+export const { deleteUserOrganization, linkUserToOrganization, upsert } =
+  context.repository.organizations;
 
-export const linkUserToOrganization = linkUserToOrganizationFactory({
-  pg: getDatabaseConnection(),
-});
-
-export const updateUserOrganizationLink = updateUserOrganizationLinkFactory({
-  pg: getDatabaseConnection(),
-});
-
-export const deleteUserOrganization = async ({
-  user_id,
-  organization_id,
-}: {
-  user_id: number;
-  organization_id: number;
-}) => {
-  const connection = getDatabaseConnection();
-
-  const { rowCount } = await connection.query(
-    `
-DELETE FROM users_organizations
-WHERE user_id = $1 AND organization_id = $2`,
-    [user_id, organization_id],
-  );
-
-  return (rowCount ?? 0) > 0;
-};
+export const { update: updateUserOrganizationLink } =
+  context.repository.users_organizations;
