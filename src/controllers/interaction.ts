@@ -4,6 +4,7 @@ import { AssertionError } from "node:assert";
 import Provider, { errors } from "oidc-provider";
 import { z } from "zod";
 import { OidcError } from "../config/errors";
+import { context } from "../connectors/context";
 import {
   doesAcrSatisfiesCertificationDirigeantRequirements,
   getCurrentAcr,
@@ -16,7 +17,6 @@ import {
   setLoginHintInUnauthenticatedSession,
   setSiretHintInUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
-import { findByClientId } from "../repositories/oidc-client";
 import {
   certificationDirigeantRequested,
   isAcrSatisfied,
@@ -43,7 +43,8 @@ export const interactionStartControllerFactory =
       req.session.prompt = prompt;
       req.session.spName = sp_name || undefined;
 
-      const oidcClient = await findByClientId(client_id);
+      const oidcClient =
+        await context.repository.oidc_clients.findByClientId(client_id);
       req.session.authForProconnectFederation =
         oidcClient?.is_proconnect_federation;
 

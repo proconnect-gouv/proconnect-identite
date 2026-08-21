@@ -19,6 +19,8 @@ import { findPendingModerationFactory } from "../repositories/moderation/find-pe
 import { findRejectedModerationFactory } from "../repositories/moderation/find-rejected-moderation.js";
 import { getModerationByIdFactory } from "../repositories/moderation/get-moderation-by-id.js";
 import { reopenModerationFactory } from "../repositories/moderation/reopen-moderation.js";
+import { addConnectionFactory } from "../repositories/oidc-client/add-connection.js";
+import { findByClientIdFactory } from "../repositories/oidc-client/find-by-client-id.js";
 import { deleteUserOrganizationFactory } from "../repositories/organization/delete-user-organization.js";
 import { findByIdFactory as findOrganizationByIdFactory } from "../repositories/organization/find-by-id.js";
 import { findBySiretFactory } from "../repositories/organization/find-by-siret.js";
@@ -83,6 +85,10 @@ export function createContext({
         findRejected: findRejectedModerationFactory({ pg }),
         getById: getModerationByIdFactory({ pg }),
         reopen: reopenModerationFactory({ pg }),
+      },
+      oidc_clients: {
+        addConnection: addConnectionFactory({ pg }),
+        findByClientId: findByClientIdFactory({ pg }),
       },
       organizations: {
         deleteUserOrganization: deleteUserOrganizationFactory({ pg }),

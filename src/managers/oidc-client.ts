@@ -1,11 +1,17 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import type {
+  BaseConnection,
+  Connection,
+} from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, isString } from "lodash-es";
 import type { IncomingHttpHeaders } from "node:http";
 import type { KoaContextWithOIDC } from "oidc-provider";
-import { addConnection, findByClientId } from "../repositories/oidc-client";
+import { context } from "../connectors/context";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { logger } from "../services/log";
+
+const { addConnection, findByClientId } = context.repository.oidc_clients;
 
 export const recordNewConnection = async ({
   accountId,
