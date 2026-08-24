@@ -22,6 +22,8 @@ let manifest: Record<
   }
 > | null = null;
 
+const viewsPath = path.resolve(import.meta.dirname, "..", "views");
+
 const viteAssetPath = (name: string) => {
   // cache the manifest file only in production
   if (NODE_ENV !== "production" || manifest === null) {
@@ -112,6 +114,9 @@ export const ejsLayoutMiddlewareFactory = (
   app: Application,
   use_dashboard_layout: boolean = false,
 ) => {
+  app.engine("ejs", (filePath, options, callback) => {
+    ejs.renderFile(filePath, options, { root: viewsPath }, callback);
+  });
   return (req: Request, res: Response, next: NextFunction) => {
     const orig = res.render;
     res.render = (view, locals = {}) => {

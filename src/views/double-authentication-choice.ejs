@@ -1,10 +1,11 @@
 <div class="dashboard-container">
   <%- include('/partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
   <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
-    <%- include('/mfa-settings/passkey-layout.ejs', {
-      notifications: notifications,
-      csrfToken: csrfToken,
+    <%- include('/mfa-settings/double-authentication-choice-layout.ejs', {
+      withInfoAlert: false,
+      isTotpAppInstalledUrl: '/is-totp-app-installed',
       verifyRegistrationAction: '/passkeys/verify-registration',
+      csrfToken: csrfToken,
     }); %>
   </div>
 </div>
