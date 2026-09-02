@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.annuaire_entreprises
 
+## 3.0.1
+
+### Patch Changes
+
+- [#2104](https://github.com/proconnect-gouv/proconnect-identite/pull/2104) [`60483ba`](https://github.com/proconnect-gouv/proconnect-identite/commit/60483bac96811590a0b89958caca1039e6501162) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour du Grist contenant la liste des administrations
+
+- [#2116](https://github.com/proconnect-gouv/proconnect-identite/pull/2116) [`f61beba`](https://github.com/proconnect-gouv/proconnect-identite/commit/f61bebaf88b6e354eb778528fc358ee0349d154a) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour du Grist contenant la liste des administrations
+
 ## 3.0.0
 
 ### Major Changes
