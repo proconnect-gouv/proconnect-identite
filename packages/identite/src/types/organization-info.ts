@@ -41,4 +41,4 @@ export type ApiRneOrganizationInfo = z.output<
   typeof ApiRneOrganizationInfoSchema
 >;
 export type OrganizationInfo = ApiEntrepriseOrganizationInfo &
-  ApiRneOrganizationInfo;
+  (ApiRneOrganizationInfo | {});

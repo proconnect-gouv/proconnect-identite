@@ -80,6 +80,8 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default(false),
   FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS:
     zodTrueFalseBoolean().default(false),
+  FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA:
+    zodTrueFalseBoolean().default(false),
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),
   FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
   FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),

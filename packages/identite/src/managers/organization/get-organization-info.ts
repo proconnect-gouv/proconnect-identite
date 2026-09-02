@@ -12,7 +12,6 @@ import {
   ApiEntrepriseInvalidSiret,
 } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
-import type { ReponseCompany } from "@proconnect-gouv/proconnect.registre_national_entreprises/types";
 import * as ApiEntreprise from "./adapters/api_entreprise.js";
 import * as ApiRne from "./adapters/rne.js";
 
@@ -21,12 +20,13 @@ import * as ApiRne from "./adapters/rne.js";
 export function getOrganizationInfoFactory(
   apiEntrepriseClient: ApiEntrepriseClient,
   apiRneClient: ApiRegistreNationalEntreprisesClient,
+  options?: { enhanceOrganizationInfoWithRneData?: boolean },
 ) {
   return async function getOrganizationInfo(
     siretOrSiren: string,
   ): Promise<OrganizationInfo> {
+    let organizationInfo: OrganizationInfo;
     try {
-      let organizationInfo: OrganizationInfo;
       let apiEntrepriseOrganizationInfo: ApiEntrepriseOrganizationInfo;
       let apiRneOrganizationInfo: ApiRneOrganizationInfo;
 
@@ -49,22 +49,27 @@ export function getOrganizationInfoFactory(
       if (statutDiffusion === "non_diffusible") {
         throw new NotFoundError();
       }
+      organizationInfo = {
+        ...apiEntrepriseOrganizationInfo,
+      };
+      if (!options?.enhanceOrganizationInfoWithRneData) {
+        return organizationInfo;
+      }
 
-      let apiRneData: ReponseCompany | undefined = undefined;
       try {
         const siren =
           siretOrSiren.length === 14 ? siretOrSiren.slice(0, 9) : siretOrSiren;
 
-        apiRneData = await apiRneClient.findCompanyBySiren(siren);
+        const apiRneData = await apiRneClient.findCompanyBySiren(siren);
+        apiRneOrganizationInfo = ApiRne.toApiRneOrganizationInfo(apiRneData);
+        organizationInfo = {
+          ...organizationInfo,
+          ...apiRneOrganizationInfo,
+        };
       } catch (error) {
         console.error("Error while fetching RNE data", error);
         console.log("RNE data will be undefined for this organization");
       }
-      apiRneOrganizationInfo = ApiRne.toApiRneOrganizationInfo(apiRneData);
-      organizationInfo = {
-        ...apiEntrepriseOrganizationInfo,
-        ...apiRneOrganizationInfo,
-      };
 
       return organizationInfo;
     } catch (e) {

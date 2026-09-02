@@ -4,6 +4,7 @@ import { createApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entre
 import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
+import z from "zod";
 import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
 import { RegistreNationalEntreprisesTestClient } from "../src/connectors/api-rne";
 import { context } from "../src/connectors/context";
@@ -20,6 +21,11 @@ const { upsert } = context.repository.organizations;
 
 //
 const DINUM_SIRET = "13002526500013";
+const { FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA } = z
+  .object({
+    FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA: z.boolean().default(false),
+  })
+  .parse(process.env);
 
 export const getOrganizationInfo = getOrganizationInfoFactory(
   createApiEntrepriseClient(
@@ -28,6 +34,10 @@ export const getOrganizationInfo = getOrganizationInfoFactory(
     DINUM_SIRET,
   ),
   RegistreNationalEntreprisesTestClient,
+  {
+    enhanceOrganizationInfoWithRneData:
+      FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA,
+  },
 );
 
 // ex: for public insee subscription the script can be run like so:
