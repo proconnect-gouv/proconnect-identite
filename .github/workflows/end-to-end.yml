@@ -10,7 +10,6 @@ env:
   CYPRESS_RECORD: true
   DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
   DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
-  FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA: false
   FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
   SMTP_URL: smtp://localhost:1025
 

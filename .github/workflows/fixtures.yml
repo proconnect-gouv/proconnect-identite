@@ -14,6 +14,7 @@ env:
   PGUSER: proconnect-identite
   SMTP_URL: smtp://localhost:1025
   SYMMETRIC_ENCRYPTION_KEY: aTrueRandom32BytesLongBase64EncodedStringAA=
+  FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA: False
 
 jobs:
   test:

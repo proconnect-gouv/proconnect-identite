@@ -5,6 +5,7 @@ import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
 import z from "zod";
+import { zodTrueFalseBoolean } from "../src/config/env.zod";
 import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
 import { RegistreNationalEntreprisesTestClient } from "../src/connectors/api-rne";
 import { context } from "../src/connectors/context";
@@ -23,7 +24,8 @@ const { upsert } = context.repository.organizations;
 const DINUM_SIRET = "13002526500013";
 const { FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA } = z
   .object({
-    FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA: z.boolean().default(false),
+    FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA:
+      zodTrueFalseBoolean().default(false),
   })
   .parse(process.env);
 
