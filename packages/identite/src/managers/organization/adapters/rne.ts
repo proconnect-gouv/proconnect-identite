@@ -9,6 +9,6 @@ export function toApiRneOrganizationInfo(
   return {
     denominationUsuelleEtablissementPrincipal:
       rneData?.formality?.content?.personnePhysique?.etablissementPrincipal
-        ?.descriptionEtablissement?.nomCommercial || null,
+        ?.descriptionEtablissement?.nomCommercial || undefined,
   };
 }
