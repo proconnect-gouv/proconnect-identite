@@ -40,13 +40,8 @@ export const AddCompanyCommand: CommandModule<
       // NOTE(douglasduteil): ensure the siren is the same as the one we got
       // Protection against some staging endpoint magic
       assert.equal(content.siren, siren);
-
       const reducedContent = reduceContent(content);
-      await writeFile(
-        filename,
-        await format(reducedContent, { parser: "json" }),
-      );
-      console.log("wrote", filename);
+      await writeReducedContentOnDisk(reducedContent, filename);
 
       return new Response(reducedContent);
     }
@@ -67,6 +62,14 @@ export const AddCompanyCommand: CommandModule<
     await rneClient.findCompanyBySiren(siren);
   },
 };
+
+async function writeReducedContentOnDisk(
+  reducedContent: string,
+  filename: string,
+) {
+  await writeFile(filename, await format(reducedContent, { parser: "json" }));
+  return reducedContent;
+}
 
 function reduceContent(content: ReponseCompany) {
   const reducedContent = {
