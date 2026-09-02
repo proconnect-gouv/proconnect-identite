@@ -10,10 +10,11 @@ import {
 } from "../managers/session/authenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import {
+  disconnectFranceConnectIdentity,
   getFamilyNameOptionsFromFranceConnectIdentity,
   getGivenNameOptionsFromFranceConnectIdentity,
-  hasFranceConnectIdentity,
   hasValidFranceConnectIdentity,
+  lastFranceConnectIdentityUpdate,
   sendUpdatePersonalInformationEmail,
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
@@ -60,7 +61,7 @@ export const getPersonalInformationsController = async (
       notifications: await getNotificationsFromRequest(req),
       pageTitle: "Informations personnelles",
       phone_number: user.phone_number,
-      hasFranceConnectIdentity: await hasFranceConnectIdentity(user.id),
+      franceConnect_last_update: await lastFranceConnectIdentityUpdate(user.id),
       givenNameOptions,
       familyNameOptions,
     });
@@ -76,7 +77,7 @@ export const postPersonalInformationsController = async (
 ) => {
   try {
     const { id: userId } = getUserFromAuthenticatedSession(req);
-    const hasFCIdentity = await hasFranceConnectIdentity(userId);
+    const hasFCIdentity = await lastFranceConnectIdentityUpdate(userId);
 
     let givenNameOptions: string[] = [];
     let familyNameOptions: string[] = [];
@@ -130,6 +131,24 @@ export const postPersonalInformationsController = async (
       );
     }
 
+    next(error);
+  }
+};
+
+export const postDisconnectFranceConnectController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+
+    await disconnectFranceConnectIdentity(userId);
+
+    return res.redirect(
+      "/personal-information?notification=personal_information_franceconnect_disconnected_success",
+    );
+  } catch (error) {
     next(error);
   }
 };

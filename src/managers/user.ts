@@ -54,6 +54,7 @@ import { isWebauthnConfiguredForUser } from "./webauthn";
 
 const {
   create,
+  deleteFranceConnectUserInfo,
   findByEmail,
   findByMagicLinkToken,
   findByResetPasswordToken,
@@ -589,8 +590,14 @@ export async function hasValidFranceConnectIdentity(userId: number) {
   );
 }
 
-export async function hasFranceConnectIdentity(userId: number) {
-  return !isEmpty(await getFranceConnectUserInfo(userId));
+export async function lastFranceConnectIdentityUpdate(userId: number) {
+  const userFranceConnect = await getFranceConnectUserInfo(userId);
+  if (isEmpty(userFranceConnect)) return false;
+  return userFranceConnect.updated_at;
+}
+
+export async function disconnectFranceConnectIdentity(userId: number) {
+  return deleteFranceConnectUserInfo(userId);
 }
 
 export async function needsFranceConnectIdentityRenewal(userId: number) {
