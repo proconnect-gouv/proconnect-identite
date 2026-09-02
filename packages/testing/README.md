@@ -60,6 +60,7 @@ ENTREPRISE_API_TOKEN="your api key"
 ENTREPRISE_API_URL="https://entreprise.api.gouv.fr
 RNE_API_USERNAME="your username"
 RNE_API_PASSWORD="your password"
+RNE_API_BASE_URL=https://registre-national-entreprises.inpi.fr/api
 ```
 
 Comment it out by default and uncomment it when you want to extract data.
@@ -70,6 +71,7 @@ export ENTREPRISE_API_TOKEN="your-api-token"
 export ENTREPRISE_API_URL="https://entreprise.api.gouv.fr"
 export RNE_API_USERNAME="your username"
 export RNE_API_PASSWORD="your password"
+export RNE_API_BASE_URL=https://registre-national-entreprises.inpi.fr/api
 export ENTREPRISE_API_TRACKING_CONTEXT="testing"
 export ENTREPRISE_API_TRACKING_RECIPIENT="your-siret"
 
