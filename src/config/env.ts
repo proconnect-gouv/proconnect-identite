@@ -10,7 +10,13 @@ dotenvFlow.config({
 
 const parsedEnv = envSchema.safeParse(process.env);
 
-if (!parsedEnv.success) throw fromZodError(parsedEnv.error, {});
+if (!parsedEnv.success) {
+  console.log(
+    "🦐 error env",
+    process.env["FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA"],
+  );
+  throw fromZodError(parsedEnv.error, {});
+}
 
 export const {
   ACCESS_LOG_PATH,

@@ -52,6 +52,7 @@ export function getOrganizationInfoFactory(
       organizationInfo = {
         ...apiEntrepriseOrganizationInfo,
       };
+      console.log(`🦐 options ${JSON.stringify(options)}`);
       if (!options?.enhanceOrganizationInfoWithRneData) {
         return organizationInfo;
       }
