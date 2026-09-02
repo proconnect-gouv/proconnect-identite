@@ -108,6 +108,12 @@ components:
         paysNaissance:
           type: string
           description: Pays de naissance (pour les étrangers)
+        codeInseeGeographique:
+          type: string
+          description: Code INSEE géographique de naissance
+        codePaysNaissance:
+          type: string
+          description: Pays de naissance
     Individu:
       type: object
       properties:
