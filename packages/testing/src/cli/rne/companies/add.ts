@@ -37,7 +37,7 @@ export const AddCompanyCommand: CommandModule<
       const response = await fetch(input);
       if (!response.ok) throw new Error(await response.text());
       const content = (await response.json()) as ReponseCompany;
-      // NOTE(douglasduteil): ensure the siret is the same as the one we got
+      // NOTE(douglasduteil): ensure the siren is the same as the one we got
       // Protection against some staging endpoint magic
       assert.equal(content.siren, siren);
 
