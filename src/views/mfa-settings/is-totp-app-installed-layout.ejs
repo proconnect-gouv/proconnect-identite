@@ -1,4 +1,4 @@
-<%- include('/partials/stepper.ejs', {currentStep: "1", stepsTitle: "Configurer votre outil TOTP", nextStepTitle:"Configurer votre application TOTP" }); %>
+<%- include('../partials/stepper.ejs', {currentStep: "1", stepsTitle: "Configurer votre outil TOTP", nextStepTitle:"Configurer votre application TOTP" }); %>
 
 <form action="<%= totpConfigurationUrl %>" class="checkbox-container" method="get">
   <fieldset
@@ -65,4 +65,4 @@
   </button>
 </form>
 
-<%- include('/partials/go-back.ejs'); %>
+<%- include('../partials/go-back.ejs'); %>
