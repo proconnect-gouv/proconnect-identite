@@ -1,5 +1,5 @@
-<%- include('/partials/notifications.ejs', {notifications: notifications}) %>
-<%- include('/partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre application TOTP", nextStepTitle: nextStepTitle }); %>
+<%- include('../partials/notifications.ejs', {notifications: notifications}) %>
+<%- include('../partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre application TOTP", nextStepTitle: nextStepTitle }); %>
 
 <% if (locals.isAuthenticatorAlreadyConfigured) { %>
     <h2>Changer d’application d’authentification</h2>
