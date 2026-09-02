@@ -1,6 +1,33 @@
-<%- include('/mfa-settings/totp-recommendation-layout.ejs', {
-  description: description,
-  toolTypeLabel: toolTypeLabel,
-  tools: tools,
-  isTotpAppInstalledUrl: '/is-totp-app-installed',
-}); %>
+<div class="fr-badge fr-badge--new fr-mb-3w">
+  Recommandé pour vous
+</div>
+
+<div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+    <img src="/dist/phone-lock.svg" alt="" class="limited-width fr-mr-2w" />
+    <h2 class="fr-h5 fr-mb-0">Codes à usage unique (TOTP)</h2>
+</div>
+<p><%= description %></p>
+<p class="fr-text--sm">
+  <em>Vous êtes libre d'utiliser <%= toolTypeLabel %> de votre choix.</em><br />
+  <em>
+    Voici une liste <%= toolTypeLabel === "l'application" ? "d'applications" : "de logiciels" %>
+    que vous pouvez utiliser si vous n'avez pas encore de solution installée :
+  </em>
+</p>
+
+<ul>
+  <% tools.forEach(function (tool) { %>
+    <li>
+      <a href="<%= tool.url %>" target="_blank" rel="noopener noreferrer" class="fr-text--lead">
+        <strong><%= tool.name %></strong>
+      </a><br />
+      <% tool.details.forEach(function (detail) { %>
+        <em class="fr-text--sm"><%= detail %></em><br />
+      <% }); %>
+    </li>
+  <% }); %>
+</ul>
+
+<a class="fr-btn btn--fullwidth" href="/is-totp-app-installed">
+  Continuer
+</a>

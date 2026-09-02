@@ -8,7 +8,7 @@ describe("add 2fa authentication", () => {
 
     cy.contains("Double authentification");
 
-    cy.get('[href="/double-authentication-choice"]')
+    cy.get('[href="/double-authentication"]')
       .contains("Configurer la double authentification")
       .click();
 

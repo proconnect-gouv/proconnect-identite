@@ -1,5 +1,15 @@
 <div>
-  <%- include('/mfa-settings/smartphone-app-layout.ejs', {
-    totpRecommendationPath: '../user/mfa-decision-helper/totp-recommendation.ejs',
-  }); %>
+  <%- include('../../../partials/mfa-decision-helper-header.ejs', { step: "three" }); %>
+
+  <%- include('../totp-recommendation.ejs', {
+    description: "Une application smartphone génère un code qui change toutes les 30 secondes.",
+    toolTypeLabel: "l'application",
+    tools: [
+      { name: "Proton Authenticator", url: "https://proton.me/fr/authenticator/download", details: ["Application opensource."] },
+      { name: "2FAS", url: "https://2fas.com/auth/", details: ["Application opensource."] },
+      { name: "FreeOTP", url: "https://freeotp.github.io/", details: ["Application opensource."] },
+    ]
+  }) %>
+
+  <%- include('../../../partials/mfa-helper-restart.ejs'); %>
 </div>

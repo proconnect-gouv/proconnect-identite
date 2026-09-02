@@ -120,12 +120,8 @@ export const postTotpConfigurationController = async (
     return res.redirect("/users/2fa-successfully-configured");
   } catch (error) {
     if (error instanceof InvalidTotpTokenError) {
-      const { "totp-tool-type": totpToolType } = req.body;
-      const totpToolTypeParam = totpToolType
-        ? `&totp-tool-type=${encodeURIComponent(totpToolType)}`
-        : "";
       return res.redirect(
-        `/users/totp-configuration?notification=invalid_totp_token${totpToolTypeParam}`,
+        "/users/totp-configuration?notification=invalid_totp_token",
       );
     }
 

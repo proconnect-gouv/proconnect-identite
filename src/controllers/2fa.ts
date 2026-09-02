@@ -20,7 +20,7 @@ export const getDoubleAuthenticationController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    return res.render("double-authentication-choice", {
+    return res.render("double-authentication", {
       pageTitle: "Double authentification",
       notifications: await getNotificationsFromRequest(req),
       isAuthenticatorConfigured: await isTotpConfiguredForUser(user_id),

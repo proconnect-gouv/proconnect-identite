@@ -1,10 +1,76 @@
 <div>
-  <%- include('/partials/notifications.ejs', {notifications: notifications}) %>
+  <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
+  <div class="fr-alert fr-alert--info fr-mb-5w">
+    <p>
+      <p>
+      En plus du mot de passe, une <b>étape de sécurité supplémentaire</b> sera demandée à chaque nouvelle session sur <%= locals.spName ? locals.spName : "ce service" %>.
+    </p>
+    </p>
+  </div>
+  <h1 class="fr-h3">Choisir votre méthode de connexion renforcée</h1>
+  <div class="fr-callout fr-icon-alert-line" id="webauthn-not-supported" hidden>
+    <p class="fr-callout__title fr-h4">
+      Impossible de créer une clé d’accès sur cet appareil
+    </p>
+    <p class="fr-callout__text">
+      Assurez-vous que le système d’exploitation de votre appareil est à jour,
+      que le verrouillage de l’écran et le Bluetooth sont activés, et que vous
+      utilisez un navigateur compatible.
+    </p>
+  </div>
+  <div
+    class="fr-alert fr-alert--error fr-mb-2w"
+    id="webauthn-alert-error"
+    hidden
+  ></div>
+  <form
+    action="/users/is-totp-app-installed"
+    class="checkbox-container"
+    method="get"
+  >
+    <fieldset
+      class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
+      aria-labelledby="radio-legend radio-messages"
+    >
+      <div id="totp-option" class="fr-fieldset__element border fr-p-2w">
+        <div class="fr-radio-group">
+          <input type="radio" id="radio-totp" name="radio-2fa" value="totp" required/>
+          <label class="fr-label" for="radio-totp">
+            Code à usage unique (TOTP)<span class="fr-hint-text">Générez un code via une application smartphone ou un logiciel sur votre ordinateur.</span>
+          </label>
+        </div>
+      </div>
+      <div id="webauthn-btn-begin-registration" class="fr-fieldset__element border fr-p-2w">
+        <div class="fr-radio-group">
+          <input type="radio" id="radio-passkey" name="radio-2fa" value="passkey" required/>
+          <label class="fr-label" for="radio-passkey">
+            Clé d'accès (passkey)<span class="fr-hint-text">Utilisez la biométrie ou le code PIN de votre session d’ordinateur.</span>
+          </label>
+        </div>
+      </div>
 
-  <%- include('/mfa-settings/double-authentication-choice-layout.ejs', {
-    withInfoAlert: true,
-    isTotpAppInstalledUrl: '/users/is-totp-app-installed',
-    verifyRegistrationAction: '/users/passkeys/verify-registration',
-    csrfToken: csrfToken,
-  }); %>
+      <div id="dont-know-option" class="fr-fieldset__element border fr-p-2w">
+        <div class="fr-radio-group">
+          <input type="radio" id="radio-dont-know" name="radio-2fa" value="dont-know" required/>
+          <label class="fr-label" for="radio-dont-know">
+            Je ne sais pas<span class="fr-hint-text">Laissez-nous vous guider vers la meilleure méthode pour vous.</span>
+          </label>
+        </div>
+      </div>
+      
+    </fieldset>
+    <button class="fr-btn btn--fullwidth" type="submit" id="webauthn-registration-button">Continuer</button>
+  </form>
+  <%- include('../partials/go-back.ejs'); %>
+  <form
+    id="webauthn-registration-response-form"
+    action="/users/passkeys/verify-registration"
+    method="post"
+    hidden
+  >
+    <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+    <input type="hidden" name="webauthn_registration_response_string" />
+    <button type="submit" class="fr-btn"></button>
+  </form>
+  <script type="module" src="<%= js('webauthn-registration.js') %>"></script>
 </div>
