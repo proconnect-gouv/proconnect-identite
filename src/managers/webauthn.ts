@@ -16,8 +16,6 @@ import {
   type WebAuthnCredential,
 } from "@simplewebauthn/server";
 import { isEmpty } from "lodash-es";
-import moment from "moment";
-import "moment-timezone";
 import { AssertionError } from "node:assert";
 import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
 import {
@@ -26,6 +24,7 @@ import {
 } from "../config/errors";
 import { context } from "../connectors/context";
 import { getAuthenticatorFriendlyName } from "../connectors/github-passkey-authenticator-aaguids";
+import { formatDate } from "../services/date-format";
 import { logger } from "../services/log";
 import { disableForce2fa, is2FACapable } from "./2fa";
 
@@ -78,9 +77,9 @@ export const getUserAuthenticators = async (email: string) => {
       credential_id,
       usage_count,
       display_name: display_name || `Clé ${credential_id.substring(0, 10)}`,
-      created_at: moment(created_at).tz("Europe/Paris").locale("fr").calendar(),
+      created_at: formatDate(created_at),
       last_used_at: last_used_at
-        ? moment(last_used_at).tz("Europe/Paris").locale("fr").calendar()
+        ? formatDate(last_used_at)
         : "pas encore utilisée",
       shows_second_factor_only_label: !user_verified,
     }),

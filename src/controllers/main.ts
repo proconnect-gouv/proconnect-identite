@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from "express";
-import moment from "moment/moment";
 import z, { ZodError } from "zod";
 import { context } from "../connectors/context";
 import { is2FACapable } from "../managers/2fa";
@@ -24,6 +23,7 @@ import {
   nameSchema,
   phoneNumberSchema,
 } from "../services/custom-zod-schemas";
+import { formatDate } from "../services/date-format";
 import { getNotificationsFromRequest } from "../services/get-notifications-from-request";
 
 const { update } = context.repository.users;
@@ -52,6 +52,10 @@ export const getPersonalInformationsController = async (
     const familyNameOptions =
       await getFamilyNameOptionsFromFranceConnectIdentity(user.id);
 
+    const franceconnectUpdatedAt = await lastFranceConnectIdentityUpdate(
+      user.id,
+    );
+
     return res.render("personal-information", {
       csrfToken: csrfToken(req),
       email: user.email,
@@ -61,7 +65,9 @@ export const getPersonalInformationsController = async (
       notifications: await getNotificationsFromRequest(req),
       pageTitle: "Informations personnelles",
       phone_number: user.phone_number,
-      franceConnect_last_update: await lastFranceConnectIdentityUpdate(user.id),
+      franceconnect_updated_at: franceconnectUpdatedAt
+        ? formatDate(franceconnectUpdatedAt)
+        : null,
       givenNameOptions,
       familyNameOptions,
     });
@@ -200,10 +206,7 @@ export const getConnectionAndAccountController = async (
       isVerifiedWithFranceConnect,
       passkeys,
       totpKeyVerifiedAt: totp_key_verified_at
-        ? moment(totp_key_verified_at)
-            .tz("Europe/Paris")
-            .locale("fr")
-            .calendar()
+        ? formatDate(totp_key_verified_at)
         : null,
       csrfToken: csrfToken(req),
       is2faCapable,
