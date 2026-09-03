@@ -16,8 +16,6 @@ document.addEventListener(
       "webauthn-authentication-response-form",
     );
     const errorElement = document.getElementById("webauthn-alert-error");
-    const passwordInput = document.getElementById("password-input");
-    let controller;
 
     const actionAttribute = authenticationResponseForm.getAttribute("action");
     let authOptionsUrl;
@@ -31,31 +29,35 @@ document.addEventListener(
       throw new Error("Webauthn page miss-configured!");
     }
 
-    // Start registration when the user clicks a button
-    const onAuthenticateClickAndDOMContentLoad = async () => {
+    // Start authentication
+    const authenticate = async ({ useBrowserAutofill = false } = {}) => {
       // Reset success/error messages
       errorElement.style.display = "none";
       errorElement.innerText = "";
-      beginElement.disabled = true;
-      controller = new AbortController();
 
-      let asseResp;
+      if (!useBrowserAutofill) {
+        beginElement.disabled = true;
+      }
+
+      let authResponse;
 
       try {
-        // GET registration options from the endpoint that calls
-        // @simplewebauthn/server -> generateRegistrationOptions()
+        // GET authentication options from the endpoint that calls
+        // @simplewebauthn/server -> generateAuthenticationOptions()
         const authOptions = await fetch(authOptionsUrl);
 
         // Pass the options to the authenticator and wait for a response
-        asseResp = await startAuthentication({
+        authResponse = await startAuthentication({
           optionsJSON: await authOptions.json(),
-          signal: controller.signal,
+          useBrowserAutofill,
         });
       } catch (error) {
+        // User dismissed/refused passkey prompt: do not show an error
         if (error.name === "AbortError") {
           beginElement.disabled = false;
           return;
         }
+
         errorElement.style.display = "block";
         if (error.name === "NotAllowedError") {
           errorElement.innerText = `Une erreur est survenue. Nous n’avons pas pu vérifier vos informations. Merci de réessayer.`;
@@ -68,16 +70,15 @@ document.addEventListener(
       }
 
       // POST the response to the endpoint that calls
-      // @simplewebauthn/server -> verifyRegistrationResponse()
-      authenticationResponseStringInputElement.value = JSON.stringify(asseResp);
+      // @simplewebauthn/server -> verifyAuthenticationResponse()
+      authenticationResponseStringInputElement.value = JSON.stringify(authResponse);
       authenticationResponseForm.requestSubmit();
     };
-    onAuthenticateClickAndDOMContentLoad();
-    beginElement.addEventListener(
-      "click",
-      onAuthenticateClickAndDOMContentLoad,
-    );
-    passwordInput?.addEventListener("focus", () => controller?.abort());
+    beginElement.addEventListener("click", () => {
+      authenticate({ useBrowserAutofill: false });
+    });
+
+    authenticate({ useBrowserAutofill: true });
   },
   false,
 );

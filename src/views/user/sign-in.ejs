@@ -46,7 +46,7 @@
                             required
                             aria-required="true"
                             name="password"
-                            autocomplete="current-password"
+                            autocomplete="current-password webauthn"
                             id="password-input"
                             type="password"
                             autofocus
@@ -95,7 +95,7 @@
         <%- include('../partials/go-back.ejs') %>
         <form id="webauthn-authentication-response-form" action="/users/sign-in-with-passkey" method="post" hidden>
         <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-        <input type="hidden" name="webauthn_authentication_response_string" autocomplete="webauthn">
+        <input type="hidden" name="webauthn_authentication_response_string">
         <button type="submit" class="fr-btn"></button>
     </form>
     </div>

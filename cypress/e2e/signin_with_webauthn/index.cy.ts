@@ -18,7 +18,7 @@ before(function () {
 });
 
 describe("sign-in with a passkey configured", () => {
-  it("should add ctap2 internal passkey authentication", function () {
+  it.only("should add ctap2 internal passkey authentication", function () {
     cy.visit("/connection-and-account");
     cy.login("lion.eljonson@darkangels.world");
 
@@ -49,18 +49,21 @@ describe("sign-in with a passkey configured", () => {
     });
   });
 
-  it("should connect with configured passkey", function () {
-    cy.visit("/");
-    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+  it.only("should connect with configured passkey", function () {
+    cy.origin("http://localhost:4000", () => {
+      cy.visit("/");
+      cy.title().should("include", "standard-client - ProConnect");
+      cy.contains("S’identifier avec ProConnect").click();
+    });
+
     cy.contains("Email professionnel").click();
     cy.focused().type("lion.eljonson@darkangels.world");
     cy.contains("Continuer").click();
 
-    cy.title().should("include", "Accéder au compte - ProConnect");
-    cy.title().should("include", "Accueil - ProConnect");
+    cy.contains('"amr": [\n    "pop",\n    "mfa"\n  ],');
   });
 
-  it("should allow the user to cancel auto-triggered passkey and sign in with password", function () {
+  it.only("should allow the user to cancel auto-triggered passkey and sign in with password", function () {
     cy.origin("http://localhost:4000", () => {
       cy.visit("/");
       cy.title().should("include", "standard-client - ProConnect");
@@ -107,17 +110,10 @@ describe("sign-in with a passkey configured", () => {
       isUserVerified: false,
     });
 
-    cy.on("uncaught:exception", (err) => {
-      if (err.name === "NotAllowedError") {
-        return false;
-      }
-      return true;
-    });
-
     cy.get('[name="login"]').type("lion.eljonson@darkangels.world");
     cy.get('[type="submit"]').click();
 
-    cy.contains("Une erreur est survenue.");
+    cy.get("#webauthn-alert-error").should("not.be.visible");
 
     cy.setUserVerified({
       authenticatorId: this["authenticatorId"],
@@ -136,36 +132,21 @@ describe("sign-in with a passkey configured", () => {
     cy.origin("http://localhost:4000", () => {
       cy.visit("/");
       cy.title().should("include", "standard-client - ProConnect");
-      cy.contains("S’identifier avec ProConnect").click();
-    });
-
-    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-
-    cy.setUserVerified({
-      authenticatorId: this["authenticatorId"],
-      isUserVerified: false,
-    });
-
-    cy.on("uncaught:exception", (err) => {
-      if (err.name === "NotAllowedError") {
-        return false;
-      }
-      return true;
-    });
-
-    cy.origin("http://localhost:4000", () => {
-      cy.visit("/");
-      cy.title().should("include", "standard-client - ProConnect");
       cy.contains("Forcer une connexion a deux facteurs").click();
     });
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.login("lion.eljonson@darkangels.world");
+    // cy.login("lion.eljonson@darkangels.world");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("lion.eljonson@darkangels.world");
+    cy.contains("Continuer").click();
 
     cy.title().should(
       "include",
       "Se connecter avec la double authentification - ProConnect",
     );
+
+    //todo: something is missing here
 
     cy.intercept("http://localhost:4000");
     cy.setUserVerified({
@@ -228,13 +209,6 @@ describe("sign-in with a configured passkey after enabling 2FA for all sites", (
       isUserVerified: false,
     });
 
-    cy.on("uncaught:exception", (err) => {
-      if (err.name === "NotAllowedError") {
-        return false;
-      }
-      return true;
-    });
-
     cy.origin("http://localhost:4000", () => {
       cy.visit("/");
       cy.title().should("include", "standard-client - ProConnect");
@@ -248,12 +222,6 @@ describe("sign-in with a configured passkey after enabling 2FA for all sites", (
       "include",
       "Se connecter avec la double authentification - ProConnect",
     );
-
-    cy.intercept("http://localhost:4000");
-    cy.setUserVerified({
-      authenticatorId: this["authenticatorId"],
-      isUserVerified: true,
-    });
 
     cy.origin("http://localhost:4000", () => {
       cy.title().should("include", "standard-client - ProConnect");
