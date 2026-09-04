@@ -56,7 +56,7 @@ services:
     network_mode: "host"
 
   maildev:
-    image: maildev/maildev@sha256:180ef51f65eefebb0e7122d8308813c1fd7bff164bc440ce5a3c2feee167a810 # latest
+    image: maildev/maildev@sha256:ad6d46b7c47617c141961649a9ed5e50069aed53e94ca5359a59b3e1459925da # latest
     environment:
       MAILDEV_IP: "::"
     healthcheck:
