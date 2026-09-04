@@ -10,7 +10,7 @@
 
             <p aria-hidden="true" class="fr-hint-text">Les champs notés * sont obligatoires.</p>
 
-            <% if (locals.franceConnect_last_update) { %>
+            <% if (locals.franceconnect_updated_at) { %>
             <div class="fr-select-group">
                 <label class="fr-label" for="given_name">
                     Prénom<span aria-hidden="true"> *</span>
@@ -46,7 +46,7 @@
             </div>
             <% } %>
 
-            <% if (locals.franceConnect_last_update) { %>
+            <% if (locals.franceconnect_updated_at) { %>
             <div class="fr-select-group">
                 <label class="fr-label" for="family_name">
                     Nom<span aria-hidden="true"> *</span>
@@ -122,13 +122,11 @@
 
         <h1 class="fr-h3 fr-mt-4w">Identité FranceConnect</h1>
 
-        <% if (locals.franceConnect_last_update) { %>
+        <% if (locals.franceconnect_updated_at) { %>
 
         <p>
           Vous avez utilisé votre identité FranceConnect pour pré-remplir vos informations personnelles. <br/>
-          <em>Dernière connexion FranceConnect :
-          le <%= locals.franceConnect_last_update.toLocaleString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }); %>
-          à <%= locals.franceConnect_last_update.toLocaleTimeString("fr-FR"); %></em>
+          <em>Dernière connexion FranceConnect : <%= locals.franceconnect_updated_at; %></em>
         </p>
 
         <h2 class="fr-h6">Mettre à jour votre identité FranceConnect</h2>
