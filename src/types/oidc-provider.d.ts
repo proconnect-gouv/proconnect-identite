@@ -9,6 +9,20 @@ import type {
   UnknownObject,
 } from "oidc-provider";
 
+declare module "oidc-provider" {
+  interface Provider {
+    // Public getter exposed at runtime but absent from the shipped type definitions.
+    // Returns the Claims class bound to this provider instance.
+    Claims: new (
+      claims: Record<string, unknown>,
+      options: { ctx: unknown },
+    ) => {
+      filter: Record<string, unknown>;
+      scope(scopeString: string): void;
+    };
+  }
+}
+
 declare global {
   /**
    * Extends the {@link OIDCContext.params} type.
