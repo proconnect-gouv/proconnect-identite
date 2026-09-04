@@ -27,5 +27,6 @@ export interface Organization {
   cached_categorie_juridique: string | null;
   cached_libelle_categorie_juridique: string | null;
   cached_siege_social: boolean | null;
+  cached_denomination_usuelle_etablissement_principal?: string | null;
   organization_info_fetched_at: Date | null;
 }

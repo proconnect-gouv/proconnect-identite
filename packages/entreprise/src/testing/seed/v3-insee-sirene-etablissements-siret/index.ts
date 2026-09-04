@@ -12,4 +12,5 @@ export { default as StihleFreres } from "./43841606700017.js";
 export { default as MegevandSas } from "./78824266700020.js";
 export { default as ExpertiseRurale } from "./81104725700019.js";
 export { default as NintendoOfEuropeSe } from "./82271212100018.js";
+export { default as FergusMacDonaldEntrepreneur } from "./84951084700015.js";
 export { default as RogalDornEntrepreneur } from "./94957325700019.js";

@@ -10,7 +10,13 @@ dotenvFlow.config({
 
 const parsedEnv = envSchema.safeParse(process.env);
 
-if (!parsedEnv.success) throw fromZodError(parsedEnv.error, {});
+if (!parsedEnv.success) {
+  console.log(
+    "🦐 error env",
+    process.env["FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA"],
+  );
+  throw fromZodError(parsedEnv.error, {});
+}
 
 export const {
   ACCESS_LOG_PATH,
@@ -38,6 +44,7 @@ export const {
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE,
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE,
   FEATURE_DISPLAY_TEST_ENV_WARNING,
+  FEATURE_ENHANCE_ORGANIZATION_INFO_WITH_RNE_DATA,
   FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS,
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API,
   FEATURE_RATE_LIMIT_BY_EMAIL,
@@ -72,6 +79,7 @@ export const {
   RNE_API_HTTP_CLIENT_TIMEOUT,
   RNE_API_PASSWORD,
   RNE_API_USERNAME,
+  RNE_API_BASE_URL,
   SENTRY_DSN,
   SESSION_COOKIE_SECRET,
   SESSION_MAX_AGE_IN_SECONDS,

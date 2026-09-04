@@ -1,0 +1,21 @@
+{
+  "formality": {
+    "content": {
+      "personnePhysique": {
+        "etablissementPrincipal": {
+          "descriptionEtablissement": {
+            "rolePourEntreprise": "3",
+            "siret": "82869625200026",
+            "nomCommercial": "ONEDOES.DOES.RENT.EMILEZOLA",
+            "sansActiviteAutreActiviteSiege": false,
+            "indicateurEtablissementPrincipal": true,
+            "statutPourFormalite": "4",
+            "codeApe": "6820A",
+            "etablissementValidated": false,
+            "etablissementRdd": true
+          }
+        }
+      }
+    }
+  }
+}
