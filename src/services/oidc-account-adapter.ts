@@ -82,7 +82,9 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
       }
 
       const organization = organizations.find(
-        ({ id }) => id === selectedOrganizationId,
+        ({ id, needs_official_contact_email_verification }) =>
+          id === selectedOrganizationId &&
+          !needs_official_contact_email_verification,
       );
 
       if (isEmpty(organization)) {

@@ -82,6 +82,7 @@ describe("join collectivité territoriale with code send to official contact ema
     cy.contains("Continuer avec cet email").click();
 
     cy.title().should("include", "Vérifier votre email - ProConnect");
+    cy.contains("Confirmer votre adresse email").click();
 
     cy.maildevGetMessageBySubject(
       "[ProConnect] Authentifier un email sur ProConnect",
