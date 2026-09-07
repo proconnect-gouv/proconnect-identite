@@ -1,12 +1,18 @@
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
+import dotenvFlow from "dotenv-flow";
 import { z } from "zod";
+
+//
+
+dotenvFlow.config({});
 
 import { fileURLToPath } from "node:url";
 import { fromZodError } from "zod-validation-error";
 import {
-  fetchAdministrationListGristRecordsFactory,
+  fetchAdministrationBlacklistGristRecordsFactory,
+  fetchAdministrationWhitelistGristRecordsFactory,
   fetchCodeJuridiqueToAdministrationGristRecordsFactory,
 } from "../connectors/administration-grist.js";
 
@@ -38,7 +44,7 @@ async function syncGristDocumentsToFiles() {
   });
 
   await syncGristDocumentToFile({
-    fetch: fetchAdministrationListGristRecordsFactory({
+    fetch: fetchAdministrationWhitelistGristRecordsFactory({
       documentUrl: buildGristUrl(ADMINISTRATION_WHITELIST_SIREN_TABLE_ID),
       apiKey: ADMINISTRATION_GRIST_API_KEY,
     }),
@@ -46,7 +52,7 @@ async function syncGristDocumentsToFiles() {
   });
 
   await syncGristDocumentToFile({
-    fetch: fetchAdministrationListGristRecordsFactory({
+    fetch: fetchAdministrationBlacklistGristRecordsFactory({
       documentUrl: buildGristUrl(ADMINISTRATION_BLACKLIST_SIREN_TABLE_ID),
       apiKey: ADMINISTRATION_GRIST_API_KEY,
     }),

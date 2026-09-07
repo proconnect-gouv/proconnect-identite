@@ -527,7 +527,7 @@
   {
     "codeJuridique": 7364,
     "libelle": "Etablissement d'hospitalisation",
-    "isAdministrationEtat": false,
+    "isAdministrationEtat": true,
     "isCollectivite": false,
     "isServicePublicAdministratif": true
   },
