@@ -43,16 +43,18 @@ export function fetchCodeJuridiqueToAdministrationGristRecordsFactory({
     }>(documentUrl, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
-    return data.records.map((record) => ({
-      codeJuridique: record.fields.Code_juridique,
-      libelle: record.fields.Libelle.trim(),
-      isAdministrationEtat:
-        record.fields
-          .Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_,
-      isCollectivite: record.fields.Collectivites,
-      isServicePublicAdministratif:
-        record.fields.Mission_de_service_public_administratif,
-    }));
+    return data.records
+      .filter((record) => !!record.fields.Code_juridique)
+      .map((record) => ({
+        codeJuridique: record.fields.Code_juridique,
+        libelle: record.fields.Libelle.trim(),
+        isAdministrationEtat:
+          record.fields
+            .Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_,
+        isCollectivite: record.fields.Collectivites,
+        isServicePublicAdministratif:
+          record.fields.Mission_de_service_public_administratif,
+      }));
   };
 }
 
@@ -69,10 +71,12 @@ export function fetchAdministrationBlacklistGristRecordsFactory({
     }>(documentUrl, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
-    return data.records.map((record) => ({
-      siren: record.fields.siren,
-      denomination: record.fields.denomination,
-    }));
+    return data.records
+      .filter((record) => !!record.fields.siren)
+      .map((record) => ({
+        siren: record.fields.siren,
+        denomination: record.fields.denomination,
+      }));
   };
 }
 
@@ -89,12 +93,14 @@ export function fetchAdministrationWhitelistGristRecordsFactory({
     }>(documentUrl, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
-    return data.records.map((record) => ({
-      siren: record.fields.siren,
-      denomination: record.fields.denomination,
-      Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_:
-        record.fields
-          .Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_,
-    }));
+    return data.records
+      .filter((record) => !!record.fields.siren)
+      .map((record) => ({
+        siren: record.fields.siren,
+        denomination: record.fields.denomination,
+        Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_:
+          record.fields
+            .Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_,
+      }));
   };
 }
