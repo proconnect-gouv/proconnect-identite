@@ -1,6 +1,10 @@
 import { to } from "await-to-js";
+import { isEmpty } from "lodash-es";
 import { interactionPolicy } from "oidc-provider";
-import { getOrganizationById } from "../managers/organization/main";
+import {
+  getOrganizationById,
+  getOrganizationsByUserId,
+} from "../managers/organization/main";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 
 //
@@ -26,6 +30,17 @@ policy.add(
         );
 
         if (!selectedOrganizationId) {
+          return Check.REQUEST_PROMPT;
+        }
+
+        const userOrganizations = await getOrganizationsByUserId(user_id);
+        const organization = userOrganizations.find(
+          ({ id, needs_official_contact_email_verification }) =>
+            id === selectedOrganizationId &&
+            !needs_official_contact_email_verification,
+        );
+
+        if (isEmpty(organization)) {
           return Check.REQUEST_PROMPT;
         }
 
