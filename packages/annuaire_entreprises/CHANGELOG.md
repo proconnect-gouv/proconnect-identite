@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.annuaire_entreprises
 
+## 3.0.2
+
+### Patch Changes
+
+- [#2129](https://github.com/proconnect-gouv/proconnect-identite/pull/2129) [`bab7ae7`](https://github.com/proconnect-gouv/proconnect-identite/commit/bab7ae77defd41e0821bc94e4423b47eb0a83f66) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - suppression de l'utilisation du fichier operateur_lolf.json et prise en compte du tag isAdministrationEtat du Grist
+
 ## 3.0.1
 
 ### Patch Changes
