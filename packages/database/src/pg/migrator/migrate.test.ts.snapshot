@@ -16,6 +16,9 @@ exports[`Database migration with external PostgreSQL > applies complete schema t
     "table_name": "moderations"
   },
   {
+    "table_name": "official_contact_email_verifications"
+  },
+  {
     "table_name": "oidc_clients"
   },
   {

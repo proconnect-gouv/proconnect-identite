@@ -146,6 +146,8 @@ export const paramsEnvSchema = z.object({
   NODE_ENV: z
     .enum(["production", "development", "test"])
     .default("development"),
+  OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES:
+    z.coerce.number().int().nonnegative().default(60), // 1 hour in minutes
   PORT: z.coerce.number().int().nonnegative().default(3000),
   RECENT_LOGIN_INTERVAL_IN_SECONDS: z.coerce
     .number()

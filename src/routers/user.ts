@@ -107,7 +107,6 @@ import {
   userCanAccessAppGuardMiddleware,
   userHasAtLeastOneOrganizationGuardMiddleware,
   userHasConnectedRecentlyGuardMiddleware,
-  userHasSelectedAnOrganizationGuardMiddleware,
   userIsConnectedGuardMiddleware,
   userIsVerifiedGuardMiddleware,
   userSignInRequirementsGuardMiddleware,
@@ -494,6 +493,31 @@ export const userRouter = () => {
   );
 
   userRouter.get(
+    "/official-contact-ask-which-email",
+    browserIsTrustedGuardMiddleware,
+    csrfProtectionMiddleware,
+    getOfficialContactAskWhichEmailController,
+  );
+
+  userRouter.get(
+    "/official-contact-email-verification",
+    browserIsTrustedGuardMiddleware,
+    csrfProtectionMiddleware,
+    officialContactEmailVerificationRateLimiterMiddleware,
+    getOfficialContactEmailVerificationController,
+  );
+
+  userRouter.post(
+    "/official-contact-email-verification",
+    browserIsTrustedGuardMiddleware,
+    csrfProtectionMiddleware,
+    officialContactEmailVerificationRateLimiterMiddleware,
+    postOfficialContactEmailVerificationMiddleware,
+    userSignInRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
+  );
+
+  userRouter.get(
     "/select-organization",
     userHasAtLeastOneOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
@@ -505,30 +529,6 @@ export const userRouter = () => {
     userHasAtLeastOneOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
     postSelectOrganizationMiddleware,
-    userSignInRequirementsGuardMiddleware,
-    issueSessionOrRedirectController,
-  );
-
-  userRouter.get(
-    "/official-contact-ask-which-email/:organization_id",
-    userHasSelectedAnOrganizationGuardMiddleware,
-    csrfProtectionMiddleware,
-    getOfficialContactAskWhichEmailController,
-  );
-
-  userRouter.get(
-    "/official-contact-email-verification/:organization_id",
-    userHasSelectedAnOrganizationGuardMiddleware,
-    csrfProtectionMiddleware,
-    officialContactEmailVerificationRateLimiterMiddleware,
-    getOfficialContactEmailVerificationController,
-  );
-
-  userRouter.post(
-    "/official-contact-email-verification/:organization_id",
-    userHasSelectedAnOrganizationGuardMiddleware,
-    csrfProtectionMiddleware,
-    postOfficialContactEmailVerificationMiddleware,
     userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );

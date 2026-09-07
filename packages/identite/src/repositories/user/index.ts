@@ -1,6 +1,7 @@
 //
 
 export * from "./create.js";
+export * from "./delete-franceconnect-userinfo.js";
 export * from "./delete.js";
 export * from "./find-by-email.js";
 export * from "./find-by-id.js";

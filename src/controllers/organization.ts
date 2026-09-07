@@ -25,6 +25,7 @@ import {
   GouvFrDomainsForbiddenForPrivateOrg,
   OrganizationNotActiveError,
   PendingCertificationDirigeantError,
+  PendingOfficialContactEmailVerificationError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -135,6 +136,8 @@ export const postJoinOrganizationMiddleware = async (
 
     req.session.pendingModerationOrganizationId = undefined;
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
+    req.session.pendingOfficialContactEmailVerificationOrganizationId =
+      undefined;
 
     const organization = await upsertOrganization(siret);
     const userOrganizationLink = await joinOrganization({
@@ -176,6 +179,13 @@ export const postJoinOrganizationMiddleware = async (
 
     if (error instanceof PendingCertificationDirigeantError) {
       req.session.pendingCertificationDirigeantOrganizationId =
+        error.organizationId;
+
+      return next();
+    }
+
+    if (error instanceof PendingOfficialContactEmailVerificationError) {
+      req.session.pendingOfficialContactEmailVerificationOrganizationId =
         error.organizationId;
 
       return next();

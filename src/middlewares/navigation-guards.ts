@@ -27,7 +27,6 @@ import {
   greetForJoiningOrganization,
 } from "../managers/organization/join";
 import {
-  getOrganizationById,
   getOrganizationBySiret,
   getOrganizationsByUserId,
   selectOrganization,
@@ -60,8 +59,11 @@ import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 const { getFranceConnectUserInfo } = context.repository.users;
-const { getUserOrganizationLink, linkUserToOrganization } =
-  context.repository.organizations;
+const {
+  getUserOrganizationLink,
+  linkUserToOrganization,
+  getById: getOrganizationById,
+} = context.repository.organizations;
 const { update: updateUserOrganizationLink } =
   context.repository.users_organizations;
 
@@ -663,59 +665,6 @@ const userIsCertifiedAsDirigeantGuard = async <
   return pass("user_is_certified_as_dirigeant");
 };
 
-const userHasNoPendingOfficialContactEmailVerificationGuard = async (
-  context: Pass<RequestContext>,
-) => {
-  const {
-    data: { req },
-    pass,
-    redirect,
-  } = context;
-
-  const userOrganizations = await getOrganizationsByUserId(
-    getUserFromAuthenticatedSession(req).id,
-  );
-
-  let organizationThatNeedsOfficialContactEmailVerification;
-
-  const selectedOrganizationId = await getSelectedOrganizationId(
-    getUserFromAuthenticatedSession(req).id,
-  );
-
-  if (selectedOrganizationId) {
-    organizationThatNeedsOfficialContactEmailVerification =
-      userOrganizations.find(
-        ({ id, needs_official_contact_email_verification }) =>
-          needs_official_contact_email_verification &&
-          id === selectedOrganizationId,
-      );
-  } else {
-    organizationThatNeedsOfficialContactEmailVerification =
-      userOrganizations.find(
-        ({ needs_official_contact_email_verification }) =>
-          needs_official_contact_email_verification,
-      );
-  }
-
-  if (!isEmpty(organizationThatNeedsOfficialContactEmailVerification)) {
-    if (
-      await isCommuneWithMultipleOfficialContactEmails(
-        organizationThatNeedsOfficialContactEmailVerification,
-      )
-    ) {
-      return redirect(
-        `/users/official-contact-ask-which-email/${organizationThatNeedsOfficialContactEmailVerification.id}`,
-      );
-    }
-
-    return redirect(
-      `/users/official-contact-email-verification/${organizationThatNeedsOfficialContactEmailVerification.id}`,
-    );
-  }
-
-  return pass("user_has_no_pending_official_contact_email_verification");
-};
-
 const userHasBeenGreetedGuard = async (context: Pass<RequestContext>) => {
   const {
     data: { req },
@@ -767,10 +716,7 @@ const userHasBeenGreetedGuard = async (context: Pass<RequestContext>) => {
 const connectToAppGuard = async (prev: Pass<RequestContext>) => {
   let context;
 
-  context = await userHasNoPendingOfficialContactEmailVerificationGuard(prev);
-  if (!Pass.is_passing(context)) return context;
-
-  context = await userHasBeenGreetedGuard(context);
+  context = await userHasBeenGreetedGuard(prev);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("ok_to_connect_to_app");
@@ -799,10 +745,6 @@ const connectToSp = async (
   context = await userHasPersonalInformationsGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  context =
-    await userHasNoPendingOfficialContactEmailVerificationGuard(context);
-  if (!Pass.is_passing(context)) return context;
-
   context = await userHasBeenGreetedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
@@ -815,7 +757,7 @@ const processPendingModerationGuard = async (prev: Pass<RequestContext>) => {
   } = prev;
 
   const organization_id = req.session.pendingModerationOrganizationId!;
-  const organization = (await getOrganizationById(organization_id))!;
+  const organization = await getOrganizationById(organization_id);
   const user = getUserFromAuthenticatedSession(prev.data.req);
 
   let context;
@@ -845,7 +787,7 @@ const processCertificationDirigeantGuard = async (
     redirect,
   } = prev;
 
-  const organizationId =
+  const organization_id =
     req.session.pendingCertificationDirigeantOrganizationId!;
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
@@ -854,7 +796,7 @@ const processCertificationDirigeantGuard = async (
   }
 
   const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
-  const organization = (await getOrganizationById(organizationId))!;
+  const organization = await getOrganizationById(organization_id);
 
   try {
     await processCertificationDirigeantOrThrow(
@@ -864,7 +806,7 @@ const processCertificationDirigeantGuard = async (
 
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
 
-    if (await getUserOrganizationLink(organizationId, user_id)) {
+    if (await getUserOrganizationLink(organization_id, user_id)) {
       await updateUserOrganizationLink(organization.id, user_id, {
         verification_type: LinkEnum.enum.organization_dirigeant,
         verified_at: new Date(),
@@ -880,11 +822,11 @@ const processCertificationDirigeantGuard = async (
 
     await selectOrganization({
       user_id,
-      organization_id: organizationId,
+      organization_id,
     });
 
     pass("user_passed_certification_dirigeant").extends({
-      selectedOrganizationId: organizationId,
+      selectedOrganizationId: organization_id,
     });
 
     return userSignInRequirementsGuard(prev);
@@ -912,6 +854,27 @@ const processCertificationDirigeantGuard = async (
   }
 };
 
+const processOfficialContactEmailVerificationGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+    redirect,
+  } = prev;
+  const organization_id =
+    req.session.pendingOfficialContactEmailVerificationOrganizationId!;
+  const organization = await getOrganizationById(organization_id);
+  if (isEmpty(organization)) {
+    throw HttpErrors.NotFound();
+  }
+
+  if (await isCommuneWithMultipleOfficialContactEmails(organization)) {
+    return redirect(`/users/official-contact-ask-which-email`);
+  }
+
+  return redirect(`/users/official-contact-email-verification`);
+};
+
 async function userSignInRequirementsGuard(
   prev: Pass<RequestContext>,
 ): Promise<GuardResult<string, RequestContext>> {
@@ -922,21 +885,28 @@ async function userSignInRequirementsGuard(
     pendingModerationOrganizationId,
     interactionId,
     pendingCertificationDirigeantOrganizationId,
+    pendingOfficialContactEmailVerificationOrganizationId,
   } = context.data.req.session;
 
   return match({
     pendingModerationOrganizationId,
     interactionId,
     pendingCertificationDirigeantOrganizationId,
+    pendingOfficialContactEmailVerificationOrganizationId:
+      pendingOfficialContactEmailVerificationOrganizationId,
   })
     .with({ pendingModerationOrganizationId: P.number }, () =>
       processPendingModerationGuard(context),
     )
-    .with({ interactionId: P.nullish }, () => connectToAppGuard(context))
     .with({ pendingCertificationDirigeantOrganizationId: P.number }, () =>
       processCertificationDirigeantGuard(context),
     )
-    .otherwise(() => connectToSp(context));
+    .with(
+      { pendingOfficialContactEmailVerificationOrganizationId: P.number },
+      () => processOfficialContactEmailVerificationGuard(context),
+    )
+    .with({ interactionId: P.string }, () => connectToSp(context))
+    .otherwise(() => connectToAppGuard(context));
 }
 
 // check that the user goes through all requirements before issuing a session

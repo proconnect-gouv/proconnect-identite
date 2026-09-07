@@ -55,9 +55,6 @@ export const BaseUserOrganizationLinkSchema = z.object({
   // updated when verification_type is changed
   verified_at: z.date().or(z.literal(null)),
   has_been_greeted: z.boolean(),
-  needs_official_contact_email_verification: z.boolean(),
-  official_contact_email_verification_token: z.string().nullable(),
-  official_contact_email_verification_sent_at: z.date().nullable(),
 });
 
 export type BaseUserOrganizationLink = z.output<
@@ -88,7 +85,6 @@ export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
 ).extend(
   UserOrganizationLinkSchema.pick({
     is_external: true,
-    needs_official_contact_email_verification: true,
   }).partial().shape,
 );
 

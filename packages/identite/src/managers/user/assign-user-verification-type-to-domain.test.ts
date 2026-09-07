@@ -56,14 +56,13 @@ describe("assignUserVerificationTypeToDomain", () => {
     // link all users to the organization
     await pg.sql`
       INSERT INTO users_organizations
-        (user_id, organization_id, created_at, updated_at, is_external, verification_type, needs_official_contact_email_verification, official_contact_email_verification_token, official_contact_email_verification_sent_at)
-      VALUES
-        (1, 1, '4444-04-04', '4444-04-04', false, 'no_validation_means_available', false, null, null),
-        (2, 1, '4444-04-04', '4444-04-04', false, 'verified', false, null, null),
-        (3, 1, '4444-04-04', '4444-04-04', false, 'no_validation_means_available', false, null, null),
-        (4, 1, '4444-04-04', '4444-04-04', false, 'no_verification_means_for_entreprise_unipersonnelle', false, null, null),
-        (5, 1, '4444-04-04', '4444-04-04', false, 'no_verification_means_for_small_association', false, null, null),
-        (6, 1, '4444-04-04', '4444-04-04', false, 'domain_not_verified_yet', false, null, null)
+      (user_id, organization_id, created_at, updated_at, is_external, verification_type)
+      VALUES (1, 1, '4444-04-04', '4444-04-04', false, 'no_validation_means_available'),
+             (2, 1, '4444-04-04', '4444-04-04', false, 'verified'),
+             (3, 1, '4444-04-04', '4444-04-04', false, 'no_validation_means_available'),
+             (4, 1, '4444-04-04', '4444-04-04', false, 'no_verification_means_for_entreprise_unipersonnelle'),
+             (5, 1, '4444-04-04', '4444-04-04', false, 'no_verification_means_for_small_association'),
+             (6, 1, '4444-04-04', '4444-04-04', false, 'domain_not_verified_yet')
       ;
     `;
 

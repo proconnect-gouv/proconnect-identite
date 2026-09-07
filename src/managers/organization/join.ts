@@ -38,6 +38,7 @@ import {
   GouvFrDomainsForbiddenForPrivateOrg,
   OrganizationNotActiveError,
   PendingCertificationDirigeantError,
+  PendingOfficialContactEmailVerificationError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -349,12 +350,7 @@ export const joinOrganization = async ({
     }
 
     if (some(contactEmails, isEmailValid) && isAFreeEmailProvider(email)) {
-      return await linkUserToOrganization({
-        organization_id,
-        user_id,
-        verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
-        needs_official_contact_email_verification: true,
-      });
+      throw new PendingOfficialContactEmailVerificationError(organization_id);
     }
   }
 
@@ -376,12 +372,7 @@ export const joinOrganization = async ({
     }
 
     if (isEmailValid(contactEmail)) {
-      return await linkUserToOrganization({
-        organization_id,
-        user_id,
-        verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
-        needs_official_contact_email_verification: true,
-      });
+      throw new PendingOfficialContactEmailVerificationError(organization_id);
     }
   }
 

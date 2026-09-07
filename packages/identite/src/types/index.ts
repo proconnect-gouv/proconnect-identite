@@ -8,6 +8,7 @@ export * from "./email-domain.js";
 export * from "./franceconnect.js";
 export * from "./identity-vector.js";
 export * from "./moderation.js";
+export * from "./official-contact-email-verification.js";
 export * from "./oidc-client.js";
 export * from "./organization-info.js";
 export * from "./organization.js";

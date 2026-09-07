@@ -28,9 +28,8 @@ describe("markDomainAsVerified", () => {
     `;
     await pg.sql`
       INSERT INTO users_organizations
-        (user_id, organization_id, created_at, updated_at, is_external, verification_type, needs_official_contact_email_verification, official_contact_email_verification_token, official_contact_email_verification_sent_at)
-      VALUES
-        (1, 1, '4444-04-04', '4444-04-04', false, 'no_verification_means_for_entreprise_unipersonnelle', false, null, null)
+      (user_id, organization_id, created_at, updated_at, is_external, verification_type)
+      VALUES (1, 1, '4444-04-04', '4444-04-04', false, 'no_verification_means_for_entreprise_unipersonnelle')
       ;
     `;
     await pg.sql`

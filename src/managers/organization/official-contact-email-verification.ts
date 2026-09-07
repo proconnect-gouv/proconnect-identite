@@ -5,7 +5,9 @@ import type {
   Organization,
   UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
+import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
+import { OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES } from "../../config/env";
 import {
   ApiAnnuaireContactEmailMismatchError,
   ApiAnnuaireError,
@@ -22,13 +24,17 @@ import {
   isCommune,
   isEtablissementScolaireDuPremierEtSecondDegre,
 } from "../../services/organization";
-
-const { findById: findOrganizationById, getUsers } =
-  context.repository.organizations;
-const { update: updateUserOrganizationLink } =
-  context.repository.users_organizations;
-
-const OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES = 60;
+const {
+  findById: findOrganizationById,
+  getUserOrganizationLink,
+  linkUserToOrganization,
+} = context.repository.organizations;
+const {
+  delete: deleteOfficialContactEmailVerification,
+  find: findOfficialContactEmailVerification,
+  upsert: upsertOfficialContactEmailVerification,
+} = context.repository.official_contact_email_verifications;
+const { findById: findUserById } = context.repository.users;
 
 export const isCommuneWithMultipleOfficialContactEmails = async (
   organization: Organization,
@@ -62,21 +68,14 @@ export const sendOfficialContactEmailVerificationEmail = async ({
   contactEmail: string;
   libelle: string | null;
 }> => {
-  const organizationUsers = await getUsers(organization_id);
-  const user = organizationUsers.find(({ id }) => id === user_id);
+  const user = await findUserById(user_id);
   const organization = await findOrganizationById(organization_id);
-
-  // The user should be in the organization already
   if (isEmpty(user) || isEmpty(organization)) {
     throw new NotFoundError();
   }
 
-  const {
-    needs_official_contact_email_verification,
-    official_contact_email_verification_sent_at,
-  } = user;
-
-  if (!needs_official_contact_email_verification) {
+  const link = await getUserOrganizationLink(organization_id, user_id);
+  if (!isEmpty(link)) {
     throw new OfficialContactEmailVerificationNotNeededError();
   }
 
@@ -121,10 +120,13 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     throw new NotFoundError();
   }
 
+  const officialContactEmailVerification =
+    await findOfficialContactEmailVerification({ organization_id, user_id });
+
   if (
     checkBeforeSend &&
     !isExpired(
-      official_contact_email_verification_sent_at,
+      officialContactEmailVerification?.sent_at || null,
       OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
     )
   ) {
@@ -135,11 +137,13 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     };
   }
 
-  const official_contact_email_verification_token = generateDicewarePassword();
+  const token = generateDicewarePassword();
 
-  await updateUserOrganizationLink(organization_id, user_id, {
-    official_contact_email_verification_token,
-    official_contact_email_verification_sent_at: new Date(),
+  await upsertOfficialContactEmailVerification({
+    organization_id,
+    user_id,
+    token,
+    sent_at: new Date(),
   });
 
   const { given_name, family_name, email } = user;
@@ -152,7 +156,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
       family_name: family_name ?? "",
       email,
       libelle: libelle ?? "",
-      token: official_contact_email_verification_token,
+      token,
     }).toString(),
     tag: "official-contact-email-verification",
   });
@@ -173,26 +177,24 @@ export const verifyOfficialContactEmailToken = async ({
   organization_id: number;
   token: string;
 }): Promise<UserOrganizationLink> => {
-  const organizationUsers = await getUsers(organization_id);
-  const user = organizationUsers.find(({ id }) => id === user_id);
+  const user = await findUserById(user_id);
   const organization = await findOrganizationById(organization_id);
-
-  // The user should be in the organization already
-  if (isEmpty(user) || isEmpty(organization)) {
+  const officialContactEmailVerification =
+    await findOfficialContactEmailVerification({ organization_id, user_id });
+  if (
+    isEmpty(user) ||
+    isEmpty(organization) ||
+    isEmpty(officialContactEmailVerification)
+  ) {
     throw new NotFoundError();
   }
 
-  const {
-    official_contact_email_verification_token,
-    official_contact_email_verification_sent_at,
-  } = user;
-
-  if (official_contact_email_verification_token !== token) {
+  if (officialContactEmailVerification.token !== token) {
     throw new InvalidTokenError();
   }
 
   const isTokenExpired = isExpired(
-    official_contact_email_verification_sent_at,
+    officialContactEmailVerification.sent_at,
     OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
   );
 
@@ -200,9 +202,10 @@ export const verifyOfficialContactEmailToken = async ({
     throw new InvalidTokenError();
   }
 
-  return await updateUserOrganizationLink(organization_id, user_id, {
-    needs_official_contact_email_verification: false,
-    official_contact_email_verification_token: null,
-    official_contact_email_verification_sent_at: null,
+  await deleteOfficialContactEmailVerification({ organization_id, user_id });
+  return await linkUserToOrganization({
+    user_id,
+    organization_id,
+    verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
   });
 };

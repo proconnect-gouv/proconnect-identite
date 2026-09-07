@@ -231,9 +231,6 @@ SELECT
 	updated_at,
 	verification_type,
 	has_been_greeted,
-	needs_official_contact_email_verification,
-	'**********' as official_contact_email_verification_token,
-	official_contact_email_verification_sent_at,
 	verified_at
 FROM users_organizations"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_users_organizations ADD PRIMARY KEY("user_id","organization_id")"

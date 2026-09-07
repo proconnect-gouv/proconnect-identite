@@ -12,20 +12,17 @@ export function getUserOrganizationLinkFactory({ pg }: DatabaseContext) {
   ) {
     const { rows }: QueryResult<UserOrganizationLink> = await pg.query(
       `
-SELECT
-  user_id,
-  organization_id,
-  is_external,
-  created_at,
-  updated_at,
-  verification_type,
-  verified_at,
-  has_been_greeted,
-  needs_official_contact_email_verification,
-  official_contact_email_verification_token,
-  official_contact_email_verification_sent_at
-FROM users_organizations
-WHERE organization_id = $1 AND user_id = $2`,
+        SELECT user_id,
+               organization_id,
+               is_external,
+               created_at,
+               updated_at,
+               verification_type,
+               verified_at,
+               has_been_greeted
+        FROM users_organizations
+        WHERE organization_id = $1
+          AND user_id = $2`,
       [organization_id, user_id],
     );
 
