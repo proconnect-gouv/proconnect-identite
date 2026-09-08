@@ -75,7 +75,7 @@ jobs:
         if: steps.data_check.outputs.needs_update == 'true'
         run: |
           mkdir -p .changeset
-          cat << EOF > .changeset/sync-grist-${{ steps.date.outputs.today }}.md
+          cat << EOF > .changeset/sync-grist.md
           ---
           "@proconnect-gouv/proconnect.annuaire_entreprises": patch
           ---
@@ -91,7 +91,7 @@ jobs:
             .changeset/*.md
             packages/annuaire_entreprises/data/*.json
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          branch: github-actions/sync-grist-${{ steps.date.outputs.today }}
+          branch: github-actions/sync-grist
           commit-message: "⬆️ Synchronisation du Grist contenant la liste des administrations"
           delete-branch: true
           title: "⬆️ Synchronisation du Grist contenant la liste des administrations"

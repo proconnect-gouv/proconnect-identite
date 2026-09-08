@@ -1,5 +1,5 @@
-<%- include('/partials/notifications.ejs', {notifications: notifications}) %>
-<%- include('/partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre application TOTP", nextStepTitle: nextStepTitle }); %>
+<%- include('../partials/notifications.ejs', {notifications: notifications}) %>
+<%- include('../partials/stepper.ejs', {currentStep: "2", stepsTitle: "Configurer votre application TOTP", nextStepTitle: nextStepTitle }); %>
 
 <% if (locals.isAuthenticatorAlreadyConfigured) { %>
     <h2>Changer d’application d’authentification</h2>
@@ -69,7 +69,6 @@
             <p>Type : TOTP</p>
             <p>Algorithme : SHA1</p>
         </b>
-        <a href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-icon-question-fill fr-btn--icon-left" target="_blank" rel="noopener noreferrer">Consulter notre page d'aide sur la double authentification</a>
     </div>
 </div>
 

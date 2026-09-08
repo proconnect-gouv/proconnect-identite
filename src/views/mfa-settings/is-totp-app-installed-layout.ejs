@@ -1,4 +1,4 @@
-<%- include('/partials/stepper.ejs', {currentStep: "1", stepsTitle: "Configurer votre outil TOTP", nextStepTitle:"Configurer votre application TOTP" }); %>
+<%- include('../partials/stepper.ejs', {currentStep: "1", stepsTitle: "Configurer votre outil TOTP", nextStepTitle:"Configurer votre application TOTP" }); %>
 
 <form action="<%= totpConfigurationUrl %>" class="checkbox-container" method="get">
   <fieldset
@@ -45,7 +45,7 @@
           <b>Quelle application ou logiciel installer</b> pour générer les codes à chaque session ? 
       </p>
       
-          <aclass="fr-text-action-high--blue-france"
+          <a class="fr-text-action-high--blue-france"
           href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/"
           target="_blank"
           rel="noopener noreferrer"
@@ -65,4 +65,4 @@
   </button>
 </form>
 
-<%- include('/partials/go-back.ejs'); %>
+<%- include('../partials/go-back.ejs'); %>

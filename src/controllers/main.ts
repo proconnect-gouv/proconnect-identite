@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from "express";
-import moment from "moment/moment";
 import z, { ZodError } from "zod";
 import { context } from "../connectors/context";
 import { is2FACapable } from "../managers/2fa";
@@ -10,10 +9,11 @@ import {
 } from "../managers/session/authenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import {
+  disconnectFranceConnectIdentity,
   getFamilyNameOptionsFromFranceConnectIdentity,
   getGivenNameOptionsFromFranceConnectIdentity,
-  hasFranceConnectIdentity,
   hasValidFranceConnectIdentity,
+  lastFranceConnectIdentityUpdate,
   sendUpdatePersonalInformationEmail,
 } from "../managers/user";
 import { getUserAuthenticators } from "../managers/webauthn";
@@ -23,6 +23,7 @@ import {
   nameSchema,
   phoneNumberSchema,
 } from "../services/custom-zod-schemas";
+import { formatDate } from "../services/date-format";
 import { getNotificationsFromRequest } from "../services/get-notifications-from-request";
 
 const { update } = context.repository.users;
@@ -51,6 +52,10 @@ export const getPersonalInformationsController = async (
     const familyNameOptions =
       await getFamilyNameOptionsFromFranceConnectIdentity(user.id);
 
+    const franceconnectUpdatedAt = await lastFranceConnectIdentityUpdate(
+      user.id,
+    );
+
     return res.render("personal-information", {
       csrfToken: csrfToken(req),
       email: user.email,
@@ -60,7 +65,9 @@ export const getPersonalInformationsController = async (
       notifications: await getNotificationsFromRequest(req),
       pageTitle: "Informations personnelles",
       phone_number: user.phone_number,
-      hasFranceConnectIdentity: await hasFranceConnectIdentity(user.id),
+      franceconnect_updated_at: franceconnectUpdatedAt
+        ? formatDate(franceconnectUpdatedAt)
+        : null,
       givenNameOptions,
       familyNameOptions,
     });
@@ -76,7 +83,7 @@ export const postPersonalInformationsController = async (
 ) => {
   try {
     const { id: userId } = getUserFromAuthenticatedSession(req);
-    const hasFCIdentity = await hasFranceConnectIdentity(userId);
+    const hasFCIdentity = await lastFranceConnectIdentityUpdate(userId);
 
     let givenNameOptions: string[] = [];
     let familyNameOptions: string[] = [];
@@ -134,6 +141,24 @@ export const postPersonalInformationsController = async (
   }
 };
 
+export const postDisconnectFranceConnectController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+
+    await disconnectFranceConnectIdentity(userId);
+
+    return res.redirect(
+      "/personal-information?notification=personal_information_franceconnect_disconnected_success",
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getManageOrganizationsController = async (
   req: Request,
   res: Response,
@@ -181,10 +206,7 @@ export const getConnectionAndAccountController = async (
       isVerifiedWithFranceConnect,
       passkeys,
       totpKeyVerifiedAt: totp_key_verified_at
-        ? moment(totp_key_verified_at)
-            .tz("Europe/Paris")
-            .locale("fr")
-            .calendar()
+        ? formatDate(totp_key_verified_at)
         : null,
       csrfToken: csrfToken(req),
       is2faCapable,

@@ -1,4 +1,4 @@
-<%- include('/partials/mfa-decision-helper-header.ejs', { step: "two" }); %>
+<%- include('../partials/mfa-decision-helper-header.ejs', { step: "two" }); %>
 
 <form action="<%= formAction %>" method="get">
   <fieldset
@@ -46,4 +46,4 @@
   <button class="fr-btn btn--fullwidth" type="submit">Continuer</button>
 </form>
 
-<%- include('/partials/mfa-helper-restart.ejs'); %>
+<%- include('../partials/mfa-helper-restart.ejs'); %>

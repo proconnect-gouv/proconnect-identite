@@ -1,7 +1,7 @@
 <div>
-  <%- include('/partials/notifications.ejs', {notifications: notifications}) %>
+  <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
 
-  <%- include('/mfa-settings/double-authentication-choice-layout.ejs', {
+  <%- include('../mfa-settings/double-authentication-choice-layout.ejs', {
     withInfoAlert: true,
     isTotpAppInstalledUrl: '/users/is-totp-app-installed',
     verifyRegistrationAction: '/users/passkeys/verify-registration',

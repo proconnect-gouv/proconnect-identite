@@ -6,7 +6,7 @@ import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import { hasFranceConnectIdentity } from "../../managers/user";
+import { lastFranceConnectIdentityUpdate } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
@@ -37,7 +37,7 @@ export const getPersonalInformationsController = async (
       notifications: await getNotificationsFromRequest(req),
       pageTitle: "Renseigner votre identité",
       phone_number,
-      hasFranceConnectIdentity: await hasFranceConnectIdentity(userId),
+      hasFranceConnectIdentity: await lastFranceConnectIdentityUpdate(userId),
     });
   } catch (error) {
     next(error);
@@ -51,7 +51,7 @@ export const postPersonalInformationsController = async (
 ) => {
   try {
     const { id: userId } = getUserFromAuthenticatedSession(req);
-    const hasFCIdentity = await hasFranceConnectIdentity(userId);
+    const hasFCIdentity = await lastFranceConnectIdentityUpdate(userId);
 
     let updatedUser: User;
 
