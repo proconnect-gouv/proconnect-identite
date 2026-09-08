@@ -83,12 +83,8 @@ export const TestingOidcFranceConnectRouter = new Hono<{
       const { client_id, redirect_uri, state, nonce } = req.valid("query");
       const codeValue = `_${Date.now()}`;
       CODE_MAP.set(codeValue, { client_id, nonce, redirect_uri, state });
-      const basePath = new URL(req.url).pathname
-        .split("/")
-        .slice(0, -3)
-        .join("/");
 
-      return redirect(`${basePath}/interaction/${codeValue}/login`);
+      return redirect(`../../interaction/${codeValue}/login`);
     },
   )
   .get(
