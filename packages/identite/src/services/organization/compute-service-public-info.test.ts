@@ -66,6 +66,16 @@ describe("computeServicePublicInfo", () => {
     assert.equal(result.isServicePublic, false);
   });
 
+  it("should return right roles for administration centrale", () => {
+    const result = computeServicePublicInfo({
+      siret: "26270289700014",
+      cached_categorie_juridique: "7364",
+      cached_etat_administratif: "A",
+    });
+    assert.equal(result.isServicePublic, true);
+    assert.equal(result.isAdministrationEtat, true);
+  });
+
   it("should return false for closed entities", () => {
     const closed_org = {
       siret: "12345678900123",
