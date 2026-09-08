@@ -18,6 +18,12 @@ describe("quit the organization", () => {
     ).click();
 
     cy.contains("Vous ne faites désormais plus partie de cette organisation.");
+
+    cy.maildevGetMessageBySubject(
+      "Vous avez quitté une organisation sur ProConnect",
+    ).then((email) => {
+      cy.maildevDeleteMessageById(email.id);
+    });
   });
 
   it("quit my last organization and get redirected to join page", function () {
