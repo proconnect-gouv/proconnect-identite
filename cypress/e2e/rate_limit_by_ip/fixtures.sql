@@ -25,7 +25,42 @@ VALUES
     'Limit',
     '0123456789',
     'Rate limit test user'
+  ),
+  (
+    2,
+    'rate-limit+user2@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Rate',
+    'Limit',
+    '0123456789',
+    'Rate limit test user'
   );
+
+INSERT INTO
+  organizations (id, cached_libelle, siret, created_at, updated_at)
+VALUES
+  (
+    1,
+    'Commune de lamalou-les-bains - Mairie',
+    '21340126800130',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  );
+
+INSERT INTO
+  users_organizations (
+    user_id,
+    organization_id,
+    is_external,
+    verification_type,
+    has_been_greeted
+  )
+VALUES
+  (1, 1, false, 'domain', true);
 
 INSERT INTO
   oidc_clients (

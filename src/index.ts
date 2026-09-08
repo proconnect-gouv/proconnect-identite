@@ -27,6 +27,10 @@ import { OidcError } from "./config/errors";
 import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
+import {
+  apiRateLimiterMiddleware,
+  rateLimiterMiddleware,
+} from "./middlewares/rate-limiter";
 import { apiRouter } from "./routers/api";
 import { interactionRouter } from "./routers/interaction";
 import { mainRouter } from "./routers/main";
@@ -155,6 +159,21 @@ app.get("/favicon.ico", function (_req, res, _next) {
   });
 });
 
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    return apiRateLimiterMiddleware(req, res, next);
+  }
+
+  return rateLimiterMiddleware(req, res, (err) => {
+    if (err) {
+      // If an error occurs, add the EJS layout middleware to render a properly formatted 429 error page
+      return ejsLayoutMiddlewareFactory(app)(req, res, () => next(err));
+    }
+
+    return next();
+  });
+});
+
 app.use("/", mainRouter(app));
 app.use(
   "/interaction",
@@ -206,6 +225,19 @@ app.use(function errorHandler(
   _next: NextFunction,
 ) {
   logger.error(inspect(err, { depth: 3 }));
+
+  if (req.path.startsWith("/api/")) {
+    if (err instanceof HttpErrors.HttpError) {
+      const statusCode = err?.statusCode || 500;
+
+      return res
+        .status(statusCode)
+        .json({ message: err.message || err["statusMessage"] });
+    }
+
+    return res.status(500).json({ message: err.message });
+  }
+
   if (err instanceof HttpErrors.HttpError) {
     if (err.statusCode === 404) {
       return res.status(404).render("not-found-error", {
