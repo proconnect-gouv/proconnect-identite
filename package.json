@@ -60,7 +60,8 @@
     "watch:workspaces:email": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.email",
     "watch:workspaces:entreprise": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.api_entreprise",
     "watch:workspaces:insee": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.insee",
-    "watch:workspaces:identite": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.identite"
+    "watch:workspaces:identite": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.identite",
+    "watch:workspaces:testing": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.testing"
   },
   "prettier": {
     "language": "postgresql",
