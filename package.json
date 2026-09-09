@@ -102,7 +102,7 @@
     "moment-timezone": "^0.6.3",
     "morgan": "^1.11.0",
     "nocache": "^4.0.0",
-    "nodemailer": "^9.0.1",
+    "nodemailer": "^9.1.1",
     "oidc-provider": "^9.5.1",
     "otpauth": "^9.4.1",
     "pg": "^8.16.3",
