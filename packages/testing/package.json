@@ -29,7 +29,8 @@
     }
   },
   "scripts": {
-    "build": "tsc --build tsconfig.lib.json && node dist/scripts/copy-json.js",
+    "build": "tsx src/scripts/copy-json.ts && tsc --build tsconfig.lib.json",
+    "dev": "npm run build -- --watch --preserveWatchOutput",
     "dev:test": "tsx --watch --test src/**/*.test.ts tests/**/*.test.ts",
     "test": "npm run test:unit",
     "test:unit": "tsx --test --test-reporter=spec src/**/*.test.ts tests/**/*.test.ts"
