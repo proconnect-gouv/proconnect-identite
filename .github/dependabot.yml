@@ -71,3 +71,9 @@ updates:
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"
+  - package-ecosystem: "nix"
+    directory: "/"
+    labels:
+      - dependencies
+    schedule:
+      interval: "weekly"
