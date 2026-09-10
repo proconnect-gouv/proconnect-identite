@@ -1,0 +1,28 @@
+<h1 class="fr-h3">
+  🛡️ Multipliez vos méthodes de double authentification (2FA) !
+</h1>
+
+<p class="fr-text--lg">Vous utilisez <%= methode2FA %>.</p>
+
+<p>
+  <strong
+    >Savez-vous que vous pouvez ajouter une seconde méthode de double
+    authentification (2FA) ?</strong
+  ><br />
+  En cas de problème avec la première (déplacement, smartphone perdu,
+  indisponibilité), vous gardez l'accès à votre compte grâce à la seconde !
+</p>
+
+<div class="fr-btns-group fr-btns-group--icon-left fr-mt-4w">
+  <a href="/users/double-authentication-choice" class="fr-btn"> Configurer </a>
+  <form
+    method="post"
+    action="/users/multiple-2fa-suggestion/ignore"
+    class="form--contents"
+  >
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <button type="submit" class="fr-btn fr-btn--secondary">
+      Ignorer pour le moment
+    </button>
+  </form>
+</div>

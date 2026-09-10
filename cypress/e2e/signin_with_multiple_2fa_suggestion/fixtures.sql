@@ -1,0 +1,142 @@
+INSERT INTO
+  users (
+    id,
+    email,
+    email_verified,
+    email_verified_at,
+    encrypted_password,
+    created_at,
+    updated_at,
+    given_name,
+    family_name,
+    phone_number,
+    job,
+    encrypted_totp_key,
+    totp_key_verified_at,
+    force_2fa,
+    multiple_2fa_suggestion_ignored_at
+  )
+VALUES
+  (
+    1,
+    'single-totp-never-seen@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Jean',
+    '0123456789',
+    'Sbire',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    true,
+    NULL
+  ),
+  (
+    2,
+    'single-totp-recently-ignored@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Jean',
+    '0123456789',
+    'Sbire',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    true,
+    CURRENT_TIMESTAMP - INTERVAL '5 days'
+  ),
+  (
+    3,
+    'single-totp-ignored-long-ago@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Jean',
+    '0123456789',
+    'Sbire',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    true,
+    CURRENT_TIMESTAMP - INTERVAL '31 days'
+  ),
+  (
+    4,
+    'single-totp-adding-second-method@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Jean',
+    '0123456789',
+    'Sbire',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    true,
+    NULL
+  );
+
+INSERT INTO
+  organizations (id, siret, created_at, updated_at)
+VALUES
+  (
+    1,
+    '21340126800130',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  );
+
+INSERT INTO
+  users_organizations (
+    user_id,
+    organization_id,
+    is_external,
+    verification_type,
+    has_been_greeted
+  )
+VALUES
+  (1, 1, false, 'domain', true),
+  (2, 1, false, 'domain', true),
+  (3, 1, false, 'domain', true),
+  (4, 1, false, 'domain', true);
+
+INSERT INTO
+  oidc_clients (
+    client_name,
+    client_id,
+    client_secret,
+    redirect_uris,
+    post_logout_redirect_uris,
+    scope,
+    client_uri,
+    client_description,
+    userinfo_signed_response_alg,
+    id_token_signed_response_alg,
+    authorization_signed_response_alg,
+    introspection_signed_response_alg
+  )
+VALUES
+  (
+    'Oidc Test Client',
+    'standard_client_id',
+    'standard_client_secret',
+    ARRAY['http://localhost:4000/login-callback'],
+    ARRAY[]::varchar[],
+    'openid email profile organization',
+    'http://localhost:4000/',
+    'ProConnect test client. More info: https://github.com/proconnect-gouv/proconnect-test-client.',
+    null,
+    null,
+    null,
+    null
+  );
