@@ -68,9 +68,11 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
+  getMultipleTwoFactorsSuggestionController,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
+  postIgnoreMultipleTwoFactorsSuggestionController,
   postTotpConfigurationController,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
@@ -227,6 +229,22 @@ export const userRouter = () => {
     userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
     post2faSuccessfullyConfiguredMiddleware,
+    userSignInRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
+  );
+
+  userRouter.get(
+    "/multiple-2fa-suggestion",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    getMultipleTwoFactorsSuggestionController,
+  );
+
+  userRouter.post(
+    "/multiple-2fa-suggestion/ignore",
+    userHasConnectedRecentlyGuardMiddleware,
+    csrfProtectionMiddleware,
+    postIgnoreMultipleTwoFactorsSuggestionController,
     userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );

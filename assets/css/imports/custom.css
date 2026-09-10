@@ -136,3 +136,7 @@ input[readonly] {
   );
   padding: 0 0 0.5rem;
 }
+
+.form--contents {
+  display: contents;
+}
