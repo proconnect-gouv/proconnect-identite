@@ -13,7 +13,8 @@ INSERT INTO
     job,
     encrypted_totp_key,
     totp_key_verified_at,
-    force_2fa
+    force_2fa,
+    multiple_2fa_suggestion_ignored_at
   )
 VALUES
   (
@@ -30,7 +31,8 @@ VALUES
     'Sbire',
     null,
     null,
-    false
+    false,
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO
