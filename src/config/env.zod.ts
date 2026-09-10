@@ -157,6 +157,11 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(20 * 60),
+  MULTIPLE_2FA_SUGGESTION_RENEWAL_IN_MINUTES: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(30 * 24 * 60), // 30 days in minutes
   NODE_ENV: z
     .enum(["production", "development", "test"])
     .default("development"),
