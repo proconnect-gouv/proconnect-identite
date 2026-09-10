@@ -72,7 +72,7 @@ export const getConfiguredMethodLabel = async (
 export const needsMultipleTwoFactorsSuggestionRenewal = async (
   user_id: number,
 ) => {
-  const user = await getById(user_id);
+  const user = await users.getById(user_id);
 
   if (!user.multiple_2fa_suggestion_ignored_at) {
     return true;
@@ -86,9 +86,9 @@ export const needsMultipleTwoFactorsSuggestionRenewal = async (
 
 export const ignoreMultipleTwoFactorsSuggestion = async (user_id: number) => {
   // ASSERTION: user exists
-  await getById(user_id);
+  await users.getById(user_id);
 
-  return await update(user_id, {
+  return await users.update(user_id, {
     multiple_2fa_suggestion_ignored_at: new Date(),
   });
 };

@@ -260,37 +260,6 @@ export const moderations = pgTable(
   ],
 );
 
-export const official_contact_email_verifications = pgTable(
-  "official_contact_email_verifications",
-  {
-    user_id: integer().notNull(),
-    organization_id: integer().notNull(),
-    token: varchar(),
-    sent_at: timestamp({ withTimezone: true, mode: "string" }),
-    created_at: timestamp({ withTimezone: true, mode: "string" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updated_at: timestamp({ withTimezone: true, mode: "string" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-  },
-  (table) => [
-    foreignKey({
-      columns: [table.user_id],
-      foreignColumns: [users.id],
-      name: "official_contact_email_verifications_user_id_fkey",
-    }).onDelete("cascade"),
-    foreignKey({
-      columns: [table.organization_id],
-      foreignColumns: [organizations.id],
-      name: "official_contact_email_verifications_organization_id_fkey",
-    }).onDelete("cascade"),
-    primaryKey({
-      columns: [table.user_id, table.organization_id],
-      name: "official_contact_email_verifications_pkey",
-    }),
-  ],
-);
 export const users = pgTable(
   "users",
   {
@@ -333,6 +302,38 @@ export const users = pgTable(
       "btree",
       table.reset_password_token.asc().nullsLast().op("text_ops"),
     ),
+  ],
+);
+
+export const official_contact_email_verifications = pgTable(
+  "official_contact_email_verifications",
+  {
+    user_id: integer().notNull(),
+    organization_id: integer().notNull(),
+    token: varchar(),
+    sent_at: timestamp({ withTimezone: true, mode: "string" }),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.user_id],
+      foreignColumns: [users.id],
+      name: "official_contact_email_verifications_user_id_fkey",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [table.organization_id],
+      foreignColumns: [organizations.id],
+      name: "official_contact_email_verifications_organization_id_fkey",
+    }).onDelete("cascade"),
+    primaryKey({
+      columns: [table.user_id, table.organization_id],
+      name: "official_contact_email_verifications_pkey",
+    }),
   ],
 );
 

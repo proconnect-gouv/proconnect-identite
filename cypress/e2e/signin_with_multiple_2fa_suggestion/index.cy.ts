@@ -63,18 +63,13 @@ describe("signin with multiple 2fa suggestion", () => {
         hasResidentKey: true,
         hasUserVerification: true,
         isUserVerified: true,
-      })
-        .as("authenticator")
-        .then((authenticatorId) => {
-          this["authenticatorId"] = authenticatorId;
-        });
+      });
     });
 
     it("should never show the suggestion once a second method is added", function () {
       cy.visit("/connection-and-account");
       cy.mfaLogin("single-totp-adding-second-method@yopmail.com");
 
-      // à ce stade, une seule méthode est configurée : la suggestion s'affiche normalement
       cy.contains("Multipliez vos méthodes de double authentification (2FA) !");
       cy.contains("Configurer").click();
 
@@ -88,20 +83,8 @@ describe("signin with multiple 2fa suggestion", () => {
       // LOGOUT
       cy.contains("Jean Jean").click();
 
-      cy.setUserVerified({
-        authenticatorId: this["authenticatorId"],
-        isUserVerified: false,
-      });
-
-      cy.on("uncaught:exception", (err) => {
-        if (err.name === "NotAllowedError") {
-          return false;
-        }
-        return true;
-      });
-
       cy.visit("/connection-and-account");
-      cy.login("single-totp-adding-second-method@yopmail.com");
+      cy.mfaLogin("single-totp-adding-second-method@yopmail.com");
 
       cy.title().should("include", "Compte et connexion");
     });
