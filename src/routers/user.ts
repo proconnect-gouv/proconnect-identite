@@ -116,7 +116,6 @@ import {
   authenticatorRateLimiterMiddleware,
   officialContactEmailVerificationRateLimiterMiddleware,
   passwordRateLimiterMiddleware,
-  rateLimiterMiddleware,
   sendEmailVerificationRateLimiterMiddleware,
   sendMagicLinkRateLimiterMiddleware,
   verifyEmailRateLimiterMiddleware,
@@ -128,8 +127,6 @@ export const userRouter = () => {
   userRouter.use(nocache());
 
   userRouter.use(urlencoded({ extended: false }));
-
-  userRouter.use(rateLimiterMiddleware);
 
   userRouter.get(
     "/start-sign-in",
