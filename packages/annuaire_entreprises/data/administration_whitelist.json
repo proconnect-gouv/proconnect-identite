@@ -2430,8 +2430,18 @@
     "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   },
   {
-    "siren": "",
-    "denomination": "",
-    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": false
+    "siren": "193100989",
+    "denomination": "CENTRE DE RESSOURCES D'EXPERTISE ET DE PERFORMANCE SPORTIVE (CREPS)",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "422097683",
+    "denomination": "ETS PUBLIC FONCIER OUEST RHONE ALPES (EPORA)",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "784301111",
+    "denomination": "INSTITUT D'EMISSION D'OUTRE-MER (IEOM)",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   }
 ]
