@@ -2,7 +2,6 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { isEmpty } from "lodash-es";
 import { context } from "../../connectors/context";
-import { getOrganizationById } from "../../managers/organization/main";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -10,7 +9,7 @@ import {
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { getSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 
-const { users } = context.repository;
+const { organizations, users } = context.repository;
 
 export const getWelcomeController = async (
   req: Request,
@@ -31,7 +30,7 @@ export const getWelcomeController = async (
     let organization = null;
 
     if (selectedOrganizationId !== null) {
-      const userOrganisation = await getOrganizationById(
+      const userOrganisation = await organizations.findById(
         selectedOrganizationId,
       );
 
@@ -82,12 +81,14 @@ export const getWelcomeDirigeantController = async (
     if (selectedOrganizationId === null)
       throw new NotFoundError("Selected organization not found");
 
-    const userOrganisations = await getOrganizationById(selectedOrganizationId);
+    const userOrganisations = await organizations.findById(
+      selectedOrganizationId,
+    );
 
     if (!userOrganisations)
       throw new NotFoundError("User in organization not found");
 
-    const user_info = await users.getFranceConnectUserInfo(user.id);
+    const user_info = await users.findFranceConnectUserInfo(user.id);
 
     if (isEmpty(user_info))
       throw new NotFoundError("FranceConnect User info not found");

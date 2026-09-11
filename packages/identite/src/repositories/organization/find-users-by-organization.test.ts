@@ -3,13 +3,15 @@
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
-import { getUsersByOrganizationFactory } from "./get-users-by-organization.js";
+import { findUsersByOrganizationFactory } from "./find-users-by-organization.js";
 
 //
 
-const getUsersByOrganization = getUsersByOrganizationFactory({ pg: pg as any });
+const findUsersByOrganization = findUsersByOrganizationFactory({
+  pg: pg as any,
+});
 
-describe("getUsersByOrganizationFactory", () => {
+describe("findUsersByOrganizationFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
@@ -37,13 +39,13 @@ describe("getUsersByOrganizationFactory", () => {
       ;
     `;
 
-    const user = await getUsersByOrganization(1);
+    const user = await findUsersByOrganization(1);
 
     t.assert.snapshot(user);
   });
 
   it("❎ fail to find users for unknown organization id", async () => {
-    const user = await getUsersByOrganization(42);
+    const user = await findUsersByOrganization(42);
     assert.deepEqual(user, []);
   });
 });

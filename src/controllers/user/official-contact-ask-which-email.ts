@@ -3,10 +3,12 @@ import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { ApiAnnuaireError } from "../../config/errors";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
-import { getOrganizationById } from "../../managers/organization/main";
+import { context } from "../../connectors/context";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 import { getOrganizationTypeLabel } from "../../services/organization";
+
+const { organizations } = context.repository;
 
 export const getOfficialContactAskWhichEmailController = async (
   req: Request,
@@ -16,7 +18,7 @@ export const getOfficialContactAskWhichEmailController = async (
   try {
     const organization_id =
       req.session.pendingOfficialContactEmailVerificationOrganizationId!;
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
       throw HttpErrors.NotFound();
     }

@@ -1,4 +1,4 @@
-exports[`getUsersByOrganizationFactory > should find users by organization id 1`] = `
+exports[`findUsersByOrganizationFactory > should find users by organization id 1`] = `
 [
   {
     "id": 1,

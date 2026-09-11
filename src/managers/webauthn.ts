@@ -42,7 +42,7 @@ export const isWebauthnConfiguredForUser = async (user_id: number) => {
   await users.getById(user_id);
 
   const userAuthenticators =
-    await authenticators.getAuthenticatorsByUserId(user_id);
+    await authenticators.findAuthenticatorsByUserId(user_id);
   return !isEmpty(userAuthenticators);
 };
 
@@ -53,7 +53,7 @@ export const getUserAuthenticators = async (email: string) => {
     throw new NotFoundError();
   }
 
-  const userAuthenticators = await authenticators.getAuthenticatorsByUserId(
+  const userAuthenticators = await authenticators.findAuthenticatorsByUserId(
     user.id,
   );
 
@@ -112,7 +112,7 @@ export const getRegistrationOptions = async (email: string) => {
   }
 
   // Retrieve any of the user's previously-registered authenticators
-  const userAuthenticators = await authenticators.getAuthenticatorsByUserId(
+  const userAuthenticators = await authenticators.findAuthenticatorsByUserId(
     user.id,
   );
 
@@ -239,7 +239,7 @@ export const getAuthenticationOptions = async (
   }
 
   // Retrieve any of the user's previously registered authenticators
-  const userAuthenticators = await authenticators.getAuthenticatorsByUserId(
+  const userAuthenticators = await authenticators.findAuthenticatorsByUserId(
     user.id,
   );
 

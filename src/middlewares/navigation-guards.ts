@@ -4,6 +4,10 @@ import type { Request, RequestHandler } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import { match, P } from "ts-pattern";
+import type {
+  BaseUserOrganizationLink,
+  Organization,
+} from "../../packages/identite/src/types";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   HOST,
@@ -26,11 +30,7 @@ import {
   greetForCertification,
   greetForJoiningOrganization,
 } from "../managers/organization/join";
-import {
-  getOrganizationBySiret,
-  getOrganizationsByUserId,
-  selectOrganization,
-} from "../managers/organization/main";
+import { selectOrganization } from "../managers/organization/main";
 import { isCommuneWithMultipleOfficialContactEmails } from "../managers/organization/official-contact-email-verification";
 import {
   getCurrentAcr,
@@ -63,10 +63,6 @@ const { organizations, users_organizations, users } = context.repository;
 //
 
 type RequestContext = { req: Request };
-
-type UserOrganizationsByUserId = Awaited<
-  ReturnType<typeof getOrganizationsByUserId>
->;
 
 type Redirect = {
   type: "redirect";
@@ -431,7 +427,7 @@ const userHasAtLeastOneOrganizationGuard = async (
     redirect,
   } = context;
 
-  const userOrganizations = await getOrganizationsByUserId(
+  const userOrganizations = await organizations.findByUserId(
     getUserFromAuthenticatedSession(req).id,
   );
   if (isEmpty(userOrganizations)) {
@@ -463,7 +459,7 @@ export const userHasAtLeastOneOrganizationGuardMiddleware =
 
 const userBelongsToHintedOrganizationGuard = async <
   TContext extends RequestContext & {
-    userOrganizations: UserOrganizationsByUserId;
+    userOrganizations: (Organization & BaseUserOrganizationLink)[];
   },
 >(
   context: Pass<TContext>,
@@ -474,7 +470,7 @@ const userBelongsToHintedOrganizationGuard = async <
     redirect,
   } = context;
   if (req.session.siretHint) {
-    const hintedOrganization = await getOrganizationBySiret(
+    const hintedOrganization = await organizations.findBySiret(
       req.session.siretHint,
     );
     const userFromAuthenticatedSession = getUserFromAuthenticatedSession(req);
@@ -501,7 +497,7 @@ const userBelongsToHintedOrganizationGuard = async <
 
 const userHasSelectedAnOrganizationGuard = async <
   TContext extends RequestContext & {
-    userOrganizations: UserOrganizationsByUserId;
+    userOrganizations: (Organization & BaseUserOrganizationLink)[];
   },
 >(
   context: Pass<TContext>,
@@ -644,7 +640,7 @@ const userIsCertifiedAsDirigeantGuard = async <
 
   if (linkType === LinkEnum.enum.organization_dirigeant) {
     const franceconnectUserInfo =
-      (await users.getFranceConnectUserInfo(user_id))!;
+      (await users.findFranceConnectUserInfo(user_id))!;
     const expiredCertification = isExpired(
       linkVerifiedAt,
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
@@ -670,7 +666,7 @@ const userHasBeenGreetedGuard = async (context: Pass<RequestContext>) => {
   } = context;
   const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-  const userOrganizations = await getOrganizationsByUserId(user_id);
+  const userOrganizations = await organizations.findByUserId(user_id);
 
   let organizationThatNeedsGreetings;
 
@@ -793,7 +789,7 @@ const processCertificationDirigeantGuard = async (
   }
 
   const franceconnectUserInfo =
-    (await users.getFranceConnectUserInfo(user_id))!;
+    (await users.findFranceConnectUserInfo(user_id))!;
   const organization = await organizations.getById(organization_id);
 
   try {

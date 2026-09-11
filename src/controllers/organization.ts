@@ -42,7 +42,6 @@ import {
   upsertOrganization,
 } from "../managers/organization/join";
 import {
-  getOrganizationById,
   quitOrganization,
   selectOrganization,
 } from "../managers/organization/main";
@@ -57,7 +56,7 @@ import {
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
 
-const { moderations, users } = context.repository;
+const { moderations, organizations, users } = context.repository;
 
 export const getJoinOrganizationController = async (
   req: Request,
@@ -265,7 +264,7 @@ export const getDomainNotAllowedForOrganizationController = async (
 
     const { organization_id } = await schema.parseAsync(req.query);
 
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
       return next(new HttpErrors.NotFound());
     }
@@ -294,7 +293,7 @@ export const getDomainRefusedForOrganizationController = async (
 
     const { organization_id } = await schema.parseAsync(req.query);
 
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
       return next(new HttpErrors.NotFound());
     }
@@ -321,7 +320,7 @@ export const getJoinOrganizationConfirmController = async (
 
     const { organization_id } = await schema.parseAsync(req.query);
 
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
 
     if (isEmpty(organization)) {
       return next(new HttpErrors.NotFound());
@@ -466,7 +465,7 @@ export async function getCertificationDirigeantCloseMatchError(
       .parse(req.query);
 
     const user = getUserFromAuthenticatedSession(req);
-    const user_info = await users.getFranceConnectUserInfo(user.id);
+    const user_info = await users.findFranceConnectUserInfo(user.id);
 
     const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
       query.source,
