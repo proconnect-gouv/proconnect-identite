@@ -1,6 +1,23 @@
 //
 
-import type { TrancheEffectifs } from "@proconnect-gouv/proconnect.api_entreprise/types";
+export type TrancheEffectifs =
+  | "NN"
+  | "00"
+  | "01"
+  | "02"
+  | "03"
+  | "11"
+  | "12"
+  | "21"
+  | "22"
+  | "31"
+  | "32"
+  | "41"
+  | "42"
+  | "51"
+  | "52"
+  | "53"
+  | null;
 
 //
 

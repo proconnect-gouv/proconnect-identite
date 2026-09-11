@@ -1,6 +1,6 @@
 //
-import type { TrancheEffectifs } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import { z } from "zod";
+import type { TrancheEffectifs } from "./organization.js";
 
 //
 
