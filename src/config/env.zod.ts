@@ -141,6 +141,11 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(20 * 60), // 20 minutes in seconds,
+  MULTIPLE_2FA_SUGGESTION_RENEWAL_IN_MINUTES: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(30 * 24 * 60), // 30 days in minutes
   HOST: z.string().url().default("http://localhost:3000"),
   APPLICATION_NAME: z.string().default("ProConnect"),
   NODE_ENV: z

@@ -381,7 +381,8 @@ CREATE TABLE "public"."users" (
   "needs_inclusionconnect_onboarding_help" boolean DEFAULT false NOT NULL,
   "encrypted_totp_key" character varying,
   "totp_key_verified_at" timestamp with time zone,
-  "force_2fa" boolean DEFAULT false NOT NULL
+  "force_2fa" boolean DEFAULT false NOT NULL,
+  "multiple_2fa_suggestion_ignored_at" timestamp with time zone
 );
 
 --

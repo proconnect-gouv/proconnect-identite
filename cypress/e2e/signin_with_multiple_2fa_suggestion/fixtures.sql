@@ -19,7 +19,7 @@ INSERT INTO
 VALUES
   (
     1,
-    'unused1@yopmail.com',
+    'single-totp-never-seen@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -32,11 +32,11 @@ VALUES
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
     true,
-    CURRENT_TIMESTAMP
+    NULL
   ),
   (
     2,
-    'lion.eljonson@darkangels.world',
+    'single-totp-recently-ignored@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -48,12 +48,12 @@ VALUES
     'Sbire',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false,
-    CURRENT_TIMESTAMP
+    true,
+    CURRENT_TIMESTAMP - INTERVAL '5 days'
   ),
   (
     3,
-    'unused3@yopmail.com',
+    'single-totp-ignored-long-ago@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -66,13 +66,13 @@ VALUES
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
     true,
-    CURRENT_TIMESTAMP
+    CURRENT_TIMESTAMP - INTERVAL '31 days'
   ),
   (
     4,
-    'jul.treize@marseille.world',
+    'single-totp-adding-second-method@yopmail.com',
     true,
-    CURRENT_TIMESTAMP - INTERVAL '3 MONTHS 1 WEEK',
+    CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
@@ -83,7 +83,7 @@ VALUES
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
     true,
-    CURRENT_TIMESTAMP
+    NULL
   );
 
 INSERT INTO

@@ -13,7 +13,8 @@ INSERT INTO
     job,
     encrypted_totp_key,
     totp_key_verified_at,
-    force_2fa
+    force_2fa,
+    multiple_2fa_suggestion_ignored_at
   )
 VALUES
   (
@@ -30,7 +31,8 @@ VALUES
     'Sbire',
     null,
     null,
-    false
+    false,
+    CURRENT_TIMESTAMP
   ),
   (
     2,
@@ -46,7 +48,8 @@ VALUES
     'Sbire',
     null,
     null,
-    false
+    false,
+    CURRENT_TIMESTAMP
   ),
   (
     3,
@@ -62,7 +65,8 @@ VALUES
     'Sbire',
     null,
     null,
-    false
+    false,
+    CURRENT_TIMESTAMP
   ),
   (
     4,
@@ -78,7 +82,8 @@ VALUES
     'Sbire',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false
+    false,
+    CURRENT_TIMESTAMP
   ),
   (
     5,
@@ -94,7 +99,8 @@ VALUES
     'Sbire',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false
+    false,
+    CURRENT_TIMESTAMP
   ),
   (
     6,
@@ -110,7 +116,8 @@ VALUES
     'Dirigeant',
     null,
     null,
-    false
+    false,
+    CURRENT_TIMESTAMP
   ),
   (
     7,
@@ -126,7 +133,8 @@ VALUES
     'Dirigeant',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false
+    false,
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO

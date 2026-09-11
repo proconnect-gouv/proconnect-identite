@@ -15,7 +15,12 @@ import {
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../config/errors";
 import { context } from "../connectors/context";
-import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
+import {
+  hasOnlyOneTwoFactorAuthMethodConfigured,
+  is2FACapable,
+  needsMultipleTwoFactorsSuggestionRenewal,
+  shouldForce2faForUser,
+} from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import {
   getCertificationDirigeantCloseMatchErrorUrl,
@@ -912,10 +917,35 @@ const processCertificationDirigeantGuard = async (
   }
 };
 
+const userHasSeenMultipleTwoFactorsSuggestionGuard = async (
+  context: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+    pass,
+    redirect,
+  } = context;
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+  if (
+    (await hasOnlyOneTwoFactorAuthMethodConfigured(user_id)) &&
+    (await needsMultipleTwoFactorsSuggestionRenewal(user_id))
+  ) {
+    return redirect("/users/multiple-2fa-suggestion");
+  }
+
+  return pass("user_has_seen_multiple_two_factors_suggestion");
+};
+
 async function userSignInRequirementsGuard(
   prev: Pass<RequestContext>,
 ): Promise<GuardResult<string, RequestContext>> {
-  const context = await browserIsTrustedGuard(prev);
+  let context;
+
+  context = await browserIsTrustedGuard(prev);
+  if (!Pass.is_passing(context)) return context;
+
+  context = await userHasSeenMultipleTwoFactorsSuggestionGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   const {
