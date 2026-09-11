@@ -28,18 +28,7 @@ import { formatDate } from "../services/date-format";
 import { logger } from "../services/log";
 import { disableForce2fa, is2FACapable } from "./2fa";
 
-const {
-  createAuthenticator,
-  deleteAuthenticator,
-  findAuthenticator,
-  getAuthenticatorsByUserId,
-  updateAuthenticator,
-} = context.repository.authenticators;
-const {
-  findByEmail: findUserByEmail,
-  getById,
-  update,
-} = context.repository.users;
+const { authenticators, users } = context.repository;
 
 // Human-readable title for your website
 const rpName = APPLICATION_NAME;
@@ -50,20 +39,23 @@ const origin = HOST;
 
 export const isWebauthnConfiguredForUser = async (user_id: number) => {
   // ASSERTION: user exists
-  await getById(user_id);
+  await users.getById(user_id);
 
-  const authenticators = await getAuthenticatorsByUserId(user_id);
-  return !isEmpty(authenticators);
+  const userAuthenticators =
+    await authenticators.getAuthenticatorsByUserId(user_id);
+  return !isEmpty(userAuthenticators);
 };
 
 export const getUserAuthenticators = async (email: string) => {
-  const user = await findUserByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
     throw new NotFoundError();
   }
 
-  const userAuthenticators = await getAuthenticatorsByUserId(user.id);
+  const userAuthenticators = await authenticators.getAuthenticatorsByUserId(
+    user.id,
+  );
 
   return userAuthenticators.map(
     ({
@@ -90,13 +82,16 @@ export const deleteUserAuthenticator = async (
   email: string,
   credential_id: string,
 ) => {
-  const user = await findUserByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
     throw new NotFoundError();
   }
 
-  const hasBeenDeleted = await deleteAuthenticator(user.id, credential_id);
+  const hasBeenDeleted = await authenticators.deleteAuthenticator(
+    user.id,
+    credential_id,
+  );
 
   if (!hasBeenDeleted) {
     throw new NotFoundError();
@@ -110,14 +105,16 @@ export const deleteUserAuthenticator = async (
 };
 
 export const getRegistrationOptions = async (email: string) => {
-  const user = await findUserByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
     throw new NotFoundError();
   }
 
   // Retrieve any of the user's previously-registered authenticators
-  const userAuthenticators = await getAuthenticatorsByUserId(user.id);
+  const userAuthenticators = await authenticators.getAuthenticatorsByUserId(
+    user.id,
+  );
 
   const registrationOptions = await generateRegistrationOptions({
     rpName,
@@ -146,7 +143,7 @@ export const getRegistrationOptions = async (email: string) => {
   });
 
   // Remember the challenge for this user
-  const updatedUser = await update(user.id, {
+  const updatedUser = await users.update(user.id, {
     current_challenge: registrationOptions.challenge,
   });
 
@@ -160,7 +157,7 @@ export const verifyRegistration = async ({
   email: string;
   response: RegistrationResponseJSON;
 }) => {
-  const user = await findUserByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user) || !user.current_challenge) {
     throw new NotFoundError();
@@ -168,7 +165,7 @@ export const verifyRegistration = async ({
 
   const current_challenge = user.current_challenge;
   // challenge must only be used once
-  const updatedUser = await update(user.id, { current_challenge: null });
+  const updatedUser = await users.update(user.id, { current_challenge: null });
 
   let verification: VerifiedRegistrationResponse;
   try {
@@ -208,7 +205,7 @@ export const verifyRegistration = async ({
   const display_name = await getAuthenticatorFriendlyName(aaguid);
 
   // Save the authenticator info so that we can get it by user ID later
-  await createAuthenticator({
+  await authenticators.createAuthenticator({
     user_id: user.id,
     authenticator: {
       credential_id,
@@ -235,14 +232,16 @@ export const getAuthenticationOptions = async (
     throw new NotFoundError();
   }
 
-  const user = await findUserByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
     throw new UserNotFoundError();
   }
 
   // Retrieve any of the user's previously registered authenticators
-  const userAuthenticators = await getAuthenticatorsByUserId(user.id);
+  const userAuthenticators = await authenticators.getAuthenticatorsByUserId(
+    user.id,
+  );
 
   const authenticationOptions = await generateAuthenticationOptions({
     rpID,
@@ -256,7 +255,7 @@ export const getAuthenticationOptions = async (
   });
 
   // Remember the challenge for this user
-  const updatedUser = await update(user.id, {
+  const updatedUser = await users.update(user.id, {
     current_challenge: authenticationOptions.challenge,
   });
 
@@ -276,7 +275,7 @@ export const verifyAuthentication = async ({
     throw new NotFoundError();
   }
 
-  const user = await findUserByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user) || !user.current_challenge) {
     throw new NotFoundError();
@@ -284,10 +283,13 @@ export const verifyAuthentication = async ({
 
   const current_challenge = user.current_challenge;
   // challenge must only be used once
-  await update(user.id, { current_challenge: null });
+  await users.update(user.id, { current_challenge: null });
 
   // Retrieve an authenticator from the DB that should match the `id` in the returned credential
-  const authenticator = await findAuthenticator(user.id, response.id);
+  const authenticator = await authenticators.findAuthenticator(
+    user.id,
+    response.id,
+  );
 
   if (isEmpty(authenticator)) {
     throw new NotFoundError("Authenticator not found", {
@@ -358,7 +360,7 @@ export const verifyAuthentication = async ({
     userVerified,
   } = authenticationInfo;
 
-  await updateAuthenticator(newCredentialID, {
+  await authenticators.updateAuthenticator(newCredentialID, {
     // for some reason, newCounter is not incremented in authenticationInfo
     counter: newCounter,
     last_used_at: new Date(),

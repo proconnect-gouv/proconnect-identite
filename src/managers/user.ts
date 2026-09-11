@@ -52,20 +52,9 @@ import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import { isExpired } from "../services/is-expired";
 import { isWebauthnConfiguredForUser } from "./webauthn";
 
-const {
-  create,
-  deleteFranceConnectUserInfo,
-  findByEmail,
-  findByMagicLinkToken,
-  findByResetPasswordToken,
-  getById,
-  getFranceConnectUserInfo,
-  update,
-  upsetFranceconnectUserinfo,
-} = context.repository.users;
+const { users } = context.repository;
 
-const { findEmailInDeliverabilityWhiteList } =
-  context.repository.email_deliverability_whitelist;
+const { email_deliverability_whitelist } = context.repository;
 
 export const startLogin = async (
   email: string,
@@ -76,7 +65,7 @@ export const startLogin = async (
   hasWebauthnConfigured: boolean;
   needsInclusionconnectWelcomePage: boolean;
 }> => {
-  const user = await findByEmail(email);
+  const user = await users.findByEmail(email);
   const userExists = !isEmpty(user);
 
   if (userExists) {
@@ -90,7 +79,10 @@ export const startLogin = async (
     };
   }
 
-  const isInWhiteList = await findEmailInDeliverabilityWhiteList(email);
+  const isInWhiteList =
+    await email_deliverability_whitelist.findEmailInDeliverabilityWhiteList(
+      email,
+    );
 
   if (!isInWhiteList) {
     let { isEmailSafeToSend, didYouMean } =
@@ -123,7 +115,7 @@ export const loginWithPassword = async (
   email: string,
   password: string,
 ): Promise<User> => {
-  const user = await findByEmail(email);
+  const user = await users.findByEmail(email);
   if (isEmpty(user)) {
     throw new NotFoundError();
   }
@@ -141,7 +133,7 @@ export const signupWithPassword = async (
   email: string,
   password: string,
 ): Promise<User> => {
-  const user = await findByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (!isEmpty(user) && !isEmpty(user.encrypted_password)) {
     throw new EmailUnavailableError();
@@ -159,13 +151,13 @@ export const signupWithPassword = async (
 
   if (!isEmpty(user)) {
     // force email verification after setting a password for the first time for an existing user
-    return await update(user.id, {
+    return await users.update(user.id, {
       email_verified: false,
       encrypted_password: hashedPassword,
     });
   }
 
-  return await create({
+  return await users.create({
     email,
     encrypted_password: hashedPassword,
   });
@@ -180,7 +172,7 @@ export const sendEmailAddressVerificationEmail = async ({
   isBrowserTrusted: boolean;
   force?: boolean;
 }): Promise<{ codeSent: boolean; updatedUser: User }> => {
-  const user = await findByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
     throw new UserNotFoundError();
@@ -206,7 +198,7 @@ export const sendEmailAddressVerificationEmail = async ({
 
   const verify_email_token = generatePinToken();
 
-  const updatedUser = await update(user.id, {
+  const updatedUser = await users.update(user.id, {
     verify_email_token,
     verify_email_sent_at: new Date(),
   });
@@ -224,7 +216,7 @@ export const sendEmailAddressVerificationEmail = async ({
 };
 
 export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await users.getById(user_id);
 
   return sendMail({
     to: [email],
@@ -243,7 +235,7 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
 }: {
   user_id: number;
 }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await users.getById(user_id);
 
   return sendMail({
     to: [email],
@@ -259,7 +251,7 @@ export const sendDeleteFreeTOTPApplicationEmail = async ({
 };
 
 export const sendDisable2faMail = async ({ user_id }: { user_id: number }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await users.getById(user_id);
 
   return sendMail({
     to: [email],
@@ -277,7 +269,7 @@ export const sendDeleteAccessKeyMail = async ({
 }: {
   user_id: number;
 }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await users.getById(user_id);
 
   return sendMail({
     to: [email],
@@ -296,7 +288,7 @@ export const sendAddFreeTOTPEmail = async ({
 }: {
   user_id: number;
 }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await users.getById(user_id);
 
   return sendMail({
     to: [email],
@@ -315,7 +307,7 @@ export const sendActivateAccessKeyMail = async ({
 }: {
   user_id: number;
 }) => {
-  const { given_name, family_name, email } = await getById(user_id);
+  const { given_name, family_name, email } = await users.getById(user_id);
 
   return sendMail({
     to: [email],
@@ -385,7 +377,7 @@ export const verifyEmail = async (
   email: string,
   token: string,
 ): Promise<User> => {
-  const user = await findByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
     throw new UserNotFoundError();
@@ -404,7 +396,7 @@ export const verifyEmail = async (
     throw new InvalidTokenError();
   }
 
-  return await update(user.id, {
+  return await users.update(user.id, {
     email_verified: true,
     email_verified_at: new Date(),
     verify_email_token: null,
@@ -415,7 +407,7 @@ export const verifyEmail = async (
 export const needsEmailVerificationRenewal = async (
   email: string,
 ): Promise<boolean> => {
-  const user = await findByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
     throw new UserNotFoundError();
@@ -431,17 +423,17 @@ export const sendSendMagicLinkEmail = async (
   email: string,
   host: string,
 ): Promise<boolean> => {
-  let user = await findByEmail(email);
+  let user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
-    user = await create({
+    user = await users.create({
       email,
     });
   }
 
   const magicLinkToken = generateToken();
 
-  await update(user.id, {
+  await users.update(user.id, {
     magic_link_token: magicLinkToken,
     magic_link_sent_at: new Date(),
   });
@@ -464,7 +456,7 @@ export const loginWithMagicLink = async (token: string): Promise<User> => {
     throw new InvalidMagicLinkError();
   }
 
-  const user = await findByMagicLinkToken(token);
+  const user = await users.findByMagicLinkToken(token);
 
   if (isEmpty(user)) {
     throw new InvalidMagicLinkError();
@@ -479,7 +471,7 @@ export const loginWithMagicLink = async (token: string): Promise<User> => {
     throw new InvalidMagicLinkError();
   }
 
-  return await update(user.id, {
+  return await users.update(user.id, {
     email_verified: true,
     email_verified_at: new Date(),
     magic_link_token: null,
@@ -491,7 +483,7 @@ export const sendResetPasswordEmail = async (
   email: string,
   host: string,
 ): Promise<boolean> => {
-  const user = await findByEmail(email);
+  const user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
     // failing silently as we do not want to give info on whether the user exists or not
@@ -500,7 +492,7 @@ export const sendResetPasswordEmail = async (
 
   const resetPasswordToken = await generateToken();
 
-  await update(user.id, {
+  await users.update(user.id, {
     reset_password_token: resetPasswordToken,
     reset_password_sent_at: new Date(),
   });
@@ -526,7 +518,7 @@ export const changePassword = async (
     throw new InvalidTokenError();
   }
 
-  const user = await findByResetPasswordToken(token);
+  const user = await users.findByResetPasswordToken(token);
 
   if (isEmpty(user)) {
     throw new InvalidTokenError();
@@ -551,7 +543,7 @@ export const changePassword = async (
 
   const hashedPassword = await hashPassword(password);
 
-  return await update(user.id, {
+  return await users.update(user.id, {
     encrypted_password: hashedPassword,
     email_verified: true,
     email_verified_at: new Date(),
@@ -568,17 +560,17 @@ export const updatePersonalInformationsForRegistration = async (
     job,
   }: Pick<User, "given_name" | "family_name" | "job">,
 ): Promise<User> => {
-  const isUserVerified = await getFranceConnectUserInfo(userId);
+  const isUserVerified = await users.getFranceConnectUserInfo(userId);
   const names = isUserVerified ? {} : { given_name, family_name };
 
-  return update(userId, {
+  return users.update(userId, {
     ...names,
     job,
   });
 };
 
 export async function hasValidFranceConnectIdentity(userId: number) {
-  const userFranceConnect = await getFranceConnectUserInfo(userId);
+  const userFranceConnect = await users.getFranceConnectUserInfo(userId);
 
   if (isEmpty(userFranceConnect)) {
     return false;
@@ -591,13 +583,13 @@ export async function hasValidFranceConnectIdentity(userId: number) {
 }
 
 export async function lastFranceConnectIdentityUpdate(userId: number) {
-  const userFranceConnect = await getFranceConnectUserInfo(userId);
+  const userFranceConnect = await users.getFranceConnectUserInfo(userId);
   if (isEmpty(userFranceConnect)) return false;
   return userFranceConnect.updated_at;
 }
 
 export async function disconnectFranceConnectIdentity(userId: number) {
-  return deleteFranceConnectUserInfo(userId);
+  return users.deleteFranceConnectUserInfo(userId);
 }
 
 export async function needsFranceConnectIdentityRenewal(userId: number) {
@@ -611,11 +603,11 @@ export async function updateFranceConnectUserInfo(
   const { family_name, preferred_username, given_name } = userInfo;
   const newFamilyName = preferred_username || family_name;
   const newGivenName = given_name.split(" ")[0];
-  const user = await update(userId, {
+  const user = await users.update(userId, {
     family_name: newFamilyName,
     given_name: newGivenName,
   });
-  await upsetFranceconnectUserinfo({
+  await users.upsetFranceconnectUserinfo({
     ...userInfo,
     user_id: userId,
   });
@@ -625,7 +617,7 @@ export async function updateFranceConnectUserInfo(
 export async function getGivenNameOptionsFromFranceConnectIdentity(
   userId: number,
 ): Promise<string[]> {
-  const franceconnectUserinfo = await getFranceConnectUserInfo(userId);
+  const franceconnectUserinfo = await users.getFranceConnectUserInfo(userId);
 
   if (!franceconnectUserinfo) {
     return [];
@@ -640,7 +632,7 @@ export async function getGivenNameOptionsFromFranceConnectIdentity(
 export async function getFamilyNameOptionsFromFranceConnectIdentity(
   userId: number,
 ): Promise<string[]> {
-  const franceconnectUserinfo = await getFranceConnectUserInfo(userId);
+  const franceconnectUserinfo = await users.getFranceConnectUserInfo(userId);
 
   if (!franceconnectUserinfo) {
     return [];

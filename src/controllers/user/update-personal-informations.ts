@@ -11,7 +11,7 @@ import { csrfToken } from "../../middlewares/csrf-protection";
 import { nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 
-const { update } = context.repository.users;
+const { users } = context.repository;
 
 export const getPersonalInformationsController = async (
   req: Request,
@@ -65,7 +65,7 @@ export const postPersonalInformationsController = async (
 
       const { given_name, family_name } = await schema.parseAsync(req.body);
 
-      updatedUser = await update(userId, {
+      updatedUser = await users.update(userId, {
         given_name,
         family_name,
       });

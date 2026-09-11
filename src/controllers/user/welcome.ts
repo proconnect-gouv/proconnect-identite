@@ -10,7 +10,7 @@ import {
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { getSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 
-const { getFranceConnectUserInfo, update } = context.repository.users;
+const { users } = context.repository;
 
 export const getWelcomeController = async (
   req: Request,
@@ -21,7 +21,7 @@ export const getWelcomeController = async (
     let user = getUserFromAuthenticatedSession(req);
     const showInclusionConnectOnboardingHelp =
       user.needs_inclusionconnect_onboarding_help;
-    user = await update(user.id, {
+    user = await users.update(user.id, {
       needs_inclusionconnect_onboarding_help: false,
     });
     updateUserInAuthenticatedSession(req, user);
@@ -71,7 +71,7 @@ export const getWelcomeDirigeantController = async (
     let user = getUserFromAuthenticatedSession(req);
     const showInclusionConnectOnboardingHelp =
       user.needs_inclusionconnect_onboarding_help;
-    user = await update(user.id, {
+    user = await users.update(user.id, {
       needs_inclusionconnect_onboarding_help: false,
     });
     updateUserInAuthenticatedSession(req, user);
@@ -87,7 +87,7 @@ export const getWelcomeDirigeantController = async (
     if (!userOrganisations)
       throw new NotFoundError("User in organization not found");
 
-    const user_info = await getFranceConnectUserInfo(user.id);
+    const user_info = await users.getFranceConnectUserInfo(user.id);
 
     if (isEmpty(user_info))
       throw new NotFoundError("FranceConnect User info not found");

@@ -11,7 +11,7 @@ import { context } from "../connectors/context";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { logger } from "../services/log";
 
-const { addConnection, findByClientId } = context.repository.oidc_clients;
+const { oidc_clients } = context.repository;
 
 export const recordNewConnection = async ({
   accountId,
@@ -28,7 +28,7 @@ export const recordNewConnection = async ({
   const user_id = parseInt(accountId, 10);
 
   const client_id = client.clientId;
-  const oidc_client = await findByClientId(client_id);
+  const oidc_client = await oidc_clients.findByClientId(client_id);
   if (isEmpty(oidc_client)) {
     throw new NotFoundError();
   }
@@ -50,7 +50,7 @@ export const recordNewConnection = async ({
 
   const user_ip_address = requestHeaders["x-forwarded-for"]?.toString() || null;
 
-  return await addConnection({
+  return await oidc_clients.addConnection({
     user_id,
     oidc_client_id,
     organization_id,

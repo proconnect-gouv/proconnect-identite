@@ -17,16 +17,19 @@ export function assignUserVerificationTypeToDomainFactory({
 
     await Promise.all(
       usersInOrganization.map(
-        ({ id, email, verification_type: link_verification_type }) => {
+        ({ id: user_id, email, verification_type: link_verification_type }) => {
           const userDomain = getEmailDomain(email);
           if (
             userDomain === domain &&
             (UnverifiedLinkEnum.safeParse(link_verification_type).success ||
               SuperWeakLinkEnum.safeParse(link_verification_type).success)
           ) {
-            return users_organizations.update(organization_id, id, {
-              verification_type: LinkEnum.enum.domain,
-            });
+            return users_organizations.update(
+              { organization_id, user_id },
+              {
+                verification_type: LinkEnum.enum.domain,
+              },
+            );
           }
 
           return null;

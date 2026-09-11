@@ -57,9 +57,7 @@ import {
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
 
-const { getFranceConnectUserInfo } = context.repository.users;
-
-const { getById: getModerationById } = context.repository.moderations;
+const { moderations, users } = context.repository;
 
 export const getJoinOrganizationController = async (
   req: Request,
@@ -401,7 +399,7 @@ export const getModerationRejectedController = async (
       });
 
     const { allow_editing, end_user_reason } =
-      await getModerationById(moderation_id);
+      await moderations.getById(moderation_id);
 
     return res.render("user/moderation-rejected", {
       allow_editing,
@@ -468,7 +466,7 @@ export async function getCertificationDirigeantCloseMatchError(
       .parse(req.query);
 
     const user = getUserFromAuthenticatedSession(req);
-    const user_info = await getFranceConnectUserInfo(user.id);
+    const user_info = await users.getFranceConnectUserInfo(user.id);
 
     const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
       query.source,

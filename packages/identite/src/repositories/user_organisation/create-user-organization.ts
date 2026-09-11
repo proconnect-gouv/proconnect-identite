@@ -6,7 +6,7 @@ import type {
 } from "#src/types";
 import type { QueryResult } from "pg";
 
-export function linkUserToOrganizationFactory({ pg }: DatabaseContext) {
+export function createUserOrganizationFactory({ pg }: DatabaseContext) {
   return async function linkUserToOrganization({
     is_external = false,
     organization_id,
@@ -37,7 +37,3 @@ export function linkUserToOrganizationFactory({ pg }: DatabaseContext) {
     return rows.shift()!;
   };
 }
-
-export type LinkUserToOrganizationHandler = ReturnType<
-  typeof linkUserToOrganizationFactory
->;

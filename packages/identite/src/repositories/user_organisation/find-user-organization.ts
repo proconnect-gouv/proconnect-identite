@@ -1,15 +1,19 @@
 //
 
-import type { DatabaseContext, UserOrganizationLink } from "#src/types";
+import type {
+  DatabaseContext,
+  FindUserOrganizationLink,
+  UserOrganizationLink,
+} from "#src/types";
 import { type QueryResult } from "pg";
 
 //
 
-export function getUserOrganizationLinkFactory({ pg }: DatabaseContext) {
-  return async function getUserOrganizationLink(
-    organization_id: number,
-    user_id: number,
-  ) {
+export function findUserOrganizationFactory({ pg }: DatabaseContext) {
+  return async function findUserOrganization({
+    organization_id,
+    user_id,
+  }: FindUserOrganizationLink) {
     const { rows }: QueryResult<UserOrganizationLink> = await pg.query(
       `
         SELECT user_id,

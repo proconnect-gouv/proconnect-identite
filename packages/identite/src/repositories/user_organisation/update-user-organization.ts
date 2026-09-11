@@ -1,15 +1,19 @@
 //
 
 import { hashToPostgresParams } from "#src/services/postgres";
-import type { DatabaseContext, User, UserOrganizationLink } from "#src/types";
+import type {
+  DatabaseContext,
+  FindUserOrganizationLink,
+  User,
+  UserOrganizationLink,
+} from "#src/types";
 import type { QueryResult } from "pg";
 
 //
 
-export function updateUserOrganizationLinkFactory({ pg }: DatabaseContext) {
-  return async function updateUserOrganizationLink(
-    organization_id: number,
-    user_id: number,
+export function updateUserOrganizationFactory({ pg }: DatabaseContext) {
+  return async function updateUserOrganization(
+    { organization_id, user_id }: FindUserOrganizationLink,
     fieldsToUpdate: Partial<UserOrganizationLink>,
   ) {
     const connection = pg;
@@ -36,7 +40,3 @@ export function updateUserOrganizationLinkFactory({ pg }: DatabaseContext) {
     return rows.shift()!;
   };
 }
-
-export type UpdateUserOrganizationLinkHandler = ReturnType<
-  typeof updateUserOrganizationLinkFactory
->;

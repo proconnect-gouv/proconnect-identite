@@ -1,11 +1,11 @@
 import { LinkEnum } from "#src/types";
 import { emptyDatabase, migrate, pg } from "#testing";
 import { before, beforeEach, mock, suite, test } from "node:test";
-import { linkUserToOrganizationFactory } from "./link-user-to-organization.js";
+import { createUserOrganizationFactory } from "./create-user-organization.js";
 
 //
 
-const linkUserToOrganization = linkUserToOrganizationFactory({ pg: pg as any });
+const linkUserToOrganization = createUserOrganizationFactory({ pg: pg as any });
 
 suite("linkUserToOrganizationFactory", () => {
   before(migrate);
