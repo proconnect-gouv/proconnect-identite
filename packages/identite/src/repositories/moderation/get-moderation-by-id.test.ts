@@ -1,7 +1,7 @@
 //
 
+import { ModerationNotFoundError } from "#src/errors";
 import { emptyDatabase, migrate, pg } from "#testing";
-import { ModerationNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import assert from "node:assert/strict";
 import { before, beforeEach, suite, test } from "node:test";
 import { getModerationByIdFactory } from "./get-moderation-by-id.js";
