@@ -3,15 +3,15 @@
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it, mock } from "node:test";
-import { findFranceConnectUserInfoFactory } from "./find-franceconnect-user-info.js";
+import { findFranceconnectUserinfoFactory } from "./find-franceconnect-userinfo.js";
 
 //
 
-const findFranceConnectUserInfo = findFranceConnectUserInfoFactory({
+const findFranceconnectUserinfo = findFranceconnectUserinfoFactory({
   pg: pg as any,
 });
 
-describe("findFranceConnectUserInfo", () => {
+describe("findFranceconnectUserinfo", () => {
   before(migrate);
   beforeEach(emptyDatabase);
   before(() => {
@@ -34,7 +34,7 @@ describe("findFranceConnectUserInfo", () => {
       ;
     `;
 
-    const user = await findFranceConnectUserInfo(1);
+    const user = await findFranceconnectUserinfo(1);
     assert.ok(user);
     assert.deepEqual(user, {
       birthcountry: null,
@@ -52,7 +52,7 @@ describe("findFranceConnectUserInfo", () => {
   });
 
   it("❎ fail to get an unknown user", async () => {
-    const user = await findFranceConnectUserInfo(42);
+    const user = await findFranceconnectUserinfo(42);
 
     assert.equal(user, undefined);
   });

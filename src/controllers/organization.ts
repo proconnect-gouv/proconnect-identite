@@ -56,7 +56,8 @@ import {
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
 
-const { moderations, organizations, users } = context.repository;
+const { franceconnect_userinfo, moderations, organizations } =
+  context.repository;
 
 export const getJoinOrganizationController = async (
   req: Request,
@@ -465,7 +466,7 @@ export async function getCertificationDirigeantCloseMatchError(
       .parse(req.query);
 
     const user = getUserFromAuthenticatedSession(req);
-    const user_info = await users.findFranceConnectUserInfo(user.id);
+    const user_info = await franceconnect_userinfo.find(user.id);
 
     const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
       query.source,

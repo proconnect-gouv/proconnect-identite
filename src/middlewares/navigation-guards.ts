@@ -58,7 +58,8 @@ import { isExpired } from "../services/is-expired";
 import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
-const { organizations, users_organizations, users } = context.repository;
+const { franceconnect_userinfo, organizations, users_organizations } =
+  context.repository;
 
 //
 
@@ -639,8 +640,7 @@ const userIsCertifiedAsDirigeantGuard = async <
   }
 
   if (linkType === LinkEnum.enum.organization_dirigeant) {
-    const franceconnectUserInfo =
-      (await users.findFranceConnectUserInfo(user_id))!;
+    const franceconnectUserInfo = (await franceconnect_userinfo.find(user_id))!;
     const expiredCertification = isExpired(
       linkVerifiedAt,
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
@@ -788,8 +788,7 @@ const processCertificationDirigeantGuard = async (
     return redirect("/users/franceconnect");
   }
 
-  const franceconnectUserInfo =
-    (await users.findFranceConnectUserInfo(user_id))!;
+  const franceconnectUserInfo = (await franceconnect_userinfo.find(user_id))!;
   const organization = await organizations.getById(organization_id);
 
   try {
