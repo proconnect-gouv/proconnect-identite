@@ -74,4 +74,149 @@ describe("markDomainAsVerified", () => {
       new NotFoundError(""),
     );
   });
+
+  it("should reject a pending domain", async () => {
+    await pg.sql`
+      INSERT INTO organizations
+        (id, cached_libelle, cached_nom_complet, siret, created_at, updated_at)
+      VALUES
+        (1, 'Black Legion', 'Black Legion Warband', '👁️', '4444-04-04', '4444-04-04')
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO email_domains (organization_id, domain, verification_type)
+      VALUES (1, 'blacklegion.world', 'not_verified_yet')
+    `;
+
+    await markDomainAsVerified({
+      domain: "blacklegion.world",
+      domain_verification_type: "refused",
+      organization_id: 1,
+    });
+
+    const { rows: emailDomains } = await pg.sql`
+      SELECT domain, verification_type
+      FROM email_domains
+      WHERE organization_id = 1
+      ORDER BY verification_type
+    `;
+    assert.deepEqual(emailDomains, [
+      { domain: "blacklegion.world", verification_type: "refused" },
+    ]);
+  });
+
+  it("rejecting a domain should not touch an existing approval for the same domain", async () => {
+    await pg.sql`
+      INSERT INTO organizations
+        (id, cached_libelle, cached_nom_complet, siret, created_at, updated_at)
+      VALUES
+        (1, 'Thousand Sons', 'Thousand Sons Legion', '📖', '4444-04-04', '4444-04-04')
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO email_domains (organization_id, domain, verification_type)
+      VALUES (1, 'thousandsons.world', 'verified')
+    `;
+
+    await markDomainAsVerified({
+      domain: "thousandsons.world",
+      domain_verification_type: "refused",
+      organization_id: 1,
+    });
+
+    const { rows: emailDomains } = await pg.sql`
+      SELECT domain, verification_type
+      FROM email_domains
+      WHERE organization_id = 1
+      ORDER BY verification_type
+    `;
+    assert.deepEqual(emailDomains, [
+      { domain: "thousandsons.world", verification_type: "refused" },
+      { domain: "thousandsons.world", verification_type: "verified" },
+    ]);
+  });
+
+  it("rejecting a domain should not demote an already domain-verified member", async () => {
+    await pg.sql`
+      INSERT INTO organizations
+        (id, cached_libelle, cached_nom_complet, siret, created_at, updated_at)
+      VALUES
+        (1, 'Word Bearers', 'Word Bearers Legion', '🔥', '4444-04-04', '4444-04-04')
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO users (id, email, created_at, updated_at, given_name, family_name, phone_number, job)
+      VALUES (1, 'lorgar.aurelian@wordbearers.world', '4444-04-04', '4444-04-04', 'Lorgar', 'Aurelian', '0', 'Primarque')
+    `;
+    await pg.sql`
+      INSERT INTO users_organizations
+        (user_id, organization_id, created_at, updated_at, is_external, verification_type, needs_official_contact_email_verification, official_contact_email_verification_token, official_contact_email_verification_sent_at)
+      VALUES
+        (1, 1, '4444-04-04', '4444-04-04', false, 'domain', false, null, null)
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO email_domains (organization_id, domain, verification_type)
+      VALUES (1, 'wordbearers.world', 'not_verified_yet')
+    `;
+
+    await markDomainAsVerified({
+      domain: "wordbearers.world",
+      domain_verification_type: "refused",
+      organization_id: 1,
+    });
+
+    const { rows: userLinks } = await pg.sql`
+      SELECT user_id, verification_type
+      FROM users_organizations
+      WHERE organization_id = 1
+    `;
+    assert.deepEqual(userLinks, [{ user_id: 1, verification_type: "domain" }]);
+  });
+
+  it("approving a domain should only promote eligible member links", async () => {
+    await pg.sql`
+      INSERT INTO organizations
+        (id, cached_libelle, cached_nom_complet, siret, created_at, updated_at)
+      VALUES
+        (1, 'Emperor''s Children', 'Emperor''s Children Legion', '🎭', '4444-04-04', '4444-04-04')
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO users (id, email, created_at, updated_at, given_name, family_name, phone_number, job)
+      VALUES
+        (1, 'fulgrim@emperorschildren.world', '4444-04-04', '4444-04-04', 'Fulgrim', 'Primarque', '0', 'Primarque'),
+        (2, 'lucius@emperorschildren.world', '4444-04-04', '4444-04-04', 'Lucius', 'The Eternal', '0', 'Champion')
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO users_organizations
+        (user_id, organization_id, created_at, updated_at, is_external, verification_type, needs_official_contact_email_verification, official_contact_email_verification_token, official_contact_email_verification_sent_at)
+      VALUES
+        (1, 1, '4444-04-04', '4444-04-04', false, 'no_verification_means_for_entreprise_unipersonnelle', false, null, null),
+        (2, 1, '4444-04-04', '4444-04-04', false, 'organization_dirigeant', false, null, null)
+      ;
+    `;
+    await pg.sql`
+      INSERT INTO email_domains (organization_id, domain, verification_type)
+      VALUES (1, 'emperorschildren.world', 'not_verified_yet')
+    `;
+
+    await markDomainAsVerified({
+      domain: "emperorschildren.world",
+      domain_verification_type: "verified",
+      organization_id: 1,
+    });
+
+    const { rows: userLinks } = await pg.sql`
+      SELECT user_id, verification_type
+      FROM users_organizations
+      WHERE organization_id = 1
+      ORDER BY user_id
+    `;
+    assert.deepEqual(userLinks, [
+      { user_id: 1, verification_type: "domain" },
+      { user_id: 2, verification_type: "organization_dirigeant" },
+    ]);
+  });
 });
