@@ -5,8 +5,8 @@ import type { QueryResult } from "pg";
 
 //
 
-export function findByIdFactory({ pg }: DatabaseContext) {
-  return async function findById(id: number) {
+export function findOrganizationByIdFactory({ pg }: DatabaseContext) {
+  return async function findOrganizationById(id: number) {
     const { rows }: QueryResult<Organization> = await pg.query(
       `
       SELECT *
@@ -19,4 +19,4 @@ export function findByIdFactory({ pg }: DatabaseContext) {
   };
 }
 
-export type FindByIdHandler = ReturnType<typeof findByIdFactory>;
+export type FindByIdHandler = ReturnType<typeof findOrganizationByIdFactory>;

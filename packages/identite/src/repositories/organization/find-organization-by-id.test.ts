@@ -3,13 +3,13 @@
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, suite, test } from "node:test";
-import { findByIdFactory } from "./find-by-id.js";
+import { findOrganizationByIdFactory } from "./find-organization-by-id.js";
 
 //
 
-const findById = findByIdFactory({ pg: pg as any });
+const findOrganizationById = findOrganizationByIdFactory({ pg: pg as any });
 
-suite("findByIdFactory", () => {
+suite("findOrganizationByIdFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
@@ -21,7 +21,7 @@ suite("findByIdFactory", () => {
         ('Necron', 'Necrontyr', 1, '⚰️', '1967-12-19', '1967-12-19')
       ;
     `;
-    const organization = await findById(1);
+    const organization = await findOrganizationById(1);
 
     assert.deepEqual(organization, {
       cached_activite_principale: null,

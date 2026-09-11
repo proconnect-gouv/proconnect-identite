@@ -1,12 +1,16 @@
-import { to } from "await-to-js";
 import type { NextFunction, Request, Response } from "express";
+import HttpErrors from "http-errors";
+import { isEmpty } from "lodash-es";
 import { z } from "zod";
 import {
   ApiAnnuaireError,
   InvalidTokenError,
   OfficialContactEmailVerificationNotNeededError,
 } from "../../config/errors";
-import { getOrganizationById } from "../../managers/organization/main";
+import {
+  getOrganizationById,
+  selectOrganization,
+} from "../../managers/organization/main";
 import {
   sendOfficialContactEmailVerificationEmail,
   verifyOfficialContactEmailToken,
@@ -14,7 +18,6 @@ import {
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import {
-  idSchema,
   officialContactEmailVerificationTokenSchema,
   optionalBooleanSchema,
 } from "../../services/custom-zod-schemas";
@@ -27,22 +30,24 @@ export const getOfficialContactEmailVerificationController = async (
   next: NextFunction,
 ) => {
   try {
+    const organization_id =
+      req.session.pendingOfficialContactEmailVerificationOrganizationId!;
+    const organization = await getOrganizationById(organization_id);
+    if (isEmpty(organization)) {
+      throw HttpErrors.NotFound();
+    }
+
     const schema = z.object({
       query: z.object({
         contact_email: z.email().optional(),
         new_code_sent: optionalBooleanSchema(),
       }),
-      params: z.object({
-        organization_id: idSchema(),
-      }),
     });
 
     const {
       query: { new_code_sent, contact_email },
-      params: { organization_id },
     } = await schema.parseAsync({
       query: req.query,
-      params: req.params,
     });
 
     const { codeSent, contactEmail, libelle } =
@@ -52,9 +57,6 @@ export const getOfficialContactEmailVerificationController = async (
         checkBeforeSend: true,
         selectedContactEmail: contact_email,
       });
-
-    // call to sendOfficialContactEmailVerificationEmail ensure organization exists
-    const organization = (await getOrganizationById(organization_id))!;
 
     return res.render("user/official-contact-email-verification", {
       pageTitle: "Vérifier votre email",
@@ -68,6 +70,8 @@ export const getOfficialContactEmailVerificationController = async (
       organization_type_label: getOrganizationTypeLabel(organization),
     });
   } catch (error) {
+    req.session.pendingOfficialContactEmailVerificationOrganizationId =
+      undefined;
     if (error instanceof OfficialContactEmailVerificationNotNeededError) {
       return res.redirect(
         `/users/join-organization?notification=official_contact_email_verification_not_needed`,
@@ -90,42 +94,52 @@ export const postOfficialContactEmailVerificationMiddleware = async (
   next: NextFunction,
 ) => {
   try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const organization_id =
+      req.session.pendingOfficialContactEmailVerificationOrganizationId!;
+    const organization = await getOrganizationById(organization_id);
+    if (isEmpty(organization)) {
+      throw HttpErrors.NotFound();
+    }
+
     const schema = z.object({
       body: z.object({
         official_contact_email_verification_token:
           officialContactEmailVerificationTokenSchema(),
       }),
-      params: z.object({
-        organization_id: idSchema(),
-      }),
     });
 
     const {
       body: { official_contact_email_verification_token },
-      params: { organization_id },
     } = await schema.parseAsync({
       body: req.body,
-      params: req.params,
     });
 
-    const [error] = await to(
-      verifyOfficialContactEmailToken({
-        user_id: getUserFromAuthenticatedSession(req).id,
-        organization_id,
-        token: official_contact_email_verification_token,
-      }),
-    );
+    await verifyOfficialContactEmailToken({
+      user_id: getUserFromAuthenticatedSession(req).id,
+      organization_id,
+      token: official_contact_email_verification_token,
+    });
 
-    if (error instanceof InvalidTokenError) {
-      return res.redirect(
-        `/users/official-contact-email-verification/${organization_id}?notification=invalid_verify_email_code`,
-      );
-    } else if (error) {
-      return next(error);
-    }
+    req.session.pendingOfficialContactEmailVerificationOrganizationId =
+      undefined;
+
+    await selectOrganization({
+      user_id,
+      organization_id,
+    });
 
     return next();
   } catch (error) {
+    if (error instanceof InvalidTokenError) {
+      return res.redirect(
+        `/users/official-contact-email-verification?notification=invalid_verify_email_code`,
+      );
+    }
+
+    req.session.pendingOfficialContactEmailVerificationOrganizationId =
+      undefined;
+
     next(error);
   }
 };

@@ -90,6 +90,7 @@ describe("env.zod", () => {
       HOST: "http://localhost:3000",
       APPLICATION_NAME: "ProConnect",
       NODE_ENV: "development",
+      OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES: 60,
       PORT: 3000,
       RECENT_LOGIN_INTERVAL_IN_SECONDS: 900,
       REDIS_URL: "redis://:@127.0.0.1:6379",
