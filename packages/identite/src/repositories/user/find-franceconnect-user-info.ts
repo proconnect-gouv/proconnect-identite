@@ -5,8 +5,8 @@ import { type QueryResult } from "pg";
 
 //
 
-export function getFranceConnectUserInfoFactory({ pg }: DatabaseContext) {
-  return async function getFranceConnectUserInfo(user_id: number) {
+export function findFranceConnectUserInfoFactory({ pg }: DatabaseContext) {
+  return async function findFranceConnectUserInfo(user_id: number) {
     const { rows }: QueryResult<FranceConnectUserInfo> = await pg.query(
       `
       SELECT *
@@ -19,7 +19,3 @@ export function getFranceConnectUserInfoFactory({ pg }: DatabaseContext) {
     return rows.shift();
   };
 }
-
-export type GetFranceConnectUserInfoHandler = ReturnType<
-  typeof getFranceConnectUserInfoFactory
->;

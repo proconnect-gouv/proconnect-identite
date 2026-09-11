@@ -1,7 +1,9 @@
 import { to } from "await-to-js";
 import { interactionPolicy } from "oidc-provider";
-import { getOrganizationById } from "../managers/organization/main";
+import { context } from "../connectors/context";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
+
+const { organizations } = context.repository;
 
 //
 
@@ -31,7 +33,7 @@ policy.add(
 
         const oidcContextParams = ctx.oidc.params as OIDCContextParams;
         if (oidcContextParams.siret_hint && selectedOrganizationId) {
-          const selectedOrganization = (await getOrganizationById(
+          const selectedOrganization = (await organizations.findById(
             selectedOrganizationId,
           ))!;
           if (selectedOrganization.siret !== oidcContextParams.siret_hint) {

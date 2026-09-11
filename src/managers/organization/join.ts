@@ -66,7 +66,7 @@ import {
   isSmallOrganization,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
-import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
+import { markDomainAsVerified } from "./main";
 
 const {
   email_domains,
@@ -426,7 +426,7 @@ export const greetForJoiningOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const userOrganisations = await getOrganizationsByUserId(user_id);
+  const userOrganisations = await organizations.findByUserId(user_id);
   const organization = userOrganisations.find(
     ({ id }) => id === organization_id,
   );
@@ -462,7 +462,7 @@ export const greetForCertification = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const userOrganisations = await getOrganizationsByUserId(user_id);
+  const userOrganisations = await organizations.findByUserId(user_id);
   const organization = userOrganisations.find(
     ({ id }) => id === organization_id,
   );

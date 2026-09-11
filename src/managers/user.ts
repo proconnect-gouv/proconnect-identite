@@ -560,7 +560,7 @@ export const updatePersonalInformationsForRegistration = async (
     job,
   }: Pick<User, "given_name" | "family_name" | "job">,
 ): Promise<User> => {
-  const isUserVerified = await users.getFranceConnectUserInfo(userId);
+  const isUserVerified = await users.findFranceConnectUserInfo(userId);
   const names = isUserVerified ? {} : { given_name, family_name };
 
   return users.update(userId, {
@@ -570,7 +570,7 @@ export const updatePersonalInformationsForRegistration = async (
 };
 
 export async function hasValidFranceConnectIdentity(userId: number) {
-  const userFranceConnect = await users.getFranceConnectUserInfo(userId);
+  const userFranceConnect = await users.findFranceConnectUserInfo(userId);
 
   if (isEmpty(userFranceConnect)) {
     return false;
@@ -583,7 +583,7 @@ export async function hasValidFranceConnectIdentity(userId: number) {
 }
 
 export async function lastFranceConnectIdentityUpdate(userId: number) {
-  const userFranceConnect = await users.getFranceConnectUserInfo(userId);
+  const userFranceConnect = await users.findFranceConnectUserInfo(userId);
   if (isEmpty(userFranceConnect)) return false;
   return userFranceConnect.updated_at;
 }
@@ -617,7 +617,7 @@ export async function updateFranceConnectUserInfo(
 export async function getGivenNameOptionsFromFranceConnectIdentity(
   userId: number,
 ): Promise<string[]> {
-  const franceconnectUserinfo = await users.getFranceConnectUserInfo(userId);
+  const franceconnectUserinfo = await users.findFranceConnectUserInfo(userId);
 
   if (!franceconnectUserinfo) {
     return [];
@@ -632,7 +632,7 @@ export async function getGivenNameOptionsFromFranceConnectIdentity(
 export async function getFamilyNameOptionsFromFranceConnectIdentity(
   userId: number,
 ): Promise<string[]> {
-  const franceconnectUserinfo = await users.getFranceConnectUserInfo(userId);
+  const franceconnectUserinfo = await users.findFranceConnectUserInfo(userId);
 
   if (!franceconnectUserinfo) {
     return [];

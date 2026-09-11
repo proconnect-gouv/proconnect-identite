@@ -7,16 +7,13 @@ import { setSelectedOrganizationId } from "../../repositories/redis/selected-org
 
 const { organizations, users_organizations } = context.repository;
 
-export const getOrganizationsByUserId = organizations.findByUserId;
-export const getOrganizationById = organizations.findById;
-export const getOrganizationBySiret = organizations.findBySiret;
 export const getUserOrganizations = async (
   userId: number,
 ): Promise<{
   userOrganizations: Organization[];
   pendingUserOrganizations: Organization[];
 }> => {
-  const userOrganizations = await getOrganizationsByUserId(userId);
+  const userOrganizations = await organizations.findByUserId(userId);
   const pendingUserOrganizations =
     await organizations.findPendingByUserId(userId);
 
@@ -50,7 +47,7 @@ export const selectOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const userOrganizations = await getOrganizationsByUserId(user_id);
+  const userOrganizations = await organizations.findByUserId(user_id);
   const organization = userOrganizations.find(
     ({ id }) => id === organization_id,
   );

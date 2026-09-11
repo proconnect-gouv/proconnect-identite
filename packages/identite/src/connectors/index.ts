@@ -4,7 +4,7 @@ import {
   createAuthenticatorFactory,
   deleteAuthenticatorFactory,
   findAuthenticatorFactory,
-  getAuthenticatorsByUserIdFactory,
+  findAuthenticatorsByUserIdFactory,
   updateAuthenticatorFactory,
 } from "#src/repositories/authenticator";
 import { findEmailInDeliverabilityWhiteListFactory } from "#src/repositories/email-deliverability-whitelist";
@@ -37,8 +37,8 @@ import {
   findByVerifiedEmailDomainFactory,
   findOrganizationByIdFactory,
   findPendingByUserIdFactory,
+  findUsersByOrganizationFactory,
   getOrganizationByIdFactory,
-  getUsersByOrganizationFactory,
   upsertFactory,
 } from "#src/repositories/organization";
 import {
@@ -48,9 +48,9 @@ import {
   findByEmailFactory,
   findByMagicLinkTokenFactory,
   findByResetPasswordTokenFactory,
+  findFranceConnectUserInfoFactory,
   findByIdFactory as findUserByIdFactory,
   getByIdFactory,
-  getFranceConnectUserInfoFactory,
   updateUserFactory,
   upsertFranceconnectUserinfoFactory,
 } from "#src/repositories/user";
@@ -89,7 +89,7 @@ export function createContext({
         createAuthenticator: createAuthenticatorFactory({ pg }),
         deleteAuthenticator: deleteAuthenticatorFactory({ pg }),
         findAuthenticator: findAuthenticatorFactory({ pg }),
-        getAuthenticatorsByUserId: getAuthenticatorsByUserIdFactory({ pg }),
+        findAuthenticatorsByUserId: findAuthenticatorsByUserIdFactory({ pg }),
         updateAuthenticator: updateAuthenticatorFactory({ pg }),
       },
       email_deliverability_whitelist: {
@@ -127,8 +127,8 @@ export function createContext({
         findByUserId: findByUserIdFactory({ pg }),
         findByVerifiedEmailDomain: findByVerifiedEmailDomainFactory({ pg }),
         findPendingByUserId: findPendingByUserIdFactory({ pg }),
+        findUsers: findUsersByOrganizationFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),
-        getUsers: getUsersByOrganizationFactory({ pg }),
         upsert: upsertFactory({ pg }),
       },
       users_organizations: {
@@ -145,8 +145,8 @@ export function createContext({
         findById: findUserByIdFactory({ pg }),
         findByMagicLinkToken: findByMagicLinkTokenFactory({ pg }),
         findByResetPasswordToken: findByResetPasswordTokenFactory({ pg }),
+        findFranceConnectUserInfo: findFranceConnectUserInfoFactory({ pg }),
         getById: getByIdFactory({ pg }),
-        getFranceConnectUserInfo: getFranceConnectUserInfoFactory({ pg }),
         update: updateUserFactory({ pg }),
         upsetFranceconnectUserinfo: upsertFranceconnectUserinfoFactory({ pg }),
       },

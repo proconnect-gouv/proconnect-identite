@@ -13,7 +13,7 @@ export function assignUserVerificationTypeToDomainFactory({
     organization_id: number,
     domain: string,
   ) {
-    const usersInOrganization = await organizations.getUsers(organization_id);
+    const usersInOrganization = await organizations.findUsers(organization_id);
 
     await Promise.all(
       usersInOrganization.map(

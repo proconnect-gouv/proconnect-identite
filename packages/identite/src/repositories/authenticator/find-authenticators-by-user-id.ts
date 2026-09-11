@@ -5,8 +5,8 @@ import { type QueryResult } from "pg";
 
 //
 
-export function getAuthenticatorsByUserIdFactory({ pg }: DatabaseContext) {
-  return async function getAuthenticatorsByUserId(user_id: number) {
+export function findAuthenticatorsByUserIdFactory({ pg }: DatabaseContext) {
+  return async function findAuthenticatorsByUserId(user_id: number) {
     const { rows }: QueryResult<Authenticator> = await pg.query(
       `
         SELECT *

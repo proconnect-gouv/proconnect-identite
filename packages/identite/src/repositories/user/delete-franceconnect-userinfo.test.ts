@@ -4,14 +4,14 @@ import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
 import { deleteFranceConnectUserInfoFactory } from "./delete-franceconnect-userinfo.js";
-import { getFranceConnectUserInfoFactory } from "./get-franceconnect-user-info.js";
+import { findFranceConnectUserInfoFactory } from "./find-franceconnect-user-info.js";
 
 //
 
 const deleteFranceConnectUserInfo = deleteFranceConnectUserInfoFactory({
   pg: pg as any,
 });
-const getFranceConnectUserInfo = getFranceConnectUserInfoFactory({
+const findFranceConnectUserInfo = findFranceConnectUserInfoFactory({
   pg: pg as any,
 });
 
@@ -37,7 +37,7 @@ describe("deleteFranceConnectUserInfo", () => {
 
     await deleteFranceConnectUserInfo(1);
 
-    const user = await getFranceConnectUserInfo(1);
+    const user = await findFranceConnectUserInfo(1);
     assert.equal(user, undefined);
   });
 

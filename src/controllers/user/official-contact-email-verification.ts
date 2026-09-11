@@ -7,10 +7,8 @@ import {
   InvalidTokenError,
   OfficialContactEmailVerificationNotNeededError,
 } from "../../config/errors";
-import {
-  getOrganizationById,
-  selectOrganization,
-} from "../../managers/organization/main";
+import { context } from "../../connectors/context";
+import { selectOrganization } from "../../managers/organization/main";
 import {
   sendOfficialContactEmailVerificationEmail,
   verifyOfficialContactEmailToken,
@@ -24,6 +22,8 @@ import {
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 import { getOrganizationTypeLabel } from "../../services/organization";
 
+const { organizations } = context.repository;
+
 export const getOfficialContactEmailVerificationController = async (
   req: Request,
   res: Response,
@@ -32,7 +32,7 @@ export const getOfficialContactEmailVerificationController = async (
   try {
     const organization_id =
       req.session.pendingOfficialContactEmailVerificationOrganizationId!;
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
       throw HttpErrors.NotFound();
     }
@@ -97,7 +97,7 @@ export const postOfficialContactEmailVerificationMiddleware = async (
     const { id: user_id } = getUserFromAuthenticatedSession(req);
     const organization_id =
       req.session.pendingOfficialContactEmailVerificationOrganizationId!;
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
       throw HttpErrors.NotFound();
     }

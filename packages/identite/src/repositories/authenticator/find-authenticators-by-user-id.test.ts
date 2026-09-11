@@ -3,20 +3,20 @@
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, suite, test } from "node:test";
-import { getAuthenticatorsByUserIdFactory } from "./get-authenticators-by-user-id.js";
+import { findAuthenticatorsByUserIdFactory } from "./find-authenticators-by-user-id.js";
 
 //
 
-const getAuthenticatorsByUserId = getAuthenticatorsByUserIdFactory({
+const findAuthenticatorsByUserId = findAuthenticatorsByUserIdFactory({
   pg: pg as any,
 });
 
-suite("getAuthenticatorsByUserIdFactory", () => {
+suite("findAuthenticatorsByUserIdFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
   test("should return empty array when user has no authenticators", async () => {
-    const authenticators = await getAuthenticatorsByUserId(1);
+    const authenticators = await findAuthenticatorsByUserId(1);
 
     assert.deepEqual(authenticators, []);
   });
@@ -37,7 +37,7 @@ suite("getAuthenticatorsByUserIdFactory", () => {
       ;
     `;
 
-    const authenticators = await getAuthenticatorsByUserId(1);
+    const authenticators = await findAuthenticatorsByUserId(1);
 
     assert.equal(authenticators.length, 1);
     assert.equal(authenticators[0]?.credential_id, "CRED1");

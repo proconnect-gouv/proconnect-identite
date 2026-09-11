@@ -9,8 +9,8 @@ import type { QueryResult } from "pg";
 
 //
 
-export function getUsersByOrganizationFactory({ pg }: DatabaseContext) {
-  return async function getUsersByOrganization(
+export function findUsersByOrganizationFactory({ pg }: DatabaseContext) {
+  return async function findUsersByOrganization(
     organization_id: number,
     additionalWhereClause: string = "",
     additionalParams: any[] = [],
@@ -36,7 +36,3 @@ export function getUsersByOrganizationFactory({ pg }: DatabaseContext) {
     return rows;
   };
 }
-
-export type GetUsersByOrganizationHandler = ReturnType<
-  typeof getUsersByOrganizationFactory
->;
