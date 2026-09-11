@@ -25,16 +25,11 @@ import {
   isEtablissementScolaireDuPremierEtSecondDegre,
 } from "../../services/organization";
 const {
-  findById: findOrganizationById,
-  getUserOrganizationLink,
-  linkUserToOrganization,
-} = context.repository.organizations;
-const {
-  delete: deleteOfficialContactEmailVerification,
-  find: findOfficialContactEmailVerification,
-  upsert: upsertOfficialContactEmailVerification,
-} = context.repository.official_contact_email_verifications;
-const { findById: findUserById } = context.repository.users;
+  official_contact_email_verifications,
+  organizations,
+  users_organizations,
+  users,
+} = context.repository;
 
 export const isCommuneWithMultipleOfficialContactEmails = async (
   organization: Organization,
@@ -68,13 +63,13 @@ export const sendOfficialContactEmailVerificationEmail = async ({
   contactEmail: string;
   libelle: string | null;
 }> => {
-  const user = await findUserById(user_id);
-  const organization = await findOrganizationById(organization_id);
+  const user = await users.findById(user_id);
+  const organization = await organizations.findById(organization_id);
   if (isEmpty(user) || isEmpty(organization)) {
     throw new NotFoundError();
   }
 
-  const link = await getUserOrganizationLink(organization_id, user_id);
+  const link = await users_organizations.find({ organization_id, user_id });
   if (!isEmpty(link)) {
     throw new OfficialContactEmailVerificationNotNeededError();
   }
@@ -121,7 +116,10 @@ export const sendOfficialContactEmailVerificationEmail = async ({
   }
 
   const officialContactEmailVerification =
-    await findOfficialContactEmailVerification({ organization_id, user_id });
+    await official_contact_email_verifications.find({
+      organization_id,
+      user_id,
+    });
 
   if (
     checkBeforeSend &&
@@ -139,7 +137,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
 
   const token = generateDicewarePassword();
 
-  await upsertOfficialContactEmailVerification({
+  await official_contact_email_verifications.upsert({
     organization_id,
     user_id,
     token,
@@ -177,10 +175,13 @@ export const verifyOfficialContactEmailToken = async ({
   organization_id: number;
   token: string;
 }): Promise<UserOrganizationLink> => {
-  const user = await findUserById(user_id);
-  const organization = await findOrganizationById(organization_id);
+  const user = await users.findById(user_id);
+  const organization = await organizations.findById(organization_id);
   const officialContactEmailVerification =
-    await findOfficialContactEmailVerification({ organization_id, user_id });
+    await official_contact_email_verifications.find({
+      organization_id,
+      user_id,
+    });
   if (
     isEmpty(user) ||
     isEmpty(organization) ||
@@ -202,8 +203,11 @@ export const verifyOfficialContactEmailToken = async ({
     throw new InvalidTokenError();
   }
 
-  await deleteOfficialContactEmailVerification({ organization_id, user_id });
-  return await linkUserToOrganization({
+  await official_contact_email_verifications.delete({
+    organization_id,
+    user_id,
+  });
+  return await users_organizations.create({
     user_id,
     organization_id,
     verification_type: LinkEnum.enum.code_sent_to_official_contact_email,

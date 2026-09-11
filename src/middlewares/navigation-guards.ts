@@ -58,14 +58,7 @@ import { isExpired } from "../services/is-expired";
 import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
-const { getFranceConnectUserInfo } = context.repository.users;
-const {
-  getUserOrganizationLink,
-  linkUserToOrganization,
-  getById: getOrganizationById,
-} = context.repository.organizations;
-const { update: updateUserOrganizationLink } =
-  context.repository.users_organizations;
+const { organizations, users_organizations, users } = context.repository;
 
 //
 
@@ -636,7 +629,10 @@ const userIsCertifiedAsDirigeantGuard = async <
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
   const { verification_type: linkType, verified_at: linkVerifiedAt } =
-    (await getUserOrganizationLink(organizationId, user_id))!;
+    (await users_organizations.find({
+      organization_id: organizationId,
+      user_id,
+    }))!;
 
   if (
     req.session.certificationDirigeantRequested &&
@@ -647,7 +643,8 @@ const userIsCertifiedAsDirigeantGuard = async <
   }
 
   if (linkType === LinkEnum.enum.organization_dirigeant) {
-    const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
+    const franceconnectUserInfo =
+      (await users.getFranceConnectUserInfo(user_id))!;
     const expiredCertification = isExpired(
       linkVerifiedAt,
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
@@ -757,7 +754,7 @@ const processPendingModerationGuard = async (prev: Pass<RequestContext>) => {
   } = prev;
 
   const organization_id = req.session.pendingModerationOrganizationId!;
-  const organization = await getOrganizationById(organization_id);
+  const organization = await organizations.getById(organization_id);
   const user = getUserFromAuthenticatedSession(prev.data.req);
 
   let context;
@@ -795,8 +792,9 @@ const processCertificationDirigeantGuard = async (
     return redirect("/users/franceconnect");
   }
 
-  const franceconnectUserInfo = (await getFranceConnectUserInfo(user_id))!;
-  const organization = await getOrganizationById(organization_id);
+  const franceconnectUserInfo =
+    (await users.getFranceConnectUserInfo(user_id))!;
+  const organization = await organizations.getById(organization_id);
 
   try {
     await processCertificationDirigeantOrThrow(
@@ -806,14 +804,17 @@ const processCertificationDirigeantGuard = async (
 
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
 
-    if (await getUserOrganizationLink(organization_id, user_id)) {
-      await updateUserOrganizationLink(organization.id, user_id, {
-        verification_type: LinkEnum.enum.organization_dirigeant,
-        verified_at: new Date(),
-        has_been_greeted: false,
-      });
+    if (await users_organizations.find({ organization_id, user_id })) {
+      await users_organizations.update(
+        { organization_id, user_id },
+        {
+          verification_type: LinkEnum.enum.organization_dirigeant,
+          verified_at: new Date(),
+          has_been_greeted: false,
+        },
+      );
     } else {
-      await linkUserToOrganization({
+      await users_organizations.create({
         user_id,
         organization_id: organization.id,
         verification_type: LinkEnum.enum.organization_dirigeant,
@@ -863,7 +864,7 @@ const processOfficialContactEmailVerificationGuard = async (
   } = prev;
   const organization_id =
     req.session.pendingOfficialContactEmailVerificationOrganizationId!;
-  const organization = await getOrganizationById(organization_id);
+  const organization = await organizations.getById(organization_id);
   if (isEmpty(organization)) {
     throw HttpErrors.NotFound();
   }

@@ -3,20 +3,20 @@
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, suite, test } from "node:test";
-import { getUserOrganizationLinkFactory } from "./get-user-organization-link.js";
+import { findUserOrganizationFactory } from "./find-user-organization.js";
 
 //
 
-const getUserOrganizationLink = getUserOrganizationLinkFactory({
+const findUserOrganization = findUserOrganizationFactory({
   pg: pg as any,
 });
 
-suite("getUserOrganizationLinkFactory", () => {
+suite("findUserOrganizationFactory", () => {
   before(migrate);
   beforeEach(emptyDatabase);
 
   test("should return undefined when the link does not exist", async () => {
-    const link = await getUserOrganizationLink(1, 1);
+    const link = await findUserOrganization({ organization_id: 1, user_id: 1 });
 
     assert.equal(link, undefined);
   });
@@ -44,7 +44,7 @@ suite("getUserOrganizationLinkFactory", () => {
       ;
     `;
 
-    const link = await getUserOrganizationLink(1, 1);
+    const link = await findUserOrganization({ organization_id: 1, user_id: 1 });
 
     assert.equal(link?.user_id, 1);
     assert.equal(link?.organization_id, 1);

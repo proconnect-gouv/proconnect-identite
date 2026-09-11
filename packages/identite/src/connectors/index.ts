@@ -32,16 +32,13 @@ import {
   findByClientIdFactory,
 } from "#src/repositories/oidc-client";
 import {
-  deleteUserOrganizationFactory,
   findBySiretFactory,
   findByUserIdFactory,
   findByVerifiedEmailDomainFactory,
   findOrganizationByIdFactory,
   findPendingByUserIdFactory,
   getOrganizationByIdFactory,
-  getUserOrganizationLinkFactory,
   getUsersByOrganizationFactory,
-  linkUserToOrganizationFactory,
   upsertFactory,
 } from "#src/repositories/organization";
 import {
@@ -55,9 +52,14 @@ import {
   getByIdFactory,
   getFranceConnectUserInfoFactory,
   updateUserFactory,
-  updateUserOrganizationLinkFactory,
   upsertFranceconnectUserinfoFactory,
 } from "#src/repositories/user";
+import {
+  createUserOrganizationFactory,
+  deleteUserOrganizationFactory,
+  findUserOrganizationFactory,
+  updateUserOrganizationFactory,
+} from "#src/repositories/user_organisation";
 import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
 import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
@@ -120,20 +122,20 @@ export function createContext({
         findByClientId: findByClientIdFactory({ pg }),
       },
       organizations: {
-        deleteUserOrganization: deleteUserOrganizationFactory({ pg }),
         findById: findOrganizationByIdFactory({ pg }),
         findBySiret: findBySiretFactory({ pg }),
         findByUserId: findByUserIdFactory({ pg }),
         findByVerifiedEmailDomain: findByVerifiedEmailDomainFactory({ pg }),
         findPendingByUserId: findPendingByUserIdFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),
-        getUserOrganizationLink: getUserOrganizationLinkFactory({ pg }),
         getUsers: getUsersByOrganizationFactory({ pg }),
-        linkUserToOrganization: linkUserToOrganizationFactory({ pg }),
         upsert: upsertFactory({ pg }),
       },
       users_organizations: {
-        update: updateUserOrganizationLinkFactory({ pg }),
+        create: createUserOrganizationFactory({ pg }),
+        delete: deleteUserOrganizationFactory({ pg }),
+        find: findUserOrganizationFactory({ pg }),
+        update: updateUserOrganizationFactory({ pg }),
       },
       users: {
         create: createUserFactory({ pg }),

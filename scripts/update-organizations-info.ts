@@ -15,7 +15,7 @@ import {
   isOrganizationInfo,
 } from "../src/services/script-helpers";
 
-const { upsert } = context.repository.organizations;
+const { organizations } = context.repository;
 
 //
 
@@ -109,7 +109,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 250;
       // 3. update the organization
       if (isOrganizationInfo(organizationInfo)) {
         logger.info(`libelle: ${organizationInfo.libelle}`);
-        await upsert({ siret, organizationInfo });
+        await organizations.upsert({ siret, organizationInfo });
       }
 
       // 4. throttle the update

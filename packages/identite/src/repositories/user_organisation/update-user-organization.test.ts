@@ -3,11 +3,11 @@
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, suite, test } from "node:test";
-import { updateUserOrganizationLinkFactory } from "./update-user-organization-link.js";
+import { updateUserOrganizationFactory } from "./update-user-organization.js";
 
 //
 
-const updateUserOrganizationLink = updateUserOrganizationLinkFactory({
+const updateUserOrganization = updateUserOrganizationFactory({
   pg: pg as any,
 });
 
@@ -37,9 +37,12 @@ suite("updateUserOrganizationLink", () => {
       ;
     `;
 
-    const user = await updateUserOrganizationLink(1, 1, {
-      is_external: true,
-    });
+    const user = await updateUserOrganization(
+      { organization_id: 1, user_id: 1 },
+      {
+        is_external: true,
+      },
+    );
     assert.ok(user.is_external);
   });
 });

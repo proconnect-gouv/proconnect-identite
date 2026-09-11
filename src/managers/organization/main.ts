@@ -5,17 +5,11 @@ import { isEmpty } from "lodash-es";
 import { context } from "../../connectors/context";
 import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 
-const {
-  findBySiret,
-  findByUserId,
-  findById: findOrganizationById,
-  findPendingByUserId,
-  deleteUserOrganization,
-} = context.repository.organizations;
+const { organizations, users_organizations } = context.repository;
 
-export const getOrganizationsByUserId = findByUserId;
-export const getOrganizationById = findOrganizationById;
-export const getOrganizationBySiret = findBySiret;
+export const getOrganizationsByUserId = organizations.findByUserId;
+export const getOrganizationById = organizations.findById;
+export const getOrganizationBySiret = organizations.findBySiret;
 export const getUserOrganizations = async (
   userId: number,
 ): Promise<{
@@ -23,7 +17,8 @@ export const getUserOrganizations = async (
   pendingUserOrganizations: Organization[];
 }> => {
   const userOrganizations = await getOrganizationsByUserId(userId);
-  const pendingUserOrganizations = await findPendingByUserId(userId);
+  const pendingUserOrganizations =
+    await organizations.findPendingByUserId(userId);
 
   return { userOrganizations, pendingUserOrganizations };
 };
@@ -34,7 +29,7 @@ export const quitOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const hasBeenRemoved = await deleteUserOrganization({
+  const hasBeenRemoved = await users_organizations.delete({
     user_id,
     organization_id,
   });

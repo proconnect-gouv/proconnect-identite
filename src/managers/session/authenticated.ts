@@ -34,8 +34,7 @@ import {
 } from "../browser-authentication";
 import { hasValidFranceConnectIdentity } from "../user";
 
-const { getUserOrganizationLink } = context.repository.organizations;
-const { update } = context.repository.users;
+const { users_organizations, users } = context.repository;
 
 export const isWithinAuthenticatedSession = (
   session: Session & Partial<SessionData>,
@@ -87,7 +86,7 @@ export const createAuthenticatedSession = async (
       if (err) {
         reject(err);
       } else {
-        const updatedUser = await update(user.id, {
+        const updatedUser = await users.update(user.id, {
           sign_in_count: user.sign_in_count + 1,
           last_sign_in_at: new Date(),
         });
@@ -282,7 +281,10 @@ export async function getCurrentOAL(req: Request) {
     throw new Error("selectedOrganizationId should be set");
   }
 
-  const link = await getUserOrganizationLink(selectedOrganizationId, user.id);
+  const link = await users_organizations.find({
+    organization_id: selectedOrganizationId,
+    user_id: user.id,
+  });
 
   if (isEmpty(link)) {
     throw new NotFoundError("link should be set");

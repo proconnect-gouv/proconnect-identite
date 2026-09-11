@@ -61,8 +61,6 @@ export type BaseUserOrganizationLink = z.output<
   typeof BaseUserOrganizationLinkSchema
 >;
 
-//
-
 export const UserOrganizationLinkSchema = BaseUserOrganizationLinkSchema.extend(
   {
     user_id: z.number(),
@@ -73,8 +71,6 @@ export const UserOrganizationLinkSchema = BaseUserOrganizationLinkSchema.extend(
 );
 
 export type UserOrganizationLink = z.output<typeof UserOrganizationLinkSchema>;
-
-//
 
 export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
   {
@@ -90,4 +86,13 @@ export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
 
 export type InsertUserOrganizationLink = z.output<
   typeof InsertUserOrganizationLinkSchema
+>;
+
+export const FindUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick({
+  organization_id: true,
+  user_id: true,
+});
+
+export type FindUserOrganizationLink = z.output<
+  typeof FindUserOrganizationLinkSchema
 >;

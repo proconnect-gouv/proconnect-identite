@@ -22,7 +22,7 @@ import {
   throttleApiCall,
 } from "../src/services/script-helpers";
 
-const { upsert } = context.repository.organizations;
+const { email_domains, organizations } = context.repository;
 
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({
@@ -144,14 +144,14 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             }
 
             // 3. update organizationInfo
-            const organization: Organization = await upsert({
+            const organization: Organization = await organizations.upsert({
               siret: organizationInfo.siret,
               organizationInfo,
             });
 
             // 4. add domain
             const emailDomains =
-              await context.repository.email_domains.findEmailDomainsByOrganizationId(
+              await email_domains.findEmailDomainsByOrganizationId(
                 organization.id,
               );
 
@@ -163,7 +163,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               continue;
             }
 
-            await context.repository.email_domains.addDomain({
+            await email_domains.addDomain({
               organization_id: organization.id,
               domain,
               verification_type: "not_verified_yet",

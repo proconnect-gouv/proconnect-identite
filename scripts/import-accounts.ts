@@ -21,9 +21,7 @@ import {
   throttleApiCall,
 } from "../src/services/script-helpers";
 
-const { findByUserId, linkUserToOrganization, upsert } =
-  context.repository.organizations;
-const { create, findByEmail, update } = context.repository.users;
+const { organizations, users_organizations, users } = context.repository;
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({
     INPUT_FILE: z.string().default("./input.csv"),
@@ -134,10 +132,10 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         }
 
         // 1. add user if it does not exist
-        let user = await findByEmail(email);
+        let user = await users.findByEmail(email);
         if (isEmpty(user)) {
-          user = await create({ email });
-          await update(user.id, {
+          user = await users.create({ email });
+          await users.update(user.id, {
             given_name: first_name,
             family_name: last_name,
             needs_inclusionconnect_welcome_page: true,
@@ -168,15 +166,17 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             }
 
             // 3. update organizationInfo
-            const organization = await upsert({
+            const organization = await organizations.upsert({
               siret: organizationInfo.siret,
               organizationInfo,
             });
 
             // 4. create the user-organization link
-            const usersOrganizations = await findByUserId(user.id);
+            const usersOrganizations = await organizations.findByUserId(
+              user.id,
+            );
             if (!some(usersOrganizations, ["id", organization.id])) {
-              await linkUserToOrganization({
+              await users_organizations.create({
                 organization_id: organization.id,
                 user_id: user.id,
                 verification_type:
