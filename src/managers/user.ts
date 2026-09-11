@@ -14,6 +14,7 @@ import {
   DeleteAccount,
   DeleteFreeTotpMail,
   MagicLink,
+  PasswordChanged,
   ResetPassword,
   UpdatePersonalDataMail,
   VerifyEmail,
@@ -551,13 +552,25 @@ export const changePassword = async (
 
   const hashedPassword = await hashPassword(password);
 
-  return await update(user.id, {
+  const result = await update(user.id, {
     encrypted_password: hashedPassword,
     email_verified: true,
     email_verified_at: new Date(),
     reset_password_token: null,
     reset_password_sent_at: null,
   });
+
+  await sendMail({
+    to: [user.email],
+    subject: "Votre mot de passe ProConnect a été modifié",
+    html: PasswordChanged({
+      given_name: user.given_name ?? "",
+      family_name: user.family_name ?? "",
+    }).toString(),
+    tag: "password-changed",
+  });
+
+  return result;
 };
 
 export const updatePersonalInformationsForRegistration = async (
