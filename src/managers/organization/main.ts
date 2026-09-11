@@ -1,8 +1,10 @@
+import { QuitOrganization } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import { markDomainAsVerifiedFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { context } from "../../connectors/context";
+import { sendMail } from "../../connectors/mail";
 import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 
 const {
@@ -12,6 +14,8 @@ const {
   findPendingByUserId,
   deleteUserOrganization,
 } = context.repository.organizations;
+
+const { getById: getUserById } = context.repository.users;
 
 export const getOrganizationsByUserId = findByUserId;
 export const getOrganizationById = findOrganizationById;
@@ -34,6 +38,12 @@ export const quitOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
+  const organization = await findOrganizationById(organization_id);
+
+  if (isEmpty(organization)) {
+    throw new NotFoundError();
+  }
+
   const hasBeenRemoved = await deleteUserOrganization({
     user_id,
     organization_id,
@@ -42,6 +52,19 @@ export const quitOrganization = async ({
   if (!hasBeenRemoved) {
     throw new NotFoundError();
   }
+
+  const { given_name, family_name, email } = await getUserById(user_id);
+
+  await sendMail({
+    to: [email],
+    subject: "Vous avez quitté une organisation sur ProConnect",
+    html: QuitOrganization({
+      given_name: given_name ?? "",
+      family_name: family_name ?? "",
+      organization_label: organization.cached_libelle || organization.siret,
+    }).toString(),
+    tag: "quit-organization",
+  });
 
   return true;
 };
