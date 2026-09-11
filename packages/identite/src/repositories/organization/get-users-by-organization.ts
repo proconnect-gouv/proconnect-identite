@@ -10,16 +10,9 @@ import type { QueryResult } from "pg";
 //
 
 export function getUsersByOrganizationFactory({ pg }: DatabaseContext) {
-  return async function getUsersByOrganization(
-    organization_id: number,
-    additionalWhereClause: string = "",
-    additionalParams: any[] = [],
-  ) {
-    const connection = pg;
-    const baseParams = [organization_id];
-
+  return async function getUsersByOrganization(organization_id: number) {
     const { rows }: QueryResult<User & BaseUserOrganizationLink> =
-      await connection.query(
+      await pg.query(
         `
         SELECT
           u.*,
@@ -32,9 +25,8 @@ export function getUsersByOrganizationFactory({ pg }: DatabaseContext) {
           uo.official_contact_email_verification_sent_at
         FROM users u
         INNER JOIN users_organizations AS uo ON uo.user_id = u.id
-        WHERE uo.organization_id = $1
-        ${additionalWhereClause}`,
-        [...baseParams, ...additionalParams],
+        WHERE uo.organization_id = $1`,
+        [organization_id],
       );
 
     return rows;
