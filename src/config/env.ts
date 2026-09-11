@@ -10,7 +10,9 @@ dotenvFlow.config({
 
 const parsedEnv = envSchema.safeParse(process.env);
 
-if (!parsedEnv.success) throw fromZodError(parsedEnv.error, {});
+if (!parsedEnv.success) {
+  throw fromZodError(parsedEnv.error, {});
+}
 
 export const {
   ACCESS_LOG_PATH,
@@ -72,6 +74,7 @@ export const {
   RNE_API_HTTP_CLIENT_TIMEOUT,
   RNE_API_PASSWORD,
   RNE_API_USERNAME,
+  RNE_API_BASE_URL,
   SENTRY_DSN,
   SESSION_COOKIE_SECRET,
   SESSION_MAX_AGE_IN_SECONDS,

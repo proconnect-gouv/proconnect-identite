@@ -141,11 +141,20 @@ export const getOrganizationInfoController = async (
     });
 
     const { siret } = await schema.parseAsync(req.params);
+    console.log(
+      `🐶🐶 getOrganizationInfoController called with SIRET ${siret}`,
+    );
 
     const organizationInfo = await getOrganizationInfo(siret);
+    console.log(
+      `🐶🐶🐶 organizationInfo returned: ${inspect(organizationInfo, { depth: 3 })}`,
+    );
 
     return res.json({ organizationInfo });
   } catch (e) {
+    console.error(
+      `🐶🐶🐶 getOrganizationInfoController encountered an error: ${inspect(e, { depth: 3 })}`,
+    );
     if (e instanceof InvalidSiretError) {
       return next(
         new HttpErrors.BadRequest(

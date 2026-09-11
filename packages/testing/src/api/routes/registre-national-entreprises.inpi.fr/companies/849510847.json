@@ -1,0 +1,23 @@
+{
+  "formality": {
+    "content": {
+      "personnePhysique": {
+        "etablissementPrincipal": {
+          "descriptionEtablissement": {
+            "rolePourEntreprise": "3",
+            "pays": "FRANCE",
+            "codePays": "FRA",
+            "siret": "84951084700015",
+            "activiteNonSedentaire": false,
+            "nomCommercial": "FMPI",
+            "indicateurEtablissementPrincipal": true,
+            "statutPourFormalite": "5",
+            "codeApe": "5520Z",
+            "etablissementValidated": false,
+            "etablissementRdd": true
+          }
+        }
+      }
+    }
+  }
+}

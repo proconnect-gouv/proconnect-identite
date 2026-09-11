@@ -36,6 +36,7 @@ export function upsertFactory({ pg }: DatabaseContext) {
       cached_categorie_juridique,
       cached_libelle_categorie_juridique,
       cached_siege_social,
+      cached_denomination_usuelle_etablissement_principal,
     } = toPartialOrganization(organizationInfo);
 
     const { rows }: QueryResult<Organization> = await pg.query(
@@ -61,12 +62,13 @@ export function upsertFactory({ pg }: DatabaseContext) {
         cached_categorie_juridique,
         cached_libelle_categorie_juridique,
         cached_siege_social,
+        cached_denomination_usuelle_etablissement_principal,
         organization_info_fetched_at,
         updated_at,
         created_at
       )
     VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
     ON CONFLICT (siret)
     DO UPDATE
     SET (
@@ -89,6 +91,7 @@ export function upsertFactory({ pg }: DatabaseContext) {
         cached_categorie_juridique,
         cached_libelle_categorie_juridique,
         cached_siege_social,
+        cached_denomination_usuelle_etablissement_principal,
         organization_info_fetched_at,
         updated_at
     ) = (
@@ -111,6 +114,7 @@ export function upsertFactory({ pg }: DatabaseContext) {
         EXCLUDED.cached_categorie_juridique,
         EXCLUDED.cached_libelle_categorie_juridique,
         EXCLUDED.cached_siege_social,
+        EXCLUDED.cached_denomination_usuelle_etablissement_principal,
         EXCLUDED.organization_info_fetched_at,
         EXCLUDED.updated_at
     )
@@ -136,6 +140,7 @@ export function upsertFactory({ pg }: DatabaseContext) {
         cached_categorie_juridique,
         cached_libelle_categorie_juridique,
         cached_siege_social,
+        cached_denomination_usuelle_etablissement_principal,
         new Date(),
         new Date(),
         new Date(),
@@ -157,6 +162,8 @@ function toPartialOrganization(organization_info: OrganizationInfo) {
     categorieJuridique: cached_categorie_juridique,
     codeOfficielGeographique: cached_code_officiel_geographique,
     codePostal: cached_code_postal,
+    denominationUsuelleEtablissementPrincipal:
+      cached_denomination_usuelle_etablissement_principal,
     enseigne: cached_enseigne,
     estActive: cached_est_active,
     estDiffusible: cached_est_diffusible,
@@ -188,6 +195,7 @@ function toPartialOrganization(organization_info: OrganizationInfo) {
     cached_libelle,
     cached_nom_complet,
     cached_siege_social,
+    cached_denomination_usuelle_etablissement_principal,
     cached_statut_diffusion,
     cached_tranche_effectifs_unite_legale,
     cached_tranche_effectifs,
