@@ -14,6 +14,11 @@ import {
   findEmailDomainsByOrganizationIdFactory,
 } from "#src/repositories/email-domain";
 import {
+  deleteFranceconnectUserinfoFactory,
+  findFranceconnectUserinfoFactory,
+  upsertFranceconnectUserinfoFactory,
+} from "#src/repositories/franceconnect_userinfo";
+import {
   createModerationFactory,
   deleteModerationFactory,
   findModerationByIdFactory,
@@ -43,16 +48,13 @@ import {
 } from "#src/repositories/organization";
 import {
   createUserFactory,
-  deleteFranceConnectUserInfoFactory,
   deleteUserFactory,
   findByEmailFactory,
   findByMagicLinkTokenFactory,
   findByResetPasswordTokenFactory,
-  findFranceConnectUserInfoFactory,
   findByIdFactory as findUserByIdFactory,
   getByIdFactory,
   updateUserFactory,
-  upsertFranceconnectUserinfoFactory,
 } from "#src/repositories/user";
 import {
   createUserOrganizationFactory,
@@ -86,11 +88,11 @@ export function createContext({
     },
     repository: {
       authenticators: {
-        createAuthenticator: createAuthenticatorFactory({ pg }),
-        deleteAuthenticator: deleteAuthenticatorFactory({ pg }),
-        findAuthenticator: findAuthenticatorFactory({ pg }),
-        findAuthenticatorsByUserId: findAuthenticatorsByUserIdFactory({ pg }),
-        updateAuthenticator: updateAuthenticatorFactory({ pg }),
+        create: createAuthenticatorFactory({ pg }),
+        delete: deleteAuthenticatorFactory({ pg }),
+        find: findAuthenticatorFactory({ pg }),
+        findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
+        update: updateAuthenticatorFactory({ pg }),
       },
       email_deliverability_whitelist: {
         findEmailInDeliverabilityWhiteList:
@@ -140,15 +142,17 @@ export function createContext({
       users: {
         create: createUserFactory({ pg }),
         delete: deleteUserFactory({ pg }),
-        deleteFranceConnectUserInfo: deleteFranceConnectUserInfoFactory({ pg }),
         findByEmail: findByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
         findByMagicLinkToken: findByMagicLinkTokenFactory({ pg }),
         findByResetPasswordToken: findByResetPasswordTokenFactory({ pg }),
-        findFranceConnectUserInfo: findFranceConnectUserInfoFactory({ pg }),
         getById: getByIdFactory({ pg }),
         update: updateUserFactory({ pg }),
-        upsetFranceconnectUserinfo: upsertFranceconnectUserinfoFactory({ pg }),
+      },
+      franceconnect_userinfo: {
+        delete: deleteFranceconnectUserinfoFactory({ pg }),
+        find: findFranceconnectUserinfoFactory({ pg }),
+        upsert: upsertFranceconnectUserinfoFactory({ pg }),
       },
     },
   };

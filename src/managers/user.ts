@@ -52,7 +52,7 @@ import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import { isExpired } from "../services/is-expired";
 import { isWebauthnConfiguredForUser } from "./webauthn";
 
-const { users } = context.repository;
+const { franceconnect_userinfo, users } = context.repository;
 
 const { email_deliverability_whitelist } = context.repository;
 
@@ -560,7 +560,7 @@ export const updatePersonalInformationsForRegistration = async (
     job,
   }: Pick<User, "given_name" | "family_name" | "job">,
 ): Promise<User> => {
-  const isUserVerified = await users.findFranceConnectUserInfo(userId);
+  const isUserVerified = await franceconnect_userinfo.find(userId);
   const names = isUserVerified ? {} : { given_name, family_name };
 
   return users.update(userId, {
@@ -570,7 +570,7 @@ export const updatePersonalInformationsForRegistration = async (
 };
 
 export async function hasValidFranceConnectIdentity(userId: number) {
-  const userFranceConnect = await users.findFranceConnectUserInfo(userId);
+  const userFranceConnect = await franceconnect_userinfo.find(userId);
 
   if (isEmpty(userFranceConnect)) {
     return false;
@@ -583,13 +583,13 @@ export async function hasValidFranceConnectIdentity(userId: number) {
 }
 
 export async function lastFranceConnectIdentityUpdate(userId: number) {
-  const userFranceConnect = await users.findFranceConnectUserInfo(userId);
+  const userFranceConnect = await franceconnect_userinfo.find(userId);
   if (isEmpty(userFranceConnect)) return false;
   return userFranceConnect.updated_at;
 }
 
 export async function disconnectFranceConnectIdentity(userId: number) {
-  return users.deleteFranceConnectUserInfo(userId);
+  return franceconnect_userinfo.delete(userId);
 }
 
 export async function needsFranceConnectIdentityRenewal(userId: number) {
@@ -607,7 +607,7 @@ export async function updateFranceConnectUserInfo(
     family_name: newFamilyName,
     given_name: newGivenName,
   });
-  await users.upsetFranceconnectUserinfo({
+  await franceconnect_userinfo.upsert({
     ...userInfo,
     user_id: userId,
   });
@@ -617,7 +617,7 @@ export async function updateFranceConnectUserInfo(
 export async function getGivenNameOptionsFromFranceConnectIdentity(
   userId: number,
 ): Promise<string[]> {
-  const franceconnectUserinfo = await users.findFranceConnectUserInfo(userId);
+  const franceconnectUserinfo = await franceconnect_userinfo.find(userId);
 
   if (!franceconnectUserinfo) {
     return [];
@@ -632,7 +632,7 @@ export async function getGivenNameOptionsFromFranceConnectIdentity(
 export async function getFamilyNameOptionsFromFranceConnectIdentity(
   userId: number,
 ): Promise<string[]> {
-  const franceconnectUserinfo = await users.findFranceConnectUserInfo(userId);
+  const franceconnectUserinfo = await franceconnect_userinfo.find(userId);
 
   if (!franceconnectUserinfo) {
     return [];

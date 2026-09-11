@@ -3,15 +3,15 @@
 import { emptyDatabase, migrate, pg } from "#testing";
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
-import { deleteFranceConnectUserInfoFactory } from "./delete-franceconnect-userinfo.js";
-import { findFranceConnectUserInfoFactory } from "./find-franceconnect-user-info.js";
+import { deleteFranceconnectUserinfoFactory } from "./delete-franceconnect-userinfo.js";
+import { findFranceconnectUserinfoFactory } from "./find-franceconnect-userinfo.js";
 
 //
 
-const deleteFranceConnectUserInfo = deleteFranceConnectUserInfoFactory({
+const deleteFranceconnectUserinfo = deleteFranceconnectUserinfoFactory({
   pg: pg as any,
 });
-const findFranceConnectUserInfo = findFranceConnectUserInfoFactory({
+const findFranceconnectUserinfo = findFranceconnectUserinfoFactory({
   pg: pg as any,
 });
 
@@ -35,13 +35,13 @@ describe("deleteFranceConnectUserInfo", () => {
       ;
     `;
 
-    await deleteFranceConnectUserInfo(1);
+    await deleteFranceconnectUserinfo(1);
 
-    const user = await findFranceConnectUserInfo(1);
+    const user = await findFranceconnectUserinfo(1);
     assert.equal(user, undefined);
   });
 
   it("should not throw when deleting a user_id with no row", async () => {
-    await assert.doesNotReject(() => deleteFranceConnectUserInfo(42));
+    await assert.doesNotReject(() => deleteFranceconnectUserinfo(42));
   });
 });

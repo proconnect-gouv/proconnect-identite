@@ -9,7 +9,7 @@ import {
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { getSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 
-const { organizations, users } = context.repository;
+const { franceconnect_userinfo, organizations, users } = context.repository;
 
 export const getWelcomeController = async (
   req: Request,
@@ -88,7 +88,7 @@ export const getWelcomeDirigeantController = async (
     if (!userOrganisations)
       throw new NotFoundError("User in organization not found");
 
-    const user_info = await users.findFranceConnectUserInfo(user.id);
+    const user_info = await franceconnect_userinfo.find(user.id);
 
     if (isEmpty(user_info))
       throw new NotFoundError("FranceConnect User info not found");
