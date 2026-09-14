@@ -160,6 +160,11 @@ app.get("/favicon.ico", function (_req, res, _next) {
   });
 });
 
+app.get("/robots.txt", function (_req, res) {
+  res.type("text/plain");
+  res.send("User-agent: *\nDisallow: /");
+});
+
 app.use((req, res, next) => {
   if (req.path.startsWith("/api/")) {
     return apiRateLimiterMiddleware(req, res, next);
