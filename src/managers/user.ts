@@ -266,8 +266,10 @@ export const sendDisable2faMail = async ({ user_id }: { user_id: number }) => {
 
 export const sendDeleteAccessKeyMail = async ({
   user_id,
+  key_name,
 }: {
   user_id: number;
+  key_name?: string;
 }) => {
   const { given_name, family_name, email } = await users.getById(user_id);
 
@@ -278,6 +280,7 @@ export const sendDeleteAccessKeyMail = async ({
       family_name: family_name ?? "",
       given_name: given_name ?? "",
       support_email: "support+identite@proconnect.gouv.fr",
+      key_name,
     }).toString(),
     tag: "delete-access-key",
   });
@@ -304,8 +307,10 @@ export const sendAddFreeTOTPEmail = async ({
 
 export const sendActivateAccessKeyMail = async ({
   user_id,
+  key_name,
 }: {
   user_id: number;
+  key_name?: string;
 }) => {
   const { given_name, family_name, email } = await users.getById(user_id);
 
@@ -316,6 +321,7 @@ export const sendActivateAccessKeyMail = async ({
       family_name: family_name ?? "",
       given_name: given_name ?? "",
       support_email: "support+identite@proconnect.gouv.fr",
+      key_name,
     }).toString(),
     tag: "add-access-key",
   });

@@ -85,6 +85,12 @@ export const deleteUserAuthenticator = async (
     throw new NotFoundError();
   }
 
+  const authenticator = await authenticators.find(user.id, credential_id);
+
+  if (isEmpty(authenticator)) {
+    throw new NotFoundError();
+  }
+
   const hasBeenDeleted = await authenticators.delete(user.id, credential_id);
 
   if (!hasBeenDeleted) {
@@ -95,7 +101,10 @@ export const deleteUserAuthenticator = async (
     await disableForce2fa(user.id);
   }
 
-  return true;
+  return (
+    authenticator.display_name ||
+    `Clé ${authenticator.credential_id.substring(0, 10)}`
+  );
 };
 
 export const getRegistrationOptions = async (email: string) => {
@@ -213,7 +222,7 @@ export const verifyRegistration = async ({
     },
   });
 
-  return { userVerified: user_verified, updatedUser };
+  return { userVerified: user_verified, updatedUser, key_name: display_name };
 };
 
 export const getAuthenticationOptions = async (
