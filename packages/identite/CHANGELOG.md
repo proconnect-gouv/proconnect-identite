@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.1.0
+
+### Minor Changes
+
+- [#2131](https://github.com/proconnect-gouv/proconnect-identite/pull/2131) [`02a93a0`](https://github.com/proconnect-gouv/proconnect-identite/commit/02a93a026cea553396241c2642a339f7713ecc95) Thanks [@rdubigny](https://github.com/rdubigny)! - réusinage de la vérification par email du contact officiel
+
 ## 10.0.2
 
 ### Patch Changes
