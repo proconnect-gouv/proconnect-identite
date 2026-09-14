@@ -147,8 +147,8 @@ exports[`AddAccessKey > should render 1`] = `
                                       margin: 0;
                                     "
                                   >
-                                    Une nouvelle clé d'accès a été ajoutée à
-                                    votre compte.<br /><br /><a
+                                    La clé d'accès « Chrome on Mac » a été
+                                    ajoutée à votre compte.<br /><br /><a
                                       href="mailto:undefined?subject=Erreur+-+Add+Access+Key"
                                       style="
                                         color: rgb(0, 0, 145);

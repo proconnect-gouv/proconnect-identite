@@ -44,7 +44,15 @@ export const isWebauthnConfiguredForUser = async (user_id: number) => {
   const userAuthenticators = await authenticators.findByUserId(user_id);
   return !isEmpty(userAuthenticators);
 };
-
+const getAuthenticatorDisplayName = (authenticator: {
+  display_name: string | null;
+  credential_id: string;
+}) => {
+  return (
+    authenticator.display_name ||
+    `Clé ${authenticator.credential_id.substring(0, 10)}`
+  );
+};
 export const getUserAuthenticators = async (email: string) => {
   const user = await users.findByEmail(email);
 
@@ -65,7 +73,10 @@ export const getUserAuthenticators = async (email: string) => {
     }) => ({
       credential_id,
       usage_count,
-      display_name: display_name || `Clé ${credential_id.substring(0, 10)}`,
+      display_name: getAuthenticatorDisplayName({
+        display_name,
+        credential_id,
+      }),
       created_at: formatDate(created_at),
       last_used_at: last_used_at
         ? formatDate(last_used_at)
@@ -85,6 +96,12 @@ export const deleteUserAuthenticator = async (
     throw new NotFoundError();
   }
 
+  const authenticator = await authenticators.find(user.id, credential_id);
+
+  if (isEmpty(authenticator)) {
+    throw new NotFoundError();
+  }
+
   const hasBeenDeleted = await authenticators.delete(user.id, credential_id);
 
   if (!hasBeenDeleted) {
@@ -95,7 +112,7 @@ export const deleteUserAuthenticator = async (
     await disableForce2fa(user.id);
   }
 
-  return true;
+  return getAuthenticatorDisplayName(authenticator);
 };
 
 export const getRegistrationOptions = async (email: string) => {
@@ -194,7 +211,8 @@ export const verifyRegistration = async ({
     userVerified: user_verified,
   } = registrationInfo;
 
-  const display_name = await getAuthenticatorFriendlyName(aaguid);
+  const friendlyName = await getAuthenticatorFriendlyName(aaguid);
+  const display_name = friendlyName || `Clé ${credential_id.substring(0, 10)}`;
 
   // Save the authenticator info so that we can get it by user ID later
   await authenticators.create({
@@ -213,7 +231,7 @@ export const verifyRegistration = async ({
     },
   });
 
-  return { userVerified: user_verified, updatedUser };
+  return { userVerified: user_verified, updatedUser, key_name: display_name };
 };
 
 export const getAuthenticationOptions = async (
