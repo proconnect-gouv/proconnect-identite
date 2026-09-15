@@ -2,6 +2,8 @@ import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { RateLimiterRedis } from "rate-limiter-flexible";
 import {
+  API_IP_RATE_LIMITER_POINTS_PER_MINUTE,
+  APP_IP_RATE_LIMITER_POINTS_PER_MINUTE,
   FEATURE_RATE_LIMIT_BY_EMAIL,
   FEATURE_RATE_LIMIT_BY_IP,
 } from "../config/env";
@@ -53,8 +55,8 @@ const emailRateLimiterMiddlewareFactory =
 export const rateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
-    keyPrefix: "rate-limiter",
-    points: 60, // 60 requests
+    keyPrefix: "rate-limiter-app",
+    points: APP_IP_RATE_LIMITER_POINTS_PER_MINUTE,
     duration: 60, // per minute per IP
   }),
 );
@@ -63,8 +65,8 @@ export const apiRateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "rate-limiter-api",
-    points: 60, // 60 API requests
-    duration: 1, // per second per IP
+    points: API_IP_RATE_LIMITER_POINTS_PER_MINUTE,
+    duration: 60, // per minute per IP
   }),
 );
 

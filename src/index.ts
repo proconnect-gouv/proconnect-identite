@@ -175,7 +175,7 @@ const WHITELISTED_PATHS = [
 ];
 
 app.use((req, res, next) => {
-  if (req.path.startsWith("/api/") && WHITELISTED_PATHS.includes(req.path)) {
+  if (req.path.startsWith("/api/") || WHITELISTED_PATHS.includes(req.path)) {
     return apiRateLimiterMiddleware(req, res, next);
   }
 

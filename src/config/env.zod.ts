@@ -112,6 +112,16 @@ export const secretEnvSchema = z.object({
 
 export const paramsEnvSchema = z.object({
   ACCESS_LOG_PATH: z.string().optional(),
+  APP_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(100),
+  API_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(1000),
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
