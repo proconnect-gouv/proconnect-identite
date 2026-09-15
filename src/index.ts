@@ -160,12 +160,12 @@ app.get("/favicon.ico", function (_req, res, _next) {
 });
 
 const WHITELISTED_PATHS = [
-  "/oauth/jwks",
-  "/oauth/token",
-  "/oauth/userinfo",
-  "/oauth/request",
-  "/oauth/token/introspection",
   "/.well-known/openid-configuration",
+  "/oauth/jwks",
+  "/oauth/request",
+  "/oauth/token",
+  "/oauth/token/introspection",
+  "/oauth/userinfo",
 ];
 
 app.use((req, res, next) => {
