@@ -4,13 +4,9 @@ import {
   createRegistreNationalEntreprisesClient,
   getRegistreNationalEntreprisesAccessTokenFactory,
 } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
+import { createRegistreNationalEntreprisesOpenApiClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/client";
 import {
-  createRegistreNationalEntreprisesOpenApiClient,
-  type RegistreNationalEntreprisesOpenApiClient,
-} from "@proconnect-gouv/proconnect.registre_national_entreprises/client";
-import { TestingRegistreNationalEntreprisesOpenApiRouter } from "@proconnect-gouv/proconnect.testing/api/routes/registre-national-entreprises.inpi.fr";
-import {
-  FEATURE_MOCK_RNE_API,
+  FEATURE_USE_MOCK_TOKEN_FOR_RNE_API_CALLS,
   RNE_API_BASE_URL,
   RNE_API_HTTP_CLIENT_TIMEOUT,
   RNE_API_PASSWORD,
@@ -23,6 +19,7 @@ const getRneToken = getRegistreNationalEntreprisesAccessTokenFactory({
   password: RNE_API_PASSWORD,
   username: RNE_API_USERNAME,
 });
+const mockGetRneToken = () => Promise.resolve("__RNE_API_TOKEN__");
 const rneClient = createRegistreNationalEntreprisesOpenApiClient({
   baseUrl: RNE_API_BASE_URL,
 });
@@ -39,30 +36,28 @@ const RegistreNationalEntreprisesClient =
 
 //
 
-export const rneOpenApiTestClient: RegistreNationalEntreprisesOpenApiClient =
-  createRegistreNationalEntreprisesOpenApiClient({
-    fetch: (input: Request) =>
-      Promise.resolve(
-        TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
-      ),
-  });
+// const rneOpenApiTestClient: RegistreNationalEntreprisesOpenApiClient =
+//   createRegistreNationalEntreprisesOpenApiClient({
+//     fetch: (input: Request) =>
+//       Promise.resolve(
+//         TestingRegistreNationalEntreprisesOpenApiRouter.fetch(input),
+//       ),
+//   });
 
 export const RegistreNationalEntreprisesTestClient =
-  createRegistreNationalEntreprisesClient(rneOpenApiTestClient, () =>
-    Promise.resolve("__RNE_API_TOKEN__"),
-  );
+  createRegistreNationalEntreprisesClient(rneClient, mockGetRneToken);
 
 //
 
 export const ApiRegistreNationalEntreprisesClient = {
   async findPouvoirsBySiren(siren: string) {
-    const client = FEATURE_MOCK_RNE_API
+    const client = FEATURE_USE_MOCK_TOKEN_FOR_RNE_API_CALLS
       ? RegistreNationalEntreprisesTestClient
       : RegistreNationalEntreprisesClient;
     return client.findPouvoirsBySiren(siren);
   },
   async findCompanyBySiren(siren: string) {
-    const client = FEATURE_MOCK_RNE_API
+    const client = FEATURE_USE_MOCK_TOKEN_FOR_RNE_API_CALLS
       ? RegistreNationalEntreprisesTestClient
       : RegistreNationalEntreprisesClient;
     return client.findCompanyBySiren(siren);
