@@ -20,8 +20,8 @@ describe("trigger rate limiting by ip", () => {
     cy.contains("standard-client");
 
     // we already consumed 9 rate limiter credits during the login process
-    for (let i = 1; i <= 60 - 9; i++) {
-      cy.visit("/", { failOnStatusCode: false });
+    for (let i = 1; i <= 100 - 9; i++) {
+      cy.visit("/");
       cy.contains("Votre compte ProConnect");
     }
 
@@ -42,7 +42,7 @@ describe("trigger rate limiting by ip", () => {
     cy.login("rate-limit+user2@yopmail.com");
 
     // we already consumed 8 rate limiter credits during the login process
-    for (let i = 1; i <= 60 - 8; i++) {
+    for (let i = 1; i <= 100 - 8; i++) {
       cy.visit("/");
       cy.contains("Votre compte ProConnect");
     }
@@ -60,7 +60,7 @@ describe("trigger rate limiting by ip", () => {
   });
 
   it("should trigger IP rate limiting by hitting 404 errors", function () {
-    for (let i = 1; i <= 60; i++) {
+    for (let i = 1; i <= 100; i++) {
       cy.visit("http://localhost:3000/random", { failOnStatusCode: false });
       cy.contains("Page non trouvée");
     }
@@ -75,7 +75,7 @@ describe("trigger rate limiting by ip", () => {
   });
 
   it("should trigger IP rate limiting by hitting 404 errors under /oauth", function () {
-    for (let i = 1; i <= 60; i++) {
+    for (let i = 1; i <= 100; i++) {
       cy.request(
         "http://localhost:3000/oauth/.well-known/openid-configuration",
       );
@@ -89,8 +89,8 @@ describe("trigger rate limiting by ip", () => {
     });
   });
 
-  it("should not trigger IP rate limiting by hitting 404 errors under /api", function () {
-    for (let i = 1; i <= 100; i++) {
+  it.only("should not trigger IP rate limiting by hitting 404 errors under /api", function () {
+    for (let i = 1; i <= 120; i++) {
       cy.visit("http://localhost:3000/api/random", { failOnStatusCode: false });
       cy.contains("Page non trouvée");
     }

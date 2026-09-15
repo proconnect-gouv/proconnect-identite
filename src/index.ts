@@ -159,8 +159,17 @@ app.get("/favicon.ico", function (_req, res, _next) {
   });
 });
 
+const WHITELISTED_PATHS = [
+  "/.well-known/openid-configuration",
+  "/oauth/jwks",
+  "/oauth/request",
+  "/oauth/token",
+  "/oauth/token/introspection",
+  "/oauth/userinfo",
+];
+
 app.use((req, res, next) => {
-  if (req.path.startsWith("/api/")) {
+  if (req.path.startsWith("/api/") && WHITELISTED_PATHS.includes(req.path)) {
     return apiRateLimiterMiddleware(req, res, next);
   }
 
