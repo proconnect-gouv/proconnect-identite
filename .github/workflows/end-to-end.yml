@@ -23,6 +23,7 @@ jobs:
           - broken_standard_client
           - check_email_deliverability
           - connect_franceconnect_account
+          - consent_skip_across_clients
           - delete_account
           - delete_totp
           - join_and_moderation
@@ -46,9 +47,11 @@ jobs:
           - reauthenticate_on_admin_page
           - redirect_after_session_expiration
           - reset_password
+          - session_survives_grant_expiry
           - set_info_after_account_provisioning
           - signin_from_proconnect_federation_client
           - signin_from_standard_client
+          - signin_scope_and_claims_isolation
           - signin_with_certification_dirigeant
           - signin_with_email_verification
           - signin_with_email_verification_renewal
