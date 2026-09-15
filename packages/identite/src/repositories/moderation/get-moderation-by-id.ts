@@ -1,7 +1,7 @@
 //
 
+import { ModerationNotFoundError } from "#src/errors";
 import { type DatabaseContext, type Moderation } from "#src/types";
-import { ModerationNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import { findModerationByIdFactory } from "./find-moderation-by-id.js";
 
 //
