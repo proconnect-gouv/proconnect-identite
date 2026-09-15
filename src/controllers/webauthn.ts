@@ -44,9 +44,12 @@ export const deletePasskeyController = async (
 
     const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
-    await deleteUserAuthenticator(email, credential_id);
+    const key_name = await deleteUserAuthenticator(email, credential_id);
 
-    await sendDeleteAccessKeyMail({ user_id });
+    await sendDeleteAccessKeyMail({
+      user_id,
+      key_name,
+    });
 
     return res.redirect(
       `/connection-and-account?notification=passkey_successfully_deleted`,
@@ -96,7 +99,7 @@ export const postVerifyRegistrationControllerFactory =
         .parseAsync(webauthn_registration_response_string);
       const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
-      const { userVerified, updatedUser } = await verifyRegistration({
+      const { userVerified, updatedUser, key_name } = await verifyRegistration({
         email: email,
         response,
       });
@@ -104,7 +107,10 @@ export const postVerifyRegistrationControllerFactory =
       if (userVerified) {
         addAuthenticationMethodReferenceInSession(req, res, updatedUser, "uv");
       }
-      await sendActivateAccessKeyMail({ user_id });
+      await sendActivateAccessKeyMail({
+        user_id,
+        key_name: key_name ?? undefined,
+      });
 
       return res.redirect(redirectUrl);
     } catch (e) {
