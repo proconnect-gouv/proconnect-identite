@@ -57,6 +57,7 @@ export const connectorEnvSchema = z.object({
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   RNE_API_PASSWORD: z.string().default("🎭 Mocked RNE API Password"),
   RNE_API_USERNAME: z.string().default("🎭 Mocked RNE API Username"),
+  RNE_API_BASE_URL: z.url(),
   RNE_API_HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
@@ -79,6 +80,8 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default(false),
   FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS:
     zodTrueFalseBoolean().default(false),
+  FEATURE_USE_MOCK_TOKEN_FOR_RNE_API_CALLS: zodTrueFalseBoolean().default(true),
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: zodTrueFalseBoolean().default(true),
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),
   FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
   FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),

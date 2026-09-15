@@ -2,7 +2,8 @@
 
 import "#src/types";
 import {
-  OrganizationInfoSchema,
+  ApiEntrepriseOrganizationInfoSchema,
+  type ApiEntrepriseOrganizationInfo,
   type Organization,
   type OrganizationInfo,
 } from "#src/types";
@@ -17,25 +18,28 @@ import { capitalize } from "lodash-es";
 
 //
 
-export function toOrganizationInfo(
-  siretData: InseeSireneEstablishmentSiretResponseData,
-): OrganizationInfo {
+export function toApiEntrepriseOrganizationInfo(
+  apiEntrepriseData: InseeSireneEstablishmentSiretResponseData,
+): ApiEntrepriseOrganizationInfo {
   const isPartiallyNonDiffusible =
-    siretData.status_diffusion === "partiellement_diffusible";
-  const enseigne = siretData.enseigne ?? "";
+    apiEntrepriseData.status_diffusion === "partiellement_diffusible";
+  const enseigne = apiEntrepriseData.enseigne ?? "";
   const nomComplet = isPartiallyNonDiffusible
     ? "Nom inconnu"
     : formatNomComplet({
         denominationUniteLegale:
-          siretData.unite_legale.personne_morale_attributs.raison_sociale ?? "",
+          apiEntrepriseData.unite_legale.personne_morale_attributs
+            .raison_sociale ?? "",
         nomUniteLegale:
-          siretData.unite_legale.personne_physique_attributs.nom_naissance,
+          apiEntrepriseData.unite_legale.personne_physique_attributs
+            .nom_naissance,
         nomUsageUniteLegale:
-          siretData.unite_legale.personne_physique_attributs.nom_usage,
+          apiEntrepriseData.unite_legale.personne_physique_attributs.nom_usage,
         prenomUsuelUniteLegale:
-          siretData.unite_legale.personne_physique_attributs.prenom_usuel,
+          apiEntrepriseData.unite_legale.personne_physique_attributs
+            .prenom_usuel,
         sigleUniteLegale:
-          siretData.unite_legale.personne_morale_attributs.sigle,
+          apiEntrepriseData.unite_legale.personne_morale_attributs.sigle,
       });
   const libelle = isPartiallyNonDiffusible
     ? "Nom inconnu"
@@ -43,37 +47,39 @@ export function toOrganizationInfo(
 
   const trancheEffectifs = isPartiallyNonDiffusible
     ? null
-    : siretData.tranche_effectif_salarie.code;
+    : apiEntrepriseData.tranche_effectif_salarie.code;
   const trancheEffectifsUniteLegale = isPartiallyNonDiffusible
     ? null
-    : siretData.unite_legale.tranche_effectif_salarie.code;
+    : apiEntrepriseData.unite_legale.tranche_effectif_salarie.code;
   const codePostal = isPartiallyNonDiffusible
-    ? siretData.adresse.code_commune
-    : siretData.adresse.code_postal;
+    ? apiEntrepriseData.adresse.code_commune
+    : apiEntrepriseData.adresse.code_postal;
 
-  return OrganizationInfoSchema.parse({
-    activitePrincipale: siretData.activite_principale.code ?? "",
-    adresse: formatAddress(siretData.adresse),
-    categorieJuridique: siretData.unite_legale.forme_juridique.code ?? "",
-    codeOfficielGeographique: siretData.adresse.code_commune ?? "",
+  return ApiEntrepriseOrganizationInfoSchema.parse({
+    activitePrincipale: apiEntrepriseData.activite_principale.code ?? "",
+    adresse: formatAddress(apiEntrepriseData.adresse),
+    categorieJuridique:
+      apiEntrepriseData.unite_legale.forme_juridique.code ?? "",
+    codeOfficielGeographique: apiEntrepriseData.adresse.code_commune ?? "",
     codePostal,
     enseigne,
-    estActive: siretData.etat_administratif === "A",
-    estDiffusible: siretData.status_diffusion === "diffusible",
-    etatAdministratif: siretData.unite_legale.etat_administratif,
+    estActive: apiEntrepriseData.etat_administratif === "A",
+    estDiffusible: apiEntrepriseData.status_diffusion === "diffusible",
+    etatAdministratif: apiEntrepriseData.unite_legale.etat_administratif,
     libelle,
     libelleActivitePrincipale: formatMainActivity(
-      siretData.activite_principale,
+      apiEntrepriseData.activite_principale,
     ),
-    libelleCategorieJuridique: siretData.unite_legale.forme_juridique.libelle,
+    libelleCategorieJuridique:
+      apiEntrepriseData.unite_legale.forme_juridique.libelle,
     libelleTrancheEffectif: libelleFromCodeEffectif(
-      siretData.tranche_effectif_salarie.intitule,
-      siretData.tranche_effectif_salarie.date_reference,
+      apiEntrepriseData.tranche_effectif_salarie.intitule,
+      apiEntrepriseData.tranche_effectif_salarie.date_reference,
     ),
     nomComplet,
-    siegeSocial: siretData.siege_social,
-    siret: siretData.siret,
-    statutDiffusion: siretData.status_diffusion,
+    siegeSocial: apiEntrepriseData.siege_social,
+    siret: apiEntrepriseData.siret,
+    statutDiffusion: apiEntrepriseData.status_diffusion,
     trancheEffectifs,
     trancheEffectifsUniteLegale,
   });
@@ -123,6 +129,10 @@ export function toPartialOrganization(organization_info: OrganizationInfo) {
     siret,
   } satisfies Omit<
     Organization,
-    "created_at" | "id" | "updated_at" | "organization_info_fetched_at"
+    | "created_at"
+    | "id"
+    | "updated_at"
+    | "organization_info_fetched_at"
+    | "cached_denomination_usuelle_etablissement_principal"
   >;
 }
