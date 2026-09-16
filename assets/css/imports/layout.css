@@ -81,3 +81,32 @@ main {
   align-items: center;
   text-align: center;
 }
+
+/* recovery codes page layout */
+
+.recovery-codes-box {
+  position: relative;
+  background-color: #fff;
+  border: 1px solid var(--border-default-grey, #ddd);
+  border-radius: 8px;
+}
+
+.recovery-codes-copy-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.recovery-codes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-right: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 2rem;
+  row-gap: 0.5rem;
+  font-family: "SF Mono", "Roboto Mono", ui-monospace, monospace;
+  font-size: 1rem;
+  color: var(--text-default-grey, #1e1e1e);
+}
