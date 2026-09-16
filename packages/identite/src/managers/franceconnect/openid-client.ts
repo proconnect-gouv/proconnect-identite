@@ -21,7 +21,7 @@ import { z } from "zod";
 //
 
 export type FranceConnectConfigurationParams = {
-  allowLocalhost?: boolean;
+  allowInsecureRequests?: boolean;
   clientId: string;
   clientSecret: string;
   metadata: Partial<ClientMetadata>;
@@ -31,14 +31,16 @@ export type FranceConnectConfigurationParams = {
 export function getFranceConnectConfigurationFactory(
   params: FranceConnectConfigurationParams,
 ) {
-  const { allowLocalhost, clientId, clientSecret, metadata, server } = params;
+  const { clientId, clientSecret, metadata, server } = params;
   return function getFranceConnectConfiguration() {
     return discovery(
       server,
       clientId,
       metadata,
       ClientSecretBasic(clientSecret),
-      allowLocalhost ? { execute: [allowInsecureRequests] } : undefined,
+      params.allowInsecureRequests
+        ? { execute: [allowInsecureRequests] }
+        : undefined,
     );
   };
 }
