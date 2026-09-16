@@ -10,7 +10,9 @@ dotenvFlow.config({
 
 const parsedEnv = envSchema.safeParse(process.env);
 
-if (!parsedEnv.success) throw fromZodError(parsedEnv.error, {});
+if (!parsedEnv.success) {
+  throw fromZodError(parsedEnv.error, {});
+}
 
 export const {
   ACCESS_LOG_PATH,
@@ -39,6 +41,8 @@ export const {
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE,
   FEATURE_DISPLAY_TEST_ENV_WARNING,
   FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS,
+  FEATURE_MOCK_RNE_API,
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS,
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API,
   FEATURE_RATE_LIMIT_BY_EMAIL,
   FEATURE_RATE_LIMIT_BY_IP,
@@ -73,6 +77,7 @@ export const {
   RNE_API_HTTP_CLIENT_TIMEOUT,
   RNE_API_PASSWORD,
   RNE_API_USERNAME,
+  RNE_API_BASE_URL,
   SENTRY_DSN,
   SESSION_COOKIE_SECRET,
   SESSION_MAX_AGE_IN_SECONDS,

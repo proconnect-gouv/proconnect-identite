@@ -28,11 +28,16 @@ export default new Hono()
         siren: z.string().length(9),
       }),
     ),
-    async ({ text, req }) => {
+    async ({ text, req, notFound }) => {
       const { siren } = req.valid("param");
-      return text(
-        await readFile(join(import.meta.dirname, `${siren}.json`), "utf8"),
-      );
+      const filepath = join(import.meta.dirname, `${siren}.json`);
+      try {
+        const fileContent = await readFile(filepath, "utf8");
+        return text(fileContent);
+      } catch (error) {
+        console.error(`Error reading file for siren ${siren}:`, error);
+        return notFound();
+      }
     },
   )
   //

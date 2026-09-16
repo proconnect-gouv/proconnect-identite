@@ -15,6 +15,7 @@ import { ZodError } from "zod";
 import {
   ACCESS_LOG_PATH,
   DEPLOY_ENV,
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
   FRANCECONNECT_ISSUER,
@@ -193,7 +194,7 @@ app.use(async (req, _res, next) => {
 
 app.use("/oauth", oidcProvider.callback());
 
-if (DEPLOY_ENV === "localhost") {
+if (FEATURE_MOUNT_MOCKED_EXTERNAL_APIS) {
   app.use(
     "/___testing___",
     createTestingHandler("/", {
