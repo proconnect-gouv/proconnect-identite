@@ -1,0 +1,40 @@
+<div class="dashboard-container">
+    <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
+    <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+
+      <h1 class="fr-h3">Génération des codes de secours</h1>
+      <p>
+        Copiez ces codes dans un éditeur de texte et imprimez-les ou
+        sauvegardez-les précieusement.
+      </p>
+
+      <div class="fr-p-3w recovery-codes-box">
+        <button
+          type="button"
+          class="fr-btn fr-btn--tertiary-no-outline fr-icon-clipboard-line recovery-codes-copy-btn"
+          aria-label="Copier les codes"
+          id="copy-recovery-codes"
+        ></button>
+
+        <ul class="recovery-codes-list">
+          <% recoveryCodes.forEach((code) => { %>
+            <li><%= code %></li>
+          <% }) %>
+        </ul>
+      </div>
+
+      <form method="get" action="">
+        <div class="fr-checkbox-group fr-mt-3w">
+          <input type="checkbox" id="recovery-codes-saved" name="recovery-codes-saved" required>
+          <label class="fr-label" for="recovery-codes-saved">
+            J'ai imprimé ou sauvegardé mes codes
+          </label>
+        </div>
+        <button type="submit" class="fr-btn fr-mt-3w btn--fullwidth">
+          Continuer
+        </button>
+      </form>
+    </div>
+</div>
+
+<script type="module" src="<%= js('recovery-code.js') %>"></script>
