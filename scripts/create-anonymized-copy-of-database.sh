@@ -58,7 +58,7 @@ SELECT
   'anonymous' as given_name,
   'anonymous' as family_name,
   '**********' as phone_number,
-  job,
+  '**********' as job,
   '**********' as magic_link_token,
   magic_link_sent_at,
   email_verified_at,
