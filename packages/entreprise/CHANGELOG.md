@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.entreprise
 
+## 2.3.0
+
+### Minor Changes
+
+- [#2082](https://github.com/proconnect-gouv/proconnect-identite/pull/2082) [`7abdcbe`](https://github.com/proconnect-gouv/proconnect-identite/commit/7abdcbe0a863f5955f6b5f46b547d70d1d748a91) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - récupération de la dénomination usuelle de l'établissement dans les organization info
+
 ## 2.2.0
 
 ### Minor Changes

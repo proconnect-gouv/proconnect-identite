@@ -1,5 +1,17 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.2.0
+
+### Minor Changes
+
+- [#2082](https://github.com/proconnect-gouv/proconnect-identite/pull/2082) [`7abdcbe`](https://github.com/proconnect-gouv/proconnect-identite/commit/7abdcbe0a863f5955f6b5f46b547d70d1d748a91) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - récupération de la dénomination usuelle de l'établissement dans les organization info
+
+### Patch Changes
+
+- Updated dependencies [[`7abdcbe`](https://github.com/proconnect-gouv/proconnect-identite/commit/7abdcbe0a863f5955f6b5f46b547d70d1d748a91)]:
+  - @proconnect-gouv/proconnect.api_entreprise@2.3.0
+  - @proconnect-gouv/proconnect.registre_national_entreprises@4.1.0
+
 ## 10.1.0
 
 ### Minor Changes
