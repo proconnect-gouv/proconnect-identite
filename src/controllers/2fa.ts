@@ -3,6 +3,7 @@ import HttpErrors from "http-errors";
 import { z } from "zod";
 import { UserIsNot2faCapableError } from "../config/errors";
 import { disableForce2fa, enableForce2fa } from "../managers/2fa";
+import { generateRecoveryCodes } from "../managers/recovery-code";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -223,6 +224,22 @@ export const postSetForce2faController = async (
       return next(new HttpErrors.UnprocessableEntity());
     }
 
+    next(error);
+  }
+};
+
+export const getRecoveryCodeController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("recovery-code", {
+      pageTitle: "Génération des codes de secours",
+      csrfToken: csrfToken(req),
+      recoveryCodes: generateRecoveryCodes(),
+    });
+  } catch (error) {
     next(error);
   }
 };
