@@ -70,6 +70,9 @@ export const connectorEnvSchema = z.object({
 });
 
 export const featureTogglesEnvSchema = z.object({
+  FEATURE_ADD_TEST_PREFIX_TO_MAIL_SUBJECT: zodTrueFalseBoolean().default(false),
+  FEATURE_ALLOW_INSECURE_REQUESTS_TO_FRANCECONNECT:
+    zodTrueFalseBoolean().default(true),
   FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default(false),
   FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE:
@@ -81,7 +84,7 @@ export const featureTogglesEnvSchema = z.object({
     zodTrueFalseBoolean().default(false),
   FEATURE_MOCK_DEBOUNCE_API: zodTrueFalseBoolean().default(true),
   FEATURE_MOCK_RNE_API: zodTrueFalseBoolean().default(true),
-  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: zodTrueFalseBoolean().default(false),
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: zodTrueFalseBoolean().default(true),
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),
   FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
   FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),
@@ -128,9 +131,6 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(1 * 24 * 60),
-  DEPLOY_ENV: z
-    .enum(["localhost", "preview", "production", "sandbox"])
-    .default("localhost"), // 55 seconds in milliseconds;
   HOST: z.string().url().default("http://localhost:3000"),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
