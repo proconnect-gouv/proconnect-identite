@@ -14,7 +14,6 @@ import path from "path";
 import { ZodError } from "zod";
 import {
   ACCESS_LOG_PATH,
-  DEPLOY_ENV,
   FEATURE_MOUNT_MOCKED_EXTERNAL_APIS,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
@@ -310,7 +309,7 @@ let server: Server | undefined;
 try {
   server = app.listen(PORT, () => {
     logger.info(`application is listening on port ${PORT}`);
-    logger.info(`in ${DEPLOY_ENV} ${NODE_ENV} mode`);
+    logger.info(`in ${NODE_ENV} mode`);
   });
 } catch (err) {
   if (server && server.listening) server.close();

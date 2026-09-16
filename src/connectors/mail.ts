@@ -5,7 +5,7 @@ import { convert } from "html-to-text";
 import { isArray, isString } from "lodash-es";
 import { createTransport, type SendMailOptions } from "nodemailer";
 import {
-  DEPLOY_ENV,
+  FEATURE_ADD_TEST_PREFIX_TO_MAIL_SUBJECT,
   SMTP_FROM,
   SMTP_FROM_ALT,
   SMTP_FROM_ALT_RATIO_PERCENT,
@@ -63,7 +63,7 @@ function computeMailSubject(
     return undefined;
   }
 
-  if (DEPLOY_ENV === "sandbox") {
+  if (FEATURE_ADD_TEST_PREFIX_TO_MAIL_SUBJECT) {
     return `Test - ${initialSubject}`;
   }
 
