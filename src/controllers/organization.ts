@@ -136,6 +136,7 @@ export const postJoinOrganizationMiddleware = async (
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
     req.session.pendingOfficialContactEmailVerificationOrganizationId =
       undefined;
+    req.session.pendingGreetingsForSelectedOrganization = undefined;
 
     const organization = await upsertOrganization(siret);
     const userOrganizationLink = await joinOrganization({
@@ -150,6 +151,8 @@ export const postJoinOrganizationMiddleware = async (
       user_id,
       organization_id: userOrganizationLink.organization_id,
     });
+
+    req.session.pendingGreetingsForSelectedOrganization = true;
 
     next();
   } catch (error) {

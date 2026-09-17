@@ -46,5 +46,6 @@ declare module "express-session" {
     pendingModerationOrganizationId?: number;
     pendingCertificationDirigeantOrganizationId?: number;
     pendingOfficialContactEmailVerificationOrganizationId?: number;
+    pendingGreetingsForSelectedOrganization?: boolean;
   }
 }

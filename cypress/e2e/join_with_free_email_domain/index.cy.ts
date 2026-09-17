@@ -4,18 +4,23 @@ describe("join with free email domain", () => {
   before(cy.seed);
 
   beforeEach(() => {
-    cy.visit("/");
-    cy.login("lion.eljonson@yopmail.com");
     cy.visit("/users/join-organization");
+    cy.login("lion.eljonson@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();
   });
 
-  it("entreprise unipersonnelle", function () {
+  it.only("entreprise unipersonnelle", function () {
     cy.focused().clear().type("82869625200018");
 
     cy.contains("Enregistrer").click();
+
+    cy.title().should("include", "Vérifier votre identité");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
 
     cy.title().should("include", "Compte créé - ProConnect");
     cy.contains("Compte créé 🎊");
@@ -39,9 +44,8 @@ describe("restrict access for", () => {
   before(cy.seed);
 
   beforeEach(() => {
-    cy.visit("/");
-    cy.login("lion.eljonson@yopmail.com");
     cy.visit("/users/join-organization");
+    cy.login("lion.eljonson@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -204,9 +208,8 @@ describe("join syndicat communal", () => {
   ];
 
   beforeEach(() => {
-    cy.visit("/");
-    cy.login("lion.eljonson@yopmail.com");
     cy.visit("/users/join-organization");
+    cy.login("lion.eljonson@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();

@@ -34,3 +34,10 @@ export class UserNotFoundError extends Error {
     this.name = "UserNotFoundError";
   }
 }
+
+export class LinkNotFoundError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "LinkNotFoundError";
+  }
+}
