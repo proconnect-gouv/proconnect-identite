@@ -25,6 +25,9 @@ exports[`Database migration with in-memory PostgreSQL > bootstraps schema from s
     "table_name": "organizations"
   },
   {
+    "table_name": "recovery_codes"
+  },
+  {
     "table_name": "users"
   },
   {

@@ -42,6 +42,7 @@ declare module "express-session" {
       Partial<CertificationSession> {
     user?: User;
     temporaryEncryptedTotpKey?: string;
+    temporaryEncryptedRecoveryCodes?: string;
     amr?: AmrValue[];
     pendingModerationOrganizationId?: number;
     pendingCertificationDirigeantOrganizationId?: number;
