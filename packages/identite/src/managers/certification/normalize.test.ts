@@ -17,6 +17,17 @@ describe("normalizeText", () => {
     assert.equal(normalizeText("Hélène"), "HELENE");
   });
 
+  it("removes diacritics outside the French alphabet", () => {
+    assert.equal(normalizeText("Muñoz"), "MUNOZ");
+    assert.equal(normalizeText("João"), "JOAO");
+    assert.equal(normalizeText("Ángel Íñigo"), "ANGEL INIGO");
+    assert.equal(normalizeText("Dvořák"), "DVORAK");
+  });
+
+  it("normalizes decomposed and precomposed accents the same way", () => {
+    assert.equal(normalizeText("He\u0301le\u0300ne"), "HELENE");
+  });
+
   it("replaces special characters with spaces", () => {
     assert.equal(normalizeText("Jean-Pierre"), "JEAN PIERRE");
     assert.equal(normalizeText("O'Connor"), "O CONNOR");
@@ -58,6 +69,10 @@ describe("extractFirstName", () => {
   it("normalizes before extracting", () => {
     assert.equal(extractFirstName("Jean-Pierre"), "JEAN");
     assert.equal(extractFirstName("Marie-Thérèse"), "MARIE");
+  });
+
+  it("keeps the whole first name when it has a non-French diacritic", () => {
+    assert.equal(extractFirstName("João Pedro"), "JOAO");
   });
 
   it("handles single name", () => {
