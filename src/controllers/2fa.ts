@@ -2,12 +2,21 @@ import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z } from "zod";
 import { UserIsNot2faCapableError } from "../config/errors";
+import { context } from "../connectors/context";
 import { disableForce2fa, enableForce2fa } from "../managers/2fa";
-import { generateRecoveryCodes } from "../managers/recovery-code";
+import {
+  generateRecoveryCodes,
+  hasRecoveryCodesConfiguredForUser,
+} from "../managers/recovery-code";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
+import {
+  deleteTemporaryRecoveryCodes,
+  getTemporaryRecoveryCodes,
+  setTemporaryRecoveryCodes,
+} from "../managers/session/temporary-recovery-codes";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import { sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
@@ -234,10 +243,65 @@ export const getRecoveryCodeController = async (
   next: NextFunction,
 ) => {
   try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    if (await hasRecoveryCodesConfiguredForUser(user_id)) {
+      return res.redirect("/connection-and-account");
+    }
+
+    const recoveryCodes = generateRecoveryCodes();
+    setTemporaryRecoveryCodes(req, recoveryCodes);
+
     return res.render("recovery-code", {
       pageTitle: "Génération des codes de secours",
       csrfToken: csrfToken(req),
-      recoveryCodes: generateRecoveryCodes(),
+      recoveryCodes,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postRecoveryCodeController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    if (await hasRecoveryCodesConfiguredForUser(user_id)) {
+      return res.redirect("/connection-and-account");
+    }
+    const recoveryCodes = getTemporaryRecoveryCodes(req);
+
+    if (!recoveryCodes) {
+      throw new HttpErrors.BadRequest();
+    }
+
+    await context.repository.recovery_codes.deleteAllByUserId(user_id);
+    await context.repository.recovery_codes.create({
+      user_id,
+      codes: recoveryCodes,
+    });
+
+    deleteTemporaryRecoveryCodes(req);
+
+    return res.redirect("/recovery-code-success");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRecoveryCodeSuccessController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("recovery-code-success", {
+      pageTitle: "Vos codes de secours sont générés",
+      csrfToken: csrfToken(req),
     });
   } catch (error) {
     next(error);

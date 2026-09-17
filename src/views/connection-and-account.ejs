@@ -161,19 +161,28 @@
                 </button>
             </form>
         <% } %>
+
         <section class="fr-mb-6w">
-            <h2 class="fr-h3">Codes de secours</h2>
-            <p>
-                <b>Pour garantir l'accès à votre compte en toutes circonstances </b>
-                (perte de téléphone, changement d’ordinateur), nous vous recommandons fortement de générer vos codes de secours.
-            </p>
-            <a
-                class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
-                href="/recovery-code"
-            >
-                Générer des codes de secours
-            </a>
+            <% if (hasRecoveryCodesConfigured) { %>
+                <p class="fr-text--sm fr-text-mention--grey">
+                    Vous avez déjà généré des codes de secours.
+                </p>
+                <button
+                    class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
+                    disabled
+                >
+                    Générer des codes de secours
+                </button>
+            <% } else { %>
+                
+                    class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
+                    href="/recovery-code"
+                >
+                    Générer des codes de secours
+                </a>
+            <% } %>
         </section>
+
         <section class="fr-mb-6w">
             <h2 class="fr-h3">Suppression du compte</h2>
             <p>
