@@ -182,48 +182,6 @@ export const franceconnect_userinfo = pgTable(
   ],
 );
 
-export const organizations = pgTable(
-  "organizations",
-  {
-    id: serial().primaryKey().notNull(),
-    siret: varchar().notNull(),
-    created_at: timestamp({ withTimezone: true, mode: "string" })
-      .default("1970-01-01 00:00:00")
-      .notNull(),
-    updated_at: timestamp({ withTimezone: true, mode: "string" })
-      .default("1970-01-01 00:00:00")
-      .notNull(),
-    cached_libelle: varchar(),
-    cached_nom_complet: varchar(),
-    cached_enseigne: varchar(),
-    cached_tranche_effectifs: varchar(),
-    cached_tranche_effectifs_unite_legale: varchar(),
-    cached_libelle_tranche_effectif: varchar(),
-    cached_etat_administratif: varchar(),
-    cached_est_active: boolean(),
-    cached_statut_diffusion: varchar(),
-    cached_est_diffusible: boolean(),
-    cached_adresse: varchar(),
-    cached_code_postal: varchar(),
-    cached_activite_principale: varchar(),
-    cached_libelle_activite_principale: varchar(),
-    cached_categorie_juridique: varchar(),
-    cached_libelle_categorie_juridique: varchar(),
-    organization_info_fetched_at: timestamp({
-      withTimezone: true,
-      mode: "string",
-    }),
-    cached_code_officiel_geographique: varchar(),
-    cached_siege_social: boolean(),
-  },
-  (table) => [
-    uniqueIndex("index_organizations_on_siret").using(
-      "btree",
-      table.siret.asc().nullsLast().op("text_ops"),
-    ),
-  ],
-);
-
 export const users_oidc_clients = pgTable(
   "users_oidc_clients",
   {
@@ -297,6 +255,69 @@ export const moderations = pgTable(
       columns: [table.organization_id],
       foreignColumns: [organizations.id],
       name: "moderations_organization_id_fkey",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const organizations = pgTable(
+  "organizations",
+  {
+    id: serial().primaryKey().notNull(),
+    siret: varchar().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .default("1970-01-01 00:00:00")
+      .notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" })
+      .default("1970-01-01 00:00:00")
+      .notNull(),
+    cached_libelle: varchar(),
+    cached_nom_complet: varchar(),
+    cached_enseigne: varchar(),
+    cached_tranche_effectifs: varchar(),
+    cached_tranche_effectifs_unite_legale: varchar(),
+    cached_libelle_tranche_effectif: varchar(),
+    cached_etat_administratif: varchar(),
+    cached_est_active: boolean(),
+    cached_statut_diffusion: varchar(),
+    cached_est_diffusible: boolean(),
+    cached_adresse: varchar(),
+    cached_code_postal: varchar(),
+    cached_activite_principale: varchar(),
+    cached_libelle_activite_principale: varchar(),
+    cached_categorie_juridique: varchar(),
+    cached_libelle_categorie_juridique: varchar(),
+    organization_info_fetched_at: timestamp({
+      withTimezone: true,
+      mode: "string",
+    }),
+    cached_code_officiel_geographique: varchar(),
+    cached_siege_social: boolean(),
+    cached_denomination_usuelle_etablissement_principal: varchar(),
+  },
+  (table) => [
+    uniqueIndex("index_organizations_on_siret").using(
+      "btree",
+      table.siret.asc().nullsLast().op("text_ops"),
+    ),
+  ],
+);
+
+export const recovery_codes = pgTable(
+  "recovery_codes",
+  {
+    id: serial().primaryKey().notNull(),
+    user_id: integer().notNull(),
+    code: text().notNull(),
+    used_at: timestamp({ withTimezone: true, mode: "string" }),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.user_id],
+      foreignColumns: [users.id],
+      name: "recovery_codes_user_id_fkey",
     }).onDelete("cascade"),
   ],
 );

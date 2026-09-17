@@ -3,6 +3,7 @@ import z, { ZodError } from "zod";
 import { context } from "../connectors/context";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
+import { hasRecoveryCodesConfiguredForUser } from "../managers/recovery-code";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -197,6 +198,8 @@ export const getConnectionAndAccountController = async (
     const is2faCapable = await is2FACapable(user_id);
     const isVerifiedWithFranceConnect =
       await hasValidFranceConnectIdentity(user_id);
+    const hasRecoveryCodesConfigured =
+      await hasRecoveryCodesConfiguredForUser(user_id);
 
     return res.render("connection-and-account", {
       pageTitle: "Compte et connexion",
@@ -211,6 +214,7 @@ export const getConnectionAndAccountController = async (
       csrfToken: csrfToken(req),
       is2faCapable,
       force2fa,
+      hasRecoveryCodesConfigured,
     });
   } catch (error) {
     next(error);

@@ -51,6 +51,9 @@ DROP CONSTRAINT IF EXISTS "users_oidc_clients_organization_id_fkey";
 ALTER TABLE IF EXISTS ONLY "public"."users_oidc_clients"
 DROP CONSTRAINT IF EXISTS "users_oidc_clients_oidc_client_id_fkey";
 
+ALTER TABLE IF EXISTS ONLY "public"."recovery_codes"
+DROP CONSTRAINT IF EXISTS "recovery_codes_user_id_fkey";
+
 ALTER TABLE IF EXISTS ONLY "public"."official_contact_email_verifications"
 DROP CONSTRAINT IF EXISTS "official_contact_email_verifications_user_id_fkey";
 
@@ -94,6 +97,9 @@ DROP CONSTRAINT IF EXISTS "users_oidc_clients_pkey";
 ALTER TABLE IF EXISTS ONLY "public"."email_domains"
 DROP CONSTRAINT IF EXISTS "unique_organization_domain";
 
+ALTER TABLE IF EXISTS ONLY "public"."recovery_codes"
+DROP CONSTRAINT IF EXISTS "recovery_codes_pkey";
+
 ALTER TABLE IF EXISTS ONLY "public"."organizations"
 DROP CONSTRAINT IF EXISTS "organizations_pkey";
 
@@ -126,6 +132,10 @@ ALTER TABLE IF EXISTS "public"."users"
 ALTER COLUMN "id"
 DROP DEFAULT;
 
+ALTER TABLE IF EXISTS "public"."recovery_codes"
+ALTER COLUMN "id"
+DROP DEFAULT;
+
 ALTER TABLE IF EXISTS "public"."organizations"
 ALTER COLUMN "id"
 DROP DEFAULT;
@@ -151,6 +161,10 @@ DROP TABLE IF EXISTS "public"."users_oidc_clients";
 DROP SEQUENCE IF EXISTS "public"."users_id_seq";
 
 DROP TABLE IF EXISTS "public"."users";
+
+DROP SEQUENCE IF EXISTS "public"."recovery_codes_id_seq";
+
+DROP TABLE IF EXISTS "public"."recovery_codes";
 
 DROP SEQUENCE IF EXISTS "public"."organizations_id_seq";
 
@@ -361,7 +375,8 @@ CREATE TABLE "public"."organizations" (
   "cached_libelle_categorie_juridique" character varying,
   "organization_info_fetched_at" timestamp with time zone,
   "cached_code_officiel_geographique" character varying,
-  "cached_siege_social" boolean
+  "cached_siege_social" boolean,
+  "cached_denomination_usuelle_etablissement_principal" character varying
 );
 
 --
@@ -375,6 +390,29 @@ WITH
 -- Name: organizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 ALTER SEQUENCE "public"."organizations_id_seq" OWNED BY "public"."organizations"."id";
+
+--
+-- Name: recovery_codes; Type: TABLE; Schema: public; Owner: -
+--
+CREATE TABLE "public"."recovery_codes" (
+  "id" integer NOT NULL,
+  "user_id" integer NOT NULL,
+  "code" "text" NOT NULL,
+  "used_at" timestamp with time zone,
+  "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+--
+-- Name: recovery_codes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+CREATE SEQUENCE "public"."recovery_codes_id_seq" AS integer START
+WITH
+  1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+
+--
+-- Name: recovery_codes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+ALTER SEQUENCE "public"."recovery_codes_id_seq" OWNED BY "public"."recovery_codes"."id";
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: -
@@ -488,6 +526,13 @@ ALTER COLUMN "id"
 SET DEFAULT "nextval" ('"public"."organizations_id_seq"'::"regclass");
 
 --
+-- Name: recovery_codes id; Type: DEFAULT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."recovery_codes"
+ALTER COLUMN "id"
+SET DEFAULT "nextval" ('"public"."recovery_codes_id_seq"'::"regclass");
+
+--
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 ALTER TABLE ONLY "public"."users"
@@ -550,6 +595,12 @@ ADD CONSTRAINT "oidc_clients_pkey" PRIMARY KEY ("id");
 --
 ALTER TABLE ONLY "public"."organizations"
 ADD CONSTRAINT "organizations_pkey" PRIMARY KEY ("id");
+
+--
+-- Name: recovery_codes recovery_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."recovery_codes"
+ADD CONSTRAINT "recovery_codes_pkey" PRIMARY KEY ("id");
 
 --
 -- Name: email_domains unique_organization_domain; Type: CONSTRAINT; Schema: public; Owner: -
@@ -641,6 +692,12 @@ ADD CONSTRAINT "official_contact_email_verifications_organization_id_fkey" FOREI
 --
 ALTER TABLE ONLY "public"."official_contact_email_verifications"
 ADD CONSTRAINT "official_contact_email_verifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON DELETE CASCADE;
+
+--
+-- Name: recovery_codes recovery_codes_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."recovery_codes"
+ADD CONSTRAINT "recovery_codes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON DELETE CASCADE;
 
 --
 -- Name: users_oidc_clients users_oidc_clients_oidc_client_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
