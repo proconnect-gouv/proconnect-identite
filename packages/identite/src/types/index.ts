@@ -12,5 +12,6 @@ export * from "./official-contact-email-verification.js";
 export * from "./oidc-client.js";
 export * from "./organization-info.js";
 export * from "./organization.js";
+export * from "./recovery-code.js";
 export * from "./user-organization-link.js";
 export * from "./user.js";
