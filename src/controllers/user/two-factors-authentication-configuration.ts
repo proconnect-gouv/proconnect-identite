@@ -317,13 +317,13 @@ export const getMultipleTwoFactorsSuggestionController = async (
   res: Response,
 ) => {
   const { id: user_id } = getUserFromAuthenticatedSession(req);
-  return res.render("user/2fa-backup-suggestion", {
+  return res.render("user/multiple-2fa-suggestion", {
     pageTitle: "Multipliez vos méthodes de double authentification",
     methode2FA: await getConfiguredMethodLabel(user_id),
     csrfToken: csrfToken(req),
   });
 };
-export const postIgnoreMultipleTwoFactorsSuggestionController = async (
+export const postMultipleTwoFactorsSuggestionIgnoreController = async (
   req: Request,
   _res: Response,
   next: NextFunction,

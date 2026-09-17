@@ -37,6 +37,10 @@ const rpID = WEBSITE_IDENTIFIER;
 // The URL at which registrations and authentications should occur
 const origin = HOST;
 
+export const countWebauthnAuthenticatorsForUser = async (user_id: number) => {
+  const userAuthenticators = await authenticators.findByUserId(user_id);
+  return userAuthenticators.length;
+};
 export const isWebauthnConfiguredForUser = async (user_id: number) => {
   // ASSERTION: user exists
   await users.getById(user_id);
