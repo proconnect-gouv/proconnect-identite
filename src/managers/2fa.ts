@@ -6,7 +6,10 @@ import { UserIsNot2faCapableError } from "../config/errors";
 import { context } from "../connectors/context";
 import { isExpired } from "../services/is-expired";
 import { isTotpConfiguredForUser } from "./totp";
-import { isWebauthnConfiguredForUser } from "./webauthn";
+import {
+  countWebauthnAuthenticatorsForUser,
+  isWebauthnConfiguredForUser,
+} from "./webauthn";
 
 const { organizations, users } = context.repository;
 
@@ -36,12 +39,12 @@ export const is2FACapable = async (user_id: number) => {
   return false;
 };
 export const countConfiguredTwoFactorAuthMethods = async (user_id: number) => {
-  const methods = await Promise.all([
+  const [hasTotp, webauthnCount] = await Promise.all([
     isTotpConfiguredForUser(user_id),
-    isWebauthnConfiguredForUser(user_id),
+    countWebauthnAuthenticatorsForUser(user_id),
   ]);
 
-  return methods.filter(Boolean).length;
+  return (hasTotp ? 1 : 0) + webauthnCount;
 };
 
 export const hasOnlyOneTwoFactorAuthMethodConfigured = async (
@@ -70,12 +73,21 @@ export const enableForce2fa = async (user_id: number) => {
 export const getConfiguredMethodLabel = async (
   user_id: number,
 ): Promise<string> => {
-  if (await isTotpConfiguredForUser(user_id)) {
+  const [hasTotp, hasWebauthn] = await Promise.all([
+    isTotpConfiguredForUser(user_id),
+    isWebauthnConfiguredForUser(user_id),
+  ]);
+
+  if (hasTotp && hasWebauthn) {
+    return "l'application d'authentification (TOTP) et une clé de sécurité ou une passkey";
+  }
+
+  if (hasTotp) {
     return "l'application d'authentification (TOTP)";
   }
 
-  if (await isWebauthnConfiguredForUser(user_id)) {
-    return "une clé de sécurité ou un passkey";
+  if (hasWebauthn) {
+    return "une clé de sécurité ou une passkey";
   }
 
   return "votre méthode de double authentification";

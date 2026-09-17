@@ -1,7 +1,7 @@
 describe("signin with multiple 2fa suggestion", () => {
   before(cy.seed);
 
-  it("should show the suggestion when only one 2fa method is configured and never seen", function () {
+  it("should show the suggestion and complete the sign-in flow when clicking ignore", function () {
     cy.visit("http://localhost:4000");
     cy.get("button.proconnect-button").click();
 
@@ -9,15 +9,7 @@ describe("signin with multiple 2fa suggestion", () => {
 
     cy.contains("Multipliez vos méthodes de double authentification (2FA) !");
     cy.contains("Vous utilisez l'application d'authentification (TOTP).");
-  });
 
-  it("should complete the sign-in flow when clicking ignore", function () {
-    cy.visit("http://localhost:4000");
-    cy.get("button.proconnect-button").click();
-
-    cy.mfaLogin("single-totp-never-seen@yopmail.com");
-
-    cy.contains("Multipliez vos méthodes de double authentification (2FA) !");
     cy.contains("Ignorer pour le moment").click();
 
     cy.contains("standard-client");
@@ -34,25 +26,26 @@ describe("signin with multiple 2fa suggestion", () => {
     cy.contains('"email": "single-totp-recently-ignored@yopmail.com"');
   });
 
-  it("should show the suggestion again when it was ignored more than 30 days ago", function () {
+  it("should show the suggestion again after 30 days and redirect to double-authentication-choice when clicking configurer", function () {
     cy.visit("http://localhost:4000");
     cy.get("button.proconnect-button").click();
 
     cy.mfaLogin("single-totp-ignored-long-ago@yopmail.com");
 
     cy.contains("Multipliez vos méthodes de double authentification (2FA) !");
-  });
 
-  it("should redirect to double-authentication-choice when clicking configurer", function () {
-    cy.visit("http://localhost:4000");
-    cy.get("button.proconnect-button").click();
-
-    cy.mfaLogin("single-totp-ignored-long-ago@yopmail.com");
-
-    cy.contains("Multipliez vos méthodes de double authentification (2FA) !");
     cy.contains("Configurer").click();
 
     cy.contains("Choisir votre méthode de connexion renforcée");
+  });
+
+  it("should never show the suggestion when the user has two passkeys and no TOTP", function () {
+    cy.visit("http://localhost:4000");
+    cy.get("button.proconnect-button").click();
+
+    cy.login("two-passkeys-no-totp@yopmail.com");
+
+    cy.contains("standard-client");
   });
 
   describe("with a user adding a second (webauthn) method", () => {

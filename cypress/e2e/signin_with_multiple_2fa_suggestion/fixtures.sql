@@ -84,6 +84,56 @@ VALUES
     CURRENT_TIMESTAMP,
     true,
     NULL
+  ),
+  (
+    5,
+    'two-passkeys-no-totp@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Jean',
+    '0123456789',
+    'Sbire',
+    NULL,
+    NULL,
+    false,
+    NULL
+  );
+
+INSERT INTO
+  authenticators (
+    credential_id,
+    credential_public_key,
+    counter,
+    credential_device_type,
+    credential_backed_up,
+    transports,
+    user_id,
+    display_name
+  )
+VALUES
+  (
+    'fake-credential-id-1',
+    '\x00'::bytea,
+    0,
+    'singleDevice',
+    false,
+    '{"internal"}',
+    5,
+    'Clé 1'
+  ),
+  (
+    'fake-credential-id-2',
+    '\x00'::bytea,
+    0,
+    'singleDevice',
+    false,
+    '{"internal"}',
+    5,
+    'Clé 2'
   );
 
 INSERT INTO
@@ -108,7 +158,8 @@ VALUES
   (1, 1, false, 'domain', true),
   (2, 1, false, 'domain', true),
   (3, 1, false, 'domain', true),
-  (4, 1, false, 'domain', true);
+  (4, 1, false, 'domain', true),
+  (5, 1, false, 'domain', true);
 
 INSERT INTO
   oidc_clients (

@@ -72,7 +72,7 @@ import {
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
-  postIgnoreMultipleTwoFactorsSuggestionController,
+  postMultipleTwoFactorsSuggestionIgnoreController,
   postTotpConfigurationController,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
@@ -240,7 +240,7 @@ export const userRouter = () => {
     "/multiple-2fa-suggestion/ignore",
     userHasConnectedRecentlyGuardMiddleware,
     csrfProtectionMiddleware,
-    postIgnoreMultipleTwoFactorsSuggestionController,
+    postMultipleTwoFactorsSuggestionIgnoreController,
     userSignInRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
