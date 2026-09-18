@@ -1,4 +1,4 @@
-describe("setup the passkey", () => {
+describe("setup the passkey without uv", () => {
   before(cy.seed);
 
   it("should add ctap2 internal passkey authentication", function () {
@@ -6,8 +6,8 @@ describe("setup the passkey", () => {
       protocol: "ctap2",
       transport: "internal",
       hasResidentKey: true,
-      hasUserVerification: true,
-      isUserVerified: true,
+      hasUserVerification: false,
+      isUserVerified: false,
     }).as("authenticator");
 
     cy.visit("/connection-and-account");
@@ -40,12 +40,12 @@ describe("setup the passkey", () => {
   });
 });
 
-describe("use the passkey", () => {
+describe("use the passkey without uv", () => {
   beforeEach(() => {
     // Adds a delay to auto-login to allow Cypress to read the page before triggering authentication.
     cy.intercept(
       "GET",
-      "/api/webauthn/generate-authentication-options-for-first-factor",
+      "/api/webauthn/generate-authentication-options-for-second-factor",
       (req) =>
         req.on("response", (res) => {
           res.setDelay(1000);
@@ -53,21 +53,7 @@ describe("use the passkey", () => {
     );
   });
 
-  it("should sign-in with passkey from PCI", function () {
-    cy.visit("/");
-
-    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Continuer").click();
-
-    cy.title().should("include", "Accéder au compte - ProConnect");
-    cy.contains("Se connecter avec une clé d’accès");
-
-    cy.title().should("include", "Accueil - ProConnect");
-  });
-
-  it("should sign-in with passkey from service provider", function () {
+  it("should sign-in with password", function () {
     cy.origin("http://localhost:4000", () => {
       cy.visit("/");
       cy.title().should("include", "standard-client - ProConnect");
@@ -75,16 +61,11 @@ describe("use the passkey", () => {
     });
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Continuer").click();
-
-    cy.title().should("include", "Accéder au compte - ProConnect");
-    cy.contains("Se connecter avec une clé d’accès");
+    cy.login("lion.eljonson@darkangels.world");
 
     cy.origin("http://localhost:4000", () => {
       cy.title().should("include", "standard-client - ProConnect");
-      cy.contains('"amr": [\n    "pop",\n    "mfa"\n  ],');
+      cy.contains('"amr": [\n    "pwd"\n  ],');
 
       cy.contains("Se déconnecter").click();
     });
@@ -98,29 +79,29 @@ describe("use the passkey", () => {
     });
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Continuer").click();
+    cy.login("lion.eljonson@darkangels.world");
 
-    cy.title().should("include", "Accéder au compte - ProConnect");
+    cy.title().should(
+      "include",
+      "Se connecter avec la double authentification - ProConnect",
+    );
+    cy.contains("Valider avec la double authentification");
     cy.contains("Se connecter avec une clé d’accès");
 
     cy.origin("http://localhost:4000", () => {
       cy.title().should("include", "standard-client - ProConnect");
-      cy.contains('"amr": [\n    "pop",\n    "mfa"\n  ],');
+      cy.contains('"amr": [\n    "pwd",\n    "pop",\n    "mfa"\n  ],');
       cy.contains('"acr": "eidas0-mfa"');
     });
   });
 
   it("should change user 2fa preference", function () {
     cy.visit("/connection-and-account");
-
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Continuer").click();
+    cy.login("lion.eljonson@darkangels.world");
 
-    cy.contains("Se connecter avec une clé d’accès");
+    cy.contains("Valider avec la double authentification");
+    cy.contains("Se connecter avec une clé d’accès").click();
 
     cy.title().should("include", "Compte et connexion");
     cy.contains("Sur tous les sites").click();
@@ -140,16 +121,18 @@ describe("use the passkey", () => {
     });
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
-    cy.contains("Email professionnel").click();
-    cy.focused().type("lion.eljonson@darkangels.world");
-    cy.contains("Continuer").click();
+    cy.login("lion.eljonson@darkangels.world");
 
-    cy.title().should("include", "Accéder au compte - ProConnect");
+    cy.title().should(
+      "include",
+      "Se connecter avec la double authentification - ProConnect",
+    );
+    cy.contains("Valider avec la double authentification");
     cy.contains("Se connecter avec une clé d’accès");
 
     cy.origin("http://localhost:4000", () => {
       cy.title().should("include", "standard-client - ProConnect");
-      cy.contains('"amr": [\n    "pop",\n    "mfa"\n  ],');
+      cy.contains('"amr": [\n    "pwd",\n    "pop",\n    "mfa"\n  ],');
     });
   });
 });

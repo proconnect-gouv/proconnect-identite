@@ -66,6 +66,36 @@ document.addEventListener(
     };
 
     beginElement.addEventListener("click", onAuthenticateClick);
+
+    const initiatingConditionalUI = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasNotification = urlParams.get("notification") !== null;
+
+      if (!hasNotification) {
+        try {
+          const authOptions = await fetch(authOptionsUrl);
+
+          let asseResp = await startAuthentication(
+            { optionsJSON: await authOptions.json() },
+            { useBrowserAutofill: true },
+          );
+
+          authenticationResponseStringInputElement.value =
+            JSON.stringify(asseResp);
+          authenticationResponseForm.requestSubmit();
+        } catch (e) {
+          // fail silently
+          console.error(e);
+        }
+      }
+    };
+
+    if (
+      authenticationResponseStringInputElement.getAttribute("autocomplete") ===
+      "webauthn"
+    ) {
+      initiatingConditionalUI();
+    }
   },
   false,
 );
