@@ -47,10 +47,10 @@ import {
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
-import { getOrganizationInfo } from "../../connectors/api-sirene";
 import { context } from "../../connectors/context";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
+import { getOrganizationInfo } from "../../connectors/organization-info";
 import {
   isAFreeEmailProvider,
   usesAFreeEmailProvider,

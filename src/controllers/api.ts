@@ -13,22 +13,23 @@ import { inspect } from "node:util";
 import { z, ZodError } from "zod";
 import notificationMessages from "../config/notification-messages";
 import { pingAnnuaireEducationNationale } from "../connectors/api-annuaire-education-nationale";
+import { ApiEntrepriseClient } from "../connectors/api-entreprise";
 import { ApiInseeClient } from "../connectors/api-insee";
 import { ApiRegistreNationalEntreprisesClient } from "../connectors/api-rne";
-import { getOrganizationInfo } from "../connectors/api-sirene";
 import { pingDebounce } from "../connectors/debounce";
 import { pingGithubPasskeyAuthenticatorAaguids } from "../connectors/github-passkey-authenticator-aaguids";
+import { getOrganizationInfo } from "../connectors/organization-info";
 import { pingPwnedPasswords } from "../connectors/pwnedpasswords";
 import { siretSchema } from "../services/custom-zod-schemas";
 import { logger } from "../services/log";
 
-export const getPingApiSireneController = async (
+export const getPingApiEntrepriseController = async (
   _req: Request,
   res: Response,
   _next: NextFunction,
 ) => {
   try {
-    await getOrganizationInfo("13002526500013"); // we use DINUM siret for the ping route
+    await ApiEntrepriseClient.findBySiret("13002526500013"); // we use DINUM siret for the ping route
 
     return res.json({});
   } catch (e) {
