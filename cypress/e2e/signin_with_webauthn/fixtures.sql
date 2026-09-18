@@ -10,7 +10,8 @@ INSERT INTO
     given_name,
     family_name,
     phone_number,
-    job
+    job,
+    multiple_2fa_suggestion_ignored_at
   )
 VALUES
   (
@@ -24,7 +25,8 @@ VALUES
     'Lion',
     'El''Jonson',
     'I',
-    'Primarque'
+    'Primarque',
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO
