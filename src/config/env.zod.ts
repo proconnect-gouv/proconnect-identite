@@ -112,40 +112,50 @@ export const secretEnvSchema = z.object({
 
 export const paramsEnvSchema = z.object({
   ACCESS_LOG_PATH: z.string().optional(),
+  API_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(1000),
+  APPLICATION_NAME: z.string().default("ProConnect"),
+  APP_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(100), // 1 day in minutes
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(1 * 24 * 60), // 1 day in minutes
+    .default(1 * 24 * 60),
   DEPLOY_ENV: z
     .enum(["localhost", "preview", "production", "sandbox"])
-    .default("localhost"),
+    .default("localhost"), // 55 seconds in milliseconds;
+  HOST: z.string().url().default("http://localhost:3000"),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(55 * 1_000), // 55 seconds in milliseconds;
+    .default(55 * 1_000), // 1 hour in minutes
   LOG_LEVEL: z
     .enum(["trace", "debug", "info", "warn", "error", "fatal"])
-    .default("info"),
+    .default("info"), // 3 months in minutes
   MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(60), // 1 hour in minutes
+    .default(60),
   MAX_DURATION_BETWEEN_TWO_EMAIL_ADDRESS_VERIFICATION_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(3 * 30 * 24 * 60), // 3 months in minutes
+    .default(3 * 30 * 24 * 60), // 20 minutes in seconds,
   MAX_SUGGESTED_ORGANIZATIONS: z.coerce.number().int().nonnegative().default(3),
   MIN_DURATION_BETWEEN_TWO_VERIFICATION_CODE_SENDING_IN_SECONDS: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(20 * 60), // 20 minutes in seconds,
-  HOST: z.string().url().default("http://localhost:3000"),
-  APPLICATION_NAME: z.string().default("ProConnect"),
+    .default(20 * 60),
   NODE_ENV: z
     .enum(["production", "development", "test"])
     .default("development"),
@@ -167,13 +177,13 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(1 * 24 * 60 * 60), // 1 day in seconds
-  TEST_CONTACT_EMAIL: z.string().default("mairie@yopmail.com"),
+  SMTP_FROM_ALT_RATIO_PERCENT: z.coerce.number().min(0).max(100).default(10),
+  TEST_CONTACT_EMAIL: z.string().default("mairie@yopmail.com"), // 3 months in seconds
   TRUSTED_BROWSER_COOKIE_MAX_AGE_IN_SECONDS: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(3 * 30 * 24 * 60 * 60), // 3 months in seconds
-  SMTP_FROM_ALT_RATIO_PERCENT: z.coerce.number().min(0).max(100).default(10),
+    .default(3 * 30 * 24 * 60 * 60),
   USE_SMTP_FROM_ALT_FOR_DOMAINS: zCoerceArray().default([]),
   VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
