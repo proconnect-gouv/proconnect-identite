@@ -27,7 +27,6 @@ import {
 } from "../managers/certification";
 import {
   createPendingModeration,
-  greetForCertification,
   greetForJoiningOrganization,
 } from "../managers/organization/join";
 import { selectOrganization } from "../managers/organization/main";
@@ -38,6 +37,7 @@ import {
   hasUserAuthenticatedRecently,
   isWithinAuthenticatedSession,
   isWithinTwoFactorAuthenticatedSession,
+  updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import {
   getEmailFromUnauthenticatedSession,
@@ -58,7 +58,7 @@ import { isExpired } from "../services/is-expired";
 import { logger } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
-const { franceconnect_userinfo, organizations, users_organizations } =
+const { franceconnect_userinfo, organizations, users, users_organizations } =
   context.repository;
 
 //
@@ -371,6 +371,28 @@ export const browserIsTrustedGuardMiddleware = createGuardMiddleware(
 
 export const userCanAccessAppGuardMiddleware = browserIsTrustedGuardMiddleware;
 
+const userHasSeenInclusionconnectOnboardingHelpGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+    pass,
+    redirect,
+  } = prev;
+  const { id: user_id, needs_inclusionconnect_onboarding_help } =
+    getUserFromAuthenticatedSession(req);
+  if (needs_inclusionconnect_onboarding_help) {
+    const user = await users.update(user_id, {
+      needs_inclusionconnect_onboarding_help: false,
+    });
+    updateUserInAuthenticatedSession(req, user);
+
+    return redirect(
+      "/users/welcome?show_inclusion_connect_onboarding_help=true",
+    );
+  }
+  return pass("user_has_seen_inclusionconnect_onboarding_help");
+};
 //
 
 const userHasLoggedInRecentlyGuard = async (prev: Pass<RequestContext>) => {
@@ -534,23 +556,6 @@ const userHasSelectedAnOrganizationGuard = async <
     selectedOrganizationId,
   });
 };
-export const userHasSelectedAnOrganizationGuardMiddleware =
-  createGuardMiddleware(
-    async function userHasSelectedAnOrganizationGuardMiddleware(prev) {
-      let context;
-
-      context = await browserIsTrustedGuard(prev);
-      if (!Pass.is_passing(context)) return context;
-
-      context = await userHasAtLeastOneOrganizationGuard(context);
-      if (!Pass.is_passing(context)) return context;
-
-      context = await userBelongsToHintedOrganizationGuard(context);
-      if (!Pass.is_passing(context)) return context;
-
-      return userHasSelectedAnOrganizationGuard(context);
-    },
-  );
 
 const userHasValidFranceConnectIdentityGuard = async <
   TContext extends RequestContext,
@@ -658,63 +663,6 @@ const userIsCertifiedAsDirigeantGuard = async <
   return pass("user_is_certified_as_dirigeant");
 };
 
-const userHasBeenGreetedGuard = async (context: Pass<RequestContext>) => {
-  const {
-    data: { req },
-    pass,
-    redirect,
-  } = context;
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-  const userOrganizations = await organizations.findByUserId(user_id);
-
-  let organizationThatNeedsGreetings;
-
-  const selectedOrganizationId = await getSelectedOrganizationId(user_id);
-
-  if (selectedOrganizationId) {
-    organizationThatNeedsGreetings = userOrganizations.find(
-      ({ id, has_been_greeted }) =>
-        !has_been_greeted && id === selectedOrganizationId,
-    );
-  } else {
-    organizationThatNeedsGreetings = userOrganizations.find(
-      ({ has_been_greeted }) => !has_been_greeted,
-    );
-  }
-
-  if (!isEmpty(organizationThatNeedsGreetings)) {
-    if (
-      organizationThatNeedsGreetings.verification_type ===
-      LinkEnum.enum.organization_dirigeant
-    ) {
-      await greetForCertification({
-        user_id,
-        organization_id: organizationThatNeedsGreetings.id,
-      });
-      return redirect("/users/welcome/dirigeant");
-    }
-
-    await greetForJoiningOrganization({
-      user_id,
-      organization_id: organizationThatNeedsGreetings.id,
-    });
-
-    return redirect("/users/welcome");
-  }
-
-  return pass("user_has_been_greeted");
-};
-
-const connectToAppGuard = async (prev: Pass<RequestContext>) => {
-  let context;
-
-  context = await userHasBeenGreetedGuard(prev);
-  if (!Pass.is_passing(context)) return context;
-
-  return context.pass("ok_to_connect_to_app");
-};
-
 const connectToSp = async (
   prev: Pass<RequestContext>,
 ): Promise<GuardResult<string, RequestContext>> => {
@@ -736,9 +684,6 @@ const connectToSp = async (
   if (!Pass.is_passing(context)) return context;
 
   context = await userHasPersonalInformationsGuard(context);
-  if (!Pass.is_passing(context)) return context;
-
-  context = await userHasBeenGreetedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   return context.pass("ok_to_connect_to_sp");
@@ -821,6 +766,8 @@ const processCertificationDirigeantGuard = async (
       organization_id,
     });
 
+    req.session.pendingGreetingsForSelectedOrganization = true;
+
     pass("user_passed_certification_dirigeant").extends({
       selectedOrganizationId: organization_id,
     });
@@ -871,10 +818,46 @@ const processOfficialContactEmailVerificationGuard = async (
   return redirect(`/users/official-contact-email-verification`);
 };
 
+const processGreetingsForSelectedOrganizationGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+  } = prev;
+
+  let context;
+
+  context = await connectToSp(prev);
+  if (!Pass.is_passing(context)) return context;
+
+  const { pendingGreetingsForSelectedOrganization } = req.session;
+  const user_id = getUserFromAuthenticatedSession(req).id;
+  const organization_id = await getSelectedOrganizationId(user_id);
+
+  if (!pendingGreetingsForSelectedOrganization || !organization_id) {
+    throw HttpErrors.InternalServerError();
+  }
+  // ASSERT link exists
+  const link = await users_organizations.get({ user_id, organization_id });
+
+  if (link.verification_type !== LinkEnum.enum.organization_dirigeant) {
+    await greetForJoiningOrganization({ user_id, organization_id });
+  }
+
+  req.session.pendingGreetingsForSelectedOrganization = undefined;
+
+  return context.redirect("/users/welcome");
+};
+
 async function userSignInRequirementsGuard(
   prev: Pass<RequestContext>,
 ): Promise<GuardResult<string, RequestContext>> {
-  const context = await browserIsTrustedGuard(prev);
+  let context;
+
+  context = await browserIsTrustedGuard(prev);
+  if (!Pass.is_passing(context)) return context;
+
+  context = await userHasSeenInclusionconnectOnboardingHelpGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   const {
@@ -882,14 +865,15 @@ async function userSignInRequirementsGuard(
     interactionId,
     pendingCertificationDirigeantOrganizationId,
     pendingOfficialContactEmailVerificationOrganizationId,
+    pendingGreetingsForSelectedOrganization,
   } = context.data.req.session;
 
   return match({
     pendingModerationOrganizationId,
     interactionId,
     pendingCertificationDirigeantOrganizationId,
-    pendingOfficialContactEmailVerificationOrganizationId:
-      pendingOfficialContactEmailVerificationOrganizationId,
+    pendingOfficialContactEmailVerificationOrganizationId,
+    pendingGreetingsForSelectedOrganization,
   })
     .with({ pendingModerationOrganizationId: P.number }, () =>
       processPendingModerationGuard(context),
@@ -901,8 +885,11 @@ async function userSignInRequirementsGuard(
       { pendingOfficialContactEmailVerificationOrganizationId: P.number },
       () => processOfficialContactEmailVerificationGuard(context),
     )
+    .with({ pendingGreetingsForSelectedOrganization: true }, () =>
+      processGreetingsForSelectedOrganizationGuard(context),
+    )
     .with({ interactionId: P.string }, () => connectToSp(context))
-    .otherwise(() => connectToAppGuard(context));
+    .otherwise(() => context.pass("ok_to_connect_to_app"));
 }
 
 // check that the user goes through all requirements before issuing a session

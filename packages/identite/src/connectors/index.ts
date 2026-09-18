@@ -60,6 +60,7 @@ import {
   createUserOrganizationFactory,
   deleteUserOrganizationFactory,
   findUserOrganizationFactory,
+  getUserOrganizationFactory,
   updateUserOrganizationFactory,
 } from "#src/repositories/user_organisation";
 import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
@@ -137,6 +138,7 @@ export function createContext({
         create: createUserOrganizationFactory({ pg }),
         delete: deleteUserOrganizationFactory({ pg }),
         find: findUserOrganizationFactory({ pg }),
+        get: getUserOrganizationFactory({ pg }),
         update: updateUserOrganizationFactory({ pg }),
       },
       users: {

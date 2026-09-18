@@ -7,21 +7,21 @@ describe("set info after account provisioning", () => {
     // Visit the signup page
     cy.visit("/users/start-sign-in");
 
-    // Sign in with the wrong password
-    cy.get('[name="login"]').type("lion.eljonson@darkangels.world");
-    cy.get('[type="submit"]').click();
+    cy.contains("Email professionnel").click();
+    cy.focused().type("lion.eljonson@darkangels.world");
+    cy.contains("Continuer").click();
 
     cy.contains("C’est votre première connexion avec ProConnect");
 
-    cy.get('[type="submit"]').contains("Continuer").click();
+    cy.contains("Continuer").click();
 
     cy.contains(
       "Pour des raisons de sécurité, nous vous invitons à définir un nouveau mot de passe",
     );
-    cy.get('[name="password"]').type(
-      "This super secret password is hidden well!",
-    );
-    cy.get('[action="/users/sign-up"]  [type="submit"]').click();
+
+    cy.contains("Mot de passe").click();
+    cy.focused().type("This super secret password is hidden well!");
+    cy.contains("Continuer").click();
 
     cy.contains(
       "Pour vérifier que vous avez bien accès à votre email, nous utilisons un code de confirmation.",
@@ -37,10 +37,14 @@ describe("set info after account provisioning", () => {
     // Visit the signup page
     cy.visit("/users/start-sign-in");
 
-    // Sign in with the wrong password
-    cy.get('[name="login"]').type("lion.eljonson@darkangels.world");
-    cy.get('[type="submit"]').click();
+    cy.contains("Email professionnel").click();
+    cy.focused().type("lion.eljonson@darkangels.world");
+    cy.contains("Continuer").click();
 
-    cy.contains("Accéder au compte");
+    cy.contains("Renseignez votre mot de passe").click();
+    cy.focused().type("This super secret password is hidden well!");
+    cy.contains("S’identifier").click();
+
+    cy.contains("Votre compte ProConnect");
   });
 });
