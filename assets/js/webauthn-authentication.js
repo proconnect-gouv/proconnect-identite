@@ -44,7 +44,9 @@ document.addEventListener(
         const authOptions = await fetch(authOptionsUrl);
 
         // Pass the options to the authenticator and wait for a response
-        asseResp = await startAuthentication(await authOptions.json());
+        asseResp = await startAuthentication({
+          optionsJSON: await authOptions.json(),
+        });
       } catch (error) {
         errorElement.style.display = "block";
         if (error.name === "NotAllowedError") {

@@ -56,7 +56,7 @@ const registerPassKey = async () => {
     const resp = await fetch("/api/webauthn/generate-registration-options");
 
     // Pass the options to the authenticator and wait for a response
-    attResp = await startRegistration(await resp.json());
+    attResp = await startRegistration({ optionsJSON: await resp.json() });
   } catch (error) {
     clearDisplay();
     errorAlertElement.style.display = "block";
