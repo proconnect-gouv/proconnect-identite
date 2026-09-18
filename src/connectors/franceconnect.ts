@@ -7,7 +7,7 @@ import {
   getFranceConnectUserFactory,
 } from "@proconnect-gouv/proconnect.identite/managers/franceconnect";
 import {
-  DEPLOY_ENV,
+  FEATURE_ALLOW_INSECURE_REQUESTS_TO_FRANCECONNECT,
   FRANCECONNECT_CLIENT_ID,
   FRANCECONNECT_CLIENT_SECRET,
   FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG,
@@ -20,7 +20,7 @@ import {
 
 export const getFranceConnectConfiguration =
   getFranceConnectConfigurationFactory({
-    allowLocalhost: DEPLOY_ENV === "localhost",
+    allowLocalhost: FEATURE_ALLOW_INSECURE_REQUESTS_TO_FRANCECONNECT,
     clientId: FRANCECONNECT_CLIENT_ID,
     clientSecret: FRANCECONNECT_CLIENT_SECRET,
     metadata: {

@@ -70,6 +70,9 @@ export const connectorEnvSchema = z.object({
 });
 
 export const featureTogglesEnvSchema = z.object({
+  FEATURE_ADD_TEST_PREFIX_TO_MAIL_SUBJECT: zodTrueFalseBoolean().default(false),
+  FEATURE_ALLOW_INSECURE_REQUESTS_TO_FRANCECONNECT:
+    zodTrueFalseBoolean().default(false),
   FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default(false),
   FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default(false),
   FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default(false),
@@ -117,9 +120,6 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(1 * 24 * 60), // 1 day in minutes
-  DEPLOY_ENV: z
-    .enum(["localhost", "preview", "production", "sandbox"])
-    .default("localhost"),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
