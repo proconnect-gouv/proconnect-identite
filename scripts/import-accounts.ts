@@ -9,8 +9,8 @@ import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { z } from "zod";
-import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import { context } from "../src/connectors/context";
+import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
 import { logger } from "../src/services/log";
 import {
