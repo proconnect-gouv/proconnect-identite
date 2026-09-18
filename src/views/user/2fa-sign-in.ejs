@@ -82,7 +82,7 @@
         </div>
         <form id="webauthn-authentication-response-form" action="/users/2fa-sign-in-with-passkey" method="post" hidden>
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
-            <input type="hidden" name="webauthn_authentication_response_string">
+            <input type="hidden" name="webauthn_authentication_response_string" autocomplete="webauthn">
             <button type="submit" class="fr-btn"></button>
         </form>
         <script type="module" src="<%= js('webauthn-authentication.js') %>"></script>
