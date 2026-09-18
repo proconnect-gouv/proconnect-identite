@@ -98,6 +98,34 @@ export const FRANCECONNECT_CITIZENS = new Map<string, Citizen>([
     },
   ],
   [
+    "Pieter Volckaert",
+    {
+      user_info: {
+        birthcountry: "99131",
+        birthdate: new Date("1984-06-05"),
+        birthplace: "",
+        family_name: "Volckaert",
+        gender: "male",
+        given_name: "Pieter",
+        preferred_username: "",
+        sub: "🎭 FranceConnect Sub",
+      },
+      avataaars: `https://avataaars.io/?${new URLSearchParams({
+        avatarStyle: "Circle",
+        topType: "ShortHairShortWaved",
+        accessoriesType: "Blank",
+        hairColor: "Brown",
+        facialHairType: "Blank",
+        clotheType: "ShirtVNeck",
+        clotheColor: "Gray02",
+        eyeType: "Default",
+        eyebrowType: "Default",
+        mouthType: "Default",
+        skinColor: "Light",
+      })}`,
+    },
+  ],
+  [
     "Karima Aknine",
     {
       user_info: {
