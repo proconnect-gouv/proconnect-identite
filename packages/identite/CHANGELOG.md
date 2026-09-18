@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.2.1
+
+### Patch Changes
+
+- [#2174](https://github.com/proconnect-gouv/proconnect-identite/pull/2174) [`bdc9f6d`](https://github.com/proconnect-gouv/proconnect-identite/commit/bdc9f6d34c80b3a5fe1bb3ad9f97212a8e913932) Thanks [@Dev-next-gen](https://github.com/Dev-next-gen)! - normalizeText retire tous les diacritiques (ñ, ã, á, ř…) et traite pareil les accents composés et décomposés
+- Updated dependencies [[`4c83789`](https://github.com/proconnect-gouv/proconnect-identite/commit/4c837898d9c1e2781525aed02d7b53cc4f755f11)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@3.0.4
+
 ## 10.2.0
 
 ### Minor Changes
