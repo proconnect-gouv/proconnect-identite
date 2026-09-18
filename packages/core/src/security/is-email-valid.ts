@@ -11,12 +11,12 @@ export function isEmailValid(email: unknown): email is string {
     return false;
   }
 
-  const parts = email.split("@").filter((part) => part);
+  const parts = email.split("@");
 
   // The email address contains two parts, separated with an @ symbol.
   // => these parts are non-empty strings
   // => there are two and only two parts
-  if (parts.length !== 2) {
+  if (parts.length !== 2 || parts.some((part) => !part)) {
     return false;
   }
 
