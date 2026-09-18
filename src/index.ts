@@ -165,8 +165,17 @@ app.get("/robots.txt", function (_req, res) {
   res.send("User-agent: *\nDisallow: /");
 });
 
+const WHITELISTED_PATHS = [
+  "/.well-known/openid-configuration",
+  "/oauth/jwks",
+  "/oauth/request",
+  "/oauth/token",
+  "/oauth/token/introspection",
+  "/oauth/userinfo",
+];
+
 app.use((req, res, next) => {
-  if (req.path.startsWith("/api/")) {
+  if (req.path.startsWith("/api/") && WHITELISTED_PATHS.includes(req.path)) {
     return apiRateLimiterMiddleware(req, res, next);
   }
 
