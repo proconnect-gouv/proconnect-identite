@@ -59,7 +59,7 @@ export async function getPingApiDebounceController(
   _next: NextFunction,
 ) {
   try {
-    await pingDebounce(); // we use a mock email for the ping route
+    await pingDebounce();
     return res.json({});
   } catch (e) {
     logger.error(inspect(e, { depth: 3 }));
