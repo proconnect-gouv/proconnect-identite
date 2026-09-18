@@ -2443,5 +2443,25 @@
     "siren": "784301111",
     "denomination": "INSTITUT D'EMISSION D'OUTRE-MER (IEOM)",
     "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "308213768",
+    "denomination": "ETS PUBLIC AMENAGEMENT VILLE NOUVELLE",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "130018914",
+    "denomination": "CENTRE DE RESSOURCES D'EXPERTISE ET DE PERFORMANCE SPORTIVE (CREPS)",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "187512751",
+    "denomination": "AGENCE DU NUMERIQUE EN SANTE (ANS)",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "514185792",
+    "denomination": "ETABLISSEMENT PUBLIC FONCIER BRETAGNE (FONCIER DE BRETAGNE) (EPF)",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   }
 ]
