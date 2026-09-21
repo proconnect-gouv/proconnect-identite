@@ -23,6 +23,12 @@ describe("isEmailValid", () => {
     assert.equal(isEmailValid("test@test@test"), false);
   });
 
+  it("should return false if an extra @ leaves an empty part", () => {
+    assert.equal(isEmailValid("test@@test.fr"), false);
+    assert.equal(isEmailValid("@test@test.fr"), false);
+    assert.equal(isEmailValid("test@test.fr@"), false);
+  });
+
   it("should return false if domains contain other than letters, numbers, hyphens (-) and periods (.)", () => {
     assert.equal(isEmailValid("test@test_test"), false);
   });
