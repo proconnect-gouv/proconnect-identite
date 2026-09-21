@@ -14,7 +14,7 @@ export interface DebounceErrorResponse {
 /**
  * @see https://developers.debounce.io/reference/responses#success-response
  */
-export interface DebounceSuccessResponse {
+export interface DebounceSingleValidationSuccessResponse {
   debounce: {
     // The email address you are requesting to validate.
     // ex: 'test@wanadoo.rf'
@@ -43,5 +43,9 @@ export interface DebounceSuccessResponse {
   };
 
   success: "1";
+  balance: `${number}`;
+}
+
+export interface DebounceBalanceSuccessResponse {
   balance: `${number}`;
 }
