@@ -34,6 +34,7 @@ suite("createUserFactory", () => {
       last_sign_in_at: null,
       magic_link_sent_at: null,
       magic_link_token: null,
+      multiple_2fa_suggestion_ignored_at: null,
       needs_inclusionconnect_onboarding_help: false,
       needs_inclusionconnect_welcome_page: false,
       phone_number: null,

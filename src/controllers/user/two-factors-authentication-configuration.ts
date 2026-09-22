@@ -3,6 +3,10 @@ import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { InvalidTotpTokenError } from "../../config/errors";
 import {
+  getConfiguredMethodLabel,
+  ignoreMultipleTwoFactorsSuggestion,
+} from "../../managers/2fa";
+import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
 } from "../../managers/session/authenticated";
@@ -307,3 +311,25 @@ export const getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController =
       next(error);
     }
   };
+
+export const getMultipleTwoFactorsSuggestionController = async (
+  req: Request,
+  res: Response,
+) => {
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  return res.render("user/multiple-2fa-suggestion", {
+    pageTitle: "Multipliez vos méthodes de double authentification",
+    methode2FA: await getConfiguredMethodLabel(user_id),
+    csrfToken: csrfToken(req),
+  });
+};
+export const postMultipleTwoFactorsSuggestionIgnoreController = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  await ignoreMultipleTwoFactorsSuggestion(user_id);
+
+  return next();
+};
