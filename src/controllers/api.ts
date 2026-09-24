@@ -16,7 +16,7 @@ import { pingAnnuaireEducationNationale } from "../connectors/api-annuaire-educa
 import { ApiEntrepriseClient } from "../connectors/api-entreprise";
 import { ApiInseeClient } from "../connectors/api-insee";
 import { ApiRegistreNationalEntreprisesClient } from "../connectors/api-rne";
-import { pingDebounce } from "../connectors/debounce";
+import { pingDebounceApi } from "../connectors/debounce";
 import { pingGithubPasskeyAuthenticatorAaguids } from "../connectors/github-passkey-authenticator-aaguids";
 import { getOrganizationInfo } from "../connectors/organization-info";
 import { pingPwnedPasswords } from "../connectors/pwnedpasswords";
@@ -60,7 +60,7 @@ export async function getPingApiDebounceController(
   _next: NextFunction,
 ) {
   try {
-    await pingDebounce();
+    await pingDebounceApi();
     return res.json({});
   } catch (e) {
     logger.error(inspect(e, { depth: 3 }));

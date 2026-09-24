@@ -72,7 +72,6 @@ export const connectorEnvSchema = z.object({
 export const featureTogglesEnvSchema = z.object({
   FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default(false),
   FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default(false),
-  FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE:
     zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE:
@@ -80,6 +79,7 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default(false),
   FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS:
     zodTrueFalseBoolean().default(false),
+  FEATURE_MOCK_DEBOUNCE_API: zodTrueFalseBoolean().default(true),
   FEATURE_MOCK_RNE_API: zodTrueFalseBoolean().default(true),
   FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: zodTrueFalseBoolean().default(false),
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),

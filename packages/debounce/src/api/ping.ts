@@ -1,6 +1,6 @@
 //
 
-import type { DebounceSuccessResponse } from "#src/types";
+import type { DebounceBalanceSuccessResponse } from "#src/types";
 import { request } from "./request.js";
 
 export function pingDebounceFactory(
@@ -8,9 +8,7 @@ export function pingDebounceFactory(
   config?: { timeout?: number },
 ) {
   return async function pingDebounce() {
-    const {
-      data: { debounce },
-    } = await request<DebounceSuccessResponse>(
+    await request<DebounceBalanceSuccessResponse>(
       `https://api.debounce.io/v1/balance?api=${apiKey}`,
       {
         method: "get",
@@ -21,6 +19,10 @@ export function pingDebounceFactory(
       },
     );
 
-    return debounce;
+    return true;
   };
+}
+
+export function mockPingDebounce() {
+  return Promise.resolve(true);
 }
