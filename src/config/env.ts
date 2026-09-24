@@ -4,8 +4,9 @@ import dotenvFlow from "dotenv-flow";
 import { fromZodError } from "zod-validation-error";
 import { envSchema } from "./env.zod";
 
+// DEPLOY_ENV (not NODE_ENV) selects the `.env.<DEPLOY_ENV>` file to load
 dotenvFlow.config({
-  default_node_env: "development",
+  node_env: process.env["DEPLOY_ENV"] || "development",
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
@@ -29,6 +30,7 @@ export const {
   CRISP_WEBSITE_ID,
   DATABASE_URL,
   DEBOUNCE_API_KEY,
+  DEPLOY_ENV,
   ENTREPRISE_API_TOKEN,
   ENTREPRISE_API_TRACKING_CONTEXT,
   ENTREPRISE_API_TRACKING_RECIPIENT,

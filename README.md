@@ -146,9 +146,9 @@ docker compose exec redis redis-cli -h redis -p 6379
 
 ### Configuring different environment variables
 
-The default environment variables are defined in the `.env` file, which applies to all environments. Based on the `NODE_ENV` variable, the corresponding file is selected: `.env.development` for the development environment, `.env.production` for production, or `.env.test` for testing.
+The default environment variables are defined in the `.env` file, which applies to all environments. Based on the `DEPLOY_ENV` variable (`development` when unset), the corresponding file is selected: `.env.development`, `.env.test`, `.env.e2e`, `.env.sandbox`, `.env.showcase`, `.env.preprod` or `.env.production`. `NODE_ENV` is set by each of these files and no longer selects the file.
 
-To customize or override these defaults, we recommend using the `.env*.local` files. The file `.env.<NODE_ENV>.local` will have higher priority over both `.env.local` and `.env.<NODE_ENV>`.
+To customize or override these defaults, we recommend using the `.env*.local` files. The file `.env.<DEPLOY_ENV>.local` will have higher priority over both `.env.local` and `.env.<DEPLOY_ENV>`.
 
 ### Skipping Cypress Binary Installation for Local Setup
 

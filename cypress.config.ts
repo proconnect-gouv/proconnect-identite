@@ -2,11 +2,19 @@
 
 import { execFile } from "child_process";
 import { defineConfig } from "cypress";
+import dotenvFlow from "dotenv-flow";
 import { Client } from "pg";
 import { createClient } from "redis";
 import { promisify } from "util";
 
 //
+
+// Load the same `.env.<DEPLOY_ENV>` files as the app, so that the tasks below
+// connect to the same database and redis (DATABASE_URL, REDIS_URL)
+dotenvFlow.config({
+  node_env: process.env["DEPLOY_ENV"] || "development",
+  silent: true,
+});
 const RECORD = process.env["CYPRESS_RECORD"] === "true";
 
 async function npm_run(args: string[], env?: NodeJS.ProcessEnv) {
