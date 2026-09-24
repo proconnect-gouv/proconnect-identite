@@ -4,7 +4,9 @@ describe("should suggest valid email address", () => {
   it("should sign-in", function () {
     cy.visit("/users/start-sign-in");
 
-    cy.get('[name="login"]').type("unknown-user-1@ypomail.com"); // yopmail with a typo domain
+    cy.contains("Email professionnel").click();
+    cy.focused().type("unknown-user-1@ypomail.com"); // yopmail with a typo domain
+    cy.contains("Continuer").click();
     cy.get('[action="/users/start-sign-in"]  [type="submit"]').click();
 
     cy.get('[name="login"]').should("have.value", "unknown-user-1@ypomail.com");
