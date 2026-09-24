@@ -126,16 +126,22 @@ function createGuardMiddleware(
   ) => GuardResult<string, object> | Promise<GuardResult<string, object>>,
 ): RequestHandler {
   return async (req, res, next) => {
-    logger_group("👮‍♀️", req.method, req.originalUrl, fn.name);
+    logger_group("👮‍", req.method, req.originalUrl, fn.name);
 
     const result = await fn(new Pass("incoming_request", { req }));
 
     const event = match(result)
       .with({ type: "next" }, ({ trace, code }) =>
-        [trace.map(({ code }) => code).join("\n -> "), "\n =>", code].join(" "),
+        [trace.map(({ code }) => code).join("\n -> "), "\n => pass", code].join(
+          " ",
+        ),
       )
       .with({ type: "redirect" }, ({ trace, url }) =>
-        [trace.map(({ code }) => code).join("\n -> "), "\n =>", url].join(" "),
+        [
+          trace.map(({ code }) => code).join("\n -> "),
+          "\n => redirect",
+          url,
+        ].join(" "),
       )
       .with({ type: "send" }, () => ["SEND"].join(" "))
       .exhaustive();
