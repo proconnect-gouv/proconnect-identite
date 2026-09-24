@@ -161,7 +161,28 @@
                 </button>
             </form>
         <% } %>
-        <hr>
+
+        <section class="fr-mb-6w">
+            <% if (hasRecoveryCodesConfigured) { %>
+                <p class="fr-text--sm fr-text-mention--grey">
+                    Vous avez déjà généré des codes de secours.
+                </p>
+                <button
+                    class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
+                    disabled
+                >
+                    Générer des codes de secours
+                </button>
+            <% } else { %>
+                
+                    class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
+                    href="/recovery-code"
+                >
+                    Générer des codes de secours
+                </a>
+            <% } %>
+        </section>
+
         <section class="fr-mb-6w">
             <h2 class="fr-h3">Suppression du compte</h2>
             <p>
@@ -170,7 +191,7 @@
             <form class="fr-mt-4w" action="/users/delete" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
                 <button
-                        class="fr-btn btn--danger js-confirm"
+                        class="fr-btn btn--danger js-confirm fr-icon-delete-line fr-btn--icon-left"
                         data-confirm="Si vous avez changé d’organisation, vous pouvez les modifier sur votre espace personnel.&#10;&#10;Si vous n’utilisez plus ProConnect avec cette adresse email, vous pouvez supprimer ce compte.&#10;&#10;Voulez vous continuer ?"
                         type="submit"
                 >
