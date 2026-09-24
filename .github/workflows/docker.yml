@@ -3,6 +3,9 @@ name: 🐋 Docker
 on:
   push:
 
+env:
+  NODE_ENV: e2e
+
 jobs:
   build:
     name: 🥧 Bake Image
