@@ -1,195 +1,125 @@
-import { randomBytes } from "node:crypto";
 import { z } from "zod";
-import { create_jwks } from "./jwks";
 
 export const connectorEnvSchema = z.object({
-  ANNUAIRE_SERVICE_PUBLIC_API_URL: z
-    .string()
-    .url()
-    .default("https://api-lannuaire.service-public.fr"),
-  CRISP_BASE_URL: z.string().url().default("https://api.crisp.chat"),
-  CRISP_IDENTIFIER: z.string().default(""),
-  CRISP_KEY: z.string().default(""),
-  CRISP_MODERATION_TAG: zCoerceArray().default(["identite", "moderation"]),
-  CRISP_PLUGIN_URN: z.string().default(""),
-  CRISP_RESOLVE_DELAY: z.coerce.number().int().nonnegative().default(1_000), // 1 second
-  CRISP_USER_NICKNAME: z.string().default("ProConnect"),
-  CRISP_WEBSITE_ID: z.string().default(""),
+  ANNUAIRE_SERVICE_PUBLIC_API_URL: z.string().url(),
+  CRISP_BASE_URL: z.string().url(),
+  CRISP_IDENTIFIER: z.string(),
+  CRISP_KEY: z.string(),
+  CRISP_MODERATION_TAG: zCoerceArray(),
+  CRISP_PLUGIN_URN: z.string(),
+  CRISP_RESOLVE_DELAY: z.coerce.number().int().nonnegative(), // 1 second
+  CRISP_USER_NICKNAME: z.string(),
+  CRISP_WEBSITE_ID: z.string(),
   DATABASE_URL: z.string().url(),
-  DEBOUNCE_API_KEY: z.string().default(""),
-  ENTREPRISE_API_TOKEN: z.string().default("🎭 Mocked Entreprise Api Token"),
+  DEBOUNCE_API_KEY: z.string(),
+  ENTREPRISE_API_TOKEN: z.string(),
   ENTREPRISE_API_URL: z.string().url(),
-  ENTREPRISE_API_TRACKING_CONTEXT: z.string().default("ProConnect Identité"),
-  ENTREPRISE_API_TRACKING_RECIPIENT: z.string().default("13002526500013"),
-  FRANCECONNECT_CLIENT_ID: z
-    .string()
-    .default("🎭 Mocked FranceConnect Client ID"),
-  FRANCECONNECT_CLIENT_SECRET: z
-    .string()
-    .default("🎭 Mocked FranceConnect Client Secret"),
-  FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().default("ES256"),
+  ENTREPRISE_API_TRACKING_CONTEXT: z.string(),
+  ENTREPRISE_API_TRACKING_RECIPIENT: z.string(),
+  FRANCECONNECT_CLIENT_ID: z.string(),
+  FRANCECONNECT_CLIENT_SECRET: z.string(),
+  FRANCECONNECT_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string(),
   FRANCECONNECT_ISSUER: z.string().url(),
-  FRANCECONNECT_SCOPES: zCoerceArray().default([
-    "birthcountry",
-    "birthplace",
-    "birthdate",
-    "family_name",
-    "gender",
-    "given_name",
-    "openid",
-    "preferred_username",
-  ]),
+  FRANCECONNECT_SCOPES: zCoerceArray(),
   FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
-    .nonnegative()
-    .default(3 * 30 * 24 * 60), // 3 months in minutes
-  INSEE_API_CLIENT_ID: z.string().default("🎭 Mocked Insee API Client ID"),
-  INSEE_API_CLIENT_SECRET: z
-    .string()
-    .default("🎭 Mocked Insee API Client Secret"),
-  INSEE_API_PASSWORD: z.string().default("🎭 Mocked Insee API Password"),
-  INSEE_API_URL: z
-    .string()
-    .url()
-    .default("https://api.insee.fr/api-sirene/prive/3.11"),
-  INSEE_API_USERNAME: z.string().default("🎭 Mocked Insee API Username"),
-  REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
-  RNE_API_PASSWORD: z.string().default("🎭 Mocked RNE API Password"),
-  RNE_API_USERNAME: z.string().default("🎭 Mocked RNE API Username"),
+    .nonnegative(), // 3 months in minutes
+  INSEE_API_CLIENT_ID: z.string(),
+  INSEE_API_CLIENT_SECRET: z.string(),
+  INSEE_API_PASSWORD: z.string(),
+  INSEE_API_URL: z.string().url(),
+  INSEE_API_USERNAME: z.string(),
+  REDIS_URL: z.string().url(),
+  RNE_API_PASSWORD: z.string(),
+  RNE_API_USERNAME: z.string(),
   RNE_API_BASE_URL: z.url(),
-  RNE_API_HTTP_CLIENT_TIMEOUT: z.coerce
-    .number()
-    .int()
-    .nonnegative()
-    .default(1_000 * 3), // 3 seconds in milliseconds;
-  SENTRY_DSN: z.string().default(""),
-  SMTP_FROM: z.string().default("nepasrepondre@email.proconnect.gouv.fr"),
-  SMTP_FROM_ALT: z.string().default("nepasrepondre@email.proconnect.gouv.fr"),
+  RNE_API_HTTP_CLIENT_TIMEOUT: z.coerce.number().int().nonnegative(), // 3 seconds in milliseconds;
+  SENTRY_DSN: z.string(),
+  SMTP_FROM: z.string(),
+  SMTP_FROM_ALT: z.string(),
   SMTP_URL: z.string(),
 });
 
 export const featureTogglesEnvSchema = z.object({
-  FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default(false),
-  FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default(false),
-  FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE:
-    zodTrueFalseBoolean().default(false),
-  FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE:
-    zodTrueFalseBoolean().default(true),
-  FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default(false),
-  FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS:
-    zodTrueFalseBoolean().default(false),
-  FEATURE_MOCK_DEBOUNCE_API: zodTrueFalseBoolean().default(true),
-  FEATURE_MOCK_RNE_API: zodTrueFalseBoolean().default(true),
-  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: zodTrueFalseBoolean().default(false),
-  FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),
-  FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
-  FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),
-  FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default(false),
-  FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default(false),
-  FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default(false),
+  FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean(),
+  FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean(),
+  FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE: zodTrueFalseBoolean(),
+  FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE: zodTrueFalseBoolean(),
+  FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean(),
+  FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS: zodTrueFalseBoolean(),
+  FEATURE_MOCK_DEBOUNCE_API: zodTrueFalseBoolean(),
+  FEATURE_MOCK_RNE_API: zodTrueFalseBoolean(),
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: zodTrueFalseBoolean(),
+  FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean(),
+  FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean(),
+  FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean(),
+  FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean(),
+  FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean(),
+  FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean(),
 });
 
 export const secretEnvSchema = z.object({
-  SYMMETRIC_ENCRYPTION_KEY: z
-    .base64({
-      error: [
-        "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long!",
-        "Use crypto.randomBytes(32).toString('base64') to generate one.",
-      ].join(" "),
-    })
-    .default(randomBytes(32).toString("base64")),
-  SESSION_COOKIE_SECRET: zCoerceArray().default([
-    randomBytes(32).toString("base64"),
-  ]),
-  JWKS: z
-    .preprocess(
-      (val) => (typeof val === "string" ? JSON.parse(val) : val),
-      z.object({ keys: z.array(z.any()) }),
-    )
-    .default(await create_jwks()),
+  SYMMETRIC_ENCRYPTION_KEY: z.base64({
+    error: [
+      "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long!",
+      "Use crypto.randomBytes(32).toString('base64') to generate one.",
+    ].join(" "),
+  }),
+  SESSION_COOKIE_SECRET: zCoerceArray(),
+  JWKS: z.preprocess(
+    (val) => (typeof val === "string" ? JSON.parse(val) : val),
+    z.object({ keys: z.array(z.any()) }),
+  ),
 });
 
 export const paramsEnvSchema = z.object({
   ACCESS_LOG_PATH: z.string().optional(),
-  API_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
-    .number()
-    .int()
-    .nonnegative()
-    .default(1000),
-  APPLICATION_NAME: z.string().default("ProConnect"),
-  APP_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
-    .number()
-    .int()
-    .nonnegative()
-    .default(100), // 1 day in minutes
+  API_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce.number().int().nonnegative(),
+  APPLICATION_NAME: z.string(),
+  APP_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce.number().int().nonnegative(), // 1 day in minutes
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
-    .nonnegative()
-    .default(1 * 24 * 60),
-  DEPLOY_ENV: z
-    .enum(["localhost", "preview", "production", "sandbox"])
-    .default("localhost"), // 55 seconds in milliseconds;
-  HOST: z.string().url().default("http://localhost:3000"),
-  HTTP_CLIENT_TIMEOUT: z.coerce
-    .number()
-    .int()
-    .nonnegative()
-    .default(55 * 1_000), // 1 hour in minutes
-  LOG_LEVEL: z
-    .enum(["trace", "debug", "info", "warn", "error", "fatal"])
-    .default("info"), // 3 months in minutes
+    .nonnegative(),
+  DEPLOY_ENV: z.enum(["localhost", "preview", "production", "sandbox"]), // 55 seconds in milliseconds;
+  HOST: z.string().url(),
+  HTTP_CLIENT_TIMEOUT: z.coerce.number().int().nonnegative(), // 1 hour in minutes
+  LOG_LEVEL: z.enum(["trace", "debug", "info", "warn", "error", "fatal"]), // 3 months in minutes
   MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
     .int()
-    .nonnegative()
-    .default(60),
+    .nonnegative(),
   MAX_DURATION_BETWEEN_TWO_EMAIL_ADDRESS_VERIFICATION_IN_MINUTES: z.coerce
     .number()
     .int()
-    .nonnegative()
-    .default(3 * 30 * 24 * 60), // 20 minutes in seconds,
-  MAX_SUGGESTED_ORGANIZATIONS: z.coerce.number().int().nonnegative().default(3),
+    .nonnegative(), // 20 minutes in seconds,
+  MAX_SUGGESTED_ORGANIZATIONS: z.coerce.number().int().nonnegative(),
   MIN_DURATION_BETWEEN_TWO_VERIFICATION_CODE_SENDING_IN_SECONDS: z.coerce
     .number()
     .int()
-    .nonnegative()
-    .default(20 * 60),
-  NODE_ENV: z
-    .enum(["production", "development", "test"])
-    .default("development"),
+    .nonnegative(),
+  NODE_ENV: z.enum(["production", "development", "test", "e2e"]),
   OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES:
-    z.coerce.number().int().nonnegative().default(60), // 1 hour in minutes
-  PORT: z.coerce.number().int().nonnegative().default(3000),
-  RECENT_LOGIN_INTERVAL_IN_SECONDS: z.coerce
-    .number()
-    .int()
-    .nonnegative()
-    .default(15 * 60), // 15 minutes
+    z.coerce.number().int().nonnegative(), // 1 hour in minutes
+  PORT: z.coerce.number().int().nonnegative(),
+  RECENT_LOGIN_INTERVAL_IN_SECONDS: z.coerce.number().int().nonnegative(), // 15 minutes
   RESET_PASSWORD_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
     .int()
-    .nonnegative()
-    .default(60), // 1 hour in minutes
-  SESSION_MAX_AGE_IN_SECONDS: z.coerce
-    .number()
-    .int()
-    .nonnegative()
-    .default(1 * 24 * 60 * 60), // 1 day in seconds
-  SMTP_FROM_ALT_RATIO_PERCENT: z.coerce.number().min(0).max(100).default(10),
-  TEST_CONTACT_EMAIL: z.string().default("mairie@yopmail.com"), // 3 months in seconds
+    .nonnegative(), // 1 hour in minutes
+  SESSION_MAX_AGE_IN_SECONDS: z.coerce.number().int().nonnegative(), // 1 day in seconds
+  SMTP_FROM_ALT_RATIO_PERCENT: z.coerce.number().min(0).max(100),
+  TEST_CONTACT_EMAIL: z.string(), // 3 months in seconds
   TRUSTED_BROWSER_COOKIE_MAX_AGE_IN_SECONDS: z.coerce
     .number()
     .int()
-    .nonnegative()
-    .default(3 * 30 * 24 * 60 * 60),
-  USE_SMTP_FROM_ALT_FOR_DOMAINS: zCoerceArray().default([]),
+    .nonnegative(),
+  USE_SMTP_FROM_ALT_FOR_DOMAINS: zCoerceArray(),
   VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
     .int()
-    .nonnegative()
-    .default(60), // 1 hour in minutes
+    .nonnegative(), // 1 hour in minutes
 });
 
 export const envSchema = z

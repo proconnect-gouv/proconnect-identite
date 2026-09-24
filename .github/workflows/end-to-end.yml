@@ -4,13 +4,11 @@ on:
   push:
 
 env:
-  ANNUAIRE_SERVICE_PUBLIC_API_URL: http://localhost:3000/___testing___/api-lannuaire.service-public.fr
   CYPRESS_RECORD: true
+  # Used by the "migrate" step, which runs before NODE_ENV is set to "e2e"
+  # for the Cypress run step below. All the other application environment
+  # variables live in .env.e2e (loaded via NODE_ENV=e2e).
   DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
-  ENTREPRISE_API_URL: http://localhost:3000/___testing___/entreprise.api.gouv.fr
-  FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
-  RNE_API_BASE_URL: http://localhost:3000/___testing___/registre-national-entreprises.inpi.fr
-  SMTP_URL: smtp://localhost:1025
 
 jobs:
   test:
@@ -92,7 +90,7 @@ jobs:
           install: false
           spec: cypress/e2e/${{ matrix.e2e_test }}/index.cy.ts
         env:
-          NODE_ENV: production
+          NODE_ENV: e2e
       # Store tests runs in case of failure
       - uses: actions/upload-artifact@v7
         if: failure()
