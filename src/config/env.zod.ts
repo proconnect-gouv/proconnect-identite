@@ -131,6 +131,7 @@ export const paramsEnvSchema = z.object({
   DEPLOY_ENV: z
     .enum(["localhost", "preview", "production", "sandbox"])
     .default("localhost"), // 55 seconds in milliseconds;
+  FORCE_2FA_FOR_SIRETS: zCoerceArray().default([]),
   HOST: z.string().url().default("http://localhost:3000"),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()

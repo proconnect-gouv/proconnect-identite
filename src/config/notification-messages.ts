@@ -192,6 +192,11 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     description:
       "Attention : en plus de votre mot de passe, vous devez configurer un code à usage unique ou une clé d’accès pour accéder à Démarches Simplifiées.",
   },
+  organization_requires_2fa: {
+    type: "info",
+    description:
+      "Information : votre organisation requiert la double authentification, qui réduit les risques de piratage.",
+  },
 };
 
 export default notificationMessages;

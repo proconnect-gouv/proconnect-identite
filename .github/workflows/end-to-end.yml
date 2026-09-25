@@ -56,6 +56,7 @@ jobs:
           - signin_with_legacy_acr
           - signin_with_legacy_scope
           - signin_with_magic_link
+          - signin_with_organization_forced_2fa
           - signin_with_right_acr
           - signin_with_suggestion
           - signin_with_totp

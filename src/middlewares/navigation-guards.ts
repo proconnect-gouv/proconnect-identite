@@ -19,7 +19,11 @@ import {
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../config/errors";
 import { context } from "../connectors/context";
-import { is2FACapable, shouldForce2faForUser } from "../managers/2fa";
+import {
+  is2FACapable,
+  shouldForce2faForOrganization,
+  shouldForce2faForUser,
+} from "../managers/2fa";
 import { isBrowserTrustedForUser } from "../managers/browser-authentication";
 import {
   getCertificationDirigeantCloseMatchErrorUrl,
@@ -552,6 +556,37 @@ export const userHasSelectedAnOrganizationGuardMiddleware =
     },
   );
 
+const userIs2faAuthenticatedIfOrgRequiresIt = async <
+  TContext extends RequestContext & {
+    userOrganizations: (Organization & BaseUserOrganizationLink)[];
+    selectedOrganizationId: number;
+  },
+>(
+  context: Pass<TContext>,
+) => {
+  const {
+    data: { req, selectedOrganizationId },
+    pass,
+    redirect,
+  } = context;
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+  if (
+    (await shouldForce2faForOrganization(selectedOrganizationId)) &&
+    !isWithinTwoFactorAuthenticatedSession(req)
+  ) {
+    if (await is2FACapable(user_id)) {
+      return redirect("/users/2fa-sign-in");
+    } else {
+      return redirect(
+        "/users/double-authentication-choice?notification=organization_requires_2fa",
+      );
+    }
+  }
+
+  return pass("user_is_2fa_authenticated_if_org_requires_it");
+};
+
 const userHasValidFranceConnectIdentityGuard = async <
   TContext extends RequestContext,
 >(
@@ -727,6 +762,9 @@ const connectToSp = async (
   if (!Pass.is_passing(context)) return context;
 
   context = await userHasSelectedAnOrganizationGuard(context);
+  if (!Pass.is_passing(context)) return context;
+
+  context = await userIs2faAuthenticatedIfOrgRequiresIt(context);
   if (!Pass.is_passing(context)) return context;
 
   context = await userHasValidFranceConnectIdentityGuard(context);
