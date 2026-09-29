@@ -45,12 +45,13 @@ describe("env.zod", () => {
       DATABASE_URL:
         "postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite",
       DEBOUNCE_API_KEY: "",
-      DEPLOY_ENV: "localhost",
       ENTREPRISE_API_TOKEN: "🎭 Mocked Entreprise Api Token",
       ENTREPRISE_API_TRACKING_CONTEXT: "ProConnect Identité",
       ENTREPRISE_API_TRACKING_RECIPIENT: "13002526500013",
       ENTREPRISE_API_URL:
         "http://localhost:3000/___testing___/entreprise.api.gouv.fr",
+      FEATURE_ADD_TEST_PREFIX_TO_MAIL_SUBJECT: false,
+      FEATURE_ALLOW_INSECURE_REQUESTS_TO_FRANCECONNECT: true,
       FEATURE_AUTHENTICATE_BROWSER: false,
       FEATURE_BYPASS_MODERATION: false,
       FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE: false,
@@ -59,7 +60,7 @@ describe("env.zod", () => {
       FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS: false,
       FEATURE_MOCK_DEBOUNCE_API: true,
       FEATURE_MOCK_RNE_API: true,
-      FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: false,
+      FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: true,
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API: true,
       FEATURE_RATE_LIMIT_BY_EMAIL: false,
       FEATURE_RATE_LIMIT_BY_IP: false,
