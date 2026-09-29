@@ -2463,5 +2463,10 @@
     "siren": "514185792",
     "denomination": "ETABLISSEMENT PUBLIC FONCIER BRETAGNE (FONCIER DE BRETAGNE) (EPF)",
     "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "181337148",
+    "denomination": "GIP CICRP BELLE DE MAI",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   }
 ]
