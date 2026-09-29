@@ -116,7 +116,7 @@ export const paramsEnvSchema = z.object({
     .number()
     .int()
     .nonnegative()
-    .default(1000),
+    .default(1500),
   APPLICATION_NAME: z.string().default("ProConnect"),
   APP_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
     .number()
