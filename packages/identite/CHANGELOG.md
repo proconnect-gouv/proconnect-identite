@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.2.2
+
+### Patch Changes
+
+- [#2170](https://github.com/proconnect-gouv/proconnect-identite/pull/2170) [`5fc628d`](https://github.com/proconnect-gouv/proconnect-identite/commit/5fc628d82e7b2ae0bcc1961d5d7a7e3f1fd0c7d2) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - renommage de la variable allowLocalhost pour FranceConnect en allowInsecureRequests
+- Updated dependencies [[`9a0ca7c`](https://github.com/proconnect-gouv/proconnect-identite/commit/9a0ca7c55d8ad6dd70cd49f6ddf470a4ee436f42)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@3.0.5
+
 ## 10.2.1
 
 ### Patch Changes
