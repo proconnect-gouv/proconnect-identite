@@ -101,7 +101,7 @@
     "lodash-es": "^4.18.1",
     "moment": "^2.30.1",
     "moment-timezone": "^0.6.3",
-    "morgan": "^1.12.0",
+    "morgan": "^1.12.1",
     "nocache": "^4.0.0",
     "nodemailer": "^10.0.9",
     "oidc-provider": "^9.5.1",
