@@ -35,7 +35,6 @@ export const apiRouter = () => {
     getPingApiAnnuaireEducationNationaleController,
   );
   apiRouter.get("/rne/ping", getPingApiRegistreNationalEntreprisesController);
-  apiRouter.get("/sirene/ping", getPingApiEntrepriseController); //TO DELETE ONCE UPTIME ROBOT DOES NOT PING IT ANYMORE
   apiRouter.get("/api-entreprise/ping", getPingApiEntrepriseController);
 
   apiRouter.get("/organization-info/:siret", getOrganizationInfoController);
