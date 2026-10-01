@@ -13,7 +13,6 @@ declare global {
        * cy.get("@authenticator").getFirstCertification();
        */
       getFirstCertification: () => ReturnType<typeof getFirstCertification>;
-      setUserVerified: typeof setUserVerified;
     }
   }
 }
@@ -26,7 +25,6 @@ Cypress.Commands.add(
   { prevSubject: true },
   getFirstCertification,
 );
-Cypress.Commands.add("setUserVerified", setUserVerified);
 
 //
 
@@ -78,21 +76,6 @@ function getFirstCertification(authenticatorId: string) {
     .then(({ credentials }) => {
       return credentials[0];
     });
-}
-
-function setUserVerified({
-  authenticatorId,
-  isUserVerified,
-}: {
-  authenticatorId: string;
-  isUserVerified: boolean;
-}) {
-  return cy.then<unknown>(() =>
-    Cypress.automation("remote:debugger:protocol", {
-      command: "WebAuthn.setUserVerified",
-      params: { authenticatorId, isUserVerified },
-    }),
-  );
 }
 
 //

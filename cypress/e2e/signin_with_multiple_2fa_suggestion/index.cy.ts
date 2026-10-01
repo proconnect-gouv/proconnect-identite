@@ -54,9 +54,9 @@ describe("signin with multiple 2fa suggestion", () => {
         protocol: "ctap2",
         transport: "internal",
         hasResidentKey: true,
-        hasUserVerification: true,
-        isUserVerified: true,
-      });
+        hasUserVerification: false,
+        isUserVerified: false,
+      }).as("authenticator");
     });
 
     it("should never show the suggestion once a second method is added", function () {
@@ -77,7 +77,7 @@ describe("signin with multiple 2fa suggestion", () => {
       cy.contains("Jean Jean").click();
 
       cy.visit("/connection-and-account");
-      cy.mfaLogin("single-totp-adding-second-method@yopmail.com");
+      cy.login("single-totp-adding-second-method@yopmail.com");
 
       cy.title().should("include", "Compte et connexion");
     });
