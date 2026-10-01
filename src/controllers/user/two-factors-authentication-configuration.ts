@@ -5,6 +5,7 @@ import { InvalidTotpTokenError } from "../../config/errors";
 import {
   getConfiguredMethodLabel,
   ignoreMultipleTwoFactorsSuggestion,
+  is2FACapable,
 } from "../../managers/2fa";
 import {
   addAuthenticationMethodReferenceInSession,
@@ -18,6 +19,7 @@ import {
 import {
   confirmTotpRegistration,
   generateTotpRegistrationOptions,
+  isTotpConfiguredForUser,
 } from "../../managers/totp";
 import { sendAddFreeTOTPEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
@@ -32,11 +34,19 @@ export const getTwoFactorsAuthenticationChoiceController = async (
   next: NextFunction,
 ) => {
   try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    const hasTotp = await isTotpConfiguredForUser(user_id);
+    const hasAny2faMethod = await is2FACapable(user_id);
+
     return res.render("user/double-authentication-choice", {
       pageTitle: "Choisir un mode de double authentification",
       csrfToken: csrfToken(req),
       notifications: await getNotificationsFromRequest(req),
       spName: req.session.spName,
+      showTotpOption: !hasTotp,
+      showDontKnowOption: !hasAny2faMethod,
+      withInfoAlert: !hasAny2faMethod,
     });
   } catch (error) {
     next(error);

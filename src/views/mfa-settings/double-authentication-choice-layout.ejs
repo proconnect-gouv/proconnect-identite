@@ -34,6 +34,7 @@
     class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
     aria-labelledby="radio-legend radio-messages"
   >
+    <% if (locals.showTotpOption !== false) { %>
     <div id="totp-option" class="fr-fieldset__element border fr-p-2w">
       <div class="fr-radio-group">
         <input type="radio" id="radio-totp" name="radio-2fa" value="totp" required/>
@@ -42,14 +43,18 @@
         </label>
       </div>
     </div>
+    <% } %>
     <div id="webauthn-btn-begin-registration" class="fr-fieldset__element border fr-p-2w">
       <div class="fr-radio-group">
-        <input type="radio" id="radio-passkey" name="radio-2fa" value="passkey" required/>
+        <input type="radio" id="radio-passkey" name="radio-2fa" value="passkey" required
+          <%= locals.showTotpOption === false && locals.showDontKnowOption === false ? 'checked' : '' %>
+        />
         <label class="fr-label" for="radio-passkey">
           Clé d'accès (passkey)<span class="fr-hint-text">Utilisez la biométrie ou le code PIN de votre session d’ordinateur.</span>
         </label>
       </div>
     </div>
+    <% if (locals.showDontKnowOption !== false) { %>
     <div id="dont-know-option" class="fr-fieldset__element border fr-p-2w">
       <div class="fr-radio-group">
         <input type="radio" id="radio-dont-know" name="radio-2fa" value="dont-know" required/>
@@ -58,6 +63,7 @@
         </label>
       </div>
     </div>
+    <% } %>
   </fieldset>
   <button class="fr-btn btn--fullwidth" type="submit" id="webauthn-registration-button">Continuer</button>
 </form>
