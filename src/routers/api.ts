@@ -15,6 +15,10 @@ import {
   getGenerateAuthenticationOptionsForSecondFactorController,
   getGenerateRegistrationOptionsController,
 } from "../controllers/webauthn";
+import {
+  externalDependencyRateLimiterMiddleware,
+  rnePingRateLimiterMiddleware,
+} from "../middlewares/rate-limiter";
 
 export const apiRouter = () => {
   const apiRouter = Router();
@@ -23,19 +27,41 @@ export const apiRouter = () => {
 
   apiRouter.use(urlencoded({ extended: false }));
 
-  apiRouter.get("/insee/ping", getPingApiInseeController);
-  apiRouter.get("/debounce/ping", getPingApiDebounceController);
-  apiRouter.get("/pwned-passwords/ping", getPingPwnedPasswordsController);
+  apiRouter.get(
+    "/insee/ping",
+    externalDependencyRateLimiterMiddleware,
+    getPingApiInseeController,
+  );
+  apiRouter.get(
+    "/debounce/ping",
+    externalDependencyRateLimiterMiddleware,
+    getPingApiDebounceController,
+  );
+  apiRouter.get(
+    "/pwned-passwords/ping",
+    externalDependencyRateLimiterMiddleware,
+    getPingPwnedPasswordsController,
+  );
   apiRouter.get(
     "/github-passkey-authenticator-aaguids/ping",
+    externalDependencyRateLimiterMiddleware,
     getPingGithubPasskeyAuthenticatorAaguidsController,
   );
   apiRouter.get(
     "/annuaire-education-nationale/ping",
+    externalDependencyRateLimiterMiddleware,
     getPingApiAnnuaireEducationNationaleController,
   );
-  apiRouter.get("/rne/ping", getPingApiRegistreNationalEntreprisesController);
-  apiRouter.get("/api-entreprise/ping", getPingApiEntrepriseController);
+  apiRouter.get(
+    "/rne/ping",
+    rnePingRateLimiterMiddleware,
+    getPingApiRegistreNationalEntreprisesController,
+  );
+  apiRouter.get(
+    "/api-entreprise/ping",
+    externalDependencyRateLimiterMiddleware,
+    getPingApiEntrepriseController,
+  );
 
   apiRouter.get("/organization-info/:siret", getOrganizationInfoController);
 

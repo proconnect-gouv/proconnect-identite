@@ -5,7 +5,7 @@ describe("trigger rate limiting by ip", () => {
   beforeEach(() => {
     // Clear rate-limiter credits
     cy.exec(
-      "docker compose exec redis redis-cli --scan --pattern 'rate-limiter-*' | xargs -r docker compose exec redis redis-cli DEL",
+      "docker compose exec redis redis-cli --scan --pattern 'ip-rate-limiter-*' | xargs -r docker compose exec redis redis-cli DEL",
     );
   });
 
@@ -89,13 +89,35 @@ describe("trigger rate limiting by ip", () => {
     });
   });
 
-  it("should not trigger IP rate limiting by hitting 404 errors under /api", function () {
-    for (let i = 1; i <= 12; i++) {
-      cy.visit("http://localhost:3000/api/random", { failOnStatusCode: false });
-      cy.contains("Page non trouvée");
+  it("should not trigger IP rate limiting by hitting machine to machine endpoint", function () {
+    for (let i = 1; i <= 15; i++) {
+      cy.request("http://localhost:3000/.well-known/openid-configuration");
     }
 
-    cy.visit("http://localhost:3000/api/random", { failOnStatusCode: false });
-    cy.contains("Page non trouvée");
+    cy.request("http://localhost:3000/.well-known/openid-configuration").then(
+      (response) => {
+        expect(response.status).to.eq(200);
+      },
+    );
+  });
+
+  it("should trigger IP rate limiting for ping routes", function () {
+    cy.request("http://localhost:3000/api/debounce/ping");
+
+    cy.request({
+      url: "http://localhost:3000/api/debounce/ping",
+      failOnStatusCode: false,
+    }).then((response) => {
+      expect(response.status).to.eq(429);
+    });
+  });
+
+  it("should trigger IP rate limiting for rne ping routes", function () {
+    cy.request({
+      url: "http://localhost:3000/api/rne/ping",
+      failOnStatusCode: false,
+    }).then((response) => {
+      expect(response.status).to.eq(429);
+    });
   });
 });

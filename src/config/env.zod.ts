@@ -115,22 +115,12 @@ export const secretEnvSchema = z.object({
 
 export const paramsEnvSchema = z.object({
   ACCESS_LOG_PATH: z.string().optional(),
-  API_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
-    .number()
-    .int()
-    .nonnegative()
-    .default(1500),
   APPLICATION_NAME: z.string().default("ProConnect"),
-  APP_IP_RATE_LIMITER_POINTS_PER_MINUTE: z.coerce
-    .number()
-    .int()
-    .nonnegative()
-    .default(100), // 1 day in minutes
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(1 * 24 * 60),
+    .default(1 * 24 * 60), // 1 day in minutes
   FORCE_2FA_FOR_SIRETS: zCoerceArray().default([]),
   HOST: z.string().url().default("http://localhost:3000"),
   HTTP_CLIENT_TIMEOUT: z.coerce
@@ -138,6 +128,26 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(55 * 1_000), // 1 hour in minutes
+  IP_RATE_LIMITER_DEFAULT_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(100),
+  IP_RATE_LIMITER_EXTERNAL_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(20),
+  IP_RATE_LIMITER_MACHINE_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(1500),
+  IP_RATE_LIMITER_RNE_PING_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(2),
   LOG_LEVEL: z
     .enum(["trace", "debug", "info", "warn", "error", "fatal"])
     .default("info"), // 3 months in minutes

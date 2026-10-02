@@ -30,9 +30,7 @@ describe("env.zod", () => {
     assert.deepEqual(env, {
       ANNUAIRE_SERVICE_PUBLIC_API_URL:
         "https://api-lannuaire.service-public.fr",
-      API_IP_RATE_LIMITER_POINTS_PER_MINUTE: 1500,
       APPLICATION_NAME: "ProConnect",
-      APP_IP_RATE_LIMITER_POINTS_PER_MINUTE: 100,
       CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: 1440,
       CRISP_BASE_URL: "https://api.crisp.chat",
       CRISP_IDENTIFIER: "",
@@ -91,6 +89,10 @@ describe("env.zod", () => {
       INSEE_API_PASSWORD: "🎭 Mocked Insee API Password",
       INSEE_API_URL: "https://api.insee.fr/api-sirene/prive/3.11",
       INSEE_API_USERNAME: "🎭 Mocked Insee API Username",
+      IP_RATE_LIMITER_DEFAULT_POINTS_PER_MINUTE: 100,
+      IP_RATE_LIMITER_EXTERNAL_POINTS_PER_MINUTE: 20,
+      IP_RATE_LIMITER_MACHINE_POINTS_PER_MINUTE: 1500,
+      IP_RATE_LIMITER_RNE_PING_POINTS_PER_MINUTE: 2,
       JWKS,
       LOG_LEVEL: "info",
       MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES: 60,
