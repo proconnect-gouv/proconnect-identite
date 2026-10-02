@@ -61,8 +61,9 @@
     </p>
   </div>
 
-  <div class="fr-pl-1w <%= locals.matches.has('birth_place') ? '' : 'info-mismatch' %>">
-    <% if (!locals.matches.has('birth_place')) { %>
+  <% const birthPlaceMatches = locals.matches.has('birth_place') || locals.matches.has('birth_country'); %>
+  <div class="fr-pl-1w <%= birthPlaceMatches ? '' : 'info-mismatch' %>">
+    <% if (!birthPlaceMatches) { %>
       <p class="fr-badge fr-badge--warning">Informations discordantes</p>
     <% } %>
     <p class="fr-mb-0 fr-text--sm">
