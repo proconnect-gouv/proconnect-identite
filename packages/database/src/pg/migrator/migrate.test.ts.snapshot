@@ -25,6 +25,9 @@ exports[`Database migration with external PostgreSQL > applies complete schema t
     "table_name": "organizations"
   },
   {
+    "table_name": "recovery_codes"
+  },
+  {
     "table_name": "users"
   },
   {
