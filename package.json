@@ -73,7 +73,7 @@
   },
   "release-it": {
     "git": {
-      "commitMessage": ":bookmark: release ${version}"
+      "tagMatch": "[0-9]*.[0-9]*.[0-9]*"
     },
     "github": {
       "comments": {
@@ -82,12 +82,9 @@
       "release": true
     },
     "hooks": {
-      "before:release": "prettier --write package.json && npm install --package-lock-only && git add package.json package-lock.json",
       "after:git:release": "git switch -c release/${version} && git push origin release/${version}"
     },
-    "npm": {
-      "publish": false
-    },
+    "npm": false,
     "plugins": {
       "@csmith/release-it-calver-plugin": {
         "cycle": "month"
