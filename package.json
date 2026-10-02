@@ -1,6 +1,6 @@
 {
   "name": "proconnect-identite",
-  "version": "1.0.0",
+  "version": "2026.10.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -40,6 +40,7 @@
     "fixtures:load-ci": "tsx scripts/run-sql-script.ts",
     "format": "prettier --write '**/*.{ts,sql}'",
     "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate -j ts",
+    "release": "release-it",
     "start": "tsx --import ./src/instrument.ts src/index.ts",
     "test": "run-s test:*",
     "lint": "prettier --check '**/*.{ts,sql}' && npm run type:check",
@@ -69,6 +70,29 @@
       "prettier-plugin-organize-imports",
       "prettier-plugin-sql"
     ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": ":bookmark: release ${version}"
+    },
+    "github": {
+      "comments": {
+        "submit": true
+      },
+      "release": true
+    },
+    "hooks": {
+      "before:release": "prettier --write package.json && npm install --package-lock-only && git add package.json package-lock.json",
+      "after:git:release": "git switch -c release/${version} && git push origin release/${version}"
+    },
+    "npm": {
+      "publish": false
+    },
+    "plugins": {
+      "@csmith/release-it-calver-plugin": {
+        "cycle": "month"
+      }
+    }
   },
   "dependencies": {
     "@proconnect-gouv/proconnect.api_entreprise": "workspace:*",
@@ -117,6 +141,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^3.0.2",
+    "@csmith/release-it-calver-plugin": "^2026.9.0",
     "@dotenvx/dotenvx": "^1.61.0",
     "@fullhuman/postcss-purgecss": "^8.0.0",
     "@gouvfr/dsfr": "^1.14.2",
@@ -154,6 +179,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-sql": "^0.19.2",
+    "release-it": "^21.1.0",
     "tld-extract": "^2.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.3.2",
