@@ -468,6 +468,10 @@ export async function getCertificationDirigeantCloseMatchError(
     const user = getUserFromAuthenticatedSession(req);
     const user_info = await franceconnect_userinfo.find(user.id);
 
+    if (isEmpty(user_info)) {
+      return next(new HttpErrors.NotFound());
+    }
+
     const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
       query.source,
     );
