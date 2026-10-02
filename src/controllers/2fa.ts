@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z } from "zod";
 import { UserIsNot2faCapableError } from "../config/errors";
-import { disableForce2fa, enableForce2fa } from "../managers/2fa";
+import { disableForce2fa, enableForce2fa, is2FACapable } from "../managers/2fa";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -20,10 +20,15 @@ export const getDoubleAuthenticationController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
+    const hasTotp = await isTotpConfiguredForUser(user_id);
+    const hasAny2faMethod = await is2FACapable(user_id);
+
     return res.render("double-authentication-choice", {
       pageTitle: "Double authentification",
       notifications: await getNotificationsFromRequest(req),
-      isAuthenticatorConfigured: await isTotpConfiguredForUser(user_id),
+      isAuthenticatorConfigured: hasTotp,
+      showTotpOption: !hasTotp,
+      showDontKnowOption: !hasAny2faMethod,
       csrfToken: csrfToken(req),
     });
   } catch (error) {

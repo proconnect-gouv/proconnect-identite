@@ -19,7 +19,7 @@ INSERT INTO
 VALUES
   (
     1,
-    'org-that-forces-mfa@example.com',
+    'single-totp-never-seen@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -31,12 +31,12 @@ VALUES
     'Sbire',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false,
-    CURRENT_TIMESTAMP
+    true,
+    NULL
   ),
   (
     2,
-    'org-that-does-not-force-mfa@example.com',
+    'single-totp-recently-ignored@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -48,12 +48,12 @@ VALUES
     'Sbire',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false,
-    CURRENT_TIMESTAMP
+    true,
+    CURRENT_TIMESTAMP - INTERVAL '5 days'
   ),
   (
     3,
-    'both-kinds-of-org@example.com',
+    'single-totp-ignored-long-ago@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -65,12 +65,12 @@ VALUES
     'Sbire',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false,
-    CURRENT_TIMESTAMP
+    true,
+    CURRENT_TIMESTAMP - INTERVAL '31 days'
   ),
   (
     4,
-    'org-that-forces-mfa-but-no-totp@example.com',
+    'single-totp-adding-second-method@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -80,26 +80,68 @@ VALUES
     'Jean',
     '0123456789',
     'Sbire',
-    null,
-    null,
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    true,
+    NULL
+  ),
+  (
+    5,
+    'two-passkeys-no-totp@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Jean',
+    '0123456789',
+    'Sbire',
+    NULL,
+    NULL,
     false,
-    CURRENT_TIMESTAMP
+    NULL
   );
 
 INSERT INTO
-  organizations (id, cached_libelle, siret, created_at, updated_at)
+  authenticators (
+    credential_id,
+    credential_public_key,
+    counter,
+    credential_device_type,
+    credential_backed_up,
+    transports,
+    user_id,
+    display_name
+  )
+VALUES
+  (
+    'fake-credential-id-1',
+    '\x00'::bytea,
+    0,
+    'singleDevice',
+    false,
+    '{"internal"}',
+    5,
+    'Clé 1'
+  ),
+  (
+    'fake-credential-id-2',
+    '\x00'::bytea,
+    0,
+    'singleDevice',
+    false,
+    '{"internal"}',
+    5,
+    'Clé 2'
+  );
+
+INSERT INTO
+  organizations (id, siret, created_at, updated_at)
 VALUES
   (
     1,
-    'Commune de lamalou-les-bains',
     '21340126800130',
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP
-  ),
-  (
-    2,
-    'Commune de clamart',
-    '21920023500014',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   );
@@ -114,10 +156,10 @@ INSERT INTO
   )
 VALUES
   (1, 1, false, 'domain', true),
-  (2, 2, false, 'domain', true),
+  (2, 1, false, 'domain', true),
   (3, 1, false, 'domain', true),
-  (3, 2, false, 'domain', true),
-  (4, 1, false, 'domain', true);
+  (4, 1, false, 'domain', true),
+  (5, 1, false, 'domain', true);
 
 INSERT INTO
   oidc_clients (

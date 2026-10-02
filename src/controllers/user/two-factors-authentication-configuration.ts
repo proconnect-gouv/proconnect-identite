@@ -3,6 +3,11 @@ import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { InvalidTotpTokenError } from "../../config/errors";
 import {
+  getConfiguredMethodLabel,
+  ignoreMultipleTwoFactorsSuggestion,
+  is2FACapable,
+} from "../../managers/2fa";
+import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
 } from "../../managers/session/authenticated";
@@ -14,6 +19,7 @@ import {
 import {
   confirmTotpRegistration,
   generateTotpRegistrationOptions,
+  isTotpConfiguredForUser,
 } from "../../managers/totp";
 import { sendAddFreeTOTPEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
@@ -28,11 +34,19 @@ export const getTwoFactorsAuthenticationChoiceController = async (
   next: NextFunction,
 ) => {
   try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    const hasTotp = await isTotpConfiguredForUser(user_id);
+    const hasAny2faMethod = await is2FACapable(user_id);
+
     return res.render("user/double-authentication-choice", {
       pageTitle: "Choisir un mode de double authentification",
       csrfToken: csrfToken(req),
       notifications: await getNotificationsFromRequest(req),
       spName: req.session.spName,
+      showTotpOption: !hasTotp,
+      showDontKnowOption: !hasAny2faMethod,
+      withInfoAlert: !hasAny2faMethod,
     });
   } catch (error) {
     next(error);
@@ -307,3 +321,25 @@ export const getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController =
       next(error);
     }
   };
+
+export const getMultipleTwoFactorsSuggestionController = async (
+  req: Request,
+  res: Response,
+) => {
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  return res.render("user/multiple-2fa-suggestion", {
+    pageTitle: "Multipliez vos méthodes de double authentification",
+    methode2FA: await getConfiguredMethodLabel(user_id),
+    csrfToken: csrfToken(req),
+  });
+};
+export const postMultipleTwoFactorsSuggestionIgnoreController = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  await ignoreMultipleTwoFactorsSuggestion(user_id);
+
+  return next();
+};

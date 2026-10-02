@@ -16,6 +16,7 @@ export interface User {
   last_sign_in_at: Date | null;
   magic_link_sent_at: Date | null;
   magic_link_token: string | null;
+  multiple_2fa_suggestion_ignored_at: Date | null;
   needs_inclusionconnect_onboarding_help: boolean;
   needs_inclusionconnect_welcome_page: boolean;
   phone_number: string | null;

@@ -2,9 +2,11 @@
   <%- include('../partials/notifications.ejs', {notifications: notifications}) %>
 
   <%- include('../mfa-settings/double-authentication-choice-layout.ejs', {
-    withInfoAlert: true,
+    withInfoAlert: withInfoAlert,
     isTotpAppInstalledUrl: '/users/is-totp-app-installed',
     verifyRegistrationAction: '/users/passkeys/verify-registration',
     csrfToken: csrfToken,
+    showTotpOption: showTotpOption,
+    showDontKnowOption: showDontKnowOption,
   }); %>
 </div>
