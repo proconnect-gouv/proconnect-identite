@@ -129,6 +129,8 @@ export const postOfficialContactEmailVerificationMiddleware = async (
       organization_id,
     });
 
+    req.session.pendingGreetingsForSelectedOrganization = true;
+
     return next();
   } catch (error) {
     if (error instanceof InvalidTokenError) {

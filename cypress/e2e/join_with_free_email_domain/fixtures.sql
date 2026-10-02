@@ -28,6 +28,31 @@ VALUES
   );
 
 INSERT INTO
+  franceconnect_userinfo (
+    user_id,
+    birthcountry,
+    birthdate,
+    birthplace,
+    family_name,
+    gender,
+    given_name,
+    created_at,
+    updated_at
+  )
+VALUES
+  (
+    1,
+    '99100',
+    '1990-06-01',
+    '75000',
+    'Un',
+    'male',
+    'Jean',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  );
+
+INSERT INTO
   organizations (id, siret, created_at, updated_at)
 VALUES
   (

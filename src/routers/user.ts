@@ -88,10 +88,7 @@ import {
   postSendEmailVerificationController,
   postVerifyEmailController,
 } from "../controllers/user/verify-email";
-import {
-  getWelcomeController,
-  getWelcomeDirigeantController,
-} from "../controllers/user/welcome";
+import { getWelcomeController } from "../controllers/user/welcome";
 import {
   postVerifyFirstFactorAuthenticationController,
   postVerifyRegistrationControllerFactory,
@@ -532,20 +529,14 @@ export const userRouter = () => {
 
   userRouter.get(
     "/welcome",
-    userSignInRequirementsGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getWelcomeController,
-  );
-  userRouter.get(
-    "/welcome/dirigeant",
-    userSignInRequirementsGuardMiddleware,
-    csrfProtectionMiddleware,
-    getWelcomeDirigeantController,
   );
 
   userRouter.post(
     "/welcome",
-    userSignInRequirementsGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     issueSessionOrRedirectController,
   );
@@ -559,7 +550,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation/:moderation_id",
-    browserIsTrustedGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/manage-organizations?notification=cancel_moderation_success",
