@@ -46,6 +46,11 @@ jobs:
         id: bump
         run: |
           VERSION=$(npx release-it --release-version --no-github.release)
+          {
+            echo "changelog<<EOF_CHANGELOG"
+            npx release-it --changelog --no-github.release
+            echo "EOF_CHANGELOG"
+          } >> "${GITHUB_OUTPUT}"
           npm pkg set version="${VERSION}"
           npx prettier --write package.json
           npm install --package-lock-only
@@ -64,6 +69,12 @@ jobs:
           title: "🔖 release ${{ steps.bump.outputs.version }}"
           body: |
             Merging this PR tags `${{ steps.bump.outputs.version }}` on `main` and publishes the GitHub release.
+
+            ## Changelog preview
+
+            ${{ steps.bump.outputs.changelog }}
+
+            _Commits merged after this PR was last updated also land in the release. Re-run the Prepare job to refresh this preview._
 
   publish:
     name: 🚢 Publish
