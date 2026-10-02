@@ -28,8 +28,8 @@ import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
 import {
-  apiRateLimiterMiddleware,
-  rateLimiterMiddleware,
+  defaultRateLimiterMiddleware,
+  machineToMachineRateLimiterMiddleware,
 } from "./middlewares/rate-limiter";
 import { apiRouter } from "./routers/api";
 import { interactionRouter } from "./routers/interaction";
@@ -164,7 +164,7 @@ app.get("/robots.txt", function (_req, res) {
   res.send("User-agent: *\nDisallow: /");
 });
 
-const WHITELISTED_PATHS = [
+const MACHINE_TO_MACHINE_PATHS = [
   "/.well-known/openid-configuration",
   "/oauth/jwks",
   "/oauth/request",
@@ -174,11 +174,11 @@ const WHITELISTED_PATHS = [
 ];
 
 app.use((req, res, next) => {
-  if (req.path.startsWith("/api/") || WHITELISTED_PATHS.includes(req.path)) {
-    return apiRateLimiterMiddleware(req, res, next);
+  if (MACHINE_TO_MACHINE_PATHS.includes(req.path)) {
+    return machineToMachineRateLimiterMiddleware(req, res, next);
   }
 
-  return rateLimiterMiddleware(req, res, (err) => {
+  return defaultRateLimiterMiddleware(req, res, (err) => {
     if (err) {
       // If an error occurs, add the EJS layout middleware to render a properly formatted 429 error page
       return ejsLayoutMiddlewareFactory(app)(req, res, () => next(err));
