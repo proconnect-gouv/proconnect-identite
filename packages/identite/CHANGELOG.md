@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.3.0
+
+### Minor Changes
+
+- [#2175](https://github.com/proconnect-gouv/proconnect-identite/pull/2175) [`ab7f8af`](https://github.com/proconnect-gouv/proconnect-identite/commit/ab7f8af1394f815d9b7fa25726d7b482cc80b632) Thanks [@rdubigny](https://github.com/rdubigny)! - ajout de la fonction getUserOrganization dans les repositories
+
 ## 10.2.2
 
 ### Patch Changes
