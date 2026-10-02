@@ -40,6 +40,8 @@ jobs:
           NPM_CONFIG_UPDATE_NOTIFIER: false
 
       - name: 🚢 Release
-        run: npm run release -- --ci
+        run: |
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          npm run release -- --ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
