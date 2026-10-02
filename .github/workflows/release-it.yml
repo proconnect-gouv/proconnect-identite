@@ -2,12 +2,72 @@ name: 🚢 🔑 ProConnect Identité Release !
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - package.json
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
-  release:
-    name: Release
+  prepare:
+    name: 🔖 Prepare
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: 🔧 Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: package.json
+          package-manager-cache: false
+
+      - name: 📦 Install dependencies
+        run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+          NPM_CONFIG_AUDIT: false
+          NPM_CONFIG_FUND: false
+          NPM_CONFIG_UPDATE_NOTIFIER: false
+
+      - name: 🔢 Bump version
+        id: bump
+        run: |
+          VERSION=$(npx release-it --release-version --no-github.release)
+          npm pkg set version="${VERSION}"
+          npx prettier --write package.json
+          npm install --package-lock-only
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: 🔀 Create Pull Request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          add-paths: |
+            package.json
+            package-lock.json
+          branch: release-it/next
+          commit-message: "🔖 release ${{ steps.bump.outputs.version }}"
+          delete-branch: true
+          sign-commits: true
+          title: "🔖 release ${{ steps.bump.outputs.version }}"
+          body: |
+            Merging this PR tags `${{ steps.bump.outputs.version }}` on `main` and publishes the GitHub release.
+
+  publish:
+    name: 🚢 Publish
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -20,18 +80,32 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: 🏷️ Check version
+        id: check
+        run: |
+          VERSION=$(jq -r .version package.json)
+          if git rev-parse -q --verify "refs/tags/${VERSION}" >/dev/null; then
+            echo "Tag ${VERSION} already exists, nothing to release."
+            echo "release=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "release=true" >> "${GITHUB_OUTPUT}"
+          fi
+
       - name: ⚙️ Git config
+        if: steps.check.outputs.release == 'true'
         run: |
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: 🔧 Setup Node
+        if: steps.check.outputs.release == 'true'
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: package.json
           package-manager-cache: false
 
-      - name: 📦 Install dependencie
+      - name: 📦 Install dependencies
+        if: steps.check.outputs.release == 'true'
         run: npm ci
         env:
           CYPRESS_INSTALL_BINARY: 0
@@ -40,8 +114,15 @@ jobs:
           NPM_CONFIG_UPDATE_NOTIFIER: false
 
       - name: 🚢 Release
+        if: steps.check.outputs.release == 'true'
         run: |
+          VERSION=$(jq -r .version package.json)
+          NEXT=$(npx release-it --release-version --no-github.release)
+          if [ "${NEXT}" != "${VERSION}" ]; then
+            echo "::error::package.json is at ${VERSION} but release-it computes ${NEXT}. Re-run the Prepare job."
+            exit 1
+          fi
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          npm run release -- --ci
+          npm run release -- --ci --git.commit=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
