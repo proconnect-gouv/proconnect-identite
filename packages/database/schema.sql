@@ -361,7 +361,8 @@ CREATE TABLE "public"."organizations" (
   "cached_libelle_categorie_juridique" character varying,
   "organization_info_fetched_at" timestamp with time zone,
   "cached_code_officiel_geographique" character varying,
-  "cached_siege_social" boolean
+  "cached_siege_social" boolean,
+  "cached_denomination_usuelle_etablissement_principal" character varying
 );
 
 --
