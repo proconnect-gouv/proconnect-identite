@@ -125,4 +125,12 @@ describe("sign-in with totp enrollment", () => {
 
     cy.contains('"acr": "eidas1-mfa"');
   });
+
+  it("should ask for previous totp before enrolling a new one", function () {
+    cy.visit("/users/double-authentication-choice");
+
+    cy.mfaLogin("account-with-totp@yopmail.com");
+
+    cy.contains("Choisir votre méthode de connexion renforcée");
+  });
 });
