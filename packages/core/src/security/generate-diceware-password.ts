@@ -10,7 +10,7 @@ type fiveDices = `${dice}${dice}${dice}${dice}${dice}`;
 const nanoidFiveDices = customAlphabet("123456", 5);
 const createFiveDices = () => nanoidFiveDices() as fiveDices;
 
-export function GenerarateDicewarePassword(
+export function GenerateDicewarePassword(
   generators: Array<typeof createFiveDices>,
 ) {
   return function generatePassword() {
@@ -20,6 +20,6 @@ export function GenerarateDicewarePassword(
   };
 }
 
-export const generateDicewarePassword = GenerarateDicewarePassword(
+export const generateDicewarePassword = GenerateDicewarePassword(
   Array(2).fill(createFiveDices),
 );
