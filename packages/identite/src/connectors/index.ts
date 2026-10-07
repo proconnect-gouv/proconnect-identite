@@ -50,7 +50,7 @@ import {
   createRecoveryCodesFactory,
   deleteAllRecoveryCodesByUserIdFactory,
   findRecoveryCodesByUserIdFactory,
-} from "#src/repositories/recovery-code";
+} from "#src/repositories/recovery-words";
 import {
   createUserFactory,
   deleteUserFactory,

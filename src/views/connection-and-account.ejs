@@ -162,30 +162,35 @@
             </form>
         <% } %>
 
-        <section class="fr-mb-6w">
-            <h2 class="fr-h3">Codes de secours</h2>
-            <% if (hasRecoveryCodesConfigured) { %>
-                <p class="fr-text--sm fr-text-mention--grey">
-                    Vous avez déjà généré des codes de secours.
-                </p>
-                <button
-                    class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
-                    disabled
-                >
-                    Générer des codes de secours
-                </button>
-            <% } else { %>
-                <p>
-                    <b>Pour garantir l'accès à votre compte en toutes circonstances</b> (perte de téléphone, changement d’ordinateur), nous vous recommandons fortement de générer vos codes de secours.
-                </p>
-                <a
-                    class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
-                    href="/recovery-code"
-                >
-                    Générer des codes de secours
-                </a>
-            <% } %>
-        </section>
+        <% if (is2faCapable) { %>
+            <section class="fr-mb-6w">
+                <h2 class="fr-h3">Récupération du compte</h2>
+                <% if (hasRecoveryWordsConfigured) { %>
+                    <p class="fr-text--sm fr-text-mention--grey">
+                        Vous avez déjà généré des mots de secours.
+                    </p>
+                    <button
+                        class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
+                        disabled
+                    >
+                        Générer des mots de secours
+                    </button>
+                <% } else { %>
+                    <p>
+                        <b>Pour garantir l'accès à votre compte en toutes circonstances</b> (perte de téléphone, changement d’ordinateur), nous vous recommandons fortement de générer vos mots de secours.
+                    </p>
+                    <form method="post" action="/recovery-words">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button
+                            type="submit"
+                            class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
+                        >
+                            Générer des mots de secours
+                        </button>
+                    </form>
+                <% } %>
+            </section>
+        <% } %>
 
         <section class="fr-mb-6w">
             <h2 class="fr-h3">Suppression du compte</h2>
