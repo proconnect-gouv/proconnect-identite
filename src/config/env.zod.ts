@@ -57,6 +57,7 @@ export const connectorEnvSchema = z.object({
   REDIS_URL: z.string().url().default("redis://:@127.0.0.1:6379"),
   RNE_API_PASSWORD: z.string().default("🎭 Mocked RNE API Password"),
   RNE_API_USERNAME: z.string().default("🎭 Mocked RNE API Username"),
+  RNE_API_BASE_URL: z.url(),
   RNE_API_HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
@@ -69,9 +70,11 @@ export const connectorEnvSchema = z.object({
 });
 
 export const featureTogglesEnvSchema = z.object({
+  FEATURE_ADD_TEST_PREFIX_TO_MAIL_SUBJECT: zodTrueFalseBoolean().default(false),
+  FEATURE_ALLOW_INSECURE_REQUESTS_TO_FRANCECONNECT:
+    zodTrueFalseBoolean().default(true),
   FEATURE_AUTHENTICATE_BROWSER: zodTrueFalseBoolean().default(false),
   FEATURE_BYPASS_MODERATION: zodTrueFalseBoolean().default(false),
-  FEATURE_CHECK_EMAIL_DELIVERABILITY: zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE:
     zodTrueFalseBoolean().default(false),
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE:
@@ -79,6 +82,9 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_DISPLAY_TEST_ENV_WARNING: zodTrueFalseBoolean().default(false),
   FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS:
     zodTrueFalseBoolean().default(false),
+  FEATURE_MOCK_DEBOUNCE_API: zodTrueFalseBoolean().default(true),
+  FEATURE_MOCK_RNE_API: zodTrueFalseBoolean().default(true),
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS: zodTrueFalseBoolean().default(true),
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),
   FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
   FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),
@@ -109,43 +115,63 @@ export const secretEnvSchema = z.object({
 
 export const paramsEnvSchema = z.object({
   ACCESS_LOG_PATH: z.string().optional(),
+  APPLICATION_NAME: z.string().default("ProConnect"),
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
     .default(1 * 24 * 60), // 1 day in minutes
-  DEPLOY_ENV: z
-    .enum(["localhost", "preview", "production", "sandbox"])
-    .default("localhost"),
+  FORCE_2FA_FOR_SIRETS: zCoerceArray().default([]),
+  HOST: z.string().url().default("http://localhost:3000"),
   HTTP_CLIENT_TIMEOUT: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(55 * 1_000), // 55 seconds in milliseconds;
+    .default(55 * 1_000), // 1 hour in minutes
+  IP_RATE_LIMITER_DEFAULT_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(100),
+  IP_RATE_LIMITER_EXTERNAL_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(20),
+  IP_RATE_LIMITER_MACHINE_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(1500),
+  IP_RATE_LIMITER_RNE_PING_POINTS_PER_MINUTE: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(2),
   LOG_LEVEL: z
     .enum(["trace", "debug", "info", "warn", "error", "fatal"])
-    .default("info"),
+    .default("info"), // 3 months in minutes
   MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(60), // 1 hour in minutes
+    .default(60),
   MAX_DURATION_BETWEEN_TWO_EMAIL_ADDRESS_VERIFICATION_IN_MINUTES: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(3 * 30 * 24 * 60), // 3 months in minutes
+    .default(3 * 30 * 24 * 60), // 20 minutes in seconds,
   MAX_SUGGESTED_ORGANIZATIONS: z.coerce.number().int().nonnegative().default(3),
   MIN_DURATION_BETWEEN_TWO_VERIFICATION_CODE_SENDING_IN_SECONDS: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(20 * 60), // 20 minutes in seconds,
-  HOST: z.string().url().default("http://localhost:3000"),
-  APPLICATION_NAME: z.string().default("ProConnect"),
+    .default(20 * 60),
   NODE_ENV: z
     .enum(["production", "development", "test"])
     .default("development"),
+  OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES:
+    z.coerce.number().int().nonnegative().default(60), // 1 hour in minutes
   PORT: z.coerce.number().int().nonnegative().default(3000),
   RECENT_LOGIN_INTERVAL_IN_SECONDS: z.coerce
     .number()
@@ -162,13 +188,13 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(1 * 24 * 60 * 60), // 1 day in seconds
-  TEST_CONTACT_EMAIL: z.string().default("mairie@yopmail.com"),
+  SMTP_FROM_ALT_RATIO_PERCENT: z.coerce.number().min(0).max(100).default(10),
+  TEST_CONTACT_EMAIL: z.string().default("mairie@yopmail.com"), // 3 months in seconds
   TRUSTED_BROWSER_COOKIE_MAX_AGE_IN_SECONDS: z.coerce
     .number()
     .int()
     .nonnegative()
-    .default(3 * 30 * 24 * 60 * 60), // 3 months in seconds
-  SMTP_FROM_ALT_RATIO_PERCENT: z.coerce.number().min(0).max(100).default(10),
+    .default(3 * 30 * 24 * 60 * 60),
   USE_SMTP_FROM_ALT_FOR_DOMAINS: zCoerceArray().default([]),
   VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()

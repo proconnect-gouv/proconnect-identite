@@ -4,9 +4,8 @@ describe("join with free email domain", () => {
   before(cy.seed);
 
   beforeEach(() => {
-    cy.visit("/");
-    cy.login("lion.eljonson@yopmail.com");
     cy.visit("/users/join-organization");
+    cy.login("lion.eljonson@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -39,9 +38,8 @@ describe("restrict access for", () => {
   before(cy.seed);
 
   beforeEach(() => {
-    cy.visit("/");
-    cy.login("lion.eljonson@yopmail.com");
     cy.visit("/users/join-organization");
+    cy.login("lion.eljonson@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -204,9 +202,8 @@ describe("join syndicat communal", () => {
   ];
 
   beforeEach(() => {
-    cy.visit("/");
-    cy.login("lion.eljonson@yopmail.com");
     cy.visit("/users/join-organization");
+    cy.login("lion.eljonson@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -232,9 +229,8 @@ describe("join small association", () => {
     },
   ];
   beforeEach(() => {
-    cy.visit("/");
-    cy.login("lion.eljonson@yopmail.com");
     cy.visit("/users/join-organization");
+    cy.login("lion.eljonson@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();
@@ -277,9 +273,8 @@ describe("join small organization", () => {
   ];
 
   beforeEach(() => {
-    cy.visit("/");
-    cy.login("lion.eljonson@yopmail.com");
     cy.visit("/users/join-organization");
+    cy.login("lion.eljonson@yopmail.com");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();

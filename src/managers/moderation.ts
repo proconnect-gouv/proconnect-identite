@@ -6,14 +6,7 @@ import { ForbiddenError } from "../config/errors";
 import { context } from "../connectors/context";
 import { sendMail } from "../connectors/mail";
 
-const { findById: findOrganizationById } = context.repository.organizations;
-
-const {
-  delete: deleteModeration,
-  findById: findModerationById,
-  getById: getModerationById,
-  reopen: reopenModeration,
-} = context.repository.moderations;
+const { moderations, organizations } = context.repository;
 
 export const getOrganizationFromModeration = async ({
   user,
@@ -22,13 +15,13 @@ export const getOrganizationFromModeration = async ({
   user: User;
   moderation_id: number;
 }) => {
-  const moderation = await findModerationById(moderation_id);
+  const moderation = await moderations.findById(moderation_id);
 
   if (isEmpty(moderation)) {
     throw new NotFoundError();
   }
 
-  const organization = await findOrganizationById(moderation.organization_id);
+  const organization = await organizations.findById(moderation.organization_id);
   if (!organization) {
     throw new NotFoundError();
   }
@@ -47,18 +40,18 @@ export const cancelModeration = async ({
   user: User;
   moderation_id: number;
 }) => {
-  const moderation = await getModerationById(moderation_id);
+  const moderation = await moderations.getById(moderation_id);
 
   if (user.id !== moderation.user_id) {
     throw new ForbiddenError();
   }
 
-  const organization = await findOrganizationById(moderation.organization_id);
+  const organization = await organizations.findById(moderation.organization_id);
   if (!organization) {
     throw new NotFoundError();
   }
 
-  const result = await deleteModeration(moderation_id);
+  const result = await moderations.delete(moderation_id);
 
   await sendMail({
     to: [user.email],
@@ -81,13 +74,13 @@ export const reopenModerationWithUserEdit = async ({
   user: User;
   moderation_id: number;
 }) => {
-  const moderation = await getModerationById(moderation_id);
+  const moderation = await moderations.getById(moderation_id);
 
   if (user.id !== moderation.user_id) {
     throw new ForbiddenError();
   }
 
-  return await reopenModeration({
+  return await moderations.reopen({
     id: moderation_id,
     userEmail: user.email,
     cause: "Edition des informations personnelles",

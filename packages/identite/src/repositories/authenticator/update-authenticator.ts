@@ -2,10 +2,10 @@
 
 import type {
   Authenticator,
+  Base64URLString,
   BaseAuthenticator,
   DatabaseContext,
 } from "#src/types";
-import type { Base64URLString } from "@simplewebauthn/server";
 import { type QueryResult } from "pg";
 
 //

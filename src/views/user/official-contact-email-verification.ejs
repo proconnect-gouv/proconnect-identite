@@ -5,7 +5,7 @@
             Confirmer votre adresse email
         </h1>
         <div>
-            <form id="verify-email" action="/users/official-contact-email-verification/<%= organization_id %>" method="post" autocomplete="off">
+            <form id="verify-email" action="/users/official-contact-email-verification" method="post" autocomplete="off">
                 <div class="fr-alert fr-alert--info fr-mb-2w">
                     <h2 class="fr-alert__title fr-h3">Code secret envoyé à l'adresse email officielle</h2>
                     <p>Nous vérifions que vous avez accès à l’adresse email officielle de votre <%= organization_type_label; %> : <b><%= contactEmail %></b></p>

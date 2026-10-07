@@ -7,7 +7,7 @@ import {
 import { sendDeleteUserEmail } from "../../managers/user";
 import { logger } from "../../services/log";
 
-const { delete: deleteUser } = context.repository.users;
+const { users } = context.repository;
 
 export const postDeleteUserController = async (
   req: Request,
@@ -19,7 +19,7 @@ export const postDeleteUserController = async (
 
     await sendDeleteUserEmail({ user_id: id });
 
-    await deleteUser(id);
+    await users.delete(id);
     logger.info(`user ${email} successfully deleted`);
 
     await destroyAuthenticatedSession(req);

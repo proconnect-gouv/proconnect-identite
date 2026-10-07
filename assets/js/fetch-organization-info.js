@@ -119,7 +119,7 @@ document.addEventListener(
         }
       };
 
-      xmlhttp.open("GET", "/api/sirene/organization-info/" + siret, true);
+      xmlhttp.open("GET", "/api/organization-info/" + siret, true);
       xmlhttp.send();
     }
 

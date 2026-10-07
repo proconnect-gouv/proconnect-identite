@@ -1,10 +1,15 @@
 //
 
-import type {
-  AuthenticatorTransportFuture,
-  Base64URLString,
-  CredentialDeviceType,
-} from "@simplewebauthn/server";
+export type Base64URLString = string;
+export type AuthenticatorTransportFuture =
+  | "ble"
+  | "cable"
+  | "hybrid"
+  | "internal"
+  | "nfc"
+  | "smart-card"
+  | "usb";
+export type CredentialDeviceType = "singleDevice" | "multiDevice";
 
 //
 

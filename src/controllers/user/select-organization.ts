@@ -1,12 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
-import {
-  getOrganizationsByUserId,
-  selectOrganization,
-} from "../../managers/organization/main";
+import { context } from "../../connectors/context";
+import { selectOrganization } from "../../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { idSchema } from "../../services/custom-zod-schemas";
+
+const { organizations } = context.repository;
 
 export const getSelectOrganizationController = async (
   req: Request,
@@ -14,7 +14,7 @@ export const getSelectOrganizationController = async (
   next: NextFunction,
 ) => {
   try {
-    const userOrganizations = await getOrganizationsByUserId(
+    const userOrganizations = await organizations.findByUserId(
       getUserFromAuthenticatedSession(req).id,
     );
 

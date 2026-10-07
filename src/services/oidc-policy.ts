@@ -1,11 +1,9 @@
 import { to } from "await-to-js";
-import { isEmpty } from "lodash-es";
 import { interactionPolicy } from "oidc-provider";
-import {
-  getOrganizationById,
-  getOrganizationsByUserId,
-} from "../managers/organization/main";
+import { context } from "../connectors/context";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
+
+const { organizations } = context.repository;
 
 //
 
@@ -33,20 +31,9 @@ policy.add(
           return Check.REQUEST_PROMPT;
         }
 
-        const userOrganizations = await getOrganizationsByUserId(user_id);
-        const organization = userOrganizations.find(
-          ({ id, needs_official_contact_email_verification }) =>
-            id === selectedOrganizationId &&
-            !needs_official_contact_email_verification,
-        );
-
-        if (isEmpty(organization)) {
-          return Check.REQUEST_PROMPT;
-        }
-
         const oidcContextParams = ctx.oidc.params as OIDCContextParams;
         if (oidcContextParams.siret_hint && selectedOrganizationId) {
-          const selectedOrganization = (await getOrganizationById(
+          const selectedOrganization = (await organizations.findById(
             selectedOrganizationId,
           ))!;
           if (selectedOrganization.siret !== oidcContextParams.siret_hint) {

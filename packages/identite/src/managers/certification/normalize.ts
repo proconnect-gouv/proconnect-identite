@@ -17,30 +17,19 @@ export function normalizeText(text: string | null | undefined): string {
   // Convert to uppercase
   let normalized = text.toUpperCase();
 
-  // Replace accented characters with their simple versions
-  const accentMap: Record<string, string> = {
-    À: "A",
-    Â: "A",
-    Ä: "A",
-    Ç: "C",
-    É: "E",
-    È: "E",
-    Ê: "E",
-    Ë: "E",
-    Î: "I",
-    Ï: "I",
-    Ô: "O",
-    Ö: "O",
-    Ù: "U",
-    Û: "U",
-    Ü: "U",
-    Ÿ: "Y",
+  // Replace accented characters with their simple versions: decompose them
+  // (NFD) and drop the combining marks, so that every Latin diacritic is
+  // covered and precomposed and decomposed inputs normalize the same way
+  normalized = normalized.normalize("NFD").replace(/\p{M}/gu, "");
+
+  // Ligatures do not decompose
+  const ligatureMap: Record<string, string> = {
     Æ: "AE",
     Œ: "OE",
   };
 
-  for (const [accented, simple] of Object.entries(accentMap)) {
-    normalized = normalized.replaceAll(accented, simple);
+  for (const [ligature, simple] of Object.entries(ligatureMap)) {
+    normalized = normalized.replaceAll(ligature, simple);
   }
 
   // Replace special characters (including ' and -) with spaces

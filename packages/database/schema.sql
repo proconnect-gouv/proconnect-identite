@@ -51,6 +51,12 @@ DROP CONSTRAINT IF EXISTS "users_oidc_clients_organization_id_fkey";
 ALTER TABLE IF EXISTS ONLY "public"."users_oidc_clients"
 DROP CONSTRAINT IF EXISTS "users_oidc_clients_oidc_client_id_fkey";
 
+ALTER TABLE IF EXISTS ONLY "public"."official_contact_email_verifications"
+DROP CONSTRAINT IF EXISTS "official_contact_email_verifications_user_id_fkey";
+
+ALTER TABLE IF EXISTS ONLY "public"."official_contact_email_verifications"
+DROP CONSTRAINT IF EXISTS "official_contact_email_verifications_organization_id_fkey";
+
 ALTER TABLE IF EXISTS ONLY "public"."moderations"
 DROP CONSTRAINT IF EXISTS "moderations_user_id_fkey";
 
@@ -93,6 +99,9 @@ DROP CONSTRAINT IF EXISTS "organizations_pkey";
 
 ALTER TABLE IF EXISTS ONLY "public"."oidc_clients"
 DROP CONSTRAINT IF EXISTS "oidc_clients_pkey";
+
+ALTER TABLE IF EXISTS ONLY "public"."official_contact_email_verifications"
+DROP CONSTRAINT IF EXISTS "official_contact_email_verifications_pkey";
 
 ALTER TABLE IF EXISTS ONLY "public"."moderations"
 DROP CONSTRAINT IF EXISTS "moderations_pkey";
@@ -150,6 +159,8 @@ DROP TABLE IF EXISTS "public"."organizations";
 DROP SEQUENCE IF EXISTS "public"."oidc_clients_id_seq";
 
 DROP TABLE IF EXISTS "public"."oidc_clients";
+
+DROP TABLE IF EXISTS "public"."official_contact_email_verifications";
 
 DROP SEQUENCE IF EXISTS "public"."moderations_id_seq";
 
@@ -279,6 +290,18 @@ WITH
 ALTER SEQUENCE "public"."moderations_id_seq" OWNED BY "public"."moderations"."id";
 
 --
+-- Name: official_contact_email_verifications; Type: TABLE; Schema: public; Owner: -
+--
+CREATE TABLE "public"."official_contact_email_verifications" (
+  "user_id" integer NOT NULL,
+  "organization_id" integer NOT NULL,
+  "token" character varying,
+  "sent_at" timestamp with time zone,
+  "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+--
 -- Name: oidc_clients; Type: TABLE; Schema: public; Owner: -
 --
 CREATE TABLE "public"."oidc_clients" (
@@ -338,7 +361,8 @@ CREATE TABLE "public"."organizations" (
   "cached_libelle_categorie_juridique" character varying,
   "organization_info_fetched_at" timestamp with time zone,
   "cached_code_officiel_geographique" character varying,
-  "cached_siege_social" boolean
+  "cached_siege_social" boolean,
+  "cached_denomination_usuelle_etablissement_principal" character varying
 );
 
 --
@@ -433,9 +457,6 @@ CREATE TABLE "public"."users_organizations" (
   "updated_at" timestamp with time zone DEFAULT '1970-01-01 00:00:00'::timestamp without time zone NOT NULL,
   "verification_type" character varying NOT NULL,
   "has_been_greeted" boolean DEFAULT false NOT NULL,
-  "needs_official_contact_email_verification" boolean DEFAULT false NOT NULL,
-  "official_contact_email_verification_token" character varying,
-  "official_contact_email_verification_sent_at" timestamp with time zone,
   "verified_at" timestamp with time zone
 );
 
@@ -512,6 +533,12 @@ ADD CONSTRAINT "franceconnect_userinfo_pkey" PRIMARY KEY ("user_id");
 --
 ALTER TABLE ONLY "public"."moderations"
 ADD CONSTRAINT "moderations_pkey" PRIMARY KEY ("id");
+
+--
+-- Name: official_contact_email_verifications official_contact_email_verifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."official_contact_email_verifications"
+ADD CONSTRAINT "official_contact_email_verifications_pkey" PRIMARY KEY ("user_id", "organization_id");
 
 --
 -- Name: oidc_clients oidc_clients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -603,6 +630,18 @@ ADD CONSTRAINT "moderations_organization_id_fkey" FOREIGN KEY ("organization_id"
 --
 ALTER TABLE ONLY "public"."moderations"
 ADD CONSTRAINT "moderations_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON DELETE CASCADE;
+
+--
+-- Name: official_contact_email_verifications official_contact_email_verifications_organization_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."official_contact_email_verifications"
+ADD CONSTRAINT "official_contact_email_verifications_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations" ("id") ON DELETE CASCADE;
+
+--
+-- Name: official_contact_email_verifications official_contact_email_verifications_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."official_contact_email_verifications"
+ADD CONSTRAINT "official_contact_email_verifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON DELETE CASCADE;
 
 --
 -- Name: users_oidc_clients users_oidc_clients_oidc_client_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -

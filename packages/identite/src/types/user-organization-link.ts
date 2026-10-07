@@ -55,16 +55,11 @@ export const BaseUserOrganizationLinkSchema = z.object({
   // updated when verification_type is changed
   verified_at: z.date().or(z.literal(null)),
   has_been_greeted: z.boolean(),
-  needs_official_contact_email_verification: z.boolean(),
-  official_contact_email_verification_token: z.string().nullable(),
-  official_contact_email_verification_sent_at: z.date().nullable(),
 });
 
 export type BaseUserOrganizationLink = z.output<
   typeof BaseUserOrganizationLinkSchema
 >;
-
-//
 
 export const UserOrganizationLinkSchema = BaseUserOrganizationLinkSchema.extend(
   {
@@ -77,8 +72,6 @@ export const UserOrganizationLinkSchema = BaseUserOrganizationLinkSchema.extend(
 
 export type UserOrganizationLink = z.output<typeof UserOrganizationLinkSchema>;
 
-//
-
 export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
   {
     organization_id: true,
@@ -88,10 +81,18 @@ export const InsertUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick(
 ).extend(
   UserOrganizationLinkSchema.pick({
     is_external: true,
-    needs_official_contact_email_verification: true,
   }).partial().shape,
 );
 
 export type InsertUserOrganizationLink = z.output<
   typeof InsertUserOrganizationLinkSchema
+>;
+
+export const FindUserOrganizationLinkSchema = UserOrganizationLinkSchema.pick({
+  organization_id: true,
+  user_id: true,
+});
+
+export type FindUserOrganizationLink = z.output<
+  typeof FindUserOrganizationLinkSchema
 >;

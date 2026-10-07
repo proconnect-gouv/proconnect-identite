@@ -5,25 +5,17 @@ import { isEmpty } from "lodash-es";
 import { context } from "../../connectors/context";
 import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 
-const {
-  findBySiret,
-  findByUserId,
-  findById: findOrganizationById,
-  findPendingByUserId,
-  deleteUserOrganization,
-} = context.repository.organizations;
+const { organizations, users_organizations } = context.repository;
 
-export const getOrganizationsByUserId = findByUserId;
-export const getOrganizationById = findOrganizationById;
-export const getOrganizationBySiret = findBySiret;
 export const getUserOrganizations = async (
   userId: number,
 ): Promise<{
   userOrganizations: Organization[];
   pendingUserOrganizations: Organization[];
 }> => {
-  const userOrganizations = await getOrganizationsByUserId(userId);
-  const pendingUserOrganizations = await findPendingByUserId(userId);
+  const userOrganizations = await organizations.findByUserId(userId);
+  const pendingUserOrganizations =
+    await organizations.findPendingByUserId(userId);
 
   return { userOrganizations, pendingUserOrganizations };
 };
@@ -34,7 +26,7 @@ export const quitOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const hasBeenRemoved = await deleteUserOrganization({
+  const hasBeenRemoved = await users_organizations.delete({
     user_id,
     organization_id,
   });
@@ -55,7 +47,7 @@ export const selectOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const userOrganizations = await getOrganizationsByUserId(user_id);
+  const userOrganizations = await organizations.findByUserId(user_id);
   const organization = userOrganizations.find(
     ({ id }) => id === organization_id,
   );
