@@ -26,7 +26,7 @@ jobs:
           - connect_franceconnect_account
           - delete_account
           - delete_totp
-          - generate_recovery_codes
+          - generate_recovery_words
           - join_and_moderation
           - join_collectivite_territoriale_free_contact_domain
           - join_collectivite_territoriale_multiple_contact_emails

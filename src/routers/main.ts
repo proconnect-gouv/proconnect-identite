@@ -10,9 +10,7 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
-  getRecoveryCodeController,
-  getRecoveryCodeSuccessController,
-  postRecoveryCodeController,
+  postRecoveryWordsController,
   postSetForce2faController,
 } from "../controllers/2fa";
 import {
@@ -75,34 +73,14 @@ export const mainRouter = (app: Express) => {
     getIsTotpAppInstalledController,
   );
 
-  mainRouter.get(
-    "/recovery-code",
-    nocache(),
-    urlencoded({ extended: false }),
-    ejsLayoutMiddlewareFactory(app, true),
-    userCanAccessAdminGuardMiddleware,
-    csrfProtectionMiddleware,
-    getRecoveryCodeController,
-  );
-
   mainRouter.post(
-    "/recovery-code",
+    "/recovery-words",
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
-    postRecoveryCodeController,
-  );
-
-  mainRouter.get(
-    "/recovery-code-success",
-    nocache(),
-    urlencoded({ extended: false }),
-    ejsLayoutMiddlewareFactory(app, true),
-    userCanAccessAdminGuardMiddleware,
-    csrfProtectionMiddleware,
-    getRecoveryCodeSuccessController,
+    postRecoveryWordsController,
   );
 
   mainRouter.get(
