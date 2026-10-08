@@ -8,7 +8,6 @@ import { z } from "zod";
 import { UserIsNot2faCapableError } from "../config/errors";
 import { context } from "../connectors/context";
 import { disableForce2fa, enableForce2fa, is2FACapable } from "../managers/2fa";
-import { hasRecoveryWordsConfiguredForUser } from "../managers/recovery-words";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -240,10 +239,6 @@ export const postRecoveryWordsController = async (
 ) => {
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-    if (await hasRecoveryWordsConfiguredForUser(user_id)) {
-      return res.redirect("/connection-and-account");
-    }
 
     if (!(await is2FACapable(user_id))) {
       return res.redirect("/connection-and-account");

@@ -4,3 +4,6 @@ import "moment-timezone";
 export const formatDate = (date: Date): string => {
   return moment(date).tz("Europe/Paris").locale("fr").calendar();
 };
+export const formatShortDate = (date: Date): string => {
+  return moment(date).tz("Europe/Paris").format("D/MM/YY");
+};
