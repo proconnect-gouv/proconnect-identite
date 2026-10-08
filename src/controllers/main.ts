@@ -3,7 +3,10 @@ import z, { ZodError } from "zod";
 import { context } from "../connectors/context";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
-import { hasRecoveryWordsConfiguredForUser } from "../managers/recovery-words";
+import {
+  getRecoveryWordsCreatedAt,
+  hasRecoveryWordsConfiguredForUser,
+} from "../managers/recovery-words";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -24,7 +27,7 @@ import {
   nameSchema,
   phoneNumberSchema,
 } from "../services/custom-zod-schemas";
-import { formatDate } from "../services/date-format";
+import { formatDate, formatShortDate } from "../services/date-format";
 import { getNotificationsFromRequest } from "../services/get-notifications-from-request";
 
 const { users } = context.repository;
@@ -200,6 +203,7 @@ export const getConnectionAndAccountController = async (
       await hasValidFranceConnectIdentity(user_id);
     const hasRecoveryWordsConfigured =
       await hasRecoveryWordsConfiguredForUser(user_id);
+    const recoveryWordsCreatedAt = await getRecoveryWordsCreatedAt(user_id);
 
     return res.render("connection-and-account", {
       pageTitle: "Compte et connexion",
@@ -215,6 +219,9 @@ export const getConnectionAndAccountController = async (
       is2faCapable,
       force2fa,
       hasRecoveryWordsConfigured,
+      recoveryWordsCreatedAt: recoveryWordsCreatedAt
+        ? formatShortDate(recoveryWordsCreatedAt)
+        : null,
     });
   } catch (error) {
     next(error);
