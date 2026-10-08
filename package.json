@@ -40,7 +40,6 @@
     "fixtures:load-ci": "tsx scripts/run-sql-script.ts",
     "format": "prettier --write '**/*.{ts,sql}'",
     "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate -j ts",
-    "release": "release-it",
     "start": "tsx --import ./src/instrument.ts src/index.ts",
     "test": "run-s test:*",
     "lint": "prettier --check '**/*.{ts,sql}' && npm run type:check",
@@ -50,7 +49,7 @@
     "test:workspaces": "npm run test --if-present --workspaces",
     "update-one-mocked-organization": "UPDATE_SNAPSHOT=True tsx mocks/entreprise.api.gouv.fr/add-establishment.ts",
     "update-organization-info": "tsx scripts/update-organizations-info.ts",
-    "version": "changeset version && npm install --package-lock-only",
+    "version-packages": "changeset version && npm install --package-lock-only",
     "watch:assets": "NODE_ENV=development vite build --clearScreen false --watch",
     "watch:ejs": "CHOKIDAR_USEPOLLING=true copy-and-watch --clean --watch \"src/views/**/*.ejs\" src/views/*.ejs build/views/",
     "watch:js": "tsc --watch --preserveWatchOutput",
@@ -76,15 +75,14 @@
       "tagMatch": "[0-9]*.[0-9]*.[0-9]*"
     },
     "github": {
-      "comments": {
-        "submit": true
-      },
       "release": true
     },
     "hooks": {
       "after:git:release": "git switch -c release/${version} && git push origin release/${version}"
     },
-    "npm": false,
+    "npm": {
+      "publish": false
+    },
     "plugins": {
       "@csmith/release-it-calver-plugin": {
         "cycle": "month"
@@ -138,7 +136,6 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^3.0.2",
-    "@csmith/release-it-calver-plugin": "^2026.9.0",
     "@dotenvx/dotenvx": "^1.61.0",
     "@fullhuman/postcss-purgecss": "^8.0.0",
     "@gouvfr/dsfr": "^1.14.2",
@@ -176,7 +173,6 @@
     "prettier": "^3.8.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-sql": "^0.19.2",
-    "release-it": "^21.1.0",
     "tld-extract": "^2.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.3.2",

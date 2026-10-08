@@ -71,7 +71,7 @@ jobs:
         with:
           commit-message: "🔖 Version Packages"
           pr-title: "🔖 Version Packages"
-          script: npm run version
+          script: npm run version-packages
 
   publish:
     name: 🚢 Publish
