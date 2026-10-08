@@ -265,7 +265,7 @@ export const userIsConnectedGuardMiddleware =
 
 //
 
-const userHasConnectedRecentlyGuard = (prev: Pass<RequestContext>) => {
+const userHasConnectedRecentlyGuard = async (prev: Pass<RequestContext>) => {
   const context = userIsConnectedGuard(prev);
   if (!Pass.is_passing(context)) return context;
   const {
@@ -278,6 +278,23 @@ const userHasConnectedRecentlyGuard = (prev: Pass<RequestContext>) => {
     req.session.referrerPath = getReferrerPath(req);
     return redirect(`/users/start-sign-in?notification=login_required`);
   }
+
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+  if (
+    (await is2FACapable(user_id)) &&
+    !isWithinTwoFactorAuthenticatedSession(req)
+  ) {
+    req.session.referrerPath = getReferrerPath(req);
+    return redirect("/users/2fa-sign-in?notification=2fa_required");
+  }
+
+  const is_browser_trusted = isBrowserTrustedForUser(req);
+  if (!is_browser_trusted) {
+    req.session.referrerPath = getReferrerPath(req);
+    return redirect("/users/verify-email?notification=browser_not_trusted");
+  }
+
   return pass("user_has_connected_recently");
 };
 export const userHasConnectedRecentlyGuardMiddleware = createGuardMiddleware(
