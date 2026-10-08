@@ -1,4 +1,4 @@
-name: 🚢 🔑 ProConnect Identité Release !
+name: 🚢 Release ProConnect Identité app (release-action)
 
 on:
   push:

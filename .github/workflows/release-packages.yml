@@ -1,4 +1,4 @@
-name: 🚢 Release It !
+name: 🦋 Release npm packages (changesets)
 
 on:
   push:
