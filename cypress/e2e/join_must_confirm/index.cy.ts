@@ -4,7 +4,7 @@ describe("join organizations", () => {
   before(cy.seed);
 
   it("join big company with free email provider", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.login("unused1@yopmail.com");
 
