@@ -3,26 +3,19 @@ import { markDomainAsVerifiedFactory } from "@proconnect-gouv/proconnect.identit
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { context } from "../../connectors/context";
-import {
-  findBySiret,
-  findByUserId,
-  findById as findOrganizationById,
-  findPendingByUserId,
-} from "../../repositories/organization/getters";
-import { deleteUserOrganization } from "../../repositories/organization/setters";
 import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 
-export const getOrganizationsByUserId = findByUserId;
-export const getOrganizationById = findOrganizationById;
-export const getOrganizationBySiret = findBySiret;
+const { organizations, users_organizations } = context.repository;
+
 export const getUserOrganizations = async (
   userId: number,
 ): Promise<{
   userOrganizations: Organization[];
   pendingUserOrganizations: Organization[];
 }> => {
-  const userOrganizations = await getOrganizationsByUserId(userId);
-  const pendingUserOrganizations = await findPendingByUserId(userId);
+  const userOrganizations = await organizations.findByUserId(userId);
+  const pendingUserOrganizations =
+    await organizations.findPendingByUserId(userId);
 
   return { userOrganizations, pendingUserOrganizations };
 };
@@ -33,7 +26,7 @@ export const quitOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const hasBeenRemoved = await deleteUserOrganization({
+  const hasBeenRemoved = await users_organizations.delete({
     user_id,
     organization_id,
   });
@@ -54,7 +47,7 @@ export const selectOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const userOrganizations = await getOrganizationsByUserId(user_id);
+  const userOrganizations = await organizations.findByUserId(user_id);
   const organization = userOrganizations.find(
     ({ id }) => id === organization_id,
   );

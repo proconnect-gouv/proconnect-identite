@@ -9,14 +9,15 @@ import * as Sentry from "@sentry/node";
 import { to } from "await-to-js";
 import { isEmpty, omitBy } from "lodash-es";
 import type { FindAccount } from "oidc-provider";
-import { findByUserId as getUsersOrganizations } from "../repositories/organization/getters";
+import { context } from "../connectors/context";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
-import { findById as findUserById } from "../repositories/user";
 import { logger } from "./log";
 import { isCommune } from "./organization";
 
+const { organizations, users } = context.repository;
+
 export const findAccount: FindAccount = async (_ctx, sub) => {
-  const user = await findUserById(parseInt(sub, 10));
+  const user = await users.findById(parseInt(sub, 10));
 
   if (isEmpty(user)) {
     return;
@@ -59,7 +60,7 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
         ),
       );
 
-      const organizations = await getUsersOrganizations(id);
+      const userOrganizations = await organizations.findByUserId(id);
 
       const [selectedOrganizationIdErr, selectedOrganizationId] = await to(
         getSelectedOrganizationId(id),
@@ -78,7 +79,7 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
         throw selectedOrganizationIdErr;
       }
 
-      const organization = organizations.find(
+      const organization = userOrganizations.find(
         ({ id }) => id === selectedOrganizationId,
       );
 

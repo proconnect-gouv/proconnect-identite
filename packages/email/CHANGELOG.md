@@ -1,5 +1,17 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.2.1
+
+### Patch Changes
+
+- [#2163](https://github.com/proconnect-gouv/proconnect-identite/pull/2163) [`cc9c03c`](https://github.com/proconnect-gouv/proconnect-identite/commit/cc9c03c16fb8c6f668eedf9cf436fa38a9e98bfc) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Include the deleted/added access key name in security alert emails
+
+## 1.2.0
+
+### Minor Changes
+
+- [#2079](https://github.com/proconnect-gouv/proconnect-identite/pull/2079) [`20d3064`](https://github.com/proconnect-gouv/proconnect-identite/commit/20d30643f5f65e817b8282d5581633e951e88af1) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ajout d'un template "annulation de demande de rattachement"
+
 ## 1.1.1
 
 ### Patch Changes

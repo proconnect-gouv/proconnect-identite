@@ -1,4 +1,10 @@
-{
-  "348679010": "SA EUROSERIGRAPHIE",
-  "498569177": "CAPCUSTO"
-}
+[
+  {
+    "siren": "348679010",
+    "denomination": "SA EUROSERIGRAPHIE"
+  },
+  {
+    "siren": "498569177",
+    "denomination": "CAPCUSTO"
+  }
+]

@@ -10,14 +10,9 @@ import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { z } from "zod";
-import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import { context } from "../src/connectors/context";
+import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
-import { findByUserId } from "../src/repositories/organization/getters";
-import {
-  linkUserToOrganization,
-  upsert,
-} from "../src/repositories/organization/setters";
 import { logger } from "../src/services/log";
 import {
   getNumberOfLineInFile,
@@ -26,9 +21,8 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
-//
 
-const { create, findByEmail, update } = context.repository.users;
+const { organizations, users_organizations, users } = context.repository;
 
 //
 
@@ -163,10 +157,10 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         }
 
         // 1. add user if it does not exist
-        let user = await findByEmail(email);
+        let user = await users.findByEmail(email);
         if (isEmpty(user)) {
-          user = await create({ email });
-          await update(user.id, {
+          user = await users.create({ email });
+          await users.update(user.id, {
             given_name,
             family_name,
             job,
@@ -185,15 +179,15 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
           }
 
           // 3. update organizationInfo
-          const organization = await upsert({
+          const organization = await organizations.upsert({
             siret: organizationInfo.siret,
             organizationInfo,
           });
 
           // 4. create the user-organization link
-          const usersOrganizations = await findByUserId(user.id);
+          const usersOrganizations = await organizations.findByUserId(user.id);
           if (!some(usersOrganizations, ["id", organization.id])) {
-            await linkUserToOrganization({
+            await users_organizations.create({
               organization_id: organization.id,
               user_id: user.id,
               verification_type:

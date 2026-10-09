@@ -24,13 +24,11 @@ exports[`findByUserIdFactory > should return multiple organizations when user ha
     "organization_info_fetched_at": null,
     "cached_code_officiel_geographique": null,
     "cached_siege_social": null,
+    "cached_denomination_usuelle_etablissement_principal": null,
     "is_external": false,
     "verification_type": "necron",
     "verified_at": null,
-    "has_been_greeted": true,
-    "needs_official_contact_email_verification": false,
-    "official_contact_email_verification_token": "necron_token_1",
-    "official_contact_email_verification_sent_at": "2023-01-26T00:00:00.000Z"
+    "has_been_greeted": true
   },
   {
     "id": 3,
@@ -56,13 +54,11 @@ exports[`findByUserIdFactory > should return multiple organizations when user ha
     "organization_info_fetched_at": null,
     "cached_code_officiel_geographique": null,
     "cached_siege_social": null,
+    "cached_denomination_usuelle_etablissement_principal": null,
     "is_external": true,
     "verification_type": "alliance",
     "verified_at": null,
-    "has_been_greeted": false,
-    "needs_official_contact_email_verification": true,
-    "official_contact_email_verification_token": "alliance_token_1",
-    "official_contact_email_verification_sent_at": "2023-04-02T00:00:00.000Z"
+    "has_been_greeted": false
   }
 ]
 `;
@@ -93,13 +89,11 @@ exports[`findByUserIdFactory > should return single organization when user has o
     "organization_info_fetched_at": null,
     "cached_code_officiel_geographique": null,
     "cached_siege_social": null,
+    "cached_denomination_usuelle_etablissement_principal": null,
     "is_external": false,
     "verification_type": "imperial",
     "verified_at": null,
-    "has_been_greeted": true,
-    "needs_official_contact_email_verification": false,
-    "official_contact_email_verification_token": "imperial_token_6",
-    "official_contact_email_verification_sent_at": "2023-07-06T00:00:00.000Z"
+    "has_been_greeted": true
   }
 ]
 `;

@@ -6,7 +6,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.get('[href="/double-authentication"]')
+    cy.get('[href="/double-authentication-choice"]')
       .contains("Configurer la double authentification")
       .click();
 
@@ -31,7 +31,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.get('[href="/double-authentication"]')
+    cy.get('[href="/double-authentication-choice"]')
       .contains("Configurer la double authentification")
       .click();
 
@@ -51,7 +51,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.get('[href="/double-authentication"]')
+    cy.get('[href="/double-authentication-choice"]')
       .contains("Configurer la double authentification")
       .click();
 
@@ -83,7 +83,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.get('[href="/double-authentication"]')
+    cy.get('[href="/double-authentication-choice"]')
       .contains("Configurer la double authentification")
       .click();
 
@@ -113,7 +113,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.get('[href="/double-authentication"]')
+    cy.get('[href="/double-authentication-choice"]')
       .contains("Configurer la double authentification")
       .click();
 
@@ -139,7 +139,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.get('[href="/double-authentication"]')
+    cy.get('[href="/double-authentication-choice"]')
       .contains("Configurer la double authentification")
       .click();
 

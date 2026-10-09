@@ -4,6 +4,10 @@ import { RateLimiterRedis } from "rate-limiter-flexible";
 import {
   FEATURE_RATE_LIMIT_BY_EMAIL,
   FEATURE_RATE_LIMIT_BY_IP,
+  IP_RATE_LIMITER_DEFAULT_POINTS_PER_MINUTE,
+  IP_RATE_LIMITER_EXTERNAL_POINTS_PER_MINUTE,
+  IP_RATE_LIMITER_MACHINE_POINTS_PER_MINUTE,
+  IP_RATE_LIMITER_RNE_PING_POINTS_PER_MINUTE,
 } from "../config/env";
 import { getNewRedisClient } from "../connectors/redis";
 import {
@@ -50,23 +54,43 @@ const emailRateLimiterMiddlewareFactory =
     }
   };
 
-export const rateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
+export const defaultRateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
-    keyPrefix: "rate-limiter",
-    points: 60, // 60 requests
+    keyPrefix: "ip-rate-limiter-ip-default",
+    points: IP_RATE_LIMITER_DEFAULT_POINTS_PER_MINUTE,
     duration: 60, // per minute per IP
   }),
 );
 
-export const apiRateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
+export const externalDependencyRateLimiterMiddleware =
+  ipRateLimiterMiddlewareFactory(
+    new RateLimiterRedis({
+      storeClient: redisClient,
+      keyPrefix: "ip-rate-limiter-external",
+      points: IP_RATE_LIMITER_EXTERNAL_POINTS_PER_MINUTE,
+      duration: 60, // per minute per IP
+    }),
+  );
+
+export const rnePingRateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
-    keyPrefix: "rate-limiter-api",
-    points: 60, // 60 API requests
-    duration: 1, // per second per IP
+    keyPrefix: "ip-rate-limiter-rne-ping",
+    points: IP_RATE_LIMITER_RNE_PING_POINTS_PER_MINUTE,
+    duration: 60, // per minute per IP
   }),
 );
+
+export const machineToMachineRateLimiterMiddleware =
+  ipRateLimiterMiddlewareFactory(
+    new RateLimiterRedis({
+      storeClient: redisClient,
+      keyPrefix: "ip-rate-limiter-machine",
+      points: IP_RATE_LIMITER_MACHINE_POINTS_PER_MINUTE,
+      duration: 60, // per minute per IP
+    }),
+  );
 
 export const passwordRateLimiterMiddleware = emailRateLimiterMiddlewareFactory(
   new RateLimiterRedis({

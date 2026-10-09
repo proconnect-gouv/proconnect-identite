@@ -1,0 +1,32 @@
+//
+
+export type Base64URLString = string;
+export type AuthenticatorTransportFuture =
+  | "ble"
+  | "cable"
+  | "hybrid"
+  | "internal"
+  | "nfc"
+  | "smart-card"
+  | "usb";
+export type CredentialDeviceType = "singleDevice" | "multiDevice";
+
+//
+
+export interface BaseAuthenticator {
+  credential_id: Base64URLString;
+  credential_public_key: Uint8Array;
+  counter: number;
+  credential_device_type: CredentialDeviceType;
+  credential_backed_up: boolean;
+  transports?: AuthenticatorTransportFuture[];
+  display_name: string | null;
+  last_used_at: Date | null;
+  usage_count: number;
+  user_verified: boolean;
+}
+
+export interface Authenticator extends BaseAuthenticator {
+  user_id: number;
+  created_at: Date;
+}

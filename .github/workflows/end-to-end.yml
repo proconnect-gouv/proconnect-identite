@@ -7,10 +7,10 @@ env:
   ANNUAIRE_SERVICE_PUBLIC_API_URL: http://localhost:3000/___testing___/api-lannuaire.service-public.fr
   CYPRESS_RECORD: true
   DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
-  DEBOUNCE_API_KEY: ${{ secrets.DEBOUNCE_API_KEY }}
+  ENTREPRISE_API_URL: http://localhost:3000/___testing___/entreprise.api.gouv.fr
   FRANCECONNECT_ISSUER: http://localhost:3000/___testing___/oidc.franceconnect.gouv.fr/api/v2
+  RNE_API_BASE_URL: http://localhost:3000/___testing___/registre-national-entreprises.inpi.fr
   SMTP_URL: smtp://localhost:1025
-  ZAMMAD_TOKEN: ${{ secrets.ZAMMAD_TOKEN }}
 
 jobs:
   test:
@@ -30,6 +30,7 @@ jobs:
           - join_collectivite_territoriale_free_contact_domain
           - join_collectivite_territoriale_multiple_contact_emails
           - join_collectivite_territoriale_official_contact_domain
+          - join_collectivite_territoriale_official_contact_pending
           - join_must_confirm
           - join_org_with_rejected_moderation
           - join_org_with_trackdechets_domain
@@ -55,11 +56,13 @@ jobs:
           - signin_with_legacy_acr
           - signin_with_legacy_scope
           - signin_with_magic_link
+          - signin_with_organization_that_forces_mfa
           - signin_with_right_acr
           - signin_with_suggestion
           - signin_with_totp
           - signin_with_totp_enrollment
           - signin_with_webauthn
+          - signin_with_webauthn_without_uv
           - signup_entreprise_unipersonnelle
           - signup_from_standard_client
           - signup_with_certification_dirigeant
@@ -83,7 +86,7 @@ jobs:
       - run: npm run build:workspaces
       - run: npm run migrate up
       - name: Cypress run
-        uses: cypress-io/github-action@v7.4.1
+        uses: cypress-io/github-action@v7.4.5
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets

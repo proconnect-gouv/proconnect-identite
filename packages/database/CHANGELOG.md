@@ -1,5 +1,17 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.8.1
+
+### Patch Changes
+
+- [#2228](https://github.com/proconnect-gouv/proconnect-identite/pull/2228) [`0ac21e3`](https://github.com/proconnect-gouv/proconnect-identite/commit/0ac21e342a4942ef88863250971b1d34bded6535) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - met à jour le schéma pour inclure cached_denomination_usuelle_etablissement_principal
+
+## 1.8.0
+
+### Minor Changes
+
+- [#2131](https://github.com/proconnect-gouv/proconnect-identite/pull/2131) [`02a93a0`](https://github.com/proconnect-gouv/proconnect-identite/commit/02a93a026cea553396241c2642a339f7713ecc95) Thanks [@rdubigny](https://github.com/rdubigny)! - réusinage de la vérification par email du contact officiel
+
 ## 1.7.0
 
 ### Minor Changes

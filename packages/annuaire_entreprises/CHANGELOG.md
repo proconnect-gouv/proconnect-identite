@@ -1,5 +1,43 @@
 # @proconnect-gouv/proconnect.annuaire_entreprises
 
+## 3.0.5
+
+### Patch Changes
+
+- [#2196](https://github.com/proconnect-gouv/proconnect-identite/pull/2196) [`9a0ca7c`](https://github.com/proconnect-gouv/proconnect-identite/commit/9a0ca7c55d8ad6dd70cd49f6ddf470a4ee436f42) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour du Grist contenant la liste des administrations
+
+## 3.0.4
+
+### Patch Changes
+
+- [#2178](https://github.com/proconnect-gouv/proconnect-identite/pull/2178) [`4c83789`](https://github.com/proconnect-gouv/proconnect-identite/commit/4c837898d9c1e2781525aed02d7b53cc4f755f11) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour du Grist contenant la liste des administrations
+
+## 3.0.3
+
+### Patch Changes
+
+- [#2149](https://github.com/proconnect-gouv/proconnect-identite/pull/2149) [`85e26a2`](https://github.com/proconnect-gouv/proconnect-identite/commit/85e26a22af36a0ef04abd855ce8bb71ea13d2fc5) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour du Grist contenant la liste des administrations
+
+## 3.0.2
+
+### Patch Changes
+
+- [#2129](https://github.com/proconnect-gouv/proconnect-identite/pull/2129) [`bab7ae7`](https://github.com/proconnect-gouv/proconnect-identite/commit/bab7ae77defd41e0821bc94e4423b47eb0a83f66) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - suppression de l'utilisation du fichier operateur_lolf.json et prise en compte du tag isAdministrationEtat du Grist
+
+## 3.0.1
+
+### Patch Changes
+
+- [#2104](https://github.com/proconnect-gouv/proconnect-identite/pull/2104) [`60483ba`](https://github.com/proconnect-gouv/proconnect-identite/commit/60483bac96811590a0b89958caca1039e6501162) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour du Grist contenant la liste des administrations
+
+- [#2116](https://github.com/proconnect-gouv/proconnect-identite/pull/2116) [`f61beba`](https://github.com/proconnect-gouv/proconnect-identite/commit/f61bebaf88b6e354eb778528fc358ee0349d154a) Thanks [@github-actions](https://github.com/apps/github-actions)! - ⬆️ Mise à jour du Grist contenant la liste des administrations
+
+## 3.0.0
+
+### Major Changes
+
+- [#1984](https://github.com/proconnect-gouv/proconnect-identite/pull/1984) [`e8f9cad`](https://github.com/proconnect-gouv/proconnect-identite/commit/e8f9cad9f1ea03229d1c019b6649ae553e3c2a5d) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - suppression de l'ancien script de calcul de is_service_public et des fichiers liés
+
 ## 2.0.2
 
 ### Patch Changes

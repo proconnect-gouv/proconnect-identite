@@ -1,5 +1,86 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.3.0
+
+### Minor Changes
+
+- [#2175](https://github.com/proconnect-gouv/proconnect-identite/pull/2175) [`ab7f8af`](https://github.com/proconnect-gouv/proconnect-identite/commit/ab7f8af1394f815d9b7fa25726d7b482cc80b632) Thanks [@rdubigny](https://github.com/rdubigny)! - ajout de la fonction getUserOrganization dans les repositories
+
+## 10.2.2
+
+### Patch Changes
+
+- [#2170](https://github.com/proconnect-gouv/proconnect-identite/pull/2170) [`5fc628d`](https://github.com/proconnect-gouv/proconnect-identite/commit/5fc628d82e7b2ae0bcc1961d5d7a7e3f1fd0c7d2) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - renommage de la variable allowLocalhost pour FranceConnect en allowInsecureRequests
+- Updated dependencies [[`9a0ca7c`](https://github.com/proconnect-gouv/proconnect-identite/commit/9a0ca7c55d8ad6dd70cd49f6ddf470a4ee436f42)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@3.0.5
+
+## 10.2.1
+
+### Patch Changes
+
+- [#2174](https://github.com/proconnect-gouv/proconnect-identite/pull/2174) [`bdc9f6d`](https://github.com/proconnect-gouv/proconnect-identite/commit/bdc9f6d34c80b3a5fe1bb3ad9f97212a8e913932) Thanks [@Dev-next-gen](https://github.com/Dev-next-gen)! - normalizeText retire tous les diacritiques (ñ, ã, á, ř…) et traite pareil les accents composés et décomposés
+- Updated dependencies [[`4c83789`](https://github.com/proconnect-gouv/proconnect-identite/commit/4c837898d9c1e2781525aed02d7b53cc4f755f11)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@3.0.4
+
+## 10.2.0
+
+### Minor Changes
+
+- [#2082](https://github.com/proconnect-gouv/proconnect-identite/pull/2082) [`7abdcbe`](https://github.com/proconnect-gouv/proconnect-identite/commit/7abdcbe0a863f5955f6b5f46b547d70d1d748a91) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - récupération de la dénomination usuelle de l'établissement dans les organization info
+
+### Patch Changes
+
+- Updated dependencies [[`7abdcbe`](https://github.com/proconnect-gouv/proconnect-identite/commit/7abdcbe0a863f5955f6b5f46b547d70d1d748a91)]:
+  - @proconnect-gouv/proconnect.api_entreprise@2.3.0
+  - @proconnect-gouv/proconnect.registre_national_entreprises@4.1.0
+
+## 10.1.0
+
+### Minor Changes
+
+- [#2131](https://github.com/proconnect-gouv/proconnect-identite/pull/2131) [`02a93a0`](https://github.com/proconnect-gouv/proconnect-identite/commit/02a93a026cea553396241c2642a339f7713ecc95) Thanks [@rdubigny](https://github.com/rdubigny)! - réusinage de la vérification par email du contact officiel
+
+## 10.0.2
+
+### Patch Changes
+
+- [#2129](https://github.com/proconnect-gouv/proconnect-identite/pull/2129) [`bab7ae7`](https://github.com/proconnect-gouv/proconnect-identite/commit/bab7ae77defd41e0821bc94e4423b47eb0a83f66) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - suppression de l'utilisation du fichier operateur_lolf.json et prise en compte du tag isAdministrationEtat du Grist
+
+- Updated dependencies [[`bab7ae7`](https://github.com/proconnect-gouv/proconnect-identite/commit/bab7ae77defd41e0821bc94e4423b47eb0a83f66)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@3.0.2
+
+## 10.0.1
+
+### Patch Changes
+
+- [#2094](https://github.com/proconnect-gouv/proconnect-identite/pull/2094) [`0afc6b7`](https://github.com/proconnect-gouv/proconnect-identite/commit/0afc6b76accb00b2e1ca38e86c78041f2478b256) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add authenticator factories and Authenticator/BaseAuthenticator types to package
+
+- [#2097](https://github.com/proconnect-gouv/proconnect-identite/pull/2097) [`71acb32`](https://github.com/proconnect-gouv/proconnect-identite/commit/71acb32f32b482184d754ac072cba4cb74066b8c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add findEmailInDeliverabilityWhiteListFactory
+
+- [#2095](https://github.com/proconnect-gouv/proconnect-identite/pull/2095) [`1c684a3`](https://github.com/proconnect-gouv/proconnect-identite/commit/1c684a39934267e41905f665f12620b8710ed417) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add moderation factories and ModerationNotFoundError to package
+
+- [#2096](https://github.com/proconnect-gouv/proconnect-identite/pull/2096) [`9e04136`](https://github.com/proconnect-gouv/proconnect-identite/commit/9e04136e70f8c8dfcfd1e6d1211069378f4b621c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add oidc-client factories and OidcClient/BaseConnection/Connection types to package
+
+- [#2093](https://github.com/proconnect-gouv/proconnect-identite/pull/2093) [`a397677`](https://github.com/proconnect-gouv/proconnect-identite/commit/a397677b9f26b9a45131afff072b42e1c2b81594) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add findBySiretFactory, findPendingByUserIdFactory, findByVerifiedEmailDomainFactory, getUserOrganizationLinkFactory
+
+- [#2090](https://github.com/proconnect-gouv/proconnect-identite/pull/2090) [`32c84ff`](https://github.com/proconnect-gouv/proconnect-identite/commit/32c84ff83ceabe1183279d25747086db55e76684) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add deleteUserFactory, findByMagicLinkTokenFactory and findByResetPasswordTokenFactory
+
+- [#2089](https://github.com/proconnect-gouv/proconnect-identite/pull/2089) [`6234667`](https://github.com/proconnect-gouv/proconnect-identite/commit/62346672fac844e82c2bc830c0e712a97e52498e) Thanks [@douglasduteil](https://github.com/douglasduteil)! - add deleteUserOrganizationFactory and wire upsert/linkUserToOrganization into connectors context
+
+- Updated dependencies [[`60483ba`](https://github.com/proconnect-gouv/proconnect-identite/commit/60483bac96811590a0b89958caca1039e6501162), [`f61beba`](https://github.com/proconnect-gouv/proconnect-identite/commit/f61bebaf88b6e354eb778528fc358ee0349d154a)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@3.0.1
+
+## 10.0.0
+
+### Major Changes
+
+- [#1984](https://github.com/proconnect-gouv/proconnect-identite/pull/1984) [`e8f9cad`](https://github.com/proconnect-gouv/proconnect-identite/commit/e8f9cad9f1ea03229d1c019b6649ae553e3c2a5d) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - suppression de l'ancien script de calcul de is_service_public et des fichiers liés
+
+### Patch Changes
+
+- Updated dependencies [[`e8f9cad`](https://github.com/proconnect-gouv/proconnect-identite/commit/e8f9cad9f1ea03229d1c019b6649ae553e3c2a5d)]:
+  - @proconnect-gouv/proconnect.annuaire_entreprises@3.0.0
+
 ## 9.1.3
 
 ### Patch Changes

@@ -1,47 +1,94 @@
 import { NotFoundError } from "#src/errors";
 import {
   CommunautéDeCommunes,
+  FergusMacDonaldEntrepreneur as FergusMacDonalEntrepreneurApiEntreprise,
   RogalDornEntrepreneur,
 } from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-insee-sirene-etablissements-siret";
 import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.api_entreprise/types";
+import { FergusMacDonaldEntrepreneur as FergusMacDonaldEntrepreneurRne } from "@proconnect-gouv/proconnect.registre_national_entreprises/testing/seed";
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
 import { getOrganizationInfoFactory } from "./get-organization-info.js";
 
 suite("getOrganizationInfo", () => {
   test("should return valid payload for diffusible siret", async (t) => {
-    const getOrganizationInfo = getOrganizationInfoFactory({
-      findBySiren: () => Promise.reject(),
-      findBySiret: () => Promise.resolve(CommunautéDeCommunes),
-    });
+    const getOrganizationInfo = getOrganizationInfoFactory(
+      {
+        findBySiren: () => Promise.reject(),
+        findBySiret: () => Promise.resolve(CommunautéDeCommunes),
+        findMandatairesSociauxBySiren: () => Promise.reject(),
+      },
+      {
+        findCompanyBySiren: () => Promise.reject(),
+        findPouvoirsBySiren: () => Promise.reject(),
+      },
+    );
     t.assert.snapshot(await getOrganizationInfo("20007184300060"));
   });
 
   test("should return valid payload for diffusible siren", async (t) => {
-    const getOrganizationInfo = getOrganizationInfoFactory({
-      findBySiren: () => Promise.resolve(CommunautéDeCommunes),
-      findBySiret: () => Promise.reject(),
-    });
+    const getOrganizationInfo = getOrganizationInfoFactory(
+      {
+        findBySiren: () => Promise.resolve(CommunautéDeCommunes),
+        findBySiret: () => Promise.reject(),
+        findMandatairesSociauxBySiren: () => Promise.reject(),
+      },
+      {
+        findCompanyBySiren: () => Promise.reject(),
+        findPouvoirsBySiren: () => Promise.reject(),
+      },
+    );
+    t.assert.snapshot(await getOrganizationInfo("200071843"));
+  });
+
+  test("should return valid payload for diffusible siren with RNE info", async (t) => {
+    const getOrganizationInfo = getOrganizationInfoFactory(
+      {
+        findBySiren: () =>
+          Promise.resolve(FergusMacDonalEntrepreneurApiEntreprise),
+        findBySiret: () => Promise.reject(),
+        findMandatairesSociauxBySiren: () => Promise.reject(),
+      },
+      {
+        findCompanyBySiren: () =>
+          Promise.resolve(FergusMacDonaldEntrepreneurRne),
+        findPouvoirsBySiren: () => Promise.reject(),
+      },
+    );
     t.assert.snapshot(await getOrganizationInfo("200071843"));
   });
 
   test("should show partial data for partially non diffusible établissement", async (t) => {
-    const getOrganizationInfo = getOrganizationInfoFactory({
-      findBySiren: () => Promise.reject(),
-      findBySiret: () => Promise.resolve(RogalDornEntrepreneur),
-    });
+    const getOrganizationInfo = getOrganizationInfoFactory(
+      {
+        findBySiren: () => Promise.reject(),
+        findBySiret: () => Promise.resolve(RogalDornEntrepreneur),
+        findMandatairesSociauxBySiren: () => Promise.reject(),
+      },
+      {
+        findCompanyBySiren: () => Promise.reject(),
+        findPouvoirsBySiren: () => Promise.reject(),
+      },
+    );
 
     t.assert.snapshot(await getOrganizationInfo("94957325700019"));
   });
 
   test.skip("should throw for totally non diffusible établissement", async () => {
-    const getOrganizationInfo = getOrganizationInfoFactory({
-      findBySiren: () => Promise.reject(),
-      findBySiret: () =>
-        Promise.resolve({
-          status_diffusion: "non_diffusible",
-        } as InseeSireneEstablishmentSiretResponseData),
-    });
+    const getOrganizationInfo = getOrganizationInfoFactory(
+      {
+        findBySiren: () => Promise.reject(),
+        findBySiret: () =>
+          Promise.resolve({
+            status_diffusion: "non_diffusible",
+          } as InseeSireneEstablishmentSiretResponseData),
+        findMandatairesSociauxBySiren: () => Promise.reject(),
+      },
+      {
+        findCompanyBySiren: () => Promise.reject(),
+        findPouvoirsBySiren: () => Promise.reject(),
+      },
+    );
     await assert.rejects(getOrganizationInfo("53512638700013"), NotFoundError);
   });
 });

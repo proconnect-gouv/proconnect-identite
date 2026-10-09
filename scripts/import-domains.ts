@@ -9,10 +9,9 @@ import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, some, toInteger } from "lodash-es";
 import { z } from "zod";
-import { getOrganizationInfo } from "../src/connectors/api-sirene";
 import { context } from "../src/connectors/context";
+import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
-import { upsert } from "../src/repositories/organization/setters";
 import { isAFreeEmailProvider } from "../src/services/email";
 import { logger } from "../src/services/log";
 import {
@@ -22,6 +21,8 @@ import {
   startDurationMesure,
   throttleApiCall,
 } from "../src/services/script-helpers";
+
+const { email_domains, organizations } = context.repository;
 
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({
@@ -143,14 +144,14 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             }
 
             // 3. update organizationInfo
-            const organization: Organization = await upsert({
+            const organization: Organization = await organizations.upsert({
               siret: organizationInfo.siret,
               organizationInfo,
             });
 
             // 4. add domain
             const emailDomains =
-              await context.repository.email_domains.findEmailDomainsByOrganizationId(
+              await email_domains.findEmailDomainsByOrganizationId(
                 organization.id,
               );
 
@@ -162,7 +163,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               continue;
             }
 
-            await context.repository.email_domains.addDomain({
+            await email_domains.addDomain({
               organization_id: organization.id,
               domain,
               verification_type: "not_verified_yet",

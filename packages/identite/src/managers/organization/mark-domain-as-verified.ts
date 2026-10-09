@@ -80,6 +80,7 @@ export function markDomainAsVerifiedFactory(context: Context) {
       domain_verification_types: [
         ...EmailDomainApprovedVerificationValues,
         ...EmailDomainPendingVerificationValues,
+        ...EmailDomainRejectedVerificationValues,
       ],
     });
     return email_domains.addDomain({
@@ -103,6 +104,7 @@ export function markDomainAsVerifiedFactory(context: Context) {
       organization_id,
       domain,
       domain_verification_types: [
+        ...EmailDomainApprovedVerificationValues,
         ...EmailDomainPendingVerificationValues,
         ...EmailDomainRejectedVerificationValues,
       ],

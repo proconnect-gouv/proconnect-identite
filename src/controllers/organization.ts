@@ -25,12 +25,14 @@ import {
   GouvFrDomainsForbiddenForPrivateOrg,
   OrganizationNotActiveError,
   PendingCertificationDirigeantError,
+  PendingOfficialContactEmailVerificationError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
   UserModerationRejectedError,
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
+import { context } from "../connectors/context";
 import { getCertificationDirigeantCloseMatchErrorUrl } from "../managers/certification";
 import { getOrganizationFromModeration } from "../managers/moderation";
 import {
@@ -40,14 +42,11 @@ import {
   upsertOrganization,
 } from "../managers/organization/join";
 import {
-  getOrganizationById,
   quitOrganization,
   selectOrganization,
 } from "../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { getModerationById } from "../repositories/moderation";
-import { getFranceConnectUserInfo } from "../repositories/user";
 import {
   idSchema,
   oidcErrorSchema,
@@ -56,6 +55,9 @@ import {
 } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
+
+const { franceconnect_userinfo, moderations, organizations } =
+  context.repository;
 
 export const getJoinOrganizationController = async (
   req: Request,
@@ -132,6 +134,9 @@ export const postJoinOrganizationMiddleware = async (
 
     req.session.pendingModerationOrganizationId = undefined;
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
+    req.session.pendingOfficialContactEmailVerificationOrganizationId =
+      undefined;
+    req.session.pendingGreetingsForSelectedOrganization = undefined;
 
     const organization = await upsertOrganization(siret);
     const userOrganizationLink = await joinOrganization({
@@ -146,6 +151,8 @@ export const postJoinOrganizationMiddleware = async (
       user_id,
       organization_id: userOrganizationLink.organization_id,
     });
+
+    req.session.pendingGreetingsForSelectedOrganization = true;
 
     next();
   } catch (error) {
@@ -173,6 +180,13 @@ export const postJoinOrganizationMiddleware = async (
 
     if (error instanceof PendingCertificationDirigeantError) {
       req.session.pendingCertificationDirigeantOrganizationId =
+        error.organizationId;
+
+      return next();
+    }
+
+    if (error instanceof PendingOfficialContactEmailVerificationError) {
+      req.session.pendingOfficialContactEmailVerificationOrganizationId =
         error.organizationId;
 
       return next();
@@ -254,7 +268,7 @@ export const getDomainNotAllowedForOrganizationController = async (
 
     const { organization_id } = await schema.parseAsync(req.query);
 
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
       return next(new HttpErrors.NotFound());
     }
@@ -283,7 +297,7 @@ export const getDomainRefusedForOrganizationController = async (
 
     const { organization_id } = await schema.parseAsync(req.query);
 
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
       return next(new HttpErrors.NotFound());
     }
@@ -310,7 +324,7 @@ export const getJoinOrganizationConfirmController = async (
 
     const { organization_id } = await schema.parseAsync(req.query);
 
-    const organization = await getOrganizationById(organization_id);
+    const organization = await organizations.findById(organization_id);
 
     if (isEmpty(organization)) {
       return next(new HttpErrors.NotFound());
@@ -388,7 +402,7 @@ export const getModerationRejectedController = async (
       });
 
     const { allow_editing, end_user_reason } =
-      await getModerationById(moderation_id);
+      await moderations.getById(moderation_id);
 
     return res.render("user/moderation-rejected", {
       allow_editing,
@@ -455,7 +469,11 @@ export async function getCertificationDirigeantCloseMatchError(
       .parse(req.query);
 
     const user = getUserFromAuthenticatedSession(req);
-    const user_info = await getFranceConnectUserInfo(user.id);
+    const user_info = await franceconnect_userinfo.find(user.id);
+
+    if (isEmpty(user_info)) {
+      return next(new HttpErrors.NotFound());
+    }
 
     const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
       query.source,

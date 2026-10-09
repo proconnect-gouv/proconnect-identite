@@ -1,73 +1,8 @@
 <div class="dashboard-container">
-    <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
-
-    <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
-        <%- include('./partials/stepper.ejs', {currentStep: "1", stepsTitle: "Configurer votre outil TOTP", nextStepTitle:"Configurer votre application TOTP" }); %>
-
-        <form action="/totp-configuration" class="checkbox-container" method="get">
-            <fieldset
-              class="fr-fieldset fr-mb-0 fr-mx-0 fr-px-0"
-              aria-labelledby="totp-tool-type-legend"
-            >
-              <legend id="totp-tool-type-legend" class="fr-fieldset__legend fr-text--regular">
-                Quel outil utilisez-vous ?
-              </legend>
-
-              <div class="fr-radio-group fr-mb-2w">
-                <input
-                  type="radio"
-                  id="totp-tool-type-smartphone"
-                  name="totp-tool-type"
-                  value="smartphone"
-                  required
-                />
-                <label class="fr-label" for="totp-tool-type-smartphone">
-                  J'ai une application sur mon smartphone
-                </label>
-              </div>
-
-              <div class="fr-radio-group">
-                <input
-                  type="radio"
-                  id="totp-tool-type-computer"
-                  name="totp-tool-type"
-                  value="computer"
-                  required
-                />
-                <label class="fr-label" for="totp-tool-type-computer">
-                  J'ai un logiciel ou une extension sur mon ordinateur
-                </label>
-              </div>
-            </fieldset>
-
-            <div class="fr-p-2w fr-mt-2w fr-grid-row fr-background-alt--blue-france">
-              <div class="fr-col-1 fr-px-1w">
-                  <img class="fr-responsive-img" src="/dist/light.svg" alt="" />
-              </div>
-              <div class="fr-col">
-                <p class="fr-mb-1w">
-                    <b>Quelle application ou logiciel installer</b> pour générer les codes à chaque session ? 
-                </p>
-                <a
-                    class="fr-text-action-high--blue-france"
-                    href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Consulter notre guide</a
-                >
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              class="fr-btn fr-mt-3w btn--fullwidth"
-              id="continue-button"
-              role="button"
-              aria-disabled="true"
-            >
-              Confirmer
-            </button>
-        </form>
-        <%- include('partials/go-back.ejs'); %>
-    </div>
+  <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
+  <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+    <%- include('mfa-settings/is-totp-app-installed-layout.ejs', {
+      totpConfigurationUrl: '/totp-configuration',
+    }); %>
+  </div>
 </div>

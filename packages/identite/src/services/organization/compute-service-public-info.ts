@@ -3,7 +3,6 @@
 import type { Organization } from "#src/types";
 import {
   ADMINISTRATION_BLACKLIST,
-  ADMINISTRATION_ETAT_WHITELIST,
   ADMINISTRATION_WHITELIST,
   ADMINISTRATIONS,
 } from "@proconnect-gouv/proconnect.annuaire_entreprises";
@@ -38,13 +37,15 @@ export const computeServicePublicInfo = ({
     return { isServicePublic: false };
   }
 
-  if (ADMINISTRATION_ETAT_WHITELIST.includes(siren)) {
-    return { isServicePublic: true, isAdministrationEtat: true };
-  }
-
   // Check if entity is in whitelist (takes priority)
-  if (ADMINISTRATION_WHITELIST.includes(siren)) {
-    return { isServicePublic: true };
+  const administrationInWhitelist = ADMINISTRATION_WHITELIST.find(
+    (ADMINISTRATION) => ADMINISTRATION.siren === siren,
+  );
+  if (administrationInWhitelist) {
+    return {
+      isServicePublic: true,
+      isAdministrationEtat: administrationInWhitelist.isAdministrationEtat,
+    };
   }
 
   const ADMINISTRATION = ADMINISTRATIONS.find(

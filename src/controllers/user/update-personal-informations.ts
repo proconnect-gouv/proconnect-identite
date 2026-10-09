@@ -1,15 +1,17 @@
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
+import { context } from "../../connectors/context";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import { hasFranceConnectIdentity } from "../../managers/user";
+import { lastFranceConnectIdentityUpdate } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import { update } from "../../repositories/user";
 import { nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
+
+const { users } = context.repository;
 
 export const getPersonalInformationsController = async (
   req: Request,
@@ -35,7 +37,7 @@ export const getPersonalInformationsController = async (
       notifications: await getNotificationsFromRequest(req),
       pageTitle: "Renseigner votre identité",
       phone_number,
-      hasFranceConnectIdentity: await hasFranceConnectIdentity(userId),
+      hasFranceConnectIdentity: await lastFranceConnectIdentityUpdate(userId),
     });
   } catch (error) {
     next(error);
@@ -49,7 +51,7 @@ export const postPersonalInformationsController = async (
 ) => {
   try {
     const { id: userId } = getUserFromAuthenticatedSession(req);
-    const hasFCIdentity = await hasFranceConnectIdentity(userId);
+    const hasFCIdentity = await lastFranceConnectIdentityUpdate(userId);
 
     let updatedUser: User;
 
@@ -63,7 +65,7 @@ export const postPersonalInformationsController = async (
 
       const { given_name, family_name } = await schema.parseAsync(req.body);
 
-      updatedUser = await update(userId, {
+      updatedUser = await users.update(userId, {
         given_name,
         family_name,
       });

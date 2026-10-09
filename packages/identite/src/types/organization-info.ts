@@ -1,10 +1,10 @@
 //
-import type { TrancheEffectifs } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import { z } from "zod";
+import type { TrancheEffectifs } from "./organization.js";
 
 //
 
-export const OrganizationInfoSchema = z.object({
+export const ApiEntrepriseOrganizationInfoSchema = z.object({
   activitePrincipale: z.string(),
   adresse: z.string(),
   categorieJuridique: z.string(),
@@ -30,4 +30,15 @@ export const OrganizationInfoSchema = z.object({
   trancheEffectifsUniteLegale: z.string().nullable(),
 });
 
-export type OrganizationInfo = z.output<typeof OrganizationInfoSchema>;
+const ApiRneOrganizationInfoSchema = z.object({
+  denominationUsuelleEtablissementPrincipal: z.string().nullable(),
+});
+
+export type ApiEntrepriseOrganizationInfo = z.output<
+  typeof ApiEntrepriseOrganizationInfoSchema
+>;
+export type ApiRneOrganizationInfo = z.output<
+  typeof ApiRneOrganizationInfoSchema
+>;
+export type OrganizationInfo = ApiEntrepriseOrganizationInfo &
+  ApiRneOrganizationInfo;

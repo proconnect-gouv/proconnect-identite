@@ -38,6 +38,7 @@ import {
   GouvFrDomainsForbiddenForPrivateOrg,
   OrganizationNotActiveError,
   PendingCertificationDirigeantError,
+  PendingOfficialContactEmailVerificationError,
   UnableToAutoJoinOrganizationError,
   UserAlreadyAskedToJoinOrganizationError,
   UserInOrganizationAlreadyError,
@@ -46,26 +47,10 @@ import {
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
-import { getOrganizationInfo } from "../../connectors/api-sirene";
 import { context } from "../../connectors/context";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
-import {
-  createModeration,
-  findPendingModeration,
-  findRejectedModeration,
-} from "../../repositories/moderation";
-import {
-  findBySiret,
-  findByUserId,
-  findByVerifiedEmailDomain,
-} from "../../repositories/organization/getters";
-import {
-  linkUserToOrganization,
-  updateUserOrganizationLink,
-  upsert,
-} from "../../repositories/organization/setters";
-import { getById as getUserById } from "../../repositories/user";
+import { getOrganizationInfo } from "../../connectors/organization-info";
 import {
   isAFreeEmailProvider,
   usesAFreeEmailProvider,
@@ -81,7 +66,15 @@ import {
   isSmallOrganization,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
-import { getOrganizationsByUserId, markDomainAsVerified } from "./main";
+import { markDomainAsVerified } from "./main";
+
+const {
+  email_domains,
+  moderations,
+  organizations,
+  users_organizations,
+  users,
+} = context.repository;
 
 export const doSuggestOrganizations = async ({
   user_id,
@@ -108,7 +101,7 @@ export const getOrganizationSuggestions = async ({
     return [];
   }
 
-  const userOrganizations = await findByUserId(user_id);
+  const userOrganizations = await organizations.findByUserId(user_id);
   if (!isEmpty(userOrganizations)) {
     return [];
   }
@@ -120,13 +113,14 @@ export const getOrganizationSuggestions = async ({
   }
 
   if (isArmeeDomain(domain)) {
-    const armeeOrganization = await findBySiret("11009001600053");
+    const armeeOrganization = await organizations.findBySiret("11009001600053");
     if (armeeOrganization) {
       return [armeeOrganization];
     }
   }
 
-  const organizationsSuggestions = await findByVerifiedEmailDomain(domain);
+  const organizationsSuggestions =
+    await organizations.findByVerifiedEmailDomain(domain);
 
   if (organizationsSuggestions.length <= MAX_SUGGESTED_ORGANIZATIONS) {
     return organizationsSuggestions;
@@ -153,7 +147,7 @@ export const upsertOrganization = async (siret: string) => {
   let organization: Organization;
   try {
     const organizationInfo = await getOrganizationInfo(siret);
-    organization = await upsert({
+    organization = await organizations.upsert({
       siret,
       organizationInfo,
     });
@@ -189,14 +183,14 @@ export const joinOrganization = async ({
   }
 
   // Ensure user_id is valid
-  const user = await getUserById(user_id);
+  const user = await users.getById(user_id);
 
-  const usersOrganizations = await findByUserId(user_id);
+  const usersOrganizations = await organizations.findByUserId(user_id);
   if (some(usersOrganizations, ["id", organization.id])) {
     throw new UserInOrganizationAlreadyError();
   }
 
-  const pendingModeration = await findPendingModeration({
+  const pendingModeration = await moderations.findPending({
     user_id,
     organization_id: organization.id,
     type: ModerationTypeSchema.enum.organization_join_block,
@@ -212,7 +206,7 @@ export const joinOrganization = async ({
     });
   }
 
-  const rejectedModeration = await findRejectedModeration({
+  const rejectedModeration = await moderations.findRejected({
     user_id,
     organization_id: organization.id,
     type: ModerationTypeSchema.enum.organization_join_block,
@@ -232,9 +226,7 @@ export const joinOrganization = async ({
   const { email } = user;
   const domain = getEmailDomain(email);
   const organizationEmailDomains =
-    await context.repository.email_domains.findEmailDomainsByOrganizationId(
-      organization_id,
-    );
+    await email_domains.findEmailDomainsByOrganizationId(organization_id);
 
   if (!isDomainAllowedForOrganization(siret, domain)) {
     throw new DomainNotAllowedForOrganizationError(organization_id);
@@ -261,7 +253,7 @@ export const joinOrganization = async ({
   }
 
   if (isEntrepriseUnipersonnelle(organization)) {
-    return await linkUserToOrganization({
+    return await users_organizations.create({
       organization_id,
       user_id,
       verification_type:
@@ -270,7 +262,7 @@ export const joinOrganization = async ({
   }
 
   if (isSmallAssociation(organization) && isAFreeEmailProvider(email)) {
-    return await linkUserToOrganization({
+    return await users_organizations.create({
       organization_id,
       user_id,
       verification_type:
@@ -279,7 +271,7 @@ export const joinOrganization = async ({
   }
 
   if (isSmallOrganization(organization) && isAFreeEmailProvider(email)) {
-    return await linkUserToOrganization({
+    return await users_organizations.create({
       organization_id,
       user_id,
       verification_type:
@@ -336,7 +328,7 @@ export const joinOrganization = async ({
       }
 
       if (contactEmail === email) {
-        return await linkUserToOrganization({
+        return await users_organizations.create({
           organization_id,
           user_id,
           verification_type: LinkEnum.enum.official_contact_email,
@@ -344,7 +336,7 @@ export const joinOrganization = async ({
       }
 
       if (!isAFreeEmailProvider(contactDomain) && contactDomain === domain) {
-        return await linkUserToOrganization({
+        return await users_organizations.create({
           organization_id,
           user_id,
           verification_type: LinkEnum.enum.domain,
@@ -353,12 +345,7 @@ export const joinOrganization = async ({
     }
 
     if (some(contactEmails, isEmailValid) && isAFreeEmailProvider(email)) {
-      return await linkUserToOrganization({
-        organization_id,
-        user_id,
-        verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
-        needs_official_contact_email_verification: true,
-      });
+      throw new PendingOfficialContactEmailVerificationError(organization_id);
     }
   }
 
@@ -372,7 +359,7 @@ export const joinOrganization = async ({
     }
 
     if (contactEmail === email) {
-      return await linkUserToOrganization({
+      return await users_organizations.create({
         organization_id,
         user_id,
         verification_type: LinkEnum.enum.official_contact_email,
@@ -380,12 +367,7 @@ export const joinOrganization = async ({
     }
 
     if (isEmailValid(contactEmail)) {
-      return await linkUserToOrganization({
-        organization_id,
-        user_id,
-        verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
-        needs_official_contact_email_verification: true,
-      });
+      throw new PendingOfficialContactEmailVerificationError(organization_id);
     }
   }
 
@@ -396,7 +378,7 @@ export const joinOrganization = async ({
   );
 
   if (approvedEmailDomain) {
-    return await linkUserToOrganization({
+    return await users_organizations.create({
       organization_id,
       user_id,
       is_external:
@@ -407,7 +389,7 @@ export const joinOrganization = async ({
   }
 
   if (FEATURE_BYPASS_MODERATION) {
-    return await linkUserToOrganization({
+    return await users_organizations.create({
       organization_id,
       user_id,
       verification_type: LinkEnum.enum.bypassed,
@@ -420,14 +402,14 @@ export const joinOrganization = async ({
       verification_type: EmailDomainVerificationEnum.enum.not_verified_yet,
     })
   ) {
-    await createModeration({
+    await moderations.create({
       user_id,
       organization_id,
       type: ModerationTypeSchema.enum.non_verified_domain,
       ticket_id: null,
       sp_name,
     });
-    return await linkUserToOrganization({
+    return await users_organizations.create({
       organization_id,
       user_id,
       verification_type: LinkEnum.enum.domain_not_verified_yet,
@@ -444,14 +426,14 @@ export const greetForJoiningOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
-  const userOrganisations = await getOrganizationsByUserId(user_id);
+  const userOrganisations = await organizations.findByUserId(user_id);
   const organization = userOrganisations.find(
     ({ id }) => id === organization_id,
   );
 
   if (isEmpty(organization)) throw new OrganizationNotFoundError();
 
-  const { given_name, family_name, email } = await getUserById(user_id);
+  const { given_name, family_name, email } = await users.getById(user_id);
 
   // Welcome the user when he joins is first organization as he may now be able to connect
   await sendMail({
@@ -463,29 +445,6 @@ export const greetForJoiningOrganization = async ({
       given_name: given_name ?? "",
     }).toString(),
     tag: "welcome",
-  });
-
-  return await updateUserOrganizationLink(organization_id, user_id, {
-    has_been_greeted: true,
-  });
-};
-
-export const greetForCertification = async ({
-  user_id,
-  organization_id,
-}: {
-  user_id: number;
-  organization_id: number;
-}) => {
-  const userOrganisations = await getOrganizationsByUserId(user_id);
-  const organization = userOrganisations.find(
-    ({ id }) => id === organization_id,
-  );
-
-  if (isEmpty(organization)) throw new OrganizationNotFoundError();
-
-  return await updateUserOrganizationLink(organization_id, user_id, {
-    has_been_greeted: true,
   });
 };
 
@@ -517,7 +476,7 @@ export const createPendingModeration = async ({
     });
   }
 
-  return createModeration({
+  return moderations.create({
     user_id,
     organization_id,
     sp_name,

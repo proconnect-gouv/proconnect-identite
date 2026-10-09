@@ -7,6 +7,13 @@ export class InvalidSiretError extends Error {
   }
 }
 
+export class ModerationNotFoundError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ModerationNotFoundError";
+  }
+}
+
 export class NotFoundError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
     super(message, options);
@@ -25,5 +32,12 @@ export class UserNotFoundError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
     super(message, options);
     this.name = "UserNotFoundError";
+  }
+}
+
+export class LinkNotFoundError extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "LinkNotFoundError";
   }
 }

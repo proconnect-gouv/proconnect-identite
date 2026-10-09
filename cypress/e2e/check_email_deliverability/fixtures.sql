@@ -32,4 +32,7 @@ VALUES
 INSERT INTO
   email_deliverability_whitelist (problematic_email, email_domain)
 VALUES
-  ('user@vip.com', 'vip.com');
+  (
+    'whitelisted-user@invalid-domain.com',
+    'invalid-domain.com'
+  );

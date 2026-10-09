@@ -1,23 +1,72 @@
 //
 
+import {
+  createAuthenticatorFactory,
+  deleteAuthenticatorFactory,
+  findAuthenticatorFactory,
+  findAuthenticatorsByUserIdFactory,
+  updateAuthenticatorFactory,
+} from "#src/repositories/authenticator";
+import { findEmailInDeliverabilityWhiteListFactory } from "#src/repositories/email-deliverability-whitelist";
+import {
+  addDomainFactory,
+  deleteEmailDomainsByVerificationTypesFactory,
+  findEmailDomainsByOrganizationIdFactory,
+} from "#src/repositories/email-domain";
+import {
+  deleteFranceconnectUserinfoFactory,
+  findFranceconnectUserinfoFactory,
+  upsertFranceconnectUserinfoFactory,
+} from "#src/repositories/franceconnect_userinfo";
+import {
+  createModerationFactory,
+  deleteModerationFactory,
+  findModerationByIdFactory,
+  findPendingModerationFactory,
+  findRejectedModerationFactory,
+  getModerationByIdFactory,
+  reopenModerationFactory,
+} from "#src/repositories/moderation";
+import {
+  deleteOfficialContactEmailVerificationFactory,
+  findOfficialContactEmailVerificationFactory,
+  upsertOfficialContactEmailVerificationFactory,
+} from "#src/repositories/official-contact-email-verification";
+import {
+  addConnectionFactory,
+  findByClientIdFactory,
+} from "#src/repositories/oidc-client";
+import {
+  findBySiretFactory,
+  findByUserIdFactory,
+  findByVerifiedEmailDomainFactory,
+  findOrganizationByIdFactory,
+  findPendingByUserIdFactory,
+  findUsersByOrganizationFactory,
+  getOrganizationByIdFactory,
+  upsertFactory,
+} from "#src/repositories/organization";
+import {
+  createUserFactory,
+  deleteUserFactory,
+  findByEmailFactory,
+  findByMagicLinkTokenFactory,
+  findByResetPasswordTokenFactory,
+  findByIdFactory as findUserByIdFactory,
+  getByIdFactory,
+  updateUserFactory,
+} from "#src/repositories/user";
+import {
+  createUserOrganizationFactory,
+  deleteUserOrganizationFactory,
+  findUserOrganizationFactory,
+  getUserOrganizationFactory,
+  updateUserOrganizationFactory,
+} from "#src/repositories/user_organisation";
 import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
 import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { type Pool } from "pg";
-import { addDomainFactory } from "../repositories/email-domain/add-domain.js";
-import { deleteEmailDomainsByVerificationTypesFactory } from "../repositories/email-domain/delete-email-domains-by-verification-types.js";
-import { findEmailDomainsByOrganizationIdFactory } from "../repositories/email-domain/find-email-domains-by-organization-id.js";
-import { findByIdFactory as findOrganizationByIdFactory } from "../repositories/organization/find-by-id.js";
-import { findByUserIdFactory } from "../repositories/organization/find-by-user-id.js";
-import { getUsersByOrganizationFactory } from "../repositories/organization/get-users-by-organization.js";
-import { createUserFactory } from "../repositories/user/create.js";
-import { findByEmailFactory } from "../repositories/user/find-by-email.js";
-import { findByIdFactory as findUserByIdFactory } from "../repositories/user/find-by-id.js";
-import { getByIdFactory } from "../repositories/user/get-by-id.js";
-import { getFranceConnectUserInfoFactory } from "../repositories/user/get-franceconnect-user-info.js";
-import { updateUserOrganizationLinkFactory } from "../repositories/user/update-user-organization-link.js";
-import { updateUserFactory } from "../repositories/user/update.js";
-import { upsertFranceconnectUserinfoFactory } from "../repositories/user/upsert-franceconnect-userinfo.js";
 
 //
 
@@ -39,6 +88,17 @@ export function createContext({
       rne: api_registre_national_entreprises_client,
     },
     repository: {
+      authenticators: {
+        create: createAuthenticatorFactory({ pg }),
+        delete: deleteAuthenticatorFactory({ pg }),
+        find: findAuthenticatorFactory({ pg }),
+        findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
+        update: updateAuthenticatorFactory({ pg }),
+      },
+      email_deliverability_whitelist: {
+        findEmailInDeliverabilityWhiteList:
+          findEmailInDeliverabilityWhiteListFactory({ pg }),
+      },
       email_domains: {
         addDomain: addDomainFactory({ pg }),
         deleteEmailDomainsByVerificationTypes:
@@ -46,22 +106,55 @@ export function createContext({
         findEmailDomainsByOrganizationId:
           findEmailDomainsByOrganizationIdFactory({ pg }),
       },
+      moderations: {
+        create: createModerationFactory({ pg }),
+        delete: deleteModerationFactory({ pg }),
+        findById: findModerationByIdFactory({ pg }),
+        findPending: findPendingModerationFactory({ pg }),
+        findRejected: findRejectedModerationFactory({ pg }),
+        getById: getModerationByIdFactory({ pg }),
+        reopen: reopenModerationFactory({ pg }),
+      },
+      official_contact_email_verifications: {
+        delete: deleteOfficialContactEmailVerificationFactory({ pg }),
+        find: findOfficialContactEmailVerificationFactory({ pg }),
+        upsert: upsertOfficialContactEmailVerificationFactory({ pg }),
+      },
+      oidc_clients: {
+        addConnection: addConnectionFactory({ pg }),
+        findByClientId: findByClientIdFactory({ pg }),
+      },
       organizations: {
         findById: findOrganizationByIdFactory({ pg }),
+        findBySiret: findBySiretFactory({ pg }),
         findByUserId: findByUserIdFactory({ pg }),
-        getUsers: getUsersByOrganizationFactory({ pg }),
+        findByVerifiedEmailDomain: findByVerifiedEmailDomainFactory({ pg }),
+        findPendingByUserId: findPendingByUserIdFactory({ pg }),
+        findUsers: findUsersByOrganizationFactory({ pg }),
+        getById: getOrganizationByIdFactory({ pg }),
+        upsert: upsertFactory({ pg }),
       },
       users_organizations: {
-        update: updateUserOrganizationLinkFactory({ pg }),
+        create: createUserOrganizationFactory({ pg }),
+        delete: deleteUserOrganizationFactory({ pg }),
+        find: findUserOrganizationFactory({ pg }),
+        get: getUserOrganizationFactory({ pg }),
+        update: updateUserOrganizationFactory({ pg }),
       },
       users: {
         create: createUserFactory({ pg }),
+        delete: deleteUserFactory({ pg }),
         findByEmail: findByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
+        findByMagicLinkToken: findByMagicLinkTokenFactory({ pg }),
+        findByResetPasswordToken: findByResetPasswordTokenFactory({ pg }),
         getById: getByIdFactory({ pg }),
-        getFranceConnectUserInfo: getFranceConnectUserInfoFactory({ pg }),
         update: updateUserFactory({ pg }),
-        upsetFranceconnectUserinfo: upsertFranceconnectUserinfoFactory({ pg }),
+      },
+      franceconnect_userinfo: {
+        delete: deleteFranceconnectUserinfoFactory({ pg }),
+        find: findFranceconnectUserinfoFactory({ pg }),
+        upsert: upsertFranceconnectUserinfoFactory({ pg }),
       },
     },
   };

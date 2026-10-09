@@ -1,6 +1,6 @@
 {
   "name": "proconnect-identite",
-  "version": "1.0.0",
+  "version": "2026.10.4",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -49,7 +49,7 @@
     "test:workspaces": "npm run test --if-present --workspaces",
     "update-one-mocked-organization": "UPDATE_SNAPSHOT=True tsx mocks/entreprise.api.gouv.fr/add-establishment.ts",
     "update-organization-info": "tsx scripts/update-organizations-info.ts",
-    "version": "changeset version && npm install --package-lock-only",
+    "version-packages": "changeset version && npm install --package-lock-only",
     "watch:assets": "NODE_ENV=development vite build --clearScreen false --watch",
     "watch:ejs": "CHOKIDAR_USEPOLLING=true copy-and-watch --clean --watch \"src/views/**/*.ejs\" src/views/*.ejs build/views/",
     "watch:js": "tsc --watch --preserveWatchOutput",
@@ -60,7 +60,8 @@
     "watch:workspaces:email": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.email",
     "watch:workspaces:entreprise": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.api_entreprise",
     "watch:workspaces:insee": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.insee",
-    "watch:workspaces:identite": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.identite"
+    "watch:workspaces:identite": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.identite",
+    "watch:workspaces:testing": "npm run dev --if-present --workspace=@proconnect-gouv/proconnect.testing"
   },
   "prettier": {
     "language": "postgresql",
@@ -68,6 +69,25 @@
       "prettier-plugin-organize-imports",
       "prettier-plugin-sql"
     ]
+  },
+  "release-it": {
+    "git": {
+      "tagMatch": "[0-9]*.[0-9]*.[0-9]*"
+    },
+    "github": {
+      "release": true
+    },
+    "hooks": {
+      "after:git:release": "git switch -c release/${version} && git push origin release/${version}"
+    },
+    "npm": {
+      "publish": false
+    },
+    "plugins": {
+      "@csmith/release-it-calver-plugin": {
+        "cycle": "month"
+      }
+    }
   },
   "dependencies": {
     "@proconnect-gouv/proconnect.api_entreprise": "workspace:*",
@@ -79,10 +99,10 @@
     "@proconnect-gouv/proconnect.insee": "workspace:*",
     "@proconnect-gouv/proconnect.registre_national_entreprises": "workspace:*",
     "@proconnect-gouv/proconnect.testing": "workspace:*",
-    "@sentry/node": "^10.66.0",
-    "@sentry/profiling-node": "^10.66.0",
+    "@sentry/node": "^10.75.0",
+    "@sentry/profiling-node": "^10.75.0",
     "@simplewebauthn/browser": "^13.2.2",
-    "@simplewebauthn/server": "^13.2.2",
+    "@simplewebauthn/server": "^13.3.2",
     "await-to-js": "^3.0.0",
     "axios": "^1.18.1",
     "connect-redis": "^8.1.0",
@@ -96,13 +116,13 @@
     "helmet": "^8.1.0",
     "html-to-text": "^9.0.5",
     "http-errors": "^2.0.0",
-    "ioredis": "^5.11.1",
+    "ioredis": "^6.0.0",
     "lodash-es": "^4.18.1",
-    "moment": "^2.30.1",
-    "moment-timezone": "^0.6.2",
-    "morgan": "^1.11.0",
+    "moment": "^2.31.0",
+    "moment-timezone": "^0.6.3",
+    "morgan": "^1.12.1",
     "nocache": "^4.0.0",
-    "nodemailer": "^9.0.1",
+    "nodemailer": "^10.0.9",
     "oidc-provider": "^9.5.1",
     "otpauth": "^9.4.1",
     "pg": "^8.16.3",
@@ -115,9 +135,9 @@
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
-    "@changesets/cli": "^2.29.6",
+    "@changesets/cli": "^3.0.2",
     "@dotenvx/dotenvx": "^1.61.0",
-    "@fullhuman/postcss-purgecss": "^7.0.2",
+    "@fullhuman/postcss-purgecss": "^8.0.0",
     "@gouvfr/dsfr": "^1.14.2",
     "@kitajs/html": "^4.2.9",
     "@kitajs/ts-html-plugin": "^4.1.1",
@@ -139,9 +159,9 @@
     "@types/pg": "^8.15.5",
     "@types/qrcode": "^1.5.5",
     "axe-core": "^4.12.1",
-    "concurrently": "^10.0.3",
+    "concurrently": "^10.0.6",
     "copy-and-watch": "^0.1.8",
-    "csv": "^6.4.1",
+    "csv": "^6.6.3",
     "cypress": "^15.15.0",
     "cypress-axe": "^1.6.0",
     "cypress-maildev": "^1.3.3",

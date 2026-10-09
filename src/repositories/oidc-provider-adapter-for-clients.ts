@@ -3,8 +3,9 @@
 import type { Dictionary } from "lodash";
 import { isNull, omitBy } from "lodash-es";
 import type { Adapter, AdapterPayload } from "oidc-provider";
-import { findByClientId } from "./oidc-client";
+import { context } from "../connectors/context";
 
+const { oidc_clients } = context.repository;
 //
 
 export class OidcProviderAdapterForClients implements Adapter {
@@ -15,7 +16,7 @@ export class OidcProviderAdapterForClients implements Adapter {
     return Promise.reject(new Error("Not implemented"));
   }
   async find(id: string): Promise<AdapterPayload | undefined | void> {
-    const client = await findByClientId(id);
+    const client = await oidc_clients.findByClientId(id);
     return client ? omitNullProperties(client) : undefined;
   }
   findByUid() {

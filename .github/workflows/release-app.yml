@@ -1,0 +1,62 @@
+name: 🚢 Release ProConnect Identité app (release-action)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  select-mode:
+    name: 🔎 Select mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: 🔎 Select mode
+        id: select-mode
+        uses: proconnect-gouv/release-action/select-mode@aabbb2ed4d87456c578f17118a0621a4145cdfee # v1.3.0
+
+  version:
+    name: 📝 Open release PR
+    if: needs.select-mode.outputs.mode == 'version'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: 📝 Version
+        uses: proconnect-gouv/release-action/version@aabbb2ed4d87456c578f17118a0621a4145cdfee # v1.3.0
+
+  publish:
+    name: 🚀 Publish
+    if: needs.select-mode.outputs.mode == 'publish'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: 🚀 Publish
+        uses: proconnect-gouv/release-action/publish@aabbb2ed4d87456c578f17118a0621a4145cdfee # v1.3.0

@@ -1,6 +1,23 @@
 //
 
-import type { TrancheEffectifs } from "@proconnect-gouv/proconnect.api_entreprise/types";
+export type TrancheEffectifs =
+  | "NN"
+  | "00"
+  | "01"
+  | "02"
+  | "03"
+  | "11"
+  | "12"
+  | "21"
+  | "22"
+  | "31"
+  | "32"
+  | "41"
+  | "42"
+  | "51"
+  | "52"
+  | "53"
+  | null;
 
 //
 
@@ -27,5 +44,6 @@ export interface Organization {
   cached_categorie_juridique: string | null;
   cached_libelle_categorie_juridique: string | null;
   cached_siege_social: boolean | null;
+  cached_denomination_usuelle_etablissement_principal: string | null;
   organization_info_fetched_at: Date | null;
 }

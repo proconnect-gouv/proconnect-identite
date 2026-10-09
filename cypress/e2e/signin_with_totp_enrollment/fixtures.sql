@@ -31,6 +31,22 @@ VALUES
     null,
     null,
     false
+  ),
+  (
+    2,
+    'account-with-totp@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Jean',
+    'Jean',
+    '0123456789',
+    'Sbire',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    false
   );
 
 INSERT INTO

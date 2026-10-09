@@ -120,6 +120,10 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     type: "success",
     description: "Nous avons bien récupéré vos données via FranceConnect.",
   },
+  personal_information_franceconnect_disconnected_success: {
+    type: "success",
+    description: "Vous êtes maintenant déconnecté de FranceConnect.",
+  },
   official_contact_email_verification_not_needed: {
     type: "error",
     description:
@@ -187,6 +191,11 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     type: "warning",
     description:
       "Attention : en plus de votre mot de passe, vous devez configurer un code à usage unique ou une clé d’accès pour accéder à Démarches Simplifiées.",
+  },
+  organization_requires_forced_2fa: {
+    type: "info",
+    description:
+      "Information : votre organisation requiert la double authentification, qui réduit les risques de piratage.",
   },
 };
 

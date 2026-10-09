@@ -2,7 +2,7 @@
 
 import { request } from "../../../src/connectors/request.js";
 
-type administrationGristRecord = {
+type codeJuridiqueToAdministrationGristRecord = {
   id: number;
   fields: {
     Code_juridique: number;
@@ -13,29 +13,94 @@ type administrationGristRecord = {
   };
 };
 
-export function fetchAdministrationGristRecordsFactory({
+type administrationBlacklistGristRecord = {
+  id: number;
+  fields: {
+    siren: string;
+    denomination: string;
+  };
+};
+
+type administrationWhitelistGristRecord = {
+  id: number;
+  fields: {
+    siren: string;
+    denomination: string;
+    Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_: boolean;
+  };
+};
+
+export function fetchCodeJuridiqueToAdministrationGristRecordsFactory({
   documentUrl,
   apiKey,
 }: {
   documentUrl: string;
   apiKey: string;
 }) {
-  return async function fetchAdministrationGristRecords() {
-    const { data } = await request<{ records: administrationGristRecord[] }>(
-      documentUrl,
-      {
-        headers: { Authorization: `Bearer ${apiKey}` },
-      },
-    );
-    return data.records.map((record) => ({
-      codeJuridique: record.fields.Code_juridique,
-      libelle: record.fields.Libelle.trim(),
-      isAdministrationEtat:
-        record.fields
-          .Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_,
-      isCollectivite: record.fields.Collectivites,
-      isServicePublicAdministratif:
-        record.fields.Mission_de_service_public_administratif,
-    }));
+  return async function fetchCodeJuridiqueToAdministrationGristRecords() {
+    const { data } = await request<{
+      records: codeJuridiqueToAdministrationGristRecord[];
+    }>(documentUrl, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    return data.records
+      .filter((record) => !!record.fields.Code_juridique)
+      .map((record) => ({
+        codeJuridique: record.fields.Code_juridique,
+        libelle: record.fields.Libelle.trim(),
+        isAdministrationEtat:
+          record.fields
+            .Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_,
+        isCollectivite: record.fields.Collectivites,
+        isServicePublicAdministratif:
+          record.fields.Mission_de_service_public_administratif,
+      }));
+  };
+}
+
+export function fetchAdministrationBlacklistGristRecordsFactory({
+  documentUrl,
+  apiKey,
+}: {
+  documentUrl: string;
+  apiKey: string;
+}) {
+  return async function fetchAdministrationBlacklistGristRecords() {
+    const { data } = await request<{
+      records: administrationBlacklistGristRecord[];
+    }>(documentUrl, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    return data.records
+      .filter((record) => !!record.fields.siren)
+      .map((record) => ({
+        siren: record.fields.siren,
+        denomination: record.fields.denomination,
+      }));
+  };
+}
+
+export function fetchAdministrationWhitelistGristRecordsFactory({
+  documentUrl,
+  apiKey,
+}: {
+  documentUrl: string;
+  apiKey: string;
+}) {
+  return async function fetchAdministrationWhitelistGristRecords() {
+    const { data } = await request<{
+      records: administrationWhitelistGristRecord[];
+    }>(documentUrl, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    return data.records
+      .filter((record) => !!record.fields.siren)
+      .map((record) => ({
+        siren: record.fields.siren,
+        denomination: record.fields.denomination,
+        Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_:
+          record.fields
+            .Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_,
+      }));
   };
 }

@@ -20,6 +20,7 @@ import {
   getManageOrganizationsController,
   getPersonalInformationsController,
   getPolitiqueDeConfidentialiteController,
+  postDisconnectFranceConnectController,
   postPersonalInformationsController,
 } from "../controllers/main";
 import {
@@ -36,10 +37,7 @@ import {
   userCanAccessAdminGuardMiddleware,
   userCanAccessAppGuardMiddleware,
 } from "../middlewares/navigation-guards";
-import {
-  authenticatorRateLimiterMiddleware,
-  rateLimiterMiddleware,
-} from "../middlewares/rate-limiter";
+import { authenticatorRateLimiterMiddleware } from "../middlewares/rate-limiter";
 import { ejsLayoutMiddlewareFactory } from "../services/renderer";
 
 export const mainRouter = (app: Express) => {
@@ -50,18 +48,16 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getConnectionAndAccountController,
   );
 
   mainRouter.get(
-    "/double-authentication",
+    "/double-authentication-choice",
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getDoubleAuthenticationController,
@@ -72,7 +68,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     getIsTotpAppInstalledController,
   );
@@ -82,7 +77,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getMfaDecisionHelperController,
@@ -93,7 +87,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getMfaDecisionHelperPasskeyController,
@@ -104,7 +97,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getMfaDecisionHelperCanInstallSoftwareController,
@@ -115,7 +107,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getMfaDecisionHelperCanInstallSoftwareSoftwareController,
@@ -126,7 +117,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getMfaDecisionHelperCanInstallSoftwareSmartphoneController,
@@ -137,7 +127,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController,
@@ -148,7 +137,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getMfaDecisionHelperCanInstallSoftwareExternalHelpNeededController,
@@ -159,7 +147,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     getTotpConfigurationController,
@@ -170,7 +157,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
@@ -182,7 +168,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postDeleteTotpConfigurationController,
@@ -193,7 +178,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
@@ -207,7 +191,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     deletePasskeyController,
@@ -218,7 +201,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postSetForce2faController,
@@ -229,7 +211,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getPersonalInformationsController,
@@ -240,10 +221,19 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     postPersonalInformationsController,
+  );
+
+  mainRouter.post(
+    "/personal-information/franceconnect/disconnect",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    postDisconnectFranceConnectController,
   );
 
   mainRouter.get(
@@ -251,7 +241,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getManageOrganizationsController,
@@ -262,7 +251,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     userCanAccessAppGuardMiddleware,
     getHomeController,
   );
@@ -272,7 +260,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     getConditionsGeneralesDUtilisationController,
   );
 
@@ -281,7 +268,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     getPolitiqueDeConfidentialiteController,
   );
 
@@ -290,7 +276,6 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    rateLimiterMiddleware,
     getAccessibiliteController,
   );
 

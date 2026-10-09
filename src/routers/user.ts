@@ -88,10 +88,7 @@ import {
   postSendEmailVerificationController,
   postVerifyEmailController,
 } from "../controllers/user/verify-email";
-import {
-  getWelcomeController,
-  getWelcomeDirigeantController,
-} from "../controllers/user/welcome";
+import { getWelcomeController } from "../controllers/user/welcome";
 import {
   postVerifyFirstFactorAuthenticationController,
   postVerifyRegistrationControllerFactory,
@@ -107,7 +104,6 @@ import {
   userCanAccessAppGuardMiddleware,
   userHasAtLeastOneOrganizationGuardMiddleware,
   userHasConnectedRecentlyGuardMiddleware,
-  userHasSelectedAnOrganizationGuardMiddleware,
   userIsConnectedGuardMiddleware,
   userIsVerifiedGuardMiddleware,
   userSignInRequirementsGuardMiddleware,
@@ -116,7 +112,6 @@ import {
   authenticatorRateLimiterMiddleware,
   officialContactEmailVerificationRateLimiterMiddleware,
   passwordRateLimiterMiddleware,
-  rateLimiterMiddleware,
   sendEmailVerificationRateLimiterMiddleware,
   sendMagicLinkRateLimiterMiddleware,
   verifyEmailRateLimiterMiddleware,
@@ -128,8 +123,6 @@ export const userRouter = () => {
   userRouter.use(nocache());
 
   userRouter.use(urlencoded({ extended: false }));
-
-  userRouter.use(rateLimiterMiddleware);
 
   userRouter.get(
     "/start-sign-in",
@@ -494,6 +487,31 @@ export const userRouter = () => {
   );
 
   userRouter.get(
+    "/official-contact-ask-which-email",
+    browserIsTrustedGuardMiddleware,
+    csrfProtectionMiddleware,
+    getOfficialContactAskWhichEmailController,
+  );
+
+  userRouter.get(
+    "/official-contact-email-verification",
+    browserIsTrustedGuardMiddleware,
+    csrfProtectionMiddleware,
+    officialContactEmailVerificationRateLimiterMiddleware,
+    getOfficialContactEmailVerificationController,
+  );
+
+  userRouter.post(
+    "/official-contact-email-verification",
+    browserIsTrustedGuardMiddleware,
+    csrfProtectionMiddleware,
+    officialContactEmailVerificationRateLimiterMiddleware,
+    postOfficialContactEmailVerificationMiddleware,
+    userSignInRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
+  );
+
+  userRouter.get(
     "/select-organization",
     userHasAtLeastOneOrganizationGuardMiddleware,
     csrfProtectionMiddleware,
@@ -510,45 +528,15 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/official-contact-ask-which-email/:organization_id",
-    userHasSelectedAnOrganizationGuardMiddleware,
-    csrfProtectionMiddleware,
-    getOfficialContactAskWhichEmailController,
-  );
-
-  userRouter.get(
-    "/official-contact-email-verification/:organization_id",
-    userHasSelectedAnOrganizationGuardMiddleware,
-    csrfProtectionMiddleware,
-    officialContactEmailVerificationRateLimiterMiddleware,
-    getOfficialContactEmailVerificationController,
-  );
-
-  userRouter.post(
-    "/official-contact-email-verification/:organization_id",
-    userHasSelectedAnOrganizationGuardMiddleware,
-    csrfProtectionMiddleware,
-    postOfficialContactEmailVerificationMiddleware,
-    userSignInRequirementsGuardMiddleware,
-    issueSessionOrRedirectController,
-  );
-
-  userRouter.get(
     "/welcome",
-    userSignInRequirementsGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     getWelcomeController,
   );
-  userRouter.get(
-    "/welcome/dirigeant",
-    userSignInRequirementsGuardMiddleware,
-    csrfProtectionMiddleware,
-    getWelcomeDirigeantController,
-  );
 
   userRouter.post(
     "/welcome",
-    userSignInRequirementsGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     issueSessionOrRedirectController,
   );
@@ -562,7 +550,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/cancel-moderation/:moderation_id",
-    browserIsTrustedGuardMiddleware,
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
     postCancelModerationAndRedirectControllerFactory(
       "/manage-organizations?notification=cancel_moderation_success",

@@ -13,12 +13,11 @@ import { isEmpty } from "lodash-es";
 import { match, P } from "ts-pattern";
 import { RECENT_LOGIN_INTERVAL_IN_SECONDS } from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
-import { getUserOrganizationLink } from "../../repositories/organization/getters";
+import { context } from "../../connectors/context";
 import {
   deleteSelectedOrganizationId,
   getSelectedOrganizationId,
 } from "../../repositories/redis/selected-organization";
-import { update } from "../../repositories/user";
 import { isExpiredInSeconds } from "../../services/is-expired";
 import {
   addAuthenticationMethodReference,
@@ -34,6 +33,9 @@ import {
   setIsTrustedBrowserFromLoggedInSession,
 } from "../browser-authentication";
 import { hasValidFranceConnectIdentity } from "../user";
+
+const { users_organizations, users } = context.repository;
+
 export const isWithinAuthenticatedSession = (
   session: Session & Partial<SessionData>,
 ): session is Session & Partial<SessionData> & AuthenticatedSessionData => {
@@ -84,7 +86,7 @@ export const createAuthenticatedSession = async (
       if (err) {
         reject(err);
       } else {
-        const updatedUser = await update(user.id, {
+        const updatedUser = await users.update(user.id, {
           sign_in_count: user.sign_in_count + 1,
           last_sign_in_at: new Date(),
         });
@@ -279,7 +281,10 @@ export async function getCurrentOAL(req: Request) {
     throw new Error("selectedOrganizationId should be set");
   }
 
-  const link = await getUserOrganizationLink(selectedOrganizationId, user.id);
+  const link = await users_organizations.find({
+    organization_id: selectedOrganizationId,
+    user_id: user.id,
+  });
 
   if (isEmpty(link)) {
     throw new NotFoundError("link should be set");

@@ -1,5 +1,5 @@
 describe("mfa decision helper (signin)", () => {
-  beforeEach(cy.seed);
+  before(cy.seed);
 
   it("should redirect to passkey recommendation when using a Mac", function () {
     cy.visit("http://localhost:4000");

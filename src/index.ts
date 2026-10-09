@@ -14,7 +14,7 @@ import path from "path";
 import { ZodError } from "zod";
 import {
   ACCESS_LOG_PATH,
-  DEPLOY_ENV,
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
   FRANCECONNECT_ISSUER,
@@ -27,6 +27,10 @@ import { OidcError } from "./config/errors";
 import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
+import {
+  defaultRateLimiterMiddleware,
+  machineToMachineRateLimiterMiddleware,
+} from "./middlewares/rate-limiter";
 import { apiRouter } from "./routers/api";
 import { interactionRouter } from "./routers/interaction";
 import { mainRouter } from "./routers/main";
@@ -155,6 +159,35 @@ app.get("/favicon.ico", function (_req, res, _next) {
   });
 });
 
+app.get("/robots.txt", function (_req, res) {
+  res.type("text/plain");
+  res.send("User-agent: *\nDisallow: /");
+});
+
+const MACHINE_TO_MACHINE_PATHS = [
+  "/.well-known/openid-configuration",
+  "/oauth/jwks",
+  "/oauth/request",
+  "/oauth/token",
+  "/oauth/token/introspection",
+  "/oauth/userinfo",
+];
+
+app.use((req, res, next) => {
+  if (MACHINE_TO_MACHINE_PATHS.includes(req.path)) {
+    return machineToMachineRateLimiterMiddleware(req, res, next);
+  }
+
+  return defaultRateLimiterMiddleware(req, res, (err) => {
+    if (err) {
+      // If an error occurs, add the EJS layout middleware to render a properly formatted 429 error page
+      return ejsLayoutMiddlewareFactory(app)(req, res, () => next(err));
+    }
+
+    return next();
+  });
+});
+
 app.use("/", mainRouter(app));
 app.use(
   "/interaction",
@@ -174,9 +207,10 @@ app.use(async (req, _res, next) => {
 
 app.use("/oauth", oidcProvider.callback());
 
-if (DEPLOY_ENV === "localhost") {
+if (FEATURE_MOUNT_MOCKED_EXTERNAL_APIS) {
   app.use(
-    createTestingHandler("/___testing___", {
+    "/___testing___",
+    createTestingHandler("/", {
       ISSUER: FRANCECONNECT_ISSUER,
       log: logger.warn,
     }),
@@ -205,6 +239,19 @@ app.use(function errorHandler(
   _next: NextFunction,
 ) {
   logger.error(inspect(err, { depth: 3 }));
+
+  if (req.path.startsWith("/api/")) {
+    if (err instanceof HttpErrors.HttpError) {
+      const statusCode = err?.statusCode || 500;
+
+      return res
+        .status(statusCode)
+        .json({ message: err.message || err["statusMessage"] });
+    }
+
+    return res.status(500).json({ message: err.message });
+  }
+
   if (err instanceof HttpErrors.HttpError) {
     if (err.statusCode === 404) {
       return res.status(404).render("not-found-error", {
@@ -276,7 +323,7 @@ let server: Server | undefined;
 try {
   server = app.listen(PORT, () => {
     logger.info(`application is listening on port ${PORT}`);
-    logger.info(`in ${DEPLOY_ENV} ${NODE_ENV} mode`);
+    logger.info(`in ${NODE_ENV} mode`);
   });
 } catch (err) {
   if (server && server.listening) server.close();

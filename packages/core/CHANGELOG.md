@@ -1,5 +1,17 @@
 # @proconnect-gouv/proconnect.core
 
+## 1.0.2
+
+### Patch Changes
+
+- [#2186](https://github.com/proconnect-gouv/proconnect-identite/pull/2186) [`f0764ad`](https://github.com/proconnect-gouv/proconnect-identite/commit/f0764ad3f9f91f3cdf51289a182ea0362b3c295f) Thanks [@douglasduteil](https://github.com/douglasduteil)! - la liste des fournisseurs de messagerie grand public couverts par isAFreeDomain passe de 15 à 67 domaines
+
+## 1.0.1
+
+### Patch Changes
+
+- [#2173](https://github.com/proconnect-gouv/proconnect-identite/pull/2173) [`d5be1ab`](https://github.com/proconnect-gouv/proconnect-identite/commit/d5be1ab1deeedd682ef2c538a548a495bdaef3bf) Thanks [@Dev-next-gen](https://github.com/Dev-next-gen)! - isEmailValid refuse les adresses dont un @ en trop laisse une partie vide
+
 ## 1.0.0
 
 ### Major Changes

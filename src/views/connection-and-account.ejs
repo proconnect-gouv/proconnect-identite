@@ -110,7 +110,7 @@
             <% if (isAuthenticatorConfigured || passkeys.length > 0){ %>
                 <a
                     class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
-                    href="/double-authentication"
+                    href="/double-authentication-choice"
                 >
                     Ajouter une méthode de validation supplémentaire
                 </a>
@@ -120,7 +120,7 @@
                 <p>
                     Vous n'avez pas encore configuré la double authentification (2FA).
                 </p>
-                <a class="fr-btn fr-btn--secondary" href="/double-authentication">
+                <a class="fr-btn fr-btn--secondary" href="/double-authentication-choice">
                     Configurer la double authentification
                 </a>
             <% } %>
