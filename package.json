@@ -90,6 +90,7 @@
     }
   },
   "dependencies": {
+    "@proconnect-gouv/proconnect.annuaire_entreprises": "workspace:*",
     "@proconnect-gouv/proconnect.api_entreprise": "workspace:*",
     "@proconnect-gouv/proconnect.core": "workspace:*",
     "@proconnect-gouv/proconnect.crisp": "workspace:*",
