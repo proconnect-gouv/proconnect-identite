@@ -8,6 +8,7 @@ import {
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
   computeServicePublicInfo,
+  decide_join_by_email_domain,
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
   isSmallEtablissementPublic,
@@ -24,7 +25,7 @@ import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";
 import { inspect } from "node:util";
-import { EmailDomainApprovedVerificationEnum } from "../../../packages/identite/src/types";
+import { match } from "ts-pattern";
 import {
   CRISP_WEBSITE_ID,
   FEATURE_BYPASS_MODERATION,
@@ -371,52 +372,46 @@ export const joinOrganization = async ({
     }
   }
 
-  const approvedEmailDomain = organizationEmailDomains.find(
-    ({ domain: organization_domain, verification_type }) =>
-      organization_domain === domain &&
-      EmailDomainApprovedVerificationEnum.safeParse(verification_type).success,
-  );
-
-  if (approvedEmailDomain) {
-    return await users_organizations.create({
-      organization_id,
-      user_id,
-      is_external:
-        approvedEmailDomain.verification_type ===
-        EmailDomainVerificationEnum.enum.external,
-      verification_type: LinkEnum.enum.domain,
-    });
-  }
-
-  if (FEATURE_BYPASS_MODERATION) {
-    return await users_organizations.create({
-      organization_id,
-      user_id,
-      verification_type: LinkEnum.enum.bypassed,
-    });
-  }
-
-  if (
-    some(organizationEmailDomains, {
+  return await match(
+    decide_join_by_email_domain({
+      bypass_moderation: FEATURE_BYPASS_MODERATION,
       domain,
-      verification_type: EmailDomainVerificationEnum.enum.not_verified_yet,
+      organization_email_domains: organizationEmailDomains,
+    }),
+  )
+    .with({ kind: "link_domain" }, ({ is_external }) =>
+      users_organizations.create({
+        organization_id,
+        user_id,
+        is_external,
+        verification_type: LinkEnum.enum.domain,
+      }),
+    )
+    .with({ kind: "bypassed" }, () =>
+      users_organizations.create({
+        organization_id,
+        user_id,
+        verification_type: LinkEnum.enum.bypassed,
+      }),
+    )
+    .with({ kind: "domain_not_verified_yet" }, async () => {
+      await moderations.create({
+        user_id,
+        organization_id,
+        type: ModerationTypeSchema.enum.non_verified_domain,
+        ticket_id: null,
+        sp_name,
+      });
+      return await users_organizations.create({
+        organization_id,
+        user_id,
+        verification_type: LinkEnum.enum.domain_not_verified_yet,
+      });
     })
-  ) {
-    await moderations.create({
-      user_id,
-      organization_id,
-      type: ModerationTypeSchema.enum.non_verified_domain,
-      ticket_id: null,
-      sp_name,
-    });
-    return await users_organizations.create({
-      organization_id,
-      user_id,
-      verification_type: LinkEnum.enum.domain_not_verified_yet,
-    });
-  }
-
-  throw new UnableToAutoJoinOrganizationError(organization_id);
+    .with({ kind: "unable_to_auto_join" }, () => {
+      throw new UnableToAutoJoinOrganizationError(organization_id);
+    })
+    .exhaustive();
 };
 
 export const greetForJoiningOrganization = async ({
