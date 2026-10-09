@@ -38,9 +38,9 @@ export const isWithinAuthenticatedSession = (
   // testing req.session.amr should suffice, but as this is quite critical,
   // we must be sure of what we are doing here
   return (
-    !isEmpty(session?.user) &&
-    !isEmpty(session.amr) &&
-    isOneFactorAuthenticated(session.amr!)
+    session?.user !== undefined &&
+    session.amr !== undefined &&
+    isOneFactorAuthenticated(session.amr)
   );
 };
 
@@ -147,7 +147,7 @@ export const getUserFromAuthenticatedSession = (req: Request) => {
     ip_address: req.ip,
     username: `${req.session.user.given_name} ${req.session.user.family_name}`,
   });
-  return req.session.user as User;
+  return req.session.user;
 };
 
 export const updateUserInAuthenticatedSession = (req: Request, user: User) => {
