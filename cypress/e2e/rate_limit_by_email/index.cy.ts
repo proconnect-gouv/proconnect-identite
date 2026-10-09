@@ -2,7 +2,7 @@ describe("trigger rate limit by email", () => {
   before(cy.seed);
 
   it("should trigger totp rate limiting", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.login("account-with-totp@yopmail.com");
 
@@ -22,7 +22,7 @@ describe("trigger rate limit by email", () => {
   });
 
   it("should trigger email verification rate limiting", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
     cy.login("email-verification-needed@yopmail.com");
 
     // trigger reset email verification rate limiter
@@ -40,7 +40,7 @@ describe("trigger rate limit by email", () => {
 
   it("should trigger totp rate limiting", function () {
     // Set email in unauthenticated session
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
     cy.contains("Email professionnel").click();
     cy.focused().type("new-account@yopmail.com");
     cy.get('[type="submit"]').click();

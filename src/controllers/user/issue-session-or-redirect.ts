@@ -1,6 +1,17 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
 import { HOST } from "../../config/env";
+import { logger, logger_group, logger_group_end } from "../../services/log";
+
+const getRedirection = (redirectTo: string | undefined) => {
+  if (!redirectTo) {
+    return { code: "no_redirect_to_in_session", url: "/" };
+  }
+  if (!getTrustedReferrerPath(redirectTo, HOST)) {
+    return { code: "untrusted_redirect_to_in_session", url: "/" };
+  }
+  return { code: "trusted_redirect_to_in_session", url: redirectTo };
+};
 
 export const issueSessionOrRedirectController = async (
   req: Request,
@@ -8,22 +19,26 @@ export const issueSessionOrRedirectController = async (
   next: NextFunction,
 ) => {
   try {
-    if (req.session.interactionId) {
-      return res.redirect(`/interaction/${req.session.interactionId}/login`);
-    }
+    logger_group(
+      "🎫",
+      req.method,
+      req.originalUrl,
+      issueSessionOrRedirectController.name,
+    );
 
-    if (
-      req.session.referrerPath &&
-      getTrustedReferrerPath(req.session.referrerPath, HOST)
-    ) {
-      // copy string by value
-      const referrerPath = `${req.session.referrerPath}`;
+    const { redirectTo } = req.session;
+    const { code, url } = getRedirection(redirectTo);
+
+    logger.debug([code, "\n => redirect", url].join(" "));
+    logger.trace({ redirectTo, code, url });
+    logger_group_end();
+
+    if (code === "trusted_redirect_to_in_session") {
       // then delete referer value from session
-      req.session.referrerPath = undefined;
-      return res.redirect(referrerPath);
+      req.session.redirectTo = undefined;
     }
 
-    return res.redirect("/");
+    return res.redirect(url);
   } catch (error) {
     next(error);
   }

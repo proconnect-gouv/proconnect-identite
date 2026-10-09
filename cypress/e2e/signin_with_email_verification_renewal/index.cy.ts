@@ -5,7 +5,7 @@ describe("sign-in with email verification renewal", () => {
 
   it("should sign-in with email verification needed", () => {
     // Visit the signup page
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.login("lion.eljonson@darkangels.world");
 
@@ -19,7 +19,7 @@ describe("sign-in with email verification renewal", () => {
   });
 
   it("should not show renewal notification for account creation", () => {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.get('[name="login"]').type("unused1@yopmail.com");
     cy.get('[type="submit"]').click();

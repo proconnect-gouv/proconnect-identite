@@ -37,7 +37,7 @@ describe("sign-in with suggestion", () => {
 
   it("should sign-up and be suggested the Ministere des armees organization", function () {
     // Visit the signup page
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.title().should("equal", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();

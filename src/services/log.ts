@@ -27,3 +27,10 @@ export const logger = log({
   prefix: formatDateNowApacheCommon,
   level: getLogLevelName(LOG_LEVEL),
 });
+
+export function logger_group(...label: any[]) {
+  if (["debug", "trace"].includes(LOG_LEVEL)) console.group(...label);
+}
+export function logger_group_end() {
+  if (["debug", "trace"].includes(LOG_LEVEL)) console.groupEnd();
+}
