@@ -14,9 +14,11 @@ describe("isAFreeDomain", () => {
     "outlook.com",
     "aol.com",
     "yopmail.com",
+    "9business.fr",
   ].forEach((domain) => {
-    it(`should return true for free domains "${domain}"`, () => {
+    it(`should return true for free domains and emails using "${domain}"`, () => {
       assert.equal(isAFreeDomain(domain), true);
+      assert.equal(isAFreeDomain(`user@${domain}`), true);
     });
   });
 

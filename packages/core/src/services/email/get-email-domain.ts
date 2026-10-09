@@ -1,5 +1,6 @@
 //
 
+import isString from "lodash-es/isString.js";
 import { parse_host } from "tld-extract";
 
 //
@@ -12,6 +13,10 @@ import { parse_host } from "tld-extract";
  * @returns the domain of the email address
  */
 export function getEmailDomain(email: string) {
+  if (!email || !isString(email)) {
+    throw new Error("Not a string");
+  }
+
   const parts = email.split("@");
   const host = parts[parts.length - 1];
   const { sub, domain } = parse_host(host, { allowDotlessTLD: true });
