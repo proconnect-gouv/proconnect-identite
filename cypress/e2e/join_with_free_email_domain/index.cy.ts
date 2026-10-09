@@ -245,6 +245,24 @@ describe("join small association", () => {
   });
 });
 
+describe("join small association with a free provider only in the project list", () => {
+  before(cy.seed);
+
+  beforeEach(() => {
+    cy.visit("/users/join-organization");
+    cy.login("konrad.curze@9business.fr");
+
+    cy.title().should("include", "Rejoindre une organisation -");
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+  });
+
+  it("Association de droit local (Bas-Rhin, Haut-Rhin et Moselle)", function () {
+    cy.focused().clear().type("84226400400016");
+    cy.contains("Enregistrer").click();
+    cy.contains("Compte créé");
+  });
+});
+
 describe("join small organization", () => {
   before(cy.seed);
 

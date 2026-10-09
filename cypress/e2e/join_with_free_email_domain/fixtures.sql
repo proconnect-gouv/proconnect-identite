@@ -25,6 +25,19 @@ VALUES
     'El''Jonson',
     '0123456789',
     'Primarque'
+  ),
+  (
+    2,
+    'konrad.curze@9business.fr',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Konrad',
+    'Curze',
+    '0123456789',
+    'Primarque'
   );
 
 INSERT INTO
@@ -48,6 +61,17 @@ VALUES
     'Un',
     'male',
     'Jean',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  ),
+  (
+    2,
+    '99100',
+    '1990-06-01',
+    '75000',
+    'Curze',
+    'male',
+    'Konrad',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   );
