@@ -7,8 +7,8 @@ import {
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
+  check_join_preconditions,
   computeServicePublicInfo,
-  isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
   isSmallEtablissementPublic,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
@@ -24,6 +24,7 @@ import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";
 import { inspect } from "node:util";
+import { match } from "ts-pattern";
 import { EmailDomainApprovedVerificationEnum } from "../../../packages/identite/src/types";
 import {
   CRISP_WEBSITE_ID,
@@ -186,41 +187,18 @@ export const joinOrganization = async ({
   const user = await users.getById(user_id);
 
   const usersOrganizations = await organizations.findByUserId(user_id);
-  if (some(usersOrganizations, ["id", organization.id])) {
-    throw new UserInOrganizationAlreadyError();
-  }
 
   const pendingModeration = await moderations.findPending({
     user_id,
     organization_id: organization.id,
     type: ModerationTypeSchema.enum.organization_join_block,
   });
-  if (!isEmpty(pendingModeration)) {
-    const { id: moderation_id } = pendingModeration;
-    throw new UserAlreadyAskedToJoinOrganizationError(moderation_id, {
-      cause: new AssertionError({
-        expected: undefined,
-        actual: pendingModeration,
-        operator: "findPendingModeration",
-      }),
-    });
-  }
 
   const rejectedModeration = await moderations.findRejected({
     user_id,
     organization_id: organization.id,
     type: ModerationTypeSchema.enum.organization_join_block,
   });
-  if (!isEmpty(rejectedModeration)) {
-    const { id: moderation_id } = rejectedModeration;
-    throw new UserModerationRejectedError(moderation_id, {
-      cause: new AssertionError({
-        expected: undefined,
-        actual: rejectedModeration,
-        operator: "findRejectedModeration",
-      }),
-    });
-  }
 
   const { id: organization_id } = organization;
   const { email } = user;
@@ -228,29 +206,52 @@ export const joinOrganization = async ({
   const organizationEmailDomains =
     await email_domains.findEmailDomainsByOrganizationId(organization_id);
 
-  if (!isDomainAllowedForOrganization(siret, domain)) {
-    throw new DomainNotAllowedForOrganizationError(organization_id);
-  }
-
-  if (
-    some(organizationEmailDomains, {
+  match(
+    check_join_preconditions({
+      certification_requested: certificationRequested,
       domain,
-      verification_type: EmailDomainVerificationEnum.enum.refused,
+      organization,
+      organization_email_domains: organizationEmailDomains,
+      pending_moderation: pendingModeration,
+      rejected_moderation: rejectedModeration,
+      user_organizations: usersOrganizations,
+    }),
+  )
+    .with({ kind: "already_member" }, () => {
+      throw new UserInOrganizationAlreadyError();
     })
-  ) {
-    throw new DomainRefusedForOrganizationError(organization_id);
-  }
-
-  if (
-    domain.endsWith("gouv.fr") &&
-    !computeServicePublicInfo(organization).isServicePublic
-  ) {
-    throw new GouvFrDomainsForbiddenForPrivateOrg();
-  }
-
-  if (certificationRequested) {
-    throw new PendingCertificationDirigeantError(organization_id);
-  }
+    .with({ kind: "already_asked" }, ({ moderation_id }) => {
+      throw new UserAlreadyAskedToJoinOrganizationError(moderation_id, {
+        cause: new AssertionError({
+          expected: undefined,
+          actual: pendingModeration,
+          operator: "findPendingModeration",
+        }),
+      });
+    })
+    .with({ kind: "moderation_rejected" }, ({ moderation_id }) => {
+      throw new UserModerationRejectedError(moderation_id, {
+        cause: new AssertionError({
+          expected: undefined,
+          actual: rejectedModeration,
+          operator: "findRejectedModeration",
+        }),
+      });
+    })
+    .with({ kind: "domain_not_allowed" }, () => {
+      throw new DomainNotAllowedForOrganizationError(organization_id);
+    })
+    .with({ kind: "domain_refused" }, () => {
+      throw new DomainRefusedForOrganizationError(organization_id);
+    })
+    .with({ kind: "gouv_fr_forbidden_for_private_org" }, () => {
+      throw new GouvFrDomainsForbiddenForPrivateOrg();
+    })
+    .with({ kind: "pending_certification_dirigeant" }, () => {
+      throw new PendingCertificationDirigeantError(organization_id);
+    })
+    .with({ kind: "ok" }, () => undefined)
+    .exhaustive();
 
   if (isEntrepriseUnipersonnelle(organization)) {
     return await users_organizations.create({
