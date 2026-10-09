@@ -3,12 +3,16 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
+    commit-message:
+      prefix: "⬆️"
     labels:
       - dependencies
     schedule:
       interval: "weekly"
   - package-ecosystem: "npm"
     directory: "/"
+    commit-message:
+      prefix: "⬆️"
     groups:
       sentry:
         patterns:
@@ -47,6 +51,8 @@ updates:
           - "version-update:semver-patch"
   - package-ecosystem: "docker"
     directory: "/"
+    commit-message:
+      prefix: "⬆️"
     labels:
       - dependencies
     schedule:
@@ -58,6 +64,8 @@ updates:
           - "version-update:semver-minor"
   - package-ecosystem: "docker-compose"
     directory: "/"
+    commit-message:
+      prefix: "⬆️"
     labels:
       - dependencies
     schedule:
