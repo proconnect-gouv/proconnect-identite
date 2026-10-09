@@ -8,9 +8,16 @@ import {
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
   computeServicePublicInfo,
+  hasLessThanFiftyEmployees,
+  isArmeeDomain,
+  isCommune,
   isDomainAllowedForOrganization,
+  isEducationNationaleDomain,
   isEntrepriseUnipersonnelle,
+  isEtablissementScolaireDuPremierEtSecondDegre,
+  isSmallAssociation,
   isSmallEtablissementPublic,
+  isSmallOrganization,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
   EmailDomainVerificationEnum,
@@ -56,15 +63,6 @@ import {
   usesAFreeEmailProvider,
 } from "../../services/email";
 import { logger } from "../../services/log";
-import {
-  hasLessThanFiftyEmployees,
-  isArmeeDomain,
-  isCommune,
-  isEducationNationaleDomain,
-  isEtablissementScolaireDuPremierEtSecondDegre,
-  isSmallAssociation,
-  isSmallOrganization,
-} from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
 import { markDomainAsVerified } from "./main";
 
