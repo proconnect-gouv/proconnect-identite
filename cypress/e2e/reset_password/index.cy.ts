@@ -56,6 +56,13 @@ describe("reset password", () => {
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Votre mot de passe a été mis à jour.");
+
+    cy.maildevGetMessageBySubject(
+      "Votre mot de passe ProConnect a été modifié",
+    ).then((email) => {
+      cy.maildevDeleteMessageById(email.id);
+    });
+
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Accéder au compte - ProConnect");
