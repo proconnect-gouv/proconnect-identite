@@ -12,7 +12,7 @@ import { z } from "zod";
 import { context } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
-import { isAFreeEmailProvider } from "../src/services/email";
+import { usesAFreeEmailProvider } from "../src/services/email";
 import { logger } from "../src/services/log";
 import {
   getNumberOfLineInFile,
@@ -107,7 +107,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             rowResults.push("rejected_invalid_domain");
             continue;
           }
-          if (isAFreeEmailProvider(domain)) {
+          if (usesAFreeEmailProvider(domain)) {
             i++;
             rejected_free_email_domain_count++;
             rowResults.push("rejected_free_email_domain");

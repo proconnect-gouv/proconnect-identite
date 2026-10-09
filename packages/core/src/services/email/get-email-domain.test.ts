@@ -20,11 +20,33 @@ describe("getEmailDomain", () => {
       email: "user@subdomain.domain.org",
       domain: "subdomain.domain.org",
     },
+    {
+      email: "domain.org",
+      domain: "domain.org",
+    },
   ];
 
   data.forEach(({ email, domain }) => {
     it("should return email domain", () => {
       assert.equal(getEmailDomain(email), domain);
+    });
+  });
+
+  const errors: { email: string; error: { name: string; message: RegExp } }[] =
+    [
+      {
+        email: "",
+        error: { name: "Error", message: /Empty string/ },
+      },
+      {
+        email: "jean",
+        error: { name: "Error", message: /Invalid TLD/ },
+      },
+    ];
+
+  errors.forEach(({ email, error }) => {
+    it(`should throw on ${JSON.stringify(email)}`, () => {
+      assert.throws(() => getEmailDomain(email), error);
     });
   });
 });

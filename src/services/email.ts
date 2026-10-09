@@ -1,15 +1,12 @@
 //
 
-import {
-  getEmailDomain,
-  isAFreeDomain,
-} from "@proconnect-gouv/proconnect.core/services/email";
+import { isAFreeDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import {
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE,
   FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_NON_FREE,
 } from "../config/env";
 
-export const isAFreeEmailProvider = (domain: string) => {
+export const usesAFreeEmailProvider = (email: string) => {
   if (FEATURE_CONSIDER_ALL_EMAIL_DOMAINS_AS_FREE) {
     return true;
   }
@@ -18,11 +15,5 @@ export const isAFreeEmailProvider = (domain: string) => {
     return false;
   }
 
-  return isAFreeDomain(domain);
-};
-
-export const usesAFreeEmailProvider = (email: string) => {
-  const domain = getEmailDomain(email);
-
-  return isAFreeEmailProvider(domain);
+  return isAFreeDomain(email);
 };
