@@ -3,6 +3,7 @@
 export * from "./generate-diceware-password.js";
 export * from "./generate-pin-token.js";
 export * from "./generate-token.js";
+export * from "./get-trusted-referrer-path-from-request.js";
 export * from "./get-trusted-referrer-path.js";
 export * from "./hash-password.js";
 export * from "./is-domain-valid.js";
