@@ -1,3 +1,4 @@
+import { getOrganizationTypeLabel } from "@proconnect-gouv/proconnect.identite/services/organization";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
@@ -20,7 +21,6 @@ import {
   optionalBooleanSchema,
 } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
-import { getOrganizationTypeLabel } from "../../services/organization";
 
 const { organizations } = context.repository;
 

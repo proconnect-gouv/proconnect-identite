@@ -1,6 +1,10 @@
 import { generateDicewarePassword } from "@proconnect-gouv/proconnect.core/security";
 import { OfficialContactEmailVerification } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import {
+  isCommune,
+  isEtablissementScolaireDuPremierEtSecondDegre,
+} from "@proconnect-gouv/proconnect.identite/services/organization";
 import type {
   Organization,
   UserOrganizationLink,
@@ -20,10 +24,6 @@ import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annu
 import { context } from "../../connectors/context";
 import { sendMail } from "../../connectors/mail";
 import { isExpired } from "../../services/is-expired";
-import {
-  isCommune,
-  isEtablissementScolaireDuPremierEtSecondDegre,
-} from "../../services/organization";
 const {
   official_contact_email_verifications,
   organizations,

@@ -1,6 +1,9 @@
 //
 
-import { computeServicePublicInfo } from "@proconnect-gouv/proconnect.identite/services/organization";
+import {
+  computeServicePublicInfo,
+  isCommune,
+} from "@proconnect-gouv/proconnect.identite/services/organization";
 import {
   UserClaimsSchema,
   type UserClaims,
@@ -12,7 +15,6 @@ import type { FindAccount } from "oidc-provider";
 import { context } from "../connectors/context";
 import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { logger } from "./log";
-import { isCommune } from "./organization";
 
 const { organizations, users } = context.repository;
 

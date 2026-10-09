@@ -1,155 +1,9 @@
-import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
+//
+
+import { isEtablissementScolaireDuPremierEtSecondDegre } from "#src/services/organization";
+import type { Organization } from "#src/types";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import {
-  isCommune,
-  isEducationNationaleDomain,
-  isEtablissementScolaireDuPremierEtSecondDegre,
-  isSmallAssociation,
-  isWasteManagementOrganization,
-} from "../src/services/organization";
-
-const association_org_info = {
-  siret: "83511518900010",
-  cached_tranche_effectifs: "00",
-  cached_tranche_effectifs_unite_legale: "00",
-  cached_libelle_tranche_effectif:
-    "0 salarié (n'ayant pas d'effectif au 31/12 mais ayant employé des salariés au cours de l'année de référence), en 2020",
-  cached_activite_principale: "81.21Z",
-  cached_libelle_activite_principale:
-    "81.21Z - Nettoyage courant des bâtiments",
-  cached_categorie_juridique: "9220",
-  cached_libelle_categorie_juridique: "Association déclarée",
-} as Organization;
-
-const small_association_org_info = {
-  siret: "39399933900046",
-  cached_tranche_effectifs: "12",
-  cached_tranche_effectifs_unite_legale: "12",
-  cached_libelle_tranche_effectif: "20 à 49 salariés, en 2022",
-  cached_activite_principale: "84.13Z",
-  cached_libelle_activite_principale:
-    "84.13Z - Administration publique (tutelle) des activités économiques",
-  cached_categorie_juridique: "9220",
-  cached_libelle_categorie_juridique: "Association déclarée",
-} as Organization;
-
-const entreprise_unipersonnelle_org_info = {
-  siret: "82869625200018",
-  cached_tranche_effectifs: null,
-  cached_tranche_effectifs_unite_legale: null,
-  cached_libelle_tranche_effectif: null,
-  cached_activite_principale: "62.01Z",
-  cached_libelle_activite_principale: "62.01Z - Programmation informatique",
-  cached_categorie_juridique: "1000",
-  cached_libelle_categorie_juridique: "Entrepreneur individuel",
-} as Organization;
-
-describe("isSmallAssociation", () => {
-  it("should return false for bad call", () => {
-    assert.equal(isSmallAssociation({} as Organization), false);
-  });
-
-  it("should return false for unipersonnelle organization", () => {
-    assert.equal(isSmallAssociation(entreprise_unipersonnelle_org_info), false);
-  });
-
-  it("should return true for association", () => {
-    assert.equal(isSmallAssociation(association_org_info), true);
-  });
-
-  it("should return true for small association", () => {
-    assert.equal(isSmallAssociation(small_association_org_info), true);
-  });
-});
-
-const lamalou_org_info = {
-  siret: "21340126800130",
-  cached_tranche_effectifs: "12",
-  cached_tranche_effectifs_unite_legale: "21",
-  cached_libelle_tranche_effectif: "20 à 49 salariés, en 2020",
-  cached_activite_principale: "84.11Z",
-  cached_libelle_activite_principale:
-    "84.11Z - Administration publique générale",
-  cached_categorie_juridique: "7210",
-  cached_libelle_categorie_juridique: "Commune et commune nouvelle",
-} as Organization;
-
-const dinum_org_info = {
-  siret: "13002526500013",
-  cached_tranche_effectifs: "22",
-  cached_tranche_effectifs_unite_legale: "22",
-  cached_libelle_tranche_effectif: "100 à 199 salariés, en 2020",
-  cached_activite_principale: "84.11Z",
-  cached_libelle_activite_principale:
-    "84.11Z - Administration publique générale",
-  cached_categorie_juridique: "7120",
-  cached_libelle_categorie_juridique: "Service central d'un ministère",
-} as Organization;
-
-const communaute_de_communes_org_info = {
-  siret: "20007184300060",
-  cached_tranche_effectifs: "22",
-  cached_tranche_effectifs_unite_legale: "22",
-  cached_libelle_tranche_effectif: "100 à 199 salariés, en 2022",
-  cached_activite_principale: "84.11Z",
-  cached_libelle_activite_principale:
-    "84.11Z - Administration publique générale",
-  cached_categorie_juridique: "7346",
-  cached_libelle_categorie_juridique: "Communauté de communes",
-} as Organization;
-
-describe("isCommune", () => {
-  it("should return false for bad call", () => {
-    assert.equal(isCommune({} as Organization), false);
-  });
-
-  it("should return true for collectivite territoriale", () => {
-    assert.equal(isCommune(lamalou_org_info), true);
-  });
-
-  it("should return false for administration centrale", () => {
-    assert.equal(isCommune(dinum_org_info), false);
-  });
-
-  it("should return false for communaute de communes by default", () => {
-    assert.equal(isCommune(communaute_de_communes_org_info), false);
-  });
-
-  it("should return false for communaute de communes when considerCommunauteDeCommunesAsCommune is false", () => {
-    assert.equal(isCommune(communaute_de_communes_org_info, false), false);
-  });
-
-  it("should return true for communaute de communes when considerCommunauteDeCommunesAsCommune is true", () => {
-    assert.equal(isCommune(communaute_de_communes_org_info, true), true);
-  });
-});
-
-const trackdechets_public_org_info = {
-  siret: "25680169700010",
-  cached_tranche_effectifs: "NN",
-  cached_tranche_effectifs_unite_legale: "NN",
-  cached_libelle_tranche_effectif:
-    "Unité non employeuse (pas de salarié au cours de l'année de référence et pas d'effectif au 31/12)",
-  cached_activite_principale: "38.21Z",
-  cached_libelle_activite_principale:
-    "38.21Z - Traitement et élimination des déchets non dangereux",
-  cached_categorie_juridique: "7354",
-  cached_libelle_categorie_juridique: "Syndicat mixte fermé",
-} as Organization;
-
-describe("isWasteManagementOrganization", () => {
-  it("should return false for collectivité territoriale", () => {
-    assert.equal(isWasteManagementOrganization(lamalou_org_info), false);
-  });
-
-  it("should return true for waste management organization", () => {
-    assert.equal(
-      isWasteManagementOrganization(trackdechets_public_org_info),
-      true,
-    );
-  });
-});
 
 describe("isEtablissementScolaireDuPremierEtSecondDegre", () => {
   it("should return false for unipersonnelle organization", () => {
@@ -191,7 +45,7 @@ describe("isEtablissementScolaireDuPremierEtSecondDegre", () => {
       cached_categorie_juridique: "7331",
       cached_libelle_categorie_juridique:
         "Établissement public local d'enseignement",
-    } as Organization;
+    } as unknown as Organization;
     assert.equal(
       isEtablissementScolaireDuPremierEtSecondDegre(lycee_public_org_info),
       true,
@@ -219,7 +73,7 @@ describe("isEtablissementScolaireDuPremierEtSecondDegre", () => {
       cached_categorie_juridique: "7331",
       cached_libelle_categorie_juridique:
         "Établissement public local d'enseignement",
-    } as Organization;
+    } as unknown as Organization;
     assert.equal(
       isEtablissementScolaireDuPremierEtSecondDegre(college_public_org_info),
       true,
@@ -246,7 +100,7 @@ describe("isEtablissementScolaireDuPremierEtSecondDegre", () => {
         "85.31Z - Enseignement secondaire général",
       cached_categorie_juridique: "9220",
       cached_libelle_categorie_juridique: "Association déclarée",
-    } as Organization;
+    } as unknown as Organization;
     assert.equal(
       isEtablissementScolaireDuPremierEtSecondDegre(lycee_prive_org_info),
       false,
@@ -273,7 +127,7 @@ describe("isEtablissementScolaireDuPremierEtSecondDegre", () => {
       cached_libelle_activite_principale: "85.20Z - Enseignement primaire",
       cached_categorie_juridique: "7210",
       cached_libelle_categorie_juridique: "Commune et commune nouvelle",
-    } as Organization;
+    } as unknown as Organization;
     assert.equal(
       isEtablissementScolaireDuPremierEtSecondDegre(
         ecole_primaire_publique_org_info,
@@ -302,27 +156,12 @@ describe("isEtablissementScolaireDuPremierEtSecondDegre", () => {
       cached_libelle_activite_principale: "85.20Z - Enseignement primaire",
       cached_categorie_juridique: "9220",
       cached_libelle_categorie_juridique: "Association déclarée",
-    } as Organization;
+    } as unknown as Organization;
     assert.equal(
       isEtablissementScolaireDuPremierEtSecondDegre(
         ecole_primaire_privee_org_info,
       ),
       false,
     );
-  });
-});
-
-describe("isEducationNationaleDomain", () => {
-  ["zac-orleans.fr", "ac-bordeaux.fr.net", "ac-bordeaux.gouv.fr"].forEach(
-    (domain) => {
-      it("should return false for non educ nat domain", () => {
-        assert.equal(isEducationNationaleDomain(domain), false);
-      });
-    },
-  );
-  ["ac-orleans-tours.fr", "ac-bordeaux.fr"].forEach((domain) => {
-    it("should return true for educ nat domain", () => {
-      assert.equal(isEducationNationaleDomain(domain), true);
-    });
   });
 });
