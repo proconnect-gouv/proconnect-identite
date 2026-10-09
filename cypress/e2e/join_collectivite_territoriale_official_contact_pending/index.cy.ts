@@ -29,7 +29,7 @@ describe("pending code sent to official contact email", () => {
 
     cy.get("button.proconnect-button").click();
 
-    cy.title().should("include", "Vérifier votre email - ProConnect");
-    cy.contains("Confirmer votre adresse email").click();
+    cy.contains('"email": "god-emperor@yopmail.com"');
+    cy.contains('"siret": "11009001600053"');
   });
 });

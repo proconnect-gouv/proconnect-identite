@@ -14,12 +14,10 @@ import { getSelectedOrganizationId } from "../repositories/redis/selected-organi
 import { logger } from "./log";
 import { isCommune } from "./organization";
 
-const { findById: findUserById } = context.repository.users;
-const { findByUserId: getUsersOrganizations } =
-  context.repository.organizations;
+const { organizations, users } = context.repository;
 
 export const findAccount: FindAccount = async (_ctx, sub) => {
-  const user = await findUserById(parseInt(sub, 10));
+  const user = await users.findById(parseInt(sub, 10));
 
   if (isEmpty(user)) {
     return;
@@ -62,7 +60,7 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
         ),
       );
 
-      const organizations = await getUsersOrganizations(id);
+      const userOrganizations = await organizations.findByUserId(id);
 
       const [selectedOrganizationIdErr, selectedOrganizationId] = await to(
         getSelectedOrganizationId(id),
@@ -81,10 +79,8 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
         throw selectedOrganizationIdErr;
       }
 
-      const organization = organizations.find(
-        ({ id, needs_official_contact_email_verification }) =>
-          id === selectedOrganizationId &&
-          !needs_official_contact_email_verification,
+      const organization = userOrganizations.find(
+        ({ id }) => id === selectedOrganizationId,
       );
 
       if (isEmpty(organization)) {

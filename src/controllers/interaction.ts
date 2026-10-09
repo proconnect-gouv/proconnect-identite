@@ -25,6 +25,8 @@ import {
 import { oidcErrorSchema, siretSchema } from "../services/custom-zod-schemas";
 import epochTime from "../services/epoch-time";
 
+const { oidc_clients } = context.repository;
+
 export const interactionStartControllerFactory =
   (oidcProvider: Provider) =>
   async (req: Request, res: Response, next: NextFunction) => {
@@ -43,8 +45,7 @@ export const interactionStartControllerFactory =
       req.session.prompt = prompt;
       req.session.spName = sp_name || undefined;
 
-      const oidcClient =
-        await context.repository.oidc_clients.findByClientId(client_id);
+      const oidcClient = await oidc_clients.findByClientId(client_id);
       req.session.authForProconnectFederation =
         oidcClient?.is_proconnect_federation;
 

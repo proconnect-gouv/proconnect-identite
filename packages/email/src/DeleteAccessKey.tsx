@@ -6,7 +6,7 @@ import { Link, Text } from "./components/index.js";
 //
 
 export default function DeleteAccessKey(props: Props) {
-  const { family_name, given_name, support_email } = props;
+  const { family_name, given_name, support_email, key_name } = props;
   const subject = encodeURIComponent(
     "Suppression non reconnue d'une clé d'accès sur mon compte ProConnect",
   );
@@ -21,7 +21,9 @@ export default function DeleteAccessKey(props: Props) {
       </Text>
       <br />
       <Text>
-        Une clé d'accès a été supprimée de votre compte.
+        {key_name
+          ? `La clé d'accès « ${key_name} » a été supprimée de votre compte.`
+          : "Une clé d'accès a été supprimée de votre compte."}
         <br />
         <br />
         <Link href={mailtoHref}>
@@ -40,4 +42,5 @@ export type Props = {
   family_name: string;
   given_name: string;
   support_email: string;
+  key_name?: string;
 };

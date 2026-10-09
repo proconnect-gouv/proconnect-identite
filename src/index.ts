@@ -14,7 +14,7 @@ import path from "path";
 import { ZodError } from "zod";
 import {
   ACCESS_LOG_PATH,
-  DEPLOY_ENV,
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS,
   FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
   FRANCECONNECT_ISSUER,
@@ -28,8 +28,8 @@ import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
 import {
-  apiRateLimiterMiddleware,
-  rateLimiterMiddleware,
+  defaultRateLimiterMiddleware,
+  machineToMachineRateLimiterMiddleware,
 } from "./middlewares/rate-limiter";
 import { apiRouter } from "./routers/api";
 import { interactionRouter } from "./routers/interaction";
@@ -159,12 +159,26 @@ app.get("/favicon.ico", function (_req, res, _next) {
   });
 });
 
+app.get("/robots.txt", function (_req, res) {
+  res.type("text/plain");
+  res.send("User-agent: *\nDisallow: /");
+});
+
+const MACHINE_TO_MACHINE_PATHS = [
+  "/.well-known/openid-configuration",
+  "/oauth/jwks",
+  "/oauth/request",
+  "/oauth/token",
+  "/oauth/token/introspection",
+  "/oauth/userinfo",
+];
+
 app.use((req, res, next) => {
-  if (req.path.startsWith("/api/")) {
-    return apiRateLimiterMiddleware(req, res, next);
+  if (MACHINE_TO_MACHINE_PATHS.includes(req.path)) {
+    return machineToMachineRateLimiterMiddleware(req, res, next);
   }
 
-  return rateLimiterMiddleware(req, res, (err) => {
+  return defaultRateLimiterMiddleware(req, res, (err) => {
     if (err) {
       // If an error occurs, add the EJS layout middleware to render a properly formatted 429 error page
       return ejsLayoutMiddlewareFactory(app)(req, res, () => next(err));
@@ -193,7 +207,7 @@ app.use(async (req, _res, next) => {
 
 app.use("/oauth", oidcProvider.callback());
 
-if (DEPLOY_ENV === "localhost") {
+if (FEATURE_MOUNT_MOCKED_EXTERNAL_APIS) {
   app.use(
     "/___testing___",
     createTestingHandler("/", {
@@ -309,7 +323,7 @@ let server: Server | undefined;
 try {
   server = app.listen(PORT, () => {
     logger.info(`application is listening on port ${PORT}`);
-    logger.info(`in ${DEPLOY_ENV} ${NODE_ENV} mode`);
+    logger.info(`in ${NODE_ENV} mode`);
   });
 } catch (err) {
   if (server && server.listening) server.close();

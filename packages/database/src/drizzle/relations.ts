@@ -4,6 +4,7 @@ import {
   email_domains,
   franceconnect_userinfo,
   moderations,
+  official_contact_email_verifications,
   oidc_clients,
   organizations,
   users,
@@ -23,6 +24,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   franceconnect_userinfos: many(franceconnect_userinfo),
   users_oidc_clients: many(users_oidc_clients),
   moderations: many(moderations),
+  official_contact_email_verifications: many(
+    official_contact_email_verifications,
+  ),
   users_organizations: many(users_organizations),
 }));
 
@@ -37,6 +41,9 @@ export const organizationsRelations = relations(organizations, ({ many }) => ({
   email_domains: many(email_domains),
   users_oidc_clients: many(users_oidc_clients),
   moderations: many(moderations),
+  official_contact_email_verifications: many(
+    official_contact_email_verifications,
+  ),
   users_organizations: many(users_organizations),
 }));
 
@@ -82,6 +89,20 @@ export const moderationsRelations = relations(moderations, ({ one }) => ({
     references: [organizations.id],
   }),
 }));
+
+export const official_contact_email_verificationsRelations = relations(
+  official_contact_email_verifications,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [official_contact_email_verifications.user_id],
+      references: [users.id],
+    }),
+    organization: one(organizations, {
+      fields: [official_contact_email_verifications.organization_id],
+      references: [organizations.id],
+    }),
+  }),
+);
 
 export const users_organizationsRelations = relations(
   users_organizations,

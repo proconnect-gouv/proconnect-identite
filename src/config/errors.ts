@@ -33,6 +33,15 @@ export class PendingCertificationDirigeantError extends Error {
     this.name = "PendingCertificationDirigeantError";
   }
 }
+export class PendingOfficialContactEmailVerificationError extends Error {
+  constructor(
+    public organizationId: number,
+    options?: ErrorOptions,
+  ) {
+    super(`Linked to organization ${organizationId}`, options);
+    this.name = "PendingOfficialContactEmailVerificationError";
+  }
+}
 
 export class UserInOrganizationAlreadyError extends Error {}
 

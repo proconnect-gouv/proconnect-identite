@@ -6,7 +6,7 @@ import { Link, Text } from "./components/index.js";
 //
 
 export default function AddAccessKey(props: Props) {
-  const { family_name, given_name, support_email } = props;
+  const { family_name, given_name, support_email, key_name } = props;
   const mailtoParams = new URLSearchParams({
     subject: "Erreur - Add Access Key",
   });
@@ -19,7 +19,9 @@ export default function AddAccessKey(props: Props) {
       </Text>
       <br />
       <Text>
-        Une nouvelle clé d'accès a été ajoutée à votre compte.
+        {key_name
+          ? `La clé d'accès « ${key_name} » a été ajoutée à votre compte.`
+          : "Une nouvelle clé d'accès a été ajoutée à votre compte."}
         <br />
         <br />
         <Link href={mailtoHref}>
@@ -37,4 +39,5 @@ export type Props = {
   family_name: string;
   given_name: string;
   support_email: string;
+  key_name?: string;
 };

@@ -11,5 +11,6 @@ export default {
   args: {
     given_name: "Marie",
     family_name: "Dupont",
+    key_name: "Chrome on Mac",
   } as Props,
 } as ComponentAnnotations<Renderer, Props>;

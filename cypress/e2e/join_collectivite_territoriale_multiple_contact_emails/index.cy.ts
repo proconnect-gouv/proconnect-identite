@@ -3,7 +3,7 @@
 describe("join collectivité territoriale with code send to official contact email", () => {
   before(cy.seed);
 
-  it.only("should ask which mairie to select and then send a code challenge to the selected one", function () {
+  it("should ask which mairie to select and then send a code challenge to the selected one", function () {
     cy.visit("/users/join-organization");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");

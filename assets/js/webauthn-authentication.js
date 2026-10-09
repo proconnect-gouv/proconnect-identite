@@ -16,8 +16,6 @@ document.addEventListener(
       "webauthn-authentication-response-form",
     );
     const errorElement = document.getElementById("webauthn-alert-error");
-    const passwordInput = document.getElementById("password-input");
-    let controller;
 
     const actionAttribute = authenticationResponseForm.getAttribute("action");
     let authOptionsUrl;
@@ -32,12 +30,11 @@ document.addEventListener(
     }
 
     // Start registration when the user clicks a button
-    const onAuthenticateClickAndDOMContentLoad = async () => {
+    const onAuthenticateClick = async () => {
       // Reset success/error messages
       errorElement.style.display = "none";
       errorElement.innerText = "";
       beginElement.disabled = true;
-      controller = new AbortController();
 
       let asseResp;
 
@@ -49,13 +46,8 @@ document.addEventListener(
         // Pass the options to the authenticator and wait for a response
         asseResp = await startAuthentication({
           optionsJSON: await authOptions.json(),
-          signal: controller.signal,
         });
       } catch (error) {
-        if (error.name === "AbortError") {
-          beginElement.disabled = false;
-          return;
-        }
         errorElement.style.display = "block";
         if (error.name === "NotAllowedError") {
           errorElement.innerText = `Une erreur est survenue. Nous n’avons pas pu vérifier vos informations. Merci de réessayer.`;
@@ -72,12 +64,38 @@ document.addEventListener(
       authenticationResponseStringInputElement.value = JSON.stringify(asseResp);
       authenticationResponseForm.requestSubmit();
     };
-    onAuthenticateClickAndDOMContentLoad();
-    beginElement.addEventListener(
-      "click",
-      onAuthenticateClickAndDOMContentLoad,
-    );
-    passwordInput?.addEventListener("focus", () => controller?.abort());
+
+    beginElement.addEventListener("click", onAuthenticateClick);
+
+    const initiatingConditionalUI = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasNotification = urlParams.get("notification") !== null;
+
+      if (!hasNotification) {
+        try {
+          const authOptions = await fetch(authOptionsUrl);
+
+          let asseResp = await startAuthentication(
+            { optionsJSON: await authOptions.json() },
+            { useBrowserAutofill: true },
+          );
+
+          authenticationResponseStringInputElement.value =
+            JSON.stringify(asseResp);
+          authenticationResponseForm.requestSubmit();
+        } catch (e) {
+          // fail silently
+          console.error(e);
+        }
+      }
+    };
+
+    if (
+      authenticationResponseStringInputElement.getAttribute("autocomplete") ===
+      "webauthn"
+    ) {
+      initiatingConditionalUI();
+    }
   },
   false,
 );

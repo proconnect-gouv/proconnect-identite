@@ -10,7 +10,7 @@ import {
 } from "../services/symmetric-encryption";
 import { disableForce2fa, is2FACapable } from "./2fa";
 
-const { getById, update } = context.repository.users;
+const { users } = context.repository;
 
 export const generateTotpRegistrationOptions = async (
   email: string,
@@ -54,7 +54,7 @@ export const confirmTotpRegistration = async (
   totpToken: string,
 ) => {
   // ASSERTION: user exists
-  await getById(user_id);
+  await users.getById(user_id);
 
   if (!temporaryTotpKey) {
     throw new InvalidTotpTokenError();
@@ -77,16 +77,16 @@ export const confirmTotpRegistration = async (
     temporaryTotpKey,
   );
 
-  return await update(user_id, {
+  return await users.update(user_id, {
     encrypted_totp_key,
     totp_key_verified_at: new Date(),
   });
 };
 
 export const deleteTotpConfiguration = async (user_id: number) => {
-  let user = await getById(user_id);
+  let user = await users.getById(user_id);
 
-  user = await update(user_id, {
+  user = await users.update(user_id, {
     encrypted_totp_key: null,
     totp_key_verified_at: null,
   });
@@ -99,12 +99,12 @@ export const deleteTotpConfiguration = async (user_id: number) => {
 };
 
 export const isTotpConfiguredForUser = async (user_id: number) => {
-  const user = await getById(user_id);
+  const user = await users.getById(user_id);
   return !isEmpty(user.encrypted_totp_key);
 };
 
 export const authenticateWithTotp = async (user_id: number, token: string) => {
-  const user = await getById(user_id);
+  const user = await users.getById(user_id);
   const decryptedTotpKey = decryptSymmetric(
     SYMMETRIC_ENCRYPTION_KEY,
     user.encrypted_totp_key,

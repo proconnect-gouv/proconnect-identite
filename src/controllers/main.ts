@@ -26,7 +26,7 @@ import {
 import { formatDate } from "../services/date-format";
 import { getNotificationsFromRequest } from "../services/get-notifications-from-request";
 
-const { update } = context.repository.users;
+const { users } = context.repository;
 
 export const getHomeController = async (
   req: Request,
@@ -113,7 +113,7 @@ export const postPersonalInformationsController = async (
     const { given_name, family_name, phone_number, job } =
       await schema.parseAsync(req.body);
 
-    const updatedUser = await update(userId, {
+    const updatedUser = await users.update(userId, {
       given_name,
       family_name,
       phone_number,
