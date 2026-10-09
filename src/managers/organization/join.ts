@@ -7,7 +7,6 @@ import {
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
-  computeServicePublicInfo,
   isDomainAllowedForOrganization,
   isEntrepriseUnipersonnelle,
   isSmallEtablissementPublic,
@@ -57,6 +56,7 @@ import {
 } from "../../services/email";
 import { logger } from "../../services/log";
 import {
+  computeServicePublicInfo,
   hasLessThanFiftyEmployees,
   isArmeeDomain,
   isCommune,
