@@ -1,8 +1,14 @@
+import {
+  generateRecoveryWords,
+  hashPassword,
+} from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z } from "zod";
 import { UserIsNot2faCapableError } from "../config/errors";
-import { disableForce2fa, enableForce2fa } from "../managers/2fa";
+import { context } from "../connectors/context";
+import { disableForce2fa, enableForce2fa, is2FACapable } from "../managers/2fa";
+import { hasRecoveryWordsConfiguredForUser } from "../managers/recovery-words";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -223,6 +229,40 @@ export const postSetForce2faController = async (
       return next(new HttpErrors.UnprocessableEntity());
     }
 
+    next(error);
+  }
+};
+
+export const postRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    if (await hasRecoveryWordsConfiguredForUser(user_id)) {
+      return res.redirect("/connection-and-account");
+    }
+
+    if (!(await is2FACapable(user_id))) {
+      return res.redirect("/connection-and-account");
+    }
+
+    const recoveryWords = generateRecoveryWords();
+    const hashedRecoveryWords = await hashPassword(recoveryWords.join(" "));
+
+    await context.repository.recovery_codes.deleteAllByUserId(user_id);
+    await context.repository.recovery_codes.create({
+      user_id,
+      codes: [hashedRecoveryWords],
+    });
+
+    return res.render("recovery-words", {
+      pageTitle: "Sauvegarder vos mots de secours",
+      recoveryWords,
+    });
+  } catch (error) {
     next(error);
   }
 };

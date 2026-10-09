@@ -81,3 +81,18 @@ main {
   align-items: center;
   text-align: center;
 }
+
+/* recovery words page layout */
+
+.recovery-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  list-style: none;
+  margin: 2rem 0;
+  padding: 1.5rem 2rem;
+  background: var(--background-alt-grey);
+  border: 1px solid var(--border-default-grey);
+  font-weight: 700;
+  font-size: 1.25rem;
+}

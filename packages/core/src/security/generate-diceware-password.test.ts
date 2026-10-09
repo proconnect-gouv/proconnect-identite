@@ -2,13 +2,13 @@
 
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { GenerarateDicewarePassword } from "./generate-diceware-password.js";
+import { GenerateDicewarePassword } from "./generate-diceware-password.js";
 
 //
 
-describe("GenerarateDicewarePassword", () => {
+describe("GenerateDicewarePassword", () => {
   it("should generate two words", () => {
-    const generatePassword = GenerarateDicewarePassword([
+    const generatePassword = GenerateDicewarePassword([
       () => "11111",
       () => "22222",
     ]);
@@ -16,7 +16,7 @@ describe("GenerarateDicewarePassword", () => {
   });
 
   it("should generate three words", () => {
-    const generatePassword = GenerarateDicewarePassword([
+    const generatePassword = GenerateDicewarePassword([
       () => "11111",
       () => "22222",
       () => "33333",
