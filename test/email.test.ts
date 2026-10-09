@@ -8,6 +8,7 @@ describe("usesAFreeEmailProvider", () => {
     "collectivite@wanadoo.fr",
     "collectivite@orange.fr",
     "serious@9business.fr",
+    "9business.fr",
   ];
 
   emailAddressesThatUsesFreeEmailProviders.forEach((email) => {
@@ -20,6 +21,7 @@ describe("usesAFreeEmailProvider", () => {
     "user@beta.gouv.fr",
     "collectivite@paris.fr",
     "nom.prenom@notaires.fr",
+    "beta.gouv.fr",
   ];
 
   professionalEmailAddresses.forEach((professionalEmailAddress) => {
