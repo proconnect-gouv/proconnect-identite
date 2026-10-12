@@ -22,7 +22,7 @@ export default defineConfig({
       return config;
     },
   },
-  env: {
+  expose: {
     MAILDEV_PROTOCOL: "http",
     MAILDEV_HOST: "localhost",
     MAILDEV_SMTP_PORT: "1025",
