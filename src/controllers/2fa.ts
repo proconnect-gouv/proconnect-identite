@@ -1,6 +1,8 @@
 import {
   generateRecoveryWords,
   hashPassword,
+  normalizeRecoveryWords,
+  validateRecoveryWords,
 } from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -8,6 +10,7 @@ import { z } from "zod";
 import { UserIsNot2faCapableError } from "../config/errors";
 import { context } from "../connectors/context";
 import { disableForce2fa, enableForce2fa, is2FACapable } from "../managers/2fa";
+import { hasRecoveryWordsConfiguredForUser } from "../managers/recovery-words";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -245,7 +248,9 @@ export const postRecoveryWordsController = async (
     }
 
     const recoveryWords = generateRecoveryWords();
-    const hashedRecoveryWords = await hashPassword(recoveryWords.join(" "));
+    const hashedRecoveryWords = await hashPassword(
+      normalizeRecoveryWords(recoveryWords.join(" ")),
+    );
 
     await context.repository.recovery_codes.deleteAllByUserId(user_id);
     await context.repository.recovery_codes.create({
@@ -256,6 +261,55 @@ export const postRecoveryWordsController = async (
     return res.render("recovery-words", {
       pageTitle: "Sauvegarder vos mots de secours",
       recoveryWords,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getVerifyRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      return res.redirect("/connection-and-account");
+    }
+
+    return res.render("verify-recovery-words", {
+      pageTitle: "Vérifier vos mots de secours",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postVerifyRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    const schema = z.object({
+      recovery_words: z.string(),
+    });
+
+    const { recovery_words } = await schema.parseAsync(req.body);
+    const [recoveryCode] =
+      await context.repository.recovery_codes.findByUserId(user_id);
+    const storedHash = recoveryCode?.code ?? null;
+
+    const isValid = await validateRecoveryWords(recovery_words, storedHash);
+
+    return res.render("verify-recovery-words", {
+      pageTitle: "Vérifier vos mots de secours",
+      isValid,
+      csrfToken: csrfToken(req),
     });
   } catch (error) {
     next(error);

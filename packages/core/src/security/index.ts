@@ -14,4 +14,6 @@ export * from "./is-password-secure.js";
 export * from "./is-phone-number-valid.js";
 export * from "./is-siret-valid.js";
 export * from "./is-visible-string.js";
+export * from "./normalize-recovery-words.js";
 export * from "./validate-password.js";
+export * from "./validate-recovery-words.js";
