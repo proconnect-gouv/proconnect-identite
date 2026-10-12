@@ -12,6 +12,10 @@ import { parse_host } from "tld-extract";
  * @returns the domain of the email address
  */
 export function getEmailDomain(email: string) {
+  if (!email) {
+    throw new Error("Empty string");
+  }
+
   const parts = email.split("@");
   const host = parts[parts.length - 1];
   const { sub, domain } = parse_host(host, { allowDotlessTLD: true });

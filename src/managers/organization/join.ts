@@ -51,10 +51,7 @@ import { context } from "../../connectors/context";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
 import { getOrganizationInfo } from "../../connectors/organization-info";
-import {
-  isAFreeEmailProvider,
-  usesAFreeEmailProvider,
-} from "../../services/email";
+import { usesAFreeEmailProvider } from "../../services/email";
 import { logger } from "../../services/log";
 import {
   hasLessThanFiftyEmployees,
@@ -261,7 +258,7 @@ export const joinOrganization = async ({
     });
   }
 
-  if (isSmallAssociation(organization) && isAFreeEmailProvider(email)) {
+  if (isSmallAssociation(organization) && usesAFreeEmailProvider(email)) {
     return await users_organizations.create({
       organization_id,
       user_id,
@@ -270,7 +267,7 @@ export const joinOrganization = async ({
     });
   }
 
-  if (isSmallOrganization(organization) && isAFreeEmailProvider(email)) {
+  if (isSmallOrganization(organization) && usesAFreeEmailProvider(email)) {
     return await users_organizations.create({
       organization_id,
       user_id,
@@ -281,7 +278,7 @@ export const joinOrganization = async ({
 
   if (
     !isCommune(organization, true) &&
-    isAFreeEmailProvider(email) &&
+    usesAFreeEmailProvider(email) &&
     computeServicePublicInfo(organization).isServicePublic &&
     !isSmallEtablissementPublic(organization)
   ) {
@@ -289,7 +286,7 @@ export const joinOrganization = async ({
   }
 
   if (
-    isAFreeEmailProvider(email) &&
+    usesAFreeEmailProvider(email) &&
     !hasLessThanFiftyEmployees(organization) &&
     !confirmed &&
     !isSmallEtablissementPublic(organization)
@@ -318,7 +315,7 @@ export const joinOrganization = async ({
 
       const contactDomain = getEmailDomain(contactEmail);
 
-      if (!isAFreeEmailProvider(contactDomain)) {
+      if (!usesAFreeEmailProvider(contactEmail)) {
         await markDomainAsVerified({
           organization_id,
           domain: contactDomain,
@@ -335,7 +332,7 @@ export const joinOrganization = async ({
         });
       }
 
-      if (!isAFreeEmailProvider(contactDomain) && contactDomain === domain) {
+      if (!usesAFreeEmailProvider(contactEmail) && contactDomain === domain) {
         return await users_organizations.create({
           organization_id,
           user_id,
@@ -344,7 +341,7 @@ export const joinOrganization = async ({
       }
     }
 
-    if (some(contactEmails, isEmailValid) && isAFreeEmailProvider(email)) {
+    if (some(contactEmails, isEmailValid) && usesAFreeEmailProvider(email)) {
       throw new PendingOfficialContactEmailVerificationError(organization_id);
     }
   }
