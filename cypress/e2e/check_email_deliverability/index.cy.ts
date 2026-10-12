@@ -2,7 +2,7 @@ describe("should suggest valid email address", () => {
   before(cy.seed);
 
   it("should sign-in", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.contains("Email professionnel").click();
     cy.focused().type("unknown-user-1@ypomail.com"); // yopmail with a typo domain
@@ -21,7 +21,7 @@ describe("should suggest valid email address", () => {
 
 describe("allowed whitelist email domains", () => {
   it("should sign-in", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.get('[name="login"]')
       .clear()

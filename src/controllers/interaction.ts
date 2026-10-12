@@ -42,6 +42,7 @@ export const interactionStartControllerFactory =
       req.session.certificationDirigeantRequested =
         certificationDirigeantRequested(prompt);
       req.session.interactionId = interactionId;
+      req.session.redirectTo = `/interaction/${interactionId}/login`;
       req.session.prompt = prompt;
       req.session.spName = sp_name || undefined;
 

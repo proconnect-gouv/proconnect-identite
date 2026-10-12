@@ -5,7 +5,7 @@ describe("reset password", () => {
 
   it("should reset password then sign-in", function () {
     // Visit the signup page
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();

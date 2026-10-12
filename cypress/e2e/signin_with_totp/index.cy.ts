@@ -77,7 +77,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
   });
 
   it("should display error message", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.login("unused3@yopmail.com");
 

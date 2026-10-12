@@ -11,7 +11,6 @@ import type {
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   HOST,
-  LOG_LEVEL,
 } from "../config/env";
 import {
   CertificationDirigeantCloseMatchError,
@@ -59,7 +58,7 @@ import {
 } from "../repositories/redis/selected-organization";
 import { isAcrSatisfied } from "../services/acr-checks";
 import { isExpired } from "../services/is-expired";
-import { logger } from "../services/log";
+import { logger, logger_group, logger_group_end } from "../services/log";
 import { usesAuthHeaders } from "../services/uses-auth-headers";
 
 const { franceconnect_userinfo, organizations, users, users_organizations } =
@@ -69,8 +68,13 @@ const { franceconnect_userinfo, organizations, users, users_organizations } =
 
 type RequestContext = { req: Request };
 
-type Redirect = {
-  type: "redirect";
+type HaltTo = {
+  type: "halt-to";
+  url: string;
+  trace: Pass[];
+};
+type ContinueTo = {
+  type: "continue-to";
   url: string;
   trace: Pass[];
 };
@@ -86,14 +90,23 @@ class Pass<TContext extends object = object, TCode extends string = string> {
     public readonly trace: Pass[] = [],
   ) {}
 
+  // The guard allows passage to the user.
   pass = <TNewCode extends string>(code: TNewCode) => {
     return new Pass(code, this.data, [...this.trace, this]);
   };
 
-  redirect = (url: string): Redirect => {
-    return { type: "redirect", url, trace: this.trace };
+  // The guard halts the user and redirects to the page that should enable the user to comply with the requirements.
+  haltTo = (url: string): HaltTo => {
+    return { type: "halt-to", url, trace: this.trace };
   };
 
+  // The guard redirects to the next page of an ongoing compliance process.
+  continueTo = (url: string): ContinueTo => {
+    return { type: "continue-to", url, trace: this.trace };
+  };
+
+  // The guard sends a response to a HEAD request. This should not be its responsibility.
+  // He has trained hard to become a navigation guard, and this mere task is not worthy of his time.
   send = (): Send => {
     return { type: "send" };
   };
@@ -113,17 +126,12 @@ class Pass<TContext extends object = object, TCode extends string = string> {
 
 type GuardResult<TCode extends string, TData extends object> =
   | Pass<TData, TCode>
-  | Redirect
+  | HaltTo
+  | ContinueTo
   | Send;
 
 //
 
-function logger_group(...label: any[]) {
-  if (["debug", "trace"].includes(LOG_LEVEL)) console.group(...label);
-}
-function logger_group_end() {
-  if (["debug", "trace"].includes(LOG_LEVEL)) console.groupEnd();
-}
 function createGuardMiddleware(
   fn: (
     context: Pass<RequestContext, "incoming_request">,
@@ -140,12 +148,14 @@ function createGuardMiddleware(
           " ",
         ),
       )
-      .with({ type: "redirect" }, ({ trace, url }) =>
-        [
-          trace.map(({ code }) => code).join("\n -> "),
-          "\n => redirect",
-          url,
-        ].join(" "),
+      .with(
+        { type: P.union("halt-to", "continue-to") },
+        ({ type, trace, url }) =>
+          [
+            trace.map(({ code }) => code).join("\n -> "),
+            `\n => ${type}`,
+            url,
+          ].join(" "),
       )
       .with({ type: "send" }, () => ["SEND"].join(" "))
       .exhaustive();
@@ -155,7 +165,12 @@ function createGuardMiddleware(
 
     return match(result)
       .with({ type: "next" }, () => next())
-      .with({ type: "redirect" }, ({ url }) => res.redirect(url))
+      .with({ type: "halt-to" }, ({ url }) => {
+        req.session.redirectTo ??= getReferrerPath(req);
+        logger.debug("💾 save", req.session.redirectTo);
+        return res.redirect(url);
+      })
+      .with({ type: "continue-to" }, ({ url }) => res.redirect(url))
       .with({ type: "send" }, () => res.send())
       .exhaustive();
   };
@@ -195,10 +210,10 @@ const emailInSessionGuard = (prev: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
   if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
-    return redirect("/users/start-sign-in");
+    return haltTo("/users/start-sign-in");
   }
   return pass("email_in_session");
 };
@@ -217,13 +232,13 @@ const userHasSeenInclusionconnectWelcomePageGuard = (
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
   if (
     getPartialUserFromUnauthenticatedSession(req)
       .needsInclusionconnectWelcomePage
   ) {
-    return redirect("/users/inclusionconnect-welcome");
+    return haltTo("/users/inclusionconnect-welcome");
   }
   return pass("user_has_seen_inclusionconnect_welcome_page");
 };
@@ -237,7 +252,7 @@ const userIsConnectedGuard = (context: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
     send,
   } = isUserGuard(context);
   if (req.method === "HEAD") {
@@ -250,11 +265,7 @@ const userIsConnectedGuard = (context: Pass<RequestContext>) => {
   }
 
   if (!isWithinAuthenticatedSession(req.session)) {
-    const referrerPath = getReferrerPath(req);
-    if (referrerPath) {
-      req.session.referrerPath = referrerPath;
-    }
-    return redirect("/users/start-sign-in");
+    return haltTo("/users/start-sign-in");
   }
 
   return pass("user_is_connected");
@@ -271,12 +282,11 @@ const userHasConnectedRecentlyGuard = async (prev: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
   const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
   if (!hasLoggedInRecently) {
-    req.session.referrerPath = getReferrerPath(req);
-    return redirect(`/users/start-sign-in?notification=login_required`);
+    return haltTo(`/users/start-sign-in?notification=login_required`);
   }
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
@@ -285,14 +295,12 @@ const userHasConnectedRecentlyGuard = async (prev: Pass<RequestContext>) => {
     (await is2FACapable(user_id)) &&
     !isWithinTwoFactorAuthenticatedSession(req)
   ) {
-    req.session.referrerPath = getReferrerPath(req);
-    return redirect("/users/2fa-sign-in?notification=2fa_required");
+    return haltTo("/users/2fa-sign-in?notification=2fa_required");
   }
 
   const is_browser_trusted = isBrowserTrustedForUser(req);
   if (!is_browser_trusted) {
-    req.session.referrerPath = getReferrerPath(req);
-    return redirect("/users/verify-email?notification=browser_not_trusted");
+    return haltTo("/users/verify-email?notification=browser_not_trusted");
   }
 
   return pass("user_has_connected_recently");
@@ -310,7 +318,7 @@ const userIsVerifiedGuard = async (prev: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
   const { email, email_verified } = getUserFromAuthenticatedSession(req);
   const needs_email_verification_renewal =
@@ -324,7 +332,7 @@ const userIsVerifiedGuard = async (prev: Pass<RequestContext>) => {
     } else if (needs_email_verification_renewal) {
       notification_param = "?notification=email_verification_renewal";
     }
-    return redirect(`/users/verify-email${notification_param}`);
+    return haltTo(`/users/verify-email${notification_param}`);
   }
   return pass("user_is_verified");
 };
@@ -342,7 +350,7 @@ const userIsTwoFactorAuthenticatedGuard = async (
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
   const { id: user_id } = getUserFromAuthenticatedSession(req);
   // Note:
@@ -364,9 +372,9 @@ const userIsTwoFactorAuthenticatedGuard = async (
       !isWithinTwoFactorAuthenticatedSession(req))
   ) {
     if (await is2FACapable(user_id)) {
-      return redirect("/users/2fa-sign-in");
+      return haltTo("/users/2fa-sign-in");
     } else {
-      return redirect("/users/double-authentication-choice");
+      return haltTo("/users/double-authentication-choice");
     }
   }
 
@@ -382,12 +390,12 @@ const browserIsTrustedGuard = async (prev: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
   const is_browser_trusted = isBrowserTrustedForUser(req);
 
   if (!is_browser_trusted) {
-    return redirect("/users/verify-email?notification=browser_not_trusted");
+    return haltTo("/users/verify-email?notification=browser_not_trusted");
   }
 
   return pass("browser_is_trusted");
@@ -404,7 +412,7 @@ const userHasSeenInclusionconnectOnboardingHelpGuard = async (
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = prev;
   const { id: user_id, needs_inclusionconnect_onboarding_help } =
     getUserFromAuthenticatedSession(req);
@@ -414,9 +422,7 @@ const userHasSeenInclusionconnectOnboardingHelpGuard = async (
     });
     updateUserInAuthenticatedSession(req, user);
 
-    return redirect(
-      "/users/welcome?show_inclusion_connect_onboarding_help=true",
-    );
+    return haltTo("/users/welcome?show_inclusion_connect_onboarding_help=true");
   }
   return pass("user_has_seen_inclusionconnect_onboarding_help");
 };
@@ -429,13 +435,12 @@ const userHasLoggedInRecentlyGuard = async (prev: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
   const hasLoggedInRecently = hasUserAuthenticatedRecently(req);
 
   if (!hasLoggedInRecently) {
-    req.session.referrerPath = getReferrerPath(req);
-    return redirect(`/users/start-sign-in?notification=login_required`);
+    return haltTo(`/users/start-sign-in?notification=login_required`);
   }
 
   return pass("user_has_logged_in_recently");
@@ -448,7 +453,7 @@ const userTwoFactorAuthForAdminGuard = async (prev: Pass<RequestContext>) => {
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
   const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -456,8 +461,7 @@ const userTwoFactorAuthForAdminGuard = async (prev: Pass<RequestContext>) => {
     (await is2FACapable(user_id)) &&
     !isWithinTwoFactorAuthenticatedSession(req)
   ) {
-    req.session.referrerPath = getReferrerPath(req);
-    return redirect("/users/2fa-sign-in?notification=2fa_required");
+    return haltTo("/users/2fa-sign-in?notification=2fa_required");
   }
 
   return pass("user_two_factor_auth_for_admin");
@@ -474,7 +478,7 @@ const userHasAtLeastOneOrganizationGuard = async (
 ) => {
   const {
     data: { req },
-    redirect,
+    haltTo,
   } = context;
 
   const userOrganizations = await organizations.findByUserId(
@@ -482,11 +486,11 @@ const userHasAtLeastOneOrganizationGuard = async (
   );
   if (isEmpty(userOrganizations)) {
     if (req.session.siretHint) {
-      return redirect(
+      return haltTo(
         `/users/join-organization?siret_hint=${req.session.siretHint}`,
       );
     } else {
-      return redirect("/users/join-organization");
+      return haltTo("/users/join-organization");
     }
   }
 
@@ -517,7 +521,7 @@ const userBelongsToHintedOrganizationGuard = async <
   const {
     data: { req, userOrganizations },
     pass,
-    redirect,
+    haltTo,
   } = context;
   if (req.session.siretHint) {
     const hintedOrganization = await organizations.findBySiret(
@@ -526,12 +530,12 @@ const userBelongsToHintedOrganizationGuard = async <
     const userFromAuthenticatedSession = getUserFromAuthenticatedSession(req);
 
     if (isEmpty(hintedOrganization))
-      return redirect(
+      return haltTo(
         `/users/join-organization?siret_hint=${req.session.siretHint}`,
       );
 
     if (!userOrganizations.some((org) => org.id === hintedOrganization.id)) {
-      return redirect(
+      return haltTo(
         `/users/join-organization?siret_hint=${req.session.siretHint}`,
       );
     }
@@ -555,7 +559,7 @@ const userHasSelectedAnOrganizationGuard = async <
   const {
     data: { req, userOrganizations },
     pass,
-    redirect,
+    haltTo,
   } = context;
 
   const selectedOrganizationId = await getSelectedOrganizationId(
@@ -576,7 +580,7 @@ const userHasSelectedAnOrganizationGuard = async <
       });
     }
 
-    return redirect("/users/select-organization");
+    return haltTo("/users/select-organization");
   }
 
   return pass("user_has_selected_an_organization").extends({
@@ -595,7 +599,7 @@ const userIs2faAuthenticatedIfOrganizationRequiresIt = async <
   const {
     data: { req, selectedOrganizationId },
     pass,
-    redirect,
+    haltTo,
   } = context;
   const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -604,9 +608,9 @@ const userIs2faAuthenticatedIfOrganizationRequiresIt = async <
     !isWithinTwoFactorAuthenticatedSession(req)
   ) {
     if (await is2FACapable(user_id)) {
-      return redirect("/users/2fa-sign-in");
+      return haltTo("/users/2fa-sign-in");
     } else {
-      return redirect(
+      return haltTo(
         "/users/double-authentication-choice?notification=organization_requires_forced_2fa",
       );
     }
@@ -623,7 +627,7 @@ const userHasValidFranceConnectIdentityGuard = async <
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
@@ -632,7 +636,7 @@ const userHasValidFranceConnectIdentityGuard = async <
     (await lastFranceConnectIdentityUpdate(user_id)) &&
     (await needsFranceConnectIdentityRenewal(user_id))
   ) {
-    return redirect("/users/franceconnect");
+    return haltTo("/users/franceconnect");
   }
   // Note:
   // - forcedAAL is set to 2 since the user can elevate it to level 2 when necessary.
@@ -652,7 +656,7 @@ const userHasValidFranceConnectIdentityGuard = async <
     requestedAcrRequiresFranceConnection &&
     !(await hasValidFranceConnectIdentity(user_id))
   ) {
-    return redirect("/users/franceconnect");
+    return haltTo("/users/franceconnect");
   }
 
   return pass("user_has_valid_franceconnect_identity");
@@ -666,12 +670,12 @@ const userHasPersonalInformationsGuard = async <
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
   } = context;
 
   const { given_name, family_name } = getUserFromAuthenticatedSession(req);
   if (isEmpty(given_name) || isEmpty(family_name)) {
-    return redirect("/users/personal-information");
+    return haltTo("/users/personal-information");
   }
 
   return pass("user_has_personal_informations");
@@ -772,7 +776,7 @@ const processPendingModerationGuard = async (prev: Pass<RequestContext>) => {
 
   req.session.pendingModerationOrganizationId = undefined;
 
-  return context.redirect(
+  return context.continueTo(
     `/users/unable-to-auto-join-organization?moderation_id=${moderation_id}`,
   );
 };
@@ -783,7 +787,8 @@ const processCertificationDirigeantGuard = async (
   const {
     data: { req },
     pass,
-    redirect,
+    haltTo,
+    continueTo,
   } = prev;
 
   const organization_id =
@@ -791,7 +796,7 @@ const processCertificationDirigeantGuard = async (
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
   if (!(await hasValidFranceConnectIdentity(user_id))) {
-    return redirect("/users/franceconnect");
+    return haltTo("/users/franceconnect");
   }
 
   const franceconnectUserInfo = (await franceconnect_userinfo.find(user_id))!;
@@ -839,17 +844,17 @@ const processCertificationDirigeantGuard = async (
     await deleteSelectedOrganizationId(user_id);
 
     if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
-      return redirect(
+      return continueTo(
         "/users/certification-dirigeant/organization-not-covered-error",
       );
     }
 
     if (error instanceof CertificationDirigeantCloseMatchError) {
-      return redirect(getCertificationDirigeantCloseMatchErrorUrl(error));
+      return continueTo(getCertificationDirigeantCloseMatchErrorUrl(error));
     }
 
     if (error instanceof CertificationDirigeantNoMatchError) {
-      return redirect(
+      return continueTo(
         `/users/certification-dirigeant/no-match-error?siren=${error.siren}&organization_label=${encodeURIComponent(error.organization_label)}`,
       );
     }
@@ -863,7 +868,7 @@ const processOfficialContactEmailVerificationGuard = async (
 ) => {
   const {
     data: { req },
-    redirect,
+    continueTo,
   } = prev;
   const organization_id =
     req.session.pendingOfficialContactEmailVerificationOrganizationId!;
@@ -873,10 +878,10 @@ const processOfficialContactEmailVerificationGuard = async (
   }
 
   if (await isCommuneWithMultipleOfficialContactEmails(organization)) {
-    return redirect(`/users/official-contact-ask-which-email`);
+    return continueTo(`/users/official-contact-ask-which-email`);
   }
 
-  return redirect(`/users/official-contact-email-verification`);
+  return continueTo(`/users/official-contact-email-verification`);
 };
 
 const processGreetingsForSelectedOrganizationGuard = async (
@@ -907,7 +912,7 @@ const processGreetingsForSelectedOrganizationGuard = async (
 
   req.session.pendingGreetingsForSelectedOrganization = undefined;
 
-  return context.redirect("/users/welcome");
+  return context.continueTo("/users/welcome");
 };
 
 async function userSignInRequirementsGuard(

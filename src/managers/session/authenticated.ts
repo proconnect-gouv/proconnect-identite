@@ -67,7 +67,7 @@ export const createAuthenticatedSession = async (
     authForProconnectFederation,
     interactionId,
     nonce,
-    referrerPath,
+    redirectTo,
     state,
     prompt,
     certificationDirigeantRequested,
@@ -94,7 +94,7 @@ export const createAuthenticatedSession = async (
         // we restore previous session navigation values
         req.session.interactionId = interactionId;
         req.session.prompt = prompt;
-        req.session.referrerPath = referrerPath;
+        req.session.redirectTo = redirectTo;
         req.session.authForProconnectFederation = authForProconnectFederation;
         req.session.certificationDirigeantRequested =
           certificationDirigeantRequested;

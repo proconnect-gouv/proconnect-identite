@@ -4,7 +4,7 @@ describe("sign-in with email verification renewal", () => {
   before(cy.seed);
 
   it("should sign-in with email verification needed", () => {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.login("lion.eljonson@darkangels.world");
 
@@ -22,7 +22,7 @@ describe("sign-in with email verification renewal", () => {
   });
 
   it("should be able to sign in after re-sending code", () => {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.login("rogal.dorn@imperialfists.world");
 

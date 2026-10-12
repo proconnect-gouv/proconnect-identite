@@ -4,7 +4,7 @@ describe("sign-in with magic link", () => {
   before(cy.seed);
 
   it("should sign-up with magic link", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.magicLinkLogin("lion.eljonson@darkangels.world");
@@ -14,7 +14,7 @@ describe("sign-in with magic link", () => {
   });
 
   it("should sign-in with magic link without setting password", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.magicLinkLogin("lion.eljonson@darkangels.world");
@@ -24,7 +24,7 @@ describe("sign-in with magic link", () => {
   });
 
   it("should set a password", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
@@ -43,7 +43,7 @@ describe("sign-in with magic link", () => {
   });
 
   it("should sign-in with magic link without set password prompt", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.contains("Email professionnel").click();
@@ -84,7 +84,7 @@ describe("sign-in with magic link", () => {
   });
 
   it("should use default sender email", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.contains("Email professionnel").click();
     cy.focused().type("user1@example.com");
@@ -103,7 +103,7 @@ describe("sign-in with magic link", () => {
   });
 
   it("should use alt sender email when email domain requires it", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.contains("Email professionnel").click();
     cy.focused().type("user1@example.org");
@@ -122,7 +122,7 @@ describe("sign-in with magic link", () => {
   });
 
   it("should use alt sender email when email length is a multiple of 10", function () {
-    cy.visit("/users/start-sign-in");
+    cy.visit("/");
 
     cy.contains("Email professionnel").click();
     cy.focused().type("user1234@example.com");

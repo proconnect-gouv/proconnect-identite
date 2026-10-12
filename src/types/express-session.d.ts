@@ -10,7 +10,7 @@ export interface UnauthenticatedSessionData {
   hasWebauthnConfigured?: boolean;
   interactionId?: string;
   prompt?: PromptDetail;
-  referrerPath?: string;
+  redirectTo?: string;
   authForProconnectFederation?: boolean;
   certificationDirigeantRequested?: boolean;
   spName?: string;

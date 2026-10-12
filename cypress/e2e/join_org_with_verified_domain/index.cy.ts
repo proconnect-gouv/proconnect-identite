@@ -57,15 +57,11 @@ describe("join organizations", () => {
 });
 
 describe("restrict access for", () => {
-  before(() => {
-    cy.visit("/");
-    cy.seed();
-  });
+  before(cy.seed);
 
   it("refused email domain", function () {
-    cy.visit("/");
-    cy.login("alpharius.omegon@alphalegion.world");
     cy.visit("/users/join-organization");
+    cy.login("alpharius.omegon@alphalegion.world");
 
     cy.title().should("include", "Rejoindre une organisation -");
     cy.contains("SIRET de l’organisation que vous représentez").click();
