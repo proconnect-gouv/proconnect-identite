@@ -17,6 +17,9 @@ updates:
       sentry:
         patterns:
           - "@sentry/*"
+      maildev:
+        patterns:
+          - "*maildev*"
     labels:
       - dependencies
     schedule:
@@ -66,6 +69,10 @@ updates:
     directory: "/"
     commit-message:
       prefix: "⬆️"
+    groups:
+      maildev:
+        patterns:
+          - "*maildev*"
     labels:
       - dependencies
     schedule:
