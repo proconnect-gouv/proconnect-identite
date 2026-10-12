@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.core
 
+## 1.1.0
+
+### Minor Changes
+
+- [#2246](https://github.com/proconnect-gouv/proconnect-identite/pull/2246) [`d7a9f69`](https://github.com/proconnect-gouv/proconnect-identite/commit/d7a9f69111ae9fe6b9c99a38e64258acc0663686) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🔒 les fonctions isAFreeDomain et getEmailDomain sont plus robustes et acceptent une plus grande variété de paramètres
+
 ## 1.0.2
 
 ### Patch Changes

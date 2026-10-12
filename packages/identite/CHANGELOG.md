@@ -1,5 +1,16 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.4.0
+
+### Minor Changes
+
+- [#2154](https://github.com/proconnect-gouv/proconnect-identite/pull/2154) [`6894647`](https://github.com/proconnect-gouv/proconnect-identite/commit/6894647574f1482cf9a7064dc5188d09cf9ded2a) Thanks [@douglasduteil](https://github.com/douglasduteil)! - suppression des paramètres inutilisés additionalWhereClause et additionalParams de findUsersByOrganization
+
+### Patch Changes
+
+- Updated dependencies [[`d7a9f69`](https://github.com/proconnect-gouv/proconnect-identite/commit/d7a9f69111ae9fe6b9c99a38e64258acc0663686)]:
+  - @proconnect-gouv/proconnect.core@1.1.0
+
 ## 10.3.0
 
 ### Minor Changes
