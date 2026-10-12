@@ -19,6 +19,7 @@
     "cypress.config.ts",
     "cypress/e2e",
     "cypress/support",
+    "package.json",
     "scripts",
     "src",
     "migrations"
