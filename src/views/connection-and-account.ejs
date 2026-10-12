@@ -99,7 +99,7 @@
                                     </form>
                                 </div>
                                 <div class="fr-card__start">
-                                    <p class="fr-tag fr-my-2w">Clé d'authentification</p>
+                                    <p class="fr-tag fr-mb-2w">Clé d'authentification</p>
                                 </div>
                             </div>
                         </div>
@@ -168,21 +168,30 @@
                 <% if (hasRecoveryWordsConfigured) { %>
                     <div class="recovery-words-card fr-p-3w border">
                         <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
-                            <div class="fr-col">
+                            <div class="fr-col-12 fr-col-md">
                                 <h3 class="fr-h5 fr-mb-1w blue-france">Mots de secours</h3>
                                 <p class="fr-text--sm fr-text-mention--grey fr-mb-0">
-                                Générés le <%= recoveryWordsCreatedAt %>
+                                    Générés le <%= recoveryWordsCreatedAt %>
                                 </p>
                             </div>
-                            <div class="fr-col-auto">
-                                <button
-                                    type="button"
-                                    class="fr-btn fr-btn--tertiary"
-                                    data-fr-opened="false"
-                                    aria-controls="regenerate-recovery-words-modal"
-                                >
-                                    Regénérer mes mots de secours
-                                </button>
+                            <div class="fr-col-12 fr-col-md-6">
+                                <ul class="fr-btns-group">
+                                    <li>
+                                        <a class="fr-btn fr-btn--tertiary centered-content" href="/recovery-words/verify">
+                                            Vérifier mes mots de secours
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <button
+                                            type="button"
+                                            class="fr-btn fr-btn--tertiary fr-mb-0"
+                                            data-fr-opened="false"
+                                            aria-controls="regenerate-recovery-words-modal"
+                                        >
+                                            Régénérer mes mots de secours
+                                        </button>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -206,7 +215,7 @@
                                         </div>
                                         <div class="fr-modal__content">
                                             <h2 id="regenerate-recovery-words-modal-title" class="fr-modal__title">
-                                            Regénérer vos mots de secours ?
+                                            Régénérer vos mots de secours ?
                                             </h2>
                                             <p>
                                             Vos mots de secours actuels ne fonctionneront plus. Vous devrez
@@ -218,7 +227,7 @@
                                                 <li>
                                                     <form method="post" action="/recovery-words">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                    <button type="submit" class="fr-btn">Regénérer</button>
+                                                    <button type="submit" class="fr-btn">Régénérer</button>
                                                     </form>
                                                 </li>
                                                 <li>
