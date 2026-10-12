@@ -1,7 +1,7 @@
 //
 
 describe("join collectivité territoriale with code send to official contact email", () => {
-  before(cy.seed);
+  beforeEach(cy.seed);
 
   it("should ask which mairie to select and then send a code challenge to the selected one", function () {
     cy.visit("/users/join-organization");
@@ -54,5 +54,25 @@ describe("join collectivité territoriale with code send to official contact ema
 
     cy.title().should("include", "Compte créé - ProConnect");
     cy.contains("Compte créé 🎊");
+  });
+
+  it("should ask again which mairie to select when the choice is skipped or unknown", function () {
+    cy.visit("/users/join-organization");
+    cy.login("eneeria@yopmail.com");
+
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("20006541500016");
+    cy.contains("Enregistrer").click();
+    cy.contains("Continuer avec cet email").click();
+
+    cy.contains("À quelle adresse e-mail souhaitez-vous recevoir le code ?");
+
+    cy.visit("/users/official-contact-email-verification");
+    cy.contains("À quelle adresse e-mail souhaitez-vous recevoir le code ?");
+
+    cy.visit(
+      "/users/official-contact-email-verification?contact_email=unknown@example.com",
+    );
+    cy.contains("À quelle adresse e-mail souhaitez-vous recevoir le code ?");
   });
 });
