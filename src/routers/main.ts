@@ -10,8 +10,10 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
+  getVerifyRecoveryWordsController,
   postRecoveryWordsController,
   postSetForce2faController,
+  postVerifyRecoveryWordsController,
 } from "../controllers/2fa";
 import {
   getAccessibiliteController,
@@ -81,6 +83,25 @@ export const mainRouter = (app: Express) => {
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postRecoveryWordsController,
+  );
+
+  mainRouter.get(
+    "/recovery-words/verify",
+    nocache(),
+    ejsLayoutMiddlewareFactory(app, true),
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getVerifyRecoveryWordsController,
+  );
+
+  mainRouter.post(
+    "/recovery-words/verify",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    postVerifyRecoveryWordsController,
   );
 
   mainRouter.get(
