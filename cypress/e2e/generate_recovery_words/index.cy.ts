@@ -1,7 +1,7 @@
 describe("generate recovery words", () => {
   before(cy.seed);
 
-  it("should generate recovery words, then regenerate them", function () {
+  it("should generate, verify, then regenerate recovery words", function () {
     cy.visit("/connection-and-account");
 
     cy.mfaLogin("lion.eljonson@darkangels.world");
@@ -11,26 +11,43 @@ describe("generate recovery words", () => {
 
     cy.contains("Sauvegarder vos mots de secours");
 
-    // 6 words
-    cy.getByLabel("Vos mots de secours")
-      .find("li")
-      .should("have.length", 6)
-      .each(($li) => {
-        expect($li.text().trim()).to.match(/^\p{L}+$/u);
-      });
-
     cy.getByLabel("Vos mots de secours")
       .invoke("text")
+      .then((text) => text.trim())
       .as("firstRecoveryWords", { type: "static" });
+
+    cy.get("@firstRecoveryWords").then((firstRecoveryWords) => {
+      const words = String(firstRecoveryWords).split(" ");
+      expect(words).to.have.length(6);
+      words.forEach((word) => expect(word).to.match(/^\p{L}+$/u));
+    });
 
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
     cy.contains("Générés le");
 
-    cy.contains("Regénérer mes mots de secours").click();
+    // verify with wrong words
+    cy.contains("Vérifier mes mots de secours").click();
+    cy.get("#recovery-words").type(
+      "abandon cible gastrique abandon cible gastrique",
+    );
+    cy.contains("button", "Vérifier").click();
+    cy.contains("Ces mots ne correspondent pas à vos mots de secours.");
+
+    // verify with the right words
+    cy.get("@firstRecoveryWords").then((firstRecoveryWords) => {
+      cy.get("#recovery-words").type(String(firstRecoveryWords));
+    });
+    cy.contains("button", "Vérifier").click();
+    cy.contains("Vos mots de secours sont valides.");
+
+    // regenerate
+    cy.visit("/connection-and-account");
+
+    cy.contains("Régénérer mes mots de secours").click();
     cy.get("#regenerate-recovery-words-modal")
-      .contains("button", "Regénérer")
+      .contains("button", "Régénérer")
       .click();
 
     cy.contains("Sauvegarder vos mots de secours");
@@ -38,6 +55,7 @@ describe("generate recovery words", () => {
     cy.get("@firstRecoveryWords").then((firstRecoveryWords) => {
       cy.getByLabel("Vos mots de secours")
         .invoke("text")
+        .then((text) => text.trim())
         .should("not.equal", firstRecoveryWords);
     });
   });
