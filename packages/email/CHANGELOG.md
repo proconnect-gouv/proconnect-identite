@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.3.0
+
+### Minor Changes
+
+- [#2134](https://github.com/proconnect-gouv/proconnect-identite/pull/2134) [`d6c3b4d`](https://github.com/proconnect-gouv/proconnect-identite/commit/d6c3b4d9e312d11025754448a0ba27c552d4f005) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Send confirmation email when a user's password has been reset
+
+- [#2135](https://github.com/proconnect-gouv/proconnect-identite/pull/2135) [`ff19302`](https://github.com/proconnect-gouv/proconnect-identite/commit/ff19302166915dce3f08ce4f969e2d147daf0e1b) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Send confirmation email when a user quits an organization
+
 ## 1.2.1
 
 ### Patch Changes
