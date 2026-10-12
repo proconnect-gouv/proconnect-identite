@@ -6,7 +6,7 @@ on:
 env:
   ACCESS_LOG_PATH:
   DATABASE_URL: postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite
-  NODE_ENV: test
+  DEPLOY_ENV: test
   PGDATABASE: proconnect-identite
   PGHOST: 127.0.0.1
   PGPASSWORD: proconnect-identite

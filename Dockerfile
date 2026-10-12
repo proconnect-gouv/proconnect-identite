@@ -42,6 +42,7 @@ COPY tsconfig.json vite.config.mjs ./
 COPY assets/ ./assets/
 COPY public/ ./public/
 COPY src/ ./src/
+COPY .env* ./
 COPY packages/ ./packages/
 COPY package*.json ./
 RUN npx run-s build:*
@@ -52,5 +53,6 @@ COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/dist /app/dist
 COPY --from=build /app/src /app/src
 COPY --from=build /app/packages /app/packages
+COPY --from=build /app/.env* /app/
 
 CMD [ "npm", "start" ]
