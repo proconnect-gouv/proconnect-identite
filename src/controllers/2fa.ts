@@ -1,7 +1,7 @@
 import {
   generateRecoveryWords,
   hashPassword,
-  normalizeRecoveryWords,
+  normalizeDicewareWords,
   validateRecoveryWords,
 } from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
@@ -249,7 +249,7 @@ export const postRecoveryWordsController = async (
 
     const recoveryWords = generateRecoveryWords();
     const hashedRecoveryWords = await hashPassword(
-      normalizeRecoveryWords(recoveryWords.join(" ")),
+      normalizeDicewareWords(recoveryWords.join(" ")),
     );
 
     await context.repository.recovery_codes.deleteAllByUserId(user_id);
@@ -280,6 +280,7 @@ export const getVerifyRecoveryWordsController = async (
 
     return res.render("verify-recovery-words", {
       pageTitle: "Vérifier vos mots de secours",
+      notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
     });
   } catch (error) {
@@ -306,11 +307,11 @@ export const postVerifyRecoveryWordsController = async (
 
     const isValid = await validateRecoveryWords(recovery_words, storedHash);
 
-    return res.render("verify-recovery-words", {
-      pageTitle: "Vérifier vos mots de secours",
-      isValid,
-      csrfToken: csrfToken(req),
-    });
+    return res.redirect(
+      `/recovery-words/verify?notification=${
+        isValid ? "recovery_words_valid" : "invalid_recovery_words"
+      }`,
+    );
   } catch (error) {
     next(error);
   }

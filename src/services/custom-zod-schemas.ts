@@ -4,9 +4,9 @@ import {
   isPhoneNumberValid,
   isSiretValid,
   isVisibleString,
+  normalizeDicewareWords,
 } from "@proconnect-gouv/proconnect.core/security";
 import { z } from "zod";
-import { normalizeOfficialContactEmailVerificationToken } from "./normalize-official-contact-email-verification-token";
 import { isNotificationLabelValid } from "./security";
 
 export const siretSchema = () =>
@@ -62,7 +62,7 @@ export const officialContactEmailVerificationTokenSchema = () =>
     .string()
     .trim()
     .min(1)
-    .transform((val) => normalizeOfficialContactEmailVerificationToken(val));
+    .transform((val) => normalizeDicewareWords(val));
 
 export const codeSchema = () =>
   z

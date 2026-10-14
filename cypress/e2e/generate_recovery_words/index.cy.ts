@@ -25,7 +25,7 @@ describe("generate recovery words", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
-    cy.contains("Générés le");
+    cy.contains("Création :");
 
     // verify with wrong words
     cy.contains("Vérifier mes mots de secours").click();
