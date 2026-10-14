@@ -2,15 +2,7 @@
     <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <h1 class="fr-h3">Vérifier vos mots de secours</h1>
-        <% if (typeof isValid !== "undefined") { %>
-            <div class="fr-alert fr-alert--<%= isValid ? 'success' : 'error' %> fr-mb-4w">
-            <p>
-                <%= isValid
-                ? "Vos mots de secours sont valides."
-                : "Ces mots ne correspondent pas à vos mots de secours." %>
-            </p>
-            </div>
-        <% } %>
+        <%- include('partials/notifications.ejs', {notifications: notifications}) %>
         <form method="post" action="/recovery-words/verify">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="fr-input-group">

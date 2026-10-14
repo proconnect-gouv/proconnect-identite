@@ -197,6 +197,15 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     description:
       "Information : votre organisation requiert la double authentification, qui réduit les risques de piratage.",
   },
+  recovery_words_valid: {
+    type: "success",
+    description: "Vos mots de secours sont valides.",
+  },
+  invalid_recovery_words: {
+    type: "error",
+    description:
+      "Erreur : ces mots ne correspondent pas à vos mots de secours.",
+  },
 };
 
 export default notificationMessages;

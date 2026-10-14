@@ -1,4 +1,4 @@
-import { generateDicewarePassword } from "@proconnect-gouv/proconnect.core/security";
+import { generateDicewarePhrase } from "@proconnect-gouv/proconnect.core/security";
 import { OfficialContactEmailVerification } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type {
@@ -135,7 +135,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     };
   }
 
-  const token = generateDicewarePassword();
+  const token = generateDicewarePhrase(2);
 
   await official_contact_email_verifications.upsert({
     organization_id,

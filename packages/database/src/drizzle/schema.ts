@@ -302,13 +302,12 @@ export const organizations = pgTable(
   ],
 );
 
-export const recovery_codes = pgTable(
-  "recovery_codes",
+export const recovery_words = pgTable(
+  "recovery_words",
   {
     id: serial().primaryKey().notNull(),
     user_id: integer().notNull(),
-    code: text().notNull(),
-    used_at: timestamp({ withTimezone: true, mode: "string" }),
+    hashed_words: text().notNull(),
     created_at: timestamp({ withTimezone: true, mode: "string" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -317,8 +316,9 @@ export const recovery_codes = pgTable(
     foreignKey({
       columns: [table.user_id],
       foreignColumns: [users.id],
-      name: "recovery_codes_user_id_fkey",
+      name: "recovery_words_user_id_fkey",
     }).onDelete("cascade"),
+    unique("recovery_words_user_id_key").on(table.user_id),
   ],
 );
 

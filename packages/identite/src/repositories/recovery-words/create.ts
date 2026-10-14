@@ -1,37 +1,28 @@
 //
 
-import type { DatabaseContext, RecoveryCode } from "#src/types";
+import type { DatabaseContext, RecoveryWords } from "#src/types";
 import { type QueryResult } from "pg";
 
 //
 
-export function createRecoveryCodesFactory({ pg }: DatabaseContext) {
-  return async function createRecoveryCodes({
+export function createRecoveryWordsFactory({ pg }: DatabaseContext) {
+  return async function createRecoveryWords({
     user_id,
-    codes,
+    hashed_words,
   }: {
     user_id: number;
-    codes: string[];
+    hashed_words: string;
   }) {
-    const values: string[] = [];
-    const params: any[] = [];
-
-    codes.forEach((code, index) => {
-      const offset = index * 2;
-      values.push(`($${offset + 1}, $${offset + 2}, NOW())`);
-      params.push(user_id, code);
-    });
-
-    const { rows }: QueryResult<RecoveryCode> = await pg.query(
+    const { rows }: QueryResult<RecoveryWords> = await pg.query(
       `
-        INSERT INTO recovery_codes
-            (user_id, code, created_at)
+        INSERT INTO recovery_words
+            (user_id, hashed_words)
         VALUES
-            ${values.join(", ")}
+            ($1, $2)
         RETURNING *;`,
-      params,
+      [user_id, hashed_words],
     );
 
-    return rows;
+    return rows.shift()!;
   };
 }

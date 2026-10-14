@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { normalizeOfficialContactEmailVerificationToken } from "../src/services/normalize-official-contact-email-verification-token";
+import { normalizeDicewareWords } from "./normalize-diceware-words.js";
 
-describe("normalizeOfficialContactEmailVerificationToken", () => {
+describe("normalizeDicewareWords", () => {
   const rawTokens = [
     "crème brûlée façon grand-mère",
     "Crème Brûlée fAçon Grand-Mère",
@@ -12,7 +12,7 @@ describe("normalizeOfficialContactEmailVerificationToken", () => {
   rawTokens.forEach((rawToken) => {
     it("should return normalized token", () => {
       assert.equal(
-        normalizeOfficialContactEmailVerificationToken(rawToken),
+        normalizeDicewareWords(rawToken),
         "creme-brulee-facon-grand-mere",
       );
     });

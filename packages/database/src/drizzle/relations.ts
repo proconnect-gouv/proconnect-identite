@@ -7,7 +7,7 @@ import {
   official_contact_email_verifications,
   oidc_clients,
   organizations,
-  recovery_codes,
+  recovery_words,
   users,
   users_oidc_clients,
   users_organizations,
@@ -25,7 +25,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   franceconnect_userinfos: many(franceconnect_userinfo),
   users_oidc_clients: many(users_oidc_clients),
   moderations: many(moderations),
-  recovery_codes: many(recovery_codes),
+  recovery_words: many(recovery_words),
   official_contact_email_verifications: many(
     official_contact_email_verifications,
   ),
@@ -92,9 +92,9 @@ export const moderationsRelations = relations(moderations, ({ one }) => ({
   }),
 }));
 
-export const recovery_codesRelations = relations(recovery_codes, ({ one }) => ({
+export const recovery_wordsRelations = relations(recovery_words, ({ one }) => ({
   user: one(users, {
-    fields: [recovery_codes.user_id],
+    fields: [recovery_words.user_id],
     references: [users.id],
   }),
 }));
