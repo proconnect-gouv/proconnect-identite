@@ -1,9 +1,8 @@
-export interface BaseRecoveryCode {
-  code: string;
-  used_at: Date | null;
+export interface BaseRecoveryWords {
+  hashed_words: string;
 }
 
-export interface RecoveryCode extends BaseRecoveryCode {
+export interface RecoveryWords extends BaseRecoveryWords {
   id: number;
   user_id: number;
   created_at: Date;

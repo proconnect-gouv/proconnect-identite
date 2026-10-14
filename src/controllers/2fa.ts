@@ -1,16 +1,13 @@
-import {
-  generateRecoveryWords,
-  hashPassword,
-  normalizeRecoveryWords,
-  validateRecoveryWords,
-} from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z } from "zod";
 import { UserIsNot2faCapableError } from "../config/errors";
-import { context } from "../connectors/context";
-import { disableForce2fa, enableForce2fa, is2FACapable } from "../managers/2fa";
-import { hasRecoveryWordsConfiguredForUser } from "../managers/recovery-words";
+import { disableForce2fa, enableForce2fa } from "../managers/2fa";
+import {
+  createRecoveryWordsForUser,
+  hasRecoveryWordsConfiguredForUser,
+  verifyRecoveryWordsForUser,
+} from "../managers/recovery-words";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -18,6 +15,7 @@ import {
 import { isTotpConfiguredForUser } from "../managers/totp";
 import { sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { recoveryWordsSchema } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 
 export const getDoubleAuthenticationController = async (
@@ -243,26 +241,16 @@ export const postRecoveryWordsController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    if (!(await is2FACapable(user_id))) {
-      return res.redirect("/connection-and-account");
-    }
-
-    const recoveryWords = generateRecoveryWords();
-    const hashedRecoveryWords = await hashPassword(
-      normalizeRecoveryWords(recoveryWords.join(" ")),
-    );
-
-    await context.repository.recovery_codes.deleteAllByUserId(user_id);
-    await context.repository.recovery_codes.create({
-      user_id,
-      codes: [hashedRecoveryWords],
-    });
+    const recoveryWords = await createRecoveryWordsForUser(user_id);
 
     return res.render("recovery-words", {
       pageTitle: "Sauvegarder vos mots de secours",
-      recoveryWords,
+      recoveryWords: recoveryWords.split("-"),
     });
   } catch (error) {
+    if (error instanceof UserIsNot2faCapableError) {
+      return next(new HttpErrors.UnprocessableEntity());
+    }
     next(error);
   }
 };
@@ -275,11 +263,12 @@ export const getVerifyRecoveryWordsController = async (
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
-      return res.redirect("/connection-and-account");
+      return next(new HttpErrors.UnprocessableEntity());
     }
 
     return res.render("verify-recovery-words", {
       pageTitle: "Vérifier vos mots de secours",
+      notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
     });
   } catch (error) {
@@ -295,22 +284,23 @@ export const postVerifyRecoveryWordsController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
+    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      return next(new HttpErrors.UnprocessableEntity());
+    }
+
     const schema = z.object({
-      recovery_words: z.string(),
+      recovery_words: recoveryWordsSchema(),
     });
 
     const { recovery_words } = await schema.parseAsync(req.body);
-    const [recoveryCode] =
-      await context.repository.recovery_codes.findByUserId(user_id);
-    const storedHash = recoveryCode?.code ?? null;
 
-    const isValid = await validateRecoveryWords(recovery_words, storedHash);
+    const isValid = await verifyRecoveryWordsForUser(user_id, recovery_words);
 
-    return res.render("verify-recovery-words", {
-      pageTitle: "Vérifier vos mots de secours",
-      isValid,
-      csrfToken: csrfToken(req),
-    });
+    return res.redirect(
+      `/recovery-words/verify?notification=${
+        isValid ? "recovery_words_valid" : "invalid_recovery_words"
+      }`,
+    );
   } catch (error) {
     next(error);
   }

@@ -47,9 +47,9 @@ import {
   upsertFactory,
 } from "#src/repositories/organization";
 import {
-  createRecoveryCodesFactory,
-  deleteAllRecoveryCodesByUserIdFactory,
-  findRecoveryCodesByUserIdFactory,
+  createRecoveryWordsFactory,
+  deleteRecoveryWordsByUserIdFactory,
+  findRecoveryWordsByUserIdFactory,
 } from "#src/repositories/recovery-words";
 import {
   createUserFactory,
@@ -139,10 +139,10 @@ export function createContext({
         getById: getOrganizationByIdFactory({ pg }),
         upsert: upsertFactory({ pg }),
       },
-      recovery_codes: {
-        create: createRecoveryCodesFactory({ pg }),
-        deleteAllByUserId: deleteAllRecoveryCodesByUserIdFactory({ pg }),
-        findByUserId: findRecoveryCodesByUserIdFactory({ pg }),
+      recovery_words: {
+        create: createRecoveryWordsFactory({ pg }),
+        deleteByUserId: deleteRecoveryWordsByUserIdFactory({ pg }),
+        findByUserId: findRecoveryWordsByUserIdFactory({ pg }),
       },
       users_organizations: {
         create: createUserOrganizationFactory({ pg }),

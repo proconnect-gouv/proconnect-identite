@@ -25,7 +25,7 @@ describe("generate recovery words", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
-    cy.contains("Générés le");
+    cy.contains("Création :");
 
     // verify with wrong words
     cy.contains("Vérifier mes mots de secours").click();
@@ -33,7 +33,9 @@ describe("generate recovery words", () => {
       "abandon cible gastrique abandon cible gastrique",
     );
     cy.contains("button", "Vérifier").click();
-    cy.contains("Ces mots ne correspondent pas à vos mots de secours.");
+    cy.contains(
+      "Erreur : ces mots ne correspondent pas à vos mots de secours.",
+    );
 
     // verify with the right words
     cy.get("@firstRecoveryWords").then((firstRecoveryWords) => {

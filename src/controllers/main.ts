@@ -27,7 +27,7 @@ import {
   nameSchema,
   phoneNumberSchema,
 } from "../services/custom-zod-schemas";
-import { formatDate, formatShortDate } from "../services/date-format";
+import { formatDate } from "../services/date-format";
 import { getNotificationsFromRequest } from "../services/get-notifications-from-request";
 
 const { users } = context.repository;
@@ -220,7 +220,7 @@ export const getConnectionAndAccountController = async (
       force2fa,
       hasRecoveryWordsConfigured,
       recoveryWordsCreatedAt: recoveryWordsCreatedAt
-        ? formatShortDate(recoveryWordsCreatedAt)
+        ? formatDate(recoveryWordsCreatedAt)
         : null,
     });
   } catch (error) {
