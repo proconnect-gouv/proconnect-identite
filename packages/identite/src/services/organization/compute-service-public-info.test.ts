@@ -10,9 +10,13 @@ import {
   onf_org_info,
   trackdechets_public_org_info,
 } from "#testing/seed/organizations";
+import * as AnnuaireEntreprises from "@proconnect-gouv/proconnect.annuaire_entreprises";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { computeServicePublicInfo } from "./compute-service-public-info.js";
+import { computeServicePublicInfoFactory } from "./compute-service-public-info.js";
+
+const computeServicePublicInfo =
+  computeServicePublicInfoFactory(AnnuaireEntreprises);
 
 describe("computeServicePublicInfo", () => {
   it("should return false for bad call", () => {
