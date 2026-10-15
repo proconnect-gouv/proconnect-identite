@@ -23,4 +23,10 @@ describe("GenerarateDicewarePassword", () => {
     ]);
     assert.equal(generatePassword(), "abandon-cible-gastrique");
   });
+
+  it("should reroll dice that land on a removed word", () => {
+    const rolls: Array<"12145" | "12146"> = ["12145", "12146"];
+    const generatePassword = GenerarateDicewarePassword([() => rolls.shift()!]);
+    assert.equal(generatePassword(), "amertume");
+  });
 });
