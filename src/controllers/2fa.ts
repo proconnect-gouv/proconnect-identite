@@ -4,12 +4,18 @@ import { z } from "zod";
 import { UserIsNot2faCapableError } from "../config/errors";
 import { disableForce2fa, enableForce2fa } from "../managers/2fa";
 import {
+  createRecoveryWordsForUser,
+  hasRecoveryWordsConfiguredForUser,
+  verifyRecoveryWordsForUser,
+} from "../managers/recovery-words";
+import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import { sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
+import { recoveryWordsSchema } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 
 export const getDoubleAuthenticationController = async (
@@ -223,6 +229,79 @@ export const postSetForce2faController = async (
       return next(new HttpErrors.UnprocessableEntity());
     }
 
+    next(error);
+  }
+};
+
+export const postRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    const recoveryWords = await createRecoveryWordsForUser(user_id);
+
+    return res.render("recovery-words", {
+      pageTitle: "Sauvegarder vos mots de secours",
+      recoveryWords: recoveryWords.split("-"),
+    });
+  } catch (error) {
+    if (error instanceof UserIsNot2faCapableError) {
+      return next(new HttpErrors.UnprocessableEntity());
+    }
+    next(error);
+  }
+};
+export const getVerifyRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      return next(new HttpErrors.UnprocessableEntity());
+    }
+
+    return res.render("verify-recovery-words", {
+      pageTitle: "Vérifier vos mots de secours",
+      notifications: await getNotificationsFromRequest(req),
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postVerifyRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      return next(new HttpErrors.UnprocessableEntity());
+    }
+
+    const schema = z.object({
+      recovery_words: recoveryWordsSchema(),
+    });
+
+    const { recovery_words } = await schema.parseAsync(req.body);
+
+    const isValid = await verifyRecoveryWordsForUser(user_id, recovery_words);
+
+    return res.redirect(
+      `/recovery-words/verify?notification=${
+        isValid ? "recovery_words_valid" : "invalid_recovery_words"
+      }`,
+    );
+  } catch (error) {
     next(error);
   }
 };

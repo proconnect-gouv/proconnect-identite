@@ -1,6 +1,6 @@
 //
 
-export * from "./generate-diceware-password.js";
+export * from "./generate-diceware-phrase.js";
 export * from "./generate-pin-token.js";
 export * from "./generate-token.js";
 export * from "./get-trusted-referrer-path-from-request.js";
@@ -13,4 +13,6 @@ export * from "./is-password-secure.js";
 export * from "./is-phone-number-valid.js";
 export * from "./is-siret-valid.js";
 export * from "./is-visible-string.js";
+export * from "./normalize-diceware-words.js";
 export * from "./validate-password.js";
+export * from "./validate-recovery-words.js";

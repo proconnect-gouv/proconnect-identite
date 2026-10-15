@@ -4,6 +4,10 @@ import { context } from "../connectors/context";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
 import {
+  getRecoveryWordsCreatedAt,
+  hasRecoveryWordsConfiguredForUser,
+} from "../managers/recovery-words";
+import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
@@ -197,6 +201,9 @@ export const getConnectionAndAccountController = async (
     const is2faCapable = await is2FACapable(user_id);
     const isVerifiedWithFranceConnect =
       await hasValidFranceConnectIdentity(user_id);
+    const hasRecoveryWordsConfigured =
+      await hasRecoveryWordsConfiguredForUser(user_id);
+    const recoveryWordsCreatedAt = await getRecoveryWordsCreatedAt(user_id);
 
     return res.render("connection-and-account", {
       pageTitle: "Compte et connexion",
@@ -211,6 +218,10 @@ export const getConnectionAndAccountController = async (
       csrfToken: csrfToken(req),
       is2faCapable,
       force2fa,
+      hasRecoveryWordsConfigured,
+      recoveryWordsCreatedAt: recoveryWordsCreatedAt
+        ? formatDate(recoveryWordsCreatedAt)
+        : null,
     });
   } catch (error) {
     next(error);
