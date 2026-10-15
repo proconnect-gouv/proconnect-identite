@@ -12,7 +12,7 @@ describe("GenerarateDicewarePassword", () => {
       () => "11111",
       () => "22222",
     ]);
-    assert.equal(generatePassword(), "abandon-cible");
+    assert.equal(generatePassword(), "abandon-cireuse");
   });
 
   it("should generate three words", () => {
@@ -21,6 +21,6 @@ describe("GenerarateDicewarePassword", () => {
       () => "22222",
       () => "33333",
     ]);
-    assert.equal(generatePassword(), "abandon-cible-gastrique");
+    assert.equal(generatePassword(), "abandon-cireuse-gazette");
   });
 });
