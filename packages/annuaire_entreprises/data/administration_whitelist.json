@@ -2468,5 +2468,20 @@
     "siren": "181337148",
     "denomination": "GIP CICRP BELLE DE MAI",
     "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "193301595",
+    "denomination": "CENTRE DE RESSOURCES D EXPERTISE ET DE PERFORMANCE SPORTIVE",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "301365847",
+    "denomination": "ETABLISSEMENT PUBLIC FONCIER DE GRAND EST",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "775665599",
+    "denomination": "AGENCE FRANCAISE DE DEVELOPPEMENT",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   }
 ]
