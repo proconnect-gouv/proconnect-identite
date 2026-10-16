@@ -90,10 +90,10 @@ jobs:
           add-paths: |
             .changeset/*.md
             packages/annuaire_entreprises/data/*.json
-          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           branch: github-actions/sync-grist
           commit-message: "⬆️ Synchronisation du Grist contenant la liste des administrations"
           delete-branch: true
+          sign-commits: true
           title: "⬆️ Synchronisation du Grist contenant la liste des administrations"
           body: |
             <div align=center><img src="https://github.com/annuaire-entreprises-data-gouv-fr/site/raw/main/public/images/annuaire-entreprises-paysage-large.gif" /></div>
