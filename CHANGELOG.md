@@ -1,5 +1,19 @@
 # Changelog
 
+## [2026.10.7](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.6...2026.10.7) (2026-10-16)
+
+### Modifié
+
+- 🔧 sign bot pull request commits ([#2268](https://github.com/proconnect-gouv/proconnect-identite/issues/2268)) ([5956df6](https://github.com/proconnect-gouv/proconnect-identite/commit/5956df63ca9a7e9b4ea24908a49b77be89d2d57f))
+
+### Dépendances
+
+- ⬆️ Synchronisation du Grist contenant la liste des administrations ([#2264](https://github.com/proconnect-gouv/proconnect-identite/issues/2264)) ([9cf1e2a](https://github.com/proconnect-gouv/proconnect-identite/commit/9cf1e2a369907ac811b005c5e0d20f5681368ec3))
+
+### Divers
+
+- 💬 Remove offensive and sensitive words from diceware word list ([a8fb327](https://github.com/proconnect-gouv/proconnect-identite/commit/a8fb327ad6de45523438cf1a6420e1ca2055a16b))
+
 ## [2026.10.6](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.5...2026.10.6) (2026-10-12)
 
 ### Changements
