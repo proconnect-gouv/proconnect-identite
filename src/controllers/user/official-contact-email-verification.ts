@@ -1,12 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
+import { match, P } from "ts-pattern";
 import { z } from "zod";
-import {
-  ApiAnnuaireError,
-  InvalidTokenError,
-  OfficialContactEmailVerificationNotNeededError,
-} from "../../config/errors";
+import { ApiAnnuaireError, InvalidTokenError } from "../../config/errors";
 import { context } from "../../connectors/context";
 import { selectOrganization } from "../../managers/organization/main";
 import {
@@ -50,13 +47,35 @@ export const getOfficialContactEmailVerificationController = async (
       query: req.query,
     });
 
-    const { codeSent, contactEmail, libelle } =
-      await sendOfficialContactEmailVerificationEmail({
-        user_id: getUserFromAuthenticatedSession(req).id,
-        organization_id,
-        checkBeforeSend: true,
-        selectedContactEmail: contact_email,
-      });
+    const outcome = await sendOfficialContactEmailVerificationEmail({
+      user_id: getUserFromAuthenticatedSession(req).id,
+      organization_id,
+      checkBeforeSend: true,
+      selectedContactEmail: contact_email,
+    });
+
+    if (outcome.kind !== "verification_pending") {
+      return match(outcome)
+        .with({ kind: "not_needed" }, () => {
+          req.session.pendingOfficialContactEmailVerificationOrganizationId =
+            undefined;
+          return res.redirect(
+            `/users/join-organization?notification=official_contact_email_verification_not_needed`,
+          );
+        })
+        .with(
+          {
+            kind: P.union(
+              "contact_email_choice_needed",
+              "contact_email_mismatch",
+            ),
+          },
+          () => res.redirect(`/users/official-contact-ask-which-email`),
+        )
+        .exhaustive();
+    }
+
+    const { codeSent, contactEmail, libelle } = outcome;
 
     return res.render("user/official-contact-email-verification", {
       pageTitle: "Vérifier votre email",
@@ -72,11 +91,6 @@ export const getOfficialContactEmailVerificationController = async (
   } catch (error) {
     req.session.pendingOfficialContactEmailVerificationOrganizationId =
       undefined;
-    if (error instanceof OfficialContactEmailVerificationNotNeededError) {
-      return res.redirect(
-        `/users/join-organization?notification=official_contact_email_verification_not_needed`,
-      );
-    }
 
     if (error instanceof ApiAnnuaireError) {
       return res.redirect(

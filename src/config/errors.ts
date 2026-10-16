@@ -191,28 +191,12 @@ export class ApiAnnuaireInvalidEmailError extends Error {
   }
 }
 
-export class ApiAnnuaireSeveralMairiesMatchesError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ApiAnnuaireSeveralMairiesMatchesError";
-  }
-}
-
-export class ApiAnnuaireContactEmailMismatchError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ApiAnnuaireContactEmailMismatchError";
-  }
-}
-
 export class ApiAnnuaireConnectionError extends Error {
   constructor(message?: string, options?: ErrorOptions) {
     super(message, options);
     this.name = "ApiAnnuaireConnectionError";
   }
 }
-
-export class OfficialContactEmailVerificationNotNeededError extends Error {}
 
 export class WebauthnRegistrationFailedError extends Error {}
 
