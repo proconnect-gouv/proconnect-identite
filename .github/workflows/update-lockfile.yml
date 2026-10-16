@@ -40,10 +40,10 @@ jobs:
         uses: peter-evans/create-pull-request@v8
         with:
           add-paths: package-lock.json
-          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           branch: github-actions/update-lockfile
           commit-message: "🔒 chore: update package-lock.json"
           delete-branch: true
+          sign-commits: true
           title: "🔒 chore: update package-lock.json"
           body: |
             Automated monthly refresh of `package-lock.json` to update transitive dependencies within their semver ranges.
