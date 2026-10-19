@@ -15,4 +15,3 @@ export * from "./is-siret-valid.js";
 export * from "./is-visible-string.js";
 export * from "./normalize-diceware-words.js";
 export * from "./validate-password.js";
-export * from "./validate-recovery-words.js";

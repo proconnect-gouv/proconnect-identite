@@ -2,7 +2,7 @@ import {
   generateDicewarePhrase,
   hashPassword,
   normalizeDicewareWords,
-  validateRecoveryWords,
+  validatePassword,
 } from "@proconnect-gouv/proconnect.core/security";
 import { UserIsNot2faCapableError } from "../config/errors";
 import { context } from "../connectors/context";
@@ -46,5 +46,5 @@ export const verifyRecoveryWordsForUser = async (
   const recoveryWords =
     await context.repository.recovery_words.findByUserId(user_id);
 
-  return validateRecoveryWords(input, recoveryWords?.hashed_words ?? null);
+  return validatePassword(input, recoveryWords?.hashed_words ?? null);
 };

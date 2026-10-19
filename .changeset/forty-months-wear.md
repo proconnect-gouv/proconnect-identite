@@ -2,4 +2,4 @@
 "@proconnect-gouv/proconnect.identite.database": minor
 ---
 
-Add recovery_words table for backup authentication codes
+Ajoute la table recovery_words pour les mots de récupération
