@@ -319,5 +319,7 @@ describe("signed-in user with a pending certification dirigeant", function () {
     cy.contains("S’identifier avec ProConnect").click();
 
     cy.location("pathname").should("equal", "/users/franceconnect");
+    cy.contains('"amr"').should("not.exist");
+    cy.contains('"acr"').should("not.exist");
   });
 });

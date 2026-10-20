@@ -63,6 +63,8 @@ describe("sign-in with 2FA forced by organization", () => {
     cy.contains("S’identifier avec ProConnect").click();
 
     cy.contains("Valider avec la double authentification");
+    cy.contains('"amr"').should("not.exist");
+    cy.contains('"acr"').should("not.exist");
   });
 
   it("should not force 2FA when the user selects a non listed organization", function () {
