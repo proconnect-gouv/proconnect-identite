@@ -62,7 +62,9 @@ export const processPendingModerationGuard = async (
   );
 };
 
-export const process = async (prev: Pass<RequestContext>) => {
+export const processPendingCertificationDirigeantGuard = async (
+  prev: Pass<RequestContext>,
+) => {
   const {
     data: { req },
     pass,

@@ -16,11 +16,11 @@ import {
 } from "./guards";
 import { type GuardResult, Pass, type RequestContext } from "./internals";
 import {
-  process,
   processGreetingsForSelectedOrganizationGuard,
   processOfficialContactEmailVerificationGuard,
+  processPendingCertificationDirigeantGuard,
   processPendingModerationGuard,
-} from "./process";
+} from "./processPendingCertificationDirigeantGuard";
 
 export const userCanAccessAppGuard = async (prev: Pass<RequestContext>) => {
   let context;
@@ -98,7 +98,7 @@ export async function userComplyWithAllRequirementsGuard(
       processPendingModerationGuard(context),
     )
     .with({ pendingCertificationDirigeantOrganizationId: P.number }, () =>
-      process(context),
+      processPendingCertificationDirigeantGuard(context),
     )
     .with(
       { pendingOfficialContactEmailVerificationOrganizationId: P.number },
