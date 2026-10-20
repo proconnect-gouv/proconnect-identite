@@ -296,3 +296,28 @@ describe("connected user should go through the certification flow", function () 
     cy.contains("Je suis Marie Héricart").click();
   });
 });
+
+describe("signed-in user with a pending certification dirigeant", function () {
+  before(cy.seed);
+
+  it("should resume the certification on the next sign-in", function () {
+    cy.visit("http://localhost:4000");
+    cy.contains("S’identifier avec ProConnect").click();
+
+    cy.login("no-franceconnect+already-in-org@yopmail.com");
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains('"email": "no-franceconnect+already-in-org@yopmail.com"');
+
+    cy.visit("http://localhost:4000");
+    cy.contains("Forcer une connexion par certification dirigeant").click();
+
+    cy.title().should("include", "Certification dirigeant - ");
+    cy.contains("Certifier votre statut");
+
+    cy.visit("http://localhost:4000");
+    cy.contains("S’identifier avec ProConnect").click();
+
+    cy.location("pathname").should("equal", "/users/franceconnect");
+  });
+});

@@ -37,6 +37,34 @@ describe("sign-in with 2FA forced by organization", () => {
     cy.contains('"amr": [\n    "pwd",\n    "otp",\n    "mfa"\n  ],');
   });
 
+  it.only("should not skip the 2FA of an organization selected without completing it", function () {
+    cy.visit("http://localhost:4000");
+    cy.contains("S’identifier avec ProConnect").click();
+
+    cy.login("both-kinds-of-org@example.com");
+
+    cy.title().should("include", "Choisir une organisation - ");
+    cy.getByLabel(
+      "Commune de clamart - Mairie (choisir cette organisation)",
+    ).click();
+
+    cy.contains('"amr": [\n    "pwd"\n  ],');
+
+    cy.contains("button", "Changer d’organisation").click();
+
+    cy.title().should("include", "Choisir une organisation - ");
+    cy.getByLabel(
+      "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
+    ).click();
+
+    cy.contains("Valider avec la double authentification");
+
+    cy.visit("http://localhost:4000");
+    cy.contains("S’identifier avec ProConnect").click();
+
+    cy.contains("Valider avec la double authentification");
+  });
+
   it("should not force 2FA when the user selects a non listed organization", function () {
     cy.visit("http://localhost:4000");
     cy.contains("S’identifier avec ProConnect").click();
