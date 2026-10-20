@@ -19,7 +19,7 @@ describe("sign-in with 2FA forced by organization", () => {
     cy.contains('"amr": [\n    "pwd"\n  ],');
   });
 
-  it.only("should force 2FA when the user selects a listed organization", function () {
+  it("should force 2FA when the user selects a listed organization", function () {
     cy.visit("http://localhost:4000");
     cy.contains("S’identifier avec ProConnect").click();
 
