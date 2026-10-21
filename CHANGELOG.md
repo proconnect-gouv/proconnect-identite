@@ -1,5 +1,35 @@
 # Changelog
 
+## [2026.10.7](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.6...2026.10.7) (2026-10-21)
+
+### Changements
+
+- ✨ Régénérer et vérifier ses mots de secours depuis la page « Compte et connexion » ; après une régénération, les anciens mots ne fonctionnent plus
+
+### Ajouté
+
+- ✨ Create section & page recovery code ([#2172](https://github.com/proconnect-gouv/proconnect-identite/issues/2172)) ([679aa8a](https://github.com/proconnect-gouv/proconnect-identite/commit/679aa8a857070ae1e361142f1279a130e4c8f222))
+
+### Modifié
+
+- 💄 Warn users about the hosting provider security maintenance ([020f07f](https://github.com/proconnect-gouv/proconnect-identite/commit/020f07f435956786891606577495a91248c1cd2f))
+- ♻️ Restore the `processPendingCertificationDirigeantGuard` name ([7dacd97](https://github.com/proconnect-gouv/proconnect-identite/commit/7dacd97fe915470791999c1b54dbf5ca4065d37c))
+- 🔧 sign bot pull request commits ([#2268](https://github.com/proconnect-gouv/proconnect-identite/issues/2268)) ([5956df6](https://github.com/proconnect-gouv/proconnect-identite/commit/5956df63ca9a7e9b4ea24908a49b77be89d2d57f))
+
+### Dépendances
+
+- :arrow_up: Bump follow-redirects from 1.16.0 to 1.16.1 ([#2277](https://github.com/proconnect-gouv/proconnect-identite/issues/2277)) ([90dfd77](https://github.com/proconnect-gouv/proconnect-identite/commit/90dfd771d821d3112bca22426735f5e6d98c512a))
+- :arrow_up: Bump hono from 4.13.7 to 4.13.11 ([#2278](https://github.com/proconnect-gouv/proconnect-identite/issues/2278)) ([156b3ef](https://github.com/proconnect-gouv/proconnect-identite/commit/156b3efc3fb899fc5087f62bfade435beae579cf))
+- :arrow_up: Bump moment-timezone from 0.6.3 to 0.6.5 ([#2271](https://github.com/proconnect-gouv/proconnect-identite/issues/2271)) ([a923d8b](https://github.com/proconnect-gouv/proconnect-identite/commit/a923d8b3cb683fdda8d2534889db32664f32e39b))
+- :arrow_up: Bump helmet from 8.1.0 to 8.3.0 ([#2272](https://github.com/proconnect-gouv/proconnect-identite/issues/2272)) ([731293c](https://github.com/proconnect-gouv/proconnect-identite/commit/731293c40c36a81ab78406e71dd4a5c6192af85a))
+- :arrow_up: Bump openid-client from 6.8.2 to 6.8.8 ([#2273](https://github.com/proconnect-gouv/proconnect-identite/issues/2273)) ([48afb32](https://github.com/proconnect-gouv/proconnect-identite/commit/48afb32ffc854877380d256a84e35723618002e5))
+- ⬆️ Synchronisation du Grist contenant la liste des administrations ([#2264](https://github.com/proconnect-gouv/proconnect-identite/issues/2264)) ([9cf1e2a](https://github.com/proconnect-gouv/proconnect-identite/commit/9cf1e2a369907ac811b005c5e0d20f5681368ec3))
+
+### Divers
+
+- ✅ run every forced 2fa e2e case ([f9b96f6](https://github.com/proconnect-gouv/proconnect-identite/commit/f9b96f69e57a620cac2d839b0309859bdf6a561a))
+- 💬 Remove offensive and sensitive words from diceware word list ([a8fb327](https://github.com/proconnect-gouv/proconnect-identite/commit/a8fb327ad6de45523438cf1a6420e1ca2055a16b))
+
 ## [2026.10.6](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.5...2026.10.6) (2026-10-12)
 
 ### Changements
