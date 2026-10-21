@@ -1,9 +1,13 @@
+import * as AnnuaireEntreprises from "@proconnect-gouv/proconnect.annuaire_entreprises";
 import { isDomainValid } from "@proconnect-gouv/proconnect.core/security";
 import {
-  computeServicePublicInfo,
+  computeServicePublicInfoFactory,
   isEntrepriseUnipersonnelle,
 } from "@proconnect-gouv/proconnect.identite/services/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
+
+export const computeServicePublicInfo =
+  computeServicePublicInfoFactory(AnnuaireEntreprises);
 
 export const isSmallOrganization = ({
   cached_libelle_categorie_juridique,
