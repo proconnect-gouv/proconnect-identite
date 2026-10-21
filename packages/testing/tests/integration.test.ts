@@ -98,6 +98,14 @@ describe("entreprise.api.gouv.fr", () => {
     equal(await response.text(), "ok");
   });
 
+  it("GET /v3/insee/sirene/etablissements/00000000000000 --> 500 Internal Server Error", async () => {
+    using http = await HttpTestingServer();
+    const response = await http.fetch(
+      "/entreprise.api.gouv.fr/v3/insee/sirene/etablissements/00000000000000",
+    );
+    equal(response.status, 500);
+  });
+
   it("GET /v3/infogreffe/rcs/unites_legales/213401268/mandataires_sociaux --> 200 OK", async () => {
     using http = await HttpTestingServer();
     const response = await http.fetch(

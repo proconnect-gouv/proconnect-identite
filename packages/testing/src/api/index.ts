@@ -21,9 +21,6 @@ export function createTestingHandler(
     .route("/", router)
     .notFound(function notFound() {
       return new Response("404 Not Found", { status: 404 });
-    })
-    .onError(function errorHandler(error, { json }) {
-      return json(error);
     });
   return getRequestListener(function fetchCallback(request, env) {
     return app.request(request, {}, { ...env, ...context });
