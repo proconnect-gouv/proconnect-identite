@@ -32,6 +32,8 @@ export default new Hono()
     ),
     async ({ text, req }) => {
       const { siret } = req.valid("param");
+      if (!TESTING_ENTREPRISE_API_SIRETS.includes(siret))
+        throw new Error(`Unknown siret ${siret}`);
       return text(
         await readFile(join(import.meta.dirname, `${siret}.json`), "utf8"),
       );

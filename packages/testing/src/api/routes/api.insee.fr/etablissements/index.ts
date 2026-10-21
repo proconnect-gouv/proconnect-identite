@@ -42,6 +42,8 @@ export default new Hono()
     ),
     async ({ text, req }) => {
       const { siren } = req.valid("param");
+      if (!TESTING_INSEE_API_SIRENS.includes(siren))
+        throw new Error(`Unknown siren ${siren}`);
       return text(
         await readFile(join(import.meta.dirname, `${siren}.json`), "utf8"),
       );
@@ -57,6 +59,8 @@ export default new Hono()
     ),
     async ({ text, req }) => {
       const { siret } = req.valid("param");
+      if (!TESTING_INSEE_API_SIRETS.includes(siret))
+        throw new Error(`Unknown siret ${siret}`);
       return text(
         await readFile(join(import.meta.dirname, `${siret}.json`), "utf8"),
       );
