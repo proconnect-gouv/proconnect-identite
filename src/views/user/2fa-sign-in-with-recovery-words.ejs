@@ -1,0 +1,35 @@
+<div>
+    <%- include('../partials/notifications.ejs', {notifications: notifications, noWrapperDiv: true}) %>
+    <h1 class="fr-h3">
+        Utiliser vos mots de secours
+    </h1>
+    <p>
+        Vous n’avez plus accès à votre méthode de connexion renforcée (2FA).
+    </p>
+    <p>
+        Veuillez entrer les 6 mots de secours que vous avez dû sauvegarder,
+        imprimer ou noter, pour récupérer l’accès à votre compte.
+    </p>
+
+    <form action="/users/2fa-sign-in-with-recovery-words" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
+        <div class="fr-input-group">
+            <label class="fr-label" for="recovery-words">
+                Mots de secours
+            </label>
+            <input
+                id="recovery-words"
+                class="fr-input"
+                type="text"
+                name="recovery_words"
+                required
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                autofocus
+            >
+        </div>
+        <%- include('../partials/submit-button.ejs', {label: 'Continuer'}) %>
+    </form>
+    <%- include('../partials/go-back.ejs') %>
+</div>

@@ -11,10 +11,10 @@
                 <span class="fr-sr-only">Votre email :</span>
                 <strong><%= email; %></strong>
                 <a
-                        class="fr-btn fr-btn--close"
-                        title="Changer d’adresse email"
-                        href="/users/start-sign-in"
-                        id="change-email-address"
+                    class="fr-btn fr-btn--close"
+                    title="Changer d’adresse email"
+                    href="/users/start-sign-in"
+                    id="change-email-address"
                 >
                     Changer d’adresse email
                 </a>
@@ -28,24 +28,23 @@
     <% if (showsTotpSection) { %>
         <form action="/users/2fa-sign-in-with-totp" method="post" class="fr-mb-5w">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
-
             <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
                 <label class="fr-label" for="totpToken">
                     Obtenir un code à usage unique depuis votre application mobile.
                 </label>
                 <input
-                        id="totpToken"
-                        class="fr-input"
-                        type="text"
-                        name="totpToken"
-                        required
-                        pattern="^(\s*\d){6}$"
-                        title="code composé de 6 chiffres"
-                        autocomplete="one-time-code"
-                        autofocus
-                        <% if (locals.hasCodeError) { %>
-                        aria-describedby="email-error"
-                        <% } %>
+                    id="totpToken"
+                    class="fr-input"
+                    type="text"
+                    name="totpToken"
+                    required
+                    pattern="^(\s*\d){6}$"
+                    title="code composé de 6 chiffres"
+                    autocomplete="one-time-code"
+                    autofocus
+                    <% if (locals.hasCodeError) { %>
+                    aria-describedby="email-error"
+                    <% } %>
                 >
                 <% if (locals.hasCodeError) { %>
                     <p class="fr-error-text" id="email-error" role="alert">
@@ -74,8 +73,8 @@
                 le verrouillage de l'écran pour valider votre identité.
             </p>
             <button
-                    class="fr-btn btn--fullwidth fr-mb-2w fr-btn--secondary fr-btn--icon-left fr-icon-lock-unlock-line"
-                    id="webauthn-btn-begin-authentication"
+                class="fr-btn btn--fullwidth fr-btn--secondary fr-btn--icon-left fr-icon-lock-unlock-line"
+                id="webauthn-btn-begin-authentication"
             >
                 Se connecter avec une clé d’accès
             </button>
@@ -86,6 +85,16 @@
             <button type="submit" class="fr-btn"></button>
         </form>
         <script type="module" src="<%= js('webauthn-authentication.js') %>"></script>
+    <% } %>
+    <% if (showsRecoveryWordsSection) { %>
+        <div class="fr-mt-3w fr-grid-row fr-grid-row--center">
+            <a
+                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-question-line"
+                href="/users/2fa-sign-in-with-recovery-words"
+            >
+                Vous n’avez pas accès à cette méthode ?
+            </a>
+        </div>
     <% } %>
     <%- include('../partials/go-back.ejs') %>
 </div>
