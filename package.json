@@ -48,6 +48,7 @@
     "test:unit:runner": "tsx --env-file=.env.test --test --test-reporter=spec",
     "test:workspaces": "npm run test --if-present --workspaces",
     "update-one-mocked-organization": "UPDATE_SNAPSHOT=True tsx mocks/entreprise.api.gouv.fr/add-establishment.ts",
+    "update-matomo-container": "tsx scripts/update-matomo-container.ts",
     "update-organization-info": "tsx scripts/update-organizations-info.ts",
     "version-packages": "changeset version && npm install --package-lock-only",
     "watch:assets": "NODE_ENV=development vite build --clearScreen false --watch",
