@@ -20,6 +20,11 @@ import {
 import { postSignInWithTotpController } from "../controllers/totp";
 import { postDeleteUserController } from "../controllers/user/delete";
 
+import {
+  getAccountRecoveredController,
+  getSignInWithRecoveryWordsController,
+  postSignInWithRecoveryWordsController,
+} from "../controllers/2fa";
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
 import {
   postCancelModerationAndRedirectControllerFactory,
@@ -247,6 +252,27 @@ export const userRouter = () => {
     postVerifySecondFactorAuthenticationController,
     userComplyWithAllRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
+  );
+
+  userRouter.get(
+    "/2fa-sign-in-with-recovery-words",
+    userCanBePromptedForMfaGuardMiddleware,
+    csrfProtectionMiddleware,
+    getSignInWithRecoveryWordsController,
+  );
+
+  userRouter.post(
+    "/2fa-sign-in-with-recovery-words",
+    userCanBePromptedForMfaGuardMiddleware,
+    csrfProtectionMiddleware,
+    authenticatorRateLimiterMiddleware,
+    postSignInWithRecoveryWordsController,
+  );
+
+  userRouter.get(
+    "/account-recovered",
+    userCanSetupMfaGuardMiddleware,
+    getAccountRecoveredController,
   );
 
   userRouter.get(
