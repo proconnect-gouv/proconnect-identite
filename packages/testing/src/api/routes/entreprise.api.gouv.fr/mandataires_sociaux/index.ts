@@ -34,6 +34,8 @@ export default new Hono()
     ),
     async ({ text, req }) => {
       const { siren } = req.valid("param");
+      if (!TESTING_ENTREPRISE_API_MANDATAIRES_SIREN.includes(siren))
+        throw new Error(`Unknown siren ${siren}`);
       return text(
         await readFile(join(import.meta.dirname, `${siren}.json`), "utf8"),
         200,

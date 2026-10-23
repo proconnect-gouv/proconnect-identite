@@ -30,6 +30,7 @@ export default new Hono()
     ),
     async ({ text, req, notFound }) => {
       const { siren } = req.valid("param");
+      if (!TESTING_RNE_API_SIRENS.includes(siren)) return notFound();
       const filepath = join(import.meta.dirname, `${siren}.json`);
       try {
         const fileContent = await readFile(filepath, "utf8");

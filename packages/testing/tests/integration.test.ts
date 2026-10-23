@@ -125,6 +125,22 @@ describe("entreprise.api.gouv.fr", () => {
     const body = (await response.json()) as { data: any[] };
     ok(Array.isArray(body.data));
   });
+
+  it("GET /v3/insee/sirene/etablissements/..%2F<path> --> does not read outside fixtures", async () => {
+    using http = await HttpTestingServer();
+    const response = await http.fetch(
+      "/entreprise.api.gouv.fr/v3/insee/sirene/etablissements/..%2F..%2F..%2F..%2F..%2Fpackage",
+    );
+    ok(!(await response.text()).includes("proconnect.testing"));
+  });
+
+  it("GET /v3/infogreffe/rcs/unites_legales/..%2F<path>/mandataires_sociaux --> 422", async () => {
+    using http = await HttpTestingServer();
+    const response = await http.fetch(
+      "/entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/..%2F..%2F..%2F..%2F..%2Fpackage/mandataires_sociaux",
+    );
+    equal(response.status, 422);
+  });
 });
 
 //
