@@ -12,6 +12,7 @@ jwks.json
 .vscode
 
 cypress/downloads
+cypress/logs
 cypress/screenshots
 cypress/videos
 !cypress/e2e/*/fixtures.sql

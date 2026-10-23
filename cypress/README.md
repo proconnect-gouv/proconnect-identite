@@ -42,6 +42,17 @@ On your host, run the tests:
 npm run e2e:run <my_cypress_test_case>
 ```
 
+### Run all test cases sequentially
+
+With `docker compose up --wait` running and nothing listening on port 3000:
+
+```bash
+npm run test:e2e:all
+```
+
+You can also pass a subset of test cases: `npm run test:e2e:all -- signin_with_totp reset_password`.
+Server logs are written to `cypress/logs/<test_case>.log`.
+
 ### Setup database for a specific test case
 
 Load the specific fixtures in the database using
