@@ -10,13 +10,13 @@ import { to } from "await-to-js";
 import { isEmpty, omitBy } from "lodash-es";
 import type { FindAccount } from "oidc-provider";
 import { context } from "../connectors/context";
-import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
 import { logger } from "./log";
+import { findAuthorizedOrganization } from "./oidc-authorized-organization";
 import { isCommune } from "./organization";
 
 const { organizations, users } = context.repository;
 
-export const findAccount: FindAccount = async (_ctx, sub) => {
+export const findAccount: FindAccount = async (ctx, sub, token) => {
   const user = await users.findById(parseInt(sub, 10));
 
   if (isEmpty(user)) {
@@ -62,25 +62,25 @@ export const findAccount: FindAccount = async (_ctx, sub) => {
 
       const userOrganizations = await organizations.findByUserId(id);
 
-      const [selectedOrganizationIdErr, selectedOrganizationId] = await to(
-        getSelectedOrganizationId(id),
+      const [authorizedOrganizationErr, authorized] = await to(
+        findAuthorizedOrganization(ctx, token),
       );
 
-      if (selectedOrganizationIdErr) {
+      if (authorizedOrganizationErr) {
         // This Error will be silently swallowed by oidc-provider.
         // We add additional logs to keep traces.
-        logger.error(selectedOrganizationIdErr);
-        Sentry.captureException(selectedOrganizationIdErr);
+        logger.error(authorizedOrganizationErr);
+        Sentry.captureException(authorizedOrganizationErr);
         // this will result in a 400 Bad Request
         // Response: {
         //    "error": "invalid_grant",
         //    "error_description": "grant request is invalid"
         // }
-        throw selectedOrganizationIdErr;
+        throw authorizedOrganizationErr;
       }
 
       const organization = userOrganizations.find(
-        ({ id }) => id === selectedOrganizationId,
+        ({ id }) => id === authorized?.organizationId,
       );
 
       if (isEmpty(organization)) {

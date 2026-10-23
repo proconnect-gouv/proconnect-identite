@@ -14,10 +14,6 @@ import { match, P } from "ts-pattern";
 import { RECENT_LOGIN_INTERVAL_IN_SECONDS } from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
 import { context } from "../../connectors/context";
-import {
-  deleteSelectedOrganizationId,
-  getSelectedOrganizationId,
-} from "../../repositories/redis/selected-organization";
 import { isExpiredInSeconds } from "../../services/is-expired";
 import {
   addAuthenticationMethodReference,
@@ -74,10 +70,6 @@ export const createAuthenticatedSession = async (
     spName,
     siretHint,
   } = req.session;
-
-  // as selected org is not stored in session,
-  // we delete this to avoid sync issues
-  await deleteSelectedOrganizationId(user.id);
 
   return await new Promise((resolve, reject) => {
     // session will contain sensitive rights from now
@@ -227,13 +219,40 @@ export const getSessionStandardizedAuthenticationMethodsReferences = (
   return standardizedAmr;
 };
 
+export const getSelectedOrganizationIdFromAuthenticatedSession = (
+  req: Request,
+) => {
+  if (!isWithinAuthenticatedSession(req.session)) {
+    throw new UserNotLoggedInError();
+  }
+
+  return req.session.selectedOrganizationId ?? null;
+};
+
+export const setSelectedOrganizationIdInAuthenticatedSession = (
+  req: Request,
+  organizationId: number,
+) => {
+  if (!isWithinAuthenticatedSession(req.session)) {
+    throw new UserNotLoggedInError();
+  }
+
+  req.session.selectedOrganizationId = organizationId;
+};
+
+export const deleteSelectedOrganizationIdFromAuthenticatedSession = (
+  req: Request,
+) => {
+  if (!isWithinAuthenticatedSession(req.session)) {
+    throw new UserNotLoggedInError();
+  }
+
+  req.session.selectedOrganizationId = undefined;
+};
+
 export const destroyAuthenticatedSession = async (
   req: Request,
 ): Promise<null> => {
-  if (isWithinAuthenticatedSession(req.session)) {
-    await deleteSelectedOrganizationId(getUserFromAuthenticatedSession(req).id);
-  }
-
   return await new Promise((resolve, reject) => {
     req.session.destroy((err) => {
       if (err) {
@@ -273,16 +292,11 @@ export async function getCurrentAAL(req: Request) {
 // 0: Déclaratif
 // 1: Modération
 // 2: Lien certifié par une source officielle
-export async function getCurrentOAL(req: Request) {
+export async function getCurrentOAL(req: Request, organizationId: number) {
   const user = getUserFromAuthenticatedSession(req);
-  const selectedOrganizationId = await getSelectedOrganizationId(user.id);
-
-  if (selectedOrganizationId === null) {
-    throw new Error("selectedOrganizationId should be set");
-  }
 
   const link = await users_organizations.find({
-    organization_id: selectedOrganizationId,
+    organization_id: organizationId,
     user_id: user.id,
   });
 
@@ -300,26 +314,29 @@ export async function getCurrentOAL(req: Request) {
 
 export async function doesAcrSatisfiesCertificationDirigeantRequirements(
   req: Request,
+  organizationId: number,
 ) {
   const ial = await getCurrentIAL(req);
-  const oal = await getCurrentOAL(req);
+  const oal = await getCurrentOAL(req, organizationId);
 
   return match({ ial, oal })
     .with({ ial: 1, oal: 2 }, () => true)
     .otherwise(() => false);
 }
 
-export async function getCurrentAcr(
-  req: Request,
-  {
-    forcedIAL,
-    forcedAAL,
-    forcedOAL,
-  }: { forcedIAL?: 0 | 1; forcedAAL?: 1 | 2; forcedOAL?: 0 | 1 | 2 } = {},
-) {
-  const ial = forcedIAL || (await getCurrentIAL(req));
-  const aal = forcedAAL || (await getCurrentAAL(req));
-  const oal = forcedOAL || (await getCurrentOAL(req));
+// The OAL depends on an organization: either give the organization or force the OAL.
+type CurrentAcrOptions = { forcedIAL?: 0 | 1; forcedAAL?: 1 | 2 } & (
+  | { organizationId: number; forcedOAL?: undefined }
+  | { organizationId?: undefined; forcedOAL: 0 | 1 | 2 }
+);
+
+export async function getCurrentAcr(req: Request, options: CurrentAcrOptions) {
+  const ial = options.forcedIAL || (await getCurrentIAL(req));
+  const aal = options.forcedAAL || (await getCurrentAAL(req));
+  const oal =
+    options.organizationId === undefined
+      ? options.forcedOAL
+      : await getCurrentOAL(req, options.organizationId);
 
   return match({
     ial,

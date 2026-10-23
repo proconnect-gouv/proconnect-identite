@@ -148,7 +148,7 @@ export const postJoinOrganizationMiddleware = async (
     });
 
     await selectOrganization({
-      user_id,
+      req,
       organization_id: userOrganizationLink.organization_id,
     });
 

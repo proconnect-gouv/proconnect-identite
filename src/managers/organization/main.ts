@@ -2,10 +2,14 @@ import { QuitOrganization } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import { markDomainAsVerifiedFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
+import type { Request } from "express";
 import { isEmpty } from "lodash-es";
 import { context } from "../../connectors/context";
 import { sendMail } from "../../connectors/mail";
-import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
+import {
+  getUserFromAuthenticatedSession,
+  setSelectedOrganizationIdInAuthenticatedSession,
+} from "../session/authenticated";
 
 const { organizations, users, users_organizations } = context.repository;
 
@@ -62,12 +66,13 @@ export const quitOrganization = async ({
 export const markDomainAsVerified = markDomainAsVerifiedFactory(context);
 
 export const selectOrganization = async ({
-  user_id,
+  req,
   organization_id,
 }: {
-  user_id: number;
+  req: Request;
   organization_id: number;
 }) => {
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
   const userOrganizations = await organizations.findByUserId(user_id);
   const organization = userOrganizations.find(
     ({ id }) => id === organization_id,
@@ -77,5 +82,5 @@ export const selectOrganization = async ({
     throw new NotFoundError();
   }
 
-  await setSelectedOrganizationId(user_id, organization_id);
+  setSelectedOrganizationIdInAuthenticatedSession(req, organization_id);
 };

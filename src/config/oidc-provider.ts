@@ -7,6 +7,7 @@ import { destroyAuthenticatedSession } from "../managers/session/authenticated";
 import epochTime from "../services/epoch-time";
 import { logger } from "../services/log";
 import { findAccount } from "../services/oidc-account-adapter";
+import { setAuthorizedOrganization } from "../services/oidc-authorized-organization";
 import policy from "../services/oidc-policy";
 import { oidcProviderAdapterFactory } from "../services/oidc-provider-adapter";
 import { renderWithEjsLayout } from "../services/renderer";
@@ -164,6 +165,22 @@ export const oidcProviderConfiguration = ({
     policy,
   },
   loadExistingGrant: async (ctx) => {
+    // We want to persist custom interaction outcomes like organizationId.
+    // `loadExistingGrant` serves as the sole execution point where `ctx.oidc.result` is available prior to
+    // policy evaluation and authorization code generation:
+    // Flow: `resume` → `loadAccount` → `loadGrant` (`loadExistingGrant`) → `interactions` (policy) → `respond` (code).
+    const result = ctx.oidc.result as OidcInteractionResults | undefined;
+    if (
+      ctx.oidc.session &&
+      ctx.oidc.client &&
+      result?.organizationId !== undefined
+    ) {
+      setAuthorizedOrganization(ctx.oidc.session, ctx.oidc.client.clientId, {
+        organizationId: result.organizationId,
+        acr: result.login?.acr,
+      });
+    }
+
     // We want to skip the consent
     // inspired from https://github.com/panva/node-oidc-provider/blob/main/recipes/skip_consent.md
     // We updated the function to ensure it always return a grant.
