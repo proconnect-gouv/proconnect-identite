@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.9.0
+
+### Minor Changes
+
+- [#2172](https://github.com/proconnect-gouv/proconnect-identite/pull/2172) [`679aa8a`](https://github.com/proconnect-gouv/proconnect-identite/commit/679aa8a857070ae1e361142f1279a130e4c8f222) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Ajoute la table recovery_words pour les mots de récupération
+
 ## 1.8.1
 
 ### Patch Changes

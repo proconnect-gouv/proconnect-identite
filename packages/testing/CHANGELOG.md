@@ -1,5 +1,13 @@
 # @proconnect-gouv/proconnect.testing
 
+## 2.1.1
+
+### Patch Changes
+
+- [#2283](https://github.com/proconnect-gouv/proconnect-identite/pull/2283) [`252c2a6`](https://github.com/proconnect-gouv/proconnect-identite/commit/252c2a645248400e79a3d92ca01b1432bd86c33e) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Répond 500 au lieu de 200 quand une route du serveur de test échoue, sans exposer le détail de l'erreur
+
+- [#2282](https://github.com/proconnect-gouv/proconnect-identite/pull/2282) [`0836b82`](https://github.com/proconnect-gouv/proconnect-identite/commit/0836b825456145f795f294e3f7409434300ec026) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Limite la lecture des fixtures aux identifiants connus pour empêcher la traversée de chemin (`..%2F`)
+
 ## 2.1.0
 
 ### Minor Changes
