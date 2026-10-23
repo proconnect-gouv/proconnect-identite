@@ -43,6 +43,7 @@ declare module "express-session" {
     user?: User;
     temporaryEncryptedTotpKey?: string;
     amr?: AmrValue[];
+    selectedOrganizationId?: number;
     pendingModerationOrganizationId?: number;
     pendingCertificationDirigeantOrganizationId?: number;
     pendingOfficialContactEmailVerificationOrganizationId?: number;

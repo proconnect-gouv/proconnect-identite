@@ -39,10 +39,7 @@ export const postSelectOrganizationMiddleware = async (
     });
     const { organization_id } = await schema.parseAsync(req.body);
 
-    await selectOrganization({
-      user_id: getUserFromAuthenticatedSession(req).id,
-      organization_id,
-    });
+    await selectOrganization({ req, organization_id });
 
     return next();
   } catch (error) {

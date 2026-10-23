@@ -4,9 +4,11 @@ import { isEmpty } from "lodash-es";
 import { z } from "zod";
 import { LinkEnum } from "../../../packages/identite/src/types";
 import { context } from "../../connectors/context";
-import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
+import {
+  getSelectedOrganizationIdFromAuthenticatedSession,
+  getUserFromAuthenticatedSession,
+} from "../../managers/session/authenticated";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import { getSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 import { optionalBooleanSchema } from "../../services/custom-zod-schemas";
 
 const { franceconnect_userinfo, organizations, users_organizations } =
@@ -28,7 +30,8 @@ export const getWelcomeController = async (
 
     let user = getUserFromAuthenticatedSession(req);
 
-    let selectedOrganizationId = await getSelectedOrganizationId(user.id);
+    let selectedOrganizationId =
+      getSelectedOrganizationIdFromAuthenticatedSession(req);
 
     if (selectedOrganizationId === null) {
       return res.render("user/welcome", {

@@ -94,7 +94,6 @@ export const postOfficialContactEmailVerificationMiddleware = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
     const organization_id =
       req.session.pendingOfficialContactEmailVerificationOrganizationId!;
     const organization = await organizations.findById(organization_id);
@@ -124,10 +123,7 @@ export const postOfficialContactEmailVerificationMiddleware = async (
     req.session.pendingOfficialContactEmailVerificationOrganizationId =
       undefined;
 
-    await selectOrganization({
-      user_id,
-      organization_id,
-    });
+    await selectOrganization({ req, organization_id });
 
     req.session.pendingGreetingsForSelectedOrganization = true;
 
