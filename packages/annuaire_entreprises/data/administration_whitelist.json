@@ -2483,5 +2483,10 @@
     "siren": "775665599",
     "denomination": "AGENCE FRANCAISE DE DEVELOPPEMENT",
     "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "198600587",
+    "denomination": "CENTRE DE RESSOURCES D'EXPERTISE ET DE PERFORMANCE SPORTIVE",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   }
 ]
