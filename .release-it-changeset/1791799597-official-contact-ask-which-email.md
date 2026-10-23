@@ -1,0 +1,1 @@
+🐛 Lors du rattachement à une mairie qui a plusieurs adresses email officielles, l'absence de choix ou un choix inconnu ramène désormais à la question « À quelle adresse e-mail souhaitez-vous recevoir le code ? » au lieu d'afficher une erreur de l'annuaire
