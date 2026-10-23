@@ -1,5 +1,20 @@
 # Changelog
 
+## [2026.10.8](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.7...2026.10.8) (2026-10-23)
+
+### Corrigé
+
+- 🐛 Bind the selected organization to the session and the client ([e750b01](https://github.com/proconnect-gouv/proconnect-identite/commit/e750b01953bf3d848dee5a3ca1929958731db112))
+- 🔒 Self-host the Matomo Tag Manager container ([7383e19](https://github.com/proconnect-gouv/proconnect-identite/commit/7383e19f17ef59104cd6e6ad97ab228afd74a0e5))
+- 🐛 Answer 500 when a testing route fails ([252c2a6](https://github.com/proconnect-gouv/proconnect-identite/commit/252c2a645248400e79a3d92ca01b1432bd86c33e))
+- 🐛 Restrict testing fixture reads to known ids ([0836b82](https://github.com/proconnect-gouv/proconnect-identite/commit/0836b825456145f795f294e3f7409434300ec026))
+
+### Dépendances
+
+- :arrow_up: Bump vite from 7.3.2 to 7.3.7 ([525b8be](https://github.com/proconnect-gouv/proconnect-identite/commit/525b8be2389f8c44616001eae3ffe3ba341bcbbd))
+- ⬆️ Synchronisation du Grist contenant la liste des administrations ([adc6960](https://github.com/proconnect-gouv/proconnect-identite/commit/adc6960974e2018631a462e9296d4b7e53705cd1))
+- :arrow_up: Bump launch-editor from 2.14.1 to 2.14.2 ([10a6c2c](https://github.com/proconnect-gouv/proconnect-identite/commit/10a6c2cd44908faca47d478f21124d1c92af1a8d))
+
 ## [2026.10.7](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.6...2026.10.7) (2026-10-21)
 
 ### Changements
