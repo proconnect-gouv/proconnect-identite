@@ -1,6 +1,8 @@
 describe("generate recovery words", () => {
   before(cy.seed);
 
+  let recoveryWords: string;
+
   it("should generate, verify, then regenerate recovery words", function () {
     cy.visit("/connection-and-account");
 
@@ -58,7 +60,46 @@ describe("generate recovery words", () => {
       cy.getByLabel("Vos mots de secours")
         .invoke("text")
         .then((text) => text.trim())
-        .should("not.equal", firstRecoveryWords);
+        .should("not.equal", firstRecoveryWords)
+        .then((text) => {
+          recoveryWords = String(text);
+        });
     });
+  });
+
+  it("should recover the account with recovery words", function () {
+    cy.visit("/connection-and-account");
+    cy.login("lion.eljonson@darkangels.world");
+
+    cy.contains("Valider avec la double authentification");
+    cy.contains("Vous n’avez pas accès à cette méthode ?").click();
+
+    cy.title().should("include", "Utiliser vos mots de secours");
+
+    // wrong words
+    cy.get("#recovery-words").type(
+      "abandon cible gastrique abandon cible gastrique",
+    );
+    cy.contains("button", "Continuer").click();
+    cy.contains(
+      "Erreur : ces mots ne correspondent pas à vos mots de secours.",
+    );
+
+    // right words
+    cy.get("#recovery-words").type(recoveryWords);
+    cy.contains("button", "Continuer").click();
+
+    cy.contains("Votre compte est récupéré");
+    cy.contains("Reconfigurer").click();
+
+    cy.contains("Choisir votre méthode de connexion renforcée");
+  });
+
+  it("should not ask for 2FA anymore", function () {
+    cy.visit("/connection-and-account");
+    cy.login("lion.eljonson@darkangels.world");
+
+    cy.title().should("include", "Compte et connexion");
+    cy.contains("Configurer la double authentification");
   });
 });

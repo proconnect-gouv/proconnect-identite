@@ -255,3 +255,5 @@ export class SymmetricEncryptionError extends Error {
     this.name = "SymmetricEncryptionError";
   }
 }
+
+export class InvalidRecoveryWordsError extends Error {}

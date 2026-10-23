@@ -1,11 +1,15 @@
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z } from "zod";
-import { UserIsNot2faCapableError } from "../config/errors";
+import {
+  InvalidRecoveryWordsError,
+  UserIsNot2faCapableError,
+} from "../config/errors";
 import { disableForce2fa, enableForce2fa } from "../managers/2fa";
 import {
   createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
+  signInWithRecoveryWords,
   verifyRecoveryWordsForUser,
 } from "../managers/recovery-words";
 import {
@@ -301,6 +305,64 @@ export const postVerifyRecoveryWordsController = async (
         isValid ? "recovery_words_valid" : "invalid_recovery_words"
       }`,
     );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getSignInWithRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/2fa-sign-in-with-recovery-words", {
+      pageTitle: "Utiliser vos mots de secours",
+      notifications: await getNotificationsFromRequest(req),
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postSignInWithRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      recovery_words: recoveryWordsSchema(),
+    });
+    const { recovery_words } = await schema.parseAsync(req.body);
+
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    const updatedUser = await signInWithRecoveryWords(user_id, recovery_words);
+
+    updateUserInAuthenticatedSession(req, updatedUser);
+
+    return res.redirect("/users/account-recovered");
+  } catch (error) {
+    if (error instanceof InvalidRecoveryWordsError) {
+      return res.redirect(
+        "/users/2fa-sign-in-with-recovery-words?notification=invalid_recovery_words",
+      );
+    }
+    next(error);
+  }
+};
+
+export const getAccountRecoveredController = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/account-recovered", {
+      pageTitle: "Votre compte est récupéré",
+    });
   } catch (error) {
     next(error);
   }

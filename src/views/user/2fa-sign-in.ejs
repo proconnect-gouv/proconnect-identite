@@ -74,7 +74,7 @@
                 le verrouillage de l'écran pour valider votre identité.
             </p>
             <button
-                    class="fr-btn btn--fullwidth fr-mb-2w fr-btn--secondary fr-btn--icon-left fr-icon-lock-unlock-line"
+                    class="fr-btn btn--fullwidth fr-btn--secondary fr-btn--icon-left fr-icon-lock-unlock-line"
                     id="webauthn-btn-begin-authentication"
             >
                 Se connecter avec une clé d’accès
@@ -86,6 +86,16 @@
             <button type="submit" class="fr-btn"></button>
         </form>
         <script type="module" src="<%= js('webauthn-authentication.js') %>"></script>
+    <% } %>
+    <% if (showsRecoveryWordsSection) { %>
+        <div class="fr-mt-3w fr-grid-row fr-grid-row--center">
+            <a
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-question-line"
+                    href="/users/2fa-sign-in-with-recovery-words"
+            >
+                Vous n’avez pas accès à cette méthode ?
+            </a>
+        </div>
     <% } %>
     <%- include('../partials/go-back.ejs') %>
 </div>
