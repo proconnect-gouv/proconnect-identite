@@ -1,5 +1,29 @@
 # Changelog
 
+## [2026.10.10](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.9...2026.10.10) (2026-10-26)
+
+### Changements
+
+- 🐛 Lors du rattachement à une mairie qui a plusieurs adresses email officielles, l'absence de choix ou un choix inconnu ramène désormais à la question « À quelle adresse e-mail souhaitez-vous recevoir le code ? » au lieu d'afficher une erreur de l'annuaire
+
+### Ajouté
+
+- ✨ validate express session data with zod ([#2242](https://github.com/proconnect-gouv/proconnect-identite/issues/2242)) ([31652e6](https://github.com/proconnect-gouv/proconnect-identite/commit/31652e608dd645911f7cd5710fc5395c81bb8a5f))
+
+### Corrigé
+
+- 🐛 bundle domain lists into core build ([#2313](https://github.com/proconnect-gouv/proconnect-identite/issues/2313)) ([3209f59](https://github.com/proconnect-gouv/proconnect-identite/commit/3209f59646da2171eb8ddad48f8e1d75d996f5d4))
+- 🐛 redirect replayed franceconnect logout callback instead of erroring ([#2314](https://github.com/proconnect-gouv/proconnect-identite/issues/2314)) ([65e2916](https://github.com/proconnect-gouv/proconnect-identite/commit/65e2916f48fb3ef5d107fda3f6f9c3880b8166b8))
+- 🔒 limit github token permissions in workflows ([#2312](https://github.com/proconnect-gouv/proconnect-identite/issues/2312)) ([63d44d7](https://github.com/proconnect-gouv/proconnect-identite/commit/63d44d79ada7e52cd745b2004e2b79c1a3b0e228))
+- 🐛 forbid authorization header on interaction routes ([#2310](https://github.com/proconnect-gouv/proconnect-identite/issues/2310)) ([a9a85ff](https://github.com/proconnect-gouv/proconnect-identite/commit/a9a85ffbcb4ccf4a45d17c547082a22f9be55abe))
+- 🐛 ask again which mairie email to use when the choice is skipped or unknown ([#2252](https://github.com/proconnect-gouv/proconnect-identite/issues/2252)) ([0a009f3](https://github.com/proconnect-gouv/proconnect-identite/commit/0a009f33b8c6751943b9c937f1331655400c4a27))
+- 🐛 count franceconnect cancellations instead of reporting them as errors ([#2306](https://github.com/proconnect-gouv/proconnect-identite/issues/2306)) ([b2717c0](https://github.com/proconnect-gouv/proconnect-identite/commit/b2717c0be73a88b4495eceddceccf8aca15c2be6))
+
+### Dépendances
+
+- ⬆️ bump postgres to 18.6 ([#2308](https://github.com/proconnect-gouv/proconnect-identite/issues/2308)) ([51244d7](https://github.com/proconnect-gouv/proconnect-identite/commit/51244d74e47f0546aa827ac0b4e1a40284bace62))
+- ⬆️ replace ioredis with node-redis for connect-redis 10 ([#2071](https://github.com/proconnect-gouv/proconnect-identite/issues/2071)) ([adaa07b](https://github.com/proconnect-gouv/proconnect-identite/commit/adaa07bbf2bd77967c463ad3c7189c0fa7bceb2f))
+
 ## [2026.10.9](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.8...2026.10.9) (2026-10-26)
 
 ### Ajouté
