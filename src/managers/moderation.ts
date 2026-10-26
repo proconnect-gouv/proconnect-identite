@@ -86,9 +86,14 @@ export const reopenModerationWithUserEdit = async ({
     throw new ForbiddenError();
   }
 
-  return await moderations.reopen({
+  const reopened = await moderations.reopen({
     id: moderation_id,
     userEmail: user.email,
     cause: "Edition des informations personnelles",
   });
+  if (!reopened) {
+    throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
+  }
+
+  return reopened;
 };

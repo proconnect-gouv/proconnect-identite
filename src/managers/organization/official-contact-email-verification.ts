@@ -208,10 +208,14 @@ export const verifyOfficialContactEmailToken = async ({
     throw new InvalidTokenError();
   }
 
-  await official_contact_email_verifications.delete({
+  const deleted = await official_contact_email_verifications.delete({
     organization_id,
     user_id,
   });
+  if (!deleted) {
+    throw new InvalidTokenError();
+  }
+
   return await users_organizations.create({
     user_id,
     organization_id,
