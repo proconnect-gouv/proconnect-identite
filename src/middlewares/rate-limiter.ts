@@ -45,7 +45,7 @@ const emailRateLimiterMiddlewareFactory =
         await rateLimiter.consume(getEmailFromUnauthenticatedSession(req)!);
       } else {
         // Throw an error to avoid a security flaw.
-        next(new Error("Rate limiting failed."));
+        return next(new Error("Rate limiting failed."));
       }
 
       return next();
