@@ -1,11 +1,17 @@
+import { QuitOrganization } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import { markDomainAsVerifiedFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
+import type { Request } from "express";
 import { isEmpty } from "lodash-es";
 import { context } from "../../connectors/context";
-import { setSelectedOrganizationId } from "../../repositories/redis/selected-organization";
+import { sendMail } from "../../connectors/mail";
+import {
+  getUserFromAuthenticatedSession,
+  setSelectedOrganizationIdInAuthenticatedSession,
+} from "../session/authenticated";
 
-const { organizations, users_organizations } = context.repository;
+const { organizations, users, users_organizations } = context.repository;
 
 export const getUserOrganizations = async (
   userId: number,
@@ -26,6 +32,12 @@ export const quitOrganization = async ({
   user_id: number;
   organization_id: number;
 }) => {
+  const organization = await organizations.findById(organization_id);
+
+  if (isEmpty(organization)) {
+    throw new NotFoundError();
+  }
+
   const hasBeenRemoved = await users_organizations.delete({
     user_id,
     organization_id,
@@ -35,18 +47,32 @@ export const quitOrganization = async ({
     throw new NotFoundError();
   }
 
+  const { given_name, family_name, email } = await users.getById(user_id);
+
+  await sendMail({
+    to: [email],
+    subject: "Vous avez quitté une organisation sur ProConnect",
+    html: QuitOrganization({
+      given_name: given_name ?? "",
+      family_name: family_name ?? "",
+      organization_label: organization.cached_libelle || organization.siret,
+    }).toString(),
+    tag: "quit-organization",
+  });
+
   return true;
 };
 
 export const markDomainAsVerified = markDomainAsVerifiedFactory(context);
 
 export const selectOrganization = async ({
-  user_id,
+  req,
   organization_id,
 }: {
-  user_id: number;
+  req: Request;
   organization_id: number;
 }) => {
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
   const userOrganizations = await organizations.findByUserId(user_id);
   const organization = userOrganizations.find(
     ({ id }) => id === organization_id,
@@ -56,5 +82,5 @@ export const selectOrganization = async ({
     throw new NotFoundError();
   }
 
-  await setSelectedOrganizationId(user_id, organization_id);
+  setSelectedOrganizationIdInAuthenticatedSession(req, organization_id);
 };

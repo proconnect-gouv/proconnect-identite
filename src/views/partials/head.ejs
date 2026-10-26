@@ -28,8 +28,8 @@
     <script type="module" src="<%= js('app.js') %>"></script>
     <script type="module" src="<%= js('form-validation.js') %>"></script>
     <% if (locals.loadThirdPartyTrackingScripts) { %>
-    <!-- Matomo Tag Manager -->
-    <script type="module" src="<%= js('matomo.js') %>"></script>
+    <!-- Matomo Tag Manager container, self-hosted: run `npm run update-matomo-container` after publishing in MTM -->
+    <script async src="/dist/matomo/container_yr4sXd50.js?v=a02c3619"></script>
     <!-- End Matomo Tag Manager -->
     <% } %>
 </head>

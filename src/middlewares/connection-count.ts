@@ -3,6 +3,7 @@ import type { NextFunction } from "express";
 import type { KoaContextWithOIDC } from "oidc-provider";
 import { recordNewConnection } from "../managers/oidc-client";
 import { logger } from "../services/log";
+import { getAuthorizedOrganization } from "../services/oidc-authorized-organization";
 
 // this is not an express middleware but an oidc-provider middleware as described here:
 // https://github.com/panva/node-oidc-provider/blob/v7.x/docs/README.md#pre--and-post-middlewares
@@ -41,6 +42,11 @@ export const connectionCountMiddleware = async (
         await recordNewConnection({
           accountId: ctx.oidc.session.accountId,
           client: ctx.oidc.client,
+          organizationId:
+            getAuthorizedOrganization(
+              ctx.oidc.session,
+              ctx.oidc.client.clientId,
+            )?.organizationId ?? null,
           params: ctx.oidc.params as OIDCContextParams,
           requestHeaders: ctx.request.headers,
         });

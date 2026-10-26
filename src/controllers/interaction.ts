@@ -8,6 +8,7 @@ import { context } from "../connectors/context";
 import {
   doesAcrSatisfiesCertificationDirigeantRequirements,
   getCurrentAcr,
+  getSelectedOrganizationIdFromAuthenticatedSession,
   getSessionStandardizedAuthenticationMethodsReferences,
   getUserFromAuthenticatedSession,
   isWithinAuthenticatedSession,
@@ -118,6 +119,13 @@ export const interactionEndControllerFactory =
         res,
       );
 
+      // navigation guards guarantee organization selection
+      const organizationId =
+        getSelectedOrganizationIdFromAuthenticatedSession(req);
+      if (organizationId === null) {
+        return next(new Error("organization should be selected"));
+      }
+
       let currentAcr: string | null;
 
       if (
@@ -130,12 +138,15 @@ export const interactionEndControllerFactory =
         currentAcr = "eidas1";
       } else if (
         certificationDirigeantRequested(prompt) &&
-        (await doesAcrSatisfiesCertificationDirigeantRequirements(req))
+        (await doesAcrSatisfiesCertificationDirigeantRequirements(
+          req,
+          organizationId,
+        ))
       ) {
         currentAcr =
           "https://proconnect.gouv.fr/assurance/certification-dirigeant";
       } else {
-        currentAcr = await getCurrentAcr(req);
+        currentAcr = await getCurrentAcr(req, { organizationId });
       }
 
       let result: OidcInteractionResults = {
@@ -145,6 +156,7 @@ export const interactionEndControllerFactory =
           amr,
           ts,
         },
+        organizationId,
         select_organization: false,
         update_userinfo: false,
         // skip the consent

@@ -10,7 +10,7 @@ commandTests:
       - start
     exitCode: 143
     expectedOutput:
-      - tsx --import ./src/instrument.ts src/index.ts
+      - node --import tsx/esm --import ./src/instrument.ts src/index.ts
       - application is listening on port 3000
 
 containerRunOptions:

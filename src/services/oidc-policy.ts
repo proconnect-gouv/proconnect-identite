@@ -1,7 +1,6 @@
-import { to } from "await-to-js";
 import { interactionPolicy } from "oidc-provider";
 import { context } from "../connectors/context";
-import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
+import { getAuthorizedOrganization } from "./oidc-authorized-organization";
 
 const { organizations } = context.repository;
 
@@ -18,25 +17,27 @@ policy.add(
       "organization_missing",
       "End-User must select one organization",
       async (ctx) => {
-        const { oidc } = ctx;
-
-        // existence of oidc.session.accountId is ensured by the previous prompt
-        const user_id = parseInt(oidc.session!.accountId!, 10);
-
-        const [, selectedOrganizationId] = await to(
-          getSelectedOrganizationId(user_id),
+        const authorized = getAuthorizedOrganization(
+          ctx.oidc.session,
+          ctx.oidc.client?.clientId,
         );
 
-        if (!selectedOrganizationId) {
+        if (!authorized) {
           return Check.REQUEST_PROMPT;
         }
 
-        const oidcContextParams = ctx.oidc.params as OIDCContextParams;
-        if (oidcContextParams.siret_hint && selectedOrganizationId) {
-          const selectedOrganization = (await organizations.findById(
-            selectedOrganizationId,
-          ))!;
-          if (selectedOrganization.siret !== oidcContextParams.siret_hint) {
+        // session.acr is shared by all clients: if another SP re-authenticated this
+        // session for another organization, the acr no longer matches this organization.
+        if (authorized.acr !== ctx.oidc.session?.acr) {
+          return Check.REQUEST_PROMPT;
+        }
+
+        const { siret_hint } = ctx.oidc.params as OIDCContextParams;
+        if (siret_hint) {
+          const organization = await organizations.findById(
+            authorized.organizationId,
+          );
+          if (organization?.siret !== siret_hint) {
             return Check.REQUEST_PROMPT;
           }
         }

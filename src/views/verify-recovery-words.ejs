@@ -1,0 +1,27 @@
+<div class="dashboard-container fr-my-4w">
+    <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
+    <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
+        <h1 class="fr-h3">Vérifier vos mots de secours</h1>
+        <%- include('partials/notifications.ejs', {notifications: notifications}) %>
+        <form method="post" action="/recovery-words/verify">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="fr-input-group">
+                <label class="fr-label" for="recovery-words">
+                    Vos 6 mots de secours
+                    <span class="fr-hint-text">Séparés par des espaces, accents facultatifs</span>
+                </label>
+                <input
+                    class="fr-input"
+                    type="text"
+                    id="recovery-words"
+                    name="recovery_words"
+                    autocomplete="off"
+                    spellcheck="false"
+                    required
+                >
+            </div>
+            <button type="submit" class="fr-btn btn--fullwidth">Vérifier</button>
+        </form>
+    <%- include('partials/go-back.ejs') %>
+    </div>
+</div>

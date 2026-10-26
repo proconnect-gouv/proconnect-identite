@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/node";
 import { RedisStore } from "connect-redis";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
-import session from "express-session";
+import session, { type SessionData } from "express-session";
 import fs from "fs";
 import helmet from "helmet";
 import { Server } from "http";
@@ -27,6 +27,7 @@ import { OidcError } from "./config/errors";
 import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
+import { StoredSessionSchema } from "./managers/session/session-data";
 import {
   defaultRateLimiterMiddleware,
   machineToMachineRateLimiterMiddleware,
@@ -61,7 +62,7 @@ if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
         imgSrc: ["'self'", "data:", "stats.data.gouv.fr"],
         connectSrc: ["'self'", "stats.data.gouv.fr"],
         frameSrc: ["'self'"],
-        scriptSrc: ["'self'", "stats.data.gouv.fr", "blob:"],
+        scriptSrc: ["'self'", "blob:"],
         fontSrc: ["'self'", "data:"],
         // As for https://github.com/w3c/webappsec-csp/issues/8, the feature is debated
         // and seems not useful for open id provider redirection.
@@ -90,29 +91,35 @@ app.use(httpLogger);
 
 app.set("trust proxy", 1);
 
-const sessionMiddleware =
-  // @ts-ignore
-  session({
-    store: new RedisStore({
-      client: getNewRedisClient(),
-      prefix: "mcp:session:",
-      serializer: {
-        parse: jsonParseWithDate,
-        stringify: JSON.stringify,
+const sessionMiddleware = session({
+  store: new RedisStore({
+    client: getNewRedisClient(),
+    prefix: "mcp:session:",
+    serializer: {
+      parse: (serializedSession: string) => {
+        const result = StoredSessionSchema.safeParse(
+          jsonParseWithDate(serializedSession),
+        );
+        if (result.success) return result.data;
+        logger.error(result.error);
+        Sentry.captureException(result.error);
+        return null as unknown as SessionData;
       },
-    }),
-    name: "session",
-    cookie: {
-      maxAge: SESSION_MAX_AGE_IN_SECONDS * 1000,
-      secure: FEATURE_USE_SECURE_COOKIES,
-      sameSite: "lax",
+      stringify: JSON.stringify,
     },
-    secret: SESSION_COOKIE_SECRET,
-    // future default
-    resave: false,
-    // future default
-    saveUninitialized: false,
-  });
+  }),
+  name: "session",
+  cookie: {
+    maxAge: SESSION_MAX_AGE_IN_SECONDS * 1000,
+    secure: FEATURE_USE_SECURE_COOKIES,
+    sameSite: "lax",
+  },
+  secret: SESSION_COOKIE_SECRET,
+  // future default
+  resave: false,
+  // future default
+  saveUninitialized: false,
+});
 
 // Prevent creation of sessions for API calls on /oauth or /api routes
 app.use(function preventSessionCreationMiddleware(req, res, next) {

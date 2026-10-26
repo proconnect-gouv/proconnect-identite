@@ -6,10 +6,7 @@ import { getNewRedisClient } from "../../connectors/redis";
 
 //
 
-const getClient = () =>
-  getNewRedisClient({
-    keyPrefix: "oidc:",
-  });
+const getClient = () => getNewRedisClient();
 
 const grantable = new Set([
   "AccessToken",
@@ -26,16 +23,20 @@ const consumable = new Set([
   "BackchannelAuthenticationRequest",
 ]);
 
-function grantKeyFor(id: any) {
-  return `grant:${id}`;
+function prefixed(key: string) {
+  return `oidc:${key}`;
 }
 
-function userCodeKeyFor(userCode: any) {
-  return `userCode:${userCode}`;
+function grantKeyFor(id: string) {
+  return prefixed(`grant:${id}`);
 }
 
-function uidKeyFor(uid: any) {
-  return `uid:${uid}`;
+function userCodeKeyFor(userCode: string) {
+  return prefixed(`userCode:${userCode}`);
+}
+
+function uidKeyFor(uid: string) {
+  return prefixed(`uid:${uid}`);
 }
 
 type Store = { payload: string };
@@ -45,21 +46,21 @@ export class OidcProviderAdapter implements Adapter {
 
   async upsert(id: string, payload: AdapterPayload, expiresIn: number) {
     const key = this.key(id);
-    const store = consumable.has(this.name)
-      ? ({ payload: JSON.stringify(payload) } as Store)
-      : JSON.stringify(payload);
 
     const multi = getClient().multi();
-    // @ts-ignore
-    multi[consumable.has(this.name) ? "hmset" : "set"](key, store);
+    if (consumable.has(this.name)) {
+      multi.hSet(prefixed(key), { payload: JSON.stringify(payload) });
+    } else {
+      multi.set(prefixed(key), JSON.stringify(payload));
+    }
 
     if (expiresIn) {
-      multi.expire(key, expiresIn);
+      multi.expire(prefixed(key), expiresIn);
     }
 
     if (grantable.has(this.name) && payload.grantId) {
       const grantKey = grantKeyFor(payload.grantId);
-      multi.rpush(grantKey, key);
+      multi.rPush(grantKey, key);
       // if you're seeing grant key lists growing out of acceptable proportions consider using LTRIM
       // here to trim the list to an appropriate length
       const ttl = await getClient().ttl(grantKey);
@@ -85,8 +86,8 @@ export class OidcProviderAdapter implements Adapter {
 
   async find(id: string): Promise<AdapterPayload | undefined | void> {
     const data = consumable.has(this.name)
-      ? await getClient().hgetall(this.key(id))
-      : await getClient().get(this.key(id));
+      ? await getClient().hGetAll(prefixed(this.key(id)))
+      : await getClient().get(prefixed(this.key(id)));
 
     if (isEmpty(data)) {
       return undefined;
@@ -116,21 +117,20 @@ export class OidcProviderAdapter implements Adapter {
   }
 
   async destroy(id: string) {
-    const key = this.key(id);
-    await getClient().del(key);
+    await getClient().del(prefixed(this.key(id)));
   }
 
   async revokeByGrantId(grantId: string) {
     const multi = getClient().multi();
-    const tokens = await getClient().lrange(grantKeyFor(grantId), 0, -1);
-    tokens.forEach((token: any) => multi.del(token));
+    const tokens = await getClient().lRange(grantKeyFor(grantId), 0, -1);
+    tokens.forEach((token) => multi.del(prefixed(token)));
     multi.del(grantKeyFor(grantId));
     await multi.exec();
   }
 
   async consume(id: string) {
-    await getClient().hset(
-      this.key(id),
+    await getClient().hSet(
+      prefixed(this.key(id)),
       "consumed",
       Math.floor(Date.now() / 1000),
     );

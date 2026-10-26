@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:17.9
+    image: postgres:18.6
     ports:
       - "5432:5432"
     environment:
@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: proconnect-identite
       POSTGRES_DB: proconnect-identite
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql
 
   redis:
     image: redis:7.2.16
@@ -16,7 +16,7 @@ services:
       - "6379:6379"
 
   demo-test-client:
-    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:786e49b166bb93d57264478d256b5173df70dda3e1f833b6590dc6ec6c16e02e # latest
+    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:431df64febf2d2ce2258c1764be5d783fe60fb46217e996802f51b71c234ed40 # latest
     environment:
       PORT: 3001
       # default env var can be found at https://github.com/proconnect-gouv/proconnect-test-client/blob/main/.env
@@ -26,7 +26,7 @@ services:
     network_mode: "host"
 
   standard-client:
-    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:786e49b166bb93d57264478d256b5173df70dda3e1f833b6590dc6ec6c16e02e # latest
+    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:431df64febf2d2ce2258c1764be5d783fe60fb46217e996802f51b71c234ed40 # latest
     environment:
       PORT: 4000
       CLIENT_ID: standard_client_id
@@ -39,7 +39,7 @@ services:
     network_mode: "host"
 
   proconnect-federation-client:
-    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:786e49b166bb93d57264478d256b5173df70dda3e1f833b6590dc6ec6c16e02e # latest
+    image: ghcr.io/proconnect-gouv/proconnect-test-client@sha256:431df64febf2d2ce2258c1764be5d783fe60fb46217e996802f51b71c234ed40 # latest
     environment:
       PORT: 4001
       SITE_TITLE: proconnect-federation-client
@@ -56,7 +56,7 @@ services:
     network_mode: "host"
 
   maildev:
-    image: maildev/maildev@sha256:180ef51f65eefebb0e7122d8308813c1fd7bff164bc440ce5a3c2feee167a810 # latest
+    image: maildev/maildev@sha256:180ef51f65eefebb0e7122d8308813c1fd7bff164bc440ce5a3c2feee167a810 # v2.2.1
     environment:
       MAILDEV_IP: "::"
     healthcheck:

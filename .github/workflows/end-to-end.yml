@@ -26,6 +26,7 @@ jobs:
           - connect_franceconnect_account
           - delete_account
           - delete_totp
+          - generate_recovery_words
           - join_and_moderation
           - join_collectivite_territoriale_free_contact_domain
           - join_collectivite_territoriale_multiple_contact_emails
@@ -56,6 +57,7 @@ jobs:
           - signin_with_legacy_acr
           - signin_with_legacy_scope
           - signin_with_magic_link
+          - signin_with_one_organization_per_sp
           - signin_with_organization_that_forces_mfa
           - signin_with_right_acr
           - signin_with_suggestion
@@ -86,7 +88,7 @@ jobs:
       - run: npm run build:workspaces
       - run: npm run migrate up
       - name: Cypress run
-        uses: cypress-io/github-action@v7.4.5
+        uses: cypress-io/github-action@v7.4.6
         with:
           wait-on: http://localhost:3000/users/start-sign-in
           build: npm run build:assets

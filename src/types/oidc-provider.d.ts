@@ -27,7 +27,16 @@ declare global {
    * Extends the {@link OIDCContext.result} type.
    */
   interface OidcInteractionResults extends InteractionResults {
+    organizationId?: number;
     select_organization?: boolean;
     update_userinfo?: boolean;
+  }
+}
+
+declare module "oidc-provider" {
+  interface ClientAuthorizationState {
+    organizationId?: number;
+    // acr computed at interaction end for organizationId
+    acr?: string;
   }
 }

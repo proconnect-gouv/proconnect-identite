@@ -99,7 +99,7 @@
                                     </form>
                                 </div>
                                 <div class="fr-card__start">
-                                    <p class="fr-tag fr-my-2w">Clé d'authentification</p>
+                                    <p class="fr-tag fr-mb-2w">Clé d’authentification</p>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +161,110 @@
                 </button>
             </form>
         <% } %>
-        <hr>
+
+        <% if (is2faCapable) { %>
+            <section class="fr-mb-6w">
+                <h2 class="fr-h3">Récupération du compte 
+                    <span class="fr-badge fr-badge--info">bêta</span>
+                </h2>
+                <% if (hasRecoveryWordsConfigured) { %>
+                    <div class="recovery-words-card fr-p-3w border">
+                        <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md">
+                                <h3 class="fr-h5 fr-mb-1w blue-france">Mots de secours</h3>
+                                <p class="fr-text--sm fr-text-mention--grey fr-mb-0">
+                                    Création : <%= recoveryWordsCreatedAt %>
+                                </p>
+                            </div>
+                            <div class="fr-col-12 fr-col-md-6">
+                                <ul class="fr-btns-group">
+                                    <li>
+                                        <a class="fr-btn fr-btn--tertiary centered-content" href="/recovery-words/verify">
+                                            Vérifier mes mots de secours
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <button
+                                            type="button"
+                                            class="fr-btn fr-btn--tertiary fr-mb-0"
+                                            data-fr-opened="false"
+                                            aria-controls="regenerate-recovery-words-modal"
+                                        >
+                                            Régénérer mes mots de secours
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <dialog
+                        id="regenerate-recovery-words-modal"
+                        class="fr-modal"
+                        aria-labelledby="regenerate-recovery-words-modal-title"
+                        >
+                        <div class="fr-container fr-container--fluid fr-container-md">
+                            <div class="fr-grid-row fr-grid-row--center">
+                                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                                    <div class="fr-modal__body">
+                                        <div class="fr-modal__header">
+                                            <button
+                                            type="button"
+                                            class="fr-btn--close fr-btn"
+                                            aria-controls="regenerate-recovery-words-modal"
+                                            >
+                                            Fermer
+                                            </button>
+                                        </div>
+                                        <div class="fr-modal__content">
+                                            <h2 id="regenerate-recovery-words-modal-title" class="fr-modal__title">
+                                            Régénérer vos mots de secours ?
+                                            </h2>
+                                            <p>
+                                            Vos mots de secours actuels ne fonctionneront plus. Vous devrez
+                                            sauvegarder les nouveaux.
+                                            </p>
+                                        </div>
+                                        <div class="fr-modal__footer">
+                                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg">
+                                                <li>
+                                                    <form method="post" action="/recovery-words">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <button type="submit" class="fr-btn">Régénérer</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                    type="button"
+                                                    class="fr-btn fr-btn--secondary"
+                                                    aria-controls="regenerate-recovery-words-modal"
+                                                    >
+                                                    Annuler
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </dialog>
+                <% } else { %>
+                    <p>
+                        <b>Pour garantir l’accès à votre compte en toutes circonstances</b> (perte de téléphone, changement d’ordinateur), nous vous recommandons fortement de générer vos mots de secours.
+                    </p>
+                    <form method="post" action="/recovery-words">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button
+                            type="submit"
+                            class="fr-btn fr-btn--secondary fr-icon-lock-line fr-btn--icon-left"
+                        >
+                            Générer des mots de secours
+                        </button>
+                    </form>
+                <% } %>
+            </section>
+        <% } %>
+
         <section class="fr-mb-6w">
             <h2 class="fr-h3">Suppression du compte</h2>
             <p>
@@ -170,7 +273,7 @@
             <form class="fr-mt-4w" action="/users/delete" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
                 <button
-                        class="fr-btn btn--danger js-confirm"
+                        class="fr-btn btn--danger js-confirm fr-icon-delete-line fr-btn--icon-left"
                         data-confirm="Si vous avez changé d’organisation, vous pouvez les modifier sur votre espace personnel.&#10;&#10;Si vous n’utilisez plus ProConnect avec cette adresse email, vous pouvez supprimer ce compte.&#10;&#10;Voulez vous continuer ?"
                         type="submit"
                 >

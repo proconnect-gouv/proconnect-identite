@@ -16,6 +16,7 @@ import { isBrowserTrustedForUser } from "../../managers/browser-authentication";
 import { selectOrganization } from "../../managers/organization/main";
 import {
   getCurrentAcr,
+  getSelectedOrganizationIdFromAuthenticatedSession,
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
   isWithinAuthenticatedSession,
@@ -32,12 +33,11 @@ import {
   needsEmailVerificationRenewal,
   needsFranceConnectIdentityRenewal,
 } from "../../managers/user";
-import { getSelectedOrganizationId } from "../../repositories/redis/selected-organization";
 import { isAcrSatisfied } from "../../services/acr-checks";
 import { isExpired } from "../../services/is-expired";
 import { usesAuthHeaders } from "../../services/uses-auth-headers";
 import { Pass, type RequestContext } from "./internals";
-import { process } from "./process";
+import { processPendingCertificationDirigeantGuard } from "./processPendingCertificationDirigeantGuard";
 
 const { franceconnect_userinfo, organizations, users, users_organizations } =
   context.repository;
@@ -280,8 +280,6 @@ export const userBelongsToHintedOrganizationGuard = async <
     const hintedOrganization = await organizations.findBySiret(
       req.session.siretHint,
     );
-    const userFromAuthenticatedSession = getUserFromAuthenticatedSession(req);
-
     if (isEmpty(hintedOrganization))
       return haltTo(
         `/users/join-organization?siret_hint=${req.session.siretHint}`,
@@ -293,10 +291,7 @@ export const userBelongsToHintedOrganizationGuard = async <
       );
     }
 
-    await selectOrganization({
-      user_id: userFromAuthenticatedSession.id,
-      organization_id: hintedOrganization.id,
-    });
+    await selectOrganization({ req, organization_id: hintedOrganization.id });
   }
 
   return pass("user_belongs_to_hinted_organization");
@@ -315,9 +310,8 @@ export const userHasSelectedAnOrganizationGuard = async <
     haltTo,
   } = context;
 
-  const selectedOrganizationId = await getSelectedOrganizationId(
-    getUserFromAuthenticatedSession(req).id,
-  );
+  const selectedOrganizationId =
+    getSelectedOrganizationIdFromAuthenticatedSession(req);
 
   if (!selectedOrganizationId) {
     if (
@@ -325,7 +319,7 @@ export const userHasSelectedAnOrganizationGuard = async <
       !req.session.certificationDirigeantRequested
     ) {
       await selectOrganization({
-        user_id: getUserFromAuthenticatedSession(req).id,
+        req,
         organization_id: userOrganizations[0].id,
       });
       return pass("side_effect_user_has_selected_an_organization").extends({
@@ -373,12 +367,12 @@ export const userIsMfaAuthenticatedIfOrganizationRequiresIt = async <
 };
 
 export const userHasValidFranceConnectIdentityGuard = async <
-  TContext extends RequestContext,
+  TContext extends RequestContext & { selectedOrganizationId: number },
 >(
   context: Pass<TContext>,
 ) => {
   const {
-    data: { req },
+    data: { req, selectedOrganizationId: organizationId },
     pass,
     haltTo,
   } = context;
@@ -395,11 +389,11 @@ export const userHasValidFranceConnectIdentityGuard = async <
   // - forcedAAL is set to 2 since the user can elevate it to level 2 when necessary.
   const isAcrCurrentlySatisfied = isAcrSatisfied(
     req.session.prompt,
-    await getCurrentAcr(req, { forcedAAL: 2 }),
+    await getCurrentAcr(req, { organizationId, forcedAAL: 2 }),
   );
   const wouldRequestedAcrBeSatisfiedIfAccountHasFCSetup = isAcrSatisfied(
     req.session.prompt,
-    await getCurrentAcr(req, { forcedIAL: 1, forcedAAL: 2 }),
+    await getCurrentAcr(req, { organizationId, forcedIAL: 1, forcedAAL: 2 }),
   );
 
   const requestedAcrRequiresFranceConnection =
@@ -456,7 +450,7 @@ export const userIsCertifiedAsDirigeantGuard = async <
     linkType !== LinkEnum.enum.organization_dirigeant
   ) {
     req.session.pendingCertificationDirigeantOrganizationId = organizationId;
-    return process(context);
+    return processPendingCertificationDirigeantGuard(context);
   }
 
   if (linkType === LinkEnum.enum.organization_dirigeant) {
@@ -471,7 +465,7 @@ export const userIsCertifiedAsDirigeantGuard = async <
     const renewalNeeded = expiredCertification || expiredVerification;
     if (renewalNeeded) {
       req.session.pendingCertificationDirigeantOrganizationId = organizationId;
-      return process(context);
+      return processPendingCertificationDirigeantGuard(context);
     }
   }
 

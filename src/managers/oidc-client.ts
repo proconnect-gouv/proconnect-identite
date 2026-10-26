@@ -1,27 +1,23 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
-import type {
-  BaseConnection,
-  Connection,
-} from "@proconnect-gouv/proconnect.identite/types";
-import * as Sentry from "@sentry/node";
+import type { Connection } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty, isString } from "lodash-es";
 import type { IncomingHttpHeaders } from "node:http";
 import type { KoaContextWithOIDC } from "oidc-provider";
 import { context } from "../connectors/context";
-import { getSelectedOrganizationId } from "../repositories/redis/selected-organization";
-import { logger } from "../services/log";
 
 const { oidc_clients } = context.repository;
 
 export const recordNewConnection = async ({
   accountId,
   client,
+  organizationId,
   params,
   requestHeaders,
 }: {
   accountId: string;
   // workaround to extract the unexported Client type
   client: NonNullable<KoaContextWithOIDC["oidc"]["client"]>;
+  organizationId: number | null;
   params: OIDCContextParams;
   requestHeaders: IncomingHttpHeaders;
 }): Promise<Connection> => {
@@ -34,15 +30,6 @@ export const recordNewConnection = async ({
   }
   const oidc_client_id = oidc_client.id;
 
-  let organization_id: BaseConnection["organization_id"] = null;
-  try {
-    organization_id = await getSelectedOrganizationId(user_id);
-  } catch (err) {
-    // This is unexpected, we silently fail and log it in sentry
-    logger.error(err);
-    Sentry.captureException(err);
-  }
-
   let sp_name: string | null = null;
   if (isString(params?.sp_name)) {
     sp_name = params.sp_name;
@@ -53,7 +40,7 @@ export const recordNewConnection = async ({
   return await oidc_clients.addConnection({
     user_id,
     oidc_client_id,
-    organization_id,
+    organization_id: organizationId,
     sp_name,
     user_ip_address,
   });

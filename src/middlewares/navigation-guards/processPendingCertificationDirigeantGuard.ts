@@ -17,12 +17,12 @@ import {
 } from "../../managers/organization/join";
 import { selectOrganization } from "../../managers/organization/main";
 import { isCommuneWithMultipleOfficialContactEmails } from "../../managers/organization/official-contact-email-verification";
-import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
-import { hasValidFranceConnectIdentity } from "../../managers/user";
 import {
-  deleteSelectedOrganizationId,
-  getSelectedOrganizationId,
-} from "../../repositories/redis/selected-organization";
+  deleteSelectedOrganizationIdFromAuthenticatedSession,
+  getSelectedOrganizationIdFromAuthenticatedSession,
+  getUserFromAuthenticatedSession,
+} from "../../managers/session/authenticated";
+import { hasValidFranceConnectIdentity } from "../../managers/user";
 import { userHasPersonalInformationsGuard } from "./guards";
 import { Pass, type RequestContext } from "./internals";
 import {
@@ -62,7 +62,9 @@ export const processPendingModerationGuard = async (
   );
 };
 
-export const process = async (prev: Pass<RequestContext>) => {
+export const processPendingCertificationDirigeantGuard = async (
+  prev: Pass<RequestContext>,
+) => {
   const {
     data: { req },
     pass,
@@ -106,10 +108,7 @@ export const process = async (prev: Pass<RequestContext>) => {
       });
     }
 
-    await selectOrganization({
-      user_id,
-      organization_id,
-    });
+    await selectOrganization({ req, organization_id });
 
     req.session.pendingGreetingsForSelectedOrganization = true;
 
@@ -120,7 +119,7 @@ export const process = async (prev: Pass<RequestContext>) => {
     return userComplyWithAllRequirementsGuard(prev);
   } catch (error) {
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
-    await deleteSelectedOrganizationId(user_id);
+    deleteSelectedOrganizationIdFromAuthenticatedSession(req);
 
     if (error instanceof CertificationDirigeantOrganizationNotCoveredError) {
       return continueTo(
@@ -177,7 +176,8 @@ export const processGreetingsForSelectedOrganizationGuard = async (
 
   const { pendingGreetingsForSelectedOrganization } = req.session;
   const user_id = getUserFromAuthenticatedSession(req).id;
-  const organization_id = await getSelectedOrganizationId(user_id);
+  const organization_id =
+    getSelectedOrganizationIdFromAuthenticatedSession(req);
 
   if (!pendingGreetingsForSelectedOrganization || !organization_id) {
     throw HttpErrors.InternalServerError();
