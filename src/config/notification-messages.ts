@@ -142,12 +142,22 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
   official_contact_email_verification_not_needed: {
     type: "error",
     description:
-      "Erreur : votre appartenance à l’organisation n’a plus besoin d’être vérifiée.",
+      "Erreur : votre appartenance à l’organisation n’a plus besoin d’être vérifiée.",
+  },
+  official_contact_email_verification_not_found: {
+    type: "error",
+    description:
+      "Erreur : nous n’avons pas trouvé de vérification en cours pour votre rattachement. Merci de renseigner à nouveau le SIRET de votre organisation.",
   },
   api_annuaire_error: {
     type: "error",
     description:
-      "Erreur : les données Annuaire Service Public de l’organisation, nécessaires pour valider le rattachement, sont indisponibles pour le moment. Merci de réessayer ultérieurement.",
+      "Erreur : les données Annuaire Service Public de l’organisation, nécessaires pour valider le rattachement, sont indisponibles pour le moment. Merci de réessayer ultérieurement.",
+  },
+  api_annuaire_contact_email_not_found: {
+    type: "error",
+    description:
+      "Erreur : nous n’avons pas trouvé d’adresse email officielle valide pour votre mairie dans l’Annuaire Service Public.",
   },
   passkey_successfully_created: {
     type: "success",

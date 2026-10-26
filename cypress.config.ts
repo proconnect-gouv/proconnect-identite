@@ -1,6 +1,7 @@
 //
 
 import { defineConfig } from "cypress";
+import { Client } from "pg";
 
 //
 const RECORD = process.env["CYPRESS_RECORD"] === "true";
@@ -15,6 +16,19 @@ export default defineConfig({
       on("task", {
         log(message) {
           console.log(message);
+
+          return null;
+        },
+        async psql(sql: string) {
+          const client = new Client({
+            connectionString: process.env["DATABASE_URL"],
+          });
+          await client.connect();
+          try {
+            await client.query(sql);
+          } finally {
+            await client.end();
+          }
 
           return null;
         },

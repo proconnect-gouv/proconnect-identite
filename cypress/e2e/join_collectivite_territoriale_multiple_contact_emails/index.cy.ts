@@ -75,4 +75,27 @@ describe("join collectivité territoriale with code send to official contact ema
     );
     cy.contains("À quelle adresse e-mail souhaitez-vous recevoir le code ?");
   });
+
+  it("should report a commune the annuaire has no official email for", function () {
+    cy.visit("/users/join-organization");
+    cy.login("eneeria@yopmail.com");
+
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("20006541500016");
+    cy.contains("Enregistrer").click();
+    cy.contains("Continuer avec cet email").click();
+    cy.contains("À quelle adresse e-mail souhaitez-vous recevoir le code ?");
+
+    cy.task(
+      "psql",
+      "UPDATE organizations SET cached_code_officiel_geographique = '99999' WHERE siret = '20006541500016'",
+    );
+
+    cy.reload();
+
+    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.contains(
+      "Erreur : nous n’avons pas trouvé d’adresse email officielle valide pour votre mairie dans l’Annuaire Service Public.",
+    );
+  });
 });

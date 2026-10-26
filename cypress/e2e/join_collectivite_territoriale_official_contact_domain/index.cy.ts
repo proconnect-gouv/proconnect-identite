@@ -110,5 +110,11 @@ describe("join collectivité territoriale with code send to official contact ema
 
     cy.title().should("include", "Compte créé - ProConnect");
     cy.contains("Compte créé 🎊");
+
+    cy.visit("/users/official-contact-email-verification");
+    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.contains(
+      "Erreur : nous n’avons pas trouvé de vérification en cours pour votre rattachement. Merci de renseigner à nouveau le SIRET de votre organisation.",
+    );
   });
 });
