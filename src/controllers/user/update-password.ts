@@ -93,24 +93,21 @@ export const postResetPasswordController = async (
 export const getChangePasswordController = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
-  try {
-    const schema = z.object({
-      reset_password_token: z.string().trim().min(1),
-    });
+  const query = z
+    .object({ reset_password_token: z.string().trim().min(1) })
+    .safeParse(req.query);
 
-    const { reset_password_token } = await schema.parseAsync(req.query);
-
-    return res.render("user/change-password", {
-      pageTitle: "Changer votre mot de passe",
-      resetPasswordToken: reset_password_token,
-      notifications: await getNotificationsFromRequest(req),
-      csrfToken: csrfToken(req),
-    });
-  } catch (error) {
-    next(error);
+  if (!query.success) {
+    return res.redirect(`/users/reset-password?notification=invalid_token`);
   }
+
+  return res.render("user/change-password", {
+    pageTitle: "Changer votre mot de passe",
+    resetPasswordToken: query.data.reset_password_token,
+    notifications: await getNotificationsFromRequest(req),
+    csrfToken: csrfToken(req),
+  });
 };
 
 export const postChangePasswordController = async (

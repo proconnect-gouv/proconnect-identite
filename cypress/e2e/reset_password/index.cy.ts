@@ -91,4 +91,11 @@ describe("reset password", () => {
       cy.maildevDeleteMessageById(email.id);
     });
   });
+
+  it("should redirect to reset password when the change password link has no token", () => {
+    cy.visit("/users/change-password");
+
+    cy.title().should("include", "Réinitialiser mon mot de passe - ProConnect");
+    cy.contains("le lien que vous avez utilisé est invalide ou expiré");
+  });
 });
