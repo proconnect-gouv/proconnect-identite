@@ -119,4 +119,23 @@ describe("sign-in from standard client", () => {
     cy.login("unused1@yopmail.com");
     cy.contains("standard-client");
   });
+
+  it("should forbid starting an interaction with an authorization header", () => {
+    cy.intercept("GET", "http://localhost:3000/interaction/*").as(
+      "interaction",
+    );
+    cy.visit("http://localhost:4000");
+    cy.contains("S’identifier avec ProConnect").click();
+
+    cy.wait("@interaction").then(({ request }) =>
+      cy
+        .request({
+          failOnStatusCode: false,
+          headers: { authorization: "Basic robot" },
+          url: request.url,
+        })
+        .its("status")
+        .should("equal", 403),
+    );
+  });
 });
