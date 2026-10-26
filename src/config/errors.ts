@@ -65,13 +65,6 @@ export class OrganizationNotActiveError extends Error {
   }
 }
 
-export class ModerationNotFoundError extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ModerationNotFoundError";
-  }
-}
-
 export class UserModerationRejectedError extends Error {
   constructor(
     public moderationId: number,

@@ -1,5 +1,8 @@
 import { CancelModeration } from "@proconnect-gouv/proconnect.email";
-import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import {
+  ModerationNotFoundError,
+  NotFoundError,
+} from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
@@ -52,6 +55,9 @@ export const cancelModeration = async ({
   }
 
   const result = await moderations.delete(moderation_id);
+  if (!result) {
+    throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
+  }
 
   await sendMail({
     to: [user.email],
