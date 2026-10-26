@@ -1,1 +1,0 @@
-🐛 Recharger le retour de connexion FranceConnect, ou terminer la déconnexion FranceConnect depuis un autre onglet, ramène désormais à la page de départ avec le message « L'authentification FranceConnect a échoué. Veuillez réessayer. », au lieu d'afficher une erreur 400

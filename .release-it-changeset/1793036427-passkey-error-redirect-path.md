@@ -1,1 +1,0 @@
-🐛 Un échec d'enregistrement de clé d'accès lors de la configuration de la double authentification ramène désormais au choix de la méthode avec le message « Erreur : votre clé d’accès est invalide. », au lieu d'afficher une page non trouvée

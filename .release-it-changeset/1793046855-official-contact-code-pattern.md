@@ -1,1 +1,0 @@
-🚸 Un code composé uniquement d'espaces sur la page de vérification de l'email officiel est désormais refusé par le navigateur avant l'envoi, avec le format attendu, au lieu de recharger la page avec un message d'erreur

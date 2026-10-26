@@ -1,5 +1,41 @@
 # Changelog
 
+## [2026.10.11](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.10...2026.10.11) (2026-10-26)
+
+### Changements
+
+- 🐛 Ouvrir la page de changement de mot de passe sans jeton de réinitialisation redirige désormais vers « Mot de passe oublié » avec le message de lien invalide ou expiré, au lieu d'afficher une erreur 400
+- 🔒 Le limiteur de requêtes par e-mail s'arrête désormais à l'erreur quand la session ne contient aucun e-mail, au lieu de laisser la requête continuer sans limitation
+- 🐛 Recharger le retour de connexion FranceConnect, ou terminer la déconnexion FranceConnect depuis un autre onglet, ramène désormais à la page de départ avec le message « L'authentification FranceConnect a échoué. Veuillez réessayer. », au lieu d'afficher une erreur 400
+- 🐛 Ouvrir une page de rattachement à une organisation (accès restreint, confirmation, rattachement en cours, demande refusée, certification impossible) sans ses paramètres redirige désormais vers « Rejoindre une organisation » avec un message expliquant le problème, au lieu d'afficher une erreur 400, et consulter la demande refusée d'un autre utilisateur affiche une erreur 403 au lieu d'une erreur 500
+- 🐛 Un échec d'enregistrement de clé d'accès lors de la configuration de la double authentification ramène désormais au choix de la méthode avec le message « Erreur : votre clé d’accès est invalide. », au lieu d'afficher une page non trouvée
+- 🐛 Revenir sur la page de vérification de l'email officiel après avoir rejoint une organisation redirige désormais vers « Rejoindre une organisation » avec un message d'erreur, au lieu d'afficher une page non trouvée, et un code vide ou une adresse email officielle introuvable ramènent aussi vers un message d'erreur au lieu d'une erreur 400 ou 500
+- 🐛 Annuler deux fois la même demande de rattachement ramène désormais à la page d’origine avec « Information : aucune demande de rattachement n’est en cours. » au lieu d'afficher une erreur 500, et annuler la demande d'un autre utilisateur affiche une erreur 403 au lieu d'une erreur 500
+- 🐛 Quitter deux fois la même organisation, ou sélectionner une organisation que vous venez de quitter, affiche désormais « Information : vous ne faites pas partie de cette organisation. » au lieu d'une erreur 500
+- 🚸 Un code composé uniquement d'espaces sur la page de vérification de l'email officiel est désormais refusé par le navigateur avant l'envoi, avec le format attendu, au lieu de recharger la page avec un message d'erreur
+- 🐛 Deux annulations simultanées de la même demande de rattachement n’envoient plus deux emails d’annulation : la seconde affiche « Information : aucune demande de rattachement n’est en cours. » au lieu d’un succès
+- ❎ Revenir sur la page de choix de l'adresse email officielle après avoir rejoint une organisation ramène désormais vers « Rejoindre une organisation » avec un message d'erreur au lieu d'afficher une page non trouvée, et une mairie sans adresse email officielle valide dans l'Annuaire Service Public affiche « nous n’avons pas trouvé d’adresse email officielle valide pour votre mairie » aussi sur la page de vérification du code, au lieu d'annoncer des données indisponibles
+
+### Corrigé
+
+- 🐛 send one cancellation email when a moderation is cancelled twice at once ([#2330](https://github.com/proconnect-gouv/proconnect-identite/issues/2330)) ([dbec561](https://github.com/proconnect-gouv/proconnect-identite/commit/dbec561f7274074295ac2612a74fd6a4d58bbbc3))
+- 🐛 redirect after a double quit or a stale organization pick ([#2324](https://github.com/proconnect-gouv/proconnect-identite/issues/2324)) ([ea9f9f6](https://github.com/proconnect-gouv/proconnect-identite/commit/ea9f9f6d29a7e60a635741f902cda3e2d2b0d92c))
+- 🐛 redirect when a cancelled moderation is gone ([#2323](https://github.com/proconnect-gouv/proconnect-identite/issues/2323)) ([3bf6f0a](https://github.com/proconnect-gouv/proconnect-identite/commit/3bf6f0a0e687f7e531ffee83c97ba2a6d3297834))
+- 🐛 handle official contact verification errors with redirects ([#2322](https://github.com/proconnect-gouv/proconnect-identite/issues/2322)) ([f9ab0bb](https://github.com/proconnect-gouv/proconnect-identite/commit/f9ab0bba6163f23463d613563e6506195a5a4737))
+- 🐛 fix passkey registration error redirect path ([#2321](https://github.com/proconnect-gouv/proconnect-identite/issues/2321)) ([e916cda](https://github.com/proconnect-gouv/proconnect-identite/commit/e916cdafa1becb2c2e9308852334b6001eda3d27))
+- 🐛 redirect org pages opened without their query ([#2320](https://github.com/proconnect-gouv/proconnect-identite/issues/2320)) ([499411f](https://github.com/proconnect-gouv/proconnect-identite/commit/499411fb64172ddc3f3673e74db3ce46dc781b7d))
+- 🐛 redirect franceconnect callbacks instead of erroring ([#2319](https://github.com/proconnect-gouv/proconnect-identite/issues/2319)) ([8b77657](https://github.com/proconnect-gouv/proconnect-identite/commit/8b77657583d270db106e0c8ce6edcb0bc26eb9c8))
+- 🔒 stop email rate limiter after its no-email error ([#2318](https://github.com/proconnect-gouv/proconnect-identite/issues/2318)) ([48d37c4](https://github.com/proconnect-gouv/proconnect-identite/commit/48d37c4fe514622f9740551a7062241a9574bb58))
+- 🐛 redirect change-password without reset token instead of erroring ([#2316](https://github.com/proconnect-gouv/proconnect-identite/issues/2316)) ([9f5640a](https://github.com/proconnect-gouv/proconnect-identite/commit/9f5640ad98aae3cfefe61fcb5fe058c2f56baf49))
+
+### Divers
+
+- ✅ test picking an organization just left ([#2329](https://github.com/proconnect-gouv/proconnect-identite/issues/2329)) ([5fe7c9f](https://github.com/proconnect-gouv/proconnect-identite/commit/5fe7c9fb071f5fa540dc126d2a8a981e80ee89ac))
+- ✏️ restore no-break spaces in notification texts ([#2328](https://github.com/proconnect-gouv/proconnect-identite/issues/2328)) ([edd6df5](https://github.com/proconnect-gouv/proconnect-identite/commit/edd6df55e2af0057dc24eda22f5e316a593a260c))
+- ❎ redirect the official contact pages instead of 404 or a wrong annuaire message ([#2327](https://github.com/proconnect-gouv/proconnect-identite/issues/2327)) ([cbed400](https://github.com/proconnect-gouv/proconnect-identite/commit/cbed4005e74f83ffe80a1f2ec2f101695f91ea6e))
+- 🚸 refuse a blank official contact code in the browser ([#2326](https://github.com/proconnect-gouv/proconnect-identite/issues/2326)) ([d47de9c](https://github.com/proconnect-gouv/proconnect-identite/commit/d47de9c28328244f7e30a06af2449ed191a7bf7d))
+- 🔊 log the missing reset token on the change password page ([#2325](https://github.com/proconnect-gouv/proconnect-identite/issues/2325)) ([9016a0f](https://github.com/proconnect-gouv/proconnect-identite/commit/9016a0fe759d4b86f4e6f9ee3316389e3c6512a9))
+
 ## [2026.10.10](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.9...2026.10.10) (2026-10-26)
 
 ### Changements

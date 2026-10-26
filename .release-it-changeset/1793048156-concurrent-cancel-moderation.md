@@ -1,1 +1,0 @@
-🐛 Deux annulations simultanées de la même demande de rattachement n’envoient plus deux emails d’annulation : la seconde affiche « Information : aucune demande de rattachement n’est en cours. » au lieu d’un succès

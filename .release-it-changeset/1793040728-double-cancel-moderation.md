@@ -1,1 +1,0 @@
-🐛 Annuler deux fois la même demande de rattachement ramène désormais à la page d’origine avec « Information : aucune demande de rattachement n’est en cours. » au lieu d'afficher une erreur 500, et annuler la demande d'un autre utilisateur affiche une erreur 403 au lieu d'une erreur 500
