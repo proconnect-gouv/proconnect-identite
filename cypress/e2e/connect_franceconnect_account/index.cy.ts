@@ -25,6 +25,14 @@ describe("Connect FranceConnect account", () => {
     cy.seeInField("Prénom", "Jean");
     cy.seeInField("Nom", "Dulac");
 
+    cy.visit(
+      "/users/personal-information/franceconnect/logout/callback?state=replayed",
+    );
+    cy.title().should("include", "Informations personnelles -");
+    cy.contains(
+      "L'authentification FranceConnect a échoué. Veuillez réessayer.",
+    );
+
     cy.getByLabel("Se déconnecter - Jean Dulac").filter(":visible").click();
 
     cy.title().should("include", "S'inscrire ou se connecter -");
