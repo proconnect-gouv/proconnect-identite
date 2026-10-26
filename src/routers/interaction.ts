@@ -6,7 +6,10 @@ import {
   interactionErrorControllerFactory,
   interactionStartControllerFactory,
 } from "../controllers/interaction";
-import { userComplyWithAllRequirementsGuardMiddleware } from "../middlewares/navigation-guards";
+import {
+  isUserGuardMiddleware,
+  userComplyWithAllRequirementsGuardMiddleware,
+} from "../middlewares/navigation-guards";
 
 export const interactionRouter = (oidcProvider: Provider) => {
   const interactionRouter = Router();
@@ -17,6 +20,7 @@ export const interactionRouter = (oidcProvider: Provider) => {
 
   interactionRouter.get(
     "/:grant",
+    isUserGuardMiddleware,
     interactionStartControllerFactory(oidcProvider),
   );
   interactionRouter.get(
@@ -26,6 +30,7 @@ export const interactionRouter = (oidcProvider: Provider) => {
   );
   interactionRouter.get(
     "/:grant/error",
+    isUserGuardMiddleware,
     interactionErrorControllerFactory(oidcProvider),
   );
 
