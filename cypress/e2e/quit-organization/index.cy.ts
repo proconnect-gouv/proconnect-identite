@@ -62,6 +62,28 @@ describe("quit the organization", () => {
     });
   });
 
+  it("should tell the user they are no longer in the organization picked from a stale page", function () {
+    cy.visit("/");
+
+    cy.login("lion.eljonson@yopmail.com");
+
+    cy.title().should("include", "Accueil -");
+    cy.visit("/users/select-organization");
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.contains("Votre organisation de rattachement");
+    cy.task(
+      "psql",
+      "DELETE FROM users_organizations WHERE user_id = 1 AND organization_id = 1",
+    );
+    cy.contains("a", "Lycee general et technologique chaptal").click();
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.contains(
+      "Information : vous ne faites pas partie de cette organisation.",
+    );
+  });
+
   it("quit my last organization and get redirected to join page", function () {
     cy.visit("/");
 
