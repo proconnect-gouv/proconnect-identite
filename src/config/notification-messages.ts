@@ -54,6 +54,21 @@ Veuillez vous connecter avec votre nouveau mot de passe.`,
     type: "error",
     description: "Erreur : vous appartenez déjà à cette organisation.",
   },
+  organization_not_found: {
+    type: "error",
+    description:
+      "Erreur : nous n’avons pas trouvé l’organisation demandée. Merci de renseigner à nouveau son SIRET.",
+  },
+  moderation_not_found: {
+    type: "error",
+    description:
+      "Erreur : nous n’avons pas trouvé votre demande de rattachement.",
+  },
+  certification_dirigeant_data_missing: {
+    type: "error",
+    description:
+      "Erreur : les informations de vérification de votre statut de dirigeant ne sont plus disponibles. Merci de recommencer le rattachement.",
+  },
   email_unavailable: {
     type: "warning",
     description: `Attention : un compte existe déjà avec cet email.

@@ -55,6 +55,7 @@ import {
 } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
+import { logger } from "../services/log";
 
 const { franceconnect_userinfo, moderations, organizations } =
   context.repository;
@@ -261,28 +262,31 @@ export const getDomainNotAllowedForOrganizationController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const schema = z.object({
-      organization_id: idSchema(),
-    });
+  const schema = z.object({
+    organization_id: idSchema(),
+  });
 
-    const { organization_id } = await schema.parseAsync(req.query);
-
-    const organization = await organizations.findById(organization_id);
-    if (isEmpty(organization)) {
-      return next(new HttpErrors.NotFound());
-    }
-    const whitelist = DOMAINS_WHITELIST.get(organization.siret);
-
-    return res.render("user/domain-not-allowed-for-organization", {
-      pageTitle: "Accès restreint",
-      csrfToken: csrfToken(req),
-      organization_label: organization.cached_libelle,
-      organization_domains: whitelist?.join(", "),
-    });
-  } catch (error) {
-    next(error);
+  const result = await schema.safeParseAsync(req.query);
+  if (!result.success) {
+    logger.warn(result.error);
+    return res.redirect(
+      "/users/join-organization?notification=organization_not_found",
+    );
   }
+  const { organization_id } = result.data;
+
+  const organization = await organizations.findById(organization_id);
+  if (isEmpty(organization)) {
+    return next(new HttpErrors.NotFound());
+  }
+  const whitelist = DOMAINS_WHITELIST.get(organization.siret);
+
+  return res.render("user/domain-not-allowed-for-organization", {
+    pageTitle: "Accès restreint",
+    csrfToken: csrfToken(req),
+    organization_label: organization.cached_libelle,
+    organization_domains: whitelist?.join(", "),
+  });
 };
 
 export const getDomainRefusedForOrganizationController = async (
@@ -290,26 +294,29 @@ export const getDomainRefusedForOrganizationController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const schema = z.object({
-      organization_id: idSchema(),
-    });
+  const schema = z.object({
+    organization_id: idSchema(),
+  });
 
-    const { organization_id } = await schema.parseAsync(req.query);
-
-    const organization = await organizations.findById(organization_id);
-    if (isEmpty(organization)) {
-      return next(new HttpErrors.NotFound());
-    }
-
-    return res.render("user/domain-refused-for-organization", {
-      pageTitle: "Accès restreint",
-      csrfToken: csrfToken(req),
-      organization_label: organization.cached_libelle,
-    });
-  } catch (error) {
-    next(error);
+  const result = await schema.safeParseAsync(req.query);
+  if (!result.success) {
+    logger.warn(result.error);
+    return res.redirect(
+      "/users/join-organization?notification=organization_not_found",
+    );
   }
+  const { organization_id } = result.data;
+
+  const organization = await organizations.findById(organization_id);
+  if (isEmpty(organization)) {
+    return next(new HttpErrors.NotFound());
+  }
+
+  return res.render("user/domain-refused-for-organization", {
+    pageTitle: "Accès restreint",
+    csrfToken: csrfToken(req),
+    organization_label: organization.cached_libelle,
+  });
 };
 
 export const getJoinOrganizationConfirmController = async (
@@ -317,29 +324,32 @@ export const getJoinOrganizationConfirmController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const schema = z.object({
-      organization_id: idSchema(),
-    });
+  const schema = z.object({
+    organization_id: idSchema(),
+  });
 
-    const { organization_id } = await schema.parseAsync(req.query);
-
-    const organization = await organizations.findById(organization_id);
-
-    if (isEmpty(organization)) {
-      return next(new HttpErrors.NotFound());
-    }
-
-    return res.render("user/join-organization-confirm", {
-      pageTitle: "Confirmer le rattachement",
-      csrfToken: csrfToken(req),
-      organization_label: organization.cached_libelle,
-      email: getUserFromAuthenticatedSession(req).email,
-      siret: organization.siret,
-    });
-  } catch (error) {
-    next(error);
+  const result = await schema.safeParseAsync(req.query);
+  if (!result.success) {
+    logger.warn(result.error);
+    return res.redirect(
+      "/users/join-organization?notification=organization_not_found",
+    );
   }
+  const { organization_id } = result.data;
+
+  const organization = await organizations.findById(organization_id);
+
+  if (isEmpty(organization)) {
+    return next(new HttpErrors.NotFound());
+  }
+
+  return res.render("user/join-organization-confirm", {
+    pageTitle: "Confirmer le rattachement",
+    csrfToken: csrfToken(req),
+    organization_label: organization.cached_libelle,
+    email: getUserFromAuthenticatedSession(req).email,
+    siret: organization.siret,
+  });
 };
 
 export const getUnableToAutoJoinOrganizationController = async (
@@ -347,11 +357,18 @@ export const getUnableToAutoJoinOrganizationController = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const schema = z.object({
+    moderation_id: idSchema(),
+  });
+  const result = await schema.safeParseAsync(req.query);
+  if (!result.success) {
+    logger.warn(result.error);
+    return res.redirect(
+      "/users/join-organization?notification=moderation_not_found",
+    );
+  }
+  const { moderation_id } = result.data;
   try {
-    const schema = z.object({
-      moderation_id: idSchema(),
-    });
-    const { moderation_id } = await schema.parseAsync(req.query);
     const user = getUserFromAuthenticatedSession(req);
 
     const { cached_libelle, siret, cached_adresse, cached_siege_social } =
@@ -388,11 +405,18 @@ export const getModerationRejectedController = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const schema = z.object({
+    moderation_id: idSchema(),
+  });
+  const result = await schema.safeParseAsync(req.query);
+  if (!result.success) {
+    logger.warn(result.error);
+    return res.redirect(
+      "/users/join-organization?notification=moderation_not_found",
+    );
+  }
+  const { moderation_id } = result.data;
   try {
-    const schema = z.object({
-      moderation_id: idSchema(),
-    });
-    const { moderation_id } = await schema.parseAsync(req.query);
     const user = getUserFromAuthenticatedSession(req);
 
     const { cached_libelle, siret, cached_adresse, cached_siege_social } =
@@ -420,9 +444,11 @@ export const getModerationRejectedController = async (
     });
   } catch (e) {
     if (e instanceof NotFoundError) {
-      next(new HttpErrors.NotFound());
+      return next(new HttpErrors.NotFound());
+    } else if (e instanceof ForbiddenError) {
+      return next(new HttpErrors.Forbidden());
     }
-    next(e);
+    return next(e);
   }
 };
 
@@ -453,74 +479,79 @@ export async function getCertificationDirigeantCloseMatchError(
   res: Response,
   next: NextFunction,
 ) {
-  try {
-    const query = z
-      .object({
-        matches: z
-          .string()
-          .pipe(z.transform((v) => v.split(",")))
-          .pipe(z.array(MatchCriteria))
-          .pipe(z.transform((matches) => new Set(matches)))
-          .optional(),
-        organization_label: z.string(),
-        siren: z.string().length(9),
-        source: CertificationDirigeantDataSource,
-      })
-      .parse(req.query);
-
-    const user = getUserFromAuthenticatedSession(req);
-    const user_info = await franceconnect_userinfo.find(user.id);
-
-    if (isEmpty(user_info)) {
-      return next(new HttpErrors.NotFound());
-    }
-
-    const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
-      query.source,
+  const result = z
+    .object({
+      matches: z
+        .string()
+        .pipe(z.transform((v) => v.split(",")))
+        .pipe(z.array(MatchCriteria))
+        .pipe(z.transform((matches) => new Set(matches)))
+        .optional(),
+      organization_label: z.string(),
+      siren: z.string().length(9),
+      source: CertificationDirigeantDataSource,
+    })
+    .safeParse(req.query);
+  if (!result.success) {
+    logger.warn(result.error);
+    return res.redirect(
+      "/users/join-organization?notification=certification_dirigeant_data_missing",
     );
-
-    return res.render("certification-dirigeant/close-match-error", {
-      interactionId: req.session.interactionId,
-      matches: query.matches,
-      oidcError: oidcErrorSchema().enum.login_required,
-      oidcErrorDescription: "Certification dirigeant: close match error",
-      organization_label: query.organization_label,
-      pageTitle: "Certification impossible",
-      siren: query.siren,
-      dataSourceLabel,
-      use_dashboard_layout: false,
-      user_info,
-    });
-  } catch (e) {
-    next(e);
   }
+  const query = result.data;
+
+  const user = getUserFromAuthenticatedSession(req);
+  const user_info = await franceconnect_userinfo.find(user.id);
+
+  if (isEmpty(user_info)) {
+    return next(new HttpErrors.NotFound());
+  }
+
+  const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
+    query.source,
+  );
+
+  return res.render("certification-dirigeant/close-match-error", {
+    interactionId: req.session.interactionId,
+    matches: query.matches,
+    oidcError: oidcErrorSchema().enum.login_required,
+    oidcErrorDescription: "Certification dirigeant: close match error",
+    organization_label: query.organization_label,
+    pageTitle: "Certification impossible",
+    siren: query.siren,
+    dataSourceLabel,
+    use_dashboard_layout: false,
+    user_info,
+  });
 }
 
 export async function getCertificationDirigeantNoMatchError(
   req: Request,
   res: Response,
-  next: NextFunction,
 ) {
-  try {
-    const query = z
-      .object({
-        siren: z.string().length(9),
-        organization_label: z.string().optional(),
-      })
-      .parse(req.query);
-
-    return res.render("certification-dirigeant/no-match-error", {
-      interactionId: req.session.interactionId,
-      oidcError: oidcErrorSchema().enum.login_required,
-      oidcErrorDescription: "Certification dirigeant: no match error",
-      pageTitle: "Certification impossible",
-      siren: query.siren,
-      organization_label: query.organization_label,
-      use_dashboard_layout: false,
-    });
-  } catch (e) {
-    next(e);
+  const result = z
+    .object({
+      siren: z.string().length(9),
+      organization_label: z.string().optional(),
+    })
+    .safeParse(req.query);
+  if (!result.success) {
+    logger.warn(result.error);
+    return res.redirect(
+      "/users/join-organization?notification=certification_dirigeant_data_missing",
+    );
   }
+  const query = result.data;
+
+  return res.render("certification-dirigeant/no-match-error", {
+    interactionId: req.session.interactionId,
+    oidcError: oidcErrorSchema().enum.login_required,
+    oidcErrorDescription: "Certification dirigeant: no match error",
+    pageTitle: "Certification impossible",
+    siren: query.siren,
+    organization_label: query.organization_label,
+    use_dashboard_layout: false,
+  });
 }
 
 export async function getAccessRestrictedToPublicSectorEmailController(
