@@ -2,7 +2,11 @@ import type { NextFunction, Request, Response } from "express";
 import { isEmpty } from "lodash-es";
 import { match, P } from "ts-pattern";
 import { z } from "zod";
-import { ApiAnnuaireError, InvalidTokenError } from "../../config/errors";
+import {
+  ApiAnnuaireError,
+  ApiAnnuaireNotFoundError,
+  InvalidTokenError,
+} from "../../config/errors";
 import { context } from "../../connectors/context";
 import { selectOrganization } from "../../managers/organization/main";
 import {
@@ -109,6 +113,15 @@ export const getOfficialContactEmailVerificationController = async (
   } catch (error) {
     req.session.pendingOfficialContactEmailVerificationOrganizationId =
       undefined;
+
+    if (
+      error instanceof ApiAnnuaireError &&
+      error.cause instanceof ApiAnnuaireNotFoundError
+    ) {
+      return res.redirect(
+        `/users/join-organization?notification=api_annuaire_contact_email_not_found`,
+      );
+    }
 
     if (error instanceof ApiAnnuaireError) {
       return res.redirect(

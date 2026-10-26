@@ -117,4 +117,27 @@ describe("join collectivité territoriale with code send to official contact ema
       "Erreur : nous n’avons pas trouvé de vérification en cours pour votre rattachement. Merci de renseigner à nouveau le SIRET de votre organisation.",
     );
   });
+
+  it("should report a commune the annuaire has no official email for when sending the code", function () {
+    cy.visit("/users/join-organization");
+    cy.login("servitor@yopmail.com");
+
+    cy.contains("SIRET de l’organisation que vous représentez").click();
+    cy.focused().clear().type("21340126800130");
+    cy.contains("Enregistrer").click();
+    cy.contains("Continuer avec cet email").click();
+    cy.title().should("include", "Vérifier votre email - ProConnect");
+
+    cy.task(
+      "psql",
+      "UPDATE organizations SET cached_code_officiel_geographique = '99999' WHERE siret = '21340126800130'",
+    );
+
+    cy.reload();
+
+    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.contains(
+      "Erreur : nous n’avons pas trouvé d’adresse email officielle valide pour votre mairie dans l’Annuaire Service Public.",
+    );
+  });
 });

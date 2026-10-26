@@ -54,6 +54,12 @@ describe("join collectivité territoriale with code send to official contact ema
 
     cy.title().should("include", "Compte créé - ProConnect");
     cy.contains("Compte créé 🎊");
+
+    cy.visit("/users/official-contact-ask-which-email");
+    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.contains(
+      "Erreur : nous n’avons pas trouvé de vérification en cours pour votre rattachement. Merci de renseigner à nouveau le SIRET de votre organisation.",
+    );
   });
 
   it("should ask again which mairie to select when the choice is skipped or unknown", function () {
