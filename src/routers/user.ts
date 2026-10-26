@@ -314,7 +314,7 @@ export const userRouter = () => {
     csrfProtectionMiddleware,
     postVerifyRegistrationControllerFactory(
       "/users/2fa-successfully-configured",
-      "users/double-authentication-choice?notification=invalid_passkey",
+      "/users/double-authentication-choice?notification=invalid_passkey",
     ),
   );
 
