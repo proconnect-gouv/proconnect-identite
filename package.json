@@ -168,7 +168,7 @@
     "cypress-maildev": "^2.0.0",
     "jose": "^6.2.1",
     "lodash": "^4.18.1",
-    "nock": "^14.0.10",
+    "nock": "^15.0.2",
     "node-pg-migrate": "^8.0.3",
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.8.3",
