@@ -119,4 +119,30 @@ describe("mfa decision helper (signin)", () => {
 
     cy.contains("Choisir votre méthode de connexion renforcée");
   });
+
+  it("should show the invalid passkey error when passkey registration fails", function () {
+    cy.addVirtualAuthenticator({
+      protocol: "ctap2",
+      transport: "internal",
+      hasResidentKey: true,
+      hasUserVerification: true,
+      isUserVerified: true,
+      defaultBackupEligibility: false,
+      defaultBackupState: true,
+    });
+
+    cy.visit("/users/double-authentication-choice");
+
+    cy.login("ial0-aal1-oal1@yopmail.com");
+
+    cy.contains("Clé d'accès (passkey)").click();
+    cy.contains("button", "Continuer").click();
+
+    cy.title().should(
+      "include",
+      "Choisir un mode de double authentification - ProConnect",
+    );
+    cy.contains("h1", "Choisir votre méthode de connexion renforcée");
+    cy.contains("Erreur : votre clé d’accès est invalide.");
+  });
 });
