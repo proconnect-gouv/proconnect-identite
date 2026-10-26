@@ -41,7 +41,7 @@
     "fixtures:load-ci": "tsx scripts/run-sql-script.ts",
     "format": "prettier --write '**/*.{ts,sql}'",
     "migrate": "dotenvx --quiet run --convention=flow -- node-pg-migrate -j ts",
-    "start": "tsx --import ./src/instrument.ts src/index.ts",
+    "start": "node --import tsx/esm --import ./src/instrument.ts src/index.ts",
     "test": "run-s test:*",
     "lint": "prettier --check '**/*.{ts,sql}' && npm run type:check",
     "type:check": "tsc --noEmit",

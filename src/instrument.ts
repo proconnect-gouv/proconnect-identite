@@ -7,6 +7,17 @@ import { HOST, LOG_LEVEL, NODE_ENV, SENTRY_DSN } from "./config/env";
 Sentry.init({
   enabled: Boolean(SENTRY_DSN),
   attachStacktrace: true,
+  dataCollection: {
+    cookies: false,
+    databaseQueryData: false,
+    httpBodies: [],
+    httpHeaders: {
+      request: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
+      response: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
+    },
+    urlQueryParams: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
+    userInfo: false,
+  },
   debug: LOG_LEVEL === "debug",
   dsn: SENTRY_DSN,
   environment: NODE_ENV,
@@ -18,6 +29,8 @@ Sentry.init({
     Sentry.httpIntegration(),
     Sentry.postgresIntegration(),
   ],
-  profilesSampleRate: 0.5,
+  profileLifecycle: "trace",
+  profileSessionSampleRate: 0.5,
+  traceLifecycle: "static",
   tracesSampleRate: 0.2,
 });
