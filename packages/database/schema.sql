@@ -1,8 +1,8 @@
 --
 -- PostgreSQL database dump
 --
--- Dumped from database version 17.9 (Debian 17.9-1.pgdg13+1)
--- Dumped by pg_dump version 17.9 (Debian 17.9-1.pgdg13+1)
+-- Dumped from database version 18.6 (Debian 18.6-1.pgdg13+2)
+-- Dumped by pg_dump version 18.6 (Debian 18.6-1.pgdg13+2)
 SET
   statement_timeout = 0;
 
@@ -323,7 +323,7 @@ CREATE TABLE "public"."official_contact_email_verifications" (
 --
 CREATE TABLE "public"."oidc_clients" (
   "id" integer NOT NULL,
-  "client_name" character varying NOT NULL,
+  "client_name" character varying CONSTRAINT "oidc_clients_name_not_null" NOT NULL,
   "client_id" character varying NOT NULL,
   "client_secret" character varying NOT NULL,
   "redirect_uris" character varying[] DEFAULT '{}'::character varying[] NOT NULL,
