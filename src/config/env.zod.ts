@@ -2,6 +2,11 @@ import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { create_jwks } from "./jwks";
 
+const SYMMETRIC_ENCRYPTION_KEY_ERROR = [
+  "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long!",
+  "Use crypto.randomBytes(32).toString('base64') to generate one.",
+].join(" ");
+
 export const connectorEnvSchema = z.object({
   ANNUAIRE_SERVICE_PUBLIC_API_URL: z
     .string()
@@ -95,13 +100,10 @@ export const featureTogglesEnvSchema = z.object({
 
 export const secretEnvSchema = z.object({
   SYMMETRIC_ENCRYPTION_KEY: z
-    .base64({
-      error: [
-        "The SYMMETRIC_ENCRYPTION_KEY environment variable should be 32 bytes long!",
-        "Use crypto.randomBytes(32).toString('base64') to generate one.",
-      ].join(" "),
-    })
-    .default(randomBytes(32).toString("base64")),
+    .base64({ abort: true, error: SYMMETRIC_ENCRYPTION_KEY_ERROR })
+    .refine((key) => Buffer.from(key, "base64").length === 32, {
+      error: SYMMETRIC_ENCRYPTION_KEY_ERROR,
+    }),
   SESSION_COOKIE_SECRET: zCoerceArray().default([
     randomBytes(32).toString("base64"),
   ]),

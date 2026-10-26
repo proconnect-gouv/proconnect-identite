@@ -1,0 +1,1 @@
+🔐 La variable d'environnement SYMMETRIC_ENCRYPTION_KEY est désormais obligatoire et doit faire 32 octets : l'application refuse de démarrer sans elle au lieu de générer une clé aléatoire qui rendait illisibles les clés TOTP déjà enregistrées

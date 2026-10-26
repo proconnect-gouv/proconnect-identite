@@ -1,6 +1,7 @@
 //
 
 import assert from "node:assert/strict";
+import { randomBytes } from "node:crypto";
 import { describe, it } from "node:test";
 import { envSchema } from "../src/config/env.zod";
 import { create_jwks } from "../src/config/jwks";
@@ -123,5 +124,21 @@ describe("env.zod", () => {
       USE_SMTP_FROM_ALT_FOR_DOMAINS: [],
       VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES: 60,
     });
+  });
+
+  it("rejects a missing SYMMETRIC_ENCRYPTION_KEY", () => {
+    const { SYMMETRIC_ENCRYPTION_KEY } = envSchema.shape;
+
+    assert.equal(SYMMETRIC_ENCRYPTION_KEY.safeParse(undefined).success, false);
+  });
+
+  it("rejects a SYMMETRIC_ENCRYPTION_KEY that is not 32 bytes long", () => {
+    const { SYMMETRIC_ENCRYPTION_KEY } = envSchema.shape;
+
+    assert.equal(
+      SYMMETRIC_ENCRYPTION_KEY.safeParse(randomBytes(16).toString("base64"))
+        .success,
+      false,
+    );
   });
 });
