@@ -179,56 +179,55 @@ export function useFranceConnectLogoutMiddlewareFactory(
   };
 }
 
-export async function getFranceConnectLogoutCallbackMiddleware(
-  req: Request,
-  _res: Response,
-  next: NextFunction,
+export function getFranceConnectLogoutCallbackMiddlewareFactory(
+  exception_redirect_uri: string,
 ) {
-  try {
-    const query = await z
-      .object({ state: z.string() })
-      .safeParseAsync(req.query);
-    if (!query.success) {
-      return next(
-        new OidcError("invalid_state", "The query state is invalid", {
-          cause: query.error,
-        }),
-      );
+  return async function getFranceConnectLogoutCallbackMiddleware(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const query = await z
+        .object({ state: z.string() })
+        .safeParseAsync(req.query);
+      if (!query.success) {
+        return next(
+          new OidcError("invalid_state", "The query state is invalid", {
+            cause: query.error,
+          }),
+        );
+      }
+
+      if (req.session.state === undefined) {
+        return res.redirect(
+          `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
+        );
+      }
+
+      if (req.session.state !== query.data.state) {
+        return next(
+          new OidcError(
+            "invalid_state",
+            "state mismatch between query and session",
+            {
+              cause: new AssertionError({
+                expected: req.session.state,
+                actual: query.data.state,
+                operator: "===",
+              }),
+            },
+          ),
+        );
+      }
+
+      req.session.id_token_hint = undefined;
+      req.session.nonce = undefined;
+      req.session.state = undefined;
+
+      return next();
+    } catch (error) {
+      next(error);
     }
-
-    const franceconnect_session = await FranceConnectOidcSessionSchema.pick({
-      state: true,
-    }).safeParseAsync(req.session);
-    if (!franceconnect_session.success) {
-      return next(
-        new OidcError("invalid_state", "The session state is invalid", {
-          cause: franceconnect_session.error,
-        }),
-      );
-    }
-
-    if (franceconnect_session.data.state !== query.data.state) {
-      return next(
-        new OidcError(
-          "invalid_state",
-          "state mismatch between query and session",
-          {
-            cause: new AssertionError({
-              expected: franceconnect_session.data.state,
-              actual: query.data.state,
-              operator: "===",
-            }),
-          },
-        ),
-      );
-    }
-
-    req.session.id_token_hint = undefined;
-    req.session.nonce = undefined;
-    req.session.state = undefined;
-
-    return next();
-  } catch (error) {
-    next(error);
-  }
+  };
 }

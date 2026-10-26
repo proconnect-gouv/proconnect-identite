@@ -28,7 +28,7 @@ import {
 import {
   getFranceConnectController,
   getFranceConnectLoginCallbackMiddlewareFactory,
-  getFranceConnectLogoutCallbackMiddleware,
+  getFranceConnectLogoutCallbackMiddlewareFactory,
   postFranceConnectLoginRedirectControllerFactory,
   useFranceConnectLogoutMiddlewareFactory,
 } from "../controllers/user/franceconnect";
@@ -376,7 +376,9 @@ export const userRouter = () => {
     "/personal-information/franceconnect/logout/callback",
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
-    getFranceConnectLogoutCallbackMiddleware,
+    getFranceConnectLogoutCallbackMiddlewareFactory(
+      `${HOST}/personal-information`,
+    ),
     (_req, res) =>
       res.redirect(
         "/personal-information?notification=personal_information_update_via_franceconnect_success",
@@ -594,7 +596,9 @@ export const userRouter = () => {
     "/franceconnect/logout/callback",
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
-    getFranceConnectLogoutCallbackMiddleware,
+    getFranceConnectLogoutCallbackMiddlewareFactory(
+      `${HOST}/users/franceconnect`,
+    ),
     userComplyWithAllRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
