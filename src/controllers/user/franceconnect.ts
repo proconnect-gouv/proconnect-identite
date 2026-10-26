@@ -62,71 +62,60 @@ export function getFranceConnectLoginCallbackMiddlewareFactory(
     res: Response,
     next: NextFunction,
   ) {
-    try {
-      const errorQuery = await z
-        .object({
+    const query = await z
+      .union([
+        z.object({
           error: z.string(),
-          error_description: z.string(),
-          state: z.string(),
-          iss: z.string(),
-        })
-        .safeParseAsync(req.query);
-
-      if (errorQuery.success) {
-        const { error, error_description } = errorQuery.data;
-        throw new OidcError(error, error_description, {
-          cause: errorQuery.error,
-        });
-      }
-      const { code } = await z
-        .object({ code: z.string() })
-        .parseAsync(req.query);
-
-      const { nonce, state } = await FranceConnectOidcSessionSchema.parseAsync(
-        req.session,
-      );
-
-      const currentUrl = new URL(
-        `${HOST ?? `${req.protocol}://${req.hostname}`}${req.originalUrl ?? req.url}`,
-      );
-      const [franceconnect_error, franceconnect_response] = await to(
-        getFranceConnectUser({
-          code,
-          currentUrl,
-          expectedNonce: nonce,
-          expectedState: state,
+          error_description: z.string().optional(),
         }),
-      );
-      if (franceconnect_error)
-        throw new OidcFranceConnectBackChannelError(franceconnect_error.name, {
-          cause: franceconnect_error,
-        });
+        z.object({ code: z.string() }),
+      ])
+      .parseAsync(req.query);
 
-      const { user_info, id_token } = franceconnect_response;
-      req.session.id_token_hint = id_token;
-      req.session.nonce = undefined;
-      req.session.state = undefined;
-
-      const { id: userId } = getUserFromAuthenticatedSession(req);
-
-      const updatedUser = await updateFranceConnectUserInfo(userId, user_info);
-      updateUserInAuthenticatedSession(req, updatedUser);
-
-      next();
-    } catch (error) {
-      if (error instanceof OidcError) {
-        if (error.error === "access_denied") {
-          metrics.count("franceconnect.login.aborted");
-        } else {
-          logger.error(error);
-          captureException(error);
-        }
-        return res.redirect(
-          `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
-        );
+    if ("error" in query) {
+      if (query.error === "access_denied") {
+        metrics.count("franceconnect.login.aborted");
+      } else {
+        const error = new OidcError(query.error, query.error_description);
+        logger.error(error);
+        captureException(error);
       }
-      next(error);
+      return res.redirect(
+        `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
+      );
     }
+
+    const { nonce, state } = await FranceConnectOidcSessionSchema.parseAsync(
+      req.session,
+    );
+
+    const currentUrl = new URL(
+      `${HOST ?? `${req.protocol}://${req.hostname}`}${req.originalUrl ?? req.url}`,
+    );
+    const [franceconnect_error, franceconnect_response] = await to(
+      getFranceConnectUser({
+        code: query.code,
+        currentUrl,
+        expectedNonce: nonce,
+        expectedState: state,
+      }),
+    );
+    if (franceconnect_error)
+      throw new OidcFranceConnectBackChannelError(franceconnect_error.name, {
+        cause: franceconnect_error,
+      });
+
+    const { user_info, id_token } = franceconnect_response;
+    req.session.id_token_hint = id_token;
+    req.session.nonce = undefined;
+    req.session.state = undefined;
+
+    const { id: userId } = getUserFromAuthenticatedSession(req);
+
+    const updatedUser = await updateFranceConnectUserInfo(userId, user_info);
+    updateUserInAuthenticatedSession(req, updatedUser);
+
+    next();
   };
 }
 
