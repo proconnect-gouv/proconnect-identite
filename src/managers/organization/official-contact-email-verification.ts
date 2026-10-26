@@ -8,13 +8,7 @@ import type {
 import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES } from "../../config/env";
-import {
-  ApiAnnuaireContactEmailMismatchError,
-  ApiAnnuaireError,
-  ApiAnnuaireSeveralMairiesMatchesError,
-  InvalidTokenError,
-  OfficialContactEmailVerificationNotNeededError,
-} from "../../config/errors";
+import { ApiAnnuaireError, InvalidTokenError } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
 import { context } from "../../connectors/context";
@@ -48,6 +42,17 @@ export const isCommuneWithMultipleOfficialContactEmails = async (
   return contactEmails.length > 1;
 };
 
+export type OfficialContactEmailVerificationOutcome =
+  | { kind: "not_needed" }
+  | { kind: "contact_email_choice_needed" }
+  | { kind: "contact_email_mismatch" }
+  | {
+      kind: "verification_pending";
+      codeSent: boolean;
+      contactEmail: string;
+      libelle: string | null;
+    };
+
 export const sendOfficialContactEmailVerificationEmail = async ({
   user_id,
   organization_id,
@@ -58,11 +63,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
   organization_id: number;
   checkBeforeSend: boolean;
   selectedContactEmail?: string;
-}): Promise<{
-  codeSent: boolean;
-  contactEmail: string;
-  libelle: string | null;
-}> => {
+}): Promise<OfficialContactEmailVerificationOutcome> => {
   const user = await users.findById(user_id);
   const organization = await organizations.findById(organization_id);
   if (isEmpty(user) || isEmpty(organization)) {
@@ -71,7 +72,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
 
   const link = await users_organizations.find({ organization_id, user_id });
   if (!isEmpty(link)) {
-    throw new OfficialContactEmailVerificationNotNeededError();
+    return { kind: "not_needed" };
   }
 
   const {
@@ -80,35 +81,37 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     cached_libelle: libelle,
   } = organization;
 
+  let contactEmails: string[] = [];
   let contactEmail;
   try {
     if (
       isCommune(organization) &&
       !isEtablissementScolaireDuPremierEtSecondDegre(organization)
     ) {
-      const contactEmails = await getAnnuaireServicePublicContactEmails(
+      contactEmails = await getAnnuaireServicePublicContactEmails(
         cached_code_officiel_geographique,
       );
-      if (contactEmails.length > 1) {
-        if (!selectedContactEmail) {
-          throw new ApiAnnuaireSeveralMairiesMatchesError();
-        }
-
-        if (!contactEmails.includes(selectedContactEmail)) {
-          throw new ApiAnnuaireContactEmailMismatchError();
-        }
-
-        contactEmail = selectedContactEmail;
-      }
-
-      if (contactEmails.length === 1) {
-        contactEmail = contactEmails[0];
-      }
     } else if (isEtablissementScolaireDuPremierEtSecondDegre(organization)) {
       contactEmail = await getAnnuaireEducationNationaleContactEmail(siret);
     }
   } catch (error) {
     throw new ApiAnnuaireError(undefined, { cause: error });
+  }
+
+  if (contactEmails.length > 1) {
+    if (!selectedContactEmail) {
+      return { kind: "contact_email_choice_needed" };
+    }
+
+    if (!contactEmails.includes(selectedContactEmail)) {
+      return { kind: "contact_email_mismatch" };
+    }
+
+    contactEmail = selectedContactEmail;
+  }
+
+  if (contactEmails.length === 1) {
+    contactEmail = contactEmails[0];
   }
 
   if (!contactEmail) {
@@ -129,6 +132,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
     )
   ) {
     return {
+      kind: "verification_pending",
       codeSent: false,
       contactEmail,
       libelle,
@@ -160,6 +164,7 @@ export const sendOfficialContactEmailVerificationEmail = async ({
   });
 
   return {
+    kind: "verification_pending",
     codeSent: true,
     contactEmail,
     libelle,
