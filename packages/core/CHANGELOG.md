@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.core
 
+## 1.1.1
+
+### Patch Changes
+
+- [#2313](https://github.com/proconnect-gouv/proconnect-identite/pull/2313) [`3209f59`](https://github.com/proconnect-gouv/proconnect-identite/commit/3209f59646da2171eb8ddad48f8e1d75d996f5d4) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 les listes de domaines sont de nouveau incluses dans le build : depuis la 1.0.1, `services/email` et `services/suggestion` chargeaient les fichiers `.ts` de `src/data`, ce qui cassait les projets qui les importent
+
 ## 1.1.0
 
 ### Minor Changes
