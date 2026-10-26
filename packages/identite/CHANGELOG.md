@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 10.5.0
+
+### Minor Changes
+
+- [#2242](https://github.com/proconnect-gouv/proconnect-identite/pull/2242) [`31652e6`](https://github.com/proconnect-gouv/proconnect-identite/commit/31652e608dd645911f7cd5710fc5395c81bb8a5f) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ajout du schéma zod UserSchema, le type User en est dérivé
+
 ## 10.4.0
 
 ### Minor Changes
