@@ -202,11 +202,19 @@ export function getFranceConnectLogoutCallbackMiddlewareFactory(
     next: NextFunction,
   ) {
     const query = z.object({ state: z.string() }).safeParse(req.query);
-    if (!query.success || req.session.state !== query.data.state) {
+    if (!query.success) {
+      metrics.count("franceconnect.logout.state_mismatch");
+      logger.warn(query.error);
+      return res.redirect(
+        `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
+      );
+    }
+
+    if (req.session.state !== query.data.state) {
       metrics.count("franceconnect.logout.state_mismatch");
       logger.warn("franceconnect.logout.state_mismatch", {
-        has_query_state: query.success,
-        has_session_state: req.session.state !== undefined,
+        query_state: query.data.state,
+        session_state: req.session.state,
       });
       return res.redirect(
         `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
