@@ -51,6 +51,7 @@ import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import { isExpired } from "../services/is-expired";
+import { track } from "../services/log";
 import { isWebauthnConfiguredForUser } from "./webauthn";
 
 const { franceconnect_userinfo, users } = context.repository;
@@ -466,6 +467,7 @@ export const loginWithMagicLink = async (token: string): Promise<User> => {
   const user = await users.findByMagicLinkToken(token);
 
   if (isEmpty(user)) {
+    track("magic_link.token.not_found", {});
     throw new InvalidMagicLinkError();
   }
 
@@ -475,6 +477,7 @@ export const loginWithMagicLink = async (token: string): Promise<User> => {
   );
 
   if (isTokenExpired) {
+    track("magic_link.token.expired", { user_id: user.id });
     throw new InvalidMagicLinkError();
   }
 
@@ -528,6 +531,7 @@ export const changePassword = async (
   const user = await users.findByResetPasswordToken(token);
 
   if (isEmpty(user)) {
+    track("change_password.reset_token.not_found", {});
     throw new InvalidTokenError();
   }
 
@@ -537,6 +541,7 @@ export const changePassword = async (
   );
 
   if (isTokenExpired) {
+    track("change_password.reset_token.expired", { user_id: user.id });
     throw new InvalidTokenError();
   }
 

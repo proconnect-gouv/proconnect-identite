@@ -194,6 +194,9 @@ export const postJoinOrganizationMiddleware = async (
     }
 
     if (error instanceof UserAlreadyAskedToJoinOrganizationError) {
+      track("organization.join.moderation_pending", {
+        moderation_id: error.moderationId,
+      });
       return res.redirect(
         `/users/unable-to-auto-join-organization?moderation_id=${error.moderationId}`,
       );
@@ -242,6 +245,7 @@ export const postJoinOrganizationMiddleware = async (
     }
 
     if (error instanceof UserInOrganizationAlreadyError) {
+      track("organization.join.already_member", { siret: req.body.siret });
       return res.redirect(
         `/users/join-organization?notification=user_in_organization_already&siret_hint=${req.body.siret}`,
       );
