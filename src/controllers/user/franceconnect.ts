@@ -4,7 +4,7 @@ import {
   createOidcChecks,
   getFranceConnectRedirectUrlFactory,
 } from "@proconnect-gouv/proconnect.identite/managers/franceconnect";
-import { captureException } from "@sentry/node";
+import { captureException, metrics } from "@sentry/node";
 import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { AssertionError } from "node:assert";
@@ -115,8 +115,12 @@ export function getFranceConnectLoginCallbackMiddlewareFactory(
       next();
     } catch (error) {
       if (error instanceof OidcError) {
-        logger.error(error);
-        captureException(error);
+        if (error.error === "access_denied") {
+          metrics.count("franceconnect.login.aborted");
+        } else {
+          logger.error(error);
+          captureException(error);
+        }
         return res.redirect(
           `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
         );
