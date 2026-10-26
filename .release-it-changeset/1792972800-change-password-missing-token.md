@@ -1,1 +1,0 @@
-🐛 Ouvrir la page de changement de mot de passe sans jeton de réinitialisation redirige désormais vers « Mot de passe oublié » avec le message de lien invalide ou expiré, au lieu d'afficher une erreur 400
