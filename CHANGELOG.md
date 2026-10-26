@@ -1,5 +1,33 @@
 # Changelog
 
+## [2026.10.9](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.8...2026.10.9) (2026-10-26)
+
+### Ajouté
+
+- ✨ Add a script to run all e2e test cases sequentially ([#2293](https://github.com/proconnect-gouv/proconnect-identite/issues/2293)) ([d0fcb24](https://github.com/proconnect-gouv/proconnect-identite/commit/d0fcb24833391ce51ceba98873c74f007e79000b))
+
+### Dépendances
+
+- ⬆️ bump postgres image to 17.11 ([#2305](https://github.com/proconnect-gouv/proconnect-identite/issues/2305)) ([f6f55f3](https://github.com/proconnect-gouv/proconnect-identite/commit/f6f55f31fe60d6d166ea5d8384398b25379fac6c))
+- ⬆️ Bump the sentry group across 1 directory with 2 updates ([#2256](https://github.com/proconnect-gouv/proconnect-identite/issues/2256)) ([cd045b1](https://github.com/proconnect-gouv/proconnect-identite/commit/cd045b16f02caac6b4098361de51e90ddf7125d4))
+- :arrow_up: Bump ejs from 5.0.1 to 7.0.2 ([#2301](https://github.com/proconnect-gouv/proconnect-identite/issues/2301)) ([dbc9126](https://github.com/proconnect-gouv/proconnect-identite/commit/dbc91269189e638e7e7baba28dae7f3b41ffcdda))
+- :arrow_up: Bump hono from 4.13.11 to 4.13.13 ([#2300](https://github.com/proconnect-gouv/proconnect-identite/issues/2300)) ([b0b327c](https://github.com/proconnect-gouv/proconnect-identite/commit/b0b327c7f8482974166e88822396e63ea33b7c1a))
+- :arrow_up: Bump csv from 6.6.3 to 6.6.4 ([#2302](https://github.com/proconnect-gouv/proconnect-identite/issues/2302)) ([07a3516](https://github.com/proconnect-gouv/proconnect-identite/commit/07a3516ca0bd89cdd4b35b58253de53588d876d8))
+- :arrow_up: Bump body-parser from 2.3.0 to 2.4.0 ([#2303](https://github.com/proconnect-gouv/proconnect-identite/issues/2303)) ([8cf01d3](https://github.com/proconnect-gouv/proconnect-identite/commit/8cf01d34906f22adc3a948d43bc7195bb24c069f))
+- :arrow_up: Bump undici from 7.30.0 to 7.30.1 ([#2304](https://github.com/proconnect-gouv/proconnect-identite/issues/2304)) ([65c4fe8](https://github.com/proconnect-gouv/proconnect-identite/commit/65c4fe8ee419e844b926ba4921c319b9c6344b05))
+- :arrow_up: Bump nock from 14.0.11 to 15.0.2 ([#2294](https://github.com/proconnect-gouv/proconnect-identite/issues/2294)) ([6c27553](https://github.com/proconnect-gouv/proconnect-identite/commit/6c275536cbee19d3a13dee615b349c7533315f87))
+- :arrow_up: Bump zod from 4.3.6 to 4.6.7 ([#2295](https://github.com/proconnect-gouv/proconnect-identite/issues/2295)) ([6e69c2b](https://github.com/proconnect-gouv/proconnect-identite/commit/6e69c2b44f02d1eaed378a845395d62b05ac0d0c))
+- :arrow_up: Bump nodemailer from 10.0.15 to 10.1.7 ([#2298](https://github.com/proconnect-gouv/proconnect-identite/issues/2298)) ([0464da2](https://github.com/proconnect-gouv/proconnect-identite/commit/0464da2dae41378d4839cd0f484c997373a822ae))
+- :arrow_up: Bump proconnect-gouv/proconnect-test-client ([#2297](https://github.com/proconnect-gouv/proconnect-identite/issues/2297)) ([596fc07](https://github.com/proconnect-gouv/proconnect-identite/commit/596fc0786b5567fcc2a75cb80393715d7c2abe61))
+
+### CI/CD
+
+- 👷 Add non-regression tests for per-SP organization selection ([#2292](https://github.com/proconnect-gouv/proconnect-identite/issues/2292)) ([a8c2df4](https://github.com/proconnect-gouv/proconnect-identite/commit/a8c2df48a38aba3e600b8ab78544daadbdbe7933))
+
+### Divers
+
+- Revert "💄 Warn users about the hosting provider security maintenance" ([#2284](https://github.com/proconnect-gouv/proconnect-identite/issues/2284)) ([8d64266](https://github.com/proconnect-gouv/proconnect-identite/commit/8d6426657b22f2a05b43fbf3c9e342c1b2878a9c))
+
 ## [2026.10.8](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.7...2026.10.8) (2026-10-23)
 
 ### Corrigé
