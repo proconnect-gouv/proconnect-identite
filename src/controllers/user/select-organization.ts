@@ -1,3 +1,4 @@
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { context } from "../../connectors/context";
@@ -5,6 +6,7 @@ import { selectOrganization } from "../../managers/organization/main";
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { idSchema } from "../../services/custom-zod-schemas";
+import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 
 const { organizations } = context.repository;
 
@@ -20,6 +22,7 @@ export const getSelectOrganizationController = async (
 
     return res.render("user/select-organization", {
       pageTitle: "Choisir une organisation",
+      notifications: await getNotificationsFromRequest(req),
       userOrganizations,
       csrfToken: csrfToken(req),
     });
@@ -30,7 +33,7 @@ export const getSelectOrganizationController = async (
 
 export const postSelectOrganizationMiddleware = async (
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction,
 ) => {
   try {
@@ -43,6 +46,12 @@ export const postSelectOrganizationMiddleware = async (
 
     return next();
   } catch (error) {
+    if (error instanceof NotFoundError) {
+      return res.redirect(
+        `/users/select-organization?notification=organization_not_linked`,
+      );
+    }
+
     next(error);
   }
 };

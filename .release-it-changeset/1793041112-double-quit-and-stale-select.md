@@ -1,0 +1,1 @@
+🐛 Quitter deux fois la même organisation, ou sélectionner une organisation que vous venez de quitter, affiche désormais « Information : vous ne faites pas partie de cette organisation. » au lieu d'une erreur 500.

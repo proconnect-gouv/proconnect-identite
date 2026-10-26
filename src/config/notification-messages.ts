@@ -59,6 +59,11 @@ Veuillez vous connecter avec votre nouveau mot de passe.`,
     description:
       "Erreur : nous n’avons pas trouvé l’organisation demandée. Merci de renseigner à nouveau son SIRET.",
   },
+  organization_not_linked: {
+    type: "info",
+    description:
+      "Information : vous ne faites pas partie de cette organisation.",
+  },
   moderation_not_found: {
     type: "error",
     description:
