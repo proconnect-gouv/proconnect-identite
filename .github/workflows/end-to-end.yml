@@ -3,6 +3,9 @@ name: End-to-end tests
 on:
   push:
 
+permissions:
+  contents: read
+
 env:
   ANNUAIRE_SERVICE_PUBLIC_API_URL: http://localhost:3000/___testing___/api-lannuaire.service-public.fr
   CYPRESS_RECORD: true

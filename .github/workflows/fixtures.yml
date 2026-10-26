@@ -3,6 +3,9 @@ name: Fixtures tests
 on:
   push:
 
+permissions:
+  contents: read
+
 env:
   ACCESS_LOG_PATH:
   DATABASE_URL: postgres://proconnect-identite:proconnect-identite@127.0.0.1:5432/proconnect-identite
