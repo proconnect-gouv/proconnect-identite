@@ -1,7 +1,12 @@
 import { getTrustedReferrerPath } from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
 import { HOST } from "../../config/env";
-import { logger, logger_group, logger_group_end } from "../../services/log";
+import {
+  logger,
+  logger_group,
+  logger_group_end,
+  track,
+} from "../../services/log";
 
 const getRedirection = (redirectTo: string | undefined) => {
   if (!redirectTo) {
@@ -33,6 +38,9 @@ export const issueSessionOrRedirectController = async (
     logger.trace({ redirectTo, code, url });
     logger_group_end();
 
+    if (code === "untrusted_redirect_to_in_session") {
+      track("session.redirect_to.untrusted", { redirect_to: redirectTo });
+    }
     if (code === "trusted_redirect_to_in_session") {
       // then delete referer value from session
       req.session.redirectTo = undefined;

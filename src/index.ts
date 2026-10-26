@@ -37,7 +37,7 @@ import { interactionRouter } from "./routers/interaction";
 import { mainRouter } from "./routers/main";
 import { userRouter } from "./routers/user";
 import { jsonParseWithDate } from "./services/json-parse-with-date";
-import { logger } from "./services/log";
+import { logger, track } from "./services/log";
 import {
   ejsLayoutMiddlewareFactory,
   renderWithEjsLayout,
@@ -246,6 +246,14 @@ app.use(function errorHandler(
   _next: NextFunction,
 ) {
   logger.error(inspect(err, { depth: 3 }));
+
+  if (err instanceof HttpErrors.HttpError && err["code"] === "EBADCSRFTOKEN") {
+    track("csrf.token.invalid", {
+      has_body_token: typeof req.body?._csrf === "string",
+      has_session_token: typeof req.session?.csrfToken === "string",
+      method: req.method,
+    });
+  }
 
   if (req.path.startsWith("/api/")) {
     if (err instanceof HttpErrors.HttpError) {

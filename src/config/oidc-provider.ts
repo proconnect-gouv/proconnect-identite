@@ -5,7 +5,7 @@ import type { Request } from "express";
 import Provider, { errors, type Configuration } from "oidc-provider";
 import { destroyAuthenticatedSession } from "../managers/session/authenticated";
 import epochTime from "../services/epoch-time";
-import { logger } from "../services/log";
+import { logger, track } from "../services/log";
 import { findAccount } from "../services/oidc-account-adapter";
 import { setAuthorizedOrganization } from "../services/oidc-authorized-organization";
 import policy from "../services/oidc-policy";
@@ -29,13 +29,16 @@ export async function createOidcProvider() {
     async renderError(ctx, { error, error_description }, err) {
       logger.error(err);
       if (
-        !(
-          err instanceof errors.InvalidClient ||
-          err instanceof errors.InvalidRedirectUri ||
-          err instanceof errors.InvalidRequest ||
-          err instanceof errors.InvalidRequestUri
-        )
+        err instanceof errors.InvalidClient ||
+        err instanceof errors.InvalidRedirectUri ||
+        err instanceof errors.InvalidRequest ||
+        err instanceof errors.InvalidRequestUri
       ) {
+        track(`oidc.request.${error}`, {
+          client_id: ctx.oidc?.params?.["client_id"],
+          error_description,
+        });
+      } else {
         Sentry.withScope((scope) => {
           scope.setSDKProcessingMetadata({ request: ctx.request });
           scope.captureException(err);
