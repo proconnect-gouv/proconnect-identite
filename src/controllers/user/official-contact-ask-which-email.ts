@@ -1,7 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
-import { ApiAnnuaireError } from "../../config/errors";
+import {
+  ApiAnnuaireConnectionError,
+  ApiAnnuaireNotFoundError,
+} from "../../config/errors";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
 import { context } from "../../connectors/context";
 import { csrfToken } from "../../middlewares/csrf-protection";
@@ -37,9 +40,16 @@ export const getOfficialContactAskWhichEmailController = async (
   } catch (error) {
     req.session.pendingOfficialContactEmailVerificationOrganizationId =
       undefined;
-    if (error instanceof ApiAnnuaireError) {
+
+    if (error instanceof ApiAnnuaireConnectionError) {
       return res.redirect(
         `/users/join-organization?notification=api_annuaire_error`,
+      );
+    }
+
+    if (error instanceof ApiAnnuaireNotFoundError) {
+      return res.redirect(
+        `/users/join-organization?notification=api_annuaire_contact_email_not_found`,
       );
     }
 
