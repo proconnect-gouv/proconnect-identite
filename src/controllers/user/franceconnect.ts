@@ -7,7 +7,6 @@ import {
 import { captureException, metrics } from "@sentry/node";
 import { to } from "await-to-js";
 import { type NextFunction, type Request, type Response } from "express";
-import { AssertionError } from "node:assert";
 import { z } from "zod";
 import { FRANCECONNECT_SCOPES, HOST } from "../../config/env";
 import {
@@ -62,7 +61,7 @@ export function getFranceConnectLoginCallbackMiddlewareFactory(
     res: Response,
     next: NextFunction,
   ) {
-    const query = await z
+    const query = z
       .union([
         z.object({
           error: z.string(),
@@ -70,13 +69,23 @@ export function getFranceConnectLoginCallbackMiddlewareFactory(
         }),
         z.object({ code: z.string() }),
       ])
-      .parseAsync(req.query);
+      .safeParse(req.query);
 
-    if ("error" in query) {
-      if (query.error === "access_denied") {
+    if (!query.success) {
+      logger.warn(query.error);
+      return res.redirect(
+        `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
+      );
+    }
+
+    if ("error" in query.data) {
+      if (query.data.error === "access_denied") {
         metrics.count("franceconnect.login.aborted");
       } else {
-        const error = new OidcError(query.error, query.error_description);
+        const error = new OidcError(
+          query.data.error,
+          query.data.error_description,
+        );
         logger.error(error);
         captureException(error);
       }
@@ -85,16 +94,21 @@ export function getFranceConnectLoginCallbackMiddlewareFactory(
       );
     }
 
-    const { nonce, state } = await FranceConnectOidcSessionSchema.parseAsync(
-      req.session,
-    );
+    const session = FranceConnectOidcSessionSchema.safeParse(req.session);
+    if (!session.success) {
+      logger.warn(session.error);
+      return res.redirect(
+        `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
+      );
+    }
+    const { nonce, state } = session.data;
 
     const currentUrl = new URL(
       `${HOST ?? `${req.protocol}://${req.hostname}`}${req.originalUrl ?? req.url}`,
     );
     const [franceconnect_error, franceconnect_response] = await to(
       getFranceConnectUser({
-        code: query.code,
+        code: query.data.code,
         currentUrl,
         expectedNonce: nonce,
         expectedState: state,
@@ -187,47 +201,30 @@ export function getFranceConnectLogoutCallbackMiddlewareFactory(
     res: Response,
     next: NextFunction,
   ) {
-    try {
-      const query = await z
-        .object({ state: z.string() })
-        .safeParseAsync(req.query);
-      if (!query.success) {
-        return next(
-          new OidcError("invalid_state", "The query state is invalid", {
-            cause: query.error,
-          }),
-        );
-      }
-
-      if (req.session.state === undefined) {
-        return res.redirect(
-          `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
-        );
-      }
-
-      if (req.session.state !== query.data.state) {
-        return next(
-          new OidcError(
-            "invalid_state",
-            "state mismatch between query and session",
-            {
-              cause: new AssertionError({
-                expected: req.session.state,
-                actual: query.data.state,
-                operator: "===",
-              }),
-            },
-          ),
-        );
-      }
-
-      req.session.id_token_hint = undefined;
-      req.session.nonce = undefined;
-      req.session.state = undefined;
-
-      return next();
-    } catch (error) {
-      next(error);
+    const query = z.object({ state: z.string() }).safeParse(req.query);
+    if (!query.success) {
+      metrics.count("franceconnect.logout.state_mismatch");
+      logger.warn(query.error);
+      return res.redirect(
+        `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
+      );
     }
+
+    if (req.session.state !== query.data.state) {
+      metrics.count("franceconnect.logout.state_mismatch");
+      logger.warn("franceconnect.logout.state_mismatch", {
+        query_state: query.data.state,
+        session_state: req.session.state,
+      });
+      return res.redirect(
+        `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
+      );
+    }
+
+    req.session.id_token_hint = undefined;
+    req.session.nonce = undefined;
+    req.session.state = undefined;
+
+    return next();
   };
 }

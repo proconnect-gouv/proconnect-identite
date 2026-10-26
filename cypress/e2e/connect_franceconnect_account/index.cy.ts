@@ -56,4 +56,54 @@ describe("Connect FranceConnect account", () => {
       "L'authentification FranceConnect a échoué. Veuillez réessayer.",
     );
   });
+
+  it("should come back to personal information page when the FranceConnect login callback is revisited", function () {
+    cy.visit("/");
+    cy.login("god-emperor@mankind.world");
+
+    cy.visit("/personal-information");
+
+    cy.contains("S’identifier avec").click();
+    cy.contains("Je suis Jean De La Rose").click();
+
+    cy.title().should("include", "Informations personnelles -");
+    cy.contains("Nous avons bien récupéré vos données via FranceConnect.");
+
+    cy.visit(
+      "/users/personal-information/franceconnect/login/callback?code=replayed",
+    );
+    cy.title().should("include", "Informations personnelles -");
+    cy.contains(
+      "L'authentification FranceConnect a échoué. Veuillez réessayer.",
+    );
+  });
+
+  it("should come back to personal information page if the FranceConnect logout callback state mismatches", function () {
+    cy.visit("/");
+    cy.login("god-emperor@mankind.world");
+
+    cy.visit("/personal-information");
+
+    cy.contains("S’identifier avec").click();
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+
+    cy.visit(
+      "/users/personal-information/franceconnect/logout/callback?state=mismatch",
+    );
+    cy.title().should("include", "Informations personnelles -");
+    cy.contains(
+      "L'authentification FranceConnect a échoué. Veuillez réessayer.",
+    );
+  });
+
+  it("should come back to personal information page if the FranceConnect logout callback has no state", function () {
+    cy.visit("/");
+    cy.login("god-emperor@mankind.world");
+
+    cy.visit("/users/personal-information/franceconnect/logout/callback");
+    cy.title().should("include", "Informations personnelles -");
+    cy.contains(
+      "L'authentification FranceConnect a échoué. Veuillez réessayer.",
+    );
+  });
 });
