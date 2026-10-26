@@ -47,7 +47,7 @@
     "openid-client": "^6.8.8",
     "sql-template-tag": "^5.2.1",
     "ts-pattern": "^5.7.0",
-    "zod": "^4.3.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.12",
