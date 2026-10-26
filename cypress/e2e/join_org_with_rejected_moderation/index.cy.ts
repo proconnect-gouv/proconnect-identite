@@ -95,4 +95,16 @@ describe("join organization with rejected moderation", () => {
 
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
   });
+
+  it("should show an error when the moderation id is missing from the url", function () {
+    cy.visit("/users/moderation-rejected");
+
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.login("rejected.user@yopmail.com");
+
+    cy.title().should("include", "Rejoindre une organisation - ProConnect");
+    cy.contains(
+      "Erreur : nous n’avons pas trouvé votre demande de rattachement.",
+    );
+  });
 });
