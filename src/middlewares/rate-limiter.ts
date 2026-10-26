@@ -17,7 +17,7 @@ import {
 import { getEmailFromUnauthenticatedSession } from "../managers/session/unauthenticated";
 
 const redisClient = getNewRedisClient({
-  enableOfflineQueue: false,
+  disableOfflineQueue: true,
 });
 
 const ipRateLimiterMiddlewareFactory =
@@ -57,6 +57,7 @@ const emailRateLimiterMiddlewareFactory =
 export const defaultRateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
+    useRedisPackage: true,
     keyPrefix: "ip-rate-limiter-ip-default",
     points: IP_RATE_LIMITER_DEFAULT_POINTS_PER_MINUTE,
     duration: 60, // per minute per IP
@@ -67,6 +68,7 @@ export const externalDependencyRateLimiterMiddleware =
   ipRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
       storeClient: redisClient,
+      useRedisPackage: true,
       keyPrefix: "ip-rate-limiter-external",
       points: IP_RATE_LIMITER_EXTERNAL_POINTS_PER_MINUTE,
       duration: 60, // per minute per IP
@@ -76,6 +78,7 @@ export const externalDependencyRateLimiterMiddleware =
 export const rnePingRateLimiterMiddleware = ipRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
+    useRedisPackage: true,
     keyPrefix: "ip-rate-limiter-rne-ping",
     points: IP_RATE_LIMITER_RNE_PING_POINTS_PER_MINUTE,
     duration: 60, // per minute per IP
@@ -86,6 +89,7 @@ export const machineToMachineRateLimiterMiddleware =
   ipRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
       storeClient: redisClient,
+      useRedisPackage: true,
       keyPrefix: "ip-rate-limiter-machine",
       points: IP_RATE_LIMITER_MACHINE_POINTS_PER_MINUTE,
       duration: 60, // per minute per IP
@@ -95,6 +99,7 @@ export const machineToMachineRateLimiterMiddleware =
 export const passwordRateLimiterMiddleware = emailRateLimiterMiddlewareFactory(
   new RateLimiterRedis({
     storeClient: redisClient,
+    useRedisPackage: true,
     keyPrefix: "rate-limiter-password",
     points: 10, // 10 requests
     duration: 5 * 60, // per 5 minutes per email
@@ -105,6 +110,7 @@ export const verifyEmailRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
       storeClient: redisClient,
+      useRedisPackage: true,
       keyPrefix: "rate-limiter-verify-email",
       points: 10, // 10 requests
       duration: 5 * 60, // per 5 minutes per email
@@ -115,6 +121,7 @@ export const authenticatorRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
       storeClient: redisClient,
+      useRedisPackage: true,
       keyPrefix: "rate-limiter-totp",
       points: 5, // 5 requests
       duration: 15 * 60, // per 15 minutes per email
@@ -123,6 +130,7 @@ export const authenticatorRateLimiterMiddleware =
 
 export const resetPasswordRateLimiter = new RateLimiterRedis({
   storeClient: redisClient,
+  useRedisPackage: true,
   keyPrefix: "rate-limiter-reset-password",
   points: 5, // 5 requests
   duration: 15 * 60, // per 15 minutes per email
@@ -132,6 +140,7 @@ export const sendEmailVerificationRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
       storeClient: redisClient,
+      useRedisPackage: true,
       keyPrefix: "rate-limiter-send-email-verification",
       points: 5, // 5 requests
       duration: 15 * 60, // per 15 minutes per email
@@ -142,6 +151,7 @@ export const sendMagicLinkRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
       storeClient: redisClient,
+      useRedisPackage: true,
       keyPrefix: "rate-limiter-send-magic-link",
       points: 5, // 5 requests
       duration: 15 * 60, // per 15 minutes per email
@@ -152,6 +162,7 @@ export const officialContactEmailVerificationRateLimiterMiddleware =
   emailRateLimiterMiddlewareFactory(
     new RateLimiterRedis({
       storeClient: redisClient,
+      useRedisPackage: true,
       keyPrefix: "rate-limiter-official-contact-email-verification",
       points: 5, // 5 requests
       duration: 15 * 60, // per 15 minutes per email
