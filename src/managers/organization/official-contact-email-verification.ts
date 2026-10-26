@@ -6,6 +6,7 @@ import type {
   UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
 import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
+import { metrics } from "@sentry/node";
 import { isEmpty } from "lodash-es";
 import { OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES } from "../../config/env";
 import { ApiAnnuaireError, InvalidTokenError } from "../../config/errors";
@@ -14,6 +15,7 @@ import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annu
 import { context } from "../../connectors/context";
 import { sendMail } from "../../connectors/mail";
 import { isExpired } from "../../services/is-expired";
+import { logger } from "../../services/log";
 import {
   isCommune,
   isEtablissementScolaireDuPremierEtSecondDegre,
@@ -208,10 +210,19 @@ export const verifyOfficialContactEmailToken = async ({
     throw new InvalidTokenError();
   }
 
-  await official_contact_email_verifications.delete({
+  const deleted = await official_contact_email_verifications.delete({
     organization_id,
     user_id,
   });
+  if (!deleted) {
+    metrics.count("official_contact.code.already_used");
+    logger.warn("official_contact.code.already_used", {
+      organization_id,
+      user_id,
+    });
+    throw new InvalidTokenError();
+  }
+
   return await users_organizations.create({
     user_id,
     organization_id,
