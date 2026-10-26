@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from "express";
-import HttpErrors from "http-errors";
 import { isEmpty } from "lodash-es";
 import {
   ApiAnnuaireConnectionError,
@@ -20,10 +19,20 @@ export const getOfficialContactAskWhichEmailController = async (
 ) => {
   try {
     const organization_id =
-      req.session.pendingOfficialContactEmailVerificationOrganizationId!;
+      req.session.pendingOfficialContactEmailVerificationOrganizationId;
+    if (organization_id === undefined) {
+      return res.redirect(
+        `/users/join-organization?notification=official_contact_email_verification_not_found`,
+      );
+    }
+
     const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
-      throw HttpErrors.NotFound();
+      req.session.pendingOfficialContactEmailVerificationOrganizationId =
+        undefined;
+      return res.redirect(
+        `/users/join-organization?notification=organization_not_found`,
+      );
     }
 
     const contactEmails = await getAnnuaireServicePublicContactEmails(
