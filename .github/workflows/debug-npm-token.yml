@@ -3,6 +3,8 @@ name: 🔍 Debug NPM Token
 on:
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   check:
     runs-on: ubuntu-latest
