@@ -11,11 +11,6 @@
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "imports": {
-    "#src/data/gouvfr-domains": "./src/data/gouvfr-domains.ts",
-    "#src/data/most-used-free-email-domains": "./src/data/most-used-free-email-domains.ts",
-    "#src/data/other-gouv-domains": "./src/data/other-gouv-domains.ts"
-  },
   "exports": {
     "./security": {
       "require": "./dist/security/index.cjs",

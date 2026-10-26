@@ -1,7 +1,7 @@
 //
 
-import mostUsedFreeEmailDomains from "#src/data/most-used-free-email-domains";
 import { isFree } from "is-disposable-email-domain";
+import mostUsedFreeEmailDomains from "../../data/most-used-free-email-domains.js";
 import { getEmailDomain } from "./get-email-domain.js";
 
 //
