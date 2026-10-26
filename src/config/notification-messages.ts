@@ -64,6 +64,10 @@ Veuillez vous connecter avec votre nouveau mot de passe.`,
     description:
       "Erreur : nous n’avons pas trouvé votre demande de rattachement.",
   },
+  moderation_not_pending: {
+    type: "info",
+    description: "Information : aucune demande de rattachement n’est en cours.",
+  },
   certification_dirigeant_data_missing: {
     type: "error",
     description:

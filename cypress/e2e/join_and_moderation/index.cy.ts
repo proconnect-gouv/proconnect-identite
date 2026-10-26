@@ -41,6 +41,43 @@ describe("join and moderation", () => {
       });
     });
 
+    it("redirects instead of erroring when a moderation is cancelled twice", function () {
+      cy.visit("/users/join-organization");
+
+      cy.login("lion.eljonson@darkangels.world");
+
+      cy.contains("SIRET de l’organisation que vous représentez").click();
+      cy.focused().clear().type("66204244933106");
+      cy.getByLabel(
+        "Organisation correspondante au SIRET donné : Bnp paribas - Bnp paribas",
+      ).click();
+      cy.contains("Demande en cours");
+
+      cy.visit("/manage-organizations");
+      cy.intercept("POST", "/users/cancel-moderation/*").as("cancel");
+      cy.contains("Annuler ma demande de rattachement").click();
+      cy.contains("Votre demande de rattachement a bien été annulée.");
+
+      cy.wait("@cancel").then(({ request }) => {
+        cy.request({
+          body: request.body,
+          failOnStatusCode: false,
+          followRedirect: false,
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          method: "POST",
+          url: request.url,
+        }).then((response) => {
+          expect(response.status).to.equal(302);
+
+          cy.visit(String(response.headers["location"]));
+          cy.title().should("include", "Organisations -");
+          cy.contains(
+            "Information : aucune demande de rattachement n’est en cours.",
+          );
+        });
+      });
+    });
+
     it("will be moderated when login to an SP", function () {
       cy.origin("http://localhost:4000", () => {
         cy.visit("/");
