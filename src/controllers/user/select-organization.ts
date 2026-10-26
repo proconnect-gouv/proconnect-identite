@@ -7,6 +7,7 @@ import { getUserFromAuthenticatedSession } from "../../managers/session/authenti
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { idSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
+import { track } from "../../services/log";
 
 const { organizations } = context.repository;
 
@@ -47,6 +48,10 @@ export const postSelectOrganizationMiddleware = async (
     return next();
   } catch (error) {
     if (error instanceof NotFoundError) {
+      track("organization.select.not_linked", {
+        organization_id: req.body.organization_id,
+        user_id: getUserFromAuthenticatedSession(req).id,
+      });
       return res.redirect(
         `/users/select-organization?notification=organization_not_linked`,
       );

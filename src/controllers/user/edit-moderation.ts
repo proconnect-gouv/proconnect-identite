@@ -13,6 +13,7 @@ import {
 } from "../../managers/moderation";
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { idSchema } from "../../services/custom-zod-schemas";
+import { track } from "../../services/log";
 
 export const postCancelModerationAndRedirectControllerFactory =
   (redirectUrl: string) =>
@@ -29,12 +30,20 @@ export const postCancelModerationAndRedirectControllerFactory =
       return res.redirect(redirectUrl);
     } catch (e) {
       if (e instanceof ModerationNotFoundError || e instanceof NotFoundError) {
+        track("moderation.cancel.not_found", {
+          moderation_id: req.params["moderation_id"],
+          user_id: getUserFromAuthenticatedSession(req).id,
+        });
         const url = new URL(redirectUrl, HOST);
         url.searchParams.set("notification", "moderation_not_pending");
 
         return res.redirect(`${url.pathname}${url.search}`);
       }
       if (e instanceof ForbiddenError) {
+        track("moderation.access.forbidden", {
+          moderation_id: req.params["moderation_id"],
+          user_id: getUserFromAuthenticatedSession(req).id,
+        });
         return next(new HttpErrors.Forbidden());
       }
       next(e);
@@ -56,12 +65,20 @@ export const postReopenModerationAndRedirectControllerFactory =
       return res.redirect(redirectUrl);
     } catch (e) {
       if (e instanceof ModerationNotFoundError || e instanceof NotFoundError) {
+        track("moderation.reopen.not_found", {
+          moderation_id: req.params["moderation_id"],
+          user_id: getUserFromAuthenticatedSession(req).id,
+        });
         const url = new URL(redirectUrl, HOST);
         url.searchParams.set("notification", "moderation_not_pending");
 
         return res.redirect(`${url.pathname}${url.search}`);
       }
       if (e instanceof ForbiddenError) {
+        track("moderation.access.forbidden", {
+          moderation_id: req.params["moderation_id"],
+          user_id: getUserFromAuthenticatedSession(req).id,
+        });
         return next(new HttpErrors.Forbidden());
       }
       next(e);

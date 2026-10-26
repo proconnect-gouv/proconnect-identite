@@ -55,7 +55,7 @@ import {
 } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
-import { logger } from "../services/log";
+import { track } from "../services/log";
 
 const { franceconnect_userinfo, moderations, organizations } =
   context.repository;
@@ -268,7 +268,7 @@ export const getDomainNotAllowedForOrganizationController = async (
 
   const result = schema.safeParse(req.query);
   if (!result.success) {
-    logger.warn(result.error);
+    track("organization.page_query.invalid", { error: result.error });
     return res.redirect(
       "/users/join-organization?notification=organization_not_found",
     );
@@ -300,7 +300,7 @@ export const getDomainRefusedForOrganizationController = async (
 
   const result = schema.safeParse(req.query);
   if (!result.success) {
-    logger.warn(result.error);
+    track("organization.page_query.invalid", { error: result.error });
     return res.redirect(
       "/users/join-organization?notification=organization_not_found",
     );
@@ -330,7 +330,7 @@ export const getJoinOrganizationConfirmController = async (
 
   const result = schema.safeParse(req.query);
   if (!result.success) {
-    logger.warn(result.error);
+    track("organization.page_query.invalid", { error: result.error });
     return res.redirect(
       "/users/join-organization?notification=organization_not_found",
     );
@@ -362,7 +362,7 @@ export const getUnableToAutoJoinOrganizationController = async (
   });
   const result = schema.safeParse(req.query);
   if (!result.success) {
-    logger.warn(result.error);
+    track("organization.page_query.invalid", { error: result.error });
     return res.redirect(
       "/users/join-organization?notification=moderation_not_found",
     );
@@ -393,6 +393,10 @@ export const getUnableToAutoJoinOrganizationController = async (
     if (e instanceof NotFoundError) {
       next(new HttpErrors.NotFound());
     } else if (e instanceof ForbiddenError) {
+      track("moderation.access.forbidden", {
+        moderation_id,
+        user_id: getUserFromAuthenticatedSession(req).id,
+      });
       next(new HttpErrors.Forbidden());
     } else {
       next(e);
@@ -410,7 +414,7 @@ export const getModerationRejectedController = async (
   });
   const result = schema.safeParse(req.query);
   if (!result.success) {
-    logger.warn(result.error);
+    track("organization.page_query.invalid", { error: result.error });
     return res.redirect(
       "/users/join-organization?notification=moderation_not_found",
     );
@@ -446,6 +450,10 @@ export const getModerationRejectedController = async (
     if (e instanceof NotFoundError) {
       return next(new HttpErrors.NotFound());
     } else if (e instanceof ForbiddenError) {
+      track("moderation.access.forbidden", {
+        moderation_id,
+        user_id: getUserFromAuthenticatedSession(req).id,
+      });
       return next(new HttpErrors.Forbidden());
     }
     return next(e);
@@ -493,7 +501,7 @@ export async function getCertificationDirigeantCloseMatchError(
     })
     .safeParse(req.query);
   if (!result.success) {
-    logger.warn(result.error);
+    track("organization.page_query.invalid", { error: result.error });
     return res.redirect(
       "/users/join-organization?notification=certification_dirigeant_data_missing",
     );
@@ -536,7 +544,7 @@ export async function getCertificationDirigeantNoMatchError(
     })
     .safeParse(req.query);
   if (!result.success) {
-    logger.warn(result.error);
+    track("organization.page_query.invalid", { error: result.error });
     return res.redirect(
       "/users/join-organization?notification=certification_dirigeant_data_missing",
     );
@@ -597,6 +605,10 @@ export const postQuitUserOrganizationController = async (
     );
   } catch (error) {
     if (error instanceof NotFoundError) {
+      track("organization.quit.not_linked", {
+        organization_id: req.params["id"],
+        user_id: getUserFromAuthenticatedSession(req).id,
+      });
       return res.redirect(
         `/manage-organizations?notification=organization_not_linked`,
       );

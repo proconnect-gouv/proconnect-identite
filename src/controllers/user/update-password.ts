@@ -1,4 +1,3 @@
-import { metrics } from "@sentry/node";
 import { to } from "await-to-js";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
@@ -24,7 +23,7 @@ import { resetPasswordRateLimiter } from "../../middlewares/rate-limiter";
 import { emailSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 import hasErrorFromField from "../../services/has-error-from-field";
-import { logger } from "../../services/log";
+import { track } from "../../services/log";
 
 export const getResetPasswordController = async (
   req: Request,
@@ -101,8 +100,7 @@ export const getChangePasswordController = async (
     .safeParse(req.query);
 
   if (!query.success) {
-    metrics.count("change_password.reset_token.missing");
-    logger.warn(query.error);
+    track("change_password.reset_token.missing", { error: query.error });
     return res.redirect(`/users/reset-password?notification=invalid_token`);
   }
 

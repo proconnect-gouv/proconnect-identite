@@ -1,3 +1,4 @@
+import { captureEvent, getIsolationScope } from "@sentry/node";
 import log, { type LogLevelNames } from "console-log-level";
 import moment from "moment";
 import { LOG_LEVEL } from "../config/env";
@@ -33,4 +34,12 @@ export function logger_group(...label: any[]) {
 }
 export function logger_group_end() {
   if (["debug", "trace"].includes(LOG_LEVEL)) console.groupEnd();
+}
+
+export function track(name: string, details: Record<string, unknown>) {
+  captureEvent({ fingerprint: ["track", name], level: "info", message: name });
+  logger.warn(name, {
+    "http.route": getIsolationScope().getScopeData().transactionName,
+    ...details,
+  });
 }

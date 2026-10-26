@@ -20,7 +20,7 @@ import {
   optionalBooleanSchema,
 } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
-import { logger } from "../../services/log";
+import { track } from "../../services/log";
 import { getOrganizationTypeLabel } from "../../services/organization";
 
 const { organizations } = context.repository;
@@ -34,6 +34,9 @@ export const getOfficialContactEmailVerificationController = async (
     const organization_id =
       req.session.pendingOfficialContactEmailVerificationOrganizationId;
     if (organization_id === undefined) {
+      track("official_contact.verification.missing", {
+        user_id: getUserFromAuthenticatedSession(req).id,
+      });
       return res.redirect(
         `/users/join-organization?notification=official_contact_email_verification_not_found`,
       );
@@ -41,6 +44,7 @@ export const getOfficialContactEmailVerificationController = async (
 
     const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
+      track("official_contact.organization.not_found", { organization_id });
       req.session.pendingOfficialContactEmailVerificationOrganizationId =
         undefined;
       return res.redirect(
@@ -59,7 +63,7 @@ export const getOfficialContactEmailVerificationController = async (
       query: req.query,
     });
     if (!result.success) {
-      logger.warn(result.error);
+      track("official_contact.page_query.invalid", { error: result.error });
       return res.redirect(
         `/users/official-contact-ask-which-email?notification=invalid_email`,
       );
@@ -111,6 +115,8 @@ export const getOfficialContactEmailVerificationController = async (
       organization_type_label: getOrganizationTypeLabel(organization),
     });
   } catch (error) {
+    const organization_id =
+      req.session.pendingOfficialContactEmailVerificationOrganizationId;
     req.session.pendingOfficialContactEmailVerificationOrganizationId =
       undefined;
 
@@ -118,12 +124,20 @@ export const getOfficialContactEmailVerificationController = async (
       error instanceof ApiAnnuaireError &&
       error.cause instanceof ApiAnnuaireNotFoundError
     ) {
+      track("official_contact.annuaire.contact_email_not_found", {
+        organization_id,
+      });
       return res.redirect(
         `/users/join-organization?notification=api_annuaire_contact_email_not_found`,
       );
     }
 
     if (error instanceof ApiAnnuaireError) {
+      track("official_contact.annuaire.unavailable", {
+        organization_id,
+        "error.type":
+          error.cause instanceof Error ? error.cause.name : error.name,
+      });
       return res.redirect(
         `/users/join-organization?notification=api_annuaire_error`,
       );
@@ -142,6 +156,9 @@ export const postOfficialContactEmailVerificationMiddleware = async (
     const organization_id =
       req.session.pendingOfficialContactEmailVerificationOrganizationId;
     if (organization_id === undefined) {
+      track("official_contact.verification.missing", {
+        user_id: getUserFromAuthenticatedSession(req).id,
+      });
       return res.redirect(
         `/users/join-organization?notification=official_contact_email_verification_not_found`,
       );
@@ -149,6 +166,7 @@ export const postOfficialContactEmailVerificationMiddleware = async (
 
     const organization = await organizations.findById(organization_id);
     if (isEmpty(organization)) {
+      track("official_contact.organization.not_found", { organization_id });
       req.session.pendingOfficialContactEmailVerificationOrganizationId =
         undefined;
       return res.redirect(
@@ -167,7 +185,7 @@ export const postOfficialContactEmailVerificationMiddleware = async (
       body: req.body,
     });
     if (!result.success) {
-      logger.warn(result.error);
+      track("official_contact.code.invalid_format", { error: result.error });
       return res.redirect(
         `/users/official-contact-email-verification?notification=invalid_verify_email_code`,
       );
