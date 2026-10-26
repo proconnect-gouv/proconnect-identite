@@ -109,6 +109,10 @@ export const getChangePasswordController = async (
       csrfToken: csrfToken(req),
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.redirect(`/users/reset-password?notification=invalid_token`);
+    }
+
     next(error);
   }
 };
