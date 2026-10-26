@@ -266,7 +266,7 @@ export const getDomainNotAllowedForOrganizationController = async (
     organization_id: idSchema(),
   });
 
-  const result = await schema.safeParseAsync(req.query);
+  const result = schema.safeParse(req.query);
   if (!result.success) {
     logger.warn(result.error);
     return res.redirect(
@@ -298,7 +298,7 @@ export const getDomainRefusedForOrganizationController = async (
     organization_id: idSchema(),
   });
 
-  const result = await schema.safeParseAsync(req.query);
+  const result = schema.safeParse(req.query);
   if (!result.success) {
     logger.warn(result.error);
     return res.redirect(
@@ -328,7 +328,7 @@ export const getJoinOrganizationConfirmController = async (
     organization_id: idSchema(),
   });
 
-  const result = await schema.safeParseAsync(req.query);
+  const result = schema.safeParse(req.query);
   if (!result.success) {
     logger.warn(result.error);
     return res.redirect(
@@ -360,7 +360,7 @@ export const getUnableToAutoJoinOrganizationController = async (
   const schema = z.object({
     moderation_id: idSchema(),
   });
-  const result = await schema.safeParseAsync(req.query);
+  const result = schema.safeParse(req.query);
   if (!result.success) {
     logger.warn(result.error);
     return res.redirect(
@@ -408,7 +408,7 @@ export const getModerationRejectedController = async (
   const schema = z.object({
     moderation_id: idSchema(),
   });
-  const result = await schema.safeParseAsync(req.query);
+  const result = schema.safeParse(req.query);
   if (!result.success) {
     logger.warn(result.error);
     return res.redirect(
