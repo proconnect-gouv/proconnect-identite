@@ -596,6 +596,12 @@ export const postQuitUserOrganizationController = async (
       `/manage-organizations?notification=quit_organization_success`,
     );
   } catch (error) {
+    if (error instanceof NotFoundError) {
+      return res.redirect(
+        `/manage-organizations?notification=organization_not_linked`,
+      );
+    }
+
     next(error);
   }
 };
