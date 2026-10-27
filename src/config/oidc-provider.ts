@@ -2,7 +2,11 @@
 
 import * as Sentry from "@sentry/node";
 import type { Request } from "express";
-import Provider, { errors, type Configuration } from "oidc-provider";
+import Provider, {
+  errors,
+  type Configuration,
+  type KoaContextWithOIDC,
+} from "oidc-provider";
 import { destroyAuthenticatedSession } from "../managers/session/authenticated";
 import epochTime from "../services/epoch-time";
 import { logger, track } from "../services/log";
@@ -79,6 +83,16 @@ export async function createOidcProvider() {
   });
   oidcProvider.proxy = true;
   oidcProvider.use(connectionCountMiddleware);
+  oidcProvider.use(async (ctx: KoaContextWithOIDC, next) => {
+    Sentry.getIsolationScope().addEventProcessor((event) => {
+      const cid = ctx.oidc?.entities.Interaction?.cid;
+      if (cid) {
+        event.tags = { ...event.tags, "oidc.interaction_cid": cid };
+      }
+      return event;
+    });
+    await next();
+  });
 
   return oidcProvider;
 }

@@ -62,6 +62,7 @@ export const createAuthenticatedSession = async (
   // csrfToken should not be passed to the new session for security reasons
   const {
     authForProconnectFederation,
+    interactionCid,
     interactionId,
     nonce,
     redirectTo,
@@ -85,6 +86,7 @@ export const createAuthenticatedSession = async (
         });
         req.session.user = updatedUser;
         // we restore previous session navigation values
+        req.session.interactionCid = interactionCid;
         req.session.interactionId = interactionId;
         req.session.prompt = prompt;
         req.session.redirectTo = redirectTo;

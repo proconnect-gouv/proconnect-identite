@@ -35,6 +35,7 @@ export const interactionStartControllerFactory =
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const {
+        cid: interactionCid,
         uid: interactionId,
         params,
         prompt,
@@ -44,6 +45,8 @@ export const interactionStartControllerFactory =
 
       req.session.certificationDirigeantRequested =
         certificationDirigeantRequested(prompt);
+      // unlike the uid, the cid is shared by every interaction of one authorization request
+      req.session.interactionCid = interactionCid;
       req.session.interactionId = interactionId;
       req.session.pendingCertificationDirigeantOrganizationId = undefined;
       req.session.redirectTo = `/interaction/${interactionId}/login`;
