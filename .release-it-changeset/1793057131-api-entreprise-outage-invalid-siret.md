@@ -1,1 +1,0 @@
-🐛 Quand les données INSEE sont indisponibles, le formulaire de rattachement n’accuse plus votre SIRET d’être invalide : il affiche « Erreur : les données INSEE de l’organisation, nécessaires pour valider le rattachement, sont indisponibles pour le moment. Merci de réessayer ultérieurement. »
