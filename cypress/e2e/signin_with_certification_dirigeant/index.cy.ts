@@ -200,6 +200,23 @@ describe("sign-in with a client requiring certification dirigeant", () => {
     cy.contains("S’identifier avec FranceConnect");
   });
 
+  it("should not ask for FranceConnect on a plain sign-in after an abandoned certification", () => {
+    cy.login("no-franceconnect+already-in-org@yopmail.com");
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Herisson (choisir cette organisation)").click();
+
+    cy.title().should("include", "Certification dirigeant - ");
+
+    cy.origin("http://localhost:4000", function () {
+      cy.visit("/");
+      cy.contains("S’identifier avec ProConnect").click();
+    });
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains('"email": "no-franceconnect+already-in-org@yopmail.com"');
+  });
+
   it("should try to re-certify a dirigeant after certification expiration", function () {
     cy.login("outdated-certification+douglasduteil@mail.com");
 
