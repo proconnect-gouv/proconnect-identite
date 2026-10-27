@@ -34,6 +34,9 @@ import {
 } from "../../config/env";
 import {
   AccessRestrictedToPublicServiceEmailError,
+  ApiAnnuaireConnectionError,
+  ApiAnnuaireInvalidEmailError,
+  ApiAnnuaireNotFoundError,
   DomainNotAllowedForOrganizationError,
   DomainRefusedForOrganizationError,
   GouvFrDomainsForbiddenForPrivateOrg,
@@ -53,7 +56,7 @@ import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
 import { getOrganizationInfo } from "../../connectors/organization-info";
 import { usesAFreeEmailProvider } from "../../services/email";
-import { logger } from "../../services/log";
+import { logger, track } from "../../services/log";
 import {
   hasLessThanFiftyEmployees,
   isArmeeDomain,
@@ -316,8 +319,22 @@ export const joinOrganization = async ({
         organization.cached_code_officiel_geographique,
       );
     } catch (err) {
-      logger.error(inspect(err, { depth: 3 }));
-      Sentry.captureException(err);
+      if (err instanceof ApiAnnuaireConnectionError) {
+        track("join.annuaire_service_public.unavailable", {
+          cog: organization.cached_code_officiel_geographique,
+          "error.type": err.name,
+          organization_id,
+        });
+      } else if (err instanceof ApiAnnuaireNotFoundError) {
+        track("join.annuaire_service_public.contact_email_not_found", {
+          cog: organization.cached_code_officiel_geographique,
+          "error.type": err.name,
+          organization_id,
+        });
+      } else {
+        logger.error(inspect(err, { depth: 3 }));
+        Sentry.captureException(err);
+      }
     }
 
     for (const contactEmail of contactEmails) {
@@ -363,8 +380,28 @@ export const joinOrganization = async ({
     try {
       contactEmail = await getAnnuaireEducationNationaleContactEmail(siret);
     } catch (err) {
-      logger.error(err);
-      Sentry.captureException(err);
+      if (err instanceof ApiAnnuaireConnectionError) {
+        track("join.annuaire_education_nationale.unavailable", {
+          "error.type": err.name,
+          organization_id,
+          siret,
+        });
+      } else if (err instanceof ApiAnnuaireNotFoundError) {
+        track("join.annuaire_education_nationale.contact_email_not_found", {
+          "error.type": err.name,
+          organization_id,
+          siret,
+        });
+      } else if (err instanceof ApiAnnuaireInvalidEmailError) {
+        track("join.annuaire_education_nationale.contact_email_invalid", {
+          "error.type": err.name,
+          organization_id,
+          siret,
+        });
+      } else {
+        logger.error(err);
+        Sentry.captureException(err);
+      }
     }
 
     if (contactEmail === email) {

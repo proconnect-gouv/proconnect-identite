@@ -1,6 +1,9 @@
 //
 
-import { processCertificationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
+import {
+  CertificationDirigeantDataSource,
+  processCertificationDirigeantFactory,
+} from "@proconnect-gouv/proconnect.identite/managers/certification";
 import type {
   FranceConnectUserInfo,
   Organization,
@@ -13,7 +16,7 @@ import {
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../../config/errors";
 import { context } from "../../connectors/context";
-import { logger } from "../../services/log";
+import { logger, track } from "../../services/log";
 
 //
 
@@ -29,6 +32,18 @@ export const processCertificationDirigeantOrThrow = async (
     franceconnect_userinfo,
   );
   const siren = organization.siret.substring(0, 9);
+
+  if (
+    details.source ===
+    CertificationDirigeantDataSource.enum[
+      "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux"
+    ]
+  ) {
+    track("certification_dirigeant.rne.unavailable", {
+      siren,
+      source: details.source,
+    });
+  }
 
   if (!ok && cause === "organisation_not_covered") {
     throw new CertificationDirigeantOrganizationNotCoveredError(cause, {
