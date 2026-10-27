@@ -1,3 +1,4 @@
+import { acrFromAssuranceLevels } from "@proconnect-gouv/proconnect.identite/services/assurance-levels";
 import {
   type BaseUserOrganizationLink,
   LinkEnum,
@@ -34,10 +35,7 @@ import {
   needsEmailVerificationRenewal,
   needsFranceConnectIdentityRenewal,
 } from "../../managers/user";
-import {
-  acrFromAssuranceLevels,
-  isAcrSatisfied,
-} from "../../services/acr-checks";
+import { isAcrSatisfied } from "../../services/acr-checks";
 import { isExpired } from "../../services/is-expired";
 import { usesAuthHeaders } from "../../services/uses-auth-headers";
 import { Pass, type RequestContext } from "./internals";
