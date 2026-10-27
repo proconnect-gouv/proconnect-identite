@@ -1,11 +1,9 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
-import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import {
-  StrongLinkValues,
-  SuperWeakLinkValues,
-  UnverifiedLinkValues,
-  WeakLinkValues,
-} from "@proconnect-gouv/proconnect.identite/types";
+  oalFromVerificationType,
+  type AssuranceLevels,
+} from "@proconnect-gouv/proconnect.identite/services/assurance-levels";
+import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import type { Request, Response } from "express";
 import { Session, type SessionData } from "express-session";
@@ -14,7 +12,6 @@ import { match } from "ts-pattern";
 import { RECENT_LOGIN_INTERVAL_IN_SECONDS } from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
 import { context } from "../../connectors/context";
-import type { AssuranceLevels } from "../../services/acr-checks";
 import { isExpiredInSeconds } from "../../services/is-expired";
 import {
   addAuthenticationMethodReference,
@@ -298,12 +295,7 @@ export async function getCurrentOAL(
     throw new NotFoundError("link should be set");
   }
 
-  return match(link.verification_type)
-    .returnType<AssuranceLevels["oal"]>()
-    .with(...UnverifiedLinkValues, () => "declared")
-    .with(...WeakLinkValues, ...SuperWeakLinkValues, () => "moderated")
-    .with(...StrongLinkValues, () => "certified")
-    .exhaustive();
+  return oalFromVerificationType(link.verification_type);
 }
 
 export async function doesAcrSatisfiesCertificationDirigeantRequirements(
