@@ -19,7 +19,10 @@ import {
 } from "../../managers/session/unauthenticated";
 import { changePassword, sendResetPasswordEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import { resetPasswordRateLimiter } from "../../middlewares/rate-limiter";
+import {
+  resetPasswordRateLimiter,
+  trackRateLimiterRejection,
+} from "../../middlewares/rate-limiter";
 import { emailSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 import hasErrorFromField from "../../services/has-error-from-field";
@@ -74,6 +77,11 @@ export const postResetPasswordController = async (
     );
 
     if (rateLimiterError) {
+      trackRateLimiterRejection({
+        error: rateLimiterError,
+        exceededName: "rate_limit.email.exceeded",
+        rateLimiter: resetPasswordRateLimiter,
+      });
       return next(new HttpErrors.TooManyRequests());
     }
 

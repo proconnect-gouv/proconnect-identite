@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
-import { RateLimiterRedis } from "rate-limiter-flexible";
+import { RateLimiterRedis, RateLimiterRes } from "rate-limiter-flexible";
 import {
   FEATURE_RATE_LIMIT_BY_EMAIL,
   FEATURE_RATE_LIMIT_BY_IP,
@@ -15,10 +15,32 @@ import {
   isWithinAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { getEmailFromUnauthenticatedSession } from "../managers/session/unauthenticated";
+import { track } from "../services/log";
 
 const redisClient = getNewRedisClient({
   disableOfflineQueue: true,
 });
+
+export function trackRateLimiterRejection({
+  error,
+  exceededName,
+  rateLimiter,
+}: {
+  error: unknown;
+  exceededName: "rate_limit.email.exceeded" | "rate_limit.ip.exceeded";
+  rateLimiter: RateLimiterRedis;
+}) {
+  const { keyPrefix: key_prefix, points } = rateLimiter;
+  if (!(error instanceof RateLimiterRes)) {
+    return track("rate_limit.store.unavailable", {
+      "error.type": error instanceof Error ? error.name : typeof error,
+      key_prefix,
+    });
+  }
+  if (error.consumedPoints === points + 1) {
+    track(exceededName, { key_prefix, ms_before_next: error.msBeforeNext });
+  }
+}
 
 const ipRateLimiterMiddlewareFactory =
   (rateLimiter: RateLimiterRedis) =>
@@ -28,7 +50,12 @@ const ipRateLimiterMiddlewareFactory =
         await rateLimiter.consume(req.ip || "unknown");
       }
       next();
-    } catch (e) {
+    } catch (error) {
+      trackRateLimiterRejection({
+        error,
+        exceededName: "rate_limit.ip.exceeded",
+        rateLimiter,
+      });
       next(new HttpErrors.TooManyRequests());
     }
   };
@@ -49,7 +76,12 @@ const emailRateLimiterMiddlewareFactory =
       }
 
       return next();
-    } catch (e) {
+    } catch (error) {
+      trackRateLimiterRejection({
+        error,
+        exceededName: "rate_limit.email.exceeded",
+        rateLimiter,
+      });
       next(new HttpErrors.TooManyRequests());
     }
   };
