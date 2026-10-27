@@ -1,4 +1,7 @@
-import { ApiEntrepriseError } from "@proconnect-gouv/proconnect.api_entreprise/types";
+import {
+  ApiEntrepriseConnectionError,
+  ApiEntrepriseError,
+} from "@proconnect-gouv/proconnect.api_entreprise/types";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { DOMAINS_WHITELIST } from "@proconnect-gouv/proconnect.identite/data/organization";
 import {
@@ -235,7 +238,14 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
-    if (error instanceof ApiEntrepriseError) {
+    if (
+      error instanceof ApiEntrepriseError ||
+      error instanceof ApiEntrepriseConnectionError
+    ) {
+      track("organization.api_entreprise.unavailable", {
+        "error.type": error.name,
+        siret: req.body.siret,
+      });
       return res.redirect(
         `/users/join-organization?notification=insee_unexpected_error&siret_hint=${req.body.siret}`,
       );

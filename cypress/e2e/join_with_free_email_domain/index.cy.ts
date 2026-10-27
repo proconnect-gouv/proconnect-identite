@@ -20,6 +20,17 @@ describe("join with free email domain", () => {
     cy.contains("Compte créé 🎊");
   });
 
+  it("API Entreprise indisponible", function () {
+    cy.focused().clear().type("10000000000019");
+
+    cy.contains("Enregistrer").click();
+
+    cy.title().should("include", "Rejoindre une organisation -");
+    cy.contains(
+      "Erreur : les données INSEE de l’organisation, nécessaires pour valider le rattachement, sont indisponibles pour le moment. Merci de réessayer ultérieurement.",
+    );
+  });
+
   it("collectivité territoriale", function () {
     cy.focused().clear().type("21340126800130");
 

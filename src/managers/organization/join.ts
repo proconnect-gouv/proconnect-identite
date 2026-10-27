@@ -1,9 +1,10 @@
-import { ApiEntrepriseError } from "@proconnect-gouv/proconnect.api_entreprise/types";
+import { ApiEntrepriseConnectionError } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { Welcome } from "@proconnect-gouv/proconnect.email";
 import {
   InvalidSiretError,
+  NotFoundError,
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
@@ -140,6 +141,17 @@ export const getOrganizationSuggestions = async ({
   );
 };
 
+const isApiEntrepriseUnavailable = (
+  error: unknown,
+): error is ApiEntrepriseConnectionError => {
+  if (!(error instanceof ApiEntrepriseConnectionError)) return false;
+
+  const { cause } = error;
+  return !(
+    cause instanceof InvalidSiretError || cause instanceof NotFoundError
+  );
+};
+
 export const upsertOrganization = async (siret: string) => {
   let organization: Organization;
   try {
@@ -149,7 +161,7 @@ export const upsertOrganization = async (siret: string) => {
       organizationInfo,
     });
   } catch (error) {
-    if (error instanceof ApiEntrepriseError) {
+    if (isApiEntrepriseUnavailable(error)) {
       throw error;
     }
 
