@@ -131,6 +131,20 @@ app.use(function preventSessionCreationMiddleware(req, res, next) {
 
 app.use(trustedBrowserMiddleware);
 
+// oidc-provider tags its own routes from the interaction it loads
+app.use(function tagInteractionCidMiddleware(req, _res, next) {
+  if (!req.path.startsWith("/oauth/")) {
+    Sentry.getIsolationScope().addEventProcessor((event) => {
+      const cid = req.session?.interactionCid;
+      if (cid) {
+        event.tags = { ...event.tags, "oidc.interaction_cid": cid };
+      }
+      return event;
+    });
+  }
+  next();
+});
+
 app.set("views", path.join(import.meta.dirname, "views"));
 app.set("view engine", "ejs");
 

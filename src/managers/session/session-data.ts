@@ -27,6 +27,7 @@ export const UnauthenticatedSessionDataSchema = z.object({
   certificationDirigeantRequested: z.boolean().optional(),
   email: z.string().optional(),
   hasWebauthnConfigured: z.boolean().optional(),
+  interactionCid: z.string().optional(),
   interactionId: z.string().optional(),
   loginHint: z.string().optional(),
   needsInclusionconnectWelcomePage: z.boolean().optional(),
