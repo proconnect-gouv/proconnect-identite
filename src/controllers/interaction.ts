@@ -25,6 +25,7 @@ import {
 } from "../services/acr-checks";
 import { oidcErrorSchema, siretSchema } from "../services/custom-zod-schemas";
 import epochTime from "../services/epoch-time";
+import { track } from "../services/log";
 
 const { oidc_clients } = context.repository;
 
@@ -193,6 +194,9 @@ export const interactionEndControllerFactory =
       if (error instanceof errors.SessionNotFound) {
         // we may have taken to long to provide a session to the user since he has been redirected
         // we fail silently
+        track("interaction.session.not_found", {
+          interaction_id: req.session.interactionId,
+        });
         return res.redirect("/");
       }
 

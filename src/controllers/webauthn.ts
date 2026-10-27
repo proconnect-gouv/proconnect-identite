@@ -29,7 +29,7 @@ import {
   verifyAuthentication,
   verifyRegistration,
 } from "../managers/webauthn";
-import { logger } from "../services/log";
+import { logger, track } from "../services/log";
 
 export const deletePasskeyController = async (
   req: Request,
@@ -115,10 +115,14 @@ export const postVerifyRegistrationControllerFactory =
       return res.redirect(redirectUrl);
     } catch (e) {
       logger.error(e);
-      if (
-        e instanceof ZodError ||
-        e instanceof WebauthnRegistrationFailedError
-      ) {
+      if (e instanceof ZodError) {
+        return res.redirect(errorRedirectUrl);
+      }
+
+      if (e instanceof WebauthnRegistrationFailedError) {
+        track("webauthn.registration.verification_failed", {
+          "error.type": e.name,
+        });
         return res.redirect(errorRedirectUrl);
       }
 
@@ -135,6 +139,7 @@ export const getGenerateAuthenticationOptionsControllerFactory =
         : getEmailFromUnauthenticatedSession(req);
 
       if (!email) {
+        track("webauthn.authentication_options.email_missing", {});
         return next(new HttpErrors.Unauthorized());
       }
 

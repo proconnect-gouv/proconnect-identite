@@ -25,7 +25,7 @@ import {
 import { context } from "../connectors/context";
 import { getAuthenticatorFriendlyName } from "../connectors/github-passkey-authenticator-aaguids";
 import { formatDate } from "../services/date-format";
-import { logger } from "../services/log";
+import { logger, track } from "../services/log";
 import { disableForce2fa, is2FACapable } from "./2fa";
 
 const { authenticators, users } = context.repository;
@@ -285,7 +285,12 @@ export const verifyAuthentication = async ({
 
   const user = await users.findByEmail(email);
 
-  if (isEmpty(user) || !user.current_challenge) {
+  if (isEmpty(user)) {
+    throw new NotFoundError();
+  }
+
+  if (!user.current_challenge) {
+    track("webauthn.authentication.challenge_missing", {});
     throw new NotFoundError();
   }
 
@@ -297,6 +302,9 @@ export const verifyAuthentication = async ({
   const authenticator = await authenticators.find(user.id, response.id);
 
   if (isEmpty(authenticator)) {
+    track("webauthn.authentication.authenticator_not_found", {
+      credential_id: response.id,
+    });
     throw new NotFoundError("Authenticator not found", {
       cause: new AssertionError({
         message: `Authenticator not found for credential ID ${response.id}`,
@@ -329,7 +337,10 @@ export const verifyAuthentication = async ({
       requireUserVerification: !isSecondFactorVerification,
     });
   } catch (error) {
-    logger.error(error);
+    track("webauthn.authentication.verification_failed", {
+      "error.message": error instanceof Error ? error.message : String(error),
+      "error.type": error instanceof Error ? error.name : typeof error,
+    });
     throw new WebauthnAuthenticationFailedError(
       "Response verification failed",
       {
