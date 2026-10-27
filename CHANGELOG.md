@@ -1,5 +1,28 @@
 # Changelog
 
+## [2026.10.12](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.11...2026.10.12) (2026-10-27)
+
+### Changements
+
+- 🐛 Valider deux fois de suite le code envoyé à l’adresse email officielle ne provoque plus d’erreur 500, et rouvrir une demande de rattachement supprimée entre-temps affiche « Information : aucune demande de rattachement n’est en cours. » au lieu d’un faux succès
+- 🐛 Quand les données INSEE sont indisponibles, le formulaire de rattachement n’accuse plus votre SIRET d’être invalide : il affiche « Erreur : les données INSEE de l’organisation, nécessaires pour valider le rattachement, sont indisponibles pour le moment. Merci de réessayer ultérieurement. »
+
+### Modifié
+
+- ♻️ parse org page queries synchronously ([#2332](https://github.com/proconnect-gouv/proconnect-identite/issues/2332)) ([01c66c1](https://github.com/proconnect-gouv/proconnect-identite/commit/01c66c181028877dc0989982db678ae5e65f3276))
+
+### Corrigé
+
+- 🐛 stop calling a SIRET invalid when API Entreprise is down ([#2336](https://github.com/proconnect-gouv/proconnect-identite/issues/2336)) ([eebcb02](https://github.com/proconnect-gouv/proconnect-identite/commit/eebcb02e8ba968bae10d59876bd80f85ceb01e6a))
+- 🐛 stop concurrent reopen and code checks from passing twice ([#2331](https://github.com/proconnect-gouv/proconnect-identite/issues/2331)) ([310f6ae](https://github.com/proconnect-gouv/proconnect-identite/commit/310f6ae565286c973b3c86fccafef8cfe7e8caa3))
+
+### Divers
+
+- 🔊 count stale tabs, token replays and passkey failures ([#2338](https://github.com/proconnect-gouv/proconnect-identite/issues/2338)) ([4bf17c5](https://github.com/proconnect-gouv/proconnect-identite/commit/4bf17c5c936e9077d6bf02ea5fc17a3aefcddd3c))
+- 🔊 count external-directory fallbacks during join and certification ([#2337](https://github.com/proconnect-gouv/proconnect-identite/issues/2337)) ([7c406eb](https://github.com/proconnect-gouv/proconnect-identite/commit/7c406ebc4554a76ed0b7d209a1d3a609b0d19432))
+- 🔊 count CSRF, rate-limit and OIDC rejections ([#2335](https://github.com/proconnect-gouv/proconnect-identite/issues/2335)) ([9cd6976](https://github.com/proconnect-gouv/proconnect-identite/commit/9cd6976432d7979c695be40501c268be17ea83f2))
+- 🔊 log and count stale, missing and foreign requests ([#2334](https://github.com/proconnect-gouv/proconnect-identite/issues/2334)) ([0e116a9](https://github.com/proconnect-gouv/proconnect-identite/commit/0e116a9e0d4f1b5143f9424414cc849ec54e313b))
+
 ## [2026.10.11](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.10...2026.10.11) (2026-10-26)
 
 ### Changements

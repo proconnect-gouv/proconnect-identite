@@ -1,1 +1,0 @@
-🐛 Valider deux fois de suite le code envoyé à l’adresse email officielle ne provoque plus d’erreur 500, et rouvrir une demande de rattachement supprimée entre-temps affiche « Information : aucune demande de rattachement n’est en cours. » au lieu d’un faux succès
