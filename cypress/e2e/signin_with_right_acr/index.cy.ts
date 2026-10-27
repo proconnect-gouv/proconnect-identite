@@ -108,6 +108,16 @@ describe("sign-in with a client requiring acr levels", () => {
     cy.contains('"acr": "eidas1"');
   });
 
+  it("should sign-in and return acr eidas0 without FranceConnect when eidas0 is also accepted", function () {
+    cy.setRequestedAcrs(["eidas0", "eidas1", "eidas1-mfa"]);
+
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("ial0-aal2-oal1@yopmail.com");
+
+    cy.contains('"acr": "eidas0"');
+  });
+
   it("should sign-in and return acr eidas0-mfa", function () {
     cy.setRequestedAcrs(["eidas0-mfa", "eidas1-mfa", "eidas2", "eidas3"]);
 
@@ -168,5 +178,21 @@ describe("sign-in with a client requiring acr levels", () => {
     cy.mfaLogin("certification-dirigeant-aal2@yopmail.com");
 
     cy.contains('"acr": "eidas1-mfa"');
+  });
+
+  it("should ask for FranceConnect when eidas1 alone is required", function () {
+    cy.setRequestedAcrs(["eidas1"]);
+
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("ial0-aal2-oal1@yopmail.com");
+
+    cy.title().should("include", "Vérifier votre identité");
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
+
+    cy.contains('"acr": "eidas1"');
   });
 });

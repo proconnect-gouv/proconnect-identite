@@ -7,7 +7,7 @@ import { OidcError } from "../config/errors";
 import { context } from "../connectors/context";
 import {
   doesAcrSatisfiesCertificationDirigeantRequirements,
-  getCurrentAcr,
+  getCurrentAssuranceLevels,
   getSelectedOrganizationIdFromAuthenticatedSession,
   getSessionStandardizedAuthenticationMethodsReferences,
   getUserFromAuthenticatedSession,
@@ -19,6 +19,7 @@ import {
   setSiretHintInUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
 import {
+  acrFromAssuranceLevels,
   certificationDirigeantRequested,
   isAcrSatisfied,
   isThereAnyRequestedAcr,
@@ -148,7 +149,9 @@ export const interactionEndControllerFactory =
         currentAcr =
           "https://proconnect.gouv.fr/assurance/certification-dirigeant";
       } else {
-        currentAcr = await getCurrentAcr(req, { organizationId });
+        currentAcr = acrFromAssuranceLevels(
+          await getCurrentAssuranceLevels(req, organizationId),
+        );
       }
 
       let result: OidcInteractionResults = {

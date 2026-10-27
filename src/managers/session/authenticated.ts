@@ -10,10 +10,11 @@ import * as Sentry from "@sentry/node";
 import type { Request, Response } from "express";
 import { Session, type SessionData } from "express-session";
 import { isEmpty } from "lodash-es";
-import { match, P } from "ts-pattern";
+import { match } from "ts-pattern";
 import { RECENT_LOGIN_INTERVAL_IN_SECONDS } from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
 import { context } from "../../connectors/context";
+import type { AssuranceLevels } from "../../services/acr-checks";
 import { isExpiredInSeconds } from "../../services/is-expired";
 import {
   addAuthenticationMethodReference,
@@ -264,35 +265,28 @@ export const destroyAuthenticatedSession = async (
   });
 };
 
-// Get the current Identity Assurance Level
-// 0: Déclaratif
-// 1: Faible (eg. FranceConnect niveau eidas1)
-// 2: Substantiel (eg. FranceConnect niveau eidas2) (not available yet)
-// 3: Élevé (eg. FranceConnect niveau eidas3) (not available yet)
-export async function getCurrentIAL(req: Request) {
+export async function getCurrentIAL(
+  req: Request,
+): Promise<AssuranceLevels["ial"]> {
   const user = getUserFromAuthenticatedSession(req);
 
   const hasValidFCIdentity = await hasValidFranceConnectIdentity(user.id);
 
-  return hasValidFCIdentity ? 1 : 0;
+  return hasValidFCIdentity ? "low" : "declared";
 }
 
-// get the current Authentication Assurance Level
-// 0: Simple (mot de passe)
-// 1: MFA faible
-// 2. MFA forte (not available yet)
-// 3. MFA forte matérielle (not available yet)
-export async function getCurrentAAL(req: Request) {
+export async function getCurrentAAL(
+  req: Request,
+): Promise<AssuranceLevels["aal"]> {
   const currentAmrValues = req.session.amr!;
 
-  return currentAmrValues.includes("mfa") ? 2 : 1;
+  return currentAmrValues.includes("mfa") ? "multi_factor" : "single_factor";
 }
 
-// get the current Organization Assurance Level
-// 0: Déclaratif
-// 1: Modération
-// 2: Lien certifié par une source officielle
-export async function getCurrentOAL(req: Request, organizationId: number) {
+export async function getCurrentOAL(
+  req: Request,
+  organizationId: number,
+): Promise<AssuranceLevels["oal"]> {
   const user = getUserFromAuthenticatedSession(req);
 
   const link = await users_organizations.find({
@@ -305,10 +299,10 @@ export async function getCurrentOAL(req: Request, organizationId: number) {
   }
 
   return match(link.verification_type)
-    .returnType<0 | 1 | 2>()
-    .with(...UnverifiedLinkValues, () => 0)
-    .with(...WeakLinkValues, ...SuperWeakLinkValues, () => 1)
-    .with(...StrongLinkValues, () => 2)
+    .returnType<AssuranceLevels["oal"]>()
+    .with(...UnverifiedLinkValues, () => "declared")
+    .with(...WeakLinkValues, ...SuperWeakLinkValues, () => "moderated")
+    .with(...StrongLinkValues, () => "certified")
     .exhaustive();
 }
 
@@ -320,48 +314,17 @@ export async function doesAcrSatisfiesCertificationDirigeantRequirements(
   const oal = await getCurrentOAL(req, organizationId);
 
   return match({ ial, oal })
-    .with({ ial: 1, oal: 2 }, () => true)
+    .with({ ial: "low", oal: "certified" }, () => true)
     .otherwise(() => false);
 }
 
-// The OAL depends on an organization: either give the organization or force the OAL.
-type CurrentAcrOptions = { forcedIAL?: 0 | 1; forcedAAL?: 1 | 2 } & (
-  | { organizationId: number; forcedOAL?: undefined }
-  | { organizationId?: undefined; forcedOAL: 0 | 1 | 2 }
-);
-
-export async function getCurrentAcr(req: Request, options: CurrentAcrOptions) {
-  const ial = options.forcedIAL || (await getCurrentIAL(req));
-  const aal = options.forcedAAL || (await getCurrentAAL(req));
-  const oal =
-    options.organizationId === undefined
-      ? options.forcedOAL
-      : await getCurrentOAL(req, options.organizationId);
-
-  return match({
-    ial,
-    aal,
-    oal,
-  })
-    .with(
-      // Identity and Organization assurance levels too low
-      { ial: 0, oal: 0 },
-      // Le cas IAL=0 & OAL=2 correspond à une certification dirigeant/employé sans FranceConnection
-      // IAL must be at least 1 for OAL to equal 2
-      { ial: 0, oal: 2 },
-      () => null,
-    )
-    .with(
-      { ial: 0, aal: 1, oal: 1 },
-      { ial: 1, aal: 1, oal: 0 },
-      () => "eidas0",
-    )
-    .with(
-      { ial: 0, aal: 2, oal: 1 },
-      { ial: 1, aal: 2, oal: 0 },
-      () => "eidas0-mfa",
-    )
-    .with({ ial: 1, aal: 1, oal: P.union(1, 2) }, () => "eidas1")
-    .with({ ial: 1, aal: 2, oal: P.union(1, 2) }, () => "eidas1-mfa")
-    .exhaustive();
+export async function getCurrentAssuranceLevels(
+  req: Request,
+  organizationId: number,
+): Promise<AssuranceLevels> {
+  return {
+    aal: await getCurrentAAL(req),
+    ial: await getCurrentIAL(req),
+    oal: await getCurrentOAL(req, organizationId),
+  };
 }
