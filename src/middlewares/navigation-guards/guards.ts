@@ -15,7 +15,8 @@ import {
 import { isBrowserTrustedForUser } from "../../managers/browser-authentication";
 import { selectOrganization } from "../../managers/organization/main";
 import {
-  getCurrentAcr,
+  getCurrentAAL,
+  getCurrentAssuranceLevels,
   getSelectedOrganizationIdFromAuthenticatedSession,
   getUserFromAuthenticatedSession,
   hasUserAuthenticatedRecently,
@@ -33,7 +34,10 @@ import {
   needsEmailVerificationRenewal,
   needsFranceConnectIdentityRenewal,
 } from "../../managers/user";
-import { isAcrSatisfied } from "../../services/acr-checks";
+import {
+  acrFromAssuranceLevels,
+  isAcrSatisfied,
+} from "../../services/acr-checks";
 import { isExpired } from "../../services/is-expired";
 import { usesAuthHeaders } from "../../services/uses-auth-headers";
 import { Pass, type RequestContext } from "./internals";
@@ -189,15 +193,20 @@ export const userIsMfaAuthenticatedIfRequiredGuard = async (
   } = prev;
   const { id: user_id } = getUserFromAuthenticatedSession(req);
   // Note:
-  // - forcedIAL is set to 1 since the user can elevate it to level 1 when necessary
-  // - forcedOAL is set to 1 to maintain a consistent value set that doesn't impact the AAL.
+  // - ial is low since the user can elevate it with FranceConnect when necessary
+  // - oal is moderated to maintain a consistent value set that doesn't impact the AAL.
+  const aal = await getCurrentAAL(req);
   const isAcrCurrentlySatisfied = isAcrSatisfied(
     req.session.prompt,
-    await getCurrentAcr(req, { forcedIAL: 1, forcedOAL: 1 }),
+    acrFromAssuranceLevels({ aal, ial: "low", oal: "moderated" }),
   );
   const wouldRequestedAcrBeSatisfiedIfAccountHasMfaSetup = isAcrSatisfied(
     req.session.prompt,
-    await getCurrentAcr(req, { forcedIAL: 1, forcedAAL: 2, forcedOAL: 1 }),
+    acrFromAssuranceLevels({
+      aal: "multi_factor",
+      ial: "low",
+      oal: "moderated",
+    }),
   );
 
   if (
@@ -386,16 +395,23 @@ export const userHasValidFranceConnectIdentityGuard = async <
     return haltTo("/users/franceconnect");
   }
   // Note:
-  // - forcedAAL is set to 2 since the user can elevate it to level 2 when necessary.
-  const isAcrCurrentlySatisfied = isAcrSatisfied(
-    req.session.prompt,
-    await getCurrentAcr(req, { organizationId, forcedAAL: 2 }),
-  );
-  const wouldRequestedAcrBeSatisfiedIfAccountHasFCSetup = isAcrSatisfied(
-    req.session.prompt,
-    await getCurrentAcr(req, { organizationId, forcedIAL: 1, forcedAAL: 2 }),
-  );
-
+  // - each ACR is also computed with a multi-factor AAL, since the user can add a second factor when necessary.
+  const levels = await getCurrentAssuranceLevels(req, organizationId);
+  const isAcrCurrentlySatisfied =
+    isAcrSatisfied(req.session.prompt, acrFromAssuranceLevels(levels)) ||
+    isAcrSatisfied(
+      req.session.prompt,
+      acrFromAssuranceLevels({ ...levels, aal: "multi_factor" }),
+    );
+  const wouldRequestedAcrBeSatisfiedIfAccountHasFCSetup =
+    isAcrSatisfied(
+      req.session.prompt,
+      acrFromAssuranceLevels({ ...levels, ial: "low" }),
+    ) ||
+    isAcrSatisfied(
+      req.session.prompt,
+      acrFromAssuranceLevels({ ...levels, aal: "multi_factor", ial: "low" }),
+    );
   const requestedAcrRequiresFranceConnection =
     !isAcrCurrentlySatisfied && wouldRequestedAcrBeSatisfiedIfAccountHasFCSetup;
 
