@@ -29,6 +29,7 @@ import {
   setBrowserAsTrustedForUser,
   setIsTrustedBrowserFromLoggedInSession,
 } from "../browser-authentication";
+import { recordAuthorizationRequestAtSignIn } from "../oidc-client";
 import { hasValidFranceConnectIdentity } from "../user";
 
 const { users_organizations, users } = context.repository;
@@ -99,6 +100,11 @@ export const createAuthenticatedSession = async (
         req.session.state = state;
         req.session.spName = spName;
         req.session.siretHint = siretHint;
+
+        await recordAuthorizationRequestAtSignIn({
+          req,
+          user_id: updatedUser.id,
+        });
 
         req.session.amr = addAuthenticationMethodReference(
           req.session.amr,

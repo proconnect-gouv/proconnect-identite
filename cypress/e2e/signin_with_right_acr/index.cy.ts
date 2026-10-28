@@ -254,3 +254,32 @@ ORDER BY users_oidc_clients.id`;
     ]);
   });
 });
+
+describe("record the request of a user signing in during it", () => {
+  before(cy.seed);
+  beforeEach(() => {
+    cy.visit("http://localhost:4000");
+  });
+
+  const selectConnections = `
+SELECT
+  interaction_cid IS NOT NULL AS has_interaction_cid,
+  outcome
+FROM users_oidc_clients
+JOIN users ON users.id = users_oidc_clients.user_id
+WHERE users.email = 'ial0-aal2-oal1@yopmail.com'
+ORDER BY users_oidc_clients.id`;
+
+  it("should record the request before being halted at FranceConnect", function () {
+    cy.setRequestedAcrs(["eidas1"]);
+
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.login("ial0-aal2-oal1@yopmail.com");
+
+    cy.title().should("include", "Vérifier votre identité");
+    cy.task("psql", selectConnections).should("deep.equal", [
+      { has_interaction_cid: true, outcome: null },
+    ]);
+  });
+});
