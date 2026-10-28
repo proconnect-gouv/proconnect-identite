@@ -24,7 +24,6 @@ import {
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";
-import { inspect } from "node:util";
 import { EmailDomainApprovedVerificationEnum } from "../../../packages/identite/src/types";
 import {
   CRISP_WEBSITE_ID,
@@ -332,7 +331,7 @@ export const joinOrganization = async ({
           organization_id,
         });
       } else {
-        logger.error(inspect(err, { depth: 3 }));
+        logger.error(err);
         Sentry.captureException(err);
       }
     }

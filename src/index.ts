@@ -9,7 +9,6 @@ import helmet from "helmet";
 import { Server } from "http";
 import HttpErrors from "http-errors";
 import morgan from "morgan";
-import { inspect } from "node:util";
 import path from "path";
 import { ZodError } from "zod";
 import {
@@ -86,7 +85,26 @@ let morganOption: morgan.Options<Request, Response> = {
 if (ACCESS_LOG_PATH) {
   morganOption.stream = fs.createWriteStream(ACCESS_LOG_PATH, { flags: "a" });
 }
-const httpLogger = morgan("combined", morganOption);
+const httpLogger = morgan(
+  (tokens, req, res) =>
+    JSON.stringify({
+      "client.address": tokens["remote-addr"](req, res),
+      duration_ms: Number(tokens["response-time"](req, res)),
+      event: "http.request.completed",
+      "http.request.header.referer": tokens["referrer"](req, res),
+      "http.request.method": tokens["method"](req, res),
+      "http.response.body.size": Number(
+        tokens["res"](req, res, "content-length"),
+      ),
+      "http.response.status_code": Number(tokens["status"](req, res)),
+      level: "info",
+      "network.protocol.version": tokens["http-version"](req, res),
+      timestamp: new Date().toISOString(),
+      url: tokens["url"](req, res),
+      "user_agent.original": tokens["user-agent"](req, res),
+    }),
+  morganOption,
+);
 app.use(httpLogger);
 
 app.set("trust proxy", 1);
@@ -259,7 +277,7 @@ app.use(function errorHandler(
   res: Response,
   _next: NextFunction,
 ) {
-  logger.error(inspect(err, { depth: 3 }));
+  logger.error(err);
 
   if (err instanceof HttpErrors.HttpError && err["code"] === "EBADCSRFTOKEN") {
     track("csrf.token.invalid", {
