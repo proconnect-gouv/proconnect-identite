@@ -21,7 +21,9 @@ Sentry.init({
       request: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
       response: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
     },
-    urlQueryParams: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
+    urlQueryParams: {
+      deny: ["code", "forwarded", "-ip", "remote-", "state", "via", "-user"],
+    },
     userInfo: false,
   },
   debug: LOG_LEVEL === "debug",
