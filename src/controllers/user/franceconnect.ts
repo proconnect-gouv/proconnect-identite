@@ -203,7 +203,7 @@ export function getFranceConnectLogoutCallbackMiddlewareFactory(
   ) {
     const query = z.object({ state: z.string() }).safeParse(req.query);
     if (!query.success) {
-      track("franceconnect.logout.state_mismatch", { error: query.error });
+      track("franceconnect.logout.state_missing", { error: query.error });
       return res.redirect(
         `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
       );
