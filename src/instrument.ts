@@ -38,5 +38,5 @@ Sentry.init({
   profileLifecycle: "trace",
   profileSessionSampleRate: 0.5,
   traceLifecycle: "static",
-  tracesSampleRate: 0.2,
+  tracesSampleRate: SENTRY_ENVIRONMENT === "localhost" ? 1 : 0.2,
 });
