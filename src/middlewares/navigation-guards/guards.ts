@@ -14,6 +14,7 @@ import {
 } from "../../managers/2fa";
 import { isBrowserTrustedForUser } from "../../managers/browser-authentication";
 import { selectOrganization } from "../../managers/organization/main";
+import { hasRecoveryWordsConfiguredForUser } from "../../managers/recovery-words";
 import {
   getCurrentAAL,
   getCurrentAssuranceLevels,
@@ -246,6 +247,40 @@ export const userHasSeenInclusionconnectOnboardingHelpGuard = async (
   return pass("user_has_seen_inclusionconnect_onboarding_help");
 };
 
+const RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MS = 24 * 60 * 60 * 1000;
+
+export const userHasSeenRecoveryWordsIncentiveGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+    pass,
+    continueTo,
+  } = prev;
+  const { id: user_id, recovery_words_incentive_seen_at } =
+    getUserFromAuthenticatedSession(req);
+
+  const hasSeenIncentiveRecently =
+    recovery_words_incentive_seen_at !== null &&
+    Date.now() - new Date(recovery_words_incentive_seen_at).getTime() <
+      RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MS;
+
+  if (
+    hasSeenIncentiveRecently ||
+    !isWithinTwoFactorAuthenticatedSession(req) ||
+    !(await is2FACapable(user_id)) ||
+    (await hasRecoveryWordsConfiguredForUser(user_id))
+  ) {
+    return pass("user_has_seen_recovery_words_incentive");
+  }
+
+  const user = await users.update(user_id, {
+    recovery_words_incentive_seen_at: new Date(),
+  });
+  updateUserInAuthenticatedSession(req, user);
+
+  return continueTo("/users/recovery-words/reminder");
+};
 export const userHasAtLeastOneOrganizationGuard = async (
   prev: Pass<RequestContext>,
 ) => {

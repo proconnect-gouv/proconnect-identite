@@ -2,7 +2,10 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { InvalidTotpTokenError } from "../config/errors";
-import { hasRecoveryWordsConfiguredForUser } from "../managers/recovery-words";
+import {
+  hasRecoveryWordsConfiguredForUser,
+  markRecoveryWordsIncentiveAsSeen,
+} from "../managers/recovery-words";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
@@ -95,6 +98,8 @@ export const postTotpConfigurationController = async (
     await sendAddFreeTOTPEmail({ user_id });
 
     if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      const user = await markRecoveryWordsIncentiveAsSeen(user_id);
+      updateUserInAuthenticatedSession(req, user);
       return res.redirect("/recovery-words/incentive");
     }
 

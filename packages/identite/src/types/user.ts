@@ -23,6 +23,7 @@ export const UserSchema = z.object({
   needs_inclusionconnect_onboarding_help: z.boolean(),
   needs_inclusionconnect_welcome_page: z.boolean(),
   phone_number: z.string().nullable(),
+  recovery_words_incentive_seen_at: z.date().nullable(),
   reset_password_sent_at: z.date().nullable(),
   reset_password_token: z.string().nullable(),
   sign_in_count: z.number(),

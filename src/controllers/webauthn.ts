@@ -11,7 +11,10 @@ import {
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
-import { hasRecoveryWordsConfiguredForUser } from "../managers/recovery-words";
+import {
+  hasRecoveryWordsConfiguredForUser,
+  markRecoveryWordsIncentiveAsSeen,
+} from "../managers/recovery-words";
 import {
   addAuthenticationMethodReferenceInSession,
   createAuthenticatedSession,
@@ -118,6 +121,8 @@ export const postVerifyRegistrationControllerFactory =
       });
 
       if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+        const user = await markRecoveryWordsIncentiveAsSeen(user_id);
+        updateUserInAuthenticatedSession(req, user);
         return res.redirect(recoveryWordsIncentiveUrl);
       }
 

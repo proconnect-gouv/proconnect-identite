@@ -6,6 +6,7 @@ import {
   userHasAtLeastOneOrganizationGuard,
   userHasPersonalInformationsGuard,
   userHasSeenInclusionconnectOnboardingHelpGuard,
+  userHasSeenRecoveryWordsIncentiveGuard,
   userHasSelectedAnOrganizationGuard,
   userHasValidFranceConnectIdentityGuard,
   userIsAuthenticatedGuard,
@@ -40,7 +41,10 @@ export const userCanAccessAppGuard = async (prev: Pass<RequestContext>) => {
   context = await browserIsTrustedGuard(context);
   if (!Pass.is_passing(context)) return context;
 
-  return userHasSeenInclusionconnectOnboardingHelpGuard(context);
+  context = await userHasSeenInclusionconnectOnboardingHelpGuard(context);
+  if (!Pass.is_passing(context)) return context;
+
+  return userHasSeenRecoveryWordsIncentiveGuard(context);
 };
 export const userCanConnectToSpGuard = async (
   prev: Pass<RequestContext>,

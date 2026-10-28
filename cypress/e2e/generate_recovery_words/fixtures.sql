@@ -13,7 +13,8 @@ INSERT INTO
     job,
     encrypted_totp_key,
     totp_key_verified_at,
-    force_2fa
+    force_2fa,
+    recovery_words_incentive_seen_at
   )
 VALUES
   (
@@ -30,7 +31,8 @@ VALUES
     'Primarque',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    true
+    true,
+    CURRENT_TIMESTAMP
   );
 
 INSERT INTO

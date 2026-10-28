@@ -68,11 +68,11 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
-  getRecoveryWordsIncentiveController,
+  getRecoveryWordsIncentiveControllerFactory,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
-  postRecoveryWordsController,
+  postRecoveryWordsControllerFactory,
   postTotpConfigurationController,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
@@ -213,14 +213,43 @@ export const userRouter = () => {
     "/recovery-words/incentive",
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
-    getRecoveryWordsIncentiveController,
+    getRecoveryWordsIncentiveControllerFactory(
+      "/users/recovery-words",
+      "/users/2fa-successfully-configured",
+    ),
   );
 
   userRouter.post(
     "/recovery-words",
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
-    postRecoveryWordsController,
+    postRecoveryWordsControllerFactory("/users/2fa-successfully-configured"),
+  );
+
+  userRouter.get(
+    "/recovery-words/reminder",
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    getRecoveryWordsIncentiveControllerFactory(
+      "/users/recovery-words/reminder",
+      "/users/recovery-words/reminder/continue",
+    ),
+  );
+
+  userRouter.post(
+    "/recovery-words/reminder",
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRecoveryWordsControllerFactory(
+      "/users/recovery-words/reminder/continue",
+    ),
+  );
+
+  userRouter.get(
+    "/recovery-words/reminder/continue",
+    userCanAccessAppGuardMiddleware,
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
   );
 
   userRouter.get(

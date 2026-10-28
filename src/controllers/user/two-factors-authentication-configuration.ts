@@ -9,10 +9,12 @@ import {
 import {
   createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
+  markRecoveryWordsIncentiveAsSeen,
 } from "../../managers/recovery-words";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
+  updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import {
   deleteTemporaryTotpKey,
@@ -126,6 +128,8 @@ export const postTotpConfigurationController = async (
     await sendAddFreeTOTPEmail({ user_id });
 
     if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      const user = await markRecoveryWordsIncentiveAsSeen(user_id);
+      updateUserInAuthenticatedSession(req, user);
       return res.redirect("/users/recovery-words/incentive");
     }
 
@@ -161,42 +165,41 @@ export const get2faSuccessfullyConfiguredController = async (
   }
 };
 
-export const getRecoveryWordsIncentiveController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.render("user/recovery-words-incentive", {
-      pageTitle: "Sauvegardez vos mots de secours",
-      csrfToken: csrfToken(req),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const postRecoveryWordsController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-    const recoveryWords = await createRecoveryWordsForUser(user_id);
-
-    return res.render("user/recovery-words", {
-      pageTitle: "Sauvegarder vos mots de secours",
-      recoveryWords: recoveryWords.split("-"),
-    });
-  } catch (error) {
-    if (error instanceof UserIsNot2faCapableError) {
-      return next(new HttpErrors.UnprocessableEntity());
+export const getRecoveryWordsIncentiveControllerFactory =
+  (generateRecoveryWordsUrl: string, skipUrl: string) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      return res.render("user/recovery-words-incentive", {
+        pageTitle: "Sauvegardez vos mots de secours",
+        csrfToken: csrfToken(req),
+        generateRecoveryWordsUrl,
+        skipUrl,
+      });
+    } catch (error) {
+      next(error);
     }
-    next(error);
-  }
-};
+  };
+
+export const postRecoveryWordsControllerFactory =
+  (continueUrl: string) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+      const recoveryWords = await createRecoveryWordsForUser(user_id);
+
+      return res.render("user/recovery-words", {
+        pageTitle: "Sauvegarder vos mots de secours",
+        recoveryWords: recoveryWords.split("-"),
+        continueUrl,
+      });
+    } catch (error) {
+      if (error instanceof UserIsNot2faCapableError) {
+        return next(new HttpErrors.UnprocessableEntity());
+      }
+      next(error);
+    }
+  };
 export const post2faSuccessfullyConfiguredMiddleware = async (
   _req: Request,
   _res: Response,

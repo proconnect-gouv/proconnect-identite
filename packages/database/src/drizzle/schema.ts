@@ -76,6 +76,10 @@ export const users = pgTable(
     encrypted_totp_key: varchar(),
     totp_key_verified_at: timestamp({ withTimezone: true, mode: "string" }),
     force_2fa: boolean().default(false).notNull(),
+    recovery_words_incentive_seen_at: timestamp({
+      withTimezone: true,
+      mode: "string",
+    }),
   },
   (table) => [
     uniqueIndex("index_users_on_email").using(
