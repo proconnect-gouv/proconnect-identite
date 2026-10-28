@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 11.0.0
+
+### Major Changes
+
+- [#2345](https://github.com/proconnect-gouv/proconnect-identite/pull/2345) [`434653c`](https://github.com/proconnect-gouv/proconnect-identite/commit/434653cb36cc334edf2bdf81df47fe4904f4c6cc) Thanks [@douglasduteil](https://github.com/douglasduteil)! - ajout des colonnes interaction_cid et outcome à users_oidc_clients, avec un index unique partiel sur interaction_cid ; addConnection devient upsertAuthorizationRequest (met à jour la ligne d'une même interaction au lieu d'en ajouter une), les types Connection et BaseConnection deviennent AuthorizationRequest et BaseAuthorizationRequest avec interaction_cid et outcome obligatoires ; AuthorizationRequestOutcomeEnum (zod) partage les valeurs de outcome
+
 ## 10.5.0
 
 ### Minor Changes
