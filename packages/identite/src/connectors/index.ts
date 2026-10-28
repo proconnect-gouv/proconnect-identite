@@ -34,6 +34,7 @@ import {
 } from "#src/repositories/official-contact-email-verification";
 import {
   findByClientIdFactory,
+  updateAuthorizationRequestLastHaltFactory,
   upsertAuthorizationRequestFactory,
 } from "#src/repositories/oidc-client";
 import {
@@ -127,6 +128,8 @@ export function createContext({
       },
       oidc_clients: {
         findByClientId: findByClientIdFactory({ pg }),
+        updateAuthorizationRequestLastHalt:
+          updateAuthorizationRequestLastHaltFactory({ pg }),
         upsertAuthorizationRequest: upsertAuthorizationRequestFactory({ pg }),
       },
       organizations: {

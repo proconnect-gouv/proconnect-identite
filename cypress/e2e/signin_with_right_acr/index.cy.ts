@@ -254,3 +254,44 @@ ORDER BY users_oidc_clients.id`;
     ]);
   });
 });
+
+describe("record where an authorization request stopped", () => {
+  before(cy.seed);
+  beforeEach(() => {
+    cy.visit("http://localhost:4000");
+  });
+
+  const selectAuthorizationRequests = `
+SELECT
+  interaction_cid IS NOT NULL AS has_interaction_cid,
+  last_halt,
+  outcome
+FROM users_oidc_clients
+JOIN users ON users.id = users_oidc_clients.user_id
+WHERE users.email = 'ial0-aal1-oal1@yopmail.com'
+ORDER BY users_oidc_clients.id`;
+
+  it("should record the step where a user who signed in during the request stopped", function () {
+    cy.setRequestedAcrs(["eidas1", "eidas1-mfa", "eidas2", "eidas3"]);
+    cy.get("button#custom-connection").click({ force: true });
+    cy.login("ial0-aal1-oal1@yopmail.com");
+
+    cy.title().should("include", "Vérifier votre identité");
+    cy.task("psql", selectAuthorizationRequests).should("deep.equal", [
+      { has_interaction_cid: true, last_halt: "franceconnect", outcome: null },
+    ]);
+
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
+
+    cy.contains('"acr": "eidas1"');
+    cy.task("psql", selectAuthorizationRequests).should("deep.equal", [
+      {
+        has_interaction_cid: true,
+        last_halt: "franceconnect",
+        outcome: "succeeded",
+      },
+    ]);
+  });
+});

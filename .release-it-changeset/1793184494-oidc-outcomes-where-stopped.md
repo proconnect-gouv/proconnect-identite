@@ -1,0 +1,1 @@
+✨ Pour chaque demande de connexion d'un service interrompue, y compris quand l'usager s'est connecté pendant la demande, la modération voit l'étape où elle s'est arrêtée (par exemple la vérification d'identité FranceConnect).

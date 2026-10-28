@@ -63,11 +63,15 @@ export function logger_group_end() {
   if (["debug", "trace"].includes(LOG_LEVEL)) console.groupEnd();
 }
 
-export function track(name: string, details: Record<string, unknown>) {
-  captureEvent({ fingerprint: ["track", name], level: "info", message: name });
+export function log_event(name: string, details: Record<string, unknown>) {
   write("info", {
     event: name,
     "http.route": getIsolationScope().getScopeData().transactionName,
     ...details,
   });
+}
+
+export function track(name: string, details: Record<string, unknown>) {
+  captureEvent({ fingerprint: ["track", name], level: "info", message: name });
+  log_event(name, details);
 }

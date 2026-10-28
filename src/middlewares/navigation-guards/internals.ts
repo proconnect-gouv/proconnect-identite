@@ -1,8 +1,20 @@
 import { getTrustedReferrerPathFromRequest } from "@proconnect-gouv/proconnect.core/security";
+import { AuthorizationRequestLastHaltEnum } from "@proconnect-gouv/proconnect.identite/types";
+import * as Sentry from "@sentry/node";
 import type { Request, RequestHandler } from "express";
 import { match, P } from "ts-pattern";
 import { HOST } from "../../config/env";
-import { logger, logger_group, logger_group_end } from "../../services/log";
+import { context } from "../../connectors/context";
+import {
+  log_event,
+  logger,
+  logger_group,
+  logger_group_end,
+  track,
+} from "../../services/log";
+import { oidcProviderAdapterFactory } from "../../services/oidc-provider-adapter";
+
+const { oidc_clients } = context.repository;
 
 export type RequestContext = { req: Request };
 
@@ -38,7 +50,7 @@ export class Pass<
 
   // The guard halts the user and redirects to the page that should enable the user to comply with the requirements.
   haltTo = (url: string): HaltTo => {
-    return { type: "halt-to", url, trace: this.trace };
+    return { type: "halt-to", url, trace: [...this.trace, this] };
   };
 
   // The guard redirects to the next page of an ongoing compliance process.
@@ -104,13 +116,70 @@ export function createGuardMiddleware(
 
     return match(result)
       .with({ type: "next" }, () => next())
-      .with({ type: "halt-to" }, ({ url }) => {
+      .with({ type: "halt-to" }, async ({ trace, url }) => {
         req.session.redirectTo ??= getTrustedReferrerPathFromRequest(req, HOST);
         logger.debug("💾 save", req.session.redirectTo);
+        await recordHalt({
+          guard: fn.name,
+          last_passed_check: trace.at(-1)?.code,
+          req,
+          url,
+        });
         return res.redirect(url);
       })
       .with({ type: "continue-to" }, ({ url }) => res.redirect(url))
       .with({ type: "send" }, () => res.send())
       .exhaustive();
   };
+}
+
+async function recordHalt({
+  guard,
+  last_passed_check,
+  req,
+  url,
+}: {
+  guard: string;
+  last_passed_check: string | undefined;
+  req: Request;
+  url: string;
+}) {
+  const { interactionCid: cid, interactionId, prompt, user } = req.session;
+  log_event("navigation_guard.halted", {
+    acr: prompt?.details["acr"],
+    cid,
+    guard,
+    last_passed_check,
+    prompt_reasons: prompt?.reasons,
+    url,
+    user_id: user?.id,
+  });
+  if (cid === undefined || interactionId === undefined) {
+    return;
+  }
+
+  const step = new URL(url, HOST).pathname
+    .replace(/^\/users\//, "")
+    .replaceAll("-", "_");
+  const last_halt = AuthorizationRequestLastHaltEnum.safeParse(step);
+  if (!last_halt.success) {
+    track("navigation_guard.halt.unknown", { cid, guard, url });
+    return;
+  }
+
+  try {
+    const interaction =
+      await oidcProviderAdapterFactory("Interaction").find(interactionId);
+    if (interaction === undefined) {
+      return;
+    }
+
+    await oidc_clients.updateAuthorizationRequestLastHalt({
+      interaction_cid: cid,
+      last_halt: last_halt.data,
+    });
+  } catch (error) {
+    logger.error(error);
+    Sentry.captureException(error);
+  }
 }

@@ -30,7 +30,7 @@ DO UPDATE SET
   outcome = EXCLUDED.outcome,
   updated_at = EXCLUDED.updated_at,
   user_id = EXCLUDED.user_id
-RETURNING user_id, oidc_client_id, organization_id, sp_name, user_ip_address, created_at, updated_at, id, interaction_cid, outcome;
+RETURNING user_id, oidc_client_id, organization_id, sp_name, user_ip_address, created_at, updated_at, id, interaction_cid, outcome, last_halt;
 `,
       [
         user_id,

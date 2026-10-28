@@ -293,6 +293,7 @@ export const users_oidc_clients = pgTable(
     user_ip_address: varchar(),
     interaction_cid: varchar(),
     outcome: varchar(),
+    last_halt: varchar(),
   },
   (table) => [
     uniqueIndex("idx_users_oidc_clients_interaction_cid")
