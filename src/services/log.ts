@@ -1,9 +1,13 @@
-import { captureEvent, getIsolationScope } from "@sentry/node";
+import { captureEvent, getActiveSpan, getIsolationScope } from "@sentry/node";
 import { format } from "node:util";
 import { LOG_LEVEL } from "../config/env";
 
 const levels = ["trace", "debug", "info", "warn", "error", "fatal"] as const;
 type LogLevelNames = (typeof levels)[number];
+
+export function current_trace_id() {
+  return getActiveSpan()?.spanContext().traceId;
+}
 
 function write(level: LogLevelNames, fields: Record<string, unknown>) {
   if (levels.indexOf(level) < levels.indexOf(LOG_LEVEL)) return;
@@ -11,6 +15,7 @@ function write(level: LogLevelNames, fields: Record<string, unknown>) {
     level,
     ...fields,
     timestamp: new Date().toISOString(),
+    trace_id: current_trace_id(),
   });
   if (levels.indexOf(level) < levels.indexOf("warn")) console.log(line);
   else console.error(line);
