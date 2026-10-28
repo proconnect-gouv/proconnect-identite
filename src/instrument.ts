@@ -34,7 +34,7 @@ Sentry.init({
   integrations: [
     nodeProfilingIntegration(),
     Sentry.expressIntegration(),
-    Sentry.httpIntegration(),
+    Sentry.httpIntegration({ ignoreStatusCodes: [404] }),
     Sentry.postgresIntegration(),
   ],
   profileLifecycle: "trace",
