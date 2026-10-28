@@ -36,7 +36,7 @@ import { interactionRouter } from "./routers/interaction";
 import { mainRouter } from "./routers/main";
 import { userRouter } from "./routers/user";
 import { jsonParseWithDate } from "./services/json-parse-with-date";
-import { logger, track } from "./services/log";
+import { current_trace_id, logger, track } from "./services/log";
 import {
   ejsLayoutMiddlewareFactory,
   renderWithEjsLayout,
@@ -100,6 +100,7 @@ const httpLogger = morgan(
       level: "info",
       "network.protocol.version": tokens["http-version"](req, res),
       timestamp: new Date().toISOString(),
+      trace_id: current_trace_id(),
       url: tokens["url"](req, res),
       "user_agent.original": tokens["user-agent"](req, res),
     }),
