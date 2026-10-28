@@ -41,6 +41,13 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
+      - name: Cache npm
+        id: npm-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: root-npm
+          key: docker-npm-${{ hashFiles('package-lock.json') }}
+
       - name: Persist npm cache
         uses: reproducible-containers/buildkit-cache-dance@v3
         with:
@@ -48,6 +55,7 @@ jobs:
             {
               "root-npm": "/root/.npm"
             }
+          skip-extraction: ${{ steps.npm-cache.outputs.cache-hit }}
 
       - name: Build
         uses: docker/bake-action@master
