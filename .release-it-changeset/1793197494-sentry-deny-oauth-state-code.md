@@ -1,1 +1,0 @@
-🔒 Les paramètres « code » et « state » d’une connexion (retour de FranceConnect, déconnexion) ne sont plus transmis à Sentry avec l’adresse des pages : une erreur pendant votre connexion n’y laisse plus de trace de ces valeurs à usage unique.
