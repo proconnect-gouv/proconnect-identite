@@ -1,7 +1,15 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
+import HttpErrors from "http-errors";
 import { z } from "zod";
-import { InvalidTotpTokenError } from "../../config/errors";
+import {
+  InvalidTotpTokenError,
+  UserIsNot2faCapableError,
+} from "../../config/errors";
+import {
+  createRecoveryWordsForUser,
+  hasRecoveryWordsConfiguredForUser,
+} from "../../managers/recovery-words";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
@@ -117,6 +125,10 @@ export const postTotpConfigurationController = async (
 
     await sendAddFreeTOTPEmail({ user_id });
 
+    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      return res.redirect("/users/recovery-words/incentive");
+    }
+
     return res.redirect("/users/2fa-successfully-configured");
   } catch (error) {
     if (error instanceof InvalidTotpTokenError) {
@@ -149,6 +161,42 @@ export const get2faSuccessfullyConfiguredController = async (
   }
 };
 
+export const getRecoveryWordsIncentiveController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/recovery-words-incentive", {
+      pageTitle: "Sauvegardez vos mots de secours",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    const recoveryWords = await createRecoveryWordsForUser(user_id);
+
+    return res.render("user/recovery-words", {
+      pageTitle: "Sauvegarder vos mots de secours",
+      recoveryWords: recoveryWords.split("-"),
+    });
+  } catch (error) {
+    if (error instanceof UserIsNot2faCapableError) {
+      return next(new HttpErrors.UnprocessableEntity());
+    }
+    next(error);
+  }
+};
 export const post2faSuccessfullyConfiguredMiddleware = async (
   _req: Request,
   _res: Response,

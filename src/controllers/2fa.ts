@@ -275,6 +275,20 @@ export const getVerifyRecoveryWordsController = async (
     next(error);
   }
 };
+export const getRecoveryWordsIncentiveController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("recovery-words-incentive", {
+      pageTitle: "Sauvegardez vos mots de secours",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const postVerifyRecoveryWordsController = async (
   req: Request,

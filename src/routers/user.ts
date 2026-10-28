@@ -68,9 +68,11 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
+  getRecoveryWordsIncentiveController,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
+  postRecoveryWordsController,
   postTotpConfigurationController,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
@@ -208,6 +210,20 @@ export const userRouter = () => {
   );
 
   userRouter.get(
+    "/recovery-words/incentive",
+    userCanSetupMfaGuardMiddleware,
+    csrfProtectionMiddleware,
+    getRecoveryWordsIncentiveController,
+  );
+
+  userRouter.post(
+    "/recovery-words",
+    userCanSetupMfaGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRecoveryWordsController,
+  );
+
+  userRouter.get(
     "/2fa-successfully-configured",
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
@@ -315,6 +331,7 @@ export const userRouter = () => {
     postVerifyRegistrationControllerFactory(
       "/users/2fa-successfully-configured",
       "/users/double-authentication-choice?notification=invalid_passkey",
+      "/users/recovery-words/incentive",
     ),
   );
 
