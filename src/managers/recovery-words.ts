@@ -13,6 +13,11 @@ export const hasRecoveryWordsConfiguredForUser = async (user_id: number) => {
     await context.repository.recovery_words.findByUserId(user_id);
   return recoveryWords !== undefined;
 };
+export const markRecoveryWordsIncentiveAsSeen = async (user_id: number) => {
+  return context.repository.users.update(user_id, {
+    recovery_words_incentive_seen_at: new Date(),
+  });
+};
 
 export const getRecoveryWordsCreatedAt = async (user_id: number) => {
   const recoveryWords =

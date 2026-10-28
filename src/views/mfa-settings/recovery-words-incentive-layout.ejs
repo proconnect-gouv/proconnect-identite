@@ -1,0 +1,29 @@
+<h1 class="fr-h3">
+  <span aria-hidden="true">🛡️</span>
+  Sauvegardez vos mots de secours
+</h1>
+
+<p>
+  Vous avez activé la connexion renforcée (2FA). Nous vous recommandons
+  fortement de générer une série de 6 mots de secours.
+</p>
+
+<p>
+  Ils sont <strong>le seul moyen de récupérer votre compte</strong> si vous
+  perdez votre smartphone ou désinstallez par erreur votre application de TOTP
+  ou votre passkey.
+</p>
+
+<form method="post" action="<%= generateRecoveryWordsUrl %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <ul class="fr-btns-group">
+    <li>
+      <button type="submit" class="fr-btn">Générer les mots de secours</button>
+    </li>
+    <li>
+      <a class="fr-btn fr-btn--secondary" href="<%= skipUrl %>">
+        Ignorer pour le moment
+      </a>
+    </li>
+  </ul>
+</form>

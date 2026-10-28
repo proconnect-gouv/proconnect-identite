@@ -10,6 +10,7 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
+  getRecoveryWordsIncentiveController,
   getVerifyRecoveryWordsController,
   postRecoveryWordsController,
   postSetForce2faController,
@@ -83,6 +84,15 @@ export const mainRouter = (app: Express) => {
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postRecoveryWordsController,
+  );
+
+  mainRouter.get(
+    "/recovery-words/incentive",
+    nocache(),
+    ejsLayoutMiddlewareFactory(app, true),
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    getRecoveryWordsIncentiveController,
   );
 
   mainRouter.get(
@@ -215,6 +225,7 @@ export const mainRouter = (app: Express) => {
     postVerifyRegistrationControllerFactory(
       "/connection-and-account?notification=passkey_successfully_created",
       "/connection-and-account?notification=invalid_passkey",
+      "/recovery-words/incentive",
     ),
   );
 

@@ -21,8 +21,10 @@ describe("setup the passkey", () => {
     cy.contains("Clé d'accès (passkey)").click();
     cy.contains("Continuer").click();
 
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Ignorer pour le moment").click();
+
     cy.title().should("include", "Compte et connexion");
-    cy.contains("Tout est en ordre !");
 
     cy.get("@authenticator").getFirstCertification().as("credential");
 

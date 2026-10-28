@@ -68,9 +68,11 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
+  getRecoveryWordsIncentiveControllerFactory,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
+  postRecoveryWordsControllerFactory,
   postTotpConfigurationController,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
@@ -208,6 +210,49 @@ export const userRouter = () => {
   );
 
   userRouter.get(
+    "/recovery-words/incentive",
+    userCanSetupMfaGuardMiddleware,
+    csrfProtectionMiddleware,
+    getRecoveryWordsIncentiveControllerFactory(
+      "/users/recovery-words",
+      "/users/2fa-successfully-configured",
+    ),
+  );
+
+  userRouter.post(
+    "/recovery-words",
+    userCanSetupMfaGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRecoveryWordsControllerFactory("/users/2fa-successfully-configured"),
+  );
+
+  userRouter.get(
+    "/recovery-words/reminder",
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    getRecoveryWordsIncentiveControllerFactory(
+      "/users/recovery-words/reminder",
+      "/users/recovery-words/reminder/continue",
+    ),
+  );
+
+  userRouter.post(
+    "/recovery-words/reminder",
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRecoveryWordsControllerFactory(
+      "/users/recovery-words/reminder/continue",
+    ),
+  );
+
+  userRouter.get(
+    "/recovery-words/reminder/continue",
+    userCanAccessAppGuardMiddleware,
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
+  );
+
+  userRouter.get(
     "/2fa-successfully-configured",
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
@@ -315,6 +360,7 @@ export const userRouter = () => {
     postVerifyRegistrationControllerFactory(
       "/users/2fa-successfully-configured",
       "/users/double-authentication-choice?notification=invalid_passkey",
+      "/users/recovery-words/incentive",
     ),
   );
 

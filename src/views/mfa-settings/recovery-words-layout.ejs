@@ -1,0 +1,28 @@
+<h1 class="fr-h3">Sauvegarder vos mots de secours</h1>
+<p class="recovery-words fr-p-2w" aria-label="Vos mots de secours">
+  <%= recoveryWords.join(" ") %>
+</p>
+<p>
+  Ces <%= recoveryWords.length %> mots de secours sont
+  <strong>le seul moyen de récupérer votre compte</strong> si vous perdez votre
+  smartphone ou désinstallez par erreur votre application de TOTP ou votre
+  passkey.
+  <strong>Notez-les, imprimez-les ou téléchargez-les !</strong>
+</p>
+
+<ul class="fr-btns-group fr-btns-group--icon-left">
+  <li>
+    <a
+      class="fr-btn fr-icon-download-line fr-btn--icon-left"
+      href="data:text/plain;charset=utf-8,<%= encodeURIComponent(recoveryWords.join(' ')) %>"
+      download="mots-de-secours.txt"
+    >
+      Télécharger mes mots de secours
+    </a>
+  </li>
+  <li>
+    <a class="fr-btn fr-btn--secondary" href="<%= continueUrl %>">
+      Continuer
+    </a>
+  </li>
+</ul>
