@@ -1,5 +1,26 @@
 # Changelog
 
+## [2026.10.15](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.14...2026.10.15) (2026-10-28)
+
+### Changements
+
+- 🔒 Les paramètres « code » et « state » d’une connexion (retour de FranceConnect, déconnexion) ne sont plus transmis à Sentry avec l’adresse des pages : une erreur pendant votre connexion n’y laisse plus de trace de ces valeurs à usage unique.
+
+### Modifié
+
+- 🔧 default Sentry to preview and keep every trace of a local run ([#2355](https://github.com/proconnect-gouv/proconnect-identite/issues/2355)) ([92450e3](https://github.com/proconnect-gouv/proconnect-identite/commit/92450e3f4725508fbba9fcc46de3c9d26b503b73))
+- 🔧 tell deployed environments apart in Sentry with SENTRY_ENVIRONMENT ([#2352](https://github.com/proconnect-gouv/proconnect-identite/issues/2352)) ([82b4cab](https://github.com/proconnect-gouv/proconnect-identite/commit/82b4cabe64b933c42cc38957c6506926421f6a6f))
+
+### Corrigé
+
+- 🔒 keep OAuth code and state out of the URLs sent to Sentry ([#2356](https://github.com/proconnect-gouv/proconnect-identite/issues/2356)) ([9501d48](https://github.com/proconnect-gouv/proconnect-identite/commit/9501d48c27522bcadc0f5141b915213fbf791f42))
+
+### Divers
+
+- 🔊 write the request's trace_id on every log line ([#2358](https://github.com/proconnect-gouv/proconnect-identite/issues/2358)) ([4919a12](https://github.com/proconnect-gouv/proconnect-identite/commit/4919a1271eadce69df299915795e1971b8d54dcc))
+- 🔊 keep the traces of requests answered with a redirect or a 401/403 ([#2359](https://github.com/proconnect-gouv/proconnect-identite/issues/2359)) ([0aef892](https://github.com/proconnect-gouv/proconnect-identite/commit/0aef892d5d543a5e035bfb9fecbabdc80880a49c))
+- 🔊 name the FranceConnect logout callback without state apart from a mismatching one ([#2357](https://github.com/proconnect-gouv/proconnect-identite/issues/2357)) ([c1b7771](https://github.com/proconnect-gouv/proconnect-identite/commit/c1b77715ac144359397e71c9eeb0a8c3a686b5d6))
+
 ## [2026.10.14](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.13...2026.10.14) (2026-10-28)
 
 ### Changements
