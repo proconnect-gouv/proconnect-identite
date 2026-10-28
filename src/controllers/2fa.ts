@@ -6,6 +6,7 @@ import {
   UserIsNot2faCapableError,
 } from "../config/errors";
 import { disableForce2fa, enableForce2fa } from "../managers/2fa";
+import { isUserInAdministrationEtat } from "../managers/organization/main";
 import {
   createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
@@ -239,7 +240,7 @@ export const postSetForce2faController = async (
   }
 };
 
-export const postRecoveryWordsController = async (
+export const postRecoveryWordsSetupController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -249,9 +250,11 @@ export const postRecoveryWordsController = async (
 
     const recoveryWords = await createRecoveryWordsForUser(user_id);
 
-    return res.render("recovery-words", {
+    return res.render("recovery-words-setup", {
       pageTitle: "Sauvegarder vos mots de secours",
+      csrfToken: csrfToken(req),
       recoveryWords: recoveryWords.split("-"),
+      isAdministrationEtat: await isUserInAdministrationEtat(user_id),
     });
   } catch (error) {
     if (error instanceof UserIsNot2faCapableError) {
@@ -281,6 +284,44 @@ export const getVerifyRecoveryWordsController = async (
     next(error);
   }
 };
+export const getRecoveryWordsIncentiveController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("recovery-words-incentive", {
+      pageTitle: "Sauvegardez vos mots de secours",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postRecoveryWordsSkipController = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.redirect("/connection-and-account");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postRecoveryWordsSetupCompletionController = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.redirect("/connection-and-account");
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const postVerifyRecoveryWordsController = async (
   req: Request,
@@ -303,7 +344,7 @@ export const postVerifyRecoveryWordsController = async (
     const isValid = await verifyRecoveryWordsForUser(user_id, recovery_words);
 
     return res.redirect(
-      `/recovery-words/verify?notification=${
+      `/recovery-words-verification?notification=${
         isValid ? "recovery_words_valid" : "invalid_recovery_words"
       }`,
     );

@@ -36,7 +36,7 @@ describe("add 2fa authentication", () => {
     // Extract the code from the front to generate the TOTP key
     cy.fillAndSubmitTotpForm("/totp-configuration");
 
-    cy.contains("L’application d’authentification a été configurée.");
+    cy.title().should("include", "Compte et connexion");
 
     cy.maildevGetMessageBySubject("Double authentification activée").then(
       (email) => {

@@ -25,7 +25,10 @@ import {
 } from "../../managers/session/authenticated";
 import { hasValidFranceConnectIdentity } from "../../managers/user";
 import { track } from "../../services/log";
-import { userHasPersonalInformationsGuard } from "./guards";
+import {
+  userHasPersonalInformationsGuard,
+  userHasSeenRecoveryWordsIncentiveGuard,
+} from "./guards";
 import { Pass, type RequestContext } from "./internals";
 import {
   userCanConnectToSpGuard,
@@ -194,6 +197,24 @@ export const processOfficialContactEmailVerificationGuard = async (
   }
 
   return continueTo(`/users/official-contact-email-verification`);
+};
+
+export const processGreetingsForConfiguredMfaGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+  } = prev;
+
+  let context;
+
+  // Suggest generating recovery words before greeting the user.
+  context = await userHasSeenRecoveryWordsIncentiveGuard(prev);
+  if (!Pass.is_passing(context)) return context;
+
+  req.session.pendingGreetingsForConfiguredMfa = undefined;
+
+  return context.continueTo("/users/2fa-successfully-configured");
 };
 
 export const processGreetingsForSelectedOrganizationGuard = async (

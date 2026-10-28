@@ -73,10 +73,12 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
+  getRecoveryWordsIncentiveController,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
-  postTotpConfigurationController,
+  postRecoveryWordsSetupController,
+  postTotpConfigurationMiddleware,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
   getChangePasswordController,
@@ -96,7 +98,7 @@ import {
 import { getWelcomeController } from "../controllers/user/welcome";
 import {
   postVerifyFirstFactorAuthenticationController,
-  postVerifyRegistrationControllerFactory,
+  postVerifyRegistrationMiddlewareFactory,
   postVerifySecondFactorAuthenticationController,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
@@ -210,7 +212,39 @@ export const userRouter = () => {
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
     authenticatorRateLimiterMiddleware,
-    postTotpConfigurationController,
+    postTotpConfigurationMiddleware,
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
+  );
+
+  userRouter.get(
+    "/recovery-words-incentive",
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    getRecoveryWordsIncentiveController,
+  );
+
+  userRouter.post(
+    "/recovery-words-skip",
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
+  );
+
+  userRouter.post(
+    "/recovery-words-setup",
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRecoveryWordsSetupController,
+  );
+
+  userRouter.post(
+    "/recovery-words-setup-completion",
+    userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
   );
 
   userRouter.get(
@@ -339,10 +373,13 @@ export const userRouter = () => {
     "/passkeys/verify-registration",
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
-    postVerifyRegistrationControllerFactory(
-      "/users/2fa-successfully-configured",
-      "/users/double-authentication-choice?notification=invalid_passkey",
-    ),
+    postVerifyRegistrationMiddlewareFactory({
+      errorRedirectUrl:
+        "/users/double-authentication-choice?notification=invalid_passkey",
+      greetForConfiguredMfa: true,
+    }),
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
   );
 
   userRouter.get(

@@ -3,7 +3,7 @@
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <h1 class="fr-h3">Vérifier vos mots de secours</h1>
         <%- include('partials/notifications.ejs', {notifications: notifications}) %>
-        <form method="post" action="/recovery-words/verify">
+        <form method="post" action="/recovery-words-verification">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="fr-input-group">
                 <label class="fr-label" for="recovery-words">
