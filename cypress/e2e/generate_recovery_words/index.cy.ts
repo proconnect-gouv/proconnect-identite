@@ -22,6 +22,10 @@ describe("generate recovery words", () => {
       words.forEach((word) => expect(word).to.match(/^\p{L}+$/u));
     });
 
+    cy.contains("En numérique");
+    cy.contains("En papier");
+
+    cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
@@ -102,5 +106,16 @@ describe("generate recovery words", () => {
 
     cy.title().should("include", "Compte et connexion");
     cy.contains("Configurer la double authentification");
+  });
+
+  it("should only show digital storage advice to State administration agents", function () {
+    cy.visit("/connection-and-account");
+    cy.mfaLogin("leman.russ@spacewolves.world");
+
+    cy.contains("Générer des mots de secours").click();
+    cy.title().should("include", "Sauvegarder vos mots de secours");
+
+    cy.contains("En numérique");
+    cy.contains("En papier").should("not.exist");
   });
 });

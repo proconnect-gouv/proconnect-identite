@@ -47,6 +47,7 @@ suite("getByIdFactory", () => {
       needs_inclusionconnect_onboarding_help: false,
       needs_inclusionconnect_welcome_page: false,
       phone_number: "i",
+      recovery_words_incentive_seen_at: null,
       reset_password_sent_at: null,
       reset_password_token: null,
       sign_in_count: 0,

@@ -6,9 +6,11 @@ import {
   UserIsNot2faCapableError,
 } from "../config/errors";
 import { disableForce2fa, enableForce2fa } from "../managers/2fa";
+import { isUserInAdministrationEtat } from "../managers/organization/main";
 import {
   createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
+  markRecoveryWordsIncentiveAsSeen,
   recoverUserAccount,
   verifyRecoveryWordsForUser,
 } from "../managers/recovery-words";
@@ -252,6 +254,7 @@ export const postRecoveryWordsController = async (
     return res.render("recovery-words", {
       pageTitle: "Sauvegarder vos mots de secours",
       recoveryWords: recoveryWords.split("-"),
+      isAdministrationEtat: await isUserInAdministrationEtat(user_id),
     });
   } catch (error) {
     if (error instanceof UserIsNot2faCapableError) {
@@ -275,6 +278,24 @@ export const getVerifyRecoveryWordsController = async (
     return res.render("verify-recovery-words", {
       pageTitle: "Vérifier vos mots de secours",
       notifications: await getNotificationsFromRequest(req),
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getRecoveryWordsIncentiveController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const user = await markRecoveryWordsIncentiveAsSeen(user_id);
+    updateUserInAuthenticatedSession(req, user);
+
+    return res.render("recovery-words-incentive", {
+      pageTitle: "Sauvegardez vos mots de secours",
       csrfToken: csrfToken(req),
     });
   } catch (error) {

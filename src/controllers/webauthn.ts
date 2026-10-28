@@ -12,6 +12,10 @@ import {
   WebauthnRegistrationFailedError,
 } from "../config/errors";
 import {
+  hasRecoveryWordsConfiguredForUser,
+  markRecoveryWordsIncentiveAsSeen,
+} from "../managers/recovery-words";
+import {
   addAuthenticationMethodReferenceInSession,
   createAuthenticatedSession,
   getUserFromAuthenticatedSession,
@@ -81,7 +85,11 @@ export const getGenerateRegistrationOptionsController = async (
 };
 
 export const postVerifyRegistrationControllerFactory =
-  (redirectUrl: string, errorRedirectUrl: string) =>
+  (
+    redirectUrl: string,
+    errorRedirectUrl: string,
+    recoveryWordsIncentiveUrl: string,
+  ) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const schema = z.object({
@@ -111,6 +119,12 @@ export const postVerifyRegistrationControllerFactory =
         user_id,
         key_name: key_name ?? undefined,
       });
+
+      if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+        const user = await markRecoveryWordsIncentiveAsSeen(user_id);
+        updateUserInAuthenticatedSession(req, user);
+        return res.redirect(recoveryWordsIncentiveUrl);
+      }
 
       return res.redirect(redirectUrl);
     } catch (e) {

@@ -3,6 +3,10 @@ import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { InvalidTotpTokenError } from "../config/errors";
 import {
+  hasRecoveryWordsConfiguredForUser,
+  markRecoveryWordsIncentiveAsSeen,
+} from "../managers/recovery-words";
+import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -92,6 +96,12 @@ export const postTotpConfigurationController = async (
     addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
 
     await sendAddFreeTOTPEmail({ user_id });
+
+    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      const user = await markRecoveryWordsIncentiveAsSeen(user_id);
+      updateUserInAuthenticatedSession(req, user);
+      return res.redirect("/recovery-words/incentive");
+    }
 
     return res.redirect(
       "/connection-and-account?notification=authenticator_added",

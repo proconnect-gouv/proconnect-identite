@@ -38,6 +38,18 @@ describe("sign-in with totp enrollment", () => {
 
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Générer les mots de secours").click();
+
+    cy.title().should("include", "Sauvegarder vos mots de secours");
+    cy.getByLabel("Vos mots de secours")
+      .invoke("text")
+      .then((text) => text.trim().split(" "))
+      .should("have.length", 6);
+
+    cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
+    cy.contains("Continuer").click();
+
     cy.contains("Votre double authentification est bien configurée");
     cy.contains("Continuer").click();
 
@@ -91,6 +103,9 @@ describe("sign-in with totp enrollment", () => {
 
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Ignorer pour le moment").click();
+
     cy.contains("Votre double authentification est bien configurée");
     cy.contains("Continuer").click();
 
@@ -115,6 +130,10 @@ describe("sign-in with totp enrollment", () => {
     cy.contains("Scannez le QR Code avec votre smartphone");
 
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
+
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Ignorer pour le moment").click();
+
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Vérifier votre identité");

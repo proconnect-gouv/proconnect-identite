@@ -49,6 +49,7 @@ jobs:
           - rate_limit_by_email
           - rate_limit_by_ip
           - reauthenticate_on_admin_page
+          - recovery_words_reminder
           - redirect_after_session_expiration
           - reset_password
           - set_info_after_account_provisioning
