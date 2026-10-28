@@ -25,12 +25,11 @@ export default defineConfig({
           });
           await client.connect();
           try {
-            await client.query(sql);
+            const { rows } = await client.query(sql);
+            return rows;
           } finally {
             await client.end();
           }
-
-          return null;
         },
       });
       return config;

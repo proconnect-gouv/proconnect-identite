@@ -39,6 +39,8 @@ export async function emptyDatabase() {
   await pg.sql`ALTER SEQUENCE users_id_seq RESTART WITH 1`;
   await pg.sql`delete from email_domains;`;
   await pg.sql`ALTER SEQUENCE email_domains_id_seq RESTART WITH 1`;
+  await pg.sql`delete from oidc_clients;`;
+  await pg.sql`ALTER SEQUENCE oidc_clients_id_seq RESTART WITH 1`;
 }
 
 //

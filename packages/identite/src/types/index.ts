@@ -1,8 +1,8 @@
 //
 
 export * from "./authenticator.js";
+export * from "./authorization-request.js";
 export * from "./claims.js";
-export * from "./connection.js";
 export * from "./contexts.js";
 export * from "./email-domain.js";
 export * from "./franceconnect.js";

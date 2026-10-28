@@ -33,8 +33,8 @@ import {
   upsertOfficialContactEmailVerificationFactory,
 } from "#src/repositories/official-contact-email-verification";
 import {
-  addConnectionFactory,
   findByClientIdFactory,
+  upsertAuthorizationRequestFactory,
 } from "#src/repositories/oidc-client";
 import {
   findBySiretFactory,
@@ -126,8 +126,8 @@ export function createContext({
         upsert: upsertOfficialContactEmailVerificationFactory({ pg }),
       },
       oidc_clients: {
-        addConnection: addConnectionFactory({ pg }),
         findByClientId: findByClientIdFactory({ pg }),
+        upsertAuthorizationRequest: upsertAuthorizationRequestFactory({ pg }),
       },
       organizations: {
         findById: findOrganizationByIdFactory({ pg }),

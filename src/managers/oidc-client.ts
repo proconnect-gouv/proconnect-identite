@@ -1,5 +1,5 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
-import type { Connection } from "@proconnect-gouv/proconnect.identite/types";
+import type { AuthorizationRequest } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty, isString } from "lodash-es";
 import type { IncomingHttpHeaders } from "node:http";
 import type { KoaContextWithOIDC } from "oidc-provider";
@@ -7,20 +7,24 @@ import { context } from "../connectors/context";
 
 const { oidc_clients } = context.repository;
 
-export const recordNewConnection = async ({
+export const recordAuthorizationRequest = async ({
   accountId,
   client,
+  interactionCid,
   organizationId,
+  outcome,
   params,
   requestHeaders,
 }: {
   accountId: string;
   // workaround to extract the unexported Client type
   client: NonNullable<KoaContextWithOIDC["oidc"]["client"]>;
+  interactionCid: string | null;
   organizationId: number | null;
+  outcome: AuthorizationRequest["outcome"];
   params: OIDCContextParams;
   requestHeaders: IncomingHttpHeaders;
-}): Promise<Connection> => {
+}): Promise<AuthorizationRequest> => {
   const user_id = parseInt(accountId, 10);
 
   const client_id = client.clientId;
@@ -37,11 +41,13 @@ export const recordNewConnection = async ({
 
   const user_ip_address = requestHeaders["x-forwarded-for"]?.toString() || null;
 
-  return await oidc_clients.addConnection({
+  return await oidc_clients.upsertAuthorizationRequest({
     user_id,
     oidc_client_id,
     organization_id: organizationId,
     sp_name,
     user_ip_address,
+    interaction_cid: interactionCid,
+    outcome,
   });
 };
