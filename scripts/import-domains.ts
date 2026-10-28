@@ -3,11 +3,12 @@ import {
   isDomainValid,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
-import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import { InvalidSiretError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, some, toInteger } from "lodash-es";
+import { match } from "ts-pattern";
 import { z } from "zod";
 import { context } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
@@ -125,7 +126,27 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
           const start = startDurationMesure();
           try {
             // 2. get organizationInfo
-            const organizationInfo = await getOrganizationInfo(siret);
+            const organizationInfo = match(await getOrganizationInfo(siret))
+              .with({ kind: "api_entreprise_failed" }, ({ exception }) => {
+                throw exception;
+              })
+              .with({ kind: "found" }, ({ organization_info, rne }) => {
+                if (rne.kind === "failed") {
+                  logger.warn(
+                    "api_rne.company_request.failed",
+                    { siret },
+                    rne.exception,
+                  );
+                }
+                return organization_info;
+              })
+              .with({ kind: "invalid_siret" }, ({ exception }) => {
+                throw exception;
+              })
+              .with({ kind: "not_diffusible" }, () => {
+                throw new InvalidSiretError("not_diffusible");
+              })
+              .exhaustive();
             await throttleApiCall(start, maxInseeCallRateInMs);
 
             // 3. check organization status
@@ -172,7 +193,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             success_count++;
             rowResults.push("success");
           } catch (error) {
-            if (error instanceof NotFoundError) {
+            if (error instanceof InvalidSiretError) {
               i++;
               rejected_invalid_siret_count++;
               rowResults.push("rejected_invalid_siret");

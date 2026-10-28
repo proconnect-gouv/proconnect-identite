@@ -65,6 +65,7 @@ describe("processCertificationDirigeantFactory", () => {
         ]),
         identity: IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
+        source_selection: { kind: "preferred" },
       },
       ok: true,
     });
@@ -92,6 +93,7 @@ describe("processCertificationDirigeantFactory", () => {
         ]),
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
+        source_selection: { kind: "preferred" },
       },
       ok: true,
     });
@@ -114,6 +116,7 @@ describe("processCertificationDirigeantFactory", () => {
         matches: new Set(["gender", "birth_country"]),
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
+        source_selection: { kind: "preferred" },
       },
       ok: false,
     });
@@ -142,6 +145,7 @@ describe("processCertificationDirigeantFactory", () => {
         ]),
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "registre-national-entreprises.inpi.fr/api",
+        source_selection: { kind: "preferred" },
       },
       ok: true,
     });
@@ -170,12 +174,17 @@ describe("processCertificationDirigeantFactory", () => {
         ]),
         identity: IdentityVectorSchema.parse(AmberleyVailFranceConnectUserInfo),
         source: "registre-national-entreprises.inpi.fr/api",
+        source_selection: { kind: "preferred" },
       },
       ok: true,
     });
   });
 
-  it("should match Rogal Dorn among the executive of Papillon in Infogreffe", async () => {
+  it("should match Rogal Dorn in Infogreffe when RNE fails", async () => {
+    const exception = new Error("RNE unavailable");
+    api_registre_national_entreprises_mock_client.findPouvoirsBySiren.mock.mockImplementationOnce(
+      () => Promise.reject(exception),
+    );
     api_entreprise_mock_client.findMandatairesSociauxBySiren.mock.mockImplementationOnce(
       () => Promise.resolve([UlysseToriMandataire, RogalDornMandataire]),
     );
@@ -199,6 +208,7 @@ describe("processCertificationDirigeantFactory", () => {
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source:
           "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
+        source_selection: { exception, kind: "fallback" },
       },
       ok: true,
     });
@@ -221,6 +231,7 @@ describe("processCertificationDirigeantFactory", () => {
         identity: IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
         matches: new Set(),
         source: "registre-national-entreprises.inpi.fr/api",
+        source_selection: { kind: "preferred" },
       },
       ok: false,
     });

@@ -1,9 +1,6 @@
 //
 
-import {
-  CertificationDirigeantDataSource,
-  processCertificationDirigeantFactory,
-} from "@proconnect-gouv/proconnect.identite/managers/certification";
+import { processCertificationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import type {
   FranceConnectUserInfo,
   Organization,
@@ -33,12 +30,12 @@ export const processCertificationDirigeantOrThrow = async (
   );
   const siren = organization.siret.substring(0, 9);
 
-  if (
-    details.source ===
-    CertificationDirigeantDataSource.enum[
-      "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux"
-    ]
-  ) {
+  if (details.source_selection.kind === "fallback") {
+    logger.warn(
+      "api_rne.pouvoirs_request.failed",
+      { siren },
+      details.source_selection.exception,
+    );
     track("certification_dirigeant.rne.unavailable", {
       siren,
       source: details.source,

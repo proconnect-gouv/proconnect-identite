@@ -1,10 +1,13 @@
-import { NotFoundError } from "#src/errors";
+import { InvalidSiretError } from "#src/errors";
 import {
   CommunautéDeCommunes,
   FergusMacDonaldEntrepreneur as FergusMacDonalEntrepreneurApiEntreprise,
   RogalDornEntrepreneur,
 } from "@proconnect-gouv/proconnect.api_entreprise/testing/seed/v3-insee-sirene-etablissements-siret";
-import type { InseeSireneEstablishmentSiretResponseData } from "@proconnect-gouv/proconnect.api_entreprise/types";
+import {
+  ApiEntrepriseError,
+  type InseeSireneEstablishmentSiretResponseData,
+} from "@proconnect-gouv/proconnect.api_entreprise/types";
 import { FergusMacDonaldEntrepreneur as FergusMacDonaldEntrepreneurRne } from "@proconnect-gouv/proconnect.registre_national_entreprises/testing/seed";
 import assert from "node:assert/strict";
 import { suite, test } from "node:test";
@@ -74,7 +77,7 @@ suite("getOrganizationInfo", () => {
     t.assert.snapshot(await getOrganizationInfo("94957325700019"));
   });
 
-  test.skip("should throw for totally non diffusible établissement", async () => {
+  test("should return not_diffusible for totally non diffusible établissement", async () => {
     const getOrganizationInfo = getOrganizationInfoFactory(
       {
         findBySiren: () => Promise.reject(),
@@ -89,6 +92,74 @@ suite("getOrganizationInfo", () => {
         findPouvoirsBySiren: () => Promise.reject(),
       },
     );
-    await assert.rejects(getOrganizationInfo("53512638700013"), NotFoundError);
+    assert.deepEqual(await getOrganizationInfo("53512638700013"), {
+      kind: "not_diffusible",
+    });
+  });
+
+  test("should return invalid_siret for a malformed input", async () => {
+    const getOrganizationInfo = getOrganizationInfoFactory(
+      {
+        findBySiren: () => Promise.reject(),
+        findBySiret: () => Promise.reject(),
+        findMandatairesSociauxBySiren: () => Promise.reject(),
+      },
+      {
+        findCompanyBySiren: () => Promise.reject(),
+        findPouvoirsBySiren: () => Promise.reject(),
+      },
+    );
+    assert.deepEqual(await getOrganizationInfo("1234"), {
+      exception: new InvalidSiretError("siret or siren must be 9 or 14 digits"),
+      kind: "invalid_siret",
+    });
+  });
+
+  test("should return invalid_siret when entreprise.api.gouv.fr rejects the siret", async () => {
+    const rejection = new ApiEntrepriseError({
+      errors: [
+        {
+          code: "00302",
+          detail: "Le numéro de siret n'est pas correctement formatté",
+          title: "Entité non traitable",
+        },
+      ],
+    });
+    const getOrganizationInfo = getOrganizationInfoFactory(
+      {
+        findBySiren: () => Promise.reject(),
+        findBySiret: () => Promise.reject(rejection),
+        findMandatairesSociauxBySiren: () => Promise.reject(),
+      },
+      {
+        findCompanyBySiren: () => Promise.reject(),
+        findPouvoirsBySiren: () => Promise.reject(),
+      },
+    );
+    assert.deepEqual(await getOrganizationInfo("20007184300061"), {
+      exception: new InvalidSiretError("rejected by entreprise.api.gouv.fr", {
+        cause: rejection,
+      }),
+      kind: "invalid_siret",
+    });
+  });
+
+  test("should return api_entreprise_failed when entreprise.api.gouv.fr fails", async () => {
+    const exception = new Error("ECONNRESET");
+    const getOrganizationInfo = getOrganizationInfoFactory(
+      {
+        findBySiren: () => Promise.reject(),
+        findBySiret: () => Promise.reject(exception),
+        findMandatairesSociauxBySiren: () => Promise.reject(),
+      },
+      {
+        findCompanyBySiren: () => Promise.reject(),
+        findPouvoirsBySiren: () => Promise.reject(),
+      },
+    );
+    assert.deepEqual(await getOrganizationInfo("20007184300060"), {
+      exception,
+      kind: "api_entreprise_failed",
+    });
   });
 });
