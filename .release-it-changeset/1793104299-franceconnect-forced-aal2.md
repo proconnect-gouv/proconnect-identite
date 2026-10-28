@@ -1,1 +1,0 @@
-🐛 Lorsqu’un service accepte une connexion sans identité vérifiée, ProConnect ne vous envoie plus sur la page « Vérifier votre identité » pour vous identifier avec FranceConnect ; et lorsqu’un service exige une identité vérifiée avec FranceConnect, ProConnect vous propose désormais cette page au lieu d’afficher « Erreur access_denied ».
