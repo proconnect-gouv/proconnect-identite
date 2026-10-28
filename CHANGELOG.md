@@ -1,5 +1,20 @@
 # Changelog
 
+## [2026.10.14](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.13...2026.10.14) (2026-10-28)
+
+### Changements
+
+- ✨ Chaque demande de connexion d'un service n'est plus enregistrée qu'une fois, avec son aboutissement, pour que la modération distingue les connexions terminées des connexions interrompues.
+
+### Ajouté
+
+- ✨ record the interaction and the outcome of each connection ([#2345](https://github.com/proconnect-gouv/proconnect-identite/issues/2345)) ([434653c](https://github.com/proconnect-gouv/proconnect-identite/commit/434653cb36cc334edf2bdf81df47fe4904f4c6cc))
+
+### CI/CD
+
+- 👷 keep the Docker build's npm cache between runs, keyed on the lockfile ([#2349](https://github.com/proconnect-gouv/proconnect-identite/issues/2349)) ([ebe4622](https://github.com/proconnect-gouv/proconnect-identite/commit/ebe46229f88063feaceacfb6da0e00d01368cd7a))
+- 👷 cache npm in the release workflow's unprivileged select-mode job ([#2350](https://github.com/proconnect-gouv/proconnect-identite/issues/2350)) ([dd3d01b](https://github.com/proconnect-gouv/proconnect-identite/commit/dd3d01bcf22076765e7b911360326e2177ff9433))
+
 ## [2026.10.13](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.12...2026.10.13) (2026-10-28)
 
 ### Changements
