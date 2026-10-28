@@ -38,8 +38,9 @@ export async function createOidcProvider() {
         err instanceof errors.InvalidRequest ||
         err instanceof errors.InvalidRequestUri
       ) {
+        const client_id = ctx.oidc?.params?.["client_id"];
         track(`oidc.request.${error}`, {
-          client_id: ctx.oidc?.params?.["client_id"],
+          client_id: typeof client_id === "string" ? client_id : undefined,
           error_description,
         });
       } else {

@@ -1,5 +1,6 @@
 import { captureEvent, getActiveSpan, getIsolationScope } from "@sentry/node";
 import { format } from "node:util";
+import { z } from "zod";
 import { LOG_LEVEL } from "../config/env";
 
 const levels = ["trace", "debug", "info", "warn", "error", "fatal"] as const;
@@ -14,6 +15,7 @@ function write(level: LogLevelNames, fields: Record<string, unknown>) {
   const line = JSON.stringify({
     level,
     ...fields,
+    span_id: getActiveSpan()?.spanContext().spanId,
     timestamp: new Date().toISOString(),
     trace_id: current_trace_id(),
   });
@@ -68,11 +70,24 @@ export function logger_group_end() {
   if (["debug", "trace"].includes(LOG_LEVEL)) console.groupEnd();
 }
 
-export function track(name: string, details: Record<string, unknown>) {
+type TrackDetails = Record<
+  string,
+  boolean | Error | null | number | readonly string[] | string | undefined
+>;
+
+function detail_value(value: TrackDetails[string]) {
+  if (value instanceof z.ZodError) return z.prettifyError(value);
+  if (value instanceof Error) return `${value.name}: ${value.message}`;
+  return value === undefined ? "undefined" : value;
+}
+
+export function track(name: string, details: TrackDetails) {
   captureEvent({ fingerprint: ["track", name], level: "info", message: name });
   write("info", {
-    event: name,
+    "event.name": name,
     "http.route": getIsolationScope().getScopeData().transactionName,
-    ...details,
+    ...Object.fromEntries(
+      Object.entries(details).map(([key, value]) => [key, detail_value(value)]),
+    ),
   });
 }

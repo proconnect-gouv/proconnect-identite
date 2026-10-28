@@ -1,11 +1,14 @@
+import type { ErrorEvent, Event } from "@sentry/node";
+import * as Sentry from "@sentry/node";
 import assert from "node:assert/strict";
 import { afterEach, describe, it, mock } from "node:test";
-import { logger } from "./log";
+import { z } from "zod";
+import { logger, track } from "./log";
+
+const error = mock.method(console, "error", () => {});
+const info = mock.method(console, "log", () => {});
 
 describe("logger", () => {
-  const error = mock.method(console, "error", () => {});
-  const info = mock.method(console, "log", () => {});
-
   afterEach(() => {
     error.mock.resetCalls();
     info.mock.resetCalls();
@@ -60,5 +63,77 @@ describe("logger", () => {
   it("drops trace lines below the configured LOG_LEVEL", () => {
     logger.trace("hidden at the debug and info levels");
     assert.equal(info.mock.callCount(), 0);
+  });
+});
+
+describe("track", () => {
+  const issues: ErrorEvent[] = [];
+  const transactions: Event[] = [];
+  Sentry.init({
+    beforeSend: (event) => {
+      issues.push(event);
+      return null;
+    },
+    beforeSendTransaction: (event) => {
+      transactions.push(event);
+      return null;
+    },
+    dsn: "https://public@sentry.invalid/1",
+    traceLifecycle: "static",
+    tracesSampleRate: 1,
+  });
+
+  it("writes one event record with its name and details in its request's trace, and sends one Sentry event named after it", async () => {
+    const request = Sentry.startSpan(
+      { forceTransaction: true, name: "GET /users/join-organization" },
+      (span) => {
+        track("organization.page_query.invalid", {
+          client_id: undefined,
+          error: new TypeError("fetch failed"),
+          query: z
+            .object({ siret: z.string().length(14) })
+            .safeParse({ siret: "123" }).error,
+          siret: "21340126800130",
+        });
+        return span.spanContext();
+      },
+    );
+    await Sentry.flush(1_000);
+    const line = JSON.parse(String(info.mock.calls.at(-1)?.arguments[0]));
+    assert.deepEqual(
+      {
+        client_id: line.client_id,
+        error: line.error,
+        "event.name": line["event.name"],
+        issues: issues.map(({ fingerprint, level, message }) => ({
+          fingerprint,
+          level,
+          message,
+        })),
+        query: line.query,
+        request_spans: transactions.at(-1)?.spans?.length,
+        siret: line.siret,
+        span_id: line.span_id,
+        trace_id: line.trace_id,
+      },
+      {
+        client_id: "undefined",
+        error: "TypeError: fetch failed",
+        "event.name": "organization.page_query.invalid",
+        issues: [
+          {
+            fingerprint: ["track", "organization.page_query.invalid"],
+            level: "info",
+            message: "organization.page_query.invalid",
+          },
+        ],
+        query:
+          "✖ Too small: expected string to have exactly 14 characters\n  → at siret",
+        request_spans: 0,
+        siret: "21340126800130",
+        span_id: request.spanId,
+        trace_id: request.traceId,
+      },
+    );
   });
 });
