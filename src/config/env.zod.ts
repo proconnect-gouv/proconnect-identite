@@ -183,6 +183,9 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(60), // 1 hour in minutes
+  SENTRY_ENVIRONMENT: z
+    .enum(["localhost", "preview", "production", "sandbox"])
+    .default("localhost"),
   SESSION_MAX_AGE_IN_SECONDS: z.coerce
     .number()
     .int()

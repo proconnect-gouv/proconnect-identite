@@ -111,6 +111,7 @@ describe("env.zod", () => {
       RNE_API_PASSWORD: "🎭 Mocked RNE API Password",
       RNE_API_USERNAME: "🎭 Mocked RNE API Username",
       SENTRY_DSN: "",
+      SENTRY_ENVIRONMENT: "localhost",
       SESSION_COOKIE_SECRET: ["proconnectsecret", "identitesecret"],
       SESSION_MAX_AGE_IN_SECONDS: 86400,
       SMTP_FROM: "nepasrepondre@email.proconnect.gouv.fr",
