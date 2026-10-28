@@ -90,7 +90,7 @@ const httpLogger = morgan(
     JSON.stringify({
       "client.address": tokens["remote-addr"](req, res),
       duration_ms: Number(tokens["response-time"](req, res)),
-      event: "http.request.completed",
+      "event.name": "http.request.completed",
       "http.request.header.referer": tokens["referrer"](req, res),
       "http.request.method": tokens["method"](req, res),
       "http.response.body.size": Number(

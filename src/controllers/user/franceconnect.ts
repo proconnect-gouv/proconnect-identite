@@ -211,8 +211,7 @@ export function getFranceConnectLogoutCallbackMiddlewareFactory(
 
     if (req.session.state !== query.data.state) {
       track("franceconnect.logout.state_mismatch", {
-        query_state: query.data.state,
-        session_state: req.session.state,
+        has_session_state: typeof req.session.state === "string",
       });
       return res.redirect(
         `${exception_redirect_uri}?notification=franceconnect_oidc_error`,
