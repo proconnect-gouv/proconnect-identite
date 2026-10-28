@@ -1,15 +1,8 @@
-import {
-  ApiEntrepriseConnectionError,
-  ApiEntrepriseError,
-} from "@proconnect-gouv/proconnect.api_entreprise/types";
-import {
-  InvalidSiretError,
-  NotFoundError,
-} from "@proconnect-gouv/proconnect.identite/errors";
 import * as Sentry from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
-import { z, ZodError } from "zod";
+import { match } from "ts-pattern";
+import { z } from "zod";
 import notificationMessages from "../config/notification-messages";
 import { pingAnnuaireEducationNationale } from "../connectors/api-annuaire-education-nationale";
 import { ApiEntrepriseClient } from "../connectors/api-entreprise";
@@ -135,53 +128,37 @@ export const getOrganizationInfoController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const schema = z.object({
-      siret: siretSchema(),
-    });
+  const params = z.object({ siret: siretSchema() }).safeParse(req.params);
+  if (!params.success) {
+    return next(
+      new HttpErrors.BadRequest(
+        notificationMessages["invalid_siret"].description,
+      ),
+    );
+  }
+  const { siret } = params.data;
 
-    const { siret } = await schema.parseAsync(req.params);
-
-    const organizationInfo = await getOrganizationInfo(siret);
-
-    return res.json({ organizationInfo });
-  } catch (e) {
-    if (e instanceof InvalidSiretError) {
-      return next(
-        new HttpErrors.BadRequest(
-          notificationMessages["invalid_siret"].description,
-        ),
-      );
-    }
-
-    if (e instanceof NotFoundError) {
-      return next(new HttpErrors.NotFound());
-    }
-
-    if (e instanceof ApiEntrepriseConnectionError) {
-      return next(
+  return match(await getOrganizationInfo(siret))
+    .with({ kind: "api_entreprise_failed" }, () =>
+      next(
         new HttpErrors.GatewayTimeout(
           notificationMessages["insee_unexpected_error"].description,
         ),
-      );
-    }
-
-    if (e instanceof ApiEntrepriseError) {
-      return next(
+      ),
+    )
+    .with({ kind: "found" }, ({ organization_info, rne }) => {
+      if (rne.kind === "failed") {
+        logger.warn("api_rne.company_request.failed", { siret }, rne.exception);
+      }
+      return res.json({ organizationInfo: organization_info });
+    })
+    .with({ kind: "invalid_siret" }, () =>
+      next(
         new HttpErrors.BadRequest(
           notificationMessages["invalid_siret"].description,
         ),
-      );
-    }
-
-    if (e instanceof ZodError) {
-      return next(
-        new HttpErrors.BadRequest(
-          notificationMessages["invalid_siret"].description,
-        ),
-      );
-    }
-
-    next(e);
-  }
+      ),
+    )
+    .with({ kind: "not_diffusible" }, () => next(new HttpErrors.NotFound()))
+    .exhaustive();
 };

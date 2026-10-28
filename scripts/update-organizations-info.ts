@@ -4,6 +4,7 @@ import { createApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entre
 import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
+import { match } from "ts-pattern";
 import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
 import { RegistreNationalEntreprisesTestClient } from "../src/connectors/api-rne";
 import { context } from "../src/connectors/context";
@@ -90,7 +91,27 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 250;
       logger.info(`${i}: fetching info for ${siret} (id: ${id})...`);
       let organizationInfo: any = {};
       try {
-        organizationInfo = await getOrganizationInfo(siret);
+        organizationInfo = match(await getOrganizationInfo(siret))
+          .with({ kind: "api_entreprise_failed" }, ({ exception }) => {
+            throw exception;
+          })
+          .with({ kind: "found" }, ({ organization_info, rne }) => {
+            if (rne.kind === "failed") {
+              logger.warn(
+                "api_rne.company_request.failed",
+                { siret },
+                rne.exception,
+              );
+            }
+            return organization_info;
+          })
+          .with({ kind: "invalid_siret" }, ({ exception }) => {
+            throw exception;
+          })
+          .with({ kind: "not_diffusible" }, () => {
+            throw new Error("not_diffusible");
+          })
+          .exhaustive();
         if (!isOrganizationInfo(organizationInfo)) {
           throw new Error("not found");
         }

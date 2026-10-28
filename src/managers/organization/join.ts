@@ -4,7 +4,6 @@ import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email"
 import { Welcome } from "@proconnect-gouv/proconnect.email";
 import {
   InvalidSiretError,
-  NotFoundError,
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
@@ -24,6 +23,7 @@ import {
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
 import { AssertionError } from "node:assert";
+import { match } from "ts-pattern";
 import { EmailDomainApprovedVerificationEnum } from "../../../packages/identite/src/types";
 import {
   CRISP_WEBSITE_ID,
@@ -143,35 +143,30 @@ export const getOrganizationSuggestions = async ({
   );
 };
 
-const isApiEntrepriseUnavailable = (
-  error: unknown,
-): error is ApiEntrepriseConnectionError => {
-  if (!(error instanceof ApiEntrepriseConnectionError)) return false;
-
-  const { cause } = error;
-  return !(
-    cause instanceof InvalidSiretError || cause instanceof NotFoundError
-  );
-};
-
-export const upsertOrganization = async (siret: string) => {
-  let organization: Organization;
-  try {
-    const organizationInfo = await getOrganizationInfo(siret);
-    organization = await organizations.upsert({
-      siret,
-      organizationInfo,
-    });
-  } catch (error) {
-    if (isApiEntrepriseUnavailable(error)) {
-      throw error;
-    }
-
-    throw new InvalidSiretError("", { cause: error });
-  }
-
-  return organization;
-};
+export const upsertOrganization = async (siret: string) =>
+  match(await getOrganizationInfo(siret))
+    .with({ kind: "api_entreprise_failed" }, ({ exception }) => {
+      throw new ApiEntrepriseConnectionError(
+        "unknown error while fetching entreprise.api.gouv.fr",
+        { cause: exception },
+      );
+    })
+    .with({ kind: "found" }, ({ organization_info, rne }) => {
+      if (rne.kind === "failed") {
+        logger.warn("api_rne.company_request.failed", { siret }, rne.exception);
+      }
+      return organizations.upsert({
+        organizationInfo: organization_info,
+        siret,
+      });
+    })
+    .with({ kind: "invalid_siret" }, ({ exception }) => {
+      throw exception;
+    })
+    .with({ kind: "not_diffusible" }, () => {
+      throw new InvalidSiretError("not_diffusible");
+    })
+    .exhaustive();
 
 export const joinOrganization = async ({
   organization,

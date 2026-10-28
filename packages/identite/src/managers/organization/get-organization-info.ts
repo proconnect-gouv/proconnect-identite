@@ -1,15 +1,11 @@
 //
 
-import { InvalidSiretError, NotFoundError } from "#src/errors";
-import {
-  type ApiEntrepriseOrganizationInfo,
-  type ApiRneOrganizationInfo,
-  type OrganizationInfo,
-} from "#src/types";
+import { InvalidSiretError } from "#src/errors";
+import { type OrganizationInfo } from "#src/types";
 import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import {
-  ApiEntrepriseConnectionError,
   ApiEntrepriseInvalidSiret,
+  type InseeSireneEstablishmentSiretResponseData,
 } from "@proconnect-gouv/proconnect.api_entreprise/types";
 import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import * as ApiEntreprise from "./adapters/api_entreprise.js";
@@ -17,67 +13,78 @@ import * as ApiRne from "./adapters/rne.js";
 
 //
 
+export type RneEnrichment =
+  | { kind: "enriched" }
+  | { kind: "failed"; exception: unknown };
+
+export type OrganizationInfoLookup =
+  | { kind: "api_entreprise_failed"; exception: unknown }
+  | { kind: "found"; organization_info: OrganizationInfo; rne: RneEnrichment }
+  | { kind: "invalid_siret"; exception: InvalidSiretError }
+  | { kind: "not_diffusible" };
+
 export function getOrganizationInfoFactory(
   apiEntrepriseClient: ApiEntrepriseClient,
   apiRneClient: ApiRegistreNationalEntreprisesClient,
 ) {
+  async function findApiEntrepriseData(siretOrSiren: string) {
+    if (/^\d{14}$/.test(siretOrSiren))
+      return apiEntrepriseClient.findBySiret(siretOrSiren);
+    return apiEntrepriseClient.findBySiren(siretOrSiren);
+  }
+
   return async function getOrganizationInfo(
     siretOrSiren: string,
-  ): Promise<OrganizationInfo> {
-    let organizationInfo: OrganizationInfo;
-    try {
-      let apiEntrepriseOrganizationInfo: ApiEntrepriseOrganizationInfo;
-      let apiRneOrganizationInfo: ApiRneOrganizationInfo;
-
-      if (siretOrSiren.match(/^\d{14}$/)) {
-        apiEntrepriseOrganizationInfo =
-          ApiEntreprise.toApiEntrepriseOrganizationInfo(
-            await apiEntrepriseClient.findBySiret(siretOrSiren),
-          );
-      } else if (siretOrSiren.match(/^\d{9}$/)) {
-        apiEntrepriseOrganizationInfo =
-          ApiEntreprise.toApiEntrepriseOrganizationInfo(
-            await apiEntrepriseClient.findBySiren(siretOrSiren),
-          );
-      } else {
-        throw new InvalidSiretError();
-      }
-
-      const { statutDiffusion } = apiEntrepriseOrganizationInfo;
-
-      if (statutDiffusion === "non_diffusible") {
-        throw new NotFoundError();
-      }
-      organizationInfo = {
-        ...apiEntrepriseOrganizationInfo,
-        denominationUsuelleEtablissementPrincipal: null,
+  ): Promise<OrganizationInfoLookup> {
+    if (!/^(\d{9}|\d{14})$/.test(siretOrSiren))
+      return {
+        exception: new InvalidSiretError(
+          "siret or siren must be 9 or 14 digits",
+        ),
+        kind: "invalid_siret",
       };
 
-      const siren =
-        siretOrSiren.length === 14 ? siretOrSiren.slice(0, 9) : siretOrSiren;
-      try {
-        const apiRneData = await apiRneClient.findCompanyBySiren(siren);
-        apiRneOrganizationInfo = ApiRne.toApiRneOrganizationInfo(apiRneData);
-        organizationInfo = {
-          ...organizationInfo,
-          ...apiRneOrganizationInfo,
+    let apiEntrepriseData: InseeSireneEstablishmentSiretResponseData;
+    try {
+      apiEntrepriseData = await findApiEntrepriseData(siretOrSiren);
+    } catch (exception) {
+      if (ApiEntrepriseInvalidSiret.isInvalidSiret(exception))
+        return {
+          exception: new InvalidSiretError(
+            "rejected by entreprise.api.gouv.fr",
+            { cause: exception },
+          ),
+          kind: "invalid_siret",
         };
-      } catch (error) {
-        console.error(
-          `RNE data will be undefined for this organization (${siren}); an error occurred while fetching it`,
-          error,
-        );
-      }
+      return { exception, kind: "api_entreprise_failed" };
+    }
 
-      return organizationInfo;
-    } catch (e) {
-      if (ApiEntrepriseInvalidSiret.isInvalidSiret(e))
-        throw new InvalidSiretError();
+    if (apiEntrepriseData.status_diffusion === "non_diffusible")
+      return { kind: "not_diffusible" };
 
-      throw new ApiEntrepriseConnectionError(
-        "unknown error while fetching entreprise.api.gouv.fr",
-        { cause: e },
+    const organizationInfo: OrganizationInfo = {
+      ...ApiEntreprise.toApiEntrepriseOrganizationInfo(apiEntrepriseData),
+      denominationUsuelleEtablissementPrincipal: null,
+    };
+
+    try {
+      const apiRneData = await apiRneClient.findCompanyBySiren(
+        siretOrSiren.slice(0, 9),
       );
+      return {
+        kind: "found",
+        organization_info: {
+          ...organizationInfo,
+          ...ApiRne.toApiRneOrganizationInfo(apiRneData),
+        },
+        rne: { kind: "enriched" },
+      };
+    } catch (exception) {
+      return {
+        kind: "found",
+        organization_info: organizationInfo,
+        rne: { exception, kind: "failed" },
+      };
     }
   };
 }

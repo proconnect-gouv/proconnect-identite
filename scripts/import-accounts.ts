@@ -8,6 +8,7 @@ import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { parse, stringify, transform } from "csv";
 import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
+import { match } from "ts-pattern";
 import { z } from "zod";
 import { context } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
@@ -157,7 +158,27 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         for (let siret of sirets) {
           // 2. get organizationInfo
           try {
-            const organizationInfo = await getOrganizationInfo(siret);
+            const organizationInfo = match(await getOrganizationInfo(siret))
+              .with({ kind: "api_entreprise_failed" }, ({ exception }) => {
+                throw exception;
+              })
+              .with({ kind: "found" }, ({ organization_info, rne }) => {
+                if (rne.kind === "failed") {
+                  logger.warn(
+                    "api_rne.company_request.failed",
+                    { siret },
+                    rne.exception,
+                  );
+                }
+                return organization_info;
+              })
+              .with({ kind: "invalid_siret" }, ({ exception }) => {
+                throw exception;
+              })
+              .with({ kind: "not_diffusible" }, () => {
+                throw new Error("not_diffusible");
+              })
+              .exhaustive();
             if (!isOrganizationInfo(organizationInfo)) {
               throw Error("empty organization info");
             }

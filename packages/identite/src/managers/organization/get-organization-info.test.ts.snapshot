@@ -1,99 +1,123 @@
 exports[`getOrganizationInfo > should return valid payload for diffusible siren 1`] = `
 {
-  "activitePrincipale": "84.11Z",
-  "adresse": "3 rue maison de vatimesnil, 27150 Etrepagny",
-  "categorieJuridique": "7346",
-  "codeOfficielGeographique": "27226",
-  "codePostal": "27150",
-  "enseigne": "",
-  "estActive": true,
-  "estDiffusible": true,
-  "etatAdministratif": "A",
-  "libelle": "Cc du vexin normand",
-  "libelleActivitePrincipale": "84.11Z - Administration publique générale",
-  "libelleCategorieJuridique": "Communauté de communes",
-  "libelleTrancheEffectif": "100 à 199 salariés, en 2022",
-  "nomComplet": "Cc du vexin normand",
-  "siegeSocial": true,
-  "siret": "20007184300060",
-  "statutDiffusion": "diffusible",
-  "trancheEffectifs": "22",
-  "trancheEffectifsUniteLegale": "22",
-  "denominationUsuelleEtablissementPrincipal": null
+  "kind": "found",
+  "organization_info": {
+    "activitePrincipale": "84.11Z",
+    "adresse": "3 rue maison de vatimesnil, 27150 Etrepagny",
+    "categorieJuridique": "7346",
+    "codeOfficielGeographique": "27226",
+    "codePostal": "27150",
+    "enseigne": "",
+    "estActive": true,
+    "estDiffusible": true,
+    "etatAdministratif": "A",
+    "libelle": "Cc du vexin normand",
+    "libelleActivitePrincipale": "84.11Z - Administration publique générale",
+    "libelleCategorieJuridique": "Communauté de communes",
+    "libelleTrancheEffectif": "100 à 199 salariés, en 2022",
+    "nomComplet": "Cc du vexin normand",
+    "siegeSocial": true,
+    "siret": "20007184300060",
+    "statutDiffusion": "diffusible",
+    "trancheEffectifs": "22",
+    "trancheEffectifsUniteLegale": "22",
+    "denominationUsuelleEtablissementPrincipal": null
+  },
+  "rne": {
+    "kind": "failed"
+  }
 }
 `;
 
 exports[`getOrganizationInfo > should return valid payload for diffusible siren with RNE info 1`] = `
 {
-  "activitePrincipale": "55.20Z",
-  "adresse": "4 lieu-dit bechemoure, 87200 Saint-martin-de-jussac",
-  "categorieJuridique": "1000",
-  "codeOfficielGeographique": "87164",
-  "codePostal": "87200",
-  "enseigne": "",
-  "estActive": true,
-  "estDiffusible": true,
-  "etatAdministratif": "A",
-  "libelle": "Fergus Macdonald",
-  "libelleActivitePrincipale": "55.20Z - Hébergement touristique et autre hébergement de courte durée",
-  "libelleCategorieJuridique": "Entrepreneur individuel",
-  "libelleTrancheEffectif": "Unités non employeuses",
-  "nomComplet": "Fergus Macdonald",
-  "siegeSocial": true,
-  "siret": "84951084700015",
-  "statutDiffusion": "diffusible",
-  "trancheEffectifs": "NN",
-  "trancheEffectifsUniteLegale": "NN",
-  "denominationUsuelleEtablissementPrincipal": "FMPI"
+  "kind": "found",
+  "organization_info": {
+    "activitePrincipale": "55.20Z",
+    "adresse": "4 lieu-dit bechemoure, 87200 Saint-martin-de-jussac",
+    "categorieJuridique": "1000",
+    "codeOfficielGeographique": "87164",
+    "codePostal": "87200",
+    "enseigne": "",
+    "estActive": true,
+    "estDiffusible": true,
+    "etatAdministratif": "A",
+    "libelle": "Fergus Macdonald",
+    "libelleActivitePrincipale": "55.20Z - Hébergement touristique et autre hébergement de courte durée",
+    "libelleCategorieJuridique": "Entrepreneur individuel",
+    "libelleTrancheEffectif": "Unités non employeuses",
+    "nomComplet": "Fergus Macdonald",
+    "siegeSocial": true,
+    "siret": "84951084700015",
+    "statutDiffusion": "diffusible",
+    "trancheEffectifs": "NN",
+    "trancheEffectifsUniteLegale": "NN",
+    "denominationUsuelleEtablissementPrincipal": "FMPI"
+  },
+  "rne": {
+    "kind": "enriched"
+  }
 }
 `;
 
 exports[`getOrganizationInfo > should return valid payload for diffusible siret 1`] = `
 {
-  "activitePrincipale": "84.11Z",
-  "adresse": "3 rue maison de vatimesnil, 27150 Etrepagny",
-  "categorieJuridique": "7346",
-  "codeOfficielGeographique": "27226",
-  "codePostal": "27150",
-  "enseigne": "",
-  "estActive": true,
-  "estDiffusible": true,
-  "etatAdministratif": "A",
-  "libelle": "Cc du vexin normand",
-  "libelleActivitePrincipale": "84.11Z - Administration publique générale",
-  "libelleCategorieJuridique": "Communauté de communes",
-  "libelleTrancheEffectif": "100 à 199 salariés, en 2022",
-  "nomComplet": "Cc du vexin normand",
-  "siegeSocial": true,
-  "siret": "20007184300060",
-  "statutDiffusion": "diffusible",
-  "trancheEffectifs": "22",
-  "trancheEffectifsUniteLegale": "22",
-  "denominationUsuelleEtablissementPrincipal": null
+  "kind": "found",
+  "organization_info": {
+    "activitePrincipale": "84.11Z",
+    "adresse": "3 rue maison de vatimesnil, 27150 Etrepagny",
+    "categorieJuridique": "7346",
+    "codeOfficielGeographique": "27226",
+    "codePostal": "27150",
+    "enseigne": "",
+    "estActive": true,
+    "estDiffusible": true,
+    "etatAdministratif": "A",
+    "libelle": "Cc du vexin normand",
+    "libelleActivitePrincipale": "84.11Z - Administration publique générale",
+    "libelleCategorieJuridique": "Communauté de communes",
+    "libelleTrancheEffectif": "100 à 199 salariés, en 2022",
+    "nomComplet": "Cc du vexin normand",
+    "siegeSocial": true,
+    "siret": "20007184300060",
+    "statutDiffusion": "diffusible",
+    "trancheEffectifs": "22",
+    "trancheEffectifsUniteLegale": "22",
+    "denominationUsuelleEtablissementPrincipal": null
+  },
+  "rne": {
+    "kind": "failed"
+  }
 }
 `;
 
 exports[`getOrganizationInfo > should show partial data for partially non diffusible établissement 1`] = `
 {
-  "activitePrincipale": "62.02A",
-  "adresse": "06155 Vallauris",
-  "categorieJuridique": "1000",
-  "codeOfficielGeographique": "06155",
-  "codePostal": "06155",
-  "enseigne": "",
-  "estActive": true,
-  "estDiffusible": false,
-  "etatAdministratif": "A",
-  "libelle": "Nom inconnu",
-  "libelleActivitePrincipale": "62.02A - Conseil en systèmes et logiciels informatiques",
-  "libelleCategorieJuridique": "Entrepreneur individuel",
-  "libelleTrancheEffectif": "",
-  "nomComplet": "Nom inconnu",
-  "siegeSocial": true,
-  "siret": "94957325700019",
-  "statutDiffusion": "partiellement_diffusible",
-  "trancheEffectifs": null,
-  "trancheEffectifsUniteLegale": null,
-  "denominationUsuelleEtablissementPrincipal": null
+  "kind": "found",
+  "organization_info": {
+    "activitePrincipale": "62.02A",
+    "adresse": "06155 Vallauris",
+    "categorieJuridique": "1000",
+    "codeOfficielGeographique": "06155",
+    "codePostal": "06155",
+    "enseigne": "",
+    "estActive": true,
+    "estDiffusible": false,
+    "etatAdministratif": "A",
+    "libelle": "Nom inconnu",
+    "libelleActivitePrincipale": "62.02A - Conseil en systèmes et logiciels informatiques",
+    "libelleCategorieJuridique": "Entrepreneur individuel",
+    "libelleTrancheEffectif": "",
+    "nomComplet": "Nom inconnu",
+    "siegeSocial": true,
+    "siret": "94957325700019",
+    "statutDiffusion": "partiellement_diffusible",
+    "trancheEffectifs": null,
+    "trancheEffectifsUniteLegale": null,
+    "denominationUsuelleEtablissementPrincipal": null
+  },
+  "rne": {
+    "kind": "failed"
+  }
 }
 `;
