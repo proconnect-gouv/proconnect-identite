@@ -196,3 +196,61 @@ describe("sign-in with a client requiring acr levels", () => {
     cy.contains('"acr": "eidas1"');
   });
 });
+
+describe("record the interaction and the outcome of each connection", () => {
+  before(cy.seed);
+  beforeEach(() => {
+    cy.visit("http://localhost:4000");
+  });
+
+  const selectConnections = `
+SELECT
+  interaction_cid IS NOT NULL AS has_interaction_cid,
+  outcome
+FROM users_oidc_clients
+JOIN users ON users.id = users_oidc_clients.user_id
+WHERE users.email = 'ial0-aal1-oal1@yopmail.com'
+ORDER BY users_oidc_clients.id`;
+
+  it("should record one connection per request and mark it once it succeeded", function () {
+    cy.setRequestedAcrs();
+    cy.get("button#custom-connection").click({ force: true });
+    cy.login("ial0-aal1-oal1@yopmail.com");
+
+    cy.contains('"acr": "eidas0"');
+    cy.task("psql", selectConnections).should("deep.equal", [
+      { has_interaction_cid: true, outcome: "succeeded" },
+    ]);
+
+    cy.visit("http://localhost:4000");
+    cy.setRequestedAcrs(["eidas1", "eidas1-mfa", "eidas2", "eidas3"]);
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.title().should("include", "Vérifier votre identité");
+    cy.task("psql", selectConnections).should("deep.equal", [
+      { has_interaction_cid: true, outcome: "succeeded" },
+      { has_interaction_cid: true, outcome: null },
+    ]);
+
+    cy.getByLabel("S’identifier avec FranceConnect").click();
+    cy.title().should("include", "Connexion 🎭 FranceConnect 🎭");
+    cy.contains("Je suis Ulysse Tosi").click();
+
+    cy.contains('"acr": "eidas1"');
+    cy.task("psql", selectConnections).should("deep.equal", [
+      { has_interaction_cid: true, outcome: "succeeded" },
+      { has_interaction_cid: true, outcome: "succeeded" },
+    ]);
+
+    cy.visit("http://localhost:4000");
+    cy.setRequestedAcrs(["eidas1", "eidas1-mfa", "eidas2", "eidas3"]);
+    cy.get("button#custom-connection").click({ force: true });
+
+    cy.contains('"acr": "eidas1"');
+    cy.task("psql", selectConnections).should("deep.equal", [
+      { has_interaction_cid: true, outcome: "succeeded" },
+      { has_interaction_cid: true, outcome: "succeeded" },
+      { has_interaction_cid: false, outcome: "succeeded" },
+    ]);
+  });
+});

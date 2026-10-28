@@ -1,7 +1,8 @@
+import { AuthorizationRequestOutcomeEnum } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import type { NextFunction } from "express";
 import type { KoaContextWithOIDC } from "oidc-provider";
-import { recordNewConnection } from "../managers/oidc-client";
+import { recordAuthorizationRequest } from "../managers/oidc-client";
 import { logger } from "../services/log";
 import { getAuthorizedOrganization } from "../services/oidc-authorized-organization";
 
@@ -39,14 +40,18 @@ export const connectionCountMiddleware = async (
     try {
       // if the interaction resulted in a success, accountId and clientId should be set
       if (ctx.oidc.session?.accountId && ctx.oidc.client?.clientId) {
-        await recordNewConnection({
+        await recordAuthorizationRequest({
           accountId: ctx.oidc.session.accountId,
           client: ctx.oidc.client,
+          interactionCid: ctx.oidc.entities.Interaction?.cid ?? null,
           organizationId:
             getAuthorizedOrganization(
               ctx.oidc.session,
               ctx.oidc.client.clientId,
             )?.organizationId ?? null,
+          outcome: ctx.oidc.entities.AuthorizationCode
+            ? AuthorizationRequestOutcomeEnum.enum.succeeded
+            : null,
           params: ctx.oidc.params as OIDCContextParams,
           requestHeaders: ctx.request.headers,
         });

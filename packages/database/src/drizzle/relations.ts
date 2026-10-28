@@ -23,9 +23,9 @@ export const authenticatorsRelations = relations(authenticators, ({ one }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   authenticators: many(authenticators),
   franceconnect_userinfos: many(franceconnect_userinfo),
-  users_oidc_clients: many(users_oidc_clients),
   moderations: many(moderations),
   recovery_words: many(recovery_words),
+  users_oidc_clients: many(users_oidc_clients),
   official_contact_email_verifications: many(
     official_contact_email_verifications,
   ),
@@ -41,8 +41,8 @@ export const email_domainsRelations = relations(email_domains, ({ one }) => ({
 
 export const organizationsRelations = relations(organizations, ({ many }) => ({
   email_domains: many(email_domains),
-  users_oidc_clients: many(users_oidc_clients),
   moderations: many(moderations),
+  users_oidc_clients: many(users_oidc_clients),
   official_contact_email_verifications: many(
     official_contact_email_verifications,
   ),
@@ -58,6 +58,24 @@ export const franceconnect_userinfoRelations = relations(
     }),
   }),
 );
+
+export const moderationsRelations = relations(moderations, ({ one }) => ({
+  user: one(users, {
+    fields: [moderations.user_id],
+    references: [users.id],
+  }),
+  organization: one(organizations, {
+    fields: [moderations.organization_id],
+    references: [organizations.id],
+  }),
+}));
+
+export const recovery_wordsRelations = relations(recovery_words, ({ one }) => ({
+  user: one(users, {
+    fields: [recovery_words.user_id],
+    references: [users.id],
+  }),
+}));
 
 export const users_oidc_clientsRelations = relations(
   users_oidc_clients,
@@ -79,24 +97,6 @@ export const users_oidc_clientsRelations = relations(
 
 export const oidc_clientsRelations = relations(oidc_clients, ({ many }) => ({
   users_oidc_clients: many(users_oidc_clients),
-}));
-
-export const moderationsRelations = relations(moderations, ({ one }) => ({
-  user: one(users, {
-    fields: [moderations.user_id],
-    references: [users.id],
-  }),
-  organization: one(organizations, {
-    fields: [moderations.organization_id],
-    references: [organizations.id],
-  }),
-}));
-
-export const recovery_wordsRelations = relations(recovery_words, ({ one }) => ({
-  user: one(users, {
-    fields: [recovery_words.user_id],
-    references: [users.id],
-  }),
 }));
 
 export const official_contact_email_verificationsRelations = relations(

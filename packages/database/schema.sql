@@ -85,6 +85,8 @@ DROP INDEX IF EXISTS "public"."index_authenticators_on_credential_id";
 
 DROP INDEX IF EXISTS "public"."idx_users_oidc_clients_user_id_created_at";
 
+DROP INDEX IF EXISTS "public"."idx_users_oidc_clients_interaction_cid";
+
 ALTER TABLE IF EXISTS ONLY "public"."users"
 DROP CONSTRAINT IF EXISTS "users_pkey";
 
@@ -470,7 +472,9 @@ CREATE TABLE "public"."users_oidc_clients" (
   "id" integer NOT NULL,
   "organization_id" integer,
   "sp_name" character varying,
-  "user_ip_address" character varying
+  "user_ip_address" character varying,
+  "interaction_cid" character varying,
+  "outcome" character varying
 );
 
 --
@@ -633,6 +637,13 @@ ADD CONSTRAINT "users_organizations_pkey" PRIMARY KEY ("user_id", "organization_
 --
 ALTER TABLE ONLY "public"."users"
 ADD CONSTRAINT "users_pkey" PRIMARY KEY ("id");
+
+--
+-- Name: idx_users_oidc_clients_interaction_cid; Type: INDEX; Schema: public; Owner: -
+--
+CREATE UNIQUE INDEX "idx_users_oidc_clients_interaction_cid" ON "public"."users_oidc_clients" USING "btree" ("interaction_cid")
+WHERE
+  ("interaction_cid" IS NOT NULL);
 
 --
 -- Name: idx_users_oidc_clients_user_id_created_at; Type: INDEX; Schema: public; Owner: -
