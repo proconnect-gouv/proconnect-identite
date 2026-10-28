@@ -1,5 +1,23 @@
 # Changelog
 
+## [2026.10.13](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.12...2026.10.13) (2026-10-28)
+
+### Changements
+
+- 🐛 Après avoir quitté une certification dirigeant en cours, une nouvelle connexion à un service ne vous demande plus de vous identifier avec FranceConnect.
+- 🐛 Lorsqu’un service accepte une connexion sans identité vérifiée, ProConnect ne vous envoie plus sur la page « Vérifier votre identité » pour vous identifier avec FranceConnect ; et lorsqu’un service exige une identité vérifiée avec FranceConnect, ProConnect vous propose désormais cette page au lieu d’afficher « Erreur access_denied ».
+- 🔊 Lorsqu’un service vous envoie vous connecter, chaque page et chaque erreur de ce parcours (connexion, vérification d’identité, choix d’organisation, retour vers le service) porte désormais le même identifiant `oidc.interaction_cid` dans Sentry : quand vous signalez un problème, l’équipe support retrouve tout votre parcours d’un seul coup, au lieu de recouper les erreurs une à une à l’heure près.
+
+### Corrigé
+
+- 🐛 check if FranceConnect is needed at the session AAL, not only AAL 2 ([#2341](https://github.com/proconnect-gouv/proconnect-identite/issues/2341)) ([e2a55e5](https://github.com/proconnect-gouv/proconnect-identite/commit/e2a55e567156fefe4828b447ab6ab6297e5571fc))
+- 🐛 stop asking for FranceConnect after an abandoned certification ([#2339](https://github.com/proconnect-gouv/proconnect-identite/issues/2339)) ([240763a](https://github.com/proconnect-gouv/proconnect-identite/commit/240763a5bbde4563f885e098eaf706208b80ec10))
+
+### Divers
+
+- 🔊 write each log as one JSON line ([#2344](https://github.com/proconnect-gouv/proconnect-identite/issues/2344)) ([7022df3](https://github.com/proconnect-gouv/proconnect-identite/commit/7022df318cef59312ed9248466c2706849d577f9))
+- 🔊 tag every Sentry event of an authorization request with its interaction cid ([#2343](https://github.com/proconnect-gouv/proconnect-identite/issues/2343)) ([d789f49](https://github.com/proconnect-gouv/proconnect-identite/commit/d789f49dd444ecd2a4c5c1ae102288747ec6b469))
+
 ## [2026.10.12](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.11...2026.10.12) (2026-10-27)
 
 ### Changements
