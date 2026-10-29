@@ -81,6 +81,7 @@ describe("record", () => {
           actor_ref: "moderator+refuses-darkangels.world",
           actor_type: "moderator",
           app: "hyyypertool",
+          cause_activity_id: null,
           context: darkangels_refused.context,
           created_at: new Date("5555-05-05"),
           id: 1,

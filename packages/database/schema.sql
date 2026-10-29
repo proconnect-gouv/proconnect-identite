@@ -235,7 +235,8 @@ CREATE TABLE "public"."activity_logs" (
   "interaction_cid" character varying,
   "moderation_id" integer,
   "organization_id" integer,
-  "user_id" integer
+  "user_id" integer,
+  "cause_activity_id" integer
 );
 
 --
