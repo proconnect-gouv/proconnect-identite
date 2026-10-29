@@ -1,0 +1,33 @@
+//
+
+import type {
+  ActivityContexts,
+  ActivityOf,
+  ActivityTargets,
+  Actor,
+  ContextMap,
+  RuntimeContext,
+} from "#src/activity";
+import type { IdentiteTransaction } from "#src/database";
+import { markDomainAsVerifiedFactory } from "#src/domains";
+import { insertActivity } from "#src/journal";
+
+//
+
+export function createIdentiteRuntime<
+  OwnContexts extends ContextMap & {
+    [Action in keyof ActivityContexts]?: never;
+  } = {},
+>({ app, db }: Omit<RuntimeContext, "actor">) {
+  return {
+    as(actor: Actor) {
+      return {
+        markDomainAsVerified: markDomainAsVerifiedFactory({ actor, app, db }),
+        record: (
+          tx: IdentiteTransaction,
+          activity: ActivityOf<OwnContexts> & ActivityTargets,
+        ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
+      };
+    },
+  };
+}

@@ -3,9 +3,12 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
-    "rootDir": "src",
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "#src/*": ["./src/*/index.ts"]
+    }
   },
   "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
-  "references": []
+  "references": [],
+  "include": ["./src/**/*"]
 }

@@ -1,5 +1,7 @@
 //
 
+import type { ActivityContexts, RuntimeContext } from "#src/activity";
+import { insertActivity } from "#src/journal";
 import {
   email_domains,
   users_organizations,
@@ -13,13 +15,13 @@ import {
   type EmailDomainApprovedVerificationType,
 } from "@proconnect-gouv/proconnect.identite/types";
 import { and, eq, inArray, sql } from "drizzle-orm";
-import type { IdentiteDatabase } from "./database.js";
 
 //
 
 type MarkDomainAsVerifiedOutcome =
   | {
       kind: "domain_verified";
+      activity_id: number;
       email_domain: {
         id: number;
         verification_type: EmailDomainApprovedVerificationType;
@@ -32,7 +34,11 @@ type MarkDomainAsVerifiedOutcome =
     }
   | { kind: "organization_not_found"; organization_id: number };
 
-export function markDomainAsVerifiedFactory({ db }: { db: IdentiteDatabase }) {
+export function markDomainAsVerifiedFactory({
+  actor,
+  app,
+  db,
+}: RuntimeContext) {
   return function markDomainAsVerified({
     domain,
     domain_verification_type,
@@ -95,6 +101,24 @@ export function markDomainAsVerifiedFactory({ db }: { db: IdentiteDatabase }) {
         })
         .returning({ id: email_domains.id });
 
+      const replaced_verification_types = replaced.map(
+        ({ verification_type }) => verification_type,
+      );
+
+      const { activity_id } = await insertActivity<ActivityContexts>(tx, {
+        action: "domain.verified",
+        actor,
+        app,
+        context: {
+          inputs: { domain, verification_type: domain_verification_type },
+          outcome: {
+            email_domain_id: email_domain.id,
+            replaced_verification_types,
+          },
+        },
+        organization_id,
+      });
+
       if (promoted_member_ids.length > 0) {
         await tx
           .update(users_organizations)
@@ -112,6 +136,7 @@ export function markDomainAsVerifiedFactory({ db }: { db: IdentiteDatabase }) {
 
       return {
         kind: "domain_verified",
+        activity_id,
         email_domain: {
           id: email_domain.id,
           verification_type: domain_verification_type,
@@ -122,9 +147,7 @@ export function markDomainAsVerifiedFactory({ db }: { db: IdentiteDatabase }) {
             previous_verification_type: verification_type,
             user_id,
           })),
-        replaced_verification_types: replaced.map(
-          ({ verification_type }) => verification_type,
-        ),
+        replaced_verification_types,
       };
     });
   };

@@ -339,17 +339,25 @@ export const joinOrganization = async ({
       const contactDomain = getEmailDomain(contactEmail);
 
       if (!usesAFreeEmailProvider(contactEmail)) {
-        const outcome = await runtime.markDomainAsVerified({
-          organization_id,
-          domain: contactDomain,
-          domain_verification_type:
-            EmailDomainVerificationEnum.enum.official_contact,
-        });
+        const outcome = await runtime
+          .as({ type: "app", job: "join.official_contact" })
+          .markDomainAsVerified({
+            organization_id,
+            domain: contactDomain,
+            domain_verification_type:
+              EmailDomainVerificationEnum.enum.official_contact,
+          });
         match(outcome)
           .with(
             { kind: "domain_verified" },
-            ({ email_domain, promoted_members, replaced_verification_types }) =>
+            ({
+              activity_id,
+              email_domain,
+              promoted_members,
+              replaced_verification_types,
+            }) =>
               track("join.official_contact_domain.verified", {
+                activity_id,
                 domain: contactDomain,
                 email_domain_id: email_domain.id,
                 organization_id,
