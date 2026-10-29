@@ -1,6 +1,7 @@
 //
 
 export * from "./compute-service-public-info.js";
+export * from "./get-member-ids-promoted-by-domain.js";
 export * from "./is-domain-allowed-for-organization.js";
 export * from "./is-entreprise-unipersonnelle.js";
 export * from "./is-organization-covered-by-certification-dirigeant.js";

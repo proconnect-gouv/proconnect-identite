@@ -4,6 +4,7 @@ import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email"
 import { Welcome } from "@proconnect-gouv/proconnect.email";
 import {
   InvalidSiretError,
+  NotFoundError,
   OrganizationNotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
 import {
@@ -50,7 +51,7 @@ import {
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
-import { context } from "../../connectors/context";
+import { context, runtime } from "../../connectors/context";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
 import { getOrganizationInfo } from "../../connectors/organization-info";
@@ -66,7 +67,6 @@ import {
   isSmallOrganization,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
-import { markDomainAsVerified } from "./main";
 
 const {
   email_domains,
@@ -339,12 +339,30 @@ export const joinOrganization = async ({
       const contactDomain = getEmailDomain(contactEmail);
 
       if (!usesAFreeEmailProvider(contactEmail)) {
-        await markDomainAsVerified({
+        const outcome = await runtime.markDomainAsVerified({
           organization_id,
           domain: contactDomain,
           domain_verification_type:
             EmailDomainVerificationEnum.enum.official_contact,
         });
+        match(outcome)
+          .with(
+            { kind: "domain_verified" },
+            ({ email_domain, promoted_members, replaced_verification_types }) =>
+              track("join.official_contact_domain.verified", {
+                domain: contactDomain,
+                email_domain_id: email_domain.id,
+                organization_id,
+                promoted_user_ids: promoted_members.map(({ user_id }) =>
+                  String(user_id),
+                ),
+                replaced_verification_types,
+              }),
+          )
+          .with({ kind: "organization_not_found" }, () => {
+            throw new NotFoundError();
+          })
+          .exhaustive();
       }
 
       if (contactEmail === email) {

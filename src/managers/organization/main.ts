@@ -1,6 +1,5 @@
 import { QuitOrganization } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
-import { markDomainAsVerifiedFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request } from "express";
 import { isEmpty } from "lodash-es";
@@ -62,8 +61,6 @@ export const quitOrganization = async ({
 
   return true;
 };
-
-export const markDomainAsVerified = markDomainAsVerifiedFactory(context);
 
 export const selectOrganization = async ({
   req,
