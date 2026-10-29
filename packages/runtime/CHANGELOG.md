@@ -1,5 +1,16 @@
 # @proconnect-gouv/proconnect.identite.runtime
 
+## 0.2.0
+
+### Minor Changes
+
+- [#2369](https://github.com/proconnect-gouv/proconnect-identite/pull/2369) [`6971b21`](https://github.com/proconnect-gouv/proconnect-identite/commit/6971b2172c4aeeb7a58f121e88d9d4548fbb87b3) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Journalise les vérifications de domaine. Changement non rétrocompatible : `createIdentiteRuntime({ app, db })` reçoit l'application appelante (`"hyyypertool"` ou `"proconnect-identite"`, enregistrée dans la colonne `app` de chaque ligne) et renvoie `as(actor)` (type `Actor` exporté : `{ type: "app", job }` ou `{ type: "moderator", sub }`), qui renvoie la commande `markDomainAsVerified` et `record` liées à l'acteur. La commande ajoute une ligne `domain.verified` dans `activity_logs` dans sa transaction et son issue `domain_verified` porte `activity_id`. Le `context` de chaque action est décrit par un schéma zod : le runtime exporte `activityContextSchemas` (`domain.verified`) et le type déduit `ActivityContexts`. Une application décrit ses propres actions avec `ContextsOf` et les passe en paramètre de type, `createIdentiteRuntime<ContextesDeLApplication>({ app, db })` ; `record(tx, { action, context, organization_id?, user_id?, moderation_id? })` écrit alors l'une de ces actions dans la transaction de l'appelant (type `IdentiteTransaction` exporté) et renvoie `{ activity_id }`. Ne compilent pas : une action déjà définie par le runtime, un `context` qui ne correspond pas à son action, la base `db` au lieu d'une transaction. Nouvelle dépendance : `zod`.
+
+### Patch Changes
+
+- Updated dependencies [[`6971b21`](https://github.com/proconnect-gouv/proconnect-identite/commit/6971b2172c4aeeb7a58f121e88d9d4548fbb87b3)]:
+  - @proconnect-gouv/proconnect.identite.database@1.11.0
+
 ## 0.1.0
 
 ### Minor Changes

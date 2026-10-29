@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.11.0
+
+### Minor Changes
+
+- [#2369](https://github.com/proconnect-gouv/proconnect-identite/pull/2369) [`6971b21`](https://github.com/proconnect-gouv/proconnect-identite/commit/6971b2172c4aeeb7a58f121e88d9d4548fbb87b3) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Ajoute la table `activity_logs`, journal des actions (`action`, `actor_type`, `actor_ref`, `app` — l'application qui écrit la ligne —, `context` en `jsonb`, `created_at`, et `user_id`, `organization_id`, `moderation_id`, `interaction_cid` sans clé étrangère), avec les index `(organization_id, created_at)` et `(user_id, created_at)`, au schéma SQL et au schéma Drizzle.
+
 ## 1.10.1
 
 ### Patch Changes
