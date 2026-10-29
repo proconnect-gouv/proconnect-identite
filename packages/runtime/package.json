@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.identite.runtime",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/runtime#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -25,8 +25,8 @@
     "test": "tsx --test --test-reporter=spec src/**/*.test.ts"
   },
   "dependencies": {
-    "@proconnect-gouv/proconnect.identite": "^11.0.0",
-    "@proconnect-gouv/proconnect.identite.database": "^1.10.0"
+    "@proconnect-gouv/proconnect.identite": "^12.0.0",
+    "@proconnect-gouv/proconnect.identite.database": "^1.10.1"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.12",

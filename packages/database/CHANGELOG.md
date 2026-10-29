@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.10.1
+
+### Patch Changes
+
+- [#2365](https://github.com/proconnect-gouv/proconnect-identite/pull/2365) [`e47d7dd`](https://github.com/proconnect-gouv/proconnect-identite/commit/e47d7dd69c76c7b8c8dc8094c8ec4ac574278e75) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Développement avec `drizzle-orm` 0.45.4, la version utilisée par `@proconnect-gouv/proconnect.identite.runtime`.
+
 ## 1.10.0
 
 ### Minor Changes

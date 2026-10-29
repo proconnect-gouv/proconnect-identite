@@ -1,5 +1,24 @@
 # @proconnect-gouv/proconnect.identite
 
+## 12.0.0
+
+### Major Changes
+
+- [#2362](https://github.com/proconnect-gouv/proconnect-identite/pull/2362) [`da31f6d`](https://github.com/proconnect-gouv/proconnect-identite/commit/da31f6d036c7569c0184962bb9bc6d14d12f04a1) Thanks [@douglasduteil](https://github.com/douglasduteil)! - `getOrganizationInfo` et `processCertificationDirigeant` renvoient leurs issues au lieu d'écrire dans la console ou de lever des erreurs.
+
+  Migration :
+  - `getOrganizationInfo` renvoie un `OrganizationInfoLookup` : faites un `match` sur `kind` au lieu d'attraper `InvalidSiretError`, `NotFoundError` ou `ApiEntrepriseConnectionError`.
+    - `found` : les données sont dans `organization_info` ; `rne.kind` vaut `enriched`, ou `failed` avec l'`exception` du registre national des entreprises.
+    - `invalid_siret` : le SIRET ou SIREN est mal formé ou refusé par entreprise.api.gouv.fr ; `exception` est une `InvalidSiretError` dont la `cause` porte le refus d'entreprise.api.gouv.fr.
+    - `not_diffusible` : l'établissement n'est pas diffusible.
+    - `api_entreprise_failed` : entreprise.api.gouv.fr a échoué, avec l'`exception`.
+  - `processCertificationDirigeant` ajoute `details.source_selection` (`SourceSelection`) : `preferred`, ou `fallback` avec l'`exception` du registre national des entreprises quand les mandataires viennent d'entreprise.api.gouv.fr.
+  - Les erreurs `InvalidSiretError`, `NotFoundError` et `ApiEntrepriseConnectionError` restent exportées.
+
+### Minor Changes
+
+- [#2365](https://github.com/proconnect-gouv/proconnect-identite/pull/2365) [`e47d7dd`](https://github.com/proconnect-gouv/proconnect-identite/commit/e47d7dd69c76c7b8c8dc8094c8ec4ac574278e75) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Ajoute `getMemberIdsPromotedByDomain` dans `services/organization` : à partir d'un domaine et des membres d'une organisation, renvoie les identifiants des membres à promouvoir au rattachement `domain`.
+
 ## 11.0.0
 
 ### Major Changes
