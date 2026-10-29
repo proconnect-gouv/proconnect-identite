@@ -76,6 +76,13 @@ export function markDomainAsVerifiedFactory({
         members,
       });
 
+      const promoted_members = memberships
+        .filter(({ user_id }) => promoted_member_ids.includes(user_id))
+        .map(({ user_id, verification_type }) => ({
+          previous_verification_type: verification_type,
+          user_id,
+        }));
+
       const replaced = await tx
         .delete(email_domains)
         .where(
@@ -132,6 +139,24 @@ export function markDomainAsVerifiedFactory({
               inArray(users_organizations.user_id, promoted_member_ids),
             ),
           );
+
+        for (const {
+          previous_verification_type,
+          user_id,
+        } of promoted_members) {
+          await insertActivity<ActivityContexts>(tx, {
+            action: "member.promoted",
+            actor: { type: "app", job: "domain.promote_members" },
+            app,
+            cause_activity_id: activity_id,
+            context: {
+              inputs: { previous_verification_type },
+              outcome: { verification_type: LinkEnum.enum.domain },
+            },
+            organization_id,
+            user_id,
+          });
+        }
       }
 
       return {
@@ -141,12 +166,7 @@ export function markDomainAsVerifiedFactory({
           id: email_domain.id,
           verification_type: domain_verification_type,
         },
-        promoted_members: memberships
-          .filter(({ user_id }) => promoted_member_ids.includes(user_id))
-          .map(({ user_id, verification_type }) => ({
-            previous_verification_type: verification_type,
-            user_id,
-          })),
+        promoted_members,
         replaced_verification_types,
       };
     });

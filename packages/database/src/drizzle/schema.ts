@@ -344,6 +344,7 @@ export const activity_logs = pgTable(
     moderation_id: integer(),
     organization_id: integer(),
     user_id: integer(),
+    cause_activity_id: integer(),
   },
   (table) => [
     index("idx_activity_logs_organization_id_created_at").using(

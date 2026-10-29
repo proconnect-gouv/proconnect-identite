@@ -87,7 +87,7 @@ describe("markDomainAsVerified", () => {
     assert.deepEqual(await readActivityLogs(pg), []);
   });
 
-  it("✅ replaces the domain states, promotes the domain members and journals the verification", async () => {
+  it("✅ replaces the domain states, promotes the domain members and journals the verification and each promotion", async () => {
     const { pg, runtime } = await setup(join_official_contact);
 
     const outcome = await runtime.markDomainAsVerified({
@@ -210,6 +210,7 @@ describe("markDomainAsVerified", () => {
         actor_ref: "join.official_contact",
         actor_type: "app",
         app: "proconnect-identite",
+        cause_activity_id: null,
         context: {
           inputs: {
             domain: "darkangels.world",
@@ -227,10 +228,47 @@ describe("markDomainAsVerified", () => {
         organization_id: 1,
         user_id: null,
       },
+      {
+        action: "member.promoted",
+        actor_ref: "domain.promote_members",
+        actor_type: "app",
+        app: "proconnect-identite",
+        cause_activity_id: 1,
+        context: {
+          inputs: {
+            previous_verification_type:
+              "no_verification_means_for_entreprise_unipersonnelle",
+          },
+          outcome: { verification_type: "domain" },
+        },
+        created_at: new Date("5555-05-05"),
+        id: 2,
+        interaction_cid: null,
+        moderation_id: null,
+        organization_id: 1,
+        user_id: 1,
+      },
+      {
+        action: "member.promoted",
+        actor_ref: "domain.promote_members",
+        actor_type: "app",
+        app: "proconnect-identite",
+        cause_activity_id: 1,
+        context: {
+          inputs: { previous_verification_type: "domain_not_verified_yet" },
+          outcome: { verification_type: "domain" },
+        },
+        created_at: new Date("5555-05-05"),
+        id: 3,
+        interaction_cid: null,
+        moderation_id: null,
+        organization_id: 1,
+        user_id: 2,
+      },
     ]);
   });
 
-  it("✅ journals the verification under the moderator", async () => {
+  it("✅ journals the verification under the moderator and each promotion under the app", async () => {
     const { pg, runtime } = await setup({
       actor: { type: "moderator", sub: "moderator+verifies-darkangels.world" },
       app: "hyyypertool",
@@ -270,6 +308,7 @@ describe("markDomainAsVerified", () => {
         actor_ref: "moderator+verifies-darkangels.world",
         actor_type: "moderator",
         app: "hyyypertool",
+        cause_activity_id: null,
         context: {
           inputs: {
             domain: "darkangels.world",
@@ -286,6 +325,43 @@ describe("markDomainAsVerified", () => {
         moderation_id: null,
         organization_id: 1,
         user_id: null,
+      },
+      {
+        action: "member.promoted",
+        actor_ref: "domain.promote_members",
+        actor_type: "app",
+        app: "hyyypertool",
+        cause_activity_id: 1,
+        context: {
+          inputs: {
+            previous_verification_type:
+              "no_verification_means_for_entreprise_unipersonnelle",
+          },
+          outcome: { verification_type: "domain" },
+        },
+        created_at: new Date("5555-05-05"),
+        id: 2,
+        interaction_cid: null,
+        moderation_id: null,
+        organization_id: 1,
+        user_id: 1,
+      },
+      {
+        action: "member.promoted",
+        actor_ref: "domain.promote_members",
+        actor_type: "app",
+        app: "hyyypertool",
+        cause_activity_id: 1,
+        context: {
+          inputs: { previous_verification_type: "domain_not_verified_yet" },
+          outcome: { verification_type: "domain" },
+        },
+        created_at: new Date("5555-05-05"),
+        id: 3,
+        interaction_cid: null,
+        moderation_id: null,
+        organization_id: 1,
+        user_id: 2,
       },
     ]);
   });
@@ -332,6 +408,7 @@ async function readActivityLogs(pg: PGlite) {
       actor_ref,
       actor_type,
       app,
+      cause_activity_id,
       context,
       created_at,
       id,

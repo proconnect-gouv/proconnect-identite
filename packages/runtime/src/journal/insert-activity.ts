@@ -19,7 +19,7 @@ export async function insertActivity<Contexts extends ContextMap>(
     ...activity
   }: ActivityOf<Contexts> &
     ActivityTargets &
-    Pick<RuntimeContext, "actor" | "app">,
+    Pick<RuntimeContext, "actor" | "app"> & { cause_activity_id?: number },
 ) {
   const [row] = await tx
     .insert(activity_logs)
