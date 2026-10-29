@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 1.12.0
+
+### Minor Changes
+
+- [#2370](https://github.com/proconnect-gouv/proconnect-identite/pull/2370) [`d3dd8ca`](https://github.com/proconnect-gouv/proconnect-identite/commit/d3dd8cada634db4d3ed9a08d3b6f0ff4000ea97c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Ajoute la colonne `cause_activity_id` (entier, sans clé étrangère) à `activity_logs` : une ligne écrite en conséquence d'une autre action pointe vers la ligne de cette action.
+
 ## 1.11.0
 
 ### Minor Changes
