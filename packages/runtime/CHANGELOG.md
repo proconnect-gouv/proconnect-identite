@@ -1,5 +1,16 @@
 # @proconnect-gouv/proconnect.identite.runtime
 
+## 0.3.0
+
+### Minor Changes
+
+- [#2370](https://github.com/proconnect-gouv/proconnect-identite/pull/2370) [`d3dd8ca`](https://github.com/proconnect-gouv/proconnect-identite/commit/d3dd8cada634db4d3ed9a08d3b6f0ff4000ea97c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Journalise les membres promus par une vérification de domaine. `markDomainAsVerified` ajoute, dans sa transaction, une ligne `member.promoted` par membre promu, sous l'acteur `{ type: "app", job: "domain.promote_members" }`, avec `user_id`, `organization_id` et `cause_activity_id` pointant vers la ligne `domain.verified`. `activityContextSchemas` décrit la nouvelle action : `inputs.previous_verification_type`, `outcome.verification_type`.
+
+### Patch Changes
+
+- Updated dependencies [[`d3dd8ca`](https://github.com/proconnect-gouv/proconnect-identite/commit/d3dd8cada634db4d3ed9a08d3b6f0ff4000ea97c)]:
+  - @proconnect-gouv/proconnect.identite.database@1.12.0
+
 ## 0.2.0
 
 ### Minor Changes
