@@ -20,5 +20,6 @@ export const context = createContext({
 });
 
 export const runtime = createIdentiteRuntime({
+  app: "proconnect-identite",
   db: drizzle(getDatabaseConnection(), { schema }),
 });

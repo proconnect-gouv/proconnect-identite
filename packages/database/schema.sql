@@ -87,6 +87,10 @@ DROP INDEX IF EXISTS "public"."idx_users_oidc_clients_user_id_created_at";
 
 DROP INDEX IF EXISTS "public"."idx_users_oidc_clients_interaction_cid";
 
+DROP INDEX IF EXISTS "public"."idx_activity_logs_user_id_created_at";
+
+DROP INDEX IF EXISTS "public"."idx_activity_logs_organization_id_created_at";
+
 ALTER TABLE IF EXISTS ONLY "public"."users"
 DROP CONSTRAINT IF EXISTS "users_pkey";
 
@@ -129,6 +133,9 @@ DROP CONSTRAINT IF EXISTS "email_deliverability_whitelist_pkey";
 ALTER TABLE IF EXISTS ONLY "public"."authenticators"
 DROP CONSTRAINT IF EXISTS "authenticators_pkey";
 
+ALTER TABLE IF EXISTS ONLY "public"."activity_logs"
+DROP CONSTRAINT IF EXISTS "activity_logs_pkey";
+
 ALTER TABLE IF EXISTS "public"."users_oidc_clients"
 ALTER COLUMN "id"
 DROP DEFAULT;
@@ -154,6 +161,10 @@ ALTER COLUMN "id"
 DROP DEFAULT;
 
 ALTER TABLE IF EXISTS "public"."email_domains"
+ALTER COLUMN "id"
+DROP DEFAULT;
+
+ALTER TABLE IF EXISTS "public"."activity_logs"
 ALTER COLUMN "id"
 DROP DEFAULT;
 
@@ -195,6 +206,10 @@ DROP TABLE IF EXISTS "public"."email_deliverability_whitelist";
 
 DROP TABLE IF EXISTS "public"."authenticators";
 
+DROP SEQUENCE IF EXISTS "public"."activity_logs_id_seq";
+
+DROP TABLE IF EXISTS "public"."activity_logs";
+
 --
 -- Name: SCHEMA "public"; Type: COMMENT; Schema: -; Owner: -
 --
@@ -205,6 +220,35 @@ SET
 
 SET
   default_table_access_method = "heap";
+
+--
+-- Name: activity_logs; Type: TABLE; Schema: public; Owner: -
+--
+CREATE TABLE "public"."activity_logs" (
+  "id" integer NOT NULL,
+  "action" character varying NOT NULL,
+  "actor_ref" character varying NOT NULL,
+  "actor_type" character varying NOT NULL,
+  "app" character varying NOT NULL,
+  "context" "jsonb" NOT NULL,
+  "created_at" timestamp with time zone DEFAULT "now" () NOT NULL,
+  "interaction_cid" character varying,
+  "moderation_id" integer,
+  "organization_id" integer,
+  "user_id" integer
+);
+
+--
+-- Name: activity_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+CREATE SEQUENCE "public"."activity_logs_id_seq" AS integer START
+WITH
+  1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+
+--
+-- Name: activity_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+ALTER SEQUENCE "public"."activity_logs_id_seq" OWNED BY "public"."activity_logs"."id";
 
 --
 -- Name: authenticators; Type: TABLE; Schema: public; Owner: -
@@ -504,6 +548,13 @@ CREATE TABLE "public"."users_organizations" (
 );
 
 --
+-- Name: activity_logs id; Type: DEFAULT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."activity_logs"
+ALTER COLUMN "id"
+SET DEFAULT "nextval" ('"public"."activity_logs_id_seq"'::"regclass");
+
+--
 -- Name: email_domains id; Type: DEFAULT; Schema: public; Owner: -
 --
 ALTER TABLE ONLY "public"."email_domains"
@@ -553,6 +604,12 @@ ALTER COLUMN "id"
 SET DEFAULT "nextval" (
   '"public"."users_oidc_clients_id_seq"'::"regclass"
 );
+
+--
+-- Name: activity_logs activity_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+ALTER TABLE ONLY "public"."activity_logs"
+ADD CONSTRAINT "activity_logs_pkey" PRIMARY KEY ("id");
 
 --
 -- Name: authenticators authenticators_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -637,6 +694,16 @@ ADD CONSTRAINT "users_organizations_pkey" PRIMARY KEY ("user_id", "organization_
 --
 ALTER TABLE ONLY "public"."users"
 ADD CONSTRAINT "users_pkey" PRIMARY KEY ("id");
+
+--
+-- Name: idx_activity_logs_organization_id_created_at; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_activity_logs_organization_id_created_at" ON "public"."activity_logs" USING "btree" ("organization_id", "created_at");
+
+--
+-- Name: idx_activity_logs_user_id_created_at; Type: INDEX; Schema: public; Owner: -
+--
+CREATE INDEX "idx_activity_logs_user_id_created_at" ON "public"."activity_logs" USING "btree" ("user_id", "created_at");
 
 --
 -- Name: idx_users_oidc_clients_interaction_cid; Type: INDEX; Schema: public; Owner: -
