@@ -53,6 +53,9 @@
 "scope: registre_national_entreprises":
   - changed-files:
       - any-glob-to-any-file: "packages/registre_national_entreprises/**/*"
+"scope: runtime":
+  - changed-files:
+      - any-glob-to-any-file: "packages/runtime/**/*"
 "scope: testing":
   - changed-files:
       - any-glob-to-any-file: "packages/testing/**/*"
