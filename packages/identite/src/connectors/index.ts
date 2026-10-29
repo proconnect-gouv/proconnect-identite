@@ -10,7 +10,6 @@ import {
 import { findEmailInDeliverabilityWhiteListFactory } from "#src/repositories/email-deliverability-whitelist";
 import {
   addDomainFactory,
-  deleteEmailDomainsByVerificationTypesFactory,
   findEmailDomainsByOrganizationIdFactory,
 } from "#src/repositories/email-domain";
 import {
@@ -42,7 +41,6 @@ import {
   findByVerifiedEmailDomainFactory,
   findOrganizationByIdFactory,
   findPendingByUserIdFactory,
-  findUsersByOrganizationFactory,
   getOrganizationByIdFactory,
   upsertFactory,
 } from "#src/repositories/organization";
@@ -106,8 +104,6 @@ export function createContext({
       },
       email_domains: {
         addDomain: addDomainFactory({ pg }),
-        deleteEmailDomainsByVerificationTypes:
-          deleteEmailDomainsByVerificationTypesFactory({ pg }),
         findEmailDomainsByOrganizationId:
           findEmailDomainsByOrganizationIdFactory({ pg }),
       },
@@ -135,7 +131,6 @@ export function createContext({
         findByUserId: findByUserIdFactory({ pg }),
         findByVerifiedEmailDomain: findByVerifiedEmailDomainFactory({ pg }),
         findPendingByUserId: findPendingByUserIdFactory({ pg }),
-        findUsers: findUsersByOrganizationFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),
         upsert: upsertFactory({ pg }),
       },
