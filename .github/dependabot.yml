@@ -52,6 +52,11 @@ updates:
           - "version-update:semver-major"
           - "version-update:semver-minor"
           - "version-update:semver-patch"
+      # SDK 11 requires self-hosted Sentry >= 26.4.2; we run 24.8.0 (the 10.x line is supported against >= 24.4.2).
+      # https://docs.sentry.io/platforms/javascript/migration/v10-to-v11/
+      - dependency-name: "@sentry/*"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "docker"
     directory: "/"
     commit-message:
