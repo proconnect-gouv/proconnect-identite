@@ -22,4 +22,18 @@ export const userActivities = {
       ),
     }),
   }),
+  "user.mfa_reset": z.object({
+    inputs: z.object({
+      user_id: z.number(),
+    }),
+    outcome: z.object({
+      previous: z.object({
+        authenticators: z.number(),
+        email_verified: z.boolean(),
+        force_2fa: z.boolean(),
+        password_configured: z.boolean(),
+        totp_configured: z.boolean(),
+      }),
+    }),
+  }),
 };

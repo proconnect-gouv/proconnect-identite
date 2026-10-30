@@ -20,7 +20,7 @@ import {
   removeMembershipFactory,
 } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
-import { deleteUserFactory } from "#src/users";
+import { deleteUserFactory, resetMfaFactory } from "#src/users";
 
 //
 
@@ -47,6 +47,7 @@ export function createIdentiteRuntime<
           tx: IdentiteTransaction,
           activity: ActivityOf<OwnContexts> & ActivityTargets,
         ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
+        resetMfa: resetMfaFactory({ actor, app, db }),
       };
     },
   };
