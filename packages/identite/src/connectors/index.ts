@@ -56,7 +56,6 @@ import {
 import {
   findUserOrganizationFactory,
   getUserOrganizationFactory,
-  updateUserOrganizationFactory,
 } from "#src/repositories/user_organisation";
 import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
 import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
@@ -133,7 +132,6 @@ export function createContext({
       users_organizations: {
         find: findUserOrganizationFactory({ pg }),
         get: getUserOrganizationFactory({ pg }),
-        update: updateUserOrganizationFactory({ pg }),
       },
       users: {
         create: createUserFactory({ pg }),
