@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 13.0.0
+
+### Major Changes
+
+- [#2372](https://github.com/proconnect-gouv/proconnect-identite/pull/2372) [`a31ca3e`](https://github.com/proconnect-gouv/proconnect-identite/commit/a31ca3e90bcd2b874e754159d3597a720f7a62b0) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `markDomainAsVerifiedFactory` (`managers/organization`) et `assignUserVerificationTypeToDomainFactory` (`managers/user`), ainsi que les repositories qu'ils étaient seuls à utiliser (`email_domains.deleteEmailDomainsByVerificationTypes`, `organizations.findUsers`), sans appelant depuis que les deux applications passent par `markDomainAsVerified` du runtime.
+
 ## 12.0.0
 
 ### Major Changes
