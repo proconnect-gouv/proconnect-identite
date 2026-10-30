@@ -1,28 +1,16 @@
 //
 
-import type { RuntimeContext } from "#src/activity";
 import type { IdentiteDatabase } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
-import { PGlite } from "@electric-sql/pglite";
+import { createTestDatabase, readActivityLogs } from "#testing";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
-import { migrate } from "@proconnect-gouv/proconnect.identite.database/pglite/migrator";
-import { sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/pglite";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 //
 
-const user_disconnecting = {
-  actor: { type: "user", user_id: 1 },
-  app: "proconnect-identite",
-} satisfies Pick<RuntimeContext, "actor" | "app">;
-
-async function setup({ actor, app }: Pick<RuntimeContext, "actor" | "app">) {
-  const pg = new PGlite();
-  await migrate(pg);
-  const db = drizzle(pg, { schema });
-  await db.execute(sql`SET search_path TO public`);
+async function setup() {
+  const db = await createTestDatabase();
 
   await db.insert(schema.users).values([
     {
@@ -47,13 +35,16 @@ async function setup({ actor, app }: Pick<RuntimeContext, "actor" | "app">) {
 
   return {
     db,
-    runtime: createIdentiteRuntime({ app, db }).as(actor),
+    runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
+      type: "user",
+      user_id: 1,
+    }),
   };
 }
 
 describe("disconnectFranceConnect", () => {
   it("✅ removes the FranceConnect identity and journals it under the user", async () => {
-    const { db, runtime } = await setup(user_disconnecting);
+    const { db, runtime } = await setup();
 
     const outcome = await runtime.disconnectFranceConnect({ user_id: 1 });
 
@@ -61,7 +52,7 @@ describe("disconnectFranceConnect", () => {
     if (outcome.kind !== "franceconnect_disconnected") return;
     assert.match(outcome.connected_at, /^4444-04-04/);
     assert.deepEqual(await identities(db), []);
-    assert.deepEqual(await activityLogs(db), [
+    assert.deepEqual(await readActivityLogs(db), [
       {
         action: "franceconnect.disconnected",
         actor_ref: "1",
@@ -81,7 +72,7 @@ describe("disconnectFranceConnect", () => {
   });
 
   it("❎ returns franceconnect_identity_not_found and journals nothing for a missing identity", async () => {
-    const { db, runtime } = await setup(user_disconnecting);
+    const { db, runtime } = await setup();
     const before = await identities(db);
 
     const outcome = await runtime.disconnectFranceConnect({ user_id: 2 });
@@ -91,7 +82,7 @@ describe("disconnectFranceConnect", () => {
       user_id: 2,
     });
     assert.deepEqual(await identities(db), before);
-    assert.deepEqual(await activityLogs(db), []);
+    assert.deepEqual(await readActivityLogs(db), []);
   });
 });
 
@@ -99,12 +90,5 @@ function identities(db: IdentiteDatabase) {
   return db.query.franceconnect_userinfo.findMany({
     columns: { sub: true, user_id: true },
     orderBy: (table, { asc }) => asc(table.user_id),
-  });
-}
-
-function activityLogs(db: IdentiteDatabase) {
-  return db.query.activity_logs.findMany({
-    columns: { created_at: false, id: false },
-    orderBy: (table, { asc }) => asc(table.id),
   });
 }

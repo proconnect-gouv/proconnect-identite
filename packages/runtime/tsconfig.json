@@ -10,5 +10,5 @@
   },
   "extends": "@proconnect-gouv/proconnect.devtools.typescript/base/tsconfig.json",
   "references": [],
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "testing"]
 }

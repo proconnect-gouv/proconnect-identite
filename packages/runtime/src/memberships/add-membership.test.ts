@@ -1,34 +1,17 @@
 //
 
-import type { RuntimeContext } from "#src/activity";
 import type { IdentiteDatabase } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
-import { PGlite } from "@electric-sql/pglite";
+import { createTestDatabase, readActivityLogs } from "#testing";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
-import { migrate } from "@proconnect-gouv/proconnect.identite.database/pglite/migrator";
-import { sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/pglite";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 //
 
-const user_joining = {
-  actor: { type: "user", user_id: 1 },
-  app: "proconnect-identite",
-} satisfies Pick<RuntimeContext, "actor" | "app">;
-
-async function setup({ actor, app }: Pick<RuntimeContext, "actor" | "app">) {
-  const pg = new PGlite();
-  await migrate(pg);
-  const db = drizzle(pg, { schema });
-  await db.execute(sql`SET search_path TO public`);
-
-  await db.insert(schema.organizations).values({
-    cached_libelle: "Dark Angels",
-    id: 1,
-    siret: "🦁",
-  });
+async function setup() {
+  const db = await createTestDatabase();
+  await db.insert(schema.organizations).values({ id: 1, siret: "🦁" });
   await db.insert(schema.users).values([
     {
       created_at: "4444-04-04",
@@ -51,13 +34,16 @@ async function setup({ actor, app }: Pick<RuntimeContext, "actor" | "app">) {
 
   return {
     db,
-    runtime: createIdentiteRuntime({ app, db }).as(actor),
+    runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
+      type: "user",
+      user_id: 1,
+    }),
   };
 }
 
 describe("addMembership", () => {
   it("✅ adds the membership and journals it under the user", async () => {
-    const { db, runtime } = await setup(user_joining);
+    const { db, runtime } = await setup();
 
     const outcome = await runtime.addMembership({
       is_external: true,
@@ -85,7 +71,7 @@ describe("addMembership", () => {
         verification_type: "domain",
       },
     ]);
-    assert.deepEqual(await activityLogs(db), [
+    assert.deepEqual(await readActivityLogs(db), [
       {
         action: "member.joined",
         actor_ref: "1",
@@ -108,7 +94,7 @@ describe("addMembership", () => {
   });
 
   it("❎ returns member_already_exists and writes nothing for an existing link", async () => {
-    const { db, runtime } = await setup(user_joining);
+    const { db, runtime } = await setup();
     const before = await memberships(db);
 
     const outcome = await runtime.addMembership({
@@ -123,7 +109,7 @@ describe("addMembership", () => {
       user_id: 2,
     });
     assert.deepEqual(await memberships(db), before);
-    assert.deepEqual(await activityLogs(db), []);
+    assert.deepEqual(await readActivityLogs(db), []);
   });
 });
 
@@ -139,12 +125,5 @@ function memberships(db: IdentiteDatabase) {
       asc(table.organization_id),
       asc(table.user_id),
     ],
-  });
-}
-
-function activityLogs(db: IdentiteDatabase) {
-  return db.query.activity_logs.findMany({
-    columns: { created_at: false, id: false },
-    orderBy: (table, { asc }) => asc(table.id),
   });
 }
