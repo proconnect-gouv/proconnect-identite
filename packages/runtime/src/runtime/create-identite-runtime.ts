@@ -15,7 +15,10 @@ import {
   disconnectFranceConnectFactory,
 } from "#src/franceconnect";
 import { insertActivity } from "#src/journal";
-import { removeMembershipFactory } from "#src/memberships";
+import {
+  addMembershipFactory,
+  removeMembershipFactory,
+} from "#src/memberships";
 
 //
 
@@ -27,6 +30,7 @@ export function createIdentiteRuntime<
   return {
     as(actor: Actor) {
       return {
+        addMembership: addMembershipFactory({ actor, app, db }),
         connectFranceConnect: connectFranceConnectFactory({ actor, app, db }),
         disconnectFranceConnect: disconnectFranceConnectFactory({
           actor,

@@ -56,7 +56,6 @@ import {
   updateUserFactory,
 } from "#src/repositories/user";
 import {
-  createUserOrganizationFactory,
   findUserOrganizationFactory,
   getUserOrganizationFactory,
   updateUserOrganizationFactory,
@@ -135,7 +134,6 @@ export function createContext({
         findByUserId: findRecoveryWordsByUserIdFactory({ pg }),
       },
       users_organizations: {
-        create: createUserOrganizationFactory({ pg }),
         find: findUserOrganizationFactory({ pg }),
         get: getUserOrganizationFactory({ pg }),
         update: updateUserOrganizationFactory({ pg }),
