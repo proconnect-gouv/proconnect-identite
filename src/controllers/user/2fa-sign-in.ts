@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import { hasRecoveryWordsConfiguredForUser } from "../../managers/recovery-words";
 import {
   getUserFromAuthenticatedSession,
   isPasskeyAuthenticatedSession,
@@ -36,6 +37,9 @@ export const get2faSignInController = async (
       !isPasskeyAuthenticatedSession(req) &&
       (await isWebauthnConfiguredForUser(id));
 
+    const showsRecoveryWordsSection =
+      await hasRecoveryWordsConfiguredForUser(id);
+
     return res.render("user/2fa-sign-in", {
       pageTitle: "Se connecter avec la double authentification",
       notifications,
@@ -44,6 +48,7 @@ export const get2faSignInController = async (
       email,
       showsTotpSection,
       showsPasskeySection,
+      showsRecoveryWordsSection,
     });
   } catch (error) {
     next(error);
