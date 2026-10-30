@@ -41,7 +41,7 @@
     "@electric-sql/pglite": "^0.3.12",
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/pg": "^8.23.1",
-    "drizzle-kit": "^0.31.10",
+    "drizzle-kit": "^0.31.11",
     "drizzle-orm": "^0.45.4",
     "pg": "^8.23.1",
     "tsx": "^4.20.3",
