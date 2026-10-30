@@ -169,7 +169,7 @@
     "cypress": "^15.15.0",
     "cypress-axe": "^1.6.0",
     "cypress-maildev": "^2.0.0",
-    "jose": "^6.2.1",
+    "jose": "^6.2.13",
     "lodash": "^4.18.1",
     "nock": "^15.0.2",
     "node-pg-migrate": "^8.0.3",
