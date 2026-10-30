@@ -1,5 +1,39 @@
 # Changelog
 
+## [2026.10.16](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.15...2026.10.16) (2026-10-30)
+
+### Changements
+
+- ✨ enregistrer la demande d'autorisation dès la connexion de l'utilisateur pendant celle-ci, même si elle s'interrompt ensuite
+- ✨ vérifier le domaine de l'adresse de contact officielle et rattacher les membres qui l'utilisent dans une seule transaction lorsqu'un utilisateur rejoint une organisation publique
+- ✨ garder une trace de chaque vérification de domaine, avec qui l'a faite et quand, y compris lorsqu'un utilisateur rejoint une organisation grâce à l'adresse de contact officielle
+- ✨ garder une trace de chaque membre rattaché automatiquement à son organisation lors de la vérification d'un domaine, et de la vérification qui l'a entraîné
+
+### Ajouté
+
+- ✨ journal each member a domain verification promotes ([#2370](https://github.com/proconnect-gouv/proconnect-identite/issues/2370)) ([d3dd8ca](https://github.com/proconnect-gouv/proconnect-identite/commit/d3dd8cada634db4d3ed9a08d3b6f0ff4000ea97c))
+- ✨ journal each domain verification in activity_logs ([#2369](https://github.com/proconnect-gouv/proconnect-identite/issues/2369)) ([6971b21](https://github.com/proconnect-gouv/proconnect-identite/commit/6971b2172c4aeeb7a58f121e88d9d4548fbb87b3))
+- ✨ verify an official contact domain at join in one transaction through identite.runtime ([#2365](https://github.com/proconnect-gouv/proconnect-identite/issues/2365)) ([e47d7dd](https://github.com/proconnect-gouv/proconnect-identite/commit/e47d7dd69c76c7b8c8dc8094c8ec4ac574278e75))
+- ✨ record the authorization request at sign-in ([#2360](https://github.com/proconnect-gouv/proconnect-identite/issues/2360)) ([162a38c](https://github.com/proconnect-gouv/proconnect-identite/commit/162a38c74d367bb370ee6d1866a6df8015989a9e))
+
+### Modifié
+
+- ♻️ return organization lookup and certification outcomes instead of throwing ([#2362](https://github.com/proconnect-gouv/proconnect-identite/issues/2362)) ([da31f6d](https://github.com/proconnect-gouv/proconnect-identite/commit/da31f6d036c7569c0184962bb9bc6d14d12f04a1))
+
+### Supprimé
+
+- 🔥 remove the uncalled legacy domain-verification managers ([#2372](https://github.com/proconnect-gouv/proconnect-identite/issues/2372)) ([a31ca3e](https://github.com/proconnect-gouv/proconnect-identite/commit/a31ca3e90bcd2b874e754159d3597a720f7a62b0))
+
+### Dépendances
+
+- ⬆️ Synchronisation du Grist contenant la liste des administrations ([#2364](https://github.com/proconnect-gouv/proconnect-identite/issues/2364)) ([f3b80f8](https://github.com/proconnect-gouv/proconnect-identite/commit/f3b80f80b43550fda9e2014ea98f1a958ddd7126))
+- :arrow_up: Bump systeminformation from 5.31.17 to 5.33.18 ([#2367](https://github.com/proconnect-gouv/proconnect-identite/issues/2367)) ([82f848e](https://github.com/proconnect-gouv/proconnect-identite/commit/82f848e22774a1b60488db166efd3d3962540543))
+- :arrow_up: Bump @hono/node-server from 2.0.10 to 2.1.3 ([#2366](https://github.com/proconnect-gouv/proconnect-identite/issues/2366)) ([3bfb9e9](https://github.com/proconnect-gouv/proconnect-identite/commit/3bfb9e99b99311fa1b1f872b391420bf5bb702aa))
+
+### Divers
+
+- 🔊 write each tracked event as one OpenTelemetry-shaped log record ([#2353](https://github.com/proconnect-gouv/proconnect-identite/issues/2353)) ([2b6ef92](https://github.com/proconnect-gouv/proconnect-identite/commit/2b6ef9253b2764624593ca5398c6b03375f7d15f))
+
 ## [2026.10.15](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.14...2026.10.15) (2026-10-28)
 
 ### Changements

@@ -1,1 +1,0 @@
-✨ enregistrer la demande d'autorisation dès la connexion de l'utilisateur pendant celle-ci, même si elle s'interrompt ensuite
