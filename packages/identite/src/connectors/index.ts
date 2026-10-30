@@ -12,11 +12,7 @@ import {
   addDomainFactory,
   findEmailDomainsByOrganizationIdFactory,
 } from "#src/repositories/email-domain";
-import {
-  deleteFranceconnectUserinfoFactory,
-  findFranceconnectUserinfoFactory,
-  upsertFranceconnectUserinfoFactory,
-} from "#src/repositories/franceconnect_userinfo";
+import { findFranceconnectUserinfoFactory } from "#src/repositories/franceconnect_userinfo";
 import {
   createModerationFactory,
   deleteModerationFactory,
@@ -155,9 +151,7 @@ export function createContext({
         update: updateUserFactory({ pg }),
       },
       franceconnect_userinfo: {
-        delete: deleteFranceconnectUserinfoFactory({ pg }),
         find: findFranceconnectUserinfoFactory({ pg }),
-        upsert: upsertFranceconnectUserinfoFactory({ pg }),
       },
     },
   };
