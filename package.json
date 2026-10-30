@@ -5,7 +5,8 @@
   "license": "MIT",
   "type": "module",
   "imports": {
-    "#cypress/*": "./cypress/*.ts"
+    "#cypress/*": "./cypress/*.ts",
+    "#testing": "./testing/index.ts"
   },
   "main": "src/index.js",
   "workspaces": [
@@ -46,8 +47,9 @@
     "test": "run-s test:*",
     "lint": "prettier --check '**/*.{ts,sql}' && npm run type:check",
     "type:check": "tsc --noEmit",
-    "test:unit": "npm run test:unit:runner src/**/*.test.ts test/**/*.test.ts",
+    "test:unit": "npm run test:unit:runner \"src/**/*.test.ts\" \"test/**/*.test.ts\"",
     "test:unit:runner": "tsx --env-file=.env.test --test --test-reporter=spec",
+    "test:unit:isolated": "tsx --test --test-reporter=spec",
     "test:workspaces": "npm run test --if-present --workspaces",
     "update-one-mocked-organization": "UPDATE_SNAPSHOT=True tsx mocks/entreprise.api.gouv.fr/add-establishment.ts",
     "update-matomo-container": "tsx scripts/update-matomo-container.ts",
@@ -142,6 +144,7 @@
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^3.0.2",
     "@dotenvx/dotenvx": "^1.61.0",
+    "@electric-sql/pglite": "^0.3.12",
     "@fullhuman/postcss-purgecss": "^8.0.0",
     "@gouvfr/dsfr": "^1.14.2",
     "@kitajs/html": "^4.2.9",

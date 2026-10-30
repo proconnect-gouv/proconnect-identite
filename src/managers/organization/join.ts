@@ -59,14 +59,13 @@ import { usesAFreeEmailProvider } from "../../services/email";
 import { logger, track } from "../../services/log";
 import {
   hasLessThanFiftyEmployees,
-  isArmeeDomain,
   isCommune,
-  isEducationNationaleDomain,
   isEtablissementScolaireDuPremierEtSecondDegre,
   isSmallAssociation,
   isSmallOrganization,
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
+import { getOrganizationSuggestions as getOrganizationSuggestionsWith } from "./organization-suggestions";
 
 const { email_domains, moderations, organizations, users } = context.repository;
 
@@ -109,52 +108,15 @@ export const getOrganizationSuggestions = async ({
 }: {
   user_id: number;
   email: string;
-}): Promise<Organization[]> => {
-  if (usesAFreeEmailProvider(email)) {
-    return [];
-  }
-
-  const userOrganizations = await organizations.findByUserId(user_id);
-  if (!isEmpty(userOrganizations)) {
-    return [];
-  }
-
-  const domain = getEmailDomain(email);
-
-  if (isEducationNationaleDomain(domain)) {
-    return [];
-  }
-
-  if (isArmeeDomain(domain)) {
-    const armeeOrganization = await organizations.findBySiret("11009001600053");
-    if (armeeOrganization) {
-      return [armeeOrganization];
-    }
-  }
-
-  const organizationsSuggestions =
-    await organizations.findByVerifiedEmailDomain(domain);
-
-  if (organizationsSuggestions.length <= MAX_SUGGESTED_ORGANIZATIONS) {
-    return organizationsSuggestions;
-  }
-
-  // if the number of suggestions is too high,
-  // only suggest organizations that represent 20% of the total member count
-
-  const totalMemberCount = organizationsSuggestions.reduce(
-    (sum, org) => sum + (org.member_count ?? 0),
-    0,
+}): Promise<Organization[]> =>
+  getOrganizationSuggestionsWith(
+    { email, user_id },
+    {
+      maxSuggestedOrganizations: MAX_SUGGESTED_ORGANIZATIONS,
+      organizations,
+      usesAFreeEmailProvider,
+    },
   );
-
-  if (totalMemberCount === 0) {
-    return [];
-  }
-
-  return organizationsSuggestions.filter(
-    (org) => (org.member_count ?? 0) / totalMemberCount >= 0.2,
-  );
-};
 
 export const upsertOrganization = async (siret: string) =>
   match(await getOrganizationInfo(siret))
