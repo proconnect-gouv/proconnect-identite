@@ -1,5 +1,6 @@
 //
 
+export { default as AccountRecovered } from "./AccountRecovered.js";
 export { default as Add2fa } from "./Add2fa.js";
 export { default as AddAccessKey } from "./AddAccessKey.js";
 export { default as CancelModeration } from "./CancelModeration.js";
