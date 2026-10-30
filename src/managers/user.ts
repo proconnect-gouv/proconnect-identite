@@ -46,7 +46,7 @@ import {
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, runtime } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
@@ -613,7 +613,9 @@ export async function lastFranceConnectIdentityUpdate(userId: number) {
 }
 
 export async function disconnectFranceConnectIdentity(userId: number) {
-  return franceconnect_userinfo.delete(userId);
+  return await runtime
+    .as({ type: "user", user_id: userId })
+    .disconnectFranceConnect({ user_id: userId });
 }
 
 export async function needsFranceConnectIdentityRenewal(userId: number) {
@@ -624,18 +626,15 @@ export async function updateFranceConnectUserInfo(
   userId: number,
   userInfo: FranceConnectUserInfoResponse,
 ) {
-  const { family_name, preferred_username, given_name } = userInfo;
-  const newFamilyName = preferred_username || family_name;
-  const newGivenName = given_name.split(" ")[0];
-  const user = await users.update(userId, {
-    family_name: newFamilyName,
-    given_name: newGivenName,
-  });
-  await franceconnect_userinfo.upsert({
-    ...userInfo,
-    user_id: userId,
-  });
-  return user;
+  const outcome = await runtime
+    .as({ type: "user", user_id: userId })
+    .connectFranceConnect({ user_id: userId, user_info: userInfo });
+
+  if (outcome.kind === "user_not_found") {
+    throw new NotFoundError();
+  }
+
+  return (await users.findById(userId))!;
 }
 
 export async function getGivenNameOptionsFromFranceConnectIdentity(
