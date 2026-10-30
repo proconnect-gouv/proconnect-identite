@@ -1,5 +1,21 @@
 # @proconnect-gouv/proconnect.identite
 
+## 14.0.0
+
+### Major Changes
+
+- [#2387](https://github.com/proconnect-gouv/proconnect-identite/pull/2387) [`e4b4789`](https://github.com/proconnect-gouv/proconnect-identite/commit/e4b4789b5eb0ad01d9b4ce216fe81cce40a2c70b) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `createUserOrganizationFactory` (`repositories/user_organisation`), exposé aussi par `connectors`. L'application identite rattache maintenant un membre à une organisation avec `addMembership` du runtime, qui crée le rattachement et écrit la ligne `member.joined` dans la même transaction.
+
+- [#2390](https://github.com/proconnect-gouv/proconnect-identite/pull/2390) [`03426c3`](https://github.com/proconnect-gouv/proconnect-identite/commit/03426c325f3439e0ee9587a2088d51e62589fe04) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `createModerationFactory` (`repositories/moderation`), exposé aussi par `connectors`. L'application identite ouvre maintenant une modération avec `openModeration` du runtime, qui crée la modération et écrit la ligne `moderation.opened` dans la même transaction.
+
+- [#2389](https://github.com/proconnect-gouv/proconnect-identite/pull/2389) [`cc30f4f`](https://github.com/proconnect-gouv/proconnect-identite/commit/cc30f4f98277b7833b7ca5949f5617916be3b2e2) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `deleteUserFactory` (`repositories/user`), exposé aussi par `connectors`. L'application identite supprime maintenant un compte avec `deleteUser` du runtime, qui fait la suppression et écrit la ligne `user.deleted` dans la même transaction.
+
+- [#2386](https://github.com/proconnect-gouv/proconnect-identite/pull/2386) [`0791585`](https://github.com/proconnect-gouv/proconnect-identite/commit/0791585ecd627035cb1a633dbc20956a08f58ad7) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `deleteFranceconnectUserinfoFactory` et `upsertFranceconnectUserinfoFactory` (`repositories/franceconnect_userinfo`), exposés aussi par `connectors`. L'application identite relie et délie maintenant une identité FranceConnect avec `connectFranceConnect` et `disconnectFranceConnect` du runtime, qui écrivent la ligne `franceconnect.connected` ou `franceconnect.disconnected` dans la même transaction que la modification.
+
+- [#2384](https://github.com/proconnect-gouv/proconnect-identite/pull/2384) [`27b202a`](https://github.com/proconnect-gouv/proconnect-identite/commit/27b202a9a33f7143c9e62e4831e24341ce320749) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `deleteUserOrganizationFactory` (`repositories/user_organisation`), exposé aussi par `connectors`. L'application identite supprime maintenant un rattachement avec `removeMembership` du runtime, qui fait la suppression et écrit la ligne `member.removed` dans la même transaction.
+
+- [#2391](https://github.com/proconnect-gouv/proconnect-identite/pull/2391) [`c8d53f1`](https://github.com/proconnect-gouv/proconnect-identite/commit/c8d53f17eeb1b0caff4b5e9031f7cee2b31dec1b) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `updateUserOrganizationFactory` (`repositories/user_organisation`), exposé aussi par `connectors`. L'application identite modifie maintenant un rattachement avec `updateMembership` du runtime, qui fait la modification et écrit la ligne `member.updated` dans la même transaction.
+
 ## 13.0.0
 
 ### Major Changes
