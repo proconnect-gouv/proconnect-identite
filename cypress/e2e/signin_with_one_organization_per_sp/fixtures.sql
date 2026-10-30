@@ -82,8 +82,7 @@ INSERT INTO
     organization_id,
     is_external,
     verification_type,
-    verified_at,
-    has_been_greeted
+    verified_at
   )
 VALUES
   (
@@ -91,10 +90,9 @@ VALUES
     1,
     false,
     'organization_dirigeant',
-    CURRENT_TIMESTAMP,
-    true
+    CURRENT_TIMESTAMP
   ),
-  (1, 2, false, 'domain', CURRENT_TIMESTAMP, true);
+  (1, 2, false, 'domain', CURRENT_TIMESTAMP);
 
 INSERT INTO
   oidc_clients (

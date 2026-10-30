@@ -44,7 +44,6 @@ suite("getUserOrganizationFactory", () => {
 
     assert.deepEqual(link, {
       created_at: new Date("4444-04-04"),
-      has_been_greeted: false,
       is_external: false,
       organization_id: 1,
       updated_at: new Date("4444-04-04"),

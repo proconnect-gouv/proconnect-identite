@@ -65,18 +65,16 @@ INSERT INTO
     organization_id,
     is_external,
     verified_at,
-    verification_type,
-    has_been_greeted
+    verification_type
   )
 VALUES
-  (1, 1, false, null, 'domain', true),
+  (1, 1, false, null, 'domain'),
   (
     2,
     1,
     false,
     CURRENT_TIMESTAMP,
-    'organization_dirigeant',
-    true
+    'organization_dirigeant'
   );
 
 INSERT INTO

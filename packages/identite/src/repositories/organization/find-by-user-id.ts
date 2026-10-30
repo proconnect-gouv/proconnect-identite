@@ -17,8 +17,7 @@ export function findByUserIdFactory({ pg }: DatabaseContext) {
           SELECT o.*,
                  uo.is_external,
                  uo.verification_type,
-                 uo.verified_at,
-                 uo.has_been_greeted
+                 uo.verified_at
           FROM organizations o
                  INNER JOIN users_organizations uo ON uo.organization_id = o.id
           WHERE uo.user_id = $1

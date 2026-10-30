@@ -58,9 +58,8 @@ INSERT INTO
     user_id,
     organization_id,
     is_external,
-    verification_type,
-    has_been_greeted
+    verification_type
   )
 VALUES
-  (1, 1, false, 'domain', true),
-  (2, 1, false, 'domain', true);
+  (1, 1, false, 'domain'),
+  (2, 1, false, 'domain');

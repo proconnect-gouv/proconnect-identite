@@ -49,11 +49,10 @@ INSERT INTO
     organization_id,
     is_external,
     verified_at,
-    verification_type,
-    has_been_greeted
+    verification_type
   )
 VALUES
-  (1, 1, false, null, 'domain', true);
+  (1, 1, false, null, 'domain');
 
 INSERT INTO
   oidc_clients (

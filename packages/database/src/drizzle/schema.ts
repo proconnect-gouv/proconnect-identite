@@ -405,7 +405,6 @@ export const users_organizations = pgTable(
       .default("1970-01-01 00:00:00")
       .notNull(),
     verification_type: varchar().notNull(),
-    has_been_greeted: boolean().default(false).notNull(),
     verified_at: timestamp({ withTimezone: true, mode: "string" }),
   },
   (table) => [
