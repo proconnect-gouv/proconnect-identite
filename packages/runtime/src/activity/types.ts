@@ -7,7 +7,8 @@ import type * as z from "zod";
 
 export type Actor =
   | { type: "app"; job: string }
-  | { type: "moderator"; sub: string };
+  | { type: "moderator"; sub: string }
+  | { type: "user"; user_id: number };
 
 export type App = "hyyypertool" | "proconnect-identite";
 

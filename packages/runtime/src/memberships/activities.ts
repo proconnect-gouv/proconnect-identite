@@ -14,4 +14,11 @@ export const membershipActivities = {
       verification_type: LinkEnum,
     }),
   }),
+  "member.removed": z.object({
+    inputs: z.object({}),
+    outcome: z.object({
+      is_external: z.boolean(),
+      verification_type: z.string(),
+    }),
+  }),
 };

@@ -61,7 +61,6 @@ import {
 } from "#src/repositories/user";
 import {
   createUserOrganizationFactory,
-  deleteUserOrganizationFactory,
   findUserOrganizationFactory,
   getUserOrganizationFactory,
   updateUserOrganizationFactory,
@@ -141,7 +140,6 @@ export function createContext({
       },
       users_organizations: {
         create: createUserOrganizationFactory({ pg }),
-        delete: deleteUserOrganizationFactory({ pg }),
         find: findUserOrganizationFactory({ pg }),
         get: getUserOrganizationFactory({ pg }),
         update: updateUserOrganizationFactory({ pg }),
