@@ -46,14 +46,7 @@ INSERT INTO
     user_id,
     organization_id,
     is_external,
-    verification_type,
-    has_been_greeted
+    verification_type
   )
 VALUES
-  (
-    1,
-    1,
-    false,
-    'imported_from_inclusion_connect',
-    false
-  );
+  (1, 1, false, 'imported_from_inclusion_connect');

@@ -145,37 +145,33 @@ INSERT INTO
     organization_id,
     is_external,
     verified_at,
-    verification_type,
-    has_been_greeted
+    verification_type
   )
 VALUES
-  (1, 1, false, null, 'domain', true),
+  (1, 1, false, null, 'domain'),
   (
     2,
     1,
     false,
     null,
-    'no_verification_means_for_entreprise_unipersonnelle',
-    true
+    'no_verification_means_for_entreprise_unipersonnelle'
   ),
-  (3, 1, false, null, 'domain', true),
-  (4, 1, false, null, 'domain', true),
-  (5, 1, false, null, 'domain', true),
+  (3, 1, false, null, 'domain'),
+  (4, 1, false, null, 'domain'),
+  (5, 1, false, null, 'domain'),
   (
     6,
     1,
     false,
     CURRENT_TIMESTAMP,
-    'organization_dirigeant',
-    true
+    'organization_dirigeant'
   ),
   (
     7,
     1,
     false,
     CURRENT_TIMESTAMP,
-    'organization_dirigeant',
-    true
+    'organization_dirigeant'
   );
 
 INSERT INTO
