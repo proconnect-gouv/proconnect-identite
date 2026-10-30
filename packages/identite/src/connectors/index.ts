@@ -14,7 +14,6 @@ import {
 } from "#src/repositories/email-domain";
 import { findFranceconnectUserinfoFactory } from "#src/repositories/franceconnect_userinfo";
 import {
-  createModerationFactory,
   deleteModerationFactory,
   findModerationByIdFactory,
   findPendingModerationFactory,
@@ -101,7 +100,6 @@ export function createContext({
           findEmailDomainsByOrganizationIdFactory({ pg }),
       },
       moderations: {
-        create: createModerationFactory({ pg }),
         delete: deleteModerationFactory({ pg }),
         findById: findModerationByIdFactory({ pg }),
         findPending: findPendingModerationFactory({ pg }),
