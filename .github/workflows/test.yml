@@ -25,3 +25,46 @@ jobs:
       - run: npm run lint
       - run: npm run test:workspaces
       - run: npm run test:unit
+
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.6
+        env:
+          POSTGRES_USER: proconnect-identite
+          POSTGRES_PASSWORD: proconnect-identite
+          POSTGRES_DB: proconnect-identite
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7.2.16
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          cache: "npm"
+          node-version-file: package.json
+      - run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+          NPM_CONFIG_AUDIT: false
+          NPM_CONFIG_FUND: false
+          NPM_CONFIG_UPDATE_NOTIFIER: false
+      - run: npm run build:workspaces
+      - run: npx node-pg-migrate -j ts up
+        env:
+          DATABASE_URL: postgres://proconnect-identite:proconnect-identite@localhost:5432/proconnect-identite
+      - run: npm run test:integration

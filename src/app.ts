@@ -1,0 +1,372 @@
+import { createTestingHandler } from "@proconnect-gouv/proconnect.testing/api";
+import * as Sentry from "@sentry/node";
+import { RedisStore } from "connect-redis";
+import type { NextFunction, Request, Response } from "express";
+import express from "express";
+import session, { type SessionData } from "express-session";
+import fs from "fs";
+import helmet from "helmet";
+import HttpErrors from "http-errors";
+import morgan from "morgan";
+import path from "path";
+import { ZodError } from "zod";
+import {
+  ACCESS_LOG_PATH,
+  FEATURE_MOUNT_MOCKED_EXTERNAL_APIS,
+  FEATURE_USE_SECURE_COOKIES,
+  FEATURE_USE_SECURITY_RESPONSE_HEADERS,
+  FRANCECONNECT_ISSUER,
+  NODE_ENV,
+  SESSION_COOKIE_SECRET,
+  SESSION_MAX_AGE_IN_SECONDS,
+} from "./config/env";
+import { OidcError } from "./config/errors";
+import { createOidcProvider } from "./config/oidc-provider";
+import { getNewRedisClient } from "./connectors/redis";
+import { trustedBrowserMiddleware } from "./managers/browser-authentication";
+import { StoredSessionSchema } from "./managers/session/session-data";
+import {
+  defaultRateLimiterMiddleware,
+  machineToMachineRateLimiterMiddleware,
+} from "./middlewares/rate-limiter";
+import { apiRouter } from "./routers/api";
+import { interactionRouter } from "./routers/interaction";
+import { mainRouter } from "./routers/main";
+import { userRouter } from "./routers/user";
+import { jsonParseWithDate } from "./services/json-parse-with-date";
+import { current_trace_id, logger, track } from "./services/log";
+import {
+  ejsLayoutMiddlewareFactory,
+  renderWithEjsLayout,
+} from "./services/renderer";
+import { usesAuthHeaders } from "./services/uses-auth-headers";
+
+export const createApp = async () => {
+  const app = express();
+  const oidcProvider = await createOidcProvider();
+
+  if (FEATURE_USE_SECURITY_RESPONSE_HEADERS) {
+    app.use(
+      helmet({
+        hsts: false,
+        frameguard: false,
+      }),
+    );
+
+    const cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
+      const cspConfig = {
+        directives: {
+          defaultSrc: ["'self'"],
+          imgSrc: ["'self'", "data:", "stats.data.gouv.fr"],
+          connectSrc: ["'self'", "stats.data.gouv.fr"],
+          frameSrc: ["'self'"],
+          scriptSrc: ["'self'", "blob:"],
+          fontSrc: ["'self'", "data:"],
+          // As for https://github.com/w3c/webappsec-csp/issues/8, the feature is debated
+          // and seems not useful for open id provider redirection.
+          // We bypass this security for now.
+          formAction: ["'self'", "*"],
+        },
+      };
+
+      helmet.contentSecurityPolicy(cspConfig)(req, res, next);
+    };
+    app.use(cspMiddleware);
+  }
+
+  // Disable etag globally to avoid triggering invalid csrf token error
+  // Note that express.static always sends weak ETags.
+  app.set("etag", false);
+
+  let morganOption: morgan.Options<Request, Response> = {
+    skip: (req: Request, _res: Response) => req.baseUrl?.startsWith("/dist"),
+  };
+  if (ACCESS_LOG_PATH) {
+    morganOption.stream = fs.createWriteStream(ACCESS_LOG_PATH, { flags: "a" });
+  }
+  const httpLogger = morgan(
+    (tokens, req, res) =>
+      JSON.stringify({
+        "client.address": tokens["remote-addr"](req, res),
+        duration_ms: Number(tokens["response-time"](req, res)),
+        "event.name": "http.request.completed",
+        "http.request.header.referer": tokens["referrer"](req, res),
+        "http.request.method": tokens["method"](req, res),
+        "http.response.body.size": Number(
+          tokens["res"](req, res, "content-length"),
+        ),
+        "http.response.status_code": Number(tokens["status"](req, res)),
+        level: "info",
+        "network.protocol.version": tokens["http-version"](req, res),
+        timestamp: new Date().toISOString(),
+        trace_id: current_trace_id(),
+        url: tokens["url"](req, res),
+        "user_agent.original": tokens["user-agent"](req, res),
+      }),
+    morganOption,
+  );
+  app.use(httpLogger);
+
+  app.set("trust proxy", 1);
+
+  const sessionMiddleware = session({
+    store: new RedisStore({
+      client: getNewRedisClient(),
+      prefix: "mcp:session:",
+      serializer: {
+        parse: (serializedSession: string) => {
+          const result = StoredSessionSchema.safeParse(
+            jsonParseWithDate(serializedSession),
+          );
+          if (result.success) return result.data;
+          logger.error(result.error);
+          Sentry.captureException(result.error);
+          return null as unknown as SessionData;
+        },
+        stringify: JSON.stringify,
+      },
+    }),
+    name: "session",
+    cookie: {
+      maxAge: SESSION_MAX_AGE_IN_SECONDS * 1000,
+      secure: FEATURE_USE_SECURE_COOKIES,
+      sameSite: "lax",
+    },
+    secret: SESSION_COOKIE_SECRET,
+    // future default
+    resave: false,
+    // future default
+    saveUninitialized: false,
+  });
+
+  // Prevent creation of sessions for API calls on /oauth or /api routes
+  app.use(function preventSessionCreationMiddleware(req, res, next) {
+    if (usesAuthHeaders(req)) {
+      return next();
+    }
+    return sessionMiddleware(req, res, next);
+  });
+
+  app.use(trustedBrowserMiddleware);
+
+  // oidc-provider tags its own routes from the interaction it loads
+  app.use(function tagInteractionCidMiddleware(req, _res, next) {
+    if (!req.path.startsWith("/oauth/")) {
+      Sentry.getIsolationScope().addEventProcessor((event) => {
+        const cid = req.session?.interactionCid;
+        if (cid) {
+          event.tags = { ...event.tags, "oidc.interaction_cid": cid };
+        }
+        return event;
+      });
+    }
+    next();
+  });
+
+  app.set("views", path.join(import.meta.dirname, "views"));
+  app.set("view engine", "ejs");
+
+  app.use(
+    "/dist/mail-proconnect.png",
+    (req, res, next) => {
+      return helmet.crossOriginResourcePolicy({
+        policy: "cross-origin",
+      })(req, res, next);
+    },
+    express.static("dist/mail-proconnect.png", {
+      maxAge: NODE_ENV === "development" ? undefined : 7 * 24 * 60 * 60 * 1000,
+    }),
+  );
+  /*
+   * `dist` folder is generated by vite.
+   * Vite transforms js and css from /assets to /dist,
+   * and copies static files from /public to /dist folder.
+   * Our express app serves those static files. Vite only takes care of generating files in dev/while building.
+   *
+   * Do not cache in dev for easier workflow. Otherwise cache for 1 week
+   */
+  app.use(
+    "/dist",
+    express.static("dist", {
+      maxAge: NODE_ENV === "development" ? undefined : 7 * 24 * 60 * 60 * 1000,
+    }),
+  );
+  app.get("/favicon.ico", function (_req, res, _next) {
+    return res.sendFile("favicons/favicon.ico", {
+      root: "public",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+  });
+
+  app.get("/robots.txt", function (_req, res) {
+    res.type("text/plain");
+    res.send("User-agent: *\nDisallow: /");
+  });
+
+  const MACHINE_TO_MACHINE_PATHS = [
+    "/.well-known/openid-configuration",
+    "/oauth/jwks",
+    "/oauth/request",
+    "/oauth/token",
+    "/oauth/token/introspection",
+    "/oauth/userinfo",
+  ];
+
+  app.use((req, res, next) => {
+    if (MACHINE_TO_MACHINE_PATHS.includes(req.path)) {
+      return machineToMachineRateLimiterMiddleware(req, res, next);
+    }
+
+    return defaultRateLimiterMiddleware(req, res, (err) => {
+      if (err) {
+        // If an error occurs, add the EJS layout middleware to render a properly formatted 429 error page
+        return ejsLayoutMiddlewareFactory(app)(req, res, () => next(err));
+      }
+
+      return next();
+    });
+  });
+
+  app.use("/", mainRouter(app));
+  app.use(
+    "/interaction",
+    ejsLayoutMiddlewareFactory(app),
+    interactionRouter(oidcProvider),
+  );
+
+  app.use("/users", ejsLayoutMiddlewareFactory(app), userRouter());
+  app.use("/api", apiRouter());
+
+  app.use(async (req, _res, next) => {
+    if (req.url === "/.well-known/openid-configuration") {
+      req.url = "/oauth/.well-known/openid-configuration";
+    }
+    next();
+  });
+
+  app.use("/oauth", oidcProvider.callback());
+
+  if (FEATURE_MOUNT_MOCKED_EXTERNAL_APIS) {
+    app.use(
+      "/___testing___",
+      createTestingHandler("/", {
+        ISSUER: FRANCECONNECT_ISSUER,
+        log: logger.warn,
+      }),
+    );
+  }
+
+  app.use(async (req, res, _next) => {
+    res.setHeader("Content-Type", "text/html");
+    res.status(404).send(
+      await renderWithEjsLayout("not-found-error", {
+        pageTitle: "Page introuvable",
+        oidcError: "invalid_request",
+        oidcErrorDescription: "Page not found",
+        interactionId: req.session?.interactionId,
+      }),
+    );
+  });
+
+  // The error handler must be before any other error middleware and after all controllers
+  Sentry.setupExpressErrorHandler(app);
+
+  app.use(function errorHandler(
+    err: HttpErrors.HttpError | ZodError | Error,
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) {
+    logger.error(err);
+
+    if (
+      err instanceof HttpErrors.HttpError &&
+      err["code"] === "EBADCSRFTOKEN"
+    ) {
+      track("csrf.token.invalid", {
+        has_body_token: typeof req.body?._csrf === "string",
+        has_session_token: typeof req.session?.csrfToken === "string",
+        method: req.method,
+      });
+    }
+
+    if (req.path.startsWith("/api/")) {
+      if (err instanceof HttpErrors.HttpError) {
+        const statusCode = err?.statusCode || 500;
+
+        return res
+          .status(statusCode)
+          .json({ message: err.message || err["statusMessage"] });
+      }
+
+      return res.status(500).json({ message: err.message });
+    }
+
+    if (err instanceof HttpErrors.HttpError) {
+      if (err.statusCode === 404) {
+        return res.status(404).render("not-found-error", {
+          // force not to use dashboard layout in case the error is shown within a dashboard page
+          use_dashboard_layout: false,
+          oidcError: "invalid_request",
+          oidcErrorDescription: "Page not found",
+          interactionId: req.session.interactionId,
+        });
+      }
+      if (err.statusCode === 429) {
+        return res.status(429).render("too-many-requests-error", {
+          error_message: err.message,
+          // force not to use dashboard layout in case the error is shown within a dashboard page
+          use_dashboard_layout: false,
+          oidcError: "server_error",
+          oidcErrorDescription: "Too many requests",
+          interactionId: req.session.interactionId,
+        });
+      }
+      return res.status(err.statusCode || 500).render("error", {
+        error_code: err.statusCode || err,
+        error_message: err.message,
+        // force not to use dashboard layout in case the error is shown within a dashboard page
+        use_dashboard_layout: false,
+        oidcError: "server_error",
+        oidcErrorDescription: HttpErrors(err.statusCode || 500).message,
+        interactionId: req.session.interactionId,
+      });
+    }
+
+    if (err instanceof ZodError) {
+      return res.status(400).render("error", {
+        error_code: 400,
+        error_message: err.message,
+        // force not to use dashboard layout in case the error is shown within a dashboard page
+        use_dashboard_layout: false,
+        oidcError: "invalid_request",
+        oidcErrorDescription: "Bad request",
+        interactionId: req.session.interactionId,
+      });
+    }
+
+    if (err instanceof OidcError) {
+      return res.status(400).render("error", {
+        error_code: err.error,
+        error_message: err.error_description,
+        // force not to use dashboard layout in case the error is shown within a dashboard page
+        use_dashboard_layout: false,
+        oidcError: err.error,
+        oidcErrorDescription: err.error_description,
+        interactionId: req.session.interactionId,
+      });
+    }
+
+    return res.status(500).render("error", {
+      error_code: err,
+      error_message: err.message,
+      // force not to use dashboard layout in case the error is shown within a dashboard page
+      use_dashboard_layout: false,
+      oidcError: "server_error",
+      oidcErrorDescription: "Unexpected error",
+      interactionId: req.session.interactionId,
+    });
+  });
+
+  return app;
+};

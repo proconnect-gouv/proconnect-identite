@@ -1,10 +1,10 @@
 import {
   db,
-  emptyDatabase,
-  insertEmailDomain,
-  insertMembership,
-  insertOrganization,
-  insertUser,
+  empty_database,
+  insert_email_domain,
+  insert_membership,
+  insert_organization,
+  insert_user,
   migrate,
 } from "#testing";
 import { isAFreeDomain } from "@proconnect-gouv/proconnect.core/services/email";
@@ -26,7 +26,7 @@ const suggest = ({ email, user_id }: { email: string; user_id: number }) =>
 
 describe("getOrganizationSuggestions", () => {
   before(migrate);
-  beforeEach(emptyDatabase);
+  beforeEach(async () => empty_database(db));
 
   it("suggests an active organization owning the email domain", async () => {
     const [{ id: organization_id }] = await db
@@ -39,7 +39,7 @@ describe("getOrganizationSuggestions", () => {
         siret: "🦁",
       })
       .returning({ id: organizations.id });
-    await insertEmailDomain({
+    await insert_email_domain(db, {
       domain: "darkangels.world",
       organization_id,
       verification_type: "verified",
@@ -79,27 +79,27 @@ describe("getOrganizationSuggestions", () => {
   });
 
   it("ignores inactive organizations, refused domains and unrelated domains", async () => {
-    const inactive_organization_id = await insertOrganization({
+    const inactive_organization_id = await insert_organization(db, {
       cached_est_active: false,
       siret: "🦁",
     });
-    await insertEmailDomain({
+    await insert_email_domain(db, {
       domain: "darkangels.world",
       organization_id: inactive_organization_id,
       verification_type: "verified",
     });
-    const refused_domain_organization_id = await insertOrganization({
+    const refused_domain_organization_id = await insert_organization(db, {
       siret: "🦅",
     });
-    await insertEmailDomain({
+    await insert_email_domain(db, {
       domain: "darkangels.world",
       organization_id: refused_domain_organization_id,
       verification_type: "refused",
     });
-    const pending_domain_organization_id = await insertOrganization({
+    const pending_domain_organization_id = await insert_organization(db, {
       siret: "🦉",
     });
-    await insertEmailDomain({
+    await insert_email_domain(db, {
       domain: "darkangels.world",
       organization_id: pending_domain_organization_id,
       verification_type: "not_verified_yet",
@@ -114,8 +114,8 @@ describe("getOrganizationSuggestions", () => {
   });
 
   it("returns no suggestions when no organization owns the email domain", async () => {
-    const organization_id = await insertOrganization({ siret: "🦁" });
-    await insertEmailDomain({
+    const organization_id = await insert_organization(db, { siret: "🦁" });
+    await insert_email_domain(db, {
       domain: "darkangels.world",
       organization_id,
       verification_type: "verified",
@@ -130,14 +130,16 @@ describe("getOrganizationSuggestions", () => {
   });
 
   it("returns no suggestions when the user already belongs to an organization", async () => {
-    const user_id = await insertUser({ email: "prospect@darkangels.world" });
-    const organization_id = await insertOrganization({ siret: "🦁" });
-    await insertEmailDomain({
+    const user_id = await insert_user(db, {
+      email: "prospect@darkangels.world",
+    });
+    const organization_id = await insert_organization(db, { siret: "🦁" });
+    await insert_email_domain(db, {
       domain: "darkangels.world",
       organization_id,
       verification_type: "verified",
     });
-    await insertMembership({ organization_id, user_id });
+    await insert_membership(db, { organization_id, user_id });
 
     const suggestions = await suggest({
       email: "prospect@darkangels.world",
@@ -148,8 +150,8 @@ describe("getOrganizationSuggestions", () => {
   });
 
   it("returns no suggestions for a free email provider address", async () => {
-    const organization_id = await insertOrganization({ siret: "🦁" });
-    await insertEmailDomain({
+    const organization_id = await insert_organization(db, { siret: "🦁" });
+    await insert_email_domain(db, {
       domain: "gmail.com",
       organization_id,
       verification_type: "verified",
@@ -166,8 +168,8 @@ describe("getOrganizationSuggestions", () => {
   it("keeps only the organizations above 20% of the members when there are too many suggestions", async () => {
     const organization_ids: number[] = [];
     for (const siret of ["🦁", "🦅", "🦉", "🦄"]) {
-      const organization_id = await insertOrganization({ siret });
-      await insertEmailDomain({
+      const organization_id = await insert_organization(db, { siret });
+      await insert_email_domain(db, {
         domain: "darkangels.world",
         organization_id,
         verification_type: "verified",
@@ -179,20 +181,20 @@ describe("getOrganizationSuggestions", () => {
     const member_ids: number[] = [];
     for (const member of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) {
       member_ids.push(
-        await insertUser({ email: `member${member}@darkangels.world` }),
+        await insert_user(db, { email: `member${member}@darkangels.world` }),
       );
     }
     for (const user_id of member_ids.slice(0, 5)) {
-      await insertMembership({ organization_id: first, user_id });
+      await insert_membership(db, { organization_id: first, user_id });
     }
     for (const user_id of member_ids.slice(5, 7)) {
-      await insertMembership({ organization_id: second, user_id });
+      await insert_membership(db, { organization_id: second, user_id });
     }
     for (const user_id of member_ids.slice(7, 8)) {
-      await insertMembership({ organization_id: third, user_id });
+      await insert_membership(db, { organization_id: third, user_id });
     }
     for (const user_id of member_ids.slice(8)) {
-      await insertMembership({ organization_id: fourth, user_id });
+      await insert_membership(db, { organization_id: fourth, user_id });
     }
 
     const suggestions = await suggest({
@@ -209,8 +211,8 @@ describe("getOrganizationSuggestions", () => {
 
   it("returns no suggestions when the matching organizations have no matching members", async () => {
     for (const siret of ["🦁", "🦅", "🦉", "🦄"]) {
-      const organization_id = await insertOrganization({ siret });
-      await insertEmailDomain({
+      const organization_id = await insert_organization(db, { siret });
+      await insert_email_domain(db, {
         domain: "darkangels.world",
         organization_id,
         verification_type: "verified",
@@ -235,8 +237,10 @@ describe("getOrganizationSuggestions", () => {
         siret: "11009001600053",
       })
       .returning({ id: organizations.id });
-    const other_organization_id = await insertOrganization({ siret: "🦁" });
-    await insertEmailDomain({
+    const other_organization_id = await insert_organization(db, {
+      siret: "🦁",
+    });
+    await insert_email_domain(db, {
       domain: "intradef.gouv.fr",
       organization_id: other_organization_id,
       verification_type: "verified",
@@ -259,8 +263,8 @@ describe("getOrganizationSuggestions", () => {
   });
 
   it("returns no suggestions for education nationale email addresses", async () => {
-    const organization_id = await insertOrganization({ siret: "🦁" });
-    await insertEmailDomain({
+    const organization_id = await insert_organization(db, { siret: "🦁" });
+    await insert_email_domain(db, {
       domain: "ac-paris.fr",
       organization_id,
       verification_type: "verified",

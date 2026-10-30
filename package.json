@@ -6,7 +6,8 @@
   "type": "module",
   "imports": {
     "#cypress/*": "./cypress/*.ts",
-    "#testing": "./testing/index.ts"
+    "#testing": "./testing/index.ts",
+    "#testing/*": "./testing/*.ts"
   },
   "main": "src/index.js",
   "workspaces": [
@@ -47,6 +48,7 @@
     "test": "run-s test:*",
     "lint": "prettier --check '**/*.{ts,sql}' && npm run type:check",
     "type:check": "tsc --noEmit",
+    "test:integration": "NODE_ENV=test tsx --test --test-reporter=spec \"src/**/*.http-test.ts\"",
     "test:unit": "npm run test:unit:runner \"src/**/*.test.ts\" \"test/**/*.test.ts\"",
     "test:unit:runner": "tsx --env-file=.env.test --test --test-reporter=spec",
     "test:unit:isolated": "tsx --test --test-reporter=spec",
@@ -165,6 +167,7 @@
     "@types/oidc-provider": "^9.5.0",
     "@types/pg": "^8.23.1",
     "@types/qrcode": "^1.5.5",
+    "@types/supertest": "^7.2.1",
     "axe-core": "^4.12.1",
     "concurrently": "^10.0.6",
     "copy-and-watch": "^0.1.8",
@@ -181,6 +184,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-sql": "^0.19.2",
+    "supertest": "^7.3.1",
     "tld-extract": "^2.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.3.7",
