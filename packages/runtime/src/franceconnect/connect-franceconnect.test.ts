@@ -1,23 +1,15 @@
 //
 
-import type { RuntimeContext } from "#src/activity";
 import type { IdentiteDatabase } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
-import { PGlite } from "@electric-sql/pglite";
+import { createTestDatabase, readActivityLogs } from "#testing";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
-import { migrate } from "@proconnect-gouv/proconnect.identite.database/pglite/migrator";
 import type { FranceConnectUserInfoResponse } from "@proconnect-gouv/proconnect.identite/types";
 import { sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/pglite";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 //
-
-const user_connecting = {
-  actor: { type: "user", user_id: 1 },
-  app: "proconnect-identite",
-} satisfies Pick<RuntimeContext, "actor" | "app">;
 
 const user_info: FranceConnectUserInfoResponse = {
   birthcountry: "99100",
@@ -29,11 +21,8 @@ const user_info: FranceConnectUserInfoResponse = {
   sub: "fc-sub-jean",
 };
 
-async function setup({ actor, app }: Pick<RuntimeContext, "actor" | "app">) {
-  const pg = new PGlite();
-  await migrate(pg);
-  const db = drizzle(pg, { schema });
-  await db.execute(sql`SET search_path TO public`);
+async function setup() {
+  const db = await createTestDatabase();
 
   await db.insert(schema.users).values([
     {
@@ -56,13 +45,16 @@ async function setup({ actor, app }: Pick<RuntimeContext, "actor" | "app">) {
 
   return {
     db,
-    runtime: createIdentiteRuntime({ app, db }).as(actor),
+    runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
+      type: "user",
+      user_id: 1,
+    }),
   };
 }
 
 describe("connectFranceConnect", () => {
   it("✅ links the identity, copies the FranceConnect names and journals it", async () => {
-    const { db, runtime } = await setup(user_connecting);
+    const { db, runtime } = await setup();
 
     const outcome = await runtime.connectFranceConnect({
       user_id: 1,
@@ -91,7 +83,7 @@ describe("connectFranceConnect", () => {
         user_id: 1,
       },
     ]);
-    assert.deepEqual(await activityLogs(db), [
+    assert.deepEqual(await readActivityLogs(db), [
       {
         action: "franceconnect.connected",
         actor_ref: "1",
@@ -111,7 +103,7 @@ describe("connectFranceConnect", () => {
   });
 
   it("✅ replaces an existing identity and keeps its creation date", async () => {
-    const { db, runtime } = await setup(user_connecting);
+    const { db, runtime } = await setup();
     await db.insert(schema.franceconnect_userinfo).values({
       created_at: "4444-04-04",
       family_name: "Valjean",
@@ -141,11 +133,11 @@ describe("connectFranceConnect", () => {
         user_id: 1,
       },
     ]);
-    assert.equal((await activityLogs(db)).length, 1);
+    assert.equal((await readActivityLogs(db)).length, 1);
   });
 
   it("❎ returns user_not_found for an unknown user and writes nothing", async () => {
-    const { db, runtime } = await setup(user_connecting);
+    const { db, runtime } = await setup();
 
     const outcome = await runtime.connectFranceConnect({
       user_id: 404,
@@ -154,11 +146,11 @@ describe("connectFranceConnect", () => {
 
     assert.deepEqual(outcome, { kind: "user_not_found", user_id: 404 });
     assert.deepEqual(await identities(db), []);
-    assert.deepEqual(await activityLogs(db), []);
+    assert.deepEqual(await readActivityLogs(db), []);
   });
 
   it("❎ rolls back the names and the identity when the journal insert fails", async () => {
-    const { db, runtime } = await setup(user_connecting);
+    const { db, runtime } = await setup();
     await db.execute(sql`
       ALTER TABLE activity_logs
         ADD CONSTRAINT activity_logs_never_franceconnect_connected
@@ -201,12 +193,5 @@ function identities(db: IdentiteDatabase) {
       user_id: true,
     },
     orderBy: (table, { asc }) => asc(table.user_id),
-  });
-}
-
-function activityLogs(db: IdentiteDatabase) {
-  return db.query.activity_logs.findMany({
-    columns: { created_at: false, id: false },
-    orderBy: (table, { asc }) => asc(table.id),
   });
 }

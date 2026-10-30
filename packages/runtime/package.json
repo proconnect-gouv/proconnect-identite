@@ -15,7 +15,8 @@
     "#src/*": {
       "types": "./dist/*/index.d.ts",
       "default": "./dist/*/index.js"
-    }
+    },
+    "#testing": "./testing/index.ts"
   },
   "exports": {
     ".": {
