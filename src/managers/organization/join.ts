@@ -17,9 +17,9 @@ import {
   EmailDomainVerificationEnum,
   LinkEnum,
   ModerationTypeSchema,
+  type InsertUserOrganizationLink,
   type Organization,
   type User,
-  type UserOrganizationLink,
 } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import { isEmpty, some } from "lodash-es";
@@ -68,13 +68,26 @@ import {
 } from "../../services/organization";
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
 
-const {
-  email_domains,
-  moderations,
-  organizations,
-  users_organizations,
-  users,
-} = context.repository;
+const { email_domains, moderations, organizations, users } = context.repository;
+
+async function addMembership({
+  user_id,
+  ...input
+}: InsertUserOrganizationLink): Promise<{
+  organization_id: number;
+  user_id: number;
+}> {
+  const outcome = await runtime
+    .as({ type: "user", user_id })
+    .addMembership({ user_id, ...input });
+
+  return match(outcome)
+    .with({ kind: "member_joined" }, ({ membership }) => membership)
+    .with({ kind: "member_already_exists" }, () => {
+      throw new UserInOrganizationAlreadyError();
+    })
+    .exhaustive();
+}
 
 export const doSuggestOrganizations = async ({
   user_id,
@@ -180,7 +193,7 @@ export const joinOrganization = async ({
   confirmed: boolean;
   certificationRequested?: boolean;
   sp_name?: string;
-}): Promise<UserOrganizationLink> => {
+}): Promise<{ organization_id: number; user_id: number }> => {
   const { siret } = organization;
 
   // Ensure the organization is active
@@ -259,7 +272,7 @@ export const joinOrganization = async ({
   }
 
   if (isEntrepriseUnipersonnelle(organization)) {
-    return await users_organizations.create({
+    return await addMembership({
       organization_id,
       user_id,
       verification_type:
@@ -268,7 +281,7 @@ export const joinOrganization = async ({
   }
 
   if (isSmallAssociation(organization) && usesAFreeEmailProvider(email)) {
-    return await users_organizations.create({
+    return await addMembership({
       organization_id,
       user_id,
       verification_type:
@@ -277,7 +290,7 @@ export const joinOrganization = async ({
   }
 
   if (isSmallOrganization(organization) && usesAFreeEmailProvider(email)) {
-    return await users_organizations.create({
+    return await addMembership({
       organization_id,
       user_id,
       verification_type:
@@ -374,7 +387,7 @@ export const joinOrganization = async ({
       }
 
       if (contactEmail === email) {
-        return await users_organizations.create({
+        return await addMembership({
           organization_id,
           user_id,
           verification_type: LinkEnum.enum.official_contact_email,
@@ -382,7 +395,7 @@ export const joinOrganization = async ({
       }
 
       if (!usesAFreeEmailProvider(contactEmail) && contactDomain === domain) {
-        return await users_organizations.create({
+        return await addMembership({
           organization_id,
           user_id,
           verification_type: LinkEnum.enum.domain,
@@ -425,7 +438,7 @@ export const joinOrganization = async ({
     }
 
     if (contactEmail === email) {
-      return await users_organizations.create({
+      return await addMembership({
         organization_id,
         user_id,
         verification_type: LinkEnum.enum.official_contact_email,
@@ -444,7 +457,7 @@ export const joinOrganization = async ({
   );
 
   if (approvedEmailDomain) {
-    return await users_organizations.create({
+    return await addMembership({
       organization_id,
       user_id,
       is_external:
@@ -455,7 +468,7 @@ export const joinOrganization = async ({
   }
 
   if (FEATURE_BYPASS_MODERATION) {
-    return await users_organizations.create({
+    return await addMembership({
       organization_id,
       user_id,
       verification_type: LinkEnum.enum.bypassed,
@@ -475,7 +488,7 @@ export const joinOrganization = async ({
       ticket_id: null,
       sp_name,
     });
-    return await users_organizations.create({
+    return await addMembership({
       organization_id,
       user_id,
       verification_type: LinkEnum.enum.domain_not_verified_yet,

@@ -11,7 +11,10 @@ import type {
 import type { IdentiteTransaction } from "#src/database";
 import { markDomainAsVerifiedFactory } from "#src/domains";
 import { insertActivity } from "#src/journal";
-import { removeMembershipFactory } from "#src/memberships";
+import {
+  addMembershipFactory,
+  removeMembershipFactory,
+} from "#src/memberships";
 
 //
 
@@ -23,6 +26,7 @@ export function createIdentiteRuntime<
   return {
     as(actor: Actor) {
       return {
+        addMembership: addMembershipFactory({ actor, app, db }),
         markDomainAsVerified: markDomainAsVerifiedFactory({ actor, app, db }),
         removeMembership: removeMembershipFactory({ actor, app, db }),
         record: (
