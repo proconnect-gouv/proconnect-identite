@@ -1,4 +1,9 @@
-import { captureEvent, getActiveSpan, getIsolationScope } from "@sentry/node";
+import {
+  captureEvent,
+  getActiveSpan,
+  getIsolationScope,
+  startSpan,
+} from "@sentry/node";
 import { format } from "node:util";
 import { z } from "zod";
 import { LOG_LEVEL } from "../config/env";
@@ -89,5 +94,33 @@ export function track(name: string, details: TrackDetails) {
     ...Object.fromEntries(
       Object.entries(details).map(([key, value]) => [key, detail_value(value)]),
     ),
+  });
+}
+
+type InstrumentOptions = {
+  op?: string;
+};
+
+export function instrument<T extends object>(
+  name: string,
+  object: T,
+  { op = "function" }: InstrumentOptions = {},
+): T {
+  return new Proxy(object, {
+    get(target, property, receiver) {
+      const value: unknown = Reflect.get(target, property, receiver);
+      if (typeof value !== "function") return value;
+      const method = String(property);
+      return (...args: unknown[]) =>
+        startSpan(
+          {
+            attributes: { "object.method": method, "object.name": name },
+            name: `${name}.${method}`,
+            onlyIfParent: true,
+            op,
+          },
+          () => Reflect.apply(value, target, args),
+        );
+    },
   });
 }
