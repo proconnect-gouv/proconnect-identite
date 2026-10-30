@@ -35,6 +35,12 @@ function toActorColumns({ actor, app }: Pick<RuntimeContext, "actor" | "app">) {
       return { actor_ref: actor.job, actor_type: "app", app } as const;
     case "moderator":
       return { actor_ref: actor.sub, actor_type: "moderator", app } as const;
+    case "user":
+      return {
+        actor_ref: String(actor.user_id),
+        actor_type: "user",
+        app,
+      } as const;
     default: {
       const unhandled_actor: never = actor;
       throw new Error(`Unhandled actor: ${JSON.stringify(unhandled_actor)}`);

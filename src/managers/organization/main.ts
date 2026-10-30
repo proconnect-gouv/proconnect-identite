@@ -3,14 +3,14 @@ import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request } from "express";
 import { isEmpty } from "lodash-es";
-import { context } from "../../connectors/context";
+import { context, runtime } from "../../connectors/context";
 import { sendMail } from "../../connectors/mail";
 import {
   getUserFromAuthenticatedSession,
   setSelectedOrganizationIdInAuthenticatedSession,
 } from "../session/authenticated";
 
-const { organizations, users, users_organizations } = context.repository;
+const { organizations, users } = context.repository;
 
 export const getUserOrganizations = async (
   userId: number,
@@ -37,12 +37,11 @@ export const quitOrganization = async ({
     throw new NotFoundError();
   }
 
-  const hasBeenRemoved = await users_organizations.delete({
-    user_id,
-    organization_id,
-  });
+  const { kind } = await runtime
+    .as({ type: "user", user_id })
+    .removeMembership({ organization_id, user_id });
 
-  if (!hasBeenRemoved) {
+  if (kind === "membership_not_found") {
     throw new NotFoundError();
   }
 
