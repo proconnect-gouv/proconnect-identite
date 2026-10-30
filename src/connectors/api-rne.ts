@@ -16,6 +16,7 @@ import {
   RNE_API_PASSWORD,
   RNE_API_USERNAME,
 } from "../config/env";
+import { instrument } from "../services/log";
 
 //
 
@@ -54,7 +55,7 @@ export const RegistreNationalEntreprisesTestClient =
 
 //
 
-export const ApiRegistreNationalEntreprisesClient = {
+const ApiRegistreNationalEntreprisesClientUntraced = {
   async findPouvoirsBySiren(siren: string) {
     const client = FEATURE_MOCK_RNE_API
       ? RegistreNationalEntreprisesTestClient
@@ -68,3 +69,11 @@ export const ApiRegistreNationalEntreprisesClient = {
     return client.findCompanyBySiren(siren);
   },
 };
+
+export const ApiRegistreNationalEntreprisesClient = instrument(
+  "api_rne",
+  ApiRegistreNationalEntreprisesClientUntraced,
+  {
+    op: "http.client",
+  },
+);

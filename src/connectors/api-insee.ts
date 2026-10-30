@@ -19,6 +19,7 @@ import {
   INSEE_API_URL,
   INSEE_API_USERNAME,
 } from "../config/env";
+import { instrument } from "../services/log";
 
 //
 
@@ -56,7 +57,7 @@ const ApiInseeTest = createApiInseeClient(inseeOpenApiTestClient, () =>
 
 //
 
-export const ApiInseeClient = {
+const ApiInseeClientUntraced = {
   findBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
@@ -76,3 +77,7 @@ export const ApiInseeClient = {
     return client.findBySiret(siret);
   },
 };
+
+export const ApiInseeClient = instrument("api_insee", ApiInseeClientUntraced, {
+  op: "http.client",
+});

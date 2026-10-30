@@ -16,6 +16,7 @@ import {
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API,
   HTTP_CLIENT_TIMEOUT,
 } from "../config/env";
+import { instrument } from "../services/log";
 
 //
 
@@ -56,7 +57,7 @@ const ApiEntrepriseTest = createApiEntrepriseClient(
 
 //
 
-export const ApiEntrepriseClient = {
+const ApiEntrepriseClientUntraced = {
   findBySiren(siren: string) {
     const client =
       FEATURE_PARTIALLY_MOCK_EXTERNAL_API &&
@@ -87,3 +88,11 @@ export const ApiEntrepriseClient = {
     return client.findMandatairesSociauxBySiren(siren);
   },
 };
+
+export const ApiEntrepriseClient = instrument(
+  "api_entreprise",
+  ApiEntrepriseClientUntraced,
+  {
+    op: "http.client",
+  },
+);

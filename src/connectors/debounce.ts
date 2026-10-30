@@ -8,18 +8,22 @@ import {
   FEATURE_MOCK_DEBOUNCE_API,
   HTTP_CLIENT_TIMEOUT,
 } from "../config/env";
-import { logger } from "../services/log";
+import { instrument, logger } from "../services/log";
 
 type EmailDebounceInfo = {
   isEmailSafeToSend: boolean;
   didYouMean?: string;
 };
 
-const debounceClient: DebounceClientType = FEATURE_MOCK_DEBOUNCE_API
-  ? mockDebounceClientFactory()
-  : debounceClientFactory(DEBOUNCE_API_KEY, {
-      timeout: HTTP_CLIENT_TIMEOUT,
-    });
+const debounceClient: DebounceClientType = instrument(
+  "debounce",
+  FEATURE_MOCK_DEBOUNCE_API
+    ? mockDebounceClientFactory()
+    : debounceClientFactory(DEBOUNCE_API_KEY, {
+        timeout: HTTP_CLIENT_TIMEOUT,
+      }),
+  { op: "http.client" },
+);
 
 export const pingDebounceApi = debounceClient.ping;
 
