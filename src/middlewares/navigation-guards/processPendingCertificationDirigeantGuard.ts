@@ -1,6 +1,7 @@
 import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import HttpErrors from "http-errors";
 import isEmpty from "lodash-es/isEmpty";
+import { match } from "ts-pattern";
 import {
   CertificationDirigeantCloseMatchError,
   CertificationDirigeantNoMatchError,
@@ -23,6 +24,7 @@ import {
   getUserFromAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import { hasValidFranceConnectIdentity } from "../../managers/user";
+import { track } from "../../services/log";
 import { userHasPersonalInformationsGuard } from "./guards";
 import { Pass, type RequestContext } from "./internals";
 import {
@@ -99,16 +101,46 @@ export const processPendingCertificationDirigeantGuard = async (
         verification_type: LinkEnum.enum.organization_dirigeant,
       });
 
-    if (membership.kind === "member_already_exists") {
-      await users_organizations.update(
-        { organization_id, user_id },
-        {
+    const outcome =
+      membership.kind === "member_already_exists"
+        ? await runtime.as({ type: "user", user_id }).updateMembership({
+            organization_id,
+            renew_verification: true,
+            user_id,
+            verification_type: LinkEnum.enum.organization_dirigeant,
+          })
+        : membership;
+
+    match(outcome)
+      .with({ kind: "member_joined" }, ({ activity_id }) =>
+        track("certification_dirigeant.member.joined", {
+          activity_id,
+          organization_id,
+          user_id,
+        }),
+      )
+      .with({ kind: "member_updated" }, ({ activity_id, previous }) =>
+        track("certification_dirigeant.member.updated", {
+          activity_id,
+          organization_id,
+          previous_verification_type: previous.verification_type,
+          user_id,
           verification_type: LinkEnum.enum.organization_dirigeant,
-          verified_at: new Date(),
-          has_been_greeted: false,
-        },
-      );
-    }
+        }),
+      )
+      .with({ kind: "membership_unchanged" }, () =>
+        track("certification_dirigeant.member.unchanged", {
+          organization_id,
+          user_id,
+        }),
+      )
+      .with({ kind: "membership_not_found" }, () =>
+        track("certification_dirigeant.membership.not_found", {
+          organization_id,
+          user_id,
+        }),
+      )
+      .exhaustive();
 
     await selectOrganization({ req, organization_id });
 

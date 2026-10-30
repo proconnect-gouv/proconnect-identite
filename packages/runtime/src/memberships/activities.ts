@@ -28,4 +28,17 @@ export const membershipActivities = {
       verification_type: z.string(),
     }),
   }),
+  "member.updated": z.object({
+    inputs: z.object({
+      is_external: z.boolean().optional(),
+      renew_verification: z.boolean().optional(),
+      verification_type: z.string().optional(),
+    }),
+    outcome: z.object({
+      previous: z.object({
+        is_external: z.boolean(),
+        verification_type: z.string(),
+      }),
+    }),
+  }),
 };

@@ -18,6 +18,7 @@ import { insertActivity } from "#src/journal";
 import {
   addMembershipFactory,
   removeMembershipFactory,
+  updateMembershipFactory,
 } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
 import { deleteUserFactory, resetMfaFactory } from "#src/users";
@@ -48,6 +49,7 @@ export function createIdentiteRuntime<
           activity: ActivityOf<OwnContexts> & ActivityTargets,
         ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
         resetMfa: resetMfaFactory({ actor, app, db }),
+        updateMembership: updateMembershipFactory({ actor, app, db }),
       };
     },
   };
