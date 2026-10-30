@@ -39,6 +39,17 @@ describe("join and moderation", () => {
         );
         cy.maildevDeleteMessageById(email.id);
       });
+
+      cy.task(
+        "psql",
+        "SELECT m.status, m.moderated_at IS NOT NULL AS moderated FROM moderations m INNER JOIN users u ON u.id = m.user_id WHERE u.email = 'lion.eljonson@darkangels.world'",
+      ).should("deep.equal", [{ moderated: true, status: "cancelled" }]);
+      cy.task(
+        "psql",
+        "SELECT action, actor_type FROM activity_logs WHERE action = 'moderation.cancelled'",
+      ).should("deep.equal", [
+        { action: "moderation.cancelled", actor_type: "user" },
+      ]);
     });
 
     it("redirects instead of erroring when a moderation is cancelled twice", function () {

@@ -6,7 +6,7 @@ import {
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, runtime } from "../connectors/context";
 import { sendMail } from "../connectors/mail";
 
 const { moderations, organizations } = context.repository;
@@ -54,9 +54,14 @@ export const cancelModeration = async ({
     throw new NotFoundError();
   }
 
-  const result = await moderations.delete(moderation_id);
-  if (!result) {
-    throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
+  const cancellation = await runtime
+    .as({ type: "user", user_id: user.id })
+    .cancelModeration({ moderation_id });
+
+  if (cancellation.kind !== "moderation_cancelled") {
+    throw new ModerationNotFoundError(
+      `Moderation ${moderation_id} is ${cancellation.kind}`,
+    );
   }
 
   await sendMail({
@@ -70,7 +75,7 @@ export const cancelModeration = async ({
     tag: "cancel-moderation",
   });
 
-  return result;
+  return cancellation;
 };
 
 export const reopenModerationWithUserEdit = async ({

@@ -1,6 +1,5 @@
 //
 
-export * from "./delete-moderation.js";
 export * from "./find-moderation-by-id.js";
 export * from "./find-pending-moderation.js";
 export * from "./find-rejected-moderation.js";
