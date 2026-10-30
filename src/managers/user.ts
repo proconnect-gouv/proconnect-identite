@@ -7,6 +7,7 @@ import {
 } from "@proconnect-gouv/proconnect.core/security";
 import { getDidYouMeanSuggestion } from "@proconnect-gouv/proconnect.core/services/suggestion";
 import {
+  AccountRecovered,
   Add2fa,
   AddAccessKey,
   Delete2faProtection,
@@ -285,6 +286,25 @@ export const sendDeleteAccessKeyMail = async ({
       key_name,
     }).toString(),
     tag: "delete-access-key",
+  });
+};
+
+export const sendAccountRecoveredMail = async ({
+  user_id,
+}: {
+  user_id: number;
+}) => {
+  const { given_name, family_name, email } = await users.getById(user_id);
+
+  return sendMail({
+    to: [email],
+    subject: "Votre compte a été récupéré avec vos mots de secours",
+    html: AccountRecovered({
+      family_name: family_name ?? "",
+      given_name: given_name ?? "",
+      support_email: "support+identite@proconnect.gouv.fr",
+    }).toString(),
+    tag: "account-recovered",
   });
 };
 

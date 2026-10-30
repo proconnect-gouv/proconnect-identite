@@ -17,7 +17,7 @@ import {
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
-import { sendDisable2faMail } from "../managers/user";
+import { sendAccountRecoveredMail, sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
 import { recoveryWordsSchema } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
@@ -337,6 +337,8 @@ export const postSignInWithRecoveryWordsController = async (
     const updatedUser = await signInWithRecoveryWords(user_id, recovery_words);
 
     updateUserInAuthenticatedSession(req, updatedUser);
+
+    await sendAccountRecoveredMail({ user_id });
 
     return res.redirect("/users/account-recovered");
   } catch (error) {
