@@ -33,7 +33,6 @@ import {
 import {
   findBySiretFactory,
   findByUserIdFactory,
-  findByVerifiedEmailDomainFactory,
   findOrganizationByIdFactory,
   findPendingByUserIdFactory,
   getOrganizationByIdFactory,
@@ -119,7 +118,6 @@ export function createContext({
         findById: findOrganizationByIdFactory({ pg }),
         findBySiret: findBySiretFactory({ pg }),
         findByUserId: findByUserIdFactory({ pg }),
-        findByVerifiedEmailDomain: findByVerifiedEmailDomainFactory({ pg }),
         findPendingByUserId: findPendingByUserIdFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),
         upsert: upsertFactory({ pg }),

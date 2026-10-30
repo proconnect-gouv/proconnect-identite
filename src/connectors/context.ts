@@ -20,6 +20,8 @@ const contextUntraced = createContext({
   pg: getDatabaseConnection(),
 });
 
+export const db = drizzle(getDatabaseConnection(), { schema });
+
 export const context: typeof contextUntraced = {
   client: contextUntraced.client,
   repository: {
@@ -72,7 +74,7 @@ export const context: typeof contextUntraced = {
 
 const runtimeUntraced = createIdentiteRuntime({
   app: "proconnect-identite",
-  db: drizzle(getDatabaseConnection(), { schema }),
+  db,
 });
 
 export const runtime: typeof runtimeUntraced = {

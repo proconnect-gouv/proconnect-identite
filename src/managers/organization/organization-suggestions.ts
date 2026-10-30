@@ -1,5 +1,11 @@
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
-import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
+import { users_organizations } from "@proconnect-gouv/proconnect.identite.database/drizzle";
+import type { IdentiteDatabase } from "@proconnect-gouv/proconnect.identite.runtime";
+import { eq } from "drizzle-orm";
+import {
+  findOrganizationBySiret,
+  findOrganizationsByVerifiedEmailDomain,
+} from "../../repositories/organization";
 import {
   isArmeeDomain,
   isEducationNationaleDomain,
@@ -9,19 +15,9 @@ import {
 
 const ARMEE_ORGANIZATION_SIRET = "11009001600053";
 
-export type SuggestedOrganization = Organization & {
-  member_count: number | null;
-};
-
 export type OrganizationSuggestionsDependencies = {
+  db: IdentiteDatabase;
   maxSuggestedOrganizations: number;
-  organizations: {
-    findBySiret: (siret: string) => Promise<Organization | undefined>;
-    findByUserId: (user_id: number) => Promise<Organization[]>;
-    findByVerifiedEmailDomain: (
-      domain: string,
-    ) => Promise<SuggestedOrganization[]>;
-  };
   usesAFreeEmailProvider: (email: string) => boolean;
 };
 
@@ -30,17 +26,21 @@ export type OrganizationSuggestionsDependencies = {
 export async function getOrganizationSuggestions(
   { email, user_id }: { email: string; user_id: number },
   {
+    db,
     maxSuggestedOrganizations,
-    organizations,
     usesAFreeEmailProvider,
   }: OrganizationSuggestionsDependencies,
-): Promise<Organization[]> {
+) {
   if (usesAFreeEmailProvider(email)) {
     return [];
   }
 
-  const userOrganizations = await organizations.findByUserId(user_id);
-  if (userOrganizations.length > 0) {
+  const [membership] = await db
+    .select({ organization_id: users_organizations.organization_id })
+    .from(users_organizations)
+    .where(eq(users_organizations.user_id, user_id))
+    .limit(1);
+  if (membership) {
     return [];
   }
 
@@ -51,7 +51,8 @@ export async function getOrganizationSuggestions(
   }
 
   if (isArmeeDomain(domain)) {
-    const armeeOrganization = await organizations.findBySiret(
+    const armeeOrganization = await findOrganizationBySiret(
+      db,
       ARMEE_ORGANIZATION_SIRET,
     );
     if (armeeOrganization) {
@@ -59,8 +60,10 @@ export async function getOrganizationSuggestions(
     }
   }
 
-  const organizationsSuggestions =
-    await organizations.findByVerifiedEmailDomain(domain);
+  const organizationsSuggestions = await findOrganizationsByVerifiedEmailDomain(
+    db,
+    domain,
+  );
 
   if (organizationsSuggestions.length <= maxSuggestedOrganizations) {
     return organizationsSuggestions;
@@ -70,7 +73,7 @@ export async function getOrganizationSuggestions(
   // only suggest organizations that represent 20% of the total member count
 
   const totalMemberCount = organizationsSuggestions.reduce(
-    (sum, org) => sum + (org.member_count ?? 0),
+    (sum, { member_count }) => sum + member_count,
     0,
   );
 
@@ -79,6 +82,6 @@ export async function getOrganizationSuggestions(
   }
 
   return organizationsSuggestions.filter(
-    (org) => (org.member_count ?? 0) / totalMemberCount >= 0.2,
+    ({ member_count }) => member_count / totalMemberCount >= 0.2,
   );
 }

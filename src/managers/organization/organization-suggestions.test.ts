@@ -1,5 +1,5 @@
 import {
-  client,
+  db,
   emptyDatabase,
   insertEmailDomain,
   insertMembership,
@@ -8,27 +8,16 @@ import {
   migrate,
 } from "#testing";
 import { isAFreeDomain } from "@proconnect-gouv/proconnect.core/services/email";
-import {
-  findBySiretFactory,
-  findByUserIdFactory,
-  findByVerifiedEmailDomainFactory,
-} from "@proconnect-gouv/proconnect.identite/repositories/organization";
+import { organizations } from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
-import type { Pool } from "pg";
 import { getOrganizationSuggestions } from "./organization-suggestions";
 
 //
 
-const pg = client as unknown as Pool;
-
 const dependencies = {
+  db,
   maxSuggestedOrganizations: 3,
-  organizations: {
-    findBySiret: findBySiretFactory({ pg }),
-    findByUserId: findByUserIdFactory({ pg }),
-    findByVerifiedEmailDomain: findByVerifiedEmailDomainFactory({ pg }),
-  },
   usesAFreeEmailProvider: isAFreeDomain,
 };
 
@@ -40,7 +29,16 @@ describe("getOrganizationSuggestions", () => {
   beforeEach(emptyDatabase);
 
   it("suggests an active organization owning the email domain", async () => {
-    const organization_id = await insertOrganization({ siret: "🦁" });
+    const [{ id: organization_id }] = await db
+      .insert(organizations)
+      .values({
+        cached_adresse: "1 rue de la Paix",
+        cached_est_active: true,
+        cached_libelle: "Dark Angels",
+        cached_siege_social: true,
+        siret: "🦁",
+      })
+      .returning({ id: organizations.id });
     await insertEmailDomain({
       domain: "darkangels.world",
       organization_id,
@@ -53,10 +51,31 @@ describe("getOrganizationSuggestions", () => {
     });
 
     assert.deepEqual(
-      suggestions.map(({ id }) => id),
-      [organization_id],
+      suggestions.map(
+        ({
+          cached_adresse,
+          cached_libelle,
+          cached_siege_social,
+          id,
+          siret,
+        }) => ({
+          cached_adresse,
+          cached_libelle,
+          cached_siege_social,
+          id,
+          siret,
+        }),
+      ),
+      [
+        {
+          cached_adresse: "1 rue de la Paix",
+          cached_libelle: "Dark Angels",
+          cached_siege_social: true,
+          id: organization_id,
+          siret: "🦁",
+        },
+      ],
     );
-    assert.ok(suggestions[0]?.created_at instanceof Date);
   });
 
   it("ignores inactive organizations, refused domains and unrelated domains", async () => {
@@ -181,11 +200,11 @@ describe("getOrganizationSuggestions", () => {
       user_id: 100,
     });
 
-    assert.deepEqual(suggestions.map(({ id }) => id).sort(), [
-      first,
-      second,
-      fourth,
-    ]);
+    assert.equal(suggestions[0]?.id, first);
+    assert.deepEqual(
+      new Set(suggestions.map(({ id }) => id)),
+      new Set([first, second, fourth]),
+    );
   });
 
   it("returns no suggestions when the matching organizations have no matching members", async () => {
@@ -207,9 +226,15 @@ describe("getOrganizationSuggestions", () => {
   });
 
   it("suggests the army organization for army email addresses", async () => {
-    const army_organization_id = await insertOrganization({
-      siret: "11009001600053",
-    });
+    const [{ id: army_organization_id }] = await db
+      .insert(organizations)
+      .values({
+        cached_adresse: "60 boulevard du Général Martial Valin",
+        cached_libelle: "Ministère des Armées",
+        cached_siege_social: false,
+        siret: "11009001600053",
+      })
+      .returning({ id: organizations.id });
     const other_organization_id = await insertOrganization({ siret: "🦁" });
     await insertEmailDomain({
       domain: "intradef.gouv.fr",
@@ -222,10 +247,15 @@ describe("getOrganizationSuggestions", () => {
       user_id: 1,
     });
 
-    assert.deepEqual(
-      suggestions.map(({ id }) => id),
-      [army_organization_id],
-    );
+    assert.deepEqual(suggestions, [
+      {
+        cached_adresse: "60 boulevard du Général Martial Valin",
+        cached_libelle: "Ministère des Armées",
+        cached_siege_social: false,
+        id: army_organization_id,
+        siret: "11009001600053",
+      },
+    ]);
   });
 
   it("returns no suggestions for education nationale email addresses", async () => {
