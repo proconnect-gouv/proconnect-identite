@@ -1,5 +1,12 @@
 # @proconnect-gouv/proconnect.identite.runtime
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`33604f3`](https://github.com/proconnect-gouv/proconnect-identite/commit/33604f32fb4393ec60e413f0b7bace8e94ac22fc)]:
+  - @proconnect-gouv/proconnect.identite@15.0.0
+
 ## 0.4.0
 
 ### Minor Changes
