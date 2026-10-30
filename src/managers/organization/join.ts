@@ -481,12 +481,12 @@ export const joinOrganization = async ({
       verification_type: EmailDomainVerificationEnum.enum.not_verified_yet,
     })
   ) {
-    await moderations.create({
-      user_id,
+    await runtime.as({ type: "user", user_id }).openModeration({
       organization_id,
-      type: ModerationTypeSchema.enum.non_verified_domain,
-      ticket_id: null,
       sp_name,
+      ticket_id: null,
+      type: ModerationTypeSchema.enum.non_verified_domain,
+      user_id,
     });
     return await addMembership({
       organization_id,
@@ -555,11 +555,15 @@ export const createPendingModeration = async ({
     });
   }
 
-  return moderations.create({
-    user_id,
-    organization_id,
-    sp_name,
-    type: ModerationTypeSchema.enum.organization_join_block,
-    ticket_id,
-  });
+  const { moderation } = await runtime
+    .as({ type: "user", user_id })
+    .openModeration({
+      organization_id,
+      sp_name,
+      ticket_id,
+      type: ModerationTypeSchema.enum.organization_join_block,
+      user_id,
+    });
+
+  return moderation;
 };

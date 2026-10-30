@@ -19,6 +19,7 @@ import {
   addMembershipFactory,
   removeMembershipFactory,
 } from "#src/memberships";
+import { openModerationFactory } from "#src/moderations";
 import { deleteUserFactory } from "#src/users";
 
 //
@@ -40,6 +41,7 @@ export function createIdentiteRuntime<
           db,
         }),
         markDomainAsVerified: markDomainAsVerifiedFactory({ actor, app, db }),
+        openModeration: openModerationFactory({ actor, app, db }),
         removeMembership: removeMembershipFactory({ actor, app, db }),
         record: (
           tx: IdentiteTransaction,
