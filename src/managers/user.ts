@@ -217,9 +217,15 @@ export const sendEmailAddressVerificationEmail = async ({
   return { codeSent: true, updatedUser };
 };
 
-export const sendDeleteUserEmail = async ({ user_id }: { user_id: number }) => {
-  const { given_name, family_name, email } = await users.getById(user_id);
-
+export const sendDeleteUserEmail = async ({
+  email,
+  family_name,
+  given_name,
+}: {
+  email: string;
+  family_name: string | null;
+  given_name: string | null;
+}) => {
   return sendMail({
     to: [email],
     subject: "Suppression de compte",

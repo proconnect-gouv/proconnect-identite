@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { context } from "../../connectors/context";
+import { runtime } from "../../connectors/context";
 import {
   destroyAuthenticatedSession,
   getUserFromAuthenticatedSession,
@@ -7,22 +7,26 @@ import {
 import { sendDeleteUserEmail } from "../../managers/user";
 import { logger } from "../../services/log";
 
-const { users } = context.repository;
-
 export const postDeleteUserController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { id, email } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    await sendDeleteUserEmail({ user_id: id });
-
-    await users.delete(id);
-    logger.info(`user ${email} successfully deleted`);
+    const deletion = await runtime
+      .as({ type: "user", user_id })
+      .deleteUser({ user_id });
 
     await destroyAuthenticatedSession(req);
+
+    if (deletion.kind === "user_not_found") {
+      return res.redirect("/users/start-sign-in");
+    }
+
+    logger.info(`user ${deletion.previous.email} successfully deleted`);
+    await sendDeleteUserEmail(deletion.previous);
 
     return res.redirect(
       `/users/start-sign-in?notification=user_successfully_deleted`,
