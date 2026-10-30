@@ -19,6 +19,7 @@ import {
   addMembershipFactory,
   removeMembershipFactory,
 } from "#src/memberships";
+import { deleteUserFactory } from "#src/users";
 
 //
 
@@ -32,6 +33,7 @@ export function createIdentiteRuntime<
       return {
         addMembership: addMembershipFactory({ actor, app, db }),
         connectFranceConnect: connectFranceConnectFactory({ actor, app, db }),
+        deleteUser: deleteUserFactory({ actor, app, db }),
         disconnectFranceConnect: disconnectFranceConnectFactory({
           actor,
           app,

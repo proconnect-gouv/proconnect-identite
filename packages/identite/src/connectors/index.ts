@@ -47,7 +47,6 @@ import {
 } from "#src/repositories/recovery-words";
 import {
   createUserFactory,
-  deleteUserFactory,
   findByEmailFactory,
   findByMagicLinkTokenFactory,
   findByResetPasswordTokenFactory,
@@ -140,7 +139,6 @@ export function createContext({
       },
       users: {
         create: createUserFactory({ pg }),
-        delete: deleteUserFactory({ pg }),
         findByEmail: findByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
         findByMagicLinkToken: findByMagicLinkTokenFactory({ pg }),
