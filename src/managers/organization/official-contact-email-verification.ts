@@ -1,17 +1,15 @@
 import { generateDicewarePhrase } from "@proconnect-gouv/proconnect.core/security";
 import { OfficialContactEmailVerification } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
-import type {
-  Organization,
-  UserOrganizationLink,
-} from "@proconnect-gouv/proconnect.identite/types";
+import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
+import { match } from "ts-pattern";
 import { OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES } from "../../config/env";
 import { ApiAnnuaireError, InvalidTokenError } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
-import { context } from "../../connectors/context";
+import { context, runtime } from "../../connectors/context";
 import { sendMail } from "../../connectors/mail";
 import { isExpired } from "../../services/is-expired";
 import {
@@ -179,7 +177,7 @@ export const verifyOfficialContactEmailToken = async ({
   user_id: number;
   organization_id: number;
   token: string;
-}): Promise<UserOrganizationLink> => {
+}): Promise<{ organization_id: number; user_id: number }> => {
   const user = await users.findById(user_id);
   const organization = await organizations.findById(organization_id);
   const officialContactEmailVerification =
@@ -216,9 +214,16 @@ export const verifyOfficialContactEmailToken = async ({
     throw new InvalidTokenError();
   }
 
-  return await users_organizations.create({
-    user_id,
-    organization_id,
-    verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
-  });
+  return match(
+    await runtime.as({ type: "user", user_id }).addMembership({
+      user_id,
+      organization_id,
+      verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
+    }),
+  )
+    .with({ kind: "member_joined" }, ({ membership }) => membership)
+    .with({ kind: "member_already_exists" }, () => {
+      throw new InvalidTokenError();
+    })
+    .exhaustive();
 };

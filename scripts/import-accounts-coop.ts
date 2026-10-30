@@ -11,7 +11,7 @@ import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
-import { context } from "../src/connectors/context";
+import { context, runtime } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
 import { logger } from "../src/services/log";
@@ -23,7 +23,7 @@ import {
   throttleApiCall,
 } from "../src/services/script-helpers";
 
-const { organizations, users_organizations, users } = context.repository;
+const { organizations, users } = context.repository;
 
 //
 
@@ -208,12 +208,14 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
           // 4. create the user-organization link
           const usersOrganizations = await organizations.findByUserId(user.id);
           if (!some(usersOrganizations, ["id", organization.id])) {
-            await users_organizations.create({
-              organization_id: organization.id,
-              user_id: user.id,
-              verification_type:
-                LinkEnum.enum.imported_from_coop_mediation_numerique,
-            });
+            await runtime
+              .as({ type: "app", job: "script.import_accounts_coop" })
+              .addMembership({
+                organization_id: organization.id,
+                user_id: user.id,
+                verification_type:
+                  LinkEnum.enum.imported_from_coop_mediation_numerique,
+              });
           }
         } catch (error) {
           logger.error(`unexpected error for siret ${siret}`);

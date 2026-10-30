@@ -10,7 +10,7 @@ import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
-import { context } from "../src/connectors/context";
+import { context, runtime } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
 import { logger } from "../src/services/log";
@@ -22,7 +22,7 @@ import {
   throttleApiCall,
 } from "../src/services/script-helpers";
 
-const { organizations, users_organizations, users } = context.repository;
+const { organizations, users } = context.repository;
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({
     INPUT_FILE: z.string().default("./input.csv"),
@@ -197,12 +197,14 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               user.id,
             );
             if (!some(usersOrganizations, ["id", organization.id])) {
-              await users_organizations.create({
-                organization_id: organization.id,
-                user_id: user.id,
-                verification_type:
-                  LinkEnum.enum.imported_from_inclusion_connect,
-              });
+              await runtime
+                .as({ type: "app", job: "script.import_accounts" })
+                .addMembership({
+                  organization_id: organization.id,
+                  user_id: user.id,
+                  verification_type:
+                    LinkEnum.enum.imported_from_inclusion_connect,
+                });
             }
           } catch (error) {
             logger.error(`unexpected error for siret: ${siret}`);

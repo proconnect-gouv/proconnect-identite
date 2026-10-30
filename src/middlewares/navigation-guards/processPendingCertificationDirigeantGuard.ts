@@ -6,7 +6,7 @@ import {
   CertificationDirigeantNoMatchError,
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../../config/errors";
-import { context } from "../../connectors/context";
+import { context, runtime } from "../../connectors/context";
 import {
   getCertificationDirigeantCloseMatchErrorUrl,
   processCertificationDirigeantOrThrow,
@@ -91,7 +91,15 @@ export const processPendingCertificationDirigeantGuard = async (
 
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
 
-    if (await users_organizations.find({ organization_id, user_id })) {
+    const membership = await runtime
+      .as({ type: "user", user_id })
+      .addMembership({
+        user_id,
+        organization_id: organization.id,
+        verification_type: LinkEnum.enum.organization_dirigeant,
+      });
+
+    if (membership.kind === "member_already_exists") {
       await users_organizations.update(
         { organization_id, user_id },
         {
@@ -100,12 +108,6 @@ export const processPendingCertificationDirigeantGuard = async (
           has_been_greeted: false,
         },
       );
-    } else {
-      await users_organizations.create({
-        user_id,
-        organization_id: organization.id,
-        verification_type: LinkEnum.enum.organization_dirigeant,
-      });
     }
 
     await selectOrganization({ req, organization_id });
