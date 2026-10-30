@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 15.0.0
+
+### Major Changes
+
+- [#2396](https://github.com/proconnect-gouv/proconnect-identite/pull/2396) [`33604f3`](https://github.com/proconnect-gouv/proconnect-identite/commit/33604f32fb4393ec60e413f0b7bace8e94ac22fc) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `findByVerifiedEmailDomainFactory` (`repositories/organization`) et l'entrée `organizations.findByVerifiedEmailDomain` de `connectors` : les suggestions d'organisation lisent maintenant la base en Drizzle depuis l'application.
+
 ## 14.0.0
 
 ### Major Changes
