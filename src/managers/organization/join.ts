@@ -51,7 +51,7 @@ import {
 } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
-import { context, runtime } from "../../connectors/context";
+import { context, db, runtime } from "../../connectors/context";
 import { startCripsConversation } from "../../connectors/crisp";
 import { sendMail } from "../../connectors/mail";
 import { getOrganizationInfo } from "../../connectors/organization-info";
@@ -108,12 +108,12 @@ export const getOrganizationSuggestions = async ({
 }: {
   user_id: number;
   email: string;
-}): Promise<Organization[]> =>
+}) =>
   getOrganizationSuggestionsWith(
     { email, user_id },
     {
+      db,
       maxSuggestedOrganizations: MAX_SUGGESTED_ORGANIZATIONS,
-      organizations,
       usesAFreeEmailProvider,
     },
   );
