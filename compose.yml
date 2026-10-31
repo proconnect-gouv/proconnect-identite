@@ -11,7 +11,7 @@ services:
       - db-data:/var/lib/postgresql
 
   redis:
-    image: redis:7.2.16
+    image: redis:7.2.17
     ports:
       - "6379:6379"
 
