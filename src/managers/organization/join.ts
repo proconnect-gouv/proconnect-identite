@@ -16,6 +16,7 @@ import {
 import {
   EmailDomainVerificationEnum,
   LinkEnum,
+  ModerationStatusSchema,
   ModerationTypeSchema,
   type InsertUserOrganizationLink,
   type Organization,
@@ -187,10 +188,16 @@ export const joinOrganization = async ({
     });
   }
 
-  const rejectedModeration = await moderations.findRejected({
-    user_id,
-    organization_id: organization.id,
-    type: ModerationTypeSchema.enum.organization_join_block,
+  const rejectedModeration = await db.query.moderations.findFirst({
+    columns: { id: true },
+    where: (table, { and, eq, isNotNull }) =>
+      and(
+        eq(table.user_id, user_id),
+        eq(table.organization_id, organization.id),
+        eq(table.type, ModerationTypeSchema.enum.organization_join_block),
+        isNotNull(table.moderated_at),
+        eq(table.status, ModerationStatusSchema.enum.rejected),
+      ),
   });
   if (!isEmpty(rejectedModeration)) {
     const { id: moderation_id } = rejectedModeration;
