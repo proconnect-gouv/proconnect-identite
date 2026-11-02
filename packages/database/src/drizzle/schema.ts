@@ -29,10 +29,10 @@ export const authenticators = pgTable(
     transports: varchar({ length: 255 }).array().default([""]),
     user_id: integer().notNull(),
     display_name: varchar(),
-    created_at: timestamp({ withTimezone: true, mode: "string" })
+    created_at: timestamp({ withTimezone: true, mode: "date" })
       .defaultNow()
       .notNull(),
-    last_used_at: timestamp({ withTimezone: true, mode: "string" }),
+    last_used_at: timestamp({ withTimezone: true, mode: "date" }),
     usage_count: integer().default(0).notNull(),
     user_verified: boolean().default(true).notNull(),
   },

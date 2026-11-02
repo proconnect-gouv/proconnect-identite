@@ -1,27 +1,26 @@
 //
 
 import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
+import type { IdentiteDatabase } from "@proconnect-gouv/proconnect.identite.runtime";
+import {
+  ModerationStatusSchema,
+  type AuthenticatorTransportFuture,
+  type ModerationType,
+} from "@proconnect-gouv/proconnect.identite/types";
 import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
 import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import {
   createAuthenticatorFactory,
   deleteAuthenticatorFactory,
-  findAuthenticatorFactory,
-  findAuthenticatorsByUserIdFactory,
   updateAuthenticatorFactory,
 } from "../repositories/legacy/authenticator";
 import type { DatabaseContext } from "../repositories/legacy/context";
-import { findEmailInDeliverabilityWhiteListFactory } from "../repositories/legacy/email-deliverability-whitelist";
-import {
-  addDomainFactory,
-  findEmailDomainsByOrganizationIdFactory,
-} from "../repositories/legacy/email-domain";
+import { addDomainFactory } from "../repositories/legacy/email-domain";
 import { findFranceconnectUserinfoFactory } from "../repositories/legacy/franceconnect_userinfo";
 import {
   deleteModerationFactory,
   findModerationByIdFactory,
-  findPendingModerationFactory,
-  findRejectedModerationFactory,
   getModerationByIdFactory,
   reopenModerationFactory,
 } from "../repositories/legacy/moderation";
@@ -67,11 +66,13 @@ export function createContext({
   api_entreprise_client,
   api_insee_client,
   api_registre_national_entreprises_client,
+  db,
   pg,
 }: {
   api_entreprise_client: ApiEntrepriseClient;
   api_insee_client: ApiInseeClient;
   api_registre_national_entreprises_client: ApiRegistreNationalEntreprisesClient;
+  db: IdentiteDatabase;
 } & DatabaseContext) {
   return {
     client: {
@@ -83,24 +84,114 @@ export function createContext({
       authenticators: {
         create: createAuthenticatorFactory({ pg }),
         delete: deleteAuthenticatorFactory({ pg }),
-        find: findAuthenticatorFactory({ pg }),
-        findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
+        find: async (user_id: number, serialized_credential_id: string) => {
+          const authenticator = await db.query.authenticators.findFirst({
+            columns: {
+              counter: true,
+              credential_id: true,
+              credential_public_key: true,
+              display_name: true,
+              transports: true,
+              usage_count: true,
+            },
+            where: (table, { and, eq }) =>
+              and(
+                eq(table.user_id, user_id),
+                eq(table.credential_id, serialized_credential_id),
+              ),
+          });
+
+          return (
+            authenticator && {
+              ...authenticator,
+              transports: (authenticator.transports ?? undefined) as
+                | AuthenticatorTransportFuture[]
+                | undefined,
+            }
+          );
+        },
+        findByUserId: async (user_id: number) => {
+          const authenticators = await db.query.authenticators.findMany({
+            columns: {
+              created_at: true,
+              credential_id: true,
+              display_name: true,
+              last_used_at: true,
+              transports: true,
+              usage_count: true,
+              user_verified: true,
+            },
+            where: (table, { eq }) => eq(table.user_id, user_id),
+          });
+
+          return authenticators.map((authenticator) => ({
+            ...authenticator,
+            transports: (authenticator.transports ?? undefined) as
+              | AuthenticatorTransportFuture[]
+              | undefined,
+          }));
+        },
         update: updateAuthenticatorFactory({ pg }),
       },
       email_deliverability_whitelist: {
-        findEmailInDeliverabilityWhiteList:
-          findEmailInDeliverabilityWhiteListFactory({ pg }),
+        findEmailInDeliverabilityWhiteList: (email: string) =>
+          db.query.email_deliverability_whitelist.findFirst({
+            columns: { email_domain: true },
+            where: (table, { eq }) =>
+              eq(table.email_domain, getEmailDomain(email)),
+          }),
       },
       email_domains: {
         addDomain: addDomainFactory({ pg }),
-        findEmailDomainsByOrganizationId:
-          findEmailDomainsByOrganizationIdFactory({ pg }),
+        findEmailDomainsByOrganizationId: (organization_id: number) =>
+          db.query.email_domains.findMany({
+            columns: { domain: true, verification_type: true },
+            where: (table, { eq }) =>
+              eq(table.organization_id, organization_id),
+          }),
       },
       moderations: {
         delete: deleteModerationFactory({ pg }),
         findById: findModerationByIdFactory({ pg }),
-        findPending: findPendingModerationFactory({ pg }),
-        findRejected: findRejectedModerationFactory({ pg }),
+        findPending: ({
+          user_id,
+          organization_id,
+          type,
+        }: {
+          user_id: number;
+          organization_id: number;
+          type: ModerationType;
+        }) =>
+          db.query.moderations.findFirst({
+            columns: { id: true },
+            where: (table, { and, eq, isNull }) =>
+              and(
+                eq(table.user_id, user_id),
+                eq(table.organization_id, organization_id),
+                eq(table.type, type),
+                isNull(table.moderated_at),
+              ),
+          }),
+        findRejected: ({
+          user_id,
+          organization_id,
+          type,
+        }: {
+          user_id: number;
+          organization_id: number;
+          type: ModerationType;
+        }) =>
+          db.query.moderations.findFirst({
+            columns: { id: true },
+            where: (table, { and, eq, isNotNull }) =>
+              and(
+                eq(table.user_id, user_id),
+                eq(table.organization_id, organization_id),
+                eq(table.type, type),
+                isNotNull(table.moderated_at),
+                eq(table.status, ModerationStatusSchema.enum.rejected),
+              ),
+          }),
         getById: getModerationByIdFactory({ pg }),
         reopen: reopenModerationFactory({ pg }),
       },
