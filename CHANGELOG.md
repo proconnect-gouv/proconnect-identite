@@ -1,5 +1,36 @@
 # Changelog
 
+## [2026.10.17](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.16...2026.10.17) (2026-10-30)
+
+### Ajouté
+
+- ✨ change a membership through the runtime ([#2391](https://github.com/proconnect-gouv/proconnect-identite/issues/2391)) ([c8d53f1](https://github.com/proconnect-gouv/proconnect-identite/commit/c8d53f17eeb1b0caff4b5e9031f7cee2b31dec1b))
+- ✨ reset a user's MFA through the runtime ([#2392](https://github.com/proconnect-gouv/proconnect-identite/issues/2392)) ([3c541dd](https://github.com/proconnect-gouv/proconnect-identite/commit/3c541dd8fe07ef45e11339c3d07e796c9e2b9f41))
+- ✨ open a moderation through the runtime ([#2390](https://github.com/proconnect-gouv/proconnect-identite/issues/2390)) ([03426c3](https://github.com/proconnect-gouv/proconnect-identite/commit/03426c325f3439e0ee9587a2088d51e62589fe04))
+- ✨ delete an account through the runtime ([#2389](https://github.com/proconnect-gouv/proconnect-identite/issues/2389)) ([cc30f4f](https://github.com/proconnect-gouv/proconnect-identite/commit/cc30f4f98277b7833b7ca5949f5617916be3b2e2))
+- ✨ link and unlink a FranceConnect identity through the runtime ([#2386](https://github.com/proconnect-gouv/proconnect-identite/issues/2386)) ([0791585](https://github.com/proconnect-gouv/proconnect-identite/commit/0791585ecd627035cb1a633dbc20956a08f58ad7))
+- ✨ add a membership through the runtime ([#2387](https://github.com/proconnect-gouv/proconnect-identite/issues/2387)) ([e4b4789](https://github.com/proconnect-gouv/proconnect-identite/commit/e4b4789b5eb0ad01d9b4ce216fe81cce40a2c70b))
+- ✨ remove a membership through the runtime ([#2384](https://github.com/proconnect-gouv/proconnect-identite/issues/2384)) ([27b202a](https://github.com/proconnect-gouv/proconnect-identite/commit/27b202a9a33f7143c9e62e4831e24341ce320749))
+- ✨ turn connector method calls into spans ([#2383](https://github.com/proconnect-gouv/proconnect-identite/issues/2383)) ([2495921](https://github.com/proconnect-gouv/proconnect-identite/commit/24959215627c9160433d0cc29f442b64c8b10690))
+
+### Modifié
+
+- ♻️ migrate the organization suggestions to drizzle ([#2396](https://github.com/proconnect-gouv/proconnect-identite/issues/2396)) ([33604f3](https://github.com/proconnect-gouv/proconnect-identite/commit/33604f32fb4393ec60e413f0b7bace8e94ac22fc))
+- ♻️ extract organization suggestions into a testable seam ([#2395](https://github.com/proconnect-gouv/proconnect-identite/issues/2395)) ([96dd535](https://github.com/proconnect-gouv/proconnect-identite/commit/96dd535f276003f0e04a2c7ae602aeb1075396e1))
+
+### Dépendances
+
+- :arrow_up: Bump proconnect-gouv/proconnect-test-client ([#2375](https://github.com/proconnect-gouv/proconnect-identite/issues/2375)) ([f459391](https://github.com/proconnect-gouv/proconnect-identite/commit/f459391d1d59c79d5b5ed0e00cff2b7c390c04f4))
+- :arrow_up: Bump drizzle-kit from 0.31.10 to 0.31.11 ([#2376](https://github.com/proconnect-gouv/proconnect-identite/issues/2376)) ([eb84e90](https://github.com/proconnect-gouv/proconnect-identite/commit/eb84e90e7d208fd2c703f28732f7c6b47977e26e))
+- :arrow_up: Bump jose from 6.2.12 to 6.2.13 ([#2379](https://github.com/proconnect-gouv/proconnect-identite/issues/2379)) ([a8bd1b7](https://github.com/proconnect-gouv/proconnect-identite/commit/a8bd1b715306cc8f3cfa2209c25a29d72ece13a8))
+- :arrow_up: Bump cypress-io/github-action from 7.4.6 to 7.4.8 ([#2382](https://github.com/proconnect-gouv/proconnect-identite/issues/2382)) ([9a7f602](https://github.com/proconnect-gouv/proconnect-identite/commit/9a7f602444ee0da267083c4751a5dc8cba0f998d))
+- :arrow_up: Bump pg and @types/pg ([#2380](https://github.com/proconnect-gouv/proconnect-identite/issues/2380)) ([17901df](https://github.com/proconnect-gouv/proconnect-identite/commit/17901dfec7861d5dd86f83edcb681b4f57f99dff))
+- ⬇️ pin the Sentry SDK to the 10.x line the server supports ([#2374](https://github.com/proconnect-gouv/proconnect-identite/issues/2374)) ([bf4c9bb](https://github.com/proconnect-gouv/proconnect-identite/commit/bf4c9bb8f192308c52863dde29a85192bace226e))
+
+### Divers
+
+- ✅ share the runtime test setup and keep one test per outcome ([#2388](https://github.com/proconnect-gouv/proconnect-identite/issues/2388)) ([0063003](https://github.com/proconnect-gouv/proconnect-identite/commit/006300341b71cd5ca97279458c39cedd047dd178))
+
 ## [2026.10.16](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.15...2026.10.16) (2026-10-30)
 
 ### Changements
