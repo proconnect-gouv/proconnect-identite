@@ -3,7 +3,7 @@ import { Secret, TOTP } from "otpauth";
 import qrcode from "qrcode";
 import { APPLICATION_NAME, SYMMETRIC_ENCRYPTION_KEY } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, runtime } from "../connectors/context";
 import {
   decryptSymmetric,
   encryptSymmetric,
@@ -77,10 +77,12 @@ export const confirmTotpRegistration = async (
     temporaryTotpKey,
   );
 
-  return await users.update(user_id, {
+  await runtime.as({ type: "user", user_id }).addTotp({
     encrypted_totp_key,
-    totp_key_verified_at: new Date(),
+    user_id,
   });
+
+  return await users.getById(user_id);
 };
 
 export const deleteTotpConfiguration = async (user_id: number) => {
