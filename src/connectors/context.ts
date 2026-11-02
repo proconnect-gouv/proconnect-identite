@@ -12,15 +12,16 @@ import { createContext } from "./repositories";
 
 //
 
+export const db = drizzle(getDatabaseConnection(), { schema });
+
 const contextUntraced = createContext({
   api_entreprise_client: ApiEntrepriseClient,
   api_insee_client: ApiInseeClient,
   api_registre_national_entreprises_client:
     ApiRegistreNationalEntreprisesClient,
+  db,
   pg: getDatabaseConnection(),
 });
-
-export const db = drizzle(getDatabaseConnection(), { schema });
 
 export const context: typeof contextUntraced = {
   client: contextUntraced.client,
