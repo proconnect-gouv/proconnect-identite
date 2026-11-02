@@ -12,6 +12,7 @@ import {
 import { context } from "../connectors/context";
 import { is2FACapable } from "./2fa";
 import { deleteTotpConfiguration } from "./totp";
+import { sendRecoveryWordsGeneratedMail } from "./user";
 import { deleteAllUserAuthenticators } from "./webauthn";
 
 export const hasRecoveryWordsConfiguredForUser = async (user_id: number) => {
@@ -37,6 +38,8 @@ export const createRecoveryWordsForUser = async (user_id: number) => {
     throw new UserIsNot2faCapableError();
   }
 
+  const regenerated = await hasRecoveryWordsConfiguredForUser(user_id);
+
   const recoveryWords = generateDicewarePhrase(6);
   const hashedRecoveryWords = await hashPassword(
     normalizeDicewareWords(recoveryWords),
@@ -47,6 +50,8 @@ export const createRecoveryWordsForUser = async (user_id: number) => {
     user_id,
     hashed_words: hashedRecoveryWords,
   });
+
+  await sendRecoveryWordsGeneratedMail({ user_id, regenerated });
 
   return recoveryWords;
 };
