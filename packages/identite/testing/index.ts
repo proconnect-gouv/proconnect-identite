@@ -11,10 +11,8 @@ import { noop } from "lodash-es";
 import { runner } from "node-pg-migrate";
 import { mock } from "node:test";
 import { join } from "path";
-import type { Pool } from "pg";
 import type { FindUniteLegaleBySirenHandler } from "../../insee/src/api/find-by-siren.js";
 import type { FindUniteLegaleBySiretHandler } from "../../insee/src/api/find-by-siret.js";
-import { createContext } from "../src/connectors/index.js";
 
 //
 
@@ -22,7 +20,8 @@ export const pg = new PGlite();
 
 export async function migrate() {
   await runner({
-    dbClient: pg as any,
+    // node-pg-migrate types its client as a pg Client; PGlite exposes the same query surface
+    dbClient: pg as unknown as Parameters<typeof runner>[0]["dbClient"],
     dir: join(import.meta.dirname, "../../../migrations"),
     direction: "up",
     migrationsTable: "pg-migrate",
@@ -66,10 +65,10 @@ export const api_registre_national_entreprises_mock_client = {
   ),
 };
 
-export const context = createContext({
-  api_entreprise_client: api_entreprise_mock_client,
-  api_insee_client: api_insee_mock_client,
-  api_registre_national_entreprises_client:
-    api_registre_national_entreprises_mock_client,
-  pg: pg as Pool & PGlite,
-});
+export const context = {
+  client: {
+    api_entreprise: api_entreprise_mock_client,
+    insee: api_insee_mock_client,
+    rne: api_registre_national_entreprises_mock_client,
+  },
+};

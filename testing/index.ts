@@ -10,6 +10,7 @@ import { drizzle } from "drizzle-orm/pglite";
 
 export const client = new PGlite();
 export const db = drizzle(client, { schema });
+export const pg = client;
 
 export async function migrate() {
   await migratePglite(client);

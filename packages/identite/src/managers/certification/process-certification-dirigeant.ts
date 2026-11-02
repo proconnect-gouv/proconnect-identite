@@ -1,6 +1,8 @@
 //
 
-import type { Context } from "#src/connectors";
+import type { ApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
+import type { ApiInseeClient } from "@proconnect-gouv/proconnect.insee/api";
+import type { ApiRegistreNationalEntreprisesClient } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { isOrganizationCoveredByCertificationDirigeant } from "#src/services/organization";
 import {
   NullIdentityVector,
@@ -27,6 +29,14 @@ export type CertificationDirigeantDataSource = z.infer<
   typeof CertificationDirigeantDataSource
 >;
 
+type Context = {
+  client: {
+    api_entreprise: ApiEntrepriseClient;
+    insee: ApiInseeClient;
+    rne: ApiRegistreNationalEntreprisesClient;
+  };
+};
+
 const CERTIFICATION_DIRIGEANT_DATA_SOURCE_LABELS: {
   [source in CertificationDirigeantDataSource]: string;
 } = {
@@ -49,7 +59,7 @@ export type SourceSelection =
   | { kind: "preferred" };
 
 async function getMandatairesSociaux(
-  { client: { api_entreprise, rne } }: Context,
+  { client: { api_entreprise, rne } }: Pick<Context, "client">,
   siren: string,
 ) {
   try {
@@ -83,7 +93,9 @@ async function getMandatairesSociaux(
   }
 }
 
-export function processCertificationDirigeantFactory(context: Context) {
+export function processCertificationDirigeantFactory(
+  context: Pick<Context, "client">,
+) {
   const {
     client: { insee },
   } = context;
