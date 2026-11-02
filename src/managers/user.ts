@@ -153,10 +153,13 @@ export const signupWithPassword = async (
 
   if (!isEmpty(user)) {
     // force email verification after setting a password for the first time for an existing user
-    return await users.update(user.id, {
-      email_verified: false,
+    await runtime.as({ type: "user", user_id: user.id }).changePassword({
       encrypted_password: hashedPassword,
+      source: "signup",
+      user_id: user.id,
     });
+
+    return { ...user, email_verified: false };
   }
 
   return await users.create({
@@ -525,10 +528,7 @@ export const sendResetPasswordEmail = async (
   return true;
 };
 
-export const changePassword = async (
-  token: string,
-  password: string,
-): Promise<User> => {
+export const changePassword = async (token: string, password: string) => {
   // check that token as not the default empty value as it will match all users
   if (!token) {
     throw new InvalidTokenError();
@@ -561,12 +561,10 @@ export const changePassword = async (
 
   const hashedPassword = await hashPassword(password);
 
-  const result = await users.update(user.id, {
+  await runtime.as({ type: "user", user_id: user.id }).changePassword({
     encrypted_password: hashedPassword,
-    email_verified: true,
-    email_verified_at: new Date(),
-    reset_password_token: null,
-    reset_password_sent_at: null,
+    source: "reset_password",
+    user_id: user.id,
   });
 
   await sendMail({
@@ -579,7 +577,7 @@ export const changePassword = async (
     tag: "password-changed",
   });
 
-  return result;
+  return { id: user.id };
 };
 
 export const updatePersonalInformationsForRegistration = async (
