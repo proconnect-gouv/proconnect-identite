@@ -46,7 +46,6 @@ import {
 import {
   createUserFactory,
   findByEmailFactory,
-  findByMagicLinkTokenFactory,
   findByResetPasswordTokenFactory,
   findByIdFactory as findUserByIdFactory,
   getByIdFactory,
@@ -135,7 +134,6 @@ export function createContext({
         create: createUserFactory({ pg }),
         findByEmail: findByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
-        findByMagicLinkToken: findByMagicLinkTokenFactory({ pg }),
         findByResetPasswordToken: findByResetPasswordTokenFactory({ pg }),
         getById: getByIdFactory({ pg }),
         update: updateUserFactory({ pg }),
