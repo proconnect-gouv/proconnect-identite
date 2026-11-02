@@ -1,6 +1,7 @@
 //
 
 import type {
+  ActivityContexts,
   ActivityOf,
   ActivityTargets,
   ContextMap,
@@ -11,15 +12,33 @@ import { activity_logs } from "@proconnect-gouv/proconnect.identite.database/dri
 
 //
 
+type InsertableActivity = {
+  action: string;
+  context: unknown;
+} & ActivityTargets &
+  Pick<RuntimeContext, "actor" | "app"> & { cause_activity_id?: number };
+
 export async function insertActivity<Contexts extends ContextMap>(
   tx: IdentiteTransaction,
-  {
-    actor,
-    app,
-    ...activity
-  }: ActivityOf<Contexts> &
+  activity: ActivityOf<Contexts> &
     ActivityTargets &
     Pick<RuntimeContext, "actor" | "app"> & { cause_activity_id?: number },
+) {
+  return insertRow(tx, activity);
+}
+
+export async function insertRecordedActivity<OwnContexts extends ContextMap>(
+  tx: IdentiteTransaction,
+  activity: (ActivityOf<OwnContexts> | ActivityOf<ActivityContexts>) &
+    ActivityTargets &
+    Pick<RuntimeContext, "actor" | "app">,
+) {
+  return insertRow(tx, activity);
+}
+
+async function insertRow(
+  tx: IdentiteTransaction,
+  { actor, app, ...activity }: InsertableActivity,
 ) {
   const [row] = await tx
     .insert(activity_logs)

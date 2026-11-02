@@ -7,7 +7,7 @@ import type { Pool } from "pg";
 import { match } from "ts-pattern";
 import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
 import { RegistreNationalEntreprisesTestClient } from "../src/connectors/api-rne";
-import { context } from "../src/connectors/context";
+import { runtime } from "../src/connectors/context";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { FetchError } from "../src/connectors/request";
 import { logger } from "../src/services/log";
@@ -17,7 +17,6 @@ import {
   isOrganizationInfo,
 } from "../src/services/script-helpers";
 
-const { organizations } = context.repository;
 
 //
 const DINUM_SIRET = "13002526500013";
@@ -133,7 +132,9 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 250;
       // 3. update the organization
       if (isOrganizationInfo(organizationInfo)) {
         logger.info(`libelle: ${organizationInfo.libelle}`);
-        await organizations.upsert({ siret, organizationInfo });
+        await runtime
+          .as({ type: "app", job: "script.update_organizations_info" })
+          .upsertOrganization({ organization_info: organizationInfo, siret });
       }
 
       // 4. throttle the update

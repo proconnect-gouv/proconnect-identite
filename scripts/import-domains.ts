@@ -10,7 +10,8 @@ import fs from "fs";
 import { isEmpty, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
-import { context } from "../src/connectors/context";
+import { context, db, runtime } from "../src/connectors/context";
+import { addDomainFactory } from "../src/repositories/email-domain";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
 import { usesAFreeEmailProvider } from "../src/services/email";
@@ -24,6 +25,8 @@ import {
 } from "../src/services/script-helpers";
 
 const { email_domains, organizations } = context.repository;
+
+const addDomain = addDomainFactory({ db });
 
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({
@@ -165,10 +168,14 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             }
 
             // 3. update organizationInfo
-            const organization: Organization = await organizations.upsert({
-              siret: organizationInfo.siret,
-              organizationInfo,
-            });
+            const { organization_id } = await runtime
+              .as({ type: "app", job: "script.import_domains" })
+              .upsertOrganization({
+                organization_info: organizationInfo,
+                siret: organizationInfo.siret,
+              });
+            const organization: Organization =
+              await organizations.getById(organization_id);
 
             // 4. add domain
             const emailDomains =
@@ -184,7 +191,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               continue;
             }
 
-            await email_domains.addDomain({
+            await addDomain({
               organization_id: organization.id,
               domain,
               verification_type: "not_verified_yet",

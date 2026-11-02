@@ -3,11 +3,17 @@ import {
   ModerationNotFoundError,
   NotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
-import type { User } from "@proconnect-gouv/proconnect.identite/types";
+import {
+  ModerationTypeSchema,
+  type User,
+} from "@proconnect-gouv/proconnect.identite/types";
+import { moderations as moderations_table } from "@proconnect-gouv/proconnect.identite.database/drizzle";
+import { eq } from "drizzle-orm";
 import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, db, runtime } from "../connectors/context";
 import { sendMail } from "../connectors/mail";
+import { cancelModerationRecord } from "../usecases/moderation/cancel-moderation";
 
 const { moderations, organizations } = context.repository;
 
@@ -54,10 +60,17 @@ export const cancelModeration = async ({
     throw new NotFoundError();
   }
 
-  const result = await moderations.delete(moderation_id);
-  if (!result) {
+  if (moderation.moderated_at !== null) {
     throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
   }
+
+  await cancelModerationRecord({
+    db,
+    moderation_id,
+    organization_id: moderation.organization_id,
+    status: moderation.status,
+    user_id: user.id,
+  });
 
   await sendMail({
     to: [user.email],
@@ -70,7 +83,7 @@ export const cancelModeration = async ({
     tag: "cancel-moderation",
   });
 
-  return result;
+  return true;
 };
 
 export const reopenModerationWithUserEdit = async ({
@@ -80,20 +93,33 @@ export const reopenModerationWithUserEdit = async ({
   user: User;
   moderation_id: number;
 }) => {
-  const moderation = await moderations.getById(moderation_id);
+  const [moderation] = await db
+    .select({
+      organization_id: moderations_table.organization_id,
+      sp_name: moderations_table.sp_name,
+      type: moderations_table.type,
+      user_id: moderations_table.user_id,
+    })
+    .from(moderations_table)
+    .where(eq(moderations_table.id, moderation_id));
+
+  if (!moderation) {
+    throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
+  }
 
   if (user.id !== moderation.user_id) {
     throw new ForbiddenError();
   }
 
-  const reopened = await moderations.reopen({
-    id: moderation_id,
-    userEmail: user.email,
-    cause: "Edition des informations personnelles",
-  });
-  if (!reopened) {
-    throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
-  }
+  const outcome = await runtime
+    .as({ type: "user", user_id: user.id })
+    .openModeration({
+      organization_id: moderation.organization_id,
+      sp_name: moderation.sp_name,
+      ticket_id: null,
+      type: ModerationTypeSchema.parse(moderation.type),
+      user_id: user.id,
+    });
 
-  return reopened;
+  return outcome.moderation;
 };

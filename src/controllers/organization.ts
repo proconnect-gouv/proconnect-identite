@@ -142,7 +142,7 @@ export const postJoinOrganizationMiddleware = async (
       undefined;
     req.session.pendingGreetingsForSelectedOrganization = undefined;
 
-    const organization = await upsertOrganization(siret);
+    const organization = await upsertOrganization({ siret, user_id });
     const userOrganizationLink = await joinOrganization({
       organization,
       user_id,

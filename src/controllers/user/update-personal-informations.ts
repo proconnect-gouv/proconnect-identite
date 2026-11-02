@@ -1,17 +1,17 @@
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
-import { context } from "../../connectors/context";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import { lastFranceConnectIdentityUpdate } from "../../managers/user";
+import {
+  lastFranceConnectIdentityUpdate,
+  updatePersonalInformations,
+} from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
-
-const { users } = context.repository;
 
 export const getPersonalInformationsController = async (
   req: Request,
@@ -65,9 +65,9 @@ export const postPersonalInformationsController = async (
 
       const { given_name, family_name } = await schema.parseAsync(req.body);
 
-      updatedUser = await users.update(userId, {
-        given_name,
+      updatedUser = await updatePersonalInformations(userId, {
         family_name,
+        given_name,
       });
     }
 

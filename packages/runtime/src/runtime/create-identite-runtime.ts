@@ -14,13 +14,14 @@ import {
   connectFranceConnectFactory,
   disconnectFranceConnectFactory,
 } from "#src/franceconnect";
-import { insertActivity } from "#src/journal";
+import { insertRecordedActivity } from "#src/journal";
 import {
   addMembershipFactory,
   removeMembershipFactory,
   updateMembershipFactory,
 } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
+import { upsertOrganizationFactory } from "#src/organizations";
 import { deleteUserFactory, resetMfaFactory } from "#src/users";
 
 //
@@ -46,10 +47,17 @@ export function createIdentiteRuntime<
         removeMembership: removeMembershipFactory({ actor, app, db }),
         record: (
           tx: IdentiteTransaction,
-          activity: ActivityOf<OwnContexts> & ActivityTargets,
-        ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
+          activity: (ActivityOf<OwnContexts> | ActivityOf<ActivityContexts>) &
+            ActivityTargets,
+        ) =>
+          insertRecordedActivity<OwnContexts>(tx, {
+            ...activity,
+            actor,
+            app,
+          }),
         resetMfa: resetMfaFactory({ actor, app, db }),
         updateMembership: updateMembershipFactory({ actor, app, db }),
+        upsertOrganization: upsertOrganizationFactory({ actor, app, db }),
       };
     },
   };

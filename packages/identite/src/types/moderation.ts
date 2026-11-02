@@ -6,6 +6,7 @@ import * as z from "zod";
 
 export const ModerationStatusSchema = z.enum([
   "accepted",
+  "cancelled",
   "pending",
   "rejected",
   "reopened",

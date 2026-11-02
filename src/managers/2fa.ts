@@ -1,13 +1,15 @@
 import { FORCE_2FA_FOR_SIRETS } from "../config/env";
 import { UserIsNot2faCapableError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, db } from "../connectors/context";
+import { disableForce2fa as disableForce2faUseCase } from "../usecases/user/disable-force-2fa";
+import { enableForce2fa as enableForce2faUseCase } from "../usecases/user/enable-force-2fa";
 import { isTotpConfiguredForUser } from "./totp";
 import { isWebauthnConfiguredForUser } from "./webauthn";
 
-const { organizations, users } = context.repository;
+const { organizations } = context.repository;
 
 export const shouldForce2faForUser = async (user_id: number) => {
-  const user = await users.getById(user_id);
+  const user = await context.repository.users.getById(user_id);
   return user.force_2fa;
 };
 
@@ -33,19 +35,19 @@ export const is2FACapable = async (user_id: number) => {
 };
 
 export const disableForce2fa = async (user_id: number) => {
-  // ASSERTION: user exists
-  await users.getById(user_id);
-
-  return await users.update(user_id, { force_2fa: false });
+  return disableForce2faUseCase({ db, user_id });
 };
 
 export const enableForce2fa = async (user_id: number) => {
-  // ASSERTION: user exists
-  await users.getById(user_id);
+  const user = await context.repository.users.getById(user_id);
 
   if (!(await is2FACapable(user_id))) {
     throw new UserIsNot2faCapableError();
   }
 
-  return await users.update(user_id, { force_2fa: true });
+  if (user.force_2fa) {
+    return user;
+  }
+
+  return enableForce2faUseCase({ db, user_id });
 };

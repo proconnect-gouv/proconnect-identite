@@ -5,7 +5,8 @@ import {
   validatePassword,
 } from "@proconnect-gouv/proconnect.core/security";
 import { UserIsNot2faCapableError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, db } from "../connectors/context";
+import { regenerateRecoveryWords } from "../usecases/user/regenerate-recovery-words";
 import { is2FACapable } from "./2fa";
 
 export const hasRecoveryWordsConfiguredForUser = async (user_id: number) => {
@@ -30,10 +31,10 @@ export const createRecoveryWordsForUser = async (user_id: number) => {
     normalizeDicewareWords(recoveryWords),
   );
 
-  await context.repository.recovery_words.deleteByUserId(user_id);
-  await context.repository.recovery_words.create({
-    user_id,
+  await regenerateRecoveryWords({
+    db,
     hashed_words: hashedRecoveryWords,
+    user_id,
   });
 
   return recoveryWords;

@@ -10,7 +10,9 @@ import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
-import { context, runtime } from "../src/connectors/context";
+import { users as users_table } from "@proconnect-gouv/proconnect.identite.database/drizzle";
+import { eq } from "drizzle-orm";
+import { context, db, runtime } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
 import { logger } from "../src/services/log";
@@ -136,12 +138,16 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         let user = await users.findByEmail(email);
         if (isEmpty(user)) {
           user = await users.create({ email });
-          await users.update(user.id, {
-            given_name: first_name,
-            family_name: last_name,
-            needs_inclusionconnect_welcome_page: true,
-            needs_inclusionconnect_onboarding_help: true,
-          });
+          await db
+            .update(users_table)
+            .set({
+              family_name: last_name,
+              given_name: first_name,
+              needs_inclusionconnect_onboarding_help: true,
+              needs_inclusionconnect_welcome_page: true,
+              updated_at: new Date().toISOString(),
+            })
+            .where(eq(users_table.id, user.id));
         }
 
         const sirets: string[] = rawSirets
@@ -187,10 +193,13 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             }
 
             // 3. update organizationInfo
-            const organization = await organizations.upsert({
-              siret: organizationInfo.siret,
-              organizationInfo,
-            });
+            const { organization_id } = await runtime
+              .as({ type: "app", job: "script.import_accounts" })
+              .upsertOrganization({
+                organization_info: organizationInfo,
+                siret: organizationInfo.siret,
+              });
+            const organization = await organizations.getById(organization_id);
 
             // 4. create the user-organization link
             const usersOrganizations = await organizations.findByUserId(

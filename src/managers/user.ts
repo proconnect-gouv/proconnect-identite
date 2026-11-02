@@ -46,12 +46,17 @@ import {
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
-import { context, runtime } from "../connectors/context";
+import { context, db, runtime } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
 import { isExpired } from "../services/is-expired";
 import { track } from "../services/log";
+import { changePassword as changePasswordUseCase } from "../usecases/user/change-password";
+import { setSignupPassword } from "../usecases/user/set-signup-password";
+import { updatePersonalInformations as updatePersonalInformationsUseCase } from "../usecases/user/update-personal-informations";
+import { verifyEmailWithToken } from "../usecases/user/verify-email";
+import { verifyEmailWithMagicLink } from "../usecases/user/verify-email-with-magic-link";
 import { isWebauthnConfiguredForUser } from "./webauthn";
 
 const { franceconnect_userinfo, users } = context.repository;
@@ -153,9 +158,10 @@ export const signupWithPassword = async (
 
   if (!isEmpty(user)) {
     // force email verification after setting a password for the first time for an existing user
-    return await users.update(user.id, {
-      email_verified: false,
+    return setSignupPassword({
+      db,
       encrypted_password: hashedPassword,
+      user_id: user.id,
     });
   }
 
@@ -410,12 +416,7 @@ export const verifyEmail = async (
     throw new InvalidTokenError();
   }
 
-  return await users.update(user.id, {
-    email_verified: true,
-    email_verified_at: new Date(),
-    verify_email_token: null,
-    verify_email_sent_at: null,
-  });
+  return verifyEmailWithToken({ db, user_id: user.id });
 };
 
 export const needsEmailVerificationRenewal = async (
@@ -487,12 +488,7 @@ export const loginWithMagicLink = async (token: string): Promise<User> => {
     throw new InvalidMagicLinkError();
   }
 
-  return await users.update(user.id, {
-    email_verified: true,
-    email_verified_at: new Date(),
-    magic_link_token: null,
-    magic_link_sent_at: null,
-  });
+  return verifyEmailWithMagicLink({ db, user_id: user.id });
 };
 
 export const sendResetPasswordEmail = async (
@@ -561,12 +557,10 @@ export const changePassword = async (
 
   const hashedPassword = await hashPassword(password);
 
-  const result = await users.update(user.id, {
+  const result = await changePasswordUseCase({
+    db,
     encrypted_password: hashedPassword,
-    email_verified: true,
-    email_verified_at: new Date(),
-    reset_password_token: null,
-    reset_password_sent_at: null,
+    user_id: user.id,
   });
 
   await sendMail({
@@ -582,21 +576,13 @@ export const changePassword = async (
   return result;
 };
 
-export const updatePersonalInformationsForRegistration = async (
-  userId: number,
-  {
-    given_name,
-    family_name,
-    job,
-  }: Pick<User, "given_name" | "family_name" | "job">,
+export const updatePersonalInformations = async (
+  user_id: number,
+  information: Partial<
+    Pick<User, "family_name" | "given_name" | "job" | "phone_number">
+  >,
 ): Promise<User> => {
-  const isUserVerified = await franceconnect_userinfo.find(userId);
-  const names = isUserVerified ? {} : { given_name, family_name };
-
-  return users.update(userId, {
-    ...names,
-    job,
-  });
+  return updatePersonalInformationsUseCase({ db, information, user_id });
 };
 
 export async function hasValidFranceConnectIdentity(userId: number) {

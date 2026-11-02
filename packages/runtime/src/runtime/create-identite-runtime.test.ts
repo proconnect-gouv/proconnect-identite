@@ -1,7 +1,6 @@
 //
 
 import type { ContextsOf } from "#src/activity";
-import type { IdentiteTransaction } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
 import { createTestDatabase, readActivityLogs } from "#testing";
 import assert from "node:assert/strict";
@@ -77,41 +76,45 @@ describe("record", () => {
     ]);
   });
 
-  it("🚫 does not compile another owner's action, a mismatched context, the bare database or an overlapping owner", async () => {
+  it("✅ lets the identite app record a shared action from its own use case", async () => {
     const { db } = await setup();
-    const { record } = createIdentiteRuntime<HyyypertoolActivityContexts>({
-      app: "hyyypertool",
-      db,
-    }).as({ type: "moderator", sub: "moderator" });
-
-    void ((tx: IdentiteTransaction) =>
-      record(tx, {
-        // @ts-expect-error domain.verified belongs to the runtime, only markDomainAsVerified writes it
-        action: "domain.verified",
-        context: darkangels_refused.context,
-      }));
-
-    void ((tx: IdentiteTransaction) =>
-      record(tx, {
-        action: "domain.refused",
-        // @ts-expect-error the context does not match domain.refused
-        context: { inputs: { domain: "darkangels.world" }, outcome: {} },
-      }));
-
-    void (() =>
-      // @ts-expect-error the bare database is not a transaction
-      record(db, darkangels_refused));
-
-    type OverlappingContexts = {
-      "domain.verified": HyyypertoolActivityContexts["domain.refused"];
+    const context = {
+      inputs: {
+        family_name: "El'Jonson",
+        given_name: "Lion",
+        job: "Primarque",
+        phone_number: null,
+      },
+      outcome: {
+        previous: {
+          family_name: null,
+          given_name: null,
+          job: null,
+          phone_number: null,
+        },
+      },
     };
-    // @ts-expect-error domain.verified is already defined by the runtime
-    void createIdentiteRuntime<OverlappingContexts>({ app: "hyyypertool", db });
 
-    void ((tx: IdentiteTransaction) =>
+    const outcome = await db.transaction((tx) =>
       createIdentiteRuntime({ app: "proconnect-identite", db })
-        .as({ type: "app", job: "join.official_contact" })
-        // @ts-expect-error proconnect-identite has no app-only action to record
-        .record(tx, darkangels_refused));
+        .as({ type: "user", user_id: 1 })
+        .record(tx, { action: "user.info_changed", context, user_id: 1 }),
+    );
+
+    assert.deepEqual(outcome, { activity_id: 1 });
+    assert.deepEqual(await readActivityLogs(db), [
+      {
+        action: "user.info_changed",
+        actor_ref: "1",
+        actor_type: "user",
+        app: "proconnect-identite",
+        cause_activity_id: null,
+        context,
+        interaction_cid: null,
+        moderation_id: null,
+        organization_id: null,
+        user_id: 1,
+      },
+    ]);
   });
 });

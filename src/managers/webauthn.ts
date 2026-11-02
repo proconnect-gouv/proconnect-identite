@@ -22,10 +22,12 @@ import {
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, db } from "../connectors/context";
 import { getAuthenticatorFriendlyName } from "../connectors/github-passkey-authenticator-aaguids";
 import { formatDate } from "../services/date-format";
 import { logger, track } from "../services/log";
+import { addPasskey } from "../usecases/user/add-passkey";
+import { removePasskey } from "../usecases/user/remove-passkey";
 import { disableForce2fa, is2FACapable } from "./2fa";
 
 const { authenticators, users } = context.repository;
@@ -102,7 +104,11 @@ export const deleteUserAuthenticator = async (
     throw new NotFoundError();
   }
 
-  const hasBeenDeleted = await authenticators.delete(user.id, credential_id);
+  const hasBeenDeleted = await removePasskey({
+    credential_id,
+    db,
+    user_id: user.id,
+  });
 
   if (!hasBeenDeleted) {
     throw new NotFoundError();
@@ -215,20 +221,21 @@ export const verifyRegistration = async ({
   const display_name = friendlyName || `Clé ${credential_id.substring(0, 10)}`;
 
   // Save the authenticator info so that we can get it by user ID later
-  await authenticators.create({
-    user_id: user.id,
+  await addPasskey({
     authenticator: {
+      counter,
+      credential_backed_up,
+      credential_device_type,
       credential_id,
       credential_public_key,
-      counter,
-      credential_device_type,
-      credential_backed_up,
-      transports,
       display_name,
       last_used_at: null,
+      transports,
       usage_count: 0,
       user_verified,
     },
+    db,
+    user_id: user.id,
   });
 
   return { userVerified: user_verified, updatedUser, key_name: display_name };

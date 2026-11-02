@@ -118,7 +118,13 @@ export const getOrganizationSuggestions = async ({
     },
   );
 
-export const upsertOrganization = async (siret: string) =>
+export const upsertOrganization = async ({
+  siret,
+  user_id,
+}: {
+  siret: string;
+  user_id: number;
+}): Promise<Organization> =>
   match(await getOrganizationInfo(siret))
     .with({ kind: "api_entreprise_failed" }, ({ exception }) => {
       throw new ApiEntrepriseConnectionError(
@@ -126,14 +132,14 @@ export const upsertOrganization = async (siret: string) =>
         { cause: exception },
       );
     })
-    .with({ kind: "found" }, ({ organization_info, rne }) => {
+    .with({ kind: "found" }, async ({ organization_info, rne }) => {
       if (rne.kind === "failed") {
         logger.warn("api_rne.company_request.failed", { siret }, rne.exception);
       }
-      return organizations.upsert({
-        organizationInfo: organization_info,
-        siret,
-      });
+      const { organization_id } = await runtime
+        .as({ type: "user", user_id })
+        .upsertOrganization({ organization_info, siret });
+      return organizations.getById(organization_id);
     })
     .with({ kind: "invalid_siret" }, ({ exception }) => {
       throw exception;
