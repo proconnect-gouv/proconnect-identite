@@ -49,4 +49,12 @@ export const userActivities = {
       }),
     }),
   }),
+  "user.password_changed": z.object({
+    inputs: z.object({
+      source: z.enum(["reset_password", "signup"]),
+    }),
+    outcome: z.object({
+      previous: z.object({ email_verified: z.boolean() }),
+    }),
+  }),
 };

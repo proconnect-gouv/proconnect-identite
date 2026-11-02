@@ -22,6 +22,7 @@ import {
 } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
 import {
+  changePasswordFactory,
   deleteUserFactory,
   resetMfaFactory,
   updatePersonalInformationsFactory,
@@ -38,6 +39,7 @@ export function createIdentiteRuntime<
     as(actor: Actor) {
       return {
         addMembership: addMembershipFactory({ actor, app, db }),
+        changePassword: changePasswordFactory({ actor, app, db }),
         connectFranceConnect: connectFranceConnectFactory({ actor, app, db }),
         deleteUser: deleteUserFactory({ actor, app, db }),
         disconnectFranceConnect: disconnectFranceConnectFactory({
