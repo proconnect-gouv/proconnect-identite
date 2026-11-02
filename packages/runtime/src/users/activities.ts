@@ -4,6 +4,13 @@ import * as z from "zod";
 
 //
 
+const userInformation = z.object({
+  family_name: z.string().nullable(),
+  given_name: z.string().nullable(),
+  job: z.string().nullable(),
+  phone_number: z.string().nullable(),
+});
+
 export const userActivities = {
   "user.deleted": z.object({
     inputs: z.object({
@@ -20,6 +27,12 @@ export const userActivities = {
           verification_type: z.string(),
         }),
       ),
+    }),
+  }),
+  "user.info_changed": z.object({
+    inputs: userInformation,
+    outcome: z.object({
+      previous: userInformation,
     }),
   }),
   "user.mfa_reset": z.object({

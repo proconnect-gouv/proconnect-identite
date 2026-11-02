@@ -1,7 +1,7 @@
-import type { User } from "@proconnect-gouv/proconnect.identite/types";
+import { UserNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
-import { z, ZodError } from "zod";
-import { context } from "../../connectors/context";
+import { z } from "zod";
+import { runtime } from "../../connectors/context";
 import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
@@ -10,8 +10,7 @@ import { lastFranceConnectIdentityUpdate } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { nameSchema } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
-
-const { users } = context.repository;
+import { track } from "../../services/log";
 
 export const getPersonalInformationsController = async (
   req: Request,
@@ -49,37 +48,47 @@ export const postPersonalInformationsController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const { id: userId } = getUserFromAuthenticatedSession(req);
-    const hasFCIdentity = await lastFranceConnectIdentityUpdate(userId);
+  const { id: userId } = getUserFromAuthenticatedSession(req);
 
-    let updatedUser: User;
-
-    if (hasFCIdentity) {
-      return next();
-    } else {
-      const schema = z.object({
-        given_name: nameSchema(),
-        family_name: nameSchema(),
-      });
-
-      const { given_name, family_name } = await schema.parseAsync(req.body);
-
-      updatedUser = await users.update(userId, {
-        given_name,
-        family_name,
-      });
-    }
-
-    updateUserInAuthenticatedSession(req, updatedUser);
-    next();
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return res.redirect(
-        `/users/personal-information?notification=invalid_personal_informations`,
-      );
-    }
-
-    next(error);
+  if (await lastFranceConnectIdentityUpdate(userId)) {
+    return next();
   }
+
+  const parsed = z
+    .object({
+      given_name: nameSchema(),
+      family_name: nameSchema(),
+    })
+    .safeParse(req.body);
+
+  if (!parsed.success) {
+    track("personal_information.invalid", {
+      error: z.prettifyError(parsed.error),
+    });
+    return res.redirect(
+      `/users/personal-information?notification=invalid_personal_informations`,
+    );
+  }
+
+  const outcome = await runtime
+    .as({ type: "user", user_id: userId })
+    .updatePersonalInformations({
+      information: parsed.data,
+      user_id: userId,
+    });
+
+  if (outcome.kind === "user_not_found") {
+    throw new UserNotFoundError("User not found");
+  }
+
+  if (outcome.kind === "info_unchanged") {
+    return next();
+  }
+
+  updateUserInAuthenticatedSession(req, {
+    ...getUserFromAuthenticatedSession(req),
+    ...outcome.next,
+  });
+
+  next();
 };

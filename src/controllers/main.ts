@@ -1,6 +1,7 @@
+import { UserNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import z, { ZodError } from "zod";
-import { context } from "../connectors/context";
+import { runtime } from "../connectors/context";
 import { is2FACapable } from "../managers/2fa";
 import { getUserOrganizations } from "../managers/organization/main";
 import {
@@ -29,8 +30,6 @@ import {
 } from "../services/custom-zod-schemas";
 import { formatDate } from "../services/date-format";
 import { getNotificationsFromRequest } from "../services/get-notifications-from-request";
-
-const { users } = context.repository;
 
 export const getHomeController = async (
   req: Request,
@@ -117,19 +116,33 @@ export const postPersonalInformationsController = async (
     const { given_name, family_name, phone_number, job } =
       await schema.parseAsync(req.body);
 
-    const updatedUser = await users.update(userId, {
-      given_name,
-      family_name,
-      phone_number,
-      job,
-    });
+    const outcome = await runtime
+      .as({ type: "user", user_id: userId })
+      .updatePersonalInformations({
+        information: { family_name, given_name, job, phone_number },
+        user_id: userId,
+      });
+
+    if (outcome.kind === "user_not_found") {
+      throw new UserNotFoundError("User not found");
+    }
+
+    if (outcome.kind === "info_unchanged") {
+      return res.redirect(
+        `/personal-information?notification=personal_information_update_success`,
+      );
+    }
+
+    const sessionUser = getUserFromAuthenticatedSession(req);
+    const previousInformations = { ...sessionUser, ...outcome.previous };
+    const newInformation = { ...sessionUser, ...outcome.next };
 
     await sendUpdatePersonalInformationEmail({
-      previousInformations: getUserFromAuthenticatedSession(req),
-      newInformation: updatedUser,
+      previousInformations,
+      newInformation,
     });
 
-    updateUserInAuthenticatedSession(req, updatedUser);
+    updateUserInAuthenticatedSession(req, newInformation);
 
     return res.redirect(
       `/personal-information?notification=personal_information_update_success`,

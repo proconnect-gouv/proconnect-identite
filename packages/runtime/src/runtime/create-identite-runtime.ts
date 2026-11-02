@@ -21,7 +21,11 @@ import {
   updateMembershipFactory,
 } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
-import { deleteUserFactory, resetMfaFactory } from "#src/users";
+import {
+  deleteUserFactory,
+  resetMfaFactory,
+  updatePersonalInformationsFactory,
+} from "#src/users";
 
 //
 
@@ -50,6 +54,11 @@ export function createIdentiteRuntime<
         ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
         resetMfa: resetMfaFactory({ actor, app, db }),
         updateMembership: updateMembershipFactory({ actor, app, db }),
+        updatePersonalInformations: updatePersonalInformationsFactory({
+          actor,
+          app,
+          db,
+        }),
       };
     },
   };
