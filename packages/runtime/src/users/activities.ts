@@ -57,4 +57,12 @@ export const userActivities = {
       previous: z.object({ email_verified: z.boolean() }),
     }),
   }),
+  "user.password_reset": z.object({
+    inputs: z.object({}),
+    outcome: z.object({
+      previous: z.object({
+        password_configured: z.boolean(),
+      }),
+    }),
+  }),
 };

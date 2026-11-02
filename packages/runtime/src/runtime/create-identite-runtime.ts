@@ -25,6 +25,7 @@ import {
   changePasswordFactory,
   deleteUserFactory,
   resetMfaFactory,
+  resetPasswordFactory,
   updatePersonalInformationsFactory,
 } from "#src/users";
 
@@ -55,6 +56,7 @@ export function createIdentiteRuntime<
           activity: ActivityOf<OwnContexts> & ActivityTargets,
         ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
         resetMfa: resetMfaFactory({ actor, app, db }),
+        resetPassword: resetPasswordFactory({ actor, app, db }),
         updateMembership: updateMembershipFactory({ actor, app, db }),
         updatePersonalInformations: updatePersonalInformationsFactory({
           actor,
