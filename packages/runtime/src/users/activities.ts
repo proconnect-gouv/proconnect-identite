@@ -57,4 +57,11 @@ export const userActivities = {
       previous: z.object({ email_verified: z.boolean() }),
     }),
   }),
+  "user.totp_removed": z.object({
+    inputs: z.object({}),
+    outcome: z.object({
+      force_2fa_cleared: z.boolean(),
+      previous: z.object({ force_2fa: z.boolean() }),
+    }),
+  }),
 };

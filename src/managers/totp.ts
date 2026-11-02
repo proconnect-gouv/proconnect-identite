@@ -3,12 +3,11 @@ import { Secret, TOTP } from "otpauth";
 import qrcode from "qrcode";
 import { APPLICATION_NAME, SYMMETRIC_ENCRYPTION_KEY } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, runtime } from "../connectors/context";
 import {
   decryptSymmetric,
   encryptSymmetric,
 } from "../services/symmetric-encryption";
-import { disableForce2fa, is2FACapable } from "./2fa";
 
 const { users } = context.repository;
 
@@ -84,18 +83,12 @@ export const confirmTotpRegistration = async (
 };
 
 export const deleteTotpConfiguration = async (user_id: number) => {
-  let user = await users.getById(user_id);
+  // ASSERTION: user exists
+  await users.getById(user_id);
 
-  user = await users.update(user_id, {
-    encrypted_totp_key: null,
-    totp_key_verified_at: null,
-  });
+  await runtime.as({ type: "user", user_id }).removeTotp({ user_id });
 
-  if (!(await is2FACapable(user_id))) {
-    user = await disableForce2fa(user_id);
-  }
-
-  return user;
+  return await users.getById(user_id);
 };
 
 export const isTotpConfiguredForUser = async (user_id: number) => {

@@ -24,6 +24,7 @@ import { openModerationFactory } from "#src/moderations";
 import {
   changePasswordFactory,
   deleteUserFactory,
+  removeTotpFactory,
   resetMfaFactory,
   updatePersonalInformationsFactory,
 } from "#src/users";
@@ -50,6 +51,7 @@ export function createIdentiteRuntime<
         markDomainAsVerified: markDomainAsVerifiedFactory({ actor, app, db }),
         openModeration: openModerationFactory({ actor, app, db }),
         removeMembership: removeMembershipFactory({ actor, app, db }),
+        removeTotp: removeTotpFactory({ actor, app, db }),
         record: (
           tx: IdentiteTransaction,
           activity: ActivityOf<OwnContexts> & ActivityTargets,
