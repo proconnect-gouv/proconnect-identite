@@ -31,7 +31,6 @@ import {
   upsertAuthorizationRequestFactory,
 } from "#src/repositories/oidc-client";
 import {
-  findBySiretFactory,
   findByUserIdFactory,
   findOrganizationByIdFactory,
   findPendingByUserIdFactory,
@@ -116,7 +115,6 @@ export function createContext({
       },
       organizations: {
         findById: findOrganizationByIdFactory({ pg }),
-        findBySiret: findBySiretFactory({ pg }),
         findByUserId: findByUserIdFactory({ pg }),
         findPendingByUserId: findPendingByUserIdFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),

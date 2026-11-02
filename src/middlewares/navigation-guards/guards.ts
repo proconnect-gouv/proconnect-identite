@@ -6,7 +6,7 @@ import {
 import HttpErrors from "http-errors";
 import isEmpty from "lodash-es/isEmpty";
 import { CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES } from "../../config/env";
-import { context } from "../../connectors/context";
+import { context, db } from "../../connectors/context";
 import {
   doesOrganizationRequireForced2fa,
   is2FACapable,
@@ -285,19 +285,17 @@ export const userBelongsToHintedOrganizationGuard = async <
     pass,
     haltTo,
   } = context;
-  if (req.session.siretHint) {
-    const hintedOrganization = await organizations.findBySiret(
-      req.session.siretHint,
-    );
+  const { siretHint } = req.session;
+  if (siretHint) {
+    const hintedOrganization = await db.query.organizations.findFirst({
+      columns: { id: true },
+      where: (table, { eq }) => eq(table.siret, siretHint),
+    });
     if (isEmpty(hintedOrganization))
-      return haltTo(
-        `/users/join-organization?siret_hint=${req.session.siretHint}`,
-      );
+      return haltTo(`/users/join-organization?siret_hint=${siretHint}`);
 
     if (!userOrganizations.some((org) => org.id === hintedOrganization.id)) {
-      return haltTo(
-        `/users/join-organization?siret_hint=${req.session.siretHint}`,
-      );
+      return haltTo(`/users/join-organization?siret_hint=${siretHint}`);
     }
 
     await selectOrganization({ req, organization_id: hintedOrganization.id });
