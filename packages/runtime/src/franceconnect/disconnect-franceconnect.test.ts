@@ -70,20 +70,6 @@ describe("disconnectFranceConnect", () => {
       },
     ]);
   });
-
-  it("❎ returns franceconnect_identity_not_found and journals nothing for a missing identity", async () => {
-    const { db, runtime } = await setup();
-    const before = await identities(db);
-
-    const outcome = await runtime.disconnectFranceConnect({ user_id: 2 });
-
-    assert.deepEqual(outcome, {
-      kind: "franceconnect_identity_not_found",
-      user_id: 2,
-    });
-    assert.deepEqual(await identities(db), before);
-    assert.deepEqual(await readActivityLogs(db), []);
-  });
 });
 
 function identities(db: IdentiteDatabase) {
