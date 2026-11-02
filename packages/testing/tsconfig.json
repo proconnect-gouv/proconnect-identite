@@ -3,7 +3,7 @@
     "declaration": true,
     "declarationMap": true,
     "resolveJsonModule": true,
-    "types": []
+    "types": ["node"]
   },
   "include": ["src", "tests"],
   "extends": "@proconnect-gouv/proconnect.devtools.typescript/hono/tsconfig.json",
