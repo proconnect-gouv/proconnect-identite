@@ -1,9 +1,9 @@
 //
 
-import type { Context } from "#src/connectors";
 import { isOrganizationCoveredByCertificationDirigeant } from "#src/services/organization";
 import {
   NullIdentityVector,
+  type Context,
   type FranceConnectUserInfo,
   type Organization,
 } from "#src/types";
