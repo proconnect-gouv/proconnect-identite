@@ -45,8 +45,7 @@ export function getCertificationDirigeantDataSourceLabels(
 //
 
 export type SourceSelection =
-  | { kind: "fallback"; exception: unknown }
-  | { kind: "preferred" };
+  { kind: "fallback"; exception: unknown } | { kind: "preferred" };
 
 async function getMandatairesSociaux(
   { client: { api_entreprise, rne } }: Context,
