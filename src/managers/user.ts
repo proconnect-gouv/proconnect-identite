@@ -15,6 +15,7 @@ import {
   DeleteFreeTotpMail,
   MagicLink,
   PasswordChanged,
+  RecoveryWordsGenerated,
   ResetPassword,
   UpdatePersonalDataMail,
   VerifyEmail,
@@ -335,6 +336,28 @@ export const sendActivateAccessKeyMail = async ({
       key_name,
     }).toString(),
     tag: "add-access-key",
+  });
+};
+
+export const sendRecoveryWordsGeneratedMail = async ({
+  user_id,
+  regenerated,
+}: {
+  user_id: number;
+  regenerated: boolean;
+}) => {
+  const { given_name, family_name, email } = await users.getById(user_id);
+
+  return sendMail({
+    to: [email],
+    subject: regenerated ? "Mots de secours modifiés" : "Mots de secours créés",
+    html: RecoveryWordsGenerated({
+      family_name: family_name ?? "",
+      given_name: given_name ?? "",
+      support_email: "support+identite@proconnect.gouv.fr",
+      regenerated,
+    }).toString(),
+    tag: regenerated ? "regenerate-recovery-words" : "create-recovery-words",
   });
 };
 

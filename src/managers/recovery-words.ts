@@ -7,6 +7,7 @@ import {
 import { UserIsNot2faCapableError } from "../config/errors";
 import { context } from "../connectors/context";
 import { is2FACapable } from "./2fa";
+import { sendRecoveryWordsGeneratedMail } from "./user";
 
 export const hasRecoveryWordsConfiguredForUser = async (user_id: number) => {
   const recoveryWords =
@@ -25,6 +26,8 @@ export const createRecoveryWordsForUser = async (user_id: number) => {
     throw new UserIsNot2faCapableError();
   }
 
+  const regenerated = await hasRecoveryWordsConfiguredForUser(user_id);
+
   const recoveryWords = generateDicewarePhrase(6);
   const hashedRecoveryWords = await hashPassword(
     normalizeDicewareWords(recoveryWords),
@@ -35,6 +38,8 @@ export const createRecoveryWordsForUser = async (user_id: number) => {
     user_id,
     hashed_words: hashedRecoveryWords,
   });
+
+  await sendRecoveryWordsGeneratedMail({ user_id, regenerated });
 
   return recoveryWords;
 };
