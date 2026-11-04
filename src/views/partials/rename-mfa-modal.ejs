@@ -1,0 +1,70 @@
+<dialog
+  id="<%= modalId %>"
+  class="fr-modal"
+  aria-labelledby="<%= modalId %>-title"
+>
+  <div class="fr-container fr-container--fluid fr-container-md">
+    <div class="fr-grid-row fr-grid-row--center">
+      <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+        <form class="fr-modal__body" action="<%= action %>" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <div class="fr-modal__header">
+            <button
+              type="button"
+              class="fr-btn--close fr-btn"
+              aria-controls="<%= modalId %>"
+            >
+              Fermer
+            </button>
+          </div>
+          <div class="fr-modal__content">
+            <h2 id="<%= modalId %>-title" class="fr-modal__title">
+              <%= title %>
+            </h2>
+            <div class="fr-input-group">
+              <label class="fr-label" for="<%= modalId %>-input">
+                <%= inputLabel %>
+                <span class="fr-hint-text">
+                  Laissez vide pour revenir au nom par défaut.
+                </span>
+              </label>
+              <input
+                class="fr-input"
+                type="text"
+                id="<%= modalId %>-input"
+                name="<%= inputName %>"
+                value="<%= currentValue %>"
+                maxlength="50"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <div class="fr-modal__footer">
+            <ul
+              class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg"
+            >
+              <li>
+                <button
+                  type="submit"
+                  class="fr-btn"
+                  aria-label="Renommer : <%= inputLabel %>"
+                >
+                  Renommer
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="fr-btn fr-btn--secondary"
+                  aria-controls="<%= modalId %>"
+                >
+                  Annuler
+                </button>
+              </li>
+            </ul>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</dialog>

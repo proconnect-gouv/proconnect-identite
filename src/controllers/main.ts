@@ -12,7 +12,10 @@ import {
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
-import { isTotpConfiguredForUser } from "../managers/totp";
+import {
+  DEFAULT_TOTP_DISPLAY_NAME,
+  isTotpConfiguredForUser,
+} from "../managers/totp";
 import {
   disconnectFranceConnectIdentity,
   getFamilyNameOptionsFromFranceConnectIdentity,
@@ -206,6 +209,7 @@ export const getConnectionAndAccountController = async (
     const {
       id: user_id,
       email,
+      totp_display_name,
       totp_key_verified_at,
       force_2fa: force2fa,
     } = getUserFromAuthenticatedSession(req);
@@ -228,6 +232,7 @@ export const getConnectionAndAccountController = async (
       totpKeyVerifiedAt: totp_key_verified_at
         ? formatDate(totp_key_verified_at)
         : null,
+      totpDisplayName: totp_display_name || DEFAULT_TOTP_DISPLAY_NAME,
       csrfToken: csrfToken(req),
       is2faCapable,
       force2fa,

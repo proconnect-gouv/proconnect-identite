@@ -19,6 +19,23 @@
 <form action="<%= totpConfigurationUrl %>" method="post">
     <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
     <input type="hidden" name="totp-tool-type" value="<%= locals.totpToolType; %>">
+    <div class="fr-input-group">
+        <label class="fr-label" for="totpDisplayName">
+            Nom de l’application (facultatif)
+            <span class="fr-hint-text">
+                Pour la retrouver facilement, ex : Google Authenticator – Téléphone pro
+            </span>
+        </label>
+        <input
+            class="fr-input"
+            type="text"
+            id="totpDisplayName"
+            name="totpDisplayName"
+            maxlength="50"
+            autocomplete="off"
+            placeholder="ex : Téléphone pro"
+        >
+    </div>
     <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
         <label class="fr-label" for="totpToken">
             Insérer ensuite le code généré par l’application

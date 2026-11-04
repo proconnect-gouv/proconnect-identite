@@ -177,6 +177,10 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     type: "success",
     description: "Votre clé d’accès a bien été supprimée.",
   },
+  passkey_successfully_renamed: {
+    type: "success",
+    description: "Votre clé d’accès a bien été renommée.",
+  },
   passkey_not_found: {
     type: "error",
     description: "Erreur : nous n’avons pas trouvé votre clé d’accès.",
@@ -206,6 +210,10 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
   authenticator_successfully_deleted: {
     type: "success",
     description: "L’application d’authentification a bien été supprimée.",
+  },
+  authenticator_successfully_renamed: {
+    type: "success",
+    description: "L’application d’authentification a bien été renommée.",
   },
   "2fa_successfully_enabled": {
     type: "success",

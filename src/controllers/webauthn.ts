@@ -26,9 +26,11 @@ import {
   deleteUserAuthenticator,
   getAuthenticationOptions,
   getRegistrationOptions,
+  renameUserAuthenticator,
   verifyAuthentication,
   verifyRegistration,
 } from "../managers/webauthn";
+import { mfaDisplayNameSchema } from "../services/custom-zod-schemas";
 import { logger, track } from "../services/log";
 
 export const deletePasskeyController = async (
@@ -58,7 +60,30 @@ export const deletePasskeyController = async (
     next(e);
   }
 };
+export const renamePasskeyController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { credential_id } = z
+      .object({ credential_id: z.string() })
+      .parse(req.params);
+    const { passkeyDisplayName } = await z
+      .object({ passkeyDisplayName: mfaDisplayNameSchema() })
+      .parseAsync(req.body);
 
+    const { email } = getUserFromAuthenticatedSession(req);
+
+    await renameUserAuthenticator(email, credential_id, passkeyDisplayName);
+
+    return res.redirect(
+      "/connection-and-account?notification=passkey_successfully_renamed",
+    );
+  } catch (e) {
+    next(e);
+  }
+};
 export const getGenerateRegistrationOptionsController = async (
   req: Request,
   res: Response,
@@ -86,10 +111,10 @@ export const postVerifyRegistrationControllerFactory =
     try {
       const schema = z.object({
         webauthn_registration_response_string: z.string(),
+        passkeyDisplayName: mfaDisplayNameSchema(),
       });
-      const { webauthn_registration_response_string } = await schema.parseAsync(
-        req.body,
-      );
+      const { webauthn_registration_response_string, passkeyDisplayName } =
+        await schema.parseAsync(req.body);
 
       const response = await z
         .preprocess(
@@ -102,6 +127,7 @@ export const postVerifyRegistrationControllerFactory =
       const { userVerified, updatedUser, key_name } = await verifyRegistration({
         email: email,
         response,
+        display_name: passkeyDisplayName,
       });
       addAuthenticationMethodReferenceInSession(req, res, updatedUser, "pop");
       if (userVerified) {
