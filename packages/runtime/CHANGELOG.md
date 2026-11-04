@@ -1,5 +1,19 @@
 # @proconnect-gouv/proconnect.identite.runtime
 
+## 0.5.0
+
+### Minor Changes
+
+- [#2407](https://github.com/proconnect-gouv/proconnect-identite/pull/2407) [`c801a10`](https://github.com/proconnect-gouv/proconnect-identite/commit/c801a108fd71b38f179dd2e21f62fc440e56fee6) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Ajoute la commande `updatePersonalInformations` et le schéma `user.info_changed` : le changement de nom, téléphone ou fonction est journalisé avec les valeurs précédentes, et une demande sans changement n'écrit rien.
+
+- [#2408](https://github.com/proconnect-gouv/proconnect-identite/pull/2408) [`478e680`](https://github.com/proconnect-gouv/proconnect-identite/commit/478e680e7f83f4c24f37e84f9134856dbaa753a2) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Ajoute la commande `changePassword` et le schéma `user.password_changed` : un mot de passe défini à la réinitialisation ou à l'inscription est journalisé avec l'état précédent, sans jamais écrire le mot de passe ni son empreinte.
+
+### Patch Changes
+
+- Updated dependencies [[`c1167a1`](https://github.com/proconnect-gouv/proconnect-identite/commit/c1167a150b16060ca704059e98040414bbf7a009), [`33604f3`](https://github.com/proconnect-gouv/proconnect-identite/commit/33604f32fb4393ec60e413f0b7bace8e94ac22fc), [`c1167a1`](https://github.com/proconnect-gouv/proconnect-identite/commit/c1167a150b16060ca704059e98040414bbf7a009)]:
+  - @proconnect-gouv/proconnect.identite.database@2.0.0
+  - @proconnect-gouv/proconnect.identite@15.0.0
+
 ## 0.4.0
 
 ### Minor Changes
