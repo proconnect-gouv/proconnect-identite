@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 2.0.0
+
+### Major Changes
+
+- [#2394](https://github.com/proconnect-gouv/proconnect-identite/pull/2394) [`c1167a1`](https://github.com/proconnect-gouv/proconnect-identite/commit/c1167a150b16060ca704059e98040414bbf7a009) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Supprime la colonne `has_been_greeted` de `users_organizations` : plus aucun code ne la lit ni ne l'écrit.
+
 ## 1.12.0
 
 ### Minor Changes
