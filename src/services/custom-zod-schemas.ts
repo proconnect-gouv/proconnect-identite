@@ -92,3 +92,11 @@ export const oidcErrorSchema = () =>
     "request_uri_not_supported",
     "registration_not_supported",
   ]);
+
+export const mfaDisplayNameSchema = () =>
+  z
+    .string()
+    .trim()
+    .max(50)
+    .optional()
+    .transform((val) => val || null);

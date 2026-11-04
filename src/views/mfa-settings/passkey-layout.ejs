@@ -31,6 +31,20 @@
   Le plus rapide et le plus simple : déverrouillez avec votre empreinte, votre visage ou le code PIN de votre ordinateur.
 </p>
 
+<div class="fr-input-group">
+  <label class="fr-label" for="passkeyDisplayName">
+    Nom de la clé d’accès (facultatif)
+  </label>
+  <input
+    class="fr-input"
+    type="text"
+    id="passkeyDisplayName"
+    name="passkeyDisplayName"
+    form="webauthn-registration-response-form"
+    maxlength="50"
+    autocomplete="off"
+  />
+</div>
 <button
   class="fr-btn btn--fullwidth"
   id="webauthn-registration-button"
