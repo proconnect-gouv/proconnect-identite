@@ -54,7 +54,6 @@ export const BaseUserOrganizationLinkSchema = z.object({
   verification_type: LinkEnum,
   // updated when verification_type is changed
   verified_at: z.date().or(z.literal(null)),
-  has_been_greeted: z.boolean(),
 });
 
 export type BaseUserOrganizationLink = z.output<

@@ -231,7 +231,6 @@ SELECT
 	created_at,
 	updated_at,
 	verification_type,
-	has_been_greeted,
 	verified_at
 FROM users_organizations"
 psql $SRC_DB_URL --command="ALTER TABLE tmp_users_organizations ADD PRIMARY KEY("user_id","organization_id")"

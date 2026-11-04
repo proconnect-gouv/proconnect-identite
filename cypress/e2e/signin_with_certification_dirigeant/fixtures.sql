@@ -351,8 +351,7 @@ INSERT INTO
     organization_id,
     is_external,
     verification_type,
-    verified_at,
-    has_been_greeted
+    verified_at
   )
 VALUES
   (
@@ -360,51 +359,45 @@ VALUES
     1,
     false,
     'organization_dirigeant',
-    CURRENT_TIMESTAMP,
-    true
+    CURRENT_TIMESTAMP
   ),
-  (2, 1, false, 'domain', CURRENT_TIMESTAMP, true),
+  (2, 1, false, 'domain', CURRENT_TIMESTAMP),
   (
     4,
     2,
     false,
     'organization_dirigeant',
-    CURRENT_TIMESTAMP - INTERVAL '1 day',
-    true
+    CURRENT_TIMESTAMP - INTERVAL '1 day'
   ),
   (
     5,
     1,
     false,
     'organization_dirigeant',
-    CURRENT_TIMESTAMP,
-    true
+    CURRENT_TIMESTAMP
   ),
   (
     8,
     3,
     false,
     'organization_dirigeant',
-    CURRENT_TIMESTAMP,
-    true
+    CURRENT_TIMESTAMP
   ),
   (
     9,
     4,
     false,
     'organization_dirigeant',
-    CURRENT_TIMESTAMP,
-    true
+    CURRENT_TIMESTAMP
   ),
-  (9, 5, false, 'domain', CURRENT_TIMESTAMP, true),
-  (10, 4, false, 'domain', CURRENT_TIMESTAMP, true),
+  (9, 5, false, 'domain', CURRENT_TIMESTAMP),
+  (10, 4, false, 'domain', CURRENT_TIMESTAMP),
   (
     11,
     1,
     false,
     'organization_dirigeant',
-    CURRENT_TIMESTAMP - INTERVAL '1 day',
-    true
+    CURRENT_TIMESTAMP - INTERVAL '1 day'
   );
 
 INSERT INTO

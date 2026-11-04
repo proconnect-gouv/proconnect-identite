@@ -59,11 +59,11 @@ async function seed() {
 
   await pg.sql`
     INSERT INTO users_organizations
-    (user_id, organization_id, created_at, updated_at, is_external, verification_type, has_been_greeted)
-    VALUES (1, 1, '2023-01-25', '2024-02-20', false, 'necron', true),
-           (1, 3, '2023-04-01', '2024-05-05', true, 'alliance', false),
-           (2, 2, '2023-03-01', '2024-04-01', false, 'necron', true),
-           (6, 5, '2023-07-05', '2024-08-15', false, 'imperial', true)
+    (user_id, organization_id, created_at, updated_at, is_external, verification_type)
+    VALUES (1, 1, '2023-01-25', '2024-02-20', false, 'necron'),
+           (1, 3, '2023-04-01', '2024-05-05', true, 'alliance'),
+           (2, 2, '2023-03-01', '2024-04-01', false, 'necron'),
+           (6, 5, '2023-07-05', '2024-08-15', false, 'imperial')
     ;
   `;
 }

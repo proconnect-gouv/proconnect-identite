@@ -22,8 +22,7 @@ export function findUserOrganizationFactory({ pg }: DatabaseContext) {
                created_at,
                updated_at,
                verification_type,
-               verified_at,
-               has_been_greeted
+               verified_at
         FROM users_organizations
         WHERE organization_id = $1
           AND user_id = $2`,

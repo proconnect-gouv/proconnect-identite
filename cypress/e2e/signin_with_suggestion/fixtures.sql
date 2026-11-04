@@ -290,20 +290,19 @@ INSERT INTO
     user_id,
     organization_id,
     is_external,
-    verification_type,
-    has_been_greeted
+    verification_type
   )
 VALUES
-  (2, 1, false, 'domain', true),
-  (2, 2, false, 'domain', true),
-  (3, 1, false, 'domain', true),
-  (3, 2, false, 'domain', true),
-  (4, 1, false, 'domain', true),
-  (5, 4, false, 'domain', true),
-  (5, 5, false, 'domain', true),
-  (5, 6, false, 'domain', true),
-  (5, 7, false, 'domain', true),
-  (6, 4, false, 'domain', true),
-  (7, 4, false, 'domain', true),
-  (8, 4, false, 'domain', true),
-  (9, 4, false, 'domain', true);
+  (2, 1, false, 'domain'),
+  (2, 2, false, 'domain'),
+  (3, 1, false, 'domain'),
+  (3, 2, false, 'domain'),
+  (4, 1, false, 'domain'),
+  (5, 4, false, 'domain'),
+  (5, 5, false, 'domain'),
+  (5, 6, false, 'domain'),
+  (5, 7, false, 'domain'),
+  (6, 4, false, 'domain'),
+  (7, 4, false, 'domain'),
+  (8, 4, false, 'domain'),
+  (9, 4, false, 'domain');

@@ -27,8 +27,7 @@ exports[`findByUserIdFactory > should return multiple organizations when user ha
     "cached_denomination_usuelle_etablissement_principal": null,
     "is_external": false,
     "verification_type": "necron",
-    "verified_at": null,
-    "has_been_greeted": true
+    "verified_at": null
   },
   {
     "id": 3,
@@ -57,8 +56,7 @@ exports[`findByUserIdFactory > should return multiple organizations when user ha
     "cached_denomination_usuelle_etablissement_principal": null,
     "is_external": true,
     "verification_type": "alliance",
-    "verified_at": null,
-    "has_been_greeted": false
+    "verified_at": null
   }
 ]
 `;
@@ -92,8 +90,7 @@ exports[`findByUserIdFactory > should return single organization when user has o
     "cached_denomination_usuelle_etablissement_principal": null,
     "is_external": false,
     "verification_type": "imperial",
-    "verified_at": null,
-    "has_been_greeted": true
+    "verified_at": null
   }
 ]
 `;
