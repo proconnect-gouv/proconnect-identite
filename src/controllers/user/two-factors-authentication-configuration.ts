@@ -17,7 +17,10 @@ import {
 } from "../../managers/totp";
 import { sendAddFreeTOTPEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import { codeSchema } from "../../services/custom-zod-schemas";
+import {
+  codeSchema,
+  mfaDisplayNameSchema,
+} from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest, {
   getNotificationLabelFromRequest,
 } from "../../services/get-notifications-from-request";
@@ -97,8 +100,9 @@ export const postTotpConfigurationController = async (
   try {
     const schema = z.object({
       totpToken: codeSchema(),
+      totpDisplayName: mfaDisplayNameSchema(),
     });
-    const { totpToken } = await schema.parseAsync(req.body);
+    const { totpToken, totpDisplayName } = await schema.parseAsync(req.body);
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
     const temporaryTotpKey = getTemporaryTotpKey(req);
@@ -111,6 +115,7 @@ export const postTotpConfigurationController = async (
       user_id,
       temporaryTotpKey,
       totpToken,
+      totpDisplayName,
     );
     deleteTemporaryTotpKey(req);
     addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");

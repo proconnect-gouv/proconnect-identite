@@ -1,3 +1,4 @@
+import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import { isEmpty } from "lodash-es";
 import { Secret, TOTP } from "otpauth";
 import qrcode from "qrcode";
@@ -9,6 +10,8 @@ import {
   encryptSymmetric,
 } from "../services/symmetric-encryption";
 import { disableForce2fa, is2FACapable } from "./2fa";
+
+export const DEFAULT_TOTP_DISPLAY_NAME = "Application d'authentification";
 
 const { users } = context.repository;
 
@@ -52,6 +55,7 @@ export const confirmTotpRegistration = async (
   user_id: number,
   temporaryTotpKey: string | undefined,
   totpToken: string,
+  totp_display_name: string | null = null,
 ) => {
   // ASSERTION: user exists
   await users.getById(user_id);
@@ -79,6 +83,7 @@ export const confirmTotpRegistration = async (
 
   return await users.update(user_id, {
     encrypted_totp_key,
+    totp_display_name,
     totp_key_verified_at: new Date(),
   });
 };
@@ -88,6 +93,7 @@ export const deleteTotpConfiguration = async (user_id: number) => {
 
   user = await users.update(user_id, {
     encrypted_totp_key: null,
+    totp_display_name: null,
     totp_key_verified_at: null,
   });
 
@@ -96,6 +102,17 @@ export const deleteTotpConfiguration = async (user_id: number) => {
   }
 
   return user;
+};
+
+export const renameTotpConfiguration = async (
+  user_id: number,
+  totp_display_name: string | null,
+) => {
+  if (!(await isTotpConfiguredForUser(user_id))) {
+    throw new NotFoundError();
+  }
+
+  return await users.update(user_id, { totp_display_name });
 };
 
 export const isTotpConfiguredForUser = async (user_id: number) => {
