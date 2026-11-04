@@ -50,6 +50,7 @@ jobs:
           - rate_limit_by_ip
           - reauthenticate_on_admin_page
           - redirect_after_session_expiration
+          - rename_mfa
           - reset_password
           - set_info_after_account_provisioning
           - signin_from_proconnect_federation_client

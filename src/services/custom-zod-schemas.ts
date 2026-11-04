@@ -98,3 +98,11 @@ export const recoveryWordsSchema = () =>
     .trim()
     .min(1)
     .transform((val) => normalizeDicewareWords(val));
+
+export const mfaDisplayNameSchema = () =>
+  z
+    .string()
+    .trim()
+    .max(50)
+    .optional()
+    .transform((val) => val || null);

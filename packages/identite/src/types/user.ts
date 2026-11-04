@@ -26,6 +26,7 @@ export const UserSchema = z.object({
   reset_password_sent_at: z.date().nullable(),
   reset_password_token: z.string().nullable(),
   sign_in_count: z.number(),
+  totp_display_name: z.string().nullable().default(null),
   totp_key_verified_at: z.date().nullable(),
   updated_at: z.date(),
   verify_email_sent_at: z.date().nullable(),
