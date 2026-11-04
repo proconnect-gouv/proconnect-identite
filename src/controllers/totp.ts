@@ -18,13 +18,17 @@ import {
   deleteTotpConfiguration,
   generateTotpRegistrationOptions,
   isTotpConfiguredForUser,
+  renameTotpConfiguration,
 } from "../managers/totp";
 import {
   sendAddFreeTOTPEmail,
   sendDeleteFreeTOTPApplicationEmail,
 } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { codeSchema } from "../services/custom-zod-schemas";
+import {
+  codeSchema,
+  mfaDisplayNameSchema,
+} from "../services/custom-zod-schemas";
 import getNotificationsFromRequest, {
   getNotificationLabelFromRequest,
 } from "../services/get-notifications-from-request";
@@ -79,8 +83,9 @@ export const postTotpConfigurationMiddlewareFactory =
     try {
       const schema = z.object({
         totpToken: codeSchema(),
+        totpDisplayName: mfaDisplayNameSchema(),
       });
-      const { totpToken } = await schema.parseAsync(req.body);
+      const { totpToken, totpDisplayName } = await schema.parseAsync(req.body);
 
       const { id: user_id } = getUserFromAuthenticatedSession(req);
       const temporaryTotpKey = getTemporaryTotpKey(req);
@@ -93,6 +98,7 @@ export const postTotpConfigurationMiddlewareFactory =
         user_id,
         temporaryTotpKey,
         totpToken,
+        totpDisplayName,
       );
 
       deleteTemporaryTotpKey(req);
@@ -136,6 +142,31 @@ export const postDeleteTotpConfigurationController = async (
 
     return res.redirect(
       `/connection-and-account?notification=authenticator_successfully_deleted`,
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postRenameTotpConfigurationController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      totpDisplayName: mfaDisplayNameSchema(),
+    });
+    const { totpDisplayName } = await schema.parseAsync(req.body);
+
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    const updatedUser = await renameTotpConfiguration(user_id, totpDisplayName);
+
+    updateUserInAuthenticatedSession(req, updatedUser);
+
+    return res.redirect(
+      "/connection-and-account?notification=authenticator_successfully_renamed",
     );
   } catch (error) {
     next(error);

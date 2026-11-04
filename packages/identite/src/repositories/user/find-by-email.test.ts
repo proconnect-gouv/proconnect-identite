@@ -47,6 +47,7 @@ suite("findByEmailFactory", () => {
       reset_password_sent_at: null,
       reset_password_token: null,
       sign_in_count: 0,
+      totp_display_name: null,
       totp_key_verified_at: null,
       updated_at: new Date("4444-04-04"),
       verify_email_sent_at: null,

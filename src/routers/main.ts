@@ -28,11 +28,13 @@ import {
 import {
   getTotpConfigurationControllerFactory,
   postDeleteTotpConfigurationController,
+  postRenameTotpConfigurationController,
   postTotpConfigurationMiddlewareFactory,
 } from "../controllers/totp";
 import {
   deletePasskeyController,
   postVerifyRegistrationMiddlewareFactory,
+  renamePasskeyController,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
@@ -198,6 +200,16 @@ export const mainRouter = (app: Express) => {
   );
 
   mainRouter.post(
+    "/rename-totp-configuration",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRenameTotpConfigurationController,
+  );
+
+  mainRouter.post(
     "/passkeys/verify-registration",
     nocache(),
     urlencoded({ extended: false }),
@@ -218,6 +230,16 @@ export const mainRouter = (app: Express) => {
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     deletePasskeyController,
+  );
+
+  mainRouter.post(
+    "/rename-passkeys/:credential_id",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    renamePasskeyController,
   );
 
   mainRouter.post(
