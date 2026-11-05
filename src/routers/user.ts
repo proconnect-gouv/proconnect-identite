@@ -272,7 +272,7 @@ export const userRouter = () => {
 
   userRouter.get(
     "/account-recovered",
-    userCanSetupMfaGuardMiddleware,
+    isUserGuardMiddleware,
     getAccountRecoveredController,
   );
 

@@ -87,6 +87,12 @@ describe("generate recovery words", () => {
     cy.contains("Votre compte est récupéré");
     cy.contains("Reconfigurer").click();
 
+    // the session has been reset: the user signs in again, email is prefilled
+    cy.get('[name="password"]').type("password123");
+    cy.get('[action="/users/sign-in"]  [type="submit"]')
+      .contains("S’identifier")
+      .click();
+
     cy.contains("Choisir votre méthode de connexion renforcée");
 
     // 2FA is not asked anymore

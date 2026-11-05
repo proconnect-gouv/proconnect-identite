@@ -9,13 +9,15 @@ import { disableForce2fa, enableForce2fa } from "../managers/2fa";
 import {
   createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
-  signInWithRecoveryWords,
+  recoverUserAccount,
   verifyRecoveryWordsForUser,
 } from "../managers/recovery-words";
 import {
   getUserFromAuthenticatedSession,
+  regenerateAsUnauthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
+import { setLoginHintInUnauthenticatedSession } from "../managers/session/unauthenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import { sendAccountRecoveredMail, sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
@@ -332,11 +334,15 @@ export const postSignInWithRecoveryWordsController = async (
     });
     const { recovery_words } = await schema.parseAsync(req.body);
 
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id, email } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await signInWithRecoveryWords(user_id, recovery_words);
+    await recoverUserAccount(user_id, recovery_words);
 
-    updateUserInAuthenticatedSession(req, updatedUser);
+    // The recovered account has no second factor anymore: invalidate the
+    // previous session id and start a fresh unauthenticated session.
+    // The login hint lets the user sign in again without retyping their email.
+    await regenerateAsUnauthenticatedSession(req);
+    setLoginHintInUnauthenticatedSession(req, email);
 
     await sendAccountRecoveredMail({ user_id });
 

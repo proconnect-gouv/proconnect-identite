@@ -54,10 +54,7 @@ export const verifyRecoveryWordsForUser = async (
   return validatePassword(input, recoveryWords?.hashed_words ?? null);
 };
 
-export const signInWithRecoveryWords = async (
-  user_id: number,
-  input: string,
-) => {
+export const recoverUserAccount = async (user_id: number, input: string) => {
   const isValid = await verifyRecoveryWordsForUser(user_id, input);
   if (!isValid) {
     throw new InvalidRecoveryWordsError();
