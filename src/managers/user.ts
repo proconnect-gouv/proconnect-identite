@@ -47,7 +47,7 @@ import {
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
-import { context, runtime } from "../connectors/context";
+import { context, db, runtime } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
@@ -493,7 +493,10 @@ export const loginWithMagicLink = async (token: string): Promise<User> => {
     throw new InvalidMagicLinkError();
   }
 
-  const user = await users.findByMagicLinkToken(token);
+  const user = await db.query.users.findFirst({
+    columns: { id: true, magic_link_sent_at: true },
+    where: (table, { eq }) => eq(table.magic_link_token, token),
+  });
 
   if (isEmpty(user)) {
     track("magic_link.token.not_found", {});
@@ -501,7 +504,7 @@ export const loginWithMagicLink = async (token: string): Promise<User> => {
   }
 
   const isTokenExpired = isExpired(
-    user.magic_link_sent_at,
+    user.magic_link_sent_at ? new Date(user.magic_link_sent_at) : null,
     MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
   );
 
