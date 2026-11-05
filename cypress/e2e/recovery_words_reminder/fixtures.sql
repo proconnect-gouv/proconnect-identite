@@ -19,7 +19,7 @@ INSERT INTO
 VALUES
   (
     1,
-    'lion.eljonson@darkangels.world',
+    'never-reminded@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -36,7 +36,7 @@ VALUES
   ),
   (
     2,
-    'rogal.dorn@imperialfists.world',
+    'reminded-two-days-ago@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -53,7 +53,7 @@ VALUES
   ),
   (
     3,
-    'konrad.curze@nightlords.world',
+    'never-reminded+service-provider@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',

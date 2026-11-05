@@ -3,7 +3,7 @@ describe("recovery words reminder", () => {
 
   it("should remind a user without recovery words after a 2fa sign-in", function () {
     cy.visit("/");
-    cy.mfaLogin("lion.eljonson@darkangels.world");
+    cy.mfaLogin("never-reminded@yopmail.com");
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
     cy.contains("Ignorer pour le moment").click();
@@ -13,14 +13,14 @@ describe("recovery words reminder", () => {
 
   it("should not remind the same user again within 24 hours", function () {
     cy.visit("/");
-    cy.mfaLogin("lion.eljonson@darkangels.world");
+    cy.mfaLogin("never-reminded@yopmail.com");
 
     cy.title().should("include", "Accueil");
   });
 
   it("should remind again after 24 hours and let the user generate recovery words", function () {
     cy.visit("/");
-    cy.mfaLogin("rogal.dorn@imperialfists.world");
+    cy.mfaLogin("reminded-two-days-ago@yopmail.com");
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
     cy.contains("Générer les mots de secours").click();
@@ -36,7 +36,7 @@ describe("recovery words reminder", () => {
     cy.visit("http://localhost:4000");
     cy.contains("Forcer une connexion a deux facteurs").click();
 
-    cy.mfaLogin("konrad.curze@nightlords.world");
+    cy.mfaLogin("never-reminded+service-provider@yopmail.com");
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
     cy.contains("Ignorer pour le moment").click();

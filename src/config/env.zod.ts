@@ -178,6 +178,11 @@ export const paramsEnvSchema = z.object({
     .int()
     .nonnegative()
     .default(15 * 60), // 15 minutes
+  RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MINUTES: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(1 * 24 * 60), // 1 day in minutes
   RESET_PASSWORD_TOKEN_EXPIRATION_DURATION_IN_MINUTES: z.coerce
     .number()
     .int()

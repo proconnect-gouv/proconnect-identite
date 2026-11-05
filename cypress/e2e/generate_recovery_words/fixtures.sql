@@ -53,7 +53,7 @@ VALUES
   ),
   (
     3,
-    'leman.russ@spacewolves.world',
+    'state-administration-agent@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',

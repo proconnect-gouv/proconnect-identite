@@ -5,7 +5,10 @@ import {
 } from "@proconnect-gouv/proconnect.identite/types";
 import HttpErrors from "http-errors";
 import isEmpty from "lodash-es/isEmpty";
-import { CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES } from "../../config/env";
+import {
+  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
+  RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MINUTES,
+} from "../../config/env";
 import { context } from "../../connectors/context";
 import {
   doesOrganizationRequireForced2fa,
@@ -226,6 +229,38 @@ export const userIsMfaAuthenticatedIfRequiredGuard = async (
   return pass("user_is_mfa_authenticated_if_required");
 };
 
+export const userHasSeenRecoveryWordsIncentiveGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+    pass,
+    continueTo,
+  } = prev;
+  const { id: user_id, recovery_words_incentive_seen_at } =
+    getUserFromAuthenticatedSession(req);
+
+  const hasSeenIncentiveRecently = !isExpired(
+    recovery_words_incentive_seen_at,
+    RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MINUTES,
+  );
+
+  const shouldConfigureRecoveryWords =
+    (await is2FACapable(user_id)) &&
+    !(await hasRecoveryWordsConfiguredForUser(user_id));
+
+  if (hasSeenIncentiveRecently || !shouldConfigureRecoveryWords) {
+    return pass("user_has_seen_recovery_words_incentive");
+  }
+
+  const user = await users.update(user_id, {
+    recovery_words_incentive_seen_at: new Date(),
+  });
+  updateUserInAuthenticatedSession(req, user);
+
+  return continueTo("/users/recovery-words/reminder");
+};
+
 export const userHasSeenInclusionconnectOnboardingHelpGuard = async (
   prev: Pass<RequestContext>,
 ) => {
@@ -247,40 +282,6 @@ export const userHasSeenInclusionconnectOnboardingHelpGuard = async (
   return pass("user_has_seen_inclusionconnect_onboarding_help");
 };
 
-const RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MS = 24 * 60 * 60 * 1000;
-
-export const userHasSeenRecoveryWordsIncentiveGuard = async (
-  prev: Pass<RequestContext>,
-) => {
-  const {
-    data: { req },
-    pass,
-    continueTo,
-  } = prev;
-  const { id: user_id, recovery_words_incentive_seen_at } =
-    getUserFromAuthenticatedSession(req);
-
-  const hasSeenIncentiveRecently =
-    recovery_words_incentive_seen_at !== null &&
-    Date.now() - new Date(recovery_words_incentive_seen_at).getTime() <
-      RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MS;
-
-  if (
-    hasSeenIncentiveRecently ||
-    !isWithinTwoFactorAuthenticatedSession(req) ||
-    !(await is2FACapable(user_id)) ||
-    (await hasRecoveryWordsConfiguredForUser(user_id))
-  ) {
-    return pass("user_has_seen_recovery_words_incentive");
-  }
-
-  const user = await users.update(user_id, {
-    recovery_words_incentive_seen_at: new Date(),
-  });
-  updateUserInAuthenticatedSession(req, user);
-
-  return continueTo("/users/recovery-words/reminder");
-};
 export const userHasAtLeastOneOrganizationGuard = async (
   prev: Pass<RequestContext>,
 ) => {
