@@ -273,6 +273,22 @@ export const destroyAuthenticatedSession = async (
   });
 };
 
+// Drop every value of the current session (including the logged-in user) and
+// issue a new session id, so that the previous session id can no longer be used.
+export const regenerateAsUnauthenticatedSession = async (
+  req: Request,
+): Promise<null> => {
+  return await new Promise((resolve, reject) => {
+    req.session.regenerate((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(null);
+      }
+    });
+  });
+};
+
 export async function getCurrentIAL(
   req: Request,
 ): Promise<AssuranceLevels["ial"]> {

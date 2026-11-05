@@ -2,6 +2,7 @@
 
 import {
   createAuthenticatorFactory,
+  deleteAllAuthenticatorsByUserIdFactory,
   deleteAuthenticatorFactory,
   findAuthenticatorFactory,
   findAuthenticatorsByUserIdFactory,
@@ -84,6 +85,7 @@ export function createContext({
       authenticators: {
         create: createAuthenticatorFactory({ pg }),
         delete: deleteAuthenticatorFactory({ pg }),
+        deleteAllByUserId: deleteAllAuthenticatorsByUserIdFactory({ pg }),
         find: findAuthenticatorFactory({ pg }),
         findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
         update: updateAuthenticatorFactory({ pg }),

@@ -1,21 +1,27 @@
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z } from "zod";
-import { UserIsNot2faCapableError } from "../config/errors";
+import {
+  InvalidRecoveryWordsError,
+  UserIsNot2faCapableError,
+} from "../config/errors";
 import { disableForce2fa, enableForce2fa } from "../managers/2fa";
 import {
   createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
+  recoverUserAccount,
   verifyRecoveryWordsForUser,
 } from "../managers/recovery-words";
 import {
   getUserFromAuthenticatedSession,
+  regenerateAsUnauthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
+import { setLoginHintInUnauthenticatedSession } from "../managers/session/unauthenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
-import { sendDisable2faMail } from "../managers/user";
+import { sendAccountRecoveredMail, sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { recoveryWordsSchema } from "../services/custom-zod-schemas";
+import { dicewareWordsSchema } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 
 export const getDoubleAuthenticationController = async (
@@ -289,7 +295,7 @@ export const postVerifyRecoveryWordsController = async (
     }
 
     const schema = z.object({
-      recovery_words: recoveryWordsSchema(),
+      recovery_words: dicewareWordsSchema(),
     });
 
     const { recovery_words } = await schema.parseAsync(req.body);
@@ -304,4 +310,58 @@ export const postVerifyRecoveryWordsController = async (
   } catch (error) {
     next(error);
   }
+};
+
+export const getSignInWithRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+) => {
+  return res.render("user/2fa-sign-in-with-recovery-words", {
+    pageTitle: "Utiliser vos mots de secours",
+    notifications: await getNotificationsFromRequest(req),
+    csrfToken: csrfToken(req),
+  });
+};
+
+export const postSignInWithRecoveryWordsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const schema = z.object({
+      recovery_words: dicewareWordsSchema(),
+    });
+    const { recovery_words } = await schema.parseAsync(req.body);
+
+    const { id: user_id, email } = getUserFromAuthenticatedSession(req);
+
+    await recoverUserAccount(user_id, recovery_words);
+
+    // The recovered account has no second factor anymore: invalidate the
+    // previous session id and start a fresh unauthenticated session.
+    // The login hint lets the user sign in again without retyping their email.
+    await regenerateAsUnauthenticatedSession(req);
+    setLoginHintInUnauthenticatedSession(req, email);
+
+    await sendAccountRecoveredMail({ user_id });
+
+    return res.redirect("/users/account-recovered");
+  } catch (error) {
+    if (error instanceof InvalidRecoveryWordsError) {
+      return res.redirect(
+        "/users/2fa-sign-in-with-recovery-words?notification=invalid_recovery_words",
+      );
+    }
+    next(error);
+  }
+};
+
+export const getAccountRecoveredController = async (
+  _req: Request,
+  res: Response,
+) => {
+  return res.render("user/account-recovered", {
+    pageTitle: "Votre compte est récupéré",
+  });
 };

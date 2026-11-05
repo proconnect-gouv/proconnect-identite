@@ -1,10 +1,10 @@
 describe("generate recovery words", () => {
-  before(cy.seed);
+  beforeEach(cy.seed);
 
   it("should generate, verify, then regenerate recovery words", function () {
     cy.visit("/connection-and-account");
 
-    cy.mfaLogin("lion.eljonson@darkangels.world");
+    cy.mfaLogin("without-recovery-words@yopmail.com");
 
     cy.contains("Récupération du compte");
     cy.contains("Générer des mots de secours").click();
@@ -29,9 +29,8 @@ describe("generate recovery words", () => {
 
     // verify with wrong words
     cy.contains("Vérifier mes mots de secours").click();
-    cy.get("#recovery-words").type(
-      "abandon cible gastrique abandon cible gastrique",
-    );
+    cy.contains("label", "Vos 6 mots de secours").click();
+    cy.focused().type("maître guerre loup lunaire hérésie traître");
     cy.contains("button", "Vérifier").click();
     cy.contains(
       "Erreur : ces mots ne correspondent pas à vos mots de secours.",
@@ -39,7 +38,8 @@ describe("generate recovery words", () => {
 
     // verify with the right words
     cy.get("@firstRecoveryWords").then((firstRecoveryWords) => {
-      cy.get("#recovery-words").type(String(firstRecoveryWords));
+      cy.contains("label", "Vos 6 mots de secours").click();
+      cy.focused().type(String(firstRecoveryWords));
     });
     cy.contains("button", "Vérifier").click();
     cy.contains("Vos mots de secours sont valides.");
@@ -48,7 +48,7 @@ describe("generate recovery words", () => {
     cy.visit("/connection-and-account");
 
     cy.contains("Régénérer mes mots de secours").click();
-    cy.get("#regenerate-recovery-words-modal")
+    cy.contains("dialog", "Régénérer vos mots de secours ?")
       .contains("button", "Régénérer")
       .click();
 
@@ -60,5 +60,47 @@ describe("generate recovery words", () => {
         .then((text) => text.trim())
         .should("not.equal", firstRecoveryWords);
     });
+  });
+
+  it("should recover the account with recovery words", function () {
+    cy.visit("/connection-and-account");
+    cy.login("with-recovery-words@yopmail.com");
+
+    cy.contains("Valider avec la double authentification");
+    cy.contains("Vous n’avez pas accès à cette méthode ?").click();
+
+    cy.title().should("include", "Utiliser vos mots de secours");
+
+    // wrong words
+    cy.contains("label", "Mots de secours").click();
+    cy.focused().type("maître guerre loup lunaire hérésie traître");
+    cy.contains("button", "Continuer").click();
+    cy.contains(
+      "Erreur : ces mots ne correspondent pas à vos mots de secours.",
+    );
+
+    // right words
+    cy.contains("label", "Mots de secours").click();
+    cy.focused().type("caliban forteresse ange noir épée lion");
+    cy.contains("button", "Continuer").click();
+
+    cy.contains("Votre compte est récupéré");
+    cy.contains("Reconfigurer").click();
+
+    // the session has been reset: the user signs in again, email is prefilled
+    cy.get('[name="password"]').type("password123");
+    cy.get('[action="/users/sign-in"]  [type="submit"]')
+      .contains("S’identifier")
+      .click();
+
+    cy.contains("Choisir votre méthode de connexion renforcée");
+
+    // 2FA is not asked anymore
+    cy.clearAllCookies();
+    cy.visit("/connection-and-account");
+    cy.login("with-recovery-words@yopmail.com");
+
+    cy.title().should("include", "Compte et connexion");
+    cy.contains("Configurer la double authentification");
   });
 });

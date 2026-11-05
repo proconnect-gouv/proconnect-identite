@@ -18,7 +18,23 @@ INSERT INTO
 VALUES
   (
     1,
-    'lion.eljonson@darkangels.world',
+    'without-recovery-words@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Lion',
+    'El''Jonson',
+    'I',
+    'Primarque',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    true
+  ),
+  (
+    2,
+    'with-recovery-words@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -51,4 +67,14 @@ INSERT INTO
     verification_type
   )
 VALUES
-  (1, 1, false, 'domain');
+  (1, 1, false, 'domain'),
+  (2, 1, false, 'domain');
+
+-- recovery words: "caliban forteresse ange noir epee lion"
+INSERT INTO
+  recovery_words (user_id, hashed_words)
+VALUES
+  (
+    2,
+    '$2b$10$E7tPKTrJLqVCfxns4QZUMekfHtN5lgpjk9gRBkWkrtmBCnz4oT1Uu'
+  );

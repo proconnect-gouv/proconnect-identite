@@ -115,6 +115,14 @@ export const deleteUserAuthenticator = async (
   return getAuthenticatorDisplayName(authenticator);
 };
 
+export const deleteAllUserAuthenticators = async (user_id: number) => {
+  await authenticators.deleteAllByUserId(user_id);
+
+  if (!(await is2FACapable(user_id))) {
+    await disableForce2fa(user_id);
+  }
+};
+
 export const getRegistrationOptions = async (email: string) => {
   const user = await users.findByEmail(email);
 

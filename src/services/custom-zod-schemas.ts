@@ -57,7 +57,7 @@ export const optionalBooleanSchema = () =>
 export const notificationLabelSchema = () =>
   z.string().refine(isNotificationLabelValid).optional();
 
-export const officialContactEmailVerificationTokenSchema = () =>
+export const dicewareWordsSchema = () =>
   z
     .string()
     .trim()
@@ -92,9 +92,3 @@ export const oidcErrorSchema = () =>
     "request_uri_not_supported",
     "registration_not_supported",
   ]);
-export const recoveryWordsSchema = () =>
-  z
-    .string()
-    .trim()
-    .min(1)
-    .transform((val) => normalizeDicewareWords(val));
