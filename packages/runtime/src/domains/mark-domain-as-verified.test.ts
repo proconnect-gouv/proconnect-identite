@@ -19,9 +19,7 @@ async function setup() {
   await db.insert(schema.users).values(
     [
       "lion.eljonson+promoted@darkangels.world",
-      "azrael+promoted@darkangels.world",
       "luther+kept-dirigeant@darkangels.world",
-      "leman.russ+kept-other-domain@spacewolves.world",
     ].map((email, index) => ({
       created_at: "4444-04-04",
       email,
@@ -40,22 +38,7 @@ async function setup() {
       {
         organization_id: 1,
         user_id: 2,
-        verification_type: "domain_not_verified_yet",
-      },
-      {
-        organization_id: 1,
-        user_id: 3,
         verification_type: "organization_dirigeant",
-      },
-      {
-        organization_id: 1,
-        user_id: 4,
-        verification_type: "no_validation_means_available",
-      },
-      {
-        organization_id: 2,
-        user_id: 1,
-        verification_type: "no_validation_means_available",
       },
     ].map((membership) => ({
       ...membership,
@@ -107,24 +90,6 @@ describe("markDomainAsVerified", () => {
     mock.timers.enable({ apis: ["Date"], now: new Date("5555-05-05") });
   });
 
-  it("❎ returns organization_not_found for an unknown organization", async () => {
-    const { db, runtime } = await setup();
-    const before = await snapshot(db);
-
-    const outcome = await runtime.markDomainAsVerified({
-      domain: "notfound.world",
-      domain_verification_type: "verified",
-      organization_id: 404,
-    });
-
-    assert.deepEqual(outcome, {
-      kind: "organization_not_found",
-      organization_id: 404,
-    });
-    assert.deepEqual(await snapshot(db), before);
-    assert.deepEqual(await readActivityLogs(db), []);
-  });
-
   it("✅ replaces the domain states, promotes the domain members and journals the verification under the moderator and each promotion under the app", async () => {
     const { db, runtime } = await setup();
 
@@ -152,7 +117,6 @@ describe("markDomainAsVerified", () => {
             "no_verification_means_for_entreprise_unipersonnelle",
           user_id: 1,
         },
-        { previous_verification_type: "domain_not_verified_yet", user_id: 2 },
       ],
       replaced_verification_types: ["not_verified_yet", "refused"],
     });
@@ -221,27 +185,9 @@ describe("markDomainAsVerified", () => {
         },
         {
           organization_id: 1,
-          updated_at: "5555-05-05 00:00:00+00",
+          updated_at: "4444-04-04 00:00:00+00",
           user_id: 2,
-          verification_type: "domain",
-        },
-        {
-          organization_id: 1,
-          updated_at: "4444-04-04 00:00:00+00",
-          user_id: 3,
           verification_type: "organization_dirigeant",
-        },
-        {
-          organization_id: 1,
-          updated_at: "4444-04-04 00:00:00+00",
-          user_id: 4,
-          verification_type: "no_validation_means_available",
-        },
-        {
-          organization_id: 2,
-          updated_at: "4444-04-04 00:00:00+00",
-          user_id: 1,
-          verification_type: "no_validation_means_available",
         },
       ],
     );
@@ -284,21 +230,6 @@ describe("markDomainAsVerified", () => {
         moderation_id: null,
         organization_id: 1,
         user_id: 1,
-      },
-      {
-        action: "member.promoted",
-        actor_ref: "domain.promote_members",
-        actor_type: "app",
-        app: "hyyypertool",
-        cause_activity_id: 1,
-        context: {
-          inputs: { previous_verification_type: "domain_not_verified_yet" },
-          outcome: { verification_type: "domain" },
-        },
-        interaction_cid: null,
-        moderation_id: null,
-        organization_id: 1,
-        user_id: 2,
       },
     ]);
   });

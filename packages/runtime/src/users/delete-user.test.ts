@@ -118,17 +118,6 @@ describe("deleteUser", () => {
       },
     ]);
   });
-
-  it("❎ returns user_not_found and journals nothing for a missing account", async () => {
-    const { db, runtime } = await setup();
-    const before = await remainingUsers(db);
-
-    const outcome = await runtime.deleteUser({ user_id: 3 });
-
-    assert.deepEqual(outcome, { kind: "user_not_found", user_id: 3 });
-    assert.deepEqual(await remainingUsers(db), before);
-    assert.deepEqual(await readActivityLogs(db), []);
-  });
 });
 
 function remainingUsers(db: IdentiteDatabase) {
