@@ -56,7 +56,7 @@ services:
     network_mode: "host"
 
   maildev:
-    image: maildev/maildev@sha256:180ef51f65eefebb0e7122d8308813c1fd7bff164bc440ce5a3c2feee167a810 # v2.2.1
+    image: maildev/maildev@sha256:14fc33af1b62e1ff35cc2494cad6756c81666499907d6acd9e11b03dbbc115cb # v3.0.0
     environment:
       MAILDEV_IP: "::"
     healthcheck:
@@ -67,7 +67,7 @@ services:
           "--quiet",
           "--tries=1",
           "--spider",
-          "http://127.0.0.1:1080/healthz",
+          "http://127.0.0.1:1080/api/healthz",
         ]
       interval: 10s
       timeout: 5s
