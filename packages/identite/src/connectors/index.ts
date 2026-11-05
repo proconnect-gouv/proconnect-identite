@@ -35,7 +35,6 @@ import {
   findBySiretFactory,
   findByUserIdFactory,
   findOrganizationByIdFactory,
-  findPendingByUserIdFactory,
   getOrganizationByIdFactory,
   upsertFactory,
 } from "#src/repositories/organization";
@@ -120,7 +119,6 @@ export function createContext({
         findById: findOrganizationByIdFactory({ pg }),
         findBySiret: findBySiretFactory({ pg }),
         findByUserId: findByUserIdFactory({ pg }),
-        findPendingByUserId: findPendingByUserIdFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),
         upsert: upsertFactory({ pg }),
       },
