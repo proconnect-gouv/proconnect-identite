@@ -29,10 +29,6 @@ export const context: typeof contextUntraced = {
       "identite.repository.authenticators",
       contextUntraced.repository.authenticators,
     ),
-    email_deliverability_whitelist: instrument(
-      "identite.repository.email_deliverability_whitelist",
-      contextUntraced.repository.email_deliverability_whitelist,
-    ),
     email_domains: instrument(
       "identite.repository.email_domains",
       contextUntraced.repository.email_domains,
