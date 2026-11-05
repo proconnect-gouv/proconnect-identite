@@ -116,6 +116,7 @@ import {
   authenticatorRateLimiterMiddleware,
   officialContactEmailVerificationRateLimiterMiddleware,
   passwordRateLimiterMiddleware,
+  recoveryWordsRateLimiterMiddleware,
   sendEmailVerificationRateLimiterMiddleware,
   sendMagicLinkRateLimiterMiddleware,
   verifyEmailRateLimiterMiddleware,
@@ -265,7 +266,7 @@ export const userRouter = () => {
     "/2fa-sign-in-with-recovery-words",
     userCanBePromptedForMfaGuardMiddleware,
     csrfProtectionMiddleware,
-    authenticatorRateLimiterMiddleware,
+    recoveryWordsRateLimiterMiddleware,
     postSignInWithRecoveryWordsController,
   );
 

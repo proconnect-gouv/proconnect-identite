@@ -16,7 +16,7 @@ import {
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import {
-  officialContactEmailVerificationTokenSchema,
+  dicewareWordsSchema,
   optionalBooleanSchema,
 } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
@@ -176,8 +176,7 @@ export const postOfficialContactEmailVerificationMiddleware = async (
 
     const schema = z.object({
       body: z.object({
-        official_contact_email_verification_token:
-          officialContactEmailVerificationTokenSchema(),
+        official_contact_email_verification_token: dicewareWordsSchema(),
       }),
     });
 

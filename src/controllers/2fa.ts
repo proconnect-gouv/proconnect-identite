@@ -19,7 +19,7 @@ import {
 import { isTotpConfiguredForUser } from "../managers/totp";
 import { sendAccountRecoveredMail, sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
-import { recoveryWordsSchema } from "../services/custom-zod-schemas";
+import { dicewareWordsSchema } from "../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 
 export const getDoubleAuthenticationController = async (
@@ -293,7 +293,7 @@ export const postVerifyRecoveryWordsController = async (
     }
 
     const schema = z.object({
-      recovery_words: recoveryWordsSchema(),
+      recovery_words: dicewareWordsSchema(),
     });
 
     const { recovery_words } = await schema.parseAsync(req.body);
@@ -328,7 +328,7 @@ export const postSignInWithRecoveryWordsController = async (
 ) => {
   try {
     const schema = z.object({
-      recovery_words: recoveryWordsSchema(),
+      recovery_words: dicewareWordsSchema(),
     });
     const { recovery_words } = await schema.parseAsync(req.body);
 

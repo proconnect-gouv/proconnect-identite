@@ -160,6 +160,17 @@ export const authenticatorRateLimiterMiddleware =
     }),
   );
 
+export const recoveryWordsRateLimiterMiddleware =
+  emailRateLimiterMiddlewareFactory(
+    new RateLimiterRedis({
+      storeClient: redisClient,
+      useRedisPackage: true,
+      keyPrefix: "rate-limiter-recovery-words",
+      points: 5, // 5 requests
+      duration: 15 * 60, // per 15 minutes per email
+    }),
+  );
+
 export const resetPasswordRateLimiter = new RateLimiterRedis({
   storeClient: redisClient,
   useRedisPackage: true,

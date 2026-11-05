@@ -11,6 +11,7 @@ import {
 import { context } from "../connectors/context";
 import { is2FACapable } from "./2fa";
 import { deleteTotpConfiguration } from "./totp";
+import { deleteAllUserAuthenticators } from "./webauthn";
 
 export const hasRecoveryWordsConfiguredForUser = async (user_id: number) => {
   const recoveryWords =
@@ -62,11 +63,7 @@ export const signInWithRecoveryWords = async (
     throw new InvalidRecoveryWordsError();
   }
 
-  const userAuthenticators =
-    await context.repository.authenticators.findByUserId(user_id);
-  for (const { credential_id } of userAuthenticators) {
-    await context.repository.authenticators.delete(user_id, credential_id);
-  }
+  await deleteAllUserAuthenticators(user_id);
 
   const updatedUser = await deleteTotpConfiguration(user_id);
 

@@ -61,6 +61,9 @@ export const userCanSetupMfaGuardMiddleware = createGuardMiddleware(
     context = userIsAuthenticatedGuard(context);
     if (!Pass.is_passing(context)) return context;
 
+    context = await userIsVerifiedGuard(context);
+    if (!Pass.is_passing(context)) return context;
+
     context = await userHasAuthenticatedRecentlyGuard(context);
     if (!Pass.is_passing(context)) return context;
 
@@ -81,7 +84,10 @@ export const userCanBePromptedForMfaGuardMiddleware = createGuardMiddleware(
     context = userIsAuthenticatedGuard(context);
     if (!Pass.is_passing(context)) return context;
 
-    return userIsVerifiedGuard(context);
+    context = await userIsVerifiedGuard(context);
+    if (!Pass.is_passing(context)) return context;
+
+    return userHasAuthenticatedRecentlyGuard(context);
   },
 );
 
