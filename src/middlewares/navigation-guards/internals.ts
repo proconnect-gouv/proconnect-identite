@@ -66,10 +66,7 @@ export class Pass<
 }
 
 export type GuardResult<TCode extends string, TData extends object> =
-  | Pass<TData, TCode>
-  | HaltTo
-  | ContinueTo
-  | Send;
+  Pass<TData, TCode> | HaltTo | ContinueTo | Send;
 
 export function createGuardMiddleware(
   fn: (

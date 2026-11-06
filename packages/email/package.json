@@ -44,7 +44,7 @@
     "@kitajs/ts-html-plugin": "^4.1.1",
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@storybook/csf": "^0.1.13",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.10",
     "vite": "^7.3.7"
   },
   "publishConfig": {
