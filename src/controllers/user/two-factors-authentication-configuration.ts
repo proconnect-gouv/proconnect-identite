@@ -1,7 +1,13 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
+import HttpErrors from "http-errors";
 import { z } from "zod";
-import { InvalidTotpTokenError } from "../../config/errors";
+import {
+  InvalidTotpTokenError,
+  UserIsNot2faCapableError,
+} from "../../config/errors";
+import { isUserInAdministrationEtat } from "../../managers/organization/main";
+import { createRecoveryWordsForUser } from "../../managers/recovery-words";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
@@ -89,7 +95,7 @@ export const getTotpConfigurationController = async (
   }
 };
 
-export const postTotpConfigurationController = async (
+export const postTotpConfigurationMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -117,7 +123,9 @@ export const postTotpConfigurationController = async (
 
     await sendAddFreeTOTPEmail({ user_id });
 
-    return res.redirect("/users/2fa-successfully-configured");
+    req.session.pendingGreetingsForConfiguredMfa = true;
+
+    return next();
   } catch (error) {
     if (error instanceof InvalidTotpTokenError) {
       const { "totp-tool-type": totpToolType } = req.body;
@@ -145,6 +153,45 @@ export const get2faSuccessfullyConfiguredController = async (
       spName: req.session.spName,
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+export const getRecoveryWordsIncentiveController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.render("user/recovery-words-incentive", {
+      pageTitle: "Sauvegardez vos mots de secours",
+      csrfToken: csrfToken(req),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postRecoveryWordsSetupController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    const recoveryWords = await createRecoveryWordsForUser(user_id);
+
+    return res.render("user/recovery-words-setup", {
+      pageTitle: "Sauvegarder vos mots de secours",
+      csrfToken: csrfToken(req),
+      recoveryWords: recoveryWords.split("-"),
+      isAdministrationEtat: await isUserInAdministrationEtat(user_id),
+    });
+  } catch (error) {
+    if (error instanceof UserIsNot2faCapableError) {
+      return next(new HttpErrors.UnprocessableEntity());
+    }
     next(error);
   }
 };

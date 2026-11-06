@@ -1,5 +1,6 @@
 import { QuitOrganization } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
+import { computeServicePublicInfo } from "@proconnect-gouv/proconnect.identite/services/organization";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request } from "express";
 import { isEmpty } from "lodash-es";
@@ -23,6 +24,17 @@ export const getUserOrganizations = async (
     await organizations.findPendingByUserId(userId);
 
   return { userOrganizations, pendingUserOrganizations };
+};
+
+export const isUserInAdministrationEtat = async (
+  user_id: number,
+): Promise<boolean> => {
+  const userOrganizations = await organizations.findByUserId(user_id);
+
+  return userOrganizations.some(
+    (organization) =>
+      computeServicePublicInfo(organization).isAdministrationEtat === true,
+  );
 };
 export const quitOrganization = async ({
   user_id,

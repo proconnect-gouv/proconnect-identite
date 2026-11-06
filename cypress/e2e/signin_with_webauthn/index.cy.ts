@@ -21,8 +21,14 @@ describe("setup the passkey", () => {
     cy.contains("Clé d'accès (passkey)").click();
     cy.contains("Continuer").click();
 
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    // the next sign-ins would show the incentive again otherwise
+    cy.contains("Générer les mots de secours").click();
+    cy.title().should("include", "Sauvegarder vos mots de secours");
+    cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
+    cy.contains("Continuer").click();
+
     cy.title().should("include", "Compte et connexion");
-    cy.contains("Tout est en ordre !");
 
     cy.get("@authenticator").getFirstCertification().as("credential");
 

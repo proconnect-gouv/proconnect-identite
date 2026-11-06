@@ -134,3 +134,25 @@ VALUES
     null,
     null
   );
+
+-- recovery words: "caliban forteresse ange noir epee lion"
+-- users with 2FA have recovery words, so the recovery words incentive is not shown at sign-in
+INSERT INTO
+  recovery_words (user_id, hashed_words)
+VALUES
+  (
+    1,
+    '$2b$10$E7tPKTrJLqVCfxns4QZUMekfHtN5lgpjk9gRBkWkrtmBCnz4oT1Uu'
+  ),
+  (
+    2,
+    '$2b$10$E7tPKTrJLqVCfxns4QZUMekfHtN5lgpjk9gRBkWkrtmBCnz4oT1Uu'
+  ),
+  (
+    3,
+    '$2b$10$E7tPKTrJLqVCfxns4QZUMekfHtN5lgpjk9gRBkWkrtmBCnz4oT1Uu'
+  ),
+  (
+    4,
+    '$2b$10$E7tPKTrJLqVCfxns4QZUMekfHtN5lgpjk9gRBkWkrtmBCnz4oT1Uu'
+  );
