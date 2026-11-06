@@ -40,12 +40,14 @@ suite("upsertAuthorizationRequestFactory", () => {
       user_ip_address: "127.0.0.1",
       interaction_cid: "Rex5_Tq4tBqqwz0xPTJyd",
       outcome: "succeeded",
+      sid: "ulthwe",
     });
 
     assert.equal(authorizationRequest.user_id, 1);
     assert.equal(authorizationRequest.oidc_client_id, 1);
     assert.equal(authorizationRequest.interaction_cid, "Rex5_Tq4tBqqwz0xPTJyd");
     assert.equal(authorizationRequest.outcome, "succeeded");
+    assert.equal(authorizationRequest.sid, "ulthwe");
   });
 
   test("should update the authorization request of the same interaction", async () => {
@@ -60,36 +62,47 @@ suite("upsertAuthorizationRequestFactory", () => {
       ...request,
       interaction_cid: "caliban",
       outcome: null,
+      sid: null,
     });
     await upsertAuthorizationRequest({
       ...request,
       interaction_cid: "fallen",
       outcome: null,
+      sid: "rock",
     });
     await upsertAuthorizationRequest({
       ...request,
       interaction_cid: "caliban",
       outcome: "succeeded",
+      sid: "rock",
+    });
+    await upsertAuthorizationRequest({
+      ...request,
+      interaction_cid: "fallen",
+      outcome: null,
+      sid: null,
     });
     await upsertAuthorizationRequest({
       ...request,
       interaction_cid: null,
       outcome: "succeeded",
+      sid: "rock",
     });
     await upsertAuthorizationRequest({
       ...request,
       interaction_cid: null,
       outcome: "succeeded",
+      sid: "rock",
     });
 
     const { rows } = await pg.query(
-      "SELECT interaction_cid, outcome FROM users_oidc_clients ORDER BY id",
+      "SELECT interaction_cid, outcome, sid FROM users_oidc_clients ORDER BY id",
     );
     assert.deepEqual(rows, [
-      { interaction_cid: "caliban", outcome: "succeeded" },
-      { interaction_cid: "fallen", outcome: null },
-      { interaction_cid: null, outcome: "succeeded" },
-      { interaction_cid: null, outcome: "succeeded" },
+      { interaction_cid: "caliban", outcome: "succeeded", sid: "rock" },
+      { interaction_cid: "fallen", outcome: null, sid: "rock" },
+      { interaction_cid: null, outcome: "succeeded", sid: "rock" },
+      { interaction_cid: null, outcome: "succeeded", sid: "rock" },
     ]);
   });
 });

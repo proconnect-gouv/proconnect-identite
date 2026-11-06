@@ -519,7 +519,8 @@ CREATE TABLE "public"."users_oidc_clients" (
   "sp_name" character varying,
   "user_ip_address" character varying,
   "interaction_cid" character varying,
-  "outcome" character varying
+  "outcome" character varying,
+  "sid" character varying
 );
 
 --

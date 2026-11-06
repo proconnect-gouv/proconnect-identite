@@ -7,6 +7,7 @@ import Provider, {
   type Configuration,
   type KoaContextWithOIDC,
 } from "oidc-provider";
+import { recordSignOut } from "../managers/oidc-client";
 import { destroyAuthenticatedSession } from "../managers/session/authenticated";
 import epochTime from "../services/epoch-time";
 import { logger, track } from "../services/log";
@@ -157,6 +158,15 @@ export const oidcProviderConfiguration = ({
       // @ts-ignore
       logoutSource: async (ctx, form) => {
         await destroyAuthenticatedSession(ctx.req as Request);
+        const { client, session } = ctx.oidc;
+        if (session?.accountId && client) {
+          await recordSignOut({
+            accountId: session.accountId,
+            client,
+            requestHeaders: ctx.request.headers,
+            sid: session.sidFor(client.clientId) ?? null,
+          });
+        }
         const csrfToken = /name="xsrf" value="([a-f0-9]*)"/.exec(form)![1];
 
         ctx.type = "html";
