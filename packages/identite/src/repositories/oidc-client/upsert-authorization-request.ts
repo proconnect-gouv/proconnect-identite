@@ -18,19 +18,21 @@ export function upsertAuthorizationRequestFactory({ pg }: DatabaseContext) {
     user_ip_address,
     interaction_cid,
     outcome,
+    sid,
   }: BaseAuthorizationRequest) {
     const { rows }: QueryResult<AuthorizationRequest> = await pg.query(
       `
 INSERT INTO users_oidc_clients
-  (user_id, oidc_client_id, organization_id, sp_name, user_ip_address, created_at, updated_at, interaction_cid, outcome)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+  (user_id, oidc_client_id, organization_id, sp_name, user_ip_address, created_at, updated_at, interaction_cid, outcome, sid)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 ON CONFLICT (interaction_cid) WHERE interaction_cid IS NOT NULL
 DO UPDATE SET
   organization_id = EXCLUDED.organization_id,
   outcome = EXCLUDED.outcome,
+  sid = COALESCE(EXCLUDED.sid, users_oidc_clients.sid),
   updated_at = EXCLUDED.updated_at,
   user_id = EXCLUDED.user_id
-RETURNING user_id, oidc_client_id, organization_id, sp_name, user_ip_address, created_at, updated_at, id, interaction_cid, outcome;
+RETURNING user_id, oidc_client_id, organization_id, sp_name, user_ip_address, created_at, updated_at, id, interaction_cid, outcome, sid;
 `,
       [
         user_id,
@@ -42,6 +44,7 @@ RETURNING user_id, oidc_client_id, organization_id, sp_name, user_ip_address, cr
         new Date(),
         interaction_cid,
         outcome,
+        sid,
       ],
     );
 

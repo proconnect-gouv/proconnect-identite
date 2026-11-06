@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-export const AuthorizationRequestOutcomeEnum = z.enum(["succeeded"]);
+export const AuthorizationRequestOutcomeEnum = z.enum([
+  "signed_out",
+  "succeeded",
+]);
 
 export type AuthorizationRequestOutcome = z.output<
   typeof AuthorizationRequestOutcomeEnum
@@ -14,6 +17,7 @@ export interface BaseAuthorizationRequest {
   user_ip_address: string | null;
   interaction_cid: string | null;
   outcome: AuthorizationRequestOutcome | null;
+  sid: string | null;
 }
 
 export interface AuthorizationRequest extends BaseAuthorizationRequest {
