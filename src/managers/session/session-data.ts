@@ -47,6 +47,7 @@ export const SessionDataSchema = z.object({
   ...UnauthenticatedSessionDataSchema.shape,
   ...FranceConnectOidcSessionSchema.partial().shape,
   amr: z.array(AmrValueSchema).optional(),
+  hasSeenRecoveryWordsIncentive: z.boolean().optional(),
   pendingCertificationDirigeantOrganizationId: z.number().optional(),
   pendingGreetingsForConfiguredMfa: z.boolean().optional(),
   pendingGreetingsForSelectedOrganization: z.boolean().optional(),

@@ -6,6 +6,9 @@ describe("generate recovery words", () => {
 
     cy.mfaLogin("without-recovery-words@yopmail.com");
 
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Ignorer pour le moment").click();
+
     cy.contains("Récupération du compte");
     cy.contains("Générer des mots de secours").click();
 
@@ -111,6 +114,9 @@ describe("generate recovery words", () => {
   it("should only show digital storage advice to State administration agents", function () {
     cy.visit("/connection-and-account");
     cy.mfaLogin("state-administration-agent@yopmail.com");
+
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Ignorer pour le moment").click();
 
     cy.contains("Générer des mots de secours").click();
     cy.title().should("include", "Sauvegarder vos mots de secours");

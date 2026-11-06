@@ -153,8 +153,7 @@ export const postPasskeyRegisteredController = async (
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
-      const user = await markRecoveryWordsIncentiveAsSeen(user_id);
-      updateUserInAuthenticatedSession(req, user);
+      markRecoveryWordsIncentiveAsSeen(req);
       return res.redirect("/recovery-words-incentive");
     }
 

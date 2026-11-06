@@ -13,8 +13,7 @@ INSERT INTO
     job,
     encrypted_totp_key,
     totp_key_verified_at,
-    force_2fa,
-    recovery_words_incentive_seen_at
+    force_2fa
   )
 VALUES
   (
@@ -31,8 +30,7 @@ VALUES
     'Sbire',
     null,
     null,
-    false,
-    null
+    false
   ),
   (
     2,
@@ -48,8 +46,7 @@ VALUES
     'Sbire',
     null,
     null,
-    true,
-    null
+    true
   );
 
 INSERT INTO

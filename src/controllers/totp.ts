@@ -98,8 +98,7 @@ export const postTotpConfigurationController = async (
     await sendAddFreeTOTPEmail({ user_id });
 
     if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
-      const user = await markRecoveryWordsIncentiveAsSeen(user_id);
-      updateUserInAuthenticatedSession(req, user);
+      markRecoveryWordsIncentiveAsSeen(req);
       return res.redirect("/recovery-words-incentive");
     }
 

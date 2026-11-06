@@ -5,10 +5,7 @@ import {
 } from "@proconnect-gouv/proconnect.identite/types";
 import HttpErrors from "http-errors";
 import isEmpty from "lodash-es/isEmpty";
-import {
-  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
-  RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MINUTES,
-} from "../../config/env";
+import { CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES } from "../../config/env";
 import { context } from "../../connectors/context";
 import {
   doesOrganizationRequireForced2fa,
@@ -17,7 +14,10 @@ import {
 } from "../../managers/2fa";
 import { isBrowserTrustedForUser } from "../../managers/browser-authentication";
 import { selectOrganization } from "../../managers/organization/main";
-import { hasRecoveryWordsConfiguredForUser } from "../../managers/recovery-words";
+import {
+  hasRecoveryWordsConfiguredForUser,
+  markRecoveryWordsIncentiveAsSeen,
+} from "../../managers/recovery-words";
 import {
   getCurrentAAL,
   getCurrentAssuranceLevels,
@@ -237,26 +237,26 @@ export const userHasSeenRecoveryWordsIncentiveGuard = async (
     pass,
     haltTo,
   } = prev;
-  const { id: user_id, recovery_words_incentive_seen_at } =
-    getUserFromAuthenticatedSession(req);
 
-  const hasSeenIncentiveRecently = !isExpired(
-    recovery_words_incentive_seen_at,
-    RECOVERY_WORDS_INCENTIVE_INTERVAL_IN_MINUTES,
-  );
+  if (req.session.hasSeenRecoveryWordsIncentive) {
+    return pass("user_has_seen_recovery_words_incentive");
+  }
+
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
 
   const shouldConfigureRecoveryWords =
     (await is2FACapable(user_id)) &&
     !(await hasRecoveryWordsConfiguredForUser(user_id));
 
-  if (hasSeenIncentiveRecently || !shouldConfigureRecoveryWords) {
+  // Do not mark the incentive as seen here: a user who sets up 2FA later in
+  // this session must still be shown the incentive.
+  if (!shouldConfigureRecoveryWords) {
     return pass("user_has_seen_recovery_words_incentive");
   }
 
-  const user = await users.update(user_id, {
-    recovery_words_incentive_seen_at: new Date(),
-  });
-  updateUserInAuthenticatedSession(req, user);
+  // Marked before the redirect, as this guard also protects the incentive
+  // pages: otherwise it would redirect the user to the incentive forever.
+  markRecoveryWordsIncentiveAsSeen(req);
 
   return haltTo("/users/recovery-words-incentive");
 };

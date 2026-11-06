@@ -10,7 +10,6 @@ import { isUserInAdministrationEtat } from "../managers/organization/main";
 import {
   createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
-  markRecoveryWordsIncentiveAsSeen,
   recoverUserAccount,
   verifyRecoveryWordsForUser,
 } from "../managers/recovery-words";
@@ -291,10 +290,6 @@ export const getRecoveryWordsIncentiveController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
-    const user = await markRecoveryWordsIncentiveAsSeen(user_id);
-    updateUserInAuthenticatedSession(req, user);
-
     return res.render("recovery-words-incentive", {
       pageTitle: "Sauvegardez vos mots de secours",
       csrfToken: csrfToken(req),

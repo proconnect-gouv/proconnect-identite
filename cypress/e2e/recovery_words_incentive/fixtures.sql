@@ -13,13 +13,12 @@ INSERT INTO
     job,
     encrypted_totp_key,
     totp_key_verified_at,
-    force_2fa,
-    recovery_words_incentive_seen_at
+    force_2fa
   )
 VALUES
   (
     1,
-    'never-reminded@yopmail.com',
+    'without-recovery-words@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -31,12 +30,11 @@ VALUES
     'Primarque',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    true,
-    null
+    true
   ),
   (
     2,
-    'reminded-two-days-ago@yopmail.com',
+    'without-recovery-words+generate@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -48,12 +46,11 @@ VALUES
     'Primarque',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    true,
-    CURRENT_TIMESTAMP - INTERVAL '2 days'
+    true
   ),
   (
     3,
-    'never-reminded+service-provider@yopmail.com',
+    'without-recovery-words+service-provider@yopmail.com',
     true,
     CURRENT_TIMESTAMP,
     '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
@@ -65,8 +62,7 @@ VALUES
     'Primarque',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false,
-    null
+    false
   );
 
 INSERT INTO

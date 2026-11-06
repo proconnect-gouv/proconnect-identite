@@ -4,6 +4,7 @@ import {
   normalizeDicewareWords,
   validatePassword,
 } from "@proconnect-gouv/proconnect.core/security";
+import type { Request } from "express";
 import {
   InvalidRecoveryWordsError,
   UserIsNot2faCapableError,
@@ -18,10 +19,11 @@ export const hasRecoveryWordsConfiguredForUser = async (user_id: number) => {
     await context.repository.recovery_words.findByUserId(user_id);
   return recoveryWords !== undefined;
 };
-export const markRecoveryWordsIncentiveAsSeen = async (user_id: number) => {
-  return context.repository.users.update(user_id, {
-    recovery_words_incentive_seen_at: new Date(),
-  });
+
+// The flag is not restored by createAuthenticatedSession:
+// the incentive is shown again at each sign-in.
+export const markRecoveryWordsIncentiveAsSeen = (req: Request) => {
+  req.session.hasSeenRecoveryWordsIncentive = true;
 };
 
 export const getRecoveryWordsCreatedAt = async (user_id: number) => {

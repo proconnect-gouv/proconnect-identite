@@ -13,8 +13,7 @@ INSERT INTO
     job,
     encrypted_totp_key,
     totp_key_verified_at,
-    force_2fa,
-    recovery_words_incentive_seen_at
+    force_2fa
   )
 VALUES
   (
@@ -31,8 +30,7 @@ VALUES
     'Sbire',
     null,
     null,
-    false,
-    null
+    false
   ),
   (
     2,
@@ -48,8 +46,7 @@ VALUES
     'Sbire',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    false,
-    CURRENT_TIMESTAMP
+    false
   );
 
 INSERT INTO
@@ -102,4 +99,14 @@ VALUES
     null,
     null,
     null
+  );
+
+-- recovery words: "caliban forteresse ange noir epee lion"
+-- users with 2FA have recovery words, so the recovery words incentive is not shown at sign-in
+INSERT INTO
+  recovery_words (user_id, hashed_words)
+VALUES
+  (
+    2,
+    '$2b$10$E7tPKTrJLqVCfxns4QZUMekfHtN5lgpjk9gRBkWkrtmBCnz4oT1Uu'
   );

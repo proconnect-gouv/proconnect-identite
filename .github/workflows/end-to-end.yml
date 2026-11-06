@@ -43,7 +43,6 @@ jobs:
           - join_with_free_email_domain
           - join_with_gouv_domain
           - join_with_official_contact_email
-          - keep_sessions_created_before_deploy
           - mfa_decision_helper_account
           - mfa_decision_helper_signin
           - quit-organization

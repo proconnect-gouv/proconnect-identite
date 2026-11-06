@@ -13,8 +13,7 @@ INSERT INTO
     job,
     encrypted_totp_key,
     totp_key_verified_at,
-    force_2fa,
-    recovery_words_incentive_seen_at
+    force_2fa
   )
 VALUES
   (
@@ -31,8 +30,7 @@ VALUES
     'Primarque',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    true,
-    CURRENT_TIMESTAMP
+    true
   ),
   (
     2,
@@ -48,8 +46,7 @@ VALUES
     'Primarque',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    true,
-    CURRENT_TIMESTAMP
+    true
   ),
   (
     3,
@@ -65,8 +62,7 @@ VALUES
     'Primarque',
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
-    true,
-    CURRENT_TIMESTAMP
+    true
   );
 
 INSERT INTO
