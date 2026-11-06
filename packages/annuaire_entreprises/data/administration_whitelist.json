@@ -2498,5 +2498,10 @@
     "siren": "784403453",
     "denomination": "CHAMBRE NATIONALE DES COMMISSAIRES DE JUSTICE",
     "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "494686975",
+    "denomination": "GRAND EQUIPEMENT NATIONAL DE CALCUL INTENSIF (GENCI)",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   }
 ]
