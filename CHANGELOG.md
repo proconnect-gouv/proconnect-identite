@@ -1,5 +1,28 @@
 # Changelog
 
+## [2026.11.0](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.17...2026.11.0) (2026-11-06)
+
+### Ajouté
+
+- ✨ Send an email when an account is recovered with recovery words ([b479cc0](https://github.com/proconnect-gouv/proconnect-identite/commit/b479cc0826e4300dda66e2549e5acf24991d863d))
+- ✨ Sign in with recovery words ([2bafaaf](https://github.com/proconnect-gouv/proconnect-identite/commit/2bafaafd3daa55f3508e63285896ffaeffc88d05))
+- ✨ journal password changes through the runtime ([#2408](https://github.com/proconnect-gouv/proconnect-identite/issues/2408)) ([478e680](https://github.com/proconnect-gouv/proconnect-identite/commit/478e680e7f83f4c24f37e84f9134856dbaa753a2))
+- ✨ journal profile changes through the runtime ([#2407](https://github.com/proconnect-gouv/proconnect-identite/issues/2407)) ([c801a10](https://github.com/proconnect-gouv/proconnect-identite/commit/c801a108fd71b38f179dd2e21f62fc440e56fee6))
+
+### Corrigé
+
+- 🔒 Reset the session after sign-in with recovery words ([34910ec](https://github.com/proconnect-gouv/proconnect-identite/commit/34910ec86f373c64f6c529d6cc9b737571df52ad))
+- 🔒 Harden sign-in with recovery words ([73e13d1](https://github.com/proconnect-gouv/proconnect-identite/commit/73e13d1157a517eb947dc7867454b27ffe51ebe9))
+
+### Supprimé
+
+- 🔥 drop the unused has_been_greeted column ([c1167a1](https://github.com/proconnect-gouv/proconnect-identite/commit/c1167a150b16060ca704059e98040414bbf7a009))
+
+### Dépendances
+
+- ⬆️ Synchronisation du Grist contenant la liste des administrations ([#2427](https://github.com/proconnect-gouv/proconnect-identite/issues/2427)) ([df695a6](https://github.com/proconnect-gouv/proconnect-identite/commit/df695a6a705481e4a4c63076376a17474ce2662b))
+- ⬆️ bump cypress-maildev to 3.0.0 and the maildev image to v3 ([#2425](https://github.com/proconnect-gouv/proconnect-identite/issues/2425)) ([52ca51b](https://github.com/proconnect-gouv/proconnect-identite/commit/52ca51b8b82f6212b6b35c58e4fe0417313ee244))
+
 ## [2026.10.17](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.16...2026.10.17) (2026-10-30)
 
 ### Ajouté
