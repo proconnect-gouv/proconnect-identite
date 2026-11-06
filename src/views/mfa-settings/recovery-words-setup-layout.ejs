@@ -23,7 +23,8 @@
   </li>
   <% } %>
 </ul>
-<form action="<%= continueUrl %>" method="get">
+<form action="<%= recoveryWordsSetupCompletionUrl %>" method="post">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
   <div class="fr-checkbox-group fr-my-3w">
     <input
       type="checkbox"

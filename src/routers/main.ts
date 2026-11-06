@@ -12,7 +12,9 @@ import {
   getMfaDecisionHelperPasskeyController,
   getRecoveryWordsIncentiveController,
   getVerifyRecoveryWordsController,
-  postRecoveryWordsController,
+  postRecoveryWordsSetupCompletionController,
+  postRecoveryWordsSetupController,
+  postRecoveryWordsSkipController,
   postSetForce2faController,
   postVerifyRecoveryWordsController,
 } from "../controllers/2fa";
@@ -34,7 +36,8 @@ import {
 } from "../controllers/totp";
 import {
   deletePasskeyController,
-  postVerifyRegistrationControllerFactory,
+  postPasskeyRegisteredController,
+  postVerifyRegistrationMiddlewareFactory,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
@@ -76,18 +79,8 @@ export const mainRouter = (app: Express) => {
     getIsTotpAppInstalledController,
   );
 
-  mainRouter.post(
-    "/recovery-words",
-    nocache(),
-    urlencoded({ extended: false }),
-    ejsLayoutMiddlewareFactory(app, true),
-    userCanAccessAdminGuardMiddleware,
-    csrfProtectionMiddleware,
-    postRecoveryWordsController,
-  );
-
   mainRouter.get(
-    "/recovery-words/incentive",
+    "/recovery-words-incentive",
     nocache(),
     ejsLayoutMiddlewareFactory(app, true),
     userCanAccessAdminGuardMiddleware,
@@ -95,8 +88,36 @@ export const mainRouter = (app: Express) => {
     getRecoveryWordsIncentiveController,
   );
 
+  mainRouter.post(
+    "/recovery-words-skip",
+    nocache(),
+    urlencoded({ extended: false }),
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRecoveryWordsSkipController,
+  );
+
+  mainRouter.post(
+    "/recovery-words-setup",
+    nocache(),
+    urlencoded({ extended: false }),
+    ejsLayoutMiddlewareFactory(app, true),
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRecoveryWordsSetupController,
+  );
+
+  mainRouter.post(
+    "/recovery-words-setup-completion",
+    nocache(),
+    urlencoded({ extended: false }),
+    userCanAccessAdminGuardMiddleware,
+    csrfProtectionMiddleware,
+    postRecoveryWordsSetupCompletionController,
+  );
+
   mainRouter.get(
-    "/recovery-words/verify",
+    "/recovery-words-verification",
     nocache(),
     ejsLayoutMiddlewareFactory(app, true),
     userCanAccessAdminGuardMiddleware,
@@ -105,7 +126,7 @@ export const mainRouter = (app: Express) => {
   );
 
   mainRouter.post(
-    "/recovery-words/verify",
+    "/recovery-words-verification",
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
@@ -222,11 +243,11 @@ export const mainRouter = (app: Express) => {
     ejsLayoutMiddlewareFactory(app, true),
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
-    postVerifyRegistrationControllerFactory(
-      "/connection-and-account?notification=passkey_successfully_created",
-      "/connection-and-account?notification=invalid_passkey",
-      "/recovery-words/incentive",
-    ),
+    postVerifyRegistrationMiddlewareFactory({
+      errorRedirectUrl: "/connection-and-account?notification=invalid_passkey",
+      greetForConfiguredMfa: false,
+    }),
+    postPasskeyRegisteredController,
   );
 
   mainRouter.post(

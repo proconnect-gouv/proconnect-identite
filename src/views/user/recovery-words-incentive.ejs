@@ -1,4 +1,6 @@
 <div>
-  <%- include('../mfa-settings/recovery-words-incentive-layout.ejs',
-  {generateRecoveryWordsUrl: generateRecoveryWordsUrl, skipUrl: skipUrl}); %>
+  <%- include('../mfa-settings/recovery-words-incentive-layout.ejs', {
+    recoveryWordsSkipUrl: '/users/recovery-words-skip',
+    recoveryWordsSetupUrl: '/users/recovery-words-setup',
+  }); %>
 </div>

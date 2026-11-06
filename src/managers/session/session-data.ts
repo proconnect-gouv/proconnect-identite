@@ -48,6 +48,7 @@ export const SessionDataSchema = z.object({
   ...FranceConnectOidcSessionSchema.partial().shape,
   amr: z.array(AmrValueSchema).optional(),
   pendingCertificationDirigeantOrganizationId: z.number().optional(),
+  pendingGreetingsForConfiguredMfa: z.boolean().optional(),
   pendingGreetingsForSelectedOrganization: z.boolean().optional(),
   pendingModerationOrganizationId: z.number().optional(),
   pendingOfficialContactEmailVerificationOrganizationId: z.number().optional(),

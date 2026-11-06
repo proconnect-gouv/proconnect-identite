@@ -235,7 +235,7 @@ export const userHasSeenRecoveryWordsIncentiveGuard = async (
   const {
     data: { req },
     pass,
-    continueTo,
+    haltTo,
   } = prev;
   const { id: user_id, recovery_words_incentive_seen_at } =
     getUserFromAuthenticatedSession(req);
@@ -258,7 +258,7 @@ export const userHasSeenRecoveryWordsIncentiveGuard = async (
   });
   updateUserInAuthenticatedSession(req, user);
 
-  return continueTo("/users/recovery-words/reminder");
+  return haltTo("/users/recovery-words-incentive");
 };
 
 export const userHasSeenInclusionconnectOnboardingHelpGuard = async (

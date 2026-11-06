@@ -14,16 +14,20 @@
   ou votre passkey.
 </p>
 
-<form method="post" action="<%= generateRecoveryWordsUrl %>">
+<form method="post" action="<%= recoveryWordsSetupUrl %>">
   <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
   <ul class="fr-btns-group">
     <li>
       <button type="submit" class="fr-btn">Générer les mots de secours</button>
     </li>
     <li>
-      <a class="fr-btn fr-btn--secondary" href="<%= skipUrl %>">
+      <button
+        type="submit"
+        class="fr-btn fr-btn--secondary"
+        formaction="<%= recoveryWordsSkipUrl %>"
+      >
         Ignorer pour le moment
-      </a>
+      </button>
     </li>
   </ul>
 </form>

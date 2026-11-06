@@ -84,12 +84,14 @@ export const getGenerateRegistrationOptionsController = async (
   }
 };
 
-export const postVerifyRegistrationControllerFactory =
-  (
-    redirectUrl: string,
-    errorRedirectUrl: string,
-    recoveryWordsIncentiveUrl: string,
-  ) =>
+export const postVerifyRegistrationMiddlewareFactory =
+  ({
+    errorRedirectUrl,
+    greetForConfiguredMfa,
+  }: {
+    errorRedirectUrl: string;
+    greetForConfiguredMfa: boolean;
+  }) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const schema = z.object({
@@ -120,13 +122,11 @@ export const postVerifyRegistrationControllerFactory =
         key_name: key_name ?? undefined,
       });
 
-      if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
-        const user = await markRecoveryWordsIncentiveAsSeen(user_id);
-        updateUserInAuthenticatedSession(req, user);
-        return res.redirect(recoveryWordsIncentiveUrl);
+      if (greetForConfiguredMfa) {
+        req.session.pendingGreetingsForConfiguredMfa = true;
       }
 
-      return res.redirect(redirectUrl);
+      return next();
     } catch (e) {
       logger.error(e);
       if (e instanceof ZodError) {
@@ -143,6 +143,28 @@ export const postVerifyRegistrationControllerFactory =
       next(e);
     }
   };
+
+export const postPasskeyRegisteredController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+      const user = await markRecoveryWordsIncentiveAsSeen(user_id);
+      updateUserInAuthenticatedSession(req, user);
+      return res.redirect("/recovery-words-incentive");
+    }
+
+    return res.redirect(
+      "/connection-and-account?notification=passkey_successfully_created",
+    );
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getGenerateAuthenticationOptionsControllerFactory =
   (isSecondFactorAuthentication: boolean) =>

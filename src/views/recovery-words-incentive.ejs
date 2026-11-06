@@ -2,8 +2,8 @@
     <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <%- include('mfa-settings/recovery-words-incentive-layout.ejs', {
-            generateRecoveryWordsUrl: '/recovery-words',
-            skipUrl: '/connection-and-account',
+            recoveryWordsSkipUrl: '/recovery-words-skip',
+            recoveryWordsSetupUrl: '/recovery-words-setup',
         }); %>
     </div>
 </div>

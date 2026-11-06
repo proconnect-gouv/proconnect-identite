@@ -1,4 +1,4 @@
-describe("recovery words reminder", () => {
+describe("recovery words incentive", () => {
   before(cy.seed);
 
   it("should remind a user without recovery words after a 2fa sign-in", function () {

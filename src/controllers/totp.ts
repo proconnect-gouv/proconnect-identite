@@ -100,7 +100,7 @@ export const postTotpConfigurationController = async (
     if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
       const user = await markRecoveryWordsIncentiveAsSeen(user_id);
       updateUserInAuthenticatedSession(req, user);
-      return res.redirect("/recovery-words/incentive");
+      return res.redirect("/recovery-words-incentive");
     }
 
     return res.redirect(

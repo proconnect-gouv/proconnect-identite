@@ -241,7 +241,7 @@ export const postSetForce2faController = async (
   }
 };
 
-export const postRecoveryWordsController = async (
+export const postRecoveryWordsSetupController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -251,8 +251,9 @@ export const postRecoveryWordsController = async (
 
     const recoveryWords = await createRecoveryWordsForUser(user_id);
 
-    return res.render("recovery-words", {
+    return res.render("recovery-words-setup", {
       pageTitle: "Sauvegarder vos mots de secours",
+      csrfToken: csrfToken(req),
       recoveryWords: recoveryWords.split("-"),
       isAdministrationEtat: await isUserInAdministrationEtat(user_id),
     });
@@ -303,6 +304,30 @@ export const getRecoveryWordsIncentiveController = async (
   }
 };
 
+export const postRecoveryWordsSkipController = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.redirect("/connection-and-account");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postRecoveryWordsSetupCompletionController = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    return res.redirect("/connection-and-account");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const postVerifyRecoveryWordsController = async (
   req: Request,
   res: Response,
@@ -324,7 +349,7 @@ export const postVerifyRecoveryWordsController = async (
     const isValid = await verifyRecoveryWordsForUser(user_id, recovery_words);
 
     return res.redirect(
-      `/recovery-words/verify?notification=${
+      `/recovery-words-verification?notification=${
         isValid ? "recovery_words_valid" : "invalid_recovery_words"
       }`,
     );

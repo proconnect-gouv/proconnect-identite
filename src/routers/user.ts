@@ -73,12 +73,12 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
-  getRecoveryWordsIncentiveControllerFactory,
+  getRecoveryWordsIncentiveController,
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
-  postRecoveryWordsControllerFactory,
-  postTotpConfigurationController,
+  postRecoveryWordsSetupController,
+  postTotpConfigurationMiddleware,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
   getChangePasswordController,
@@ -98,7 +98,7 @@ import {
 import { getWelcomeController } from "../controllers/user/welcome";
 import {
   postVerifyFirstFactorAuthenticationController,
-  postVerifyRegistrationControllerFactory,
+  postVerifyRegistrationMiddlewareFactory,
   postVerifySecondFactorAuthenticationController,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
@@ -212,48 +212,37 @@ export const userRouter = () => {
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
     authenticatorRateLimiterMiddleware,
-    postTotpConfigurationController,
+    postTotpConfigurationMiddleware,
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
   );
 
   userRouter.get(
-    "/recovery-words/incentive",
-    userCanSetupMfaGuardMiddleware,
+    "/recovery-words-incentive",
+    userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
-    getRecoveryWordsIncentiveControllerFactory(
-      "/users/recovery-words",
-      "/users/2fa-successfully-configured",
-    ),
+    getRecoveryWordsIncentiveController,
   );
 
   userRouter.post(
-    "/recovery-words",
-    userCanSetupMfaGuardMiddleware,
-    csrfProtectionMiddleware,
-    postRecoveryWordsControllerFactory("/users/2fa-successfully-configured"),
-  );
-
-  userRouter.get(
-    "/recovery-words/reminder",
+    "/recovery-words-skip",
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
-    getRecoveryWordsIncentiveControllerFactory(
-      "/users/recovery-words/reminder",
-      "/users/recovery-words/reminder/continue",
-    ),
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
   );
 
   userRouter.post(
-    "/recovery-words/reminder",
+    "/recovery-words-setup",
     userCanAccessAppGuardMiddleware,
     csrfProtectionMiddleware,
-    postRecoveryWordsControllerFactory(
-      "/users/recovery-words/reminder/continue",
-    ),
+    postRecoveryWordsSetupController,
   );
 
-  userRouter.get(
-    "/recovery-words/reminder/continue",
+  userRouter.post(
+    "/recovery-words-setup-completion",
     userCanAccessAppGuardMiddleware,
+    csrfProtectionMiddleware,
     userComplyWithAllRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
@@ -384,11 +373,13 @@ export const userRouter = () => {
     "/passkeys/verify-registration",
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
-    postVerifyRegistrationControllerFactory(
-      "/users/2fa-successfully-configured",
-      "/users/double-authentication-choice?notification=invalid_passkey",
-      "/users/recovery-words/incentive",
-    ),
+    postVerifyRegistrationMiddlewareFactory({
+      errorRedirectUrl:
+        "/users/double-authentication-choice?notification=invalid_passkey",
+      greetForConfiguredMfa: true,
+    }),
+    userComplyWithAllRequirementsGuardMiddleware,
+    issueSessionOrRedirectController,
   );
 
   userRouter.get(

@@ -50,7 +50,7 @@ jobs:
           - rate_limit_by_email
           - rate_limit_by_ip
           - reauthenticate_on_admin_page
-          - recovery_words_reminder
+          - recovery_words_incentive
           - redirect_after_session_expiration
           - reset_password
           - set_info_after_account_provisioning
@@ -69,6 +69,7 @@ jobs:
           - signin_with_totp
           - signin_with_totp_enrollment
           - signin_with_webauthn
+          - signin_with_webauthn_enrollment
           - signin_with_webauthn_without_uv
           - signup_entreprise_unipersonnelle
           - signup_from_standard_client

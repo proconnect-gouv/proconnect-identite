@@ -17,6 +17,7 @@ import {
 } from "./guards";
 import { type GuardResult, Pass, type RequestContext } from "./internals";
 import {
+  processGreetingsForConfiguredMfaGuard,
   processGreetingsForSelectedOrganizationGuard,
   processOfficialContactEmailVerificationGuard,
   processPendingCertificationDirigeantGuard,
@@ -88,6 +89,7 @@ export async function userComplyWithAllRequirementsGuard(
     interactionId,
     pendingCertificationDirigeantOrganizationId,
     pendingOfficialContactEmailVerificationOrganizationId,
+    pendingGreetingsForConfiguredMfa,
     pendingGreetingsForSelectedOrganization,
   } = context.data.req.session;
 
@@ -96,6 +98,7 @@ export async function userComplyWithAllRequirementsGuard(
     interactionId,
     pendingCertificationDirigeantOrganizationId,
     pendingOfficialContactEmailVerificationOrganizationId,
+    pendingGreetingsForConfiguredMfa,
     pendingGreetingsForSelectedOrganization,
   })
     .with({ pendingModerationOrganizationId: P.number }, () =>
@@ -107,6 +110,9 @@ export async function userComplyWithAllRequirementsGuard(
     .with(
       { pendingOfficialContactEmailVerificationOrganizationId: P.number },
       () => processOfficialContactEmailVerificationGuard(context),
+    )
+    .with({ pendingGreetingsForConfiguredMfa: true }, () =>
+      processGreetingsForConfiguredMfaGuard(context),
     )
     .with({ pendingGreetingsForSelectedOrganization: true }, () =>
       processGreetingsForSelectedOrganizationGuard(context),
