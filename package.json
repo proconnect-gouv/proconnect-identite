@@ -111,7 +111,7 @@
     "@simplewebauthn/browser": "^13.2.2",
     "@simplewebauthn/server": "^13.3.2",
     "await-to-js": "^3.0.0",
-    "axios": "^1.18.1",
+    "axios": "^1.21.0",
     "connect-redis": "^10.0.0",
     "cookie-parser": "^1.4.7",
     "csrf-sync": "^4.2.1",
