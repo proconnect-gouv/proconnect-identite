@@ -13,10 +13,11 @@ export default function QuitOrganization(props: Props) {
         Bonjour {given_name} {family_name},
       </Text>
       <br />
-      <Text safe>
-        Vous avez quitté l'organisation {organization_label} sur ProConnect.
+      <Text>
+        Vous avez quitté l’organisation <b safe>{organization_label}</b> sur
+        ProConnect.
         <br />
-        Si vous n'êtes pas à l'origine de cette action, contactez-nous
+        Si vous n’êtes pas à l’origine de cette action, contactez-nous
         immédiatement.
       </Text>
     </Layout>

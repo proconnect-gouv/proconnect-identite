@@ -147,11 +147,11 @@ exports[`QuitOrganization > should render 1`] = `
                                       margin: 0;
                                     "
                                   >
-                                    Vous avez quitté l&#39;organisation
-                                    Ministère de la Culture sur
-                                    ProConnect.&lt;br/>Si vous n&#39;êtes pas à
-                                    l&#39;origine de cette action,
-                                    contactez-nous immédiatement.
+                                    Vous avez quitté l’organisation
+                                    <b>Ministère de la Culture</b> sur
+                                    ProConnect.<br />Si vous n’êtes pas à
+                                    l’origine de cette action, contactez-nous
+                                    immédiatement.
                                   </p>
                                   <p
                                     style="
