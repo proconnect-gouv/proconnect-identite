@@ -5,7 +5,6 @@ import { InvalidTotpTokenError } from "../config/errors";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
-  updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import {
   deleteTemporaryTotpKey,
@@ -35,7 +34,7 @@ export const getTotpConfigurationController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id, email } = getUserFromAuthenticatedSession(req);
+    const { id: user_id, email } = await getUserFromAuthenticatedSession(req);
 
     const existingTemporaryTotpKey = getTemporaryTotpKey(req);
 
@@ -75,7 +74,7 @@ export const postTotpConfigurationController = async (
     });
     const { totpToken } = await schema.parseAsync(req.body);
 
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
     const temporaryTotpKey = getTemporaryTotpKey(req);
 
     if (!temporaryTotpKey) {
@@ -117,11 +116,9 @@ export const postDeleteTotpConfigurationController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await deleteTotpConfiguration(user_id);
-
-    updateUserInAuthenticatedSession(req, updatedUser);
+    await deleteTotpConfiguration(user_id);
 
     await sendDeleteFreeTOTPApplicationEmail({ user_id });
 
@@ -145,7 +142,7 @@ export const postSignInWithTotpController = async (
 
     const { totpToken } = await schema.parseAsync(req.body);
 
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
     const user = await authenticateWithTotp(user_id, totpToken);
 

@@ -44,7 +44,7 @@ export const processPendingModerationGuard = async (
 
   const organization_id = req.session.pendingModerationOrganizationId!;
   const organization = await organizations.getById(organization_id);
-  const user = getUserFromAuthenticatedSession(prev.data.req);
+  const user = await getUserFromAuthenticatedSession(prev.data.req);
 
   let context;
 
@@ -77,7 +77,7 @@ export const processPendingCertificationDirigeantGuard = async (
   const organization_id =
     req.session.pendingCertificationDirigeantOrganizationId!;
 
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = await getUserFromAuthenticatedSession(req);
   if (!(await hasValidFranceConnectIdentity(user_id))) {
     return haltTo("/users/franceconnect");
   }
@@ -209,7 +209,7 @@ export const processGreetingsForSelectedOrganizationGuard = async (
   if (!Pass.is_passing(context)) return context;
 
   const { pendingGreetingsForSelectedOrganization } = req.session;
-  const user_id = getUserFromAuthenticatedSession(req).id;
+  const user_id = (await getUserFromAuthenticatedSession(req)).id;
   const organization_id =
     getSelectedOrganizationIdFromAuthenticatedSession(req);
 

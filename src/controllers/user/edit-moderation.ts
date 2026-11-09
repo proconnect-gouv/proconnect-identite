@@ -23,7 +23,7 @@ export const postCancelModerationAndRedirectControllerFactory =
         moderation_id: idSchema(),
       });
       const { moderation_id } = await schema.parseAsync(req.params);
-      const user = getUserFromAuthenticatedSession(req);
+      const user = await getUserFromAuthenticatedSession(req);
 
       await cancelModeration({ user, moderation_id });
 
@@ -32,7 +32,7 @@ export const postCancelModerationAndRedirectControllerFactory =
       if (e instanceof ModerationNotFoundError || e instanceof NotFoundError) {
         track("moderation.cancel.not_found", {
           moderation_id: req.params["moderation_id"],
-          user_id: getUserFromAuthenticatedSession(req).id,
+          user_id: (await getUserFromAuthenticatedSession(req)).id,
         });
         const url = new URL(redirectUrl, HOST);
         url.searchParams.set("notification", "moderation_not_pending");
@@ -42,7 +42,7 @@ export const postCancelModerationAndRedirectControllerFactory =
       if (e instanceof ForbiddenError) {
         track("moderation.access.forbidden", {
           moderation_id: req.params["moderation_id"],
-          user_id: getUserFromAuthenticatedSession(req).id,
+          user_id: (await getUserFromAuthenticatedSession(req)).id,
         });
         return next(new HttpErrors.Forbidden());
       }
@@ -58,7 +58,7 @@ export const postReopenModerationAndRedirectControllerFactory =
         moderation_id: idSchema(),
       });
       const { moderation_id } = await schema.parseAsync(req.params);
-      const user = getUserFromAuthenticatedSession(req);
+      const user = await getUserFromAuthenticatedSession(req);
 
       await reopenModerationWithUserEdit({ user, moderation_id });
 
@@ -67,7 +67,7 @@ export const postReopenModerationAndRedirectControllerFactory =
       if (e instanceof ModerationNotFoundError || e instanceof NotFoundError) {
         track("moderation.reopen.not_found", {
           moderation_id: req.params["moderation_id"],
-          user_id: getUserFromAuthenticatedSession(req).id,
+          user_id: (await getUserFromAuthenticatedSession(req)).id,
         });
         const url = new URL(redirectUrl, HOST);
         url.searchParams.set("notification", "moderation_not_pending");
@@ -77,7 +77,7 @@ export const postReopenModerationAndRedirectControllerFactory =
       if (e instanceof ForbiddenError) {
         track("moderation.access.forbidden", {
           moderation_id: req.params["moderation_id"],
-          user_id: getUserFromAuthenticatedSession(req).id,
+          user_id: (await getUserFromAuthenticatedSession(req)).id,
         });
         return next(new HttpErrors.Forbidden());
       }

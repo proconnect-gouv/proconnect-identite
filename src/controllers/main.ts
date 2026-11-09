@@ -8,10 +8,7 @@ import {
   getRecoveryWordsCreatedAt,
   hasRecoveryWordsConfiguredForUser,
 } from "../managers/recovery-words";
-import {
-  getUserFromAuthenticatedSession,
-  updateUserInAuthenticatedSession,
-} from "../managers/session/authenticated";
+import { getUserFromAuthenticatedSession } from "../managers/session/authenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
 import {
   disconnectFranceConnectIdentity,
@@ -48,7 +45,7 @@ export const getPersonalInformationsController = async (
   next: NextFunction,
 ) => {
   try {
-    const user = getUserFromAuthenticatedSession(req);
+    const user = await getUserFromAuthenticatedSession(req);
     const givenNameOptions = await getGivenNameOptionsFromFranceConnectIdentity(
       user.id,
     );
@@ -85,7 +82,7 @@ export const postPersonalInformationsController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const { id: userId } = await getUserFromAuthenticatedSession(req);
     const hasFCIdentity = await lastFranceConnectIdentityUpdate(userId);
 
     let givenNameOptions: string[] = [];
@@ -133,7 +130,7 @@ export const postPersonalInformationsController = async (
       );
     }
 
-    const sessionUser = getUserFromAuthenticatedSession(req);
+    const sessionUser = await getUserFromAuthenticatedSession(req);
     const previousInformations = { ...sessionUser, ...outcome.previous };
     const newInformation = { ...sessionUser, ...outcome.next };
 
@@ -141,8 +138,6 @@ export const postPersonalInformationsController = async (
       previousInformations,
       newInformation,
     });
-
-    updateUserInAuthenticatedSession(req, newInformation);
 
     return res.redirect(
       `/personal-information?notification=personal_information_update_success`,
@@ -164,7 +159,7 @@ export const postDisconnectFranceConnectController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const { id: userId } = await getUserFromAuthenticatedSession(req);
 
     await disconnectFranceConnectIdentity(userId);
 
@@ -183,7 +178,9 @@ export const getManageOrganizationsController = async (
 ) => {
   try {
     const { userOrganizations, pendingUserOrganizations } =
-      await getUserOrganizations(getUserFromAuthenticatedSession(req).id);
+      await getUserOrganizations(
+        (await getUserFromAuthenticatedSession(req)).id,
+      );
 
     return res.render("manage-organizations", {
       pageTitle: "Organisations",
@@ -208,7 +205,7 @@ export const getConnectionAndAccountController = async (
       email,
       totp_key_verified_at,
       force_2fa: force2fa,
-    } = getUserFromAuthenticatedSession(req);
+    } = await getUserFromAuthenticatedSession(req);
 
     const passkeys = await getUserAuthenticators(email);
     const is2faCapable = await is2FACapable(user_id);

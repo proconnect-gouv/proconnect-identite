@@ -9,7 +9,7 @@ export type AmrValue = z.output<typeof AmrValueSchema>;
 
 export interface AuthenticatedSessionData {
   amr: AmrValue[];
-  user: User;
+  user: NonNullable<z.output<typeof SessionDataSchema>["user"]>;
 }
 
 export type UnauthenticatedSessionData = z.output<

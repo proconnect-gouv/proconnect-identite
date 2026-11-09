@@ -15,7 +15,6 @@ import {
 import {
   getUserFromAuthenticatedSession,
   regenerateAsUnauthenticatedSession,
-  updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { setLoginHintInUnauthenticatedSession } from "../managers/session/unauthenticated";
 import { isTotpConfiguredForUser } from "../managers/totp";
@@ -30,7 +29,7 @@ export const getDoubleAuthenticationController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
     return res.render("double-authentication-choice", {
       pageTitle: "Double authentification",
@@ -212,19 +211,15 @@ export const postSetForce2faController = async (
     const schema = z.object({ force2fa: z.enum(["enable", "disable"]) });
     const { force2fa } = await schema.parseAsync(req.body);
 
-    let updatedUser;
-
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
     if (force2fa === "enable") {
-      updatedUser = await enableForce2fa(user_id);
-      updateUserInAuthenticatedSession(req, updatedUser);
+      await enableForce2fa(user_id);
       return res.redirect(
         `/connection-and-account?notification=2fa_successfully_enabled`,
       );
     } else {
-      updatedUser = await disableForce2fa(user_id);
-      updateUserInAuthenticatedSession(req, updatedUser);
+      await disableForce2fa(user_id);
       await sendDisable2faMail({ user_id });
       return res.redirect(
         `/connection-and-account?notification=2fa_successfully_disabled`,
@@ -245,7 +240,7 @@ export const postRecoveryWordsController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
     const recoveryWords = await createRecoveryWordsForUser(user_id);
 
@@ -266,7 +261,7 @@ export const getVerifyRecoveryWordsController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
     if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
       return next(new HttpErrors.UnprocessableEntity());
@@ -288,7 +283,7 @@ export const postVerifyRecoveryWordsController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
     if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
       return next(new HttpErrors.UnprocessableEntity());
@@ -334,7 +329,7 @@ export const postSignInWithRecoveryWordsController = async (
     });
     const { recovery_words } = await schema.parseAsync(req.body);
 
-    const { id: user_id, email } = getUserFromAuthenticatedSession(req);
+    const { id: user_id, email } = await getUserFromAuthenticatedSession(req);
 
     await recoverUserAccount(user_id, recovery_words);
 

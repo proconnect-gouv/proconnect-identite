@@ -2,10 +2,7 @@ import { UserNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { runtime } from "../../connectors/context";
-import {
-  getUserFromAuthenticatedSession,
-  updateUserInAuthenticatedSession,
-} from "../../managers/session/authenticated";
+import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { lastFranceConnectIdentityUpdate } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import { nameSchema } from "../../services/custom-zod-schemas";
@@ -25,7 +22,7 @@ export const getPersonalInformationsController = async (
       job,
       needs_inclusionconnect_onboarding_help,
       phone_number,
-    } = getUserFromAuthenticatedSession(req);
+    } = await getUserFromAuthenticatedSession(req);
 
     return res.render("user/personal-information", {
       csrfToken: csrfToken(req),
@@ -48,7 +45,7 @@ export const postPersonalInformationsController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { id: userId } = getUserFromAuthenticatedSession(req);
+  const { id: userId } = await getUserFromAuthenticatedSession(req);
 
   if (await lastFranceConnectIdentityUpdate(userId)) {
     return next();
@@ -84,11 +81,6 @@ export const postPersonalInformationsController = async (
   if (outcome.kind === "info_unchanged") {
     return next();
   }
-
-  updateUserInAuthenticatedSession(req, {
-    ...getUserFromAuthenticatedSession(req),
-    ...outcome.next,
-  });
 
   next();
 };

@@ -24,7 +24,7 @@ export const getOfficialContactAskWhichEmailController = async (
       req.session.pendingOfficialContactEmailVerificationOrganizationId;
     if (organization_id === undefined) {
       track("official_contact.verification.missing", {
-        user_id: getUserFromAuthenticatedSession(req).id,
+        user_id: (await getUserFromAuthenticatedSession(req)).id,
       });
       return res.redirect(
         `/users/join-organization?notification=official_contact_email_verification_not_found`,

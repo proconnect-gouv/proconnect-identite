@@ -93,12 +93,12 @@ export const render = (absolutePath: string, params: any) => {
   });
 };
 
-const getUserLabel = (req: Request) => {
+const getUserLabel = async (req: Request) => {
   if (!isWithinAuthenticatedSession(req.session)) {
     //  do not display label when no session is found
     return null;
   }
-  const user = getUserFromAuthenticatedSession(req);
+  const user = await getUserFromAuthenticatedSession(req);
   if (!user.given_name || !user.family_name) {
     //  display email when a name is missing
     return user.email;
@@ -120,20 +120,24 @@ export const ejsLayoutMiddlewareFactory = (
         { ...locals, js: viteJsPath, css: viteCssPath },
         (err: Error, html: string) => {
           if (err) throw err;
-          orig.call(res, "_layout", {
-            ...locals,
-            // @ts-ignore
-            sentryTrackingMetaTags: Sentry.getTraceMetaTags(),
-            loadThirdPartyTrackingScripts:
-              FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS,
-            js: viteJsPath,
-            css: viteCssPath,
-            body: html,
-            header_user_label: getUserLabel(req),
-            use_dashboard_layout:
-              // @ts-ignore
-              locals.use_dashboard_layout ?? use_dashboard_layout,
-          });
+          getUserLabel(req).then(
+            (header_user_label) =>
+              orig.call(res, "_layout", {
+                ...locals,
+                // @ts-ignore
+                sentryTrackingMetaTags: Sentry.getTraceMetaTags(),
+                loadThirdPartyTrackingScripts:
+                  FEATURE_LOAD_THIRD_PARTY_TRACKING_SCRIPTS,
+                js: viteJsPath,
+                css: viteCssPath,
+                body: html,
+                header_user_label,
+                use_dashboard_layout:
+                  // @ts-ignore
+                  locals.use_dashboard_layout ?? use_dashboard_layout,
+              }),
+            next,
+          );
         },
       );
     };

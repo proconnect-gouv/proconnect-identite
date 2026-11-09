@@ -64,7 +64,7 @@ export const getTotpConfigurationController = async (
   next: NextFunction,
 ) => {
   try {
-    const { email } = getUserFromAuthenticatedSession(req);
+    const { email } = await getUserFromAuthenticatedSession(req);
     const existingTemporaryTotpKey = getTemporaryTotpKey(req);
     const { totpKey, humanReadableTotpKey, qrCodeDataUrl } =
       await generateTotpRegistrationOptions(email, existingTemporaryTotpKey);
@@ -100,7 +100,7 @@ export const postTotpConfigurationController = async (
     });
     const { totpToken } = await schema.parseAsync(req.body);
 
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
     const temporaryTotpKey = getTemporaryTotpKey(req);
 
     if (!temporaryTotpKey) {

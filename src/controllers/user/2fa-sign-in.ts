@@ -17,7 +17,7 @@ export const get2faSignInController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id, email } = getUserFromAuthenticatedSession(req);
+    const { id, email } = await getUserFromAuthenticatedSession(req);
 
     const showsTotpSection = await isTotpConfiguredForUser(id);
     let hasCodeError = false;

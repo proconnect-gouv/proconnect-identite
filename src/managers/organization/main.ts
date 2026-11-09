@@ -68,7 +68,7 @@ export const selectOrganization = async ({
   req: Request;
   organization_id: number;
 }) => {
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = await getUserFromAuthenticatedSession(req);
   const userOrganizations = await organizations.findByUserId(user_id);
   const organization = userOrganizations.find(
     ({ id }) => id === organization_id,

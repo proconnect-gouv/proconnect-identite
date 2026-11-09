@@ -38,7 +38,7 @@ export const getResetPasswordController = async (
       pageTitle: "Réinitialiser mon mot de passe",
       notifications: await getNotificationsFromRequest(req),
       loginHint: isWithinAuthenticatedSession(req.session)
-        ? getUserFromAuthenticatedSession(req).email
+        ? (await getUserFromAuthenticatedSession(req)).email
         : getEmailFromUnauthenticatedSession(req) || null,
       csrfToken: csrfToken(req),
     });
@@ -55,7 +55,7 @@ export const postResetPasswordController = async (
   try {
     let email: string;
     if (isWithinAuthenticatedSession(req.session)) {
-      const user = getUserFromAuthenticatedSession(req);
+      const user = await getUserFromAuthenticatedSession(req);
 
       email = user.email;
     } else {
