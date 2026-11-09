@@ -67,6 +67,7 @@ jobs:
           - signin_with_totp
           - signin_with_totp_enrollment
           - signin_with_webauthn
+          - signin_with_webauthn_enrollment
           - signin_with_webauthn_without_uv
           - signup_entreprise_unipersonnelle
           - signup_from_standard_client
