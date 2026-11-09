@@ -1,12 +1,15 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
-import type { AuthorizationRequest } from "@proconnect-gouv/proconnect.identite/types";
+import {
+  AuthorizationRequestOutcomeEnum,
+  type AuthorizationRequest,
+} from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
 import type { Request } from "express";
 import { isEmpty, isString } from "lodash-es";
 import type { IncomingHttpHeaders } from "node:http";
 import type { KoaContextWithOIDC } from "oidc-provider";
 import { z } from "zod";
-import { context } from "../connectors/context";
+import { context, db } from "../connectors/context";
 import { logger } from "../services/log";
 import { oidcProviderAdapterFactory } from "../services/oidc-provider-adapter";
 
@@ -28,6 +31,7 @@ export const recordAuthorizationRequest = async ({
   outcome,
   params,
   requestHeaders,
+  sid,
 }: {
   accountId: string;
   // workaround to extract the unexported Client type
@@ -37,6 +41,7 @@ export const recordAuthorizationRequest = async ({
   outcome: AuthorizationRequest["outcome"];
   params: OIDCContextParams;
   requestHeaders: IncomingHttpHeaders;
+  sid: string | null;
 }): Promise<AuthorizationRequest> => {
   const user_id = parseInt(accountId, 10);
 
@@ -62,6 +67,7 @@ export const recordAuthorizationRequest = async ({
     user_ip_address,
     interaction_cid: interactionCid,
     outcome,
+    sid,
   });
 };
 
@@ -99,9 +105,54 @@ export const recordAuthorizationRequestAtSignIn = async ({
       oidc_client_id: oidc_client.id,
       organization_id: null,
       outcome: null,
+      sid: null,
       sp_name: params.sp_name ?? null,
       user_id,
       user_ip_address: req.headers["x-forwarded-for"]?.toString() || null,
+    });
+  } catch (error) {
+    logger.error(error);
+    Sentry.captureException(error);
+  }
+};
+
+export const recordSignOut = async ({
+  accountId,
+  client,
+  requestHeaders,
+  sid,
+}: {
+  accountId: string;
+  client: NonNullable<KoaContextWithOIDC["oidc"]["client"]>;
+  requestHeaders: IncomingHttpHeaders;
+  sid: string | null;
+}) => {
+  try {
+    const user_id = parseInt(accountId, 10);
+    const oidc_client = await oidc_clients.findByClientId(client.clientId);
+    if (isEmpty(oidc_client)) {
+      throw new NotFoundError();
+    }
+
+    const last_request = await db.query.users_oidc_clients.findFirst({
+      columns: { sp_name: true },
+      orderBy: (table, { desc }) => desc(table.created_at),
+      where: (table, { and, eq }) =>
+        and(
+          eq(table.user_id, user_id),
+          eq(table.oidc_client_id, oidc_client.id),
+        ),
+    });
+
+    await oidc_clients.upsertAuthorizationRequest({
+      interaction_cid: null,
+      oidc_client_id: oidc_client.id,
+      organization_id: null,
+      outcome: AuthorizationRequestOutcomeEnum.enum.signed_out,
+      sid,
+      sp_name: last_request?.sp_name ?? null,
+      user_id,
+      user_ip_address: requestHeaders["x-forwarded-for"]?.toString() || null,
     });
   } catch (error) {
     logger.error(error);

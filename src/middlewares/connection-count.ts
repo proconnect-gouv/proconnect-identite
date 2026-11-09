@@ -54,6 +54,7 @@ export const connectionCountMiddleware = async (
             : null,
           params: ctx.oidc.params as OIDCContextParams,
           requestHeaders: ctx.request.headers,
+          sid: ctx.oidc.session.sidFor(ctx.oidc.client.clientId) ?? null,
         });
       }
     } catch (err) {

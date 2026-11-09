@@ -281,6 +281,38 @@ export const recovery_words = pgTable(
   ],
 );
 
+export const activity_logs = pgTable(
+  "activity_logs",
+  {
+    id: serial().primaryKey().notNull(),
+    action: varchar().notNull(),
+    actor_ref: varchar().notNull(),
+    actor_type: varchar().notNull(),
+    app: varchar().notNull(),
+    context: jsonb().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+    interaction_cid: varchar(),
+    moderation_id: integer(),
+    organization_id: integer(),
+    user_id: integer(),
+    cause_activity_id: integer(),
+  },
+  (table) => [
+    index("idx_activity_logs_organization_id_created_at").using(
+      "btree",
+      table.organization_id.asc().nullsLast().op("int4_ops"),
+      table.created_at.asc().nullsLast().op("timestamptz_ops"),
+    ),
+    index("idx_activity_logs_user_id_created_at").using(
+      "btree",
+      table.user_id.asc().nullsLast().op("timestamptz_ops"),
+      table.created_at.asc().nullsLast().op("int4_ops"),
+    ),
+  ],
+);
+
 export const users_oidc_clients = pgTable(
   "users_oidc_clients",
   {
@@ -294,6 +326,7 @@ export const users_oidc_clients = pgTable(
     user_ip_address: varchar(),
     interaction_cid: varchar(),
     outcome: varchar(),
+    sid: varchar(),
   },
   (table) => [
     uniqueIndex("idx_users_oidc_clients_interaction_cid")
@@ -325,38 +358,6 @@ export const users_oidc_clients = pgTable(
     })
       .onUpdate("cascade")
       .onDelete("set null"),
-  ],
-);
-
-export const activity_logs = pgTable(
-  "activity_logs",
-  {
-    id: serial().primaryKey().notNull(),
-    action: varchar().notNull(),
-    actor_ref: varchar().notNull(),
-    actor_type: varchar().notNull(),
-    app: varchar().notNull(),
-    context: jsonb().notNull(),
-    created_at: timestamp({ withTimezone: true, mode: "string" })
-      .defaultNow()
-      .notNull(),
-    interaction_cid: varchar(),
-    moderation_id: integer(),
-    organization_id: integer(),
-    user_id: integer(),
-    cause_activity_id: integer(),
-  },
-  (table) => [
-    index("idx_activity_logs_organization_id_created_at").using(
-      "btree",
-      table.organization_id.asc().nullsLast().op("int4_ops"),
-      table.created_at.asc().nullsLast().op("timestamptz_ops"),
-    ),
-    index("idx_activity_logs_user_id_created_at").using(
-      "btree",
-      table.user_id.asc().nullsLast().op("timestamptz_ops"),
-      table.created_at.asc().nullsLast().op("int4_ops"),
-    ),
   ],
 );
 
