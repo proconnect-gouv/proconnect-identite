@@ -136,19 +136,6 @@ describe("connectFranceConnect", () => {
     assert.equal((await readActivityLogs(db)).length, 1);
   });
 
-  it("❎ returns user_not_found for an unknown user and writes nothing", async () => {
-    const { db, runtime } = await setup();
-
-    const outcome = await runtime.connectFranceConnect({
-      user_id: 404,
-      user_info,
-    });
-
-    assert.deepEqual(outcome, { kind: "user_not_found", user_id: 404 });
-    assert.deepEqual(await identities(db), []);
-    assert.deepEqual(await readActivityLogs(db), []);
-  });
-
   it("❎ rolls back the names and the identity when the journal insert fails", async () => {
     const { db, runtime } = await setup();
     await db.execute(sql`

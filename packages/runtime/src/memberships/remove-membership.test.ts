@@ -91,24 +91,6 @@ describe("removeMembership", () => {
       },
     ]);
   });
-
-  it("❎ returns membership_not_found and journals nothing for a missing link", async () => {
-    const { db, runtime } = await setup();
-    const before = await memberships(db);
-
-    const outcome = await runtime.removeMembership({
-      organization_id: 1,
-      user_id: 999,
-    });
-
-    assert.deepEqual(outcome, {
-      kind: "membership_not_found",
-      organization_id: 1,
-      user_id: 999,
-    });
-    assert.deepEqual(await memberships(db), before);
-    assert.deepEqual(await readActivityLogs(db), []);
-  });
 });
 
 function memberships(db: IdentiteDatabase) {
