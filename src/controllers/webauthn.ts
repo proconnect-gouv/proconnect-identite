@@ -86,13 +86,7 @@ export const getGenerateRegistrationOptionsController = async (
 };
 
 export const postVerifyRegistrationMiddlewareFactory =
-  ({
-    errorRedirectUrl,
-    greetForConfiguredMfa,
-  }: {
-    errorRedirectUrl: string;
-    greetForConfiguredMfa: boolean;
-  }) =>
+  (errorRedirectUrl: string) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const schema = z.object({
@@ -122,10 +116,6 @@ export const postVerifyRegistrationMiddlewareFactory =
         user_id,
         key_name: key_name ?? undefined,
       });
-
-      if (greetForConfiguredMfa) {
-        req.session.pendingGreetingsForConfiguredMfa = true;
-      }
 
       return next();
     } catch (e) {

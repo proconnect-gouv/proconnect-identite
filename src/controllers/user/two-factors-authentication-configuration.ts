@@ -141,6 +141,20 @@ export const postTotpConfigurationMiddleware = async (
   }
 };
 
+export const postPasskeyConfigurationMiddleware = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  try {
+    req.session.pendingGreetingsForConfiguredMfa = true;
+
+    return next();
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const get2faSuccessfullyConfiguredController = async (
   req: Request,
   res: Response,

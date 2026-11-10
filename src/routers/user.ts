@@ -77,6 +77,7 @@ import {
   getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
+  postPasskeyConfigurationMiddleware,
   postRecoveryWordsSetupController,
   postTotpConfigurationMiddleware,
 } from "../controllers/user/two-factors-authentication-configuration";
@@ -373,11 +374,10 @@ export const userRouter = () => {
     "/passkeys/verify-registration",
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
-    postVerifyRegistrationMiddlewareFactory({
-      errorRedirectUrl:
-        "/users/double-authentication-choice?notification=invalid_passkey",
-      greetForConfiguredMfa: true,
-    }),
+    postVerifyRegistrationMiddlewareFactory(
+      "/users/double-authentication-choice?notification=invalid_passkey",
+    ),
+    postPasskeyConfigurationMiddleware,
     userComplyWithAllRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );

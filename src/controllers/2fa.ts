@@ -9,7 +9,6 @@ import { disableForce2fa, enableForce2fa } from "../managers/2fa";
 import { isUserInAdministrationEtat } from "../managers/organization/main";
 import {
   createRecoveryWordsForUser,
-  hasRecoveryWordsConfiguredForUser,
   recoverUserAccount,
   verifyRecoveryWordsForUser,
 } from "../managers/recovery-words";
@@ -269,12 +268,6 @@ export const getVerifyRecoveryWordsController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
-      return next(new HttpErrors.UnprocessableEntity());
-    }
-
     return res.render("verify-recovery-words", {
       pageTitle: "Vérifier vos mots de secours",
       notifications: await getNotificationsFromRequest(req),
@@ -330,10 +323,6 @@ export const postVerifyRecoveryWordsController = async (
 ) => {
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
-      return next(new HttpErrors.UnprocessableEntity());
-    }
 
     const schema = z.object({
       recovery_words: dicewareWordsSchema(),

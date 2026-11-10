@@ -243,10 +243,9 @@ export const mainRouter = (app: Express) => {
     ejsLayoutMiddlewareFactory(app, true),
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
-    postVerifyRegistrationMiddlewareFactory({
-      errorRedirectUrl: "/connection-and-account?notification=invalid_passkey",
-      greetForConfiguredMfa: false,
-    }),
+    postVerifyRegistrationMiddlewareFactory(
+      "/connection-and-account?notification=invalid_passkey",
+    ),
     postPasskeyRegisteredController,
   );
 
