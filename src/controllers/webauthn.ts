@@ -6,6 +6,7 @@ import type {
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z, ZodError } from "zod/v4";
+import { FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION } from "../config/env";
 import {
   UserNotLoggedInError,
   WebauthnAuthenticationFailedError,
@@ -152,7 +153,10 @@ export const postPasskeyRegisteredController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    if (!(await hasRecoveryWordsConfiguredForUser(user_id))) {
+    if (
+      FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION &&
+      !(await hasRecoveryWordsConfiguredForUser(user_id))
+    ) {
       markRecoveryWordsIncentiveAsSeen(req);
       return res.redirect("/recovery-words-incentive");
     }

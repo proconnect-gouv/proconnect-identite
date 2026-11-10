@@ -51,6 +51,7 @@ jobs:
           - rate_limit_by_ip
           - reauthenticate_on_admin_page
           - recovery_words_incentive
+          - recovery_words_incentive_disabled
           - redirect_after_session_expiration
           - reset_password
           - set_info_after_account_provisioning

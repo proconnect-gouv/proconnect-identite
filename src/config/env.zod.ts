@@ -88,6 +88,8 @@ export const featureTogglesEnvSchema = z.object({
   FEATURE_PARTIALLY_MOCK_EXTERNAL_API: zodTrueFalseBoolean().default(true),
   FEATURE_RATE_LIMIT_BY_EMAIL: zodTrueFalseBoolean().default(false),
   FEATURE_RATE_LIMIT_BY_IP: zodTrueFalseBoolean().default(false),
+  FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION:
+    zodTrueFalseBoolean().default(true),
   FEATURE_USE_ANNUAIRE_EMAILS: zodTrueFalseBoolean().default(false),
   FEATURE_USE_SECURE_COOKIES: zodTrueFalseBoolean().default(false),
   FEATURE_USE_SECURITY_RESPONSE_HEADERS: zodTrueFalseBoolean().default(false),

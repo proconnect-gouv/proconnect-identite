@@ -5,7 +5,10 @@ import {
 } from "@proconnect-gouv/proconnect.identite/types";
 import HttpErrors from "http-errors";
 import isEmpty from "lodash-es/isEmpty";
-import { CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES } from "../../config/env";
+import {
+  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
+  FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION,
+} from "../../config/env";
 import { context } from "../../connectors/context";
 import {
   doesOrganizationRequireForced2fa,
@@ -238,7 +241,10 @@ export const userHasSeenRecoveryWordsIncentiveGuard = async (
     haltTo,
   } = prev;
 
-  if (req.session.hasSeenRecoveryWordsIncentive) {
+  if (
+    !FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION ||
+    req.session.hasSeenRecoveryWordsIncentive
+  ) {
     return pass("user_has_seen_recovery_words_incentive");
   }
 
