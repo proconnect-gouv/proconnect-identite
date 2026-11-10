@@ -5,7 +5,10 @@ import {
 } from "@proconnect-gouv/proconnect.identite/types";
 import HttpErrors from "http-errors";
 import isEmpty from "lodash-es/isEmpty";
-import { CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES } from "../../config/env";
+import {
+  CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
+  FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION,
+} from "../../config/env";
 import { context } from "../../connectors/context";
 import {
   doesOrganizationRequireForced2fa,
@@ -14,6 +17,10 @@ import {
 } from "../../managers/2fa";
 import { isBrowserTrustedForUser } from "../../managers/browser-authentication";
 import { selectOrganization } from "../../managers/organization/main";
+import {
+  hasRecoveryWordsConfiguredForUser,
+  markRecoveryWordsIncentiveAsSeen,
+} from "../../managers/recovery-words";
 import {
   getCurrentAAL,
   getCurrentAssuranceLevels,
@@ -223,6 +230,41 @@ export const userIsMfaAuthenticatedIfRequiredGuard = async (
   }
 
   return pass("user_is_mfa_authenticated_if_required");
+};
+
+export const userHasSeenRecoveryWordsIncentiveGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+    pass,
+    haltTo,
+  } = prev;
+
+  if (
+    !FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION ||
+    req.session.hasSeenRecoveryWordsIncentive
+  ) {
+    return pass("user_has_seen_recovery_words_incentive");
+  }
+
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+  const shouldConfigureRecoveryWords =
+    (await is2FACapable(user_id)) &&
+    !(await hasRecoveryWordsConfiguredForUser(user_id));
+
+  // Do not mark the incentive as seen here: a user who sets up 2FA later in
+  // this session must still be shown the incentive.
+  if (!shouldConfigureRecoveryWords) {
+    return pass("user_has_seen_recovery_words_incentive");
+  }
+
+  // Marked before the redirect, as this guard also protects the incentive
+  // pages: otherwise it would redirect the user to the incentive forever.
+  markRecoveryWordsIncentiveAsSeen(req);
+
+  return haltTo("/users/recovery-words-incentive");
 };
 
 export const userHasSeenInclusionconnectOnboardingHelpGuard = async (

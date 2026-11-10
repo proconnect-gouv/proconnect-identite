@@ -115,6 +115,7 @@ describe("sign-in with totp enrollment", () => {
     cy.contains("Scannez le QR Code avec votre smartphone");
 
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
+
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Vérifier votre identité");

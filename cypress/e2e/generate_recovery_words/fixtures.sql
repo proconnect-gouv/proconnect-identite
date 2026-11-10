@@ -47,14 +47,44 @@ VALUES
     'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
     CURRENT_TIMESTAMP,
     true
+  ),
+  (
+    3,
+    'state-administration-agent@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Leman',
+    'Russ',
+    'I',
+    'Primarque',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    true
   );
 
 INSERT INTO
-  organizations (id, siret, created_at, updated_at)
+  organizations (
+    id,
+    siret,
+    cached_categorie_juridique,
+    created_at,
+    updated_at
+  )
 VALUES
   (
     1,
     '21340126800130',
+    NULL,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  ),
+  (
+    2,
+    '11000201100044',
+    '7120',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   );
@@ -68,7 +98,8 @@ INSERT INTO
   )
 VALUES
   (1, 1, false, 'domain'),
-  (2, 1, false, 'domain');
+  (2, 1, false, 'domain'),
+  (3, 2, false, 'domain');
 
 -- recovery words: "caliban forteresse ange noir epee lion"
 INSERT INTO

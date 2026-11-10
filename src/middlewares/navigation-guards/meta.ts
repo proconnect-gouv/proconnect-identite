@@ -6,6 +6,7 @@ import {
   userHasAtLeastOneOrganizationGuard,
   userHasPersonalInformationsGuard,
   userHasSeenInclusionconnectOnboardingHelpGuard,
+  userHasSeenRecoveryWordsIncentiveGuard,
   userHasSelectedAnOrganizationGuard,
   userHasValidFranceConnectIdentityGuard,
   userIsAuthenticatedGuard,
@@ -16,6 +17,7 @@ import {
 } from "./guards";
 import { type GuardResult, Pass, type RequestContext } from "./internals";
 import {
+  processGreetingsForConfiguredMfaGuard,
   processGreetingsForSelectedOrganizationGuard,
   processOfficialContactEmailVerificationGuard,
   processPendingCertificationDirigeantGuard,
@@ -38,6 +40,9 @@ export const userCanAccessAppGuard = async (prev: Pass<RequestContext>) => {
   if (!Pass.is_passing(context)) return context;
 
   context = await browserIsTrustedGuard(context);
+  if (!Pass.is_passing(context)) return context;
+
+  context = await userHasSeenRecoveryWordsIncentiveGuard(context);
   if (!Pass.is_passing(context)) return context;
 
   return userHasSeenInclusionconnectOnboardingHelpGuard(context);
@@ -84,6 +89,7 @@ export async function userComplyWithAllRequirementsGuard(
     interactionId,
     pendingCertificationDirigeantOrganizationId,
     pendingOfficialContactEmailVerificationOrganizationId,
+    pendingGreetingsForConfiguredMfa,
     pendingGreetingsForSelectedOrganization,
   } = context.data.req.session;
 
@@ -92,6 +98,7 @@ export async function userComplyWithAllRequirementsGuard(
     interactionId,
     pendingCertificationDirigeantOrganizationId,
     pendingOfficialContactEmailVerificationOrganizationId,
+    pendingGreetingsForConfiguredMfa,
     pendingGreetingsForSelectedOrganization,
   })
     .with({ pendingModerationOrganizationId: P.number }, () =>
@@ -103,6 +110,9 @@ export async function userComplyWithAllRequirementsGuard(
     .with(
       { pendingOfficialContactEmailVerificationOrganizationId: P.number },
       () => processOfficialContactEmailVerificationGuard(context),
+    )
+    .with({ pendingGreetingsForConfiguredMfa: true }, () =>
+      processGreetingsForConfiguredMfaGuard(context),
     )
     .with({ pendingGreetingsForSelectedOrganization: true }, () =>
       processGreetingsForSelectedOrganizationGuard(context),

@@ -27,20 +27,6 @@ VALUES
     'I',
     'Primarque',
     false
-  ),
-  (
-    2,
-    'unused1@yopmail.com',
-    true,
-    CURRENT_TIMESTAMP,
-    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP,
-    'Raphapha',
-    'Dubibi',
-    '0123456789',
-    'Sbire',
-    false
   );
 
 INSERT INTO
@@ -61,5 +47,13 @@ INSERT INTO
     verification_type
   )
 VALUES
-  (1, 1, false, 'domain'),
-  (2, 1, false, 'domain');
+  (1, 1, false, 'domain');
+
+-- recovery words: "caliban forteresse ange noir epee lion"
+INSERT INTO
+  recovery_words (user_id, hashed_words)
+VALUES
+  (
+    1,
+    '$2b$10$E7tPKTrJLqVCfxns4QZUMekfHtN5lgpjk9gRBkWkrtmBCnz4oT1Uu'
+  );
