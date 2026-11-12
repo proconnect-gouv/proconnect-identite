@@ -6,9 +6,7 @@ import {
   UserIsNot2faCapableError,
 } from "../config/errors";
 import { disableForce2fa, enableForce2fa } from "../managers/2fa";
-import { isUserInAdministrationEtat } from "../managers/organization/main";
 import {
-  createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
   recoverUserAccount,
   verifyRecoveryWordsForUser,
@@ -240,29 +238,6 @@ export const postSetForce2faController = async (
   }
 };
 
-export const postRecoveryWordsSetupController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-    const recoveryWords = await createRecoveryWordsForUser(user_id);
-
-    return res.render("recovery-words-setup", {
-      pageTitle: "Sauvegarder vos mots de secours",
-      csrfToken: csrfToken(req),
-      recoveryWords: recoveryWords.split("-"),
-      isAdministrationEtat: await isUserInAdministrationEtat(user_id),
-    });
-  } catch (error) {
-    if (error instanceof UserIsNot2faCapableError) {
-      return next(new HttpErrors.UnprocessableEntity());
-    }
-    next(error);
-  }
-};
 export const getVerifyRecoveryWordsController = async (
   req: Request,
   res: Response,
@@ -280,44 +255,6 @@ export const getVerifyRecoveryWordsController = async (
       notifications: await getNotificationsFromRequest(req),
       csrfToken: csrfToken(req),
     });
-  } catch (error) {
-    next(error);
-  }
-};
-export const getRecoveryWordsIncentiveController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.render("recovery-words-incentive", {
-      pageTitle: "Sauvegardez vos mots de secours",
-      csrfToken: csrfToken(req),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const postRecoveryWordsSkipController = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.redirect("/connection-and-account");
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const postRecoveryWordsSetupCompletionController = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    return res.redirect("/connection-and-account");
   } catch (error) {
     next(error);
   }

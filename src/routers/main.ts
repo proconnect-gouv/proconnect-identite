@@ -10,11 +10,7 @@ import {
   getMfaDecisionHelperCanInstallSoftwareSoftwareController,
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
-  getRecoveryWordsIncentiveController,
   getVerifyRecoveryWordsController,
-  postRecoveryWordsSetupCompletionController,
-  postRecoveryWordsSetupController,
-  postRecoveryWordsSkipController,
   postSetForce2faController,
   postVerifyRecoveryWordsController,
 } from "../controllers/2fa";
@@ -42,7 +38,6 @@ import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
   userCanAccessAdminGuardMiddleware,
   userCanAccessAppGuardMiddleware,
-  userCanSetupRecoveryWordsGuardMiddleware,
 } from "../middlewares/navigation-guards";
 import { authenticatorRateLimiterMiddleware } from "../middlewares/rate-limiter";
 import { ejsLayoutMiddlewareFactory } from "../services/renderer";
@@ -77,43 +72,6 @@ export const mainRouter = (app: Express) => {
     ejsLayoutMiddlewareFactory(app, true),
     userCanAccessAdminGuardMiddleware,
     getIsTotpAppInstalledController,
-  );
-
-  mainRouter.get(
-    "/recovery-words-incentive",
-    nocache(),
-    ejsLayoutMiddlewareFactory(app, true),
-    userCanAccessAdminGuardMiddleware,
-    csrfProtectionMiddleware,
-    getRecoveryWordsIncentiveController,
-  );
-
-  mainRouter.post(
-    "/recovery-words-skip",
-    nocache(),
-    urlencoded({ extended: false }),
-    userCanAccessAdminGuardMiddleware,
-    csrfProtectionMiddleware,
-    postRecoveryWordsSkipController,
-  );
-
-  mainRouter.post(
-    "/recovery-words-setup",
-    nocache(),
-    urlencoded({ extended: false }),
-    ejsLayoutMiddlewareFactory(app, true),
-    userCanSetupRecoveryWordsGuardMiddleware,
-    csrfProtectionMiddleware,
-    postRecoveryWordsSetupController,
-  );
-
-  mainRouter.post(
-    "/recovery-words-setup-completion",
-    nocache(),
-    urlencoded({ extended: false }),
-    userCanAccessAdminGuardMiddleware,
-    csrfProtectionMiddleware,
-    postRecoveryWordsSetupCompletionController,
   );
 
   mainRouter.get(
