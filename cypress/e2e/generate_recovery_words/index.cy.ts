@@ -31,6 +31,9 @@ describe("generate recovery words", () => {
     cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
     cy.contains("Continuer").click();
 
+    cy.title().should("include", "Accueil - ProConnect");
+
+    cy.visit("/connection-and-account");
     cy.title().should("include", "Compte et connexion");
     cy.contains("Création :");
 

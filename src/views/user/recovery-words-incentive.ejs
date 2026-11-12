@@ -1,6 +1,35 @@
 <div>
-  <%- include('../mfa-settings/recovery-words-incentive-layout.ejs', {
-    recoveryWordsSkipUrl: '/users/recovery-words-skip',
-    recoveryWordsSetupUrl: '/users/recovery-words-setup',
-  }); %>
+  <h1 class="fr-h3">
+    <span aria-hidden="true">🛡️</span>
+    Sauvegardez vos mots de secours
+  </h1>
+
+  <p>
+    Vous avez activé la connexion renforcée (2FA). Nous vous recommandons
+    fortement de générer une série de 6 mots de secours.
+  </p>
+
+  <p>
+    Ils sont <strong>le seul moyen de récupérer votre compte</strong> si vous
+    perdez votre smartphone ou désinstallez par erreur votre application de TOTP
+    ou votre passkey.
+  </p>
+
+  <form method="post" action="/users/recovery-words-setup">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <ul class="fr-btns-group">
+      <li>
+        <button type="submit" class="fr-btn">Générer les mots de secours</button>
+      </li>
+      <li>
+        <button
+          type="submit"
+          class="fr-btn fr-btn--secondary"
+          formaction="/users/recovery-words-skip"
+        >
+          Ignorer pour le moment
+        </button>
+      </li>
+    </ul>
+  </form>
 </div>
