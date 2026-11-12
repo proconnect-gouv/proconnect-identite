@@ -48,7 +48,7 @@ import {
 import { isExpired } from "../../services/is-expired";
 import { usesAuthHeaders } from "../../services/uses-auth-headers";
 import { Pass, type RequestContext } from "./internals";
-import { processPendingCertificationDirigeantGuard } from "./processPendingCertificationDirigeantGuard";
+import { processPendingCertificationDirigeantGuard } from "./process";
 
 const { franceconnect_userinfo, organizations, users, users_organizations } =
   context.repository;
