@@ -102,7 +102,7 @@ async function setup() {
   };
 }
 
-describe("markDomainAsVerified", () => {
+describe("changeEmailDomainVerification", () => {
   before(() => {
     mock.timers.enable({ apis: ["Date"], now: new Date("5555-05-05") });
   });
@@ -111,10 +111,10 @@ describe("markDomainAsVerified", () => {
     const { db, runtime } = await setup();
     const before = await snapshot(db);
 
-    const outcome = await runtime.markDomainAsVerified({
+    const outcome = await runtime.changeEmailDomainVerification({
       domain: "notfound.world",
-      domain_verification_type: "verified",
       organization_id: 404,
+      verification_type: "verified",
     });
 
     assert.deepEqual(outcome, {
@@ -128,10 +128,10 @@ describe("markDomainAsVerified", () => {
   it("✅ replaces the domain states, promotes the domain members and journals the verification under the moderator and each promotion under the app", async () => {
     const { db, runtime } = await setup();
 
-    const outcome = await runtime.markDomainAsVerified({
+    const outcome = await runtime.changeEmailDomainVerification({
       domain: "darkangels.world",
-      domain_verification_type: "verified",
       organization_id: 1,
+      verification_type: "verified",
     });
 
     const verified_domain = await db.query.email_domains.findFirst({
@@ -140,7 +140,7 @@ describe("markDomainAsVerified", () => {
         and(eq(table.domain, "darkangels.world"), eq(table.organization_id, 1)),
     });
     assert.deepEqual(outcome, {
-      kind: "domain_verified",
+      kind: "domain_verification_changed",
       activity_id: 1,
       email_domain: {
         id: verified_domain?.id,
@@ -154,6 +154,7 @@ describe("markDomainAsVerified", () => {
         },
         { previous_verification_type: "domain_not_verified_yet", user_id: 2 },
       ],
+      removed_members: [],
       replaced_verification_types: ["not_verified_yet", "refused"],
     });
     assert.deepEqual(
@@ -303,6 +304,95 @@ describe("markDomainAsVerified", () => {
     ]);
   });
 
+  it("✅ refuses the domain, removes every member of the domain and journals the refusal under the moderator and each removal under the app", async () => {
+    const { db, runtime } = await setup();
+
+    const outcome = await runtime.changeEmailDomainVerification({
+      domain: "darkangels.world",
+      organization_id: 1,
+      verification_type: "refused",
+    });
+
+    const refused_domain = await db.query.email_domains.findFirst({
+      columns: { id: true, verified_at: true },
+      where: (table, { and, eq }) =>
+        and(eq(table.domain, "darkangels.world"), eq(table.organization_id, 1)),
+    });
+    assert.deepEqual(outcome, {
+      kind: "domain_verification_changed",
+      activity_id: 1,
+      email_domain: { id: refused_domain?.id, verification_type: "refused" },
+      promoted_members: [],
+      removed_members: [
+        {
+          previous_verification_type:
+            "no_verification_means_for_entreprise_unipersonnelle",
+          user_id: 1,
+        },
+        { previous_verification_type: "domain_not_verified_yet", user_id: 2 },
+        { previous_verification_type: "organization_dirigeant", user_id: 3 },
+      ],
+      replaced_verification_types: ["not_verified_yet", "refused"],
+    });
+    assert.equal(refused_domain?.verified_at, null);
+    assert.deepEqual(
+      await db.query.users_organizations.findMany({
+        columns: { organization_id: true, user_id: true },
+        orderBy: (table, { asc }) => [
+          asc(table.organization_id),
+          asc(table.user_id),
+        ],
+      }),
+      [
+        { organization_id: 1, user_id: 4 },
+        { organization_id: 2, user_id: 1 },
+      ],
+    );
+    assert.deepEqual(
+      (await readActivityLogs(db)).map(
+        ({ action, actor_ref, cause_activity_id, context, user_id }) => ({
+          action,
+          actor_ref,
+          cause_activity_id,
+          context,
+          user_id,
+        }),
+      ),
+      [
+        {
+          action: "domain.refused",
+          actor_ref: "moderator+verifies-darkangels.world",
+          cause_activity_id: null,
+          context: {
+            inputs: {
+              domain: "darkangels.world",
+              verification_type: "refused",
+            },
+            outcome: {
+              email_domain_id: refused_domain?.id,
+              replaced_verification_types: ["not_verified_yet", "refused"],
+            },
+          },
+          user_id: null,
+        },
+        ...[
+          "no_verification_means_for_entreprise_unipersonnelle",
+          "domain_not_verified_yet",
+          "organization_dirigeant",
+        ].map((verification_type, index) => ({
+          action: "member.removed",
+          actor_ref: "domain.remove_members",
+          cause_activity_id: 1,
+          context: {
+            inputs: {},
+            outcome: { is_external: false, verification_type },
+          },
+          user_id: index + 1,
+        })),
+      ],
+    );
+  });
+
   it("❎ rolls back the domain state and its journal row when a member update fails", async () => {
     const { db, runtime } = await setup();
     await db.execute(sql`
@@ -313,10 +403,10 @@ describe("markDomainAsVerified", () => {
     const before = await snapshot(db);
 
     await assert.rejects(
-      runtime.markDomainAsVerified({
+      runtime.changeEmailDomainVerification({
         domain: "darkangels.world",
-        domain_verification_type: "verified",
         organization_id: 1,
+        verification_type: "verified",
       }),
       (error: Error) =>
         error.cause instanceof Error &&

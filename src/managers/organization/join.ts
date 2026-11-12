@@ -316,15 +316,15 @@ export const joinOrganization = async ({
       if (!usesAFreeEmailProvider(contactEmail)) {
         const outcome = await runtime
           .as({ type: "app", job: "join.official_contact" })
-          .markDomainAsVerified({
+          .changeEmailDomainVerification({
             organization_id,
             domain: contactDomain,
-            domain_verification_type:
+            verification_type:
               EmailDomainVerificationEnum.enum.official_contact,
           });
         match(outcome)
           .with(
-            { kind: "domain_verified" },
+            { kind: "domain_verification_changed" },
             ({
               activity_id,
               email_domain,
