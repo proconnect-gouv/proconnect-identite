@@ -168,11 +168,6 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     description:
       "Erreur : nous n’avons pas trouvé d’adresse email officielle valide pour votre mairie dans l’Annuaire Service Public.",
   },
-  passkey_successfully_created: {
-    type: "success",
-    description:
-      "Tout est en ordre ! Vous pouvez désormais utiliser votre empreinte, votre visage ou le verrouillage de l'écran pour vous connecter sur cet appareil.",
-  },
   passkey_successfully_deleted: {
     type: "success",
     description: "Votre clé d’accès a bien été supprimée.",
@@ -193,10 +188,6 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     type: "info",
     description:
       "Information : Pour des raisons de sécurité, nous vous invitons à définir un nouveau mot de passe.",
-  },
-  authenticator_added: {
-    type: "success",
-    description: "L’application d’authentification a été configurée.",
   },
   invalid_totp_token: {
     type: "error",

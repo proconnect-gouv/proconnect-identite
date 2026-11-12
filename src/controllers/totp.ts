@@ -1,12 +1,7 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
 import { z } from "zod";
-import { FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
-import {
-  hasRecoveryWordsConfiguredForUser,
-  markRecoveryWordsIncentiveAsSeen,
-} from "../managers/recovery-words";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
@@ -34,95 +29,96 @@ import getNotificationsFromRequest, {
   getNotificationLabelFromRequest,
 } from "../services/get-notifications-from-request";
 
-export const getTotpConfigurationController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id: user_id, email } = getUserFromAuthenticatedSession(req);
+export const getTotpConfigurationControllerFactory =
+  ({
+    template,
+  }: {
+    template: "user/totp-configuration" | "totp-configuration";
+  }) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id: user_id, email } = getUserFromAuthenticatedSession(req);
 
-    const existingTemporaryTotpKey = getTemporaryTotpKey(req);
+      const existingTemporaryTotpKey = getTemporaryTotpKey(req);
 
-    const { totpKey, humanReadableTotpKey, qrCodeDataUrl } =
-      await generateTotpRegistrationOptions(email, existingTemporaryTotpKey);
+      const { totpKey, humanReadableTotpKey, qrCodeDataUrl } =
+        await generateTotpRegistrationOptions(email, existingTemporaryTotpKey);
 
-    setTemporaryTotpKey(req, totpKey);
+      setTemporaryTotpKey(req, totpKey);
 
-    const notificationLabel = await getNotificationLabelFromRequest(req);
-    const hasCodeError = notificationLabel === "invalid_totp_token";
+      const notificationLabel = await getNotificationLabelFromRequest(req);
+      const hasCodeError = notificationLabel === "invalid_totp_token";
 
-    const { "totp-tool-type": totpToolType } = req.query;
+      const { "totp-tool-type": totpToolType } = req.query;
 
-    return res.render("totp-configuration", {
-      pageTitle: "Configuration TOTP",
-      notifications: await getNotificationsFromRequest(req),
-      hasCodeError,
-      csrfToken: csrfToken(req),
-      isAuthenticatorAlreadyConfigured: await isTotpConfiguredForUser(user_id),
-      humanReadableTotpKey,
-      qrCodeDataUrl,
-      totpToolType,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const postTotpConfigurationController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const schema = z.object({
-      totpToken: codeSchema(),
-    });
-    const { totpToken } = await schema.parseAsync(req.body);
-
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
-    const temporaryTotpKey = getTemporaryTotpKey(req);
-
-    if (!temporaryTotpKey) {
-      throw new NotFoundError();
+      return res.render(template, {
+        pageTitle: "Configurer un code à usage unique",
+        notifications: await getNotificationsFromRequest(req),
+        hasCodeError,
+        csrfToken: csrfToken(req),
+        isAuthenticatorAlreadyConfigured:
+          await isTotpConfiguredForUser(user_id),
+        humanReadableTotpKey,
+        qrCodeDataUrl,
+        totpToolType,
+      });
+    } catch (error) {
+      next(error);
     }
+  };
 
-    const updatedUser = await confirmTotpRegistration(
-      user_id,
-      temporaryTotpKey,
-      totpToken,
-    );
+export const postTotpConfigurationMiddlewareFactory =
+  ({
+    successRedirectUrl,
+    errorRedirectUrl,
+  }: {
+    successRedirectUrl?: string;
+    errorRedirectUrl: string;
+  }) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const schema = z.object({
+        totpToken: codeSchema(),
+      });
+      const { totpToken } = await schema.parseAsync(req.body);
 
-    deleteTemporaryTotpKey(req);
-    addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
+      const { id: user_id } = getUserFromAuthenticatedSession(req);
+      const temporaryTotpKey = getTemporaryTotpKey(req);
 
-    await sendAddFreeTOTPEmail({ user_id });
+      if (!temporaryTotpKey) {
+        throw new NotFoundError();
+      }
 
-    if (
-      FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION &&
-      !(await hasRecoveryWordsConfiguredForUser(user_id))
-    ) {
-      markRecoveryWordsIncentiveAsSeen(req);
-      return res.redirect("/recovery-words-incentive");
-    }
-
-    return res.redirect(
-      "/connection-and-account?notification=authenticator_added",
-    );
-  } catch (error) {
-    if (error instanceof InvalidTotpTokenError) {
-      const { "totp-tool-type": totpToolType } = req.body;
-      const totpToolTypeParam = totpToolType
-        ? `&totp-tool-type=${encodeURIComponent(totpToolType)}`
-        : "";
-      return res.redirect(
-        `/totp-configuration?notification=invalid_totp_token${totpToolTypeParam}`,
+      const updatedUser = await confirmTotpRegistration(
+        user_id,
+        temporaryTotpKey,
+        totpToken,
       );
-    }
 
-    next(error);
-  }
-};
+      deleteTemporaryTotpKey(req);
+      addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
+
+      await sendAddFreeTOTPEmail({ user_id });
+
+      req.session.pendingGreetingsForConfiguredMfa = true;
+
+      if (successRedirectUrl) {
+        return res.redirect(successRedirectUrl);
+      }
+
+      return next();
+    } catch (error) {
+      if (error instanceof InvalidTotpTokenError) {
+        const { "totp-tool-type": totpToolType } = req.body;
+        const totpToolTypeParam = totpToolType
+          ? `&totp-tool-type=${encodeURIComponent(totpToolType)}`
+          : "";
+        return res.redirect(`${errorRedirectUrl}${totpToolTypeParam}`);
+      }
+
+      next(error);
+    }
+  };
 
 export const postDeleteTotpConfigurationController = async (
   req: Request,

@@ -36,6 +36,19 @@ describe("add 2fa authentication", () => {
     // Extract the code from the front to generate the TOTP key
     cy.fillAndSubmitTotpForm("/totp-configuration");
 
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Générer les mots de secours").click();
+    cy.title().should("include", "Sauvegarder vos mots de secours");
+    cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
+    cy.contains("Continuer").click();
+
+    cy.title().should(
+      "include",
+      "Votre double authentification est bien configurée",
+    );
+    cy.contains("Votre double authentification est bien configurée");
+    cy.contains("Continuer").click();
+
     cy.title().should("include", "Compte et connexion");
 
     cy.maildevGetMessageBySubject("Double authentification activée").then(
