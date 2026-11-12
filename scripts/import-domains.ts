@@ -177,7 +177,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               );
 
             // if the domain is already register, whatever the status, we do not insert it
-            if (!some(emailDomains, { domain })) {
+            if (some(emailDomains, { domain })) {
               i++;
               already_known_by_mcp_count++;
               rowResults.push("already_known_by_mcp");
