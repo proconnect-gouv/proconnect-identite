@@ -9,7 +9,9 @@ import {
 //
 
 export function toIdentityVector(
-  pouvoir: NonNullable<Awaited<ReturnType<FindPouvoirsBySirenHandler>>[number]>,
+  pouvoir: NonNullable<
+    Awaited<ReturnType<FindPouvoirsBySirenHandler>>["pouvoirs"][number]
+  >,
 ): IdentityVector {
   const descriptionPersonne = pouvoir.individu?.descriptionPersonne;
 

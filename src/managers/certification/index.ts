@@ -56,7 +56,7 @@ export const processCertificationDirigeantOrThrow = async (
   );
   track(activity.action, { activity_id, organization_id: organization.id });
 
-  if (!ok && cause === "organisation_not_covered") {
+  if (cause === "organisation_not_covered") {
     throw new CertificationDirigeantOrganizationNotCoveredError(cause, {
       cause: new AssertionError({
         actual: organization,
@@ -65,13 +65,14 @@ export const processCertificationDirigeantOrThrow = async (
   }
 
   if (!ok && cause === "close_match") {
-    const organization_label =
-      organization.cached_libelle ?? organization.siret;
     const error = new CertificationDirigeantCloseMatchError(
-      details.source,
-      siren,
-      organization_label,
-      details.matches,
+      {
+        matches: details.matches,
+        organization_label: organization.cached_libelle ?? organization.siret,
+        siren,
+        source: details.source,
+        source_updated_at: details.source_updated_at,
+      },
       cause,
       {
         cause: new AssertionError({
@@ -87,12 +88,13 @@ export const processCertificationDirigeantOrThrow = async (
   }
 
   if (!ok) {
-    const organization_label =
-      organization.cached_libelle ?? organization.siret;
-
     const error = new CertificationDirigeantNoMatchError(
-      siren,
-      organization_label,
+      {
+        organization_label: organization.cached_libelle ?? organization.siret,
+        siren,
+        source: details.source,
+        source_updated_at: details.source_updated_at,
+      },
       cause,
     );
 
@@ -102,21 +104,28 @@ export const processCertificationDirigeantOrThrow = async (
   }
 };
 
-export const getCertificationDirigeantCloseMatchErrorUrl = (
-  error: CertificationDirigeantCloseMatchError,
+export const getCertificationDirigeantErrorUrl = (
+  error:
+    | CertificationDirigeantCloseMatchError
+    | CertificationDirigeantNoMatchError,
 ) => {
   const url = new URL(
-    "/users/certification-dirigeant/close-match-error",
+    error instanceof CertificationDirigeantCloseMatchError
+      ? "/users/certification-dirigeant/close-match-error"
+      : "/users/certification-dirigeant/no-match-error",
     // placeholder domain, not used
     "http://example.com",
   );
 
-  if (error.matches) {
+  if (error instanceof CertificationDirigeantCloseMatchError) {
     url.searchParams.set("matches", [...error.matches].join(","));
   }
 
-  url.searchParams.set("source", error.source);
-  url.searchParams.set("siren", error.siren);
   url.searchParams.set("organization_label", error.organization_label);
+  url.searchParams.set("siren", error.siren);
+  url.searchParams.set("source", error.source);
+  if (error.source_updated_at) {
+    url.searchParams.set("source_updated_at", error.source_updated_at);
+  }
   return url.pathname + url.search;
 };

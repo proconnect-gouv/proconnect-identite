@@ -9,7 +9,7 @@ import {
 } from "../../config/errors";
 import { context, runtime } from "../../connectors/context";
 import {
-  getCertificationDirigeantCloseMatchErrorUrl,
+  getCertificationDirigeantErrorUrl,
   processCertificationDirigeantOrThrow,
 } from "../../managers/certification";
 import {
@@ -164,14 +164,11 @@ export const processPendingCertificationDirigeantGuard = async (
       );
     }
 
-    if (error instanceof CertificationDirigeantCloseMatchError) {
-      return continueTo(getCertificationDirigeantCloseMatchErrorUrl(error));
-    }
-
-    if (error instanceof CertificationDirigeantNoMatchError) {
-      return continueTo(
-        `/users/certification-dirigeant/no-match-error?siren=${error.siren}&organization_label=${encodeURIComponent(error.organization_label)}`,
-      );
+    if (
+      error instanceof CertificationDirigeantCloseMatchError ||
+      error instanceof CertificationDirigeantNoMatchError
+    ) {
+      return continueTo(getCertificationDirigeantErrorUrl(error));
     }
 
     throw error;

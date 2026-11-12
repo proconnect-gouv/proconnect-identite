@@ -5,7 +5,7 @@ import type { FindPouvoirsBySirenHandler } from "#src/api";
 //
 
 type Pouvoir = NonNullable<
-  Awaited<ReturnType<FindPouvoirsBySirenHandler>>[number]
+  Awaited<ReturnType<FindPouvoirsBySirenHandler>>["pouvoirs"][number]
 >;
 
 export const UlysseTosiPouvoir: Pouvoir = {
