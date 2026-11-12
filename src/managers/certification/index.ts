@@ -1,5 +1,6 @@
 //
 
+import { getCertificationDirigeantActivity } from "@proconnect-gouv/proconnect.identite.runtime";
 import { processCertificationDirigeantFactory } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import type {
   FranceConnectUserInfo,
@@ -12,7 +13,7 @@ import {
   CertificationDirigeantNoMatchError,
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../../config/errors";
-import { context } from "../../connectors/context";
+import { context, db, runtime } from "../../connectors/context";
 import { logger, track } from "../../services/log";
 
 //
@@ -24,10 +25,11 @@ export const processCertificationDirigeantOrThrow = async (
   organization: Organization,
   franceconnect_userinfo: FranceConnectUserInfo,
 ) => {
-  const { cause, details, ok } = await processCertificationDirigeant(
+  const result = await processCertificationDirigeant(
     organization,
     franceconnect_userinfo,
   );
+  const { cause, details, ok } = result;
   const siren = organization.siret.substring(0, 9);
 
   if (details.source_selection.kind === "fallback") {
@@ -42,24 +44,24 @@ export const processCertificationDirigeantOrThrow = async (
     });
   }
 
+  const activity = getCertificationDirigeantActivity(result);
+  const { activity_id } = await db.transaction((tx) =>
+    runtime
+      .as({ type: "user", user_id: franceconnect_userinfo.user_id })
+      .record(tx, {
+        ...activity,
+        organization_id: organization.id,
+        user_id: franceconnect_userinfo.user_id,
+      }),
+  );
+  track(activity.action, { activity_id, organization_id: organization.id });
+
   if (!ok && cause === "organisation_not_covered") {
     throw new CertificationDirigeantOrganizationNotCoveredError(cause, {
       cause: new AssertionError({
         actual: organization,
       }),
     });
-  }
-
-  if (!ok) {
-    logger.info(
-      details.dirigeant,
-      `'(${details.source})`,
-      " is the closest source dirigeant to ",
-      details.identity,
-      " with a score of ",
-      details.matches.size,
-      cause,
-    );
   }
 
   if (!ok && cause === "close_match") {

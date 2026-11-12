@@ -2,7 +2,7 @@
 
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { certificationScore } from "./certification-score.js";
+import { certificationScore, compareCriteria } from "./certification-score.js";
 
 //
 
@@ -340,6 +340,69 @@ describe("certification scoring", () => {
         },
       ),
       new Set(["family_name", "first_name", "gender", "birth_date"]),
+    );
+  });
+});
+
+describe("compareCriteria", () => {
+  it("keeps the received and the compared value of each side", () => {
+    assert.deepStrictEqual(
+      compareCriteria(
+        {
+          birthcountry: "99100",
+          birthdate: new Date("1946-08-17"),
+          birthplace: "47019",
+          family_name: "Bernard",
+          gender: "male",
+          given_name: "Jean-Pierre Paul",
+        },
+        {
+          birthcountry: null,
+          birthdate: new Date("1946-08-18"),
+          birthplace: "47209",
+          family_name: "BERNARD",
+          gender: null,
+          given_name: "Jean Pierre",
+        },
+      ),
+      [
+        {
+          criterion: "family_name",
+          franceconnect: { compared: "BERNARD", raw: "Bernard" },
+          matched: true,
+          source: { compared: "BERNARD", raw: "BERNARD" },
+        },
+        {
+          criterion: "first_name",
+          franceconnect: { compared: "JEAN", raw: "Jean-Pierre Paul" },
+          matched: true,
+          source: { compared: "JEAN", raw: "Jean Pierre" },
+        },
+        {
+          criterion: "gender",
+          franceconnect: { compared: "male", raw: "male" },
+          matched: true,
+          source: { compared: null, raw: null },
+        },
+        {
+          criterion: "birth_date",
+          franceconnect: {
+            compared: "1946-08-17T00:00:00.000Z",
+            raw: "1946-08-17T00:00:00.000Z",
+          },
+          matched: false,
+          source: {
+            compared: "1946-08-18T00:00:00.000Z",
+            raw: "1946-08-18T00:00:00.000Z",
+          },
+        },
+        {
+          criterion: "birth_place",
+          franceconnect: { compared: "47209", raw: "47019" },
+          matched: true,
+          source: { compared: "47209", raw: "47209" },
+        },
+      ],
     );
   });
 });

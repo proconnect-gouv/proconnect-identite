@@ -40,69 +40,103 @@ export function certificationScore(
   identitePivot: IdentityVector,
   sourceDirigeant: IdentityVector,
 ) {
-  const matches = new Set<MatchCriteria>();
+  return new Set(
+    compareCriteria(identitePivot, sourceDirigeant)
+      .filter(({ matched }) => matched)
+      .map(({ criterion }) => criterion),
+  );
+}
 
+/**
+ * Compares each evaluated criterion and keeps, for both sides, the value as
+ * received (`raw`) and the value actually compared (`compared`).
+ */
+export function compareCriteria(
+  identitePivot: IdentityVector,
+  sourceDirigeant: IdentityVector,
+) {
   // 1. Family name match (after normalization)
-  const normalizedFamilyNamePivot = normalizeText(identitePivot.family_name);
-  const normalizedFamilyNameSource = normalizeText(sourceDirigeant.family_name);
-
-  if (
-    normalizedFamilyNamePivot &&
-    normalizedFamilyNameSource &&
-    normalizedFamilyNamePivot === normalizedFamilyNameSource
-  ) {
-    matches.add(MatchCriteria.enum.family_name);
-  }
+  const family_name = compare({
+    criterion: MatchCriteria.enum.family_name,
+    franceconnect: identitePivot.family_name,
+    match: bothPresentAndEqual,
+    normalize: normalizeText,
+    source: sourceDirigeant.family_name,
+  });
 
   // 2. First name match (first name only, after normalization)
-  const firstNamePivot = extractFirstName(identitePivot.given_name);
-  const firstNameSource = extractFirstName(sourceDirigeant.given_name);
-
-  if (firstNamePivot && firstNameSource && firstNamePivot === firstNameSource) {
-    matches.add(MatchCriteria.enum.first_name);
-  }
+  const first_name = compare({
+    criterion: MatchCriteria.enum.first_name,
+    franceconnect: identitePivot.given_name,
+    match: bothPresentAndEqual,
+    normalize: extractFirstName,
+    source: sourceDirigeant.given_name,
+  });
 
   // 3. Gender match (match or absent in source)
-  if (
-    !sourceDirigeant.gender ||
-    identitePivot.gender === sourceDirigeant.gender
-  ) {
-    matches.add(MatchCriteria.enum.gender);
-  }
+  const gender = compare({
+    criterion: MatchCriteria.enum.gender,
+    franceconnect: identitePivot.gender,
+    match: (pivot, source) => !source || pivot === source,
+    source: sourceDirigeant.gender,
+  });
 
   // 4. Birth date match (exact match)
-  if (
-    identitePivot.birthdate &&
-    sourceDirigeant.birthdate &&
-    identitePivot.birthdate.getTime() === sourceDirigeant.birthdate.getTime()
-  ) {
-    matches.add(MatchCriteria.enum.birth_date);
-  }
+  const birth_date = compare({
+    criterion: MatchCriteria.enum.birth_date,
+    franceconnect: identitePivot.birthdate?.toISOString() ?? null,
+    match: bothPresentAndEqual,
+    source: sourceDirigeant.birthdate?.toISOString() ?? null,
+  });
 
   // 5. Birth place match (different logic for French vs foreigners)
   const isFrench =
     !identitePivot.birthcountry || identitePivot.birthcountry === "99100";
+  const birth = isFrench
+    ? // For French: commune code (with conversion), match if source has none
+      compare({
+        criterion: MatchCriteria.enum.birth_place,
+        franceconnect: identitePivot.birthplace,
+        match: (pivot, source) => !source || (!!pivot && pivot === source),
+        normalize: convertCommuneCode,
+        source: sourceDirigeant.birthplace,
+      })
+    : // For foreigners: country code (COG 99XXX), match if either side has none
+      compare({
+        criterion: MatchCriteria.enum.birth_country,
+        franceconnect: identitePivot.birthcountry,
+        match: (pivot, source) =>
+          pivot === null || source === null || pivot === source,
+        source: sourceDirigeant.birthcountry,
+      });
 
-  if (isFrench) {
-    // For French: check commune code (with conversion)
-    const communePivot = convertCommuneCode(identitePivot.birthplace);
-    const communeSource = convertCommuneCode(sourceDirigeant.birthplace);
+  return [family_name, first_name, gender, birth_date, birth];
+}
 
-    // Match if equal or if source has no commune data
-    if (!communeSource || (communePivot && communePivot === communeSource)) {
-      matches.add(MatchCriteria.enum.birth_place);
-    }
-  } else {
-    // For foreigners: check country code (with conversion if needed from RNE)
-    // Both should already be in COG format (99XXX)
-    if (
-      identitePivot.birthcountry === null ||
-      sourceDirigeant.birthcountry === null ||
-      identitePivot.birthcountry === sourceDirigeant.birthcountry
-    ) {
-      matches.add(MatchCriteria.enum.birth_country);
-    }
-  }
+function bothPresentAndEqual(pivot: string | null, source: string | null) {
+  return !!pivot && !!source && pivot === source;
+}
 
-  return matches;
+function compare({
+  criterion,
+  franceconnect,
+  match,
+  normalize = (value) => value,
+  source,
+}: {
+  criterion: MatchCriteria;
+  franceconnect: string | null;
+  match: (pivot: string | null, source: string | null) => boolean;
+  normalize?: (value: string | null) => string | null;
+  source: string | null;
+}) {
+  const compared_franceconnect = normalize(franceconnect);
+  const compared_source = normalize(source);
+
+  return {
+    criterion,
+    franceconnect: { compared: compared_franceconnect, raw: franceconnect },
+    matched: match(compared_franceconnect, compared_source),
+    source: { compared: compared_source, raw: source },
+  };
 }
