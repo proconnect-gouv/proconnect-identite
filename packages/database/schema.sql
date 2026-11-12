@@ -676,7 +676,7 @@ ADD CONSTRAINT "recovery_words_user_id_key" UNIQUE ("user_id");
 -- Name: email_domains unique_organization_domain; Type: CONSTRAINT; Schema: public; Owner: -
 --
 ALTER TABLE ONLY "public"."email_domains"
-ADD CONSTRAINT "unique_organization_domain" UNIQUE ("organization_id", "domain", "verification_type");
+ADD CONSTRAINT "unique_organization_domain" UNIQUE ("organization_id", "domain");
 
 --
 -- Name: users_oidc_clients users_oidc_clients_pkey; Type: CONSTRAINT; Schema: public; Owner: -

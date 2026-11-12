@@ -113,7 +113,6 @@ export const email_domains = pgTable(
       name: "email_domains_organization_id_fkey",
     }).onDelete("cascade"),
     unique("unique_organization_domain").on(
-      table.verification_type,
       table.organization_id,
       table.domain,
     ),

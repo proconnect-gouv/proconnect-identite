@@ -71,11 +71,6 @@ async function setup() {
         verification_type: "not_verified_yet",
       },
       {
-        domain: "darkangels.world",
-        organization_id: 1,
-        verification_type: "refused",
-      },
-      {
         domain: "calibanites.world",
         organization_id: 1,
         verification_type: "verified",
@@ -154,7 +149,7 @@ describe("markDomainAsVerified", () => {
         },
         { previous_verification_type: "domain_not_verified_yet", user_id: 2 },
       ],
-      replaced_verification_types: ["not_verified_yet", "refused"],
+      replaced_verification_types: ["not_verified_yet"],
     });
     assert.deepEqual(
       await db.query.email_domains.findMany({
@@ -259,7 +254,7 @@ describe("markDomainAsVerified", () => {
           },
           outcome: {
             email_domain_id: verified_domain?.id,
-            replaced_verification_types: ["not_verified_yet", "refused"],
+            replaced_verification_types: ["not_verified_yet"],
           },
         },
         interaction_cid: null,
