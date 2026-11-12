@@ -9,7 +9,7 @@ import type {
   RuntimeContext,
 } from "#src/activity";
 import type { IdentiteTransaction } from "#src/database";
-import { markDomainAsVerifiedFactory } from "#src/domains";
+import { changeEmailDomainVerificationFactory } from "#src/domains";
 import {
   connectFranceConnectFactory,
   disconnectFranceConnectFactory,
@@ -39,6 +39,11 @@ export function createIdentiteRuntime<
     as(actor: Actor) {
       return {
         addMembership: addMembershipFactory({ actor, app, db }),
+        changeEmailDomainVerification: changeEmailDomainVerificationFactory({
+          actor,
+          app,
+          db,
+        }),
         changePassword: changePasswordFactory({ actor, app, db }),
         connectFranceConnect: connectFranceConnectFactory({ actor, app, db }),
         deleteUser: deleteUserFactory({ actor, app, db }),
@@ -47,7 +52,6 @@ export function createIdentiteRuntime<
           app,
           db,
         }),
-        markDomainAsVerified: markDomainAsVerifiedFactory({ actor, app, db }),
         openModeration: openModerationFactory({ actor, app, db }),
         removeMembership: removeMembershipFactory({ actor, app, db }),
         record: (

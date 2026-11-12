@@ -11,31 +11,23 @@ import * as z from "zod";
 //
 
 const hyyypertool_activities = {
-  "domain.refused": z.object({
+  "moderation.commented": z.object({
     inputs: z.object({
-      domain: z.string(),
-      verification_type: z.literal("refused"),
+      comment: z.string(),
     }),
     outcome: z.object({
-      email_domain_id: z.number(),
-      replaced_verification_types: z.array(z.string()),
+      moderation_id: z.number(),
     }),
   }),
 };
 
 type HyyypertoolActivityContexts = ContextsOf<typeof hyyypertool_activities>;
 
-const darkangels_refused = {
-  action: "domain.refused" as const,
+const darkangels_commented = {
+  action: "moderation.commented" as const,
   context: {
-    inputs: {
-      domain: "darkangels.world",
-      verification_type: "refused" as const,
-    },
-    outcome: {
-      email_domain_id: 7,
-      replaced_verification_types: ["not_verified_yet"],
-    },
+    inputs: { comment: "darkangels.world looks legit" },
+    outcome: { moderation_id: 7 },
   },
   organization_id: 1,
 };
@@ -48,7 +40,7 @@ async function setup() {
     moderator: createIdentiteRuntime<HyyypertoolActivityContexts>({
       app: "hyyypertool",
       db,
-    }).as({ type: "moderator", sub: "moderator+refuses-darkangels.world" }),
+    }).as({ type: "moderator", sub: "moderator+comments-darkangels.world" }),
   };
 }
 
@@ -57,18 +49,18 @@ describe("record", () => {
     const { db, moderator } = await setup();
 
     const outcome = await db.transaction((tx) =>
-      moderator.record(tx, darkangels_refused),
+      moderator.record(tx, darkangels_commented),
     );
 
     assert.deepEqual(outcome, { activity_id: 1 });
     assert.deepEqual(await readActivityLogs(db), [
       {
-        action: "domain.refused",
-        actor_ref: "moderator+refuses-darkangels.world",
+        action: "moderation.commented",
+        actor_ref: "moderator+comments-darkangels.world",
         actor_type: "moderator",
         app: "hyyypertool",
         cause_activity_id: null,
-        context: darkangels_refused.context,
+        context: darkangels_commented.context,
         interaction_cid: null,
         moderation_id: null,
         organization_id: 1,
@@ -86,24 +78,24 @@ describe("record", () => {
 
     void ((tx: IdentiteTransaction) =>
       record(tx, {
-        // @ts-expect-error domain.verified belongs to the runtime, only markDomainAsVerified writes it
+        // @ts-expect-error domain.verified belongs to the runtime, only changeEmailDomainVerification writes it
         action: "domain.verified",
-        context: darkangels_refused.context,
+        context: darkangels_commented.context,
       }));
 
     void ((tx: IdentiteTransaction) =>
       record(tx, {
-        action: "domain.refused",
-        // @ts-expect-error the context does not match domain.refused
-        context: { inputs: { domain: "darkangels.world" }, outcome: {} },
+        action: "moderation.commented",
+        // @ts-expect-error the context does not match moderation.commented
+        context: { inputs: { comment: "darkangels.world" }, outcome: {} },
       }));
 
     void (() =>
       // @ts-expect-error the bare database is not a transaction
-      record(db, darkangels_refused));
+      record(db, darkangels_commented));
 
     type OverlappingContexts = {
-      "domain.verified": HyyypertoolActivityContexts["domain.refused"];
+      "domain.verified": HyyypertoolActivityContexts["moderation.commented"];
     };
     // @ts-expect-error domain.verified is already defined by the runtime
     void createIdentiteRuntime<OverlappingContexts>({ app: "hyyypertool", db });
@@ -112,6 +104,6 @@ describe("record", () => {
       createIdentiteRuntime({ app: "proconnect-identite", db })
         .as({ type: "app", job: "join.official_contact" })
         // @ts-expect-error proconnect-identite has no app-only action to record
-        .record(tx, darkangels_refused));
+        .record(tx, darkangels_commented));
   });
 });
