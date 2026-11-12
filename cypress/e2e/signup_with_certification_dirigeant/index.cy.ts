@@ -249,6 +249,16 @@ describe("❎ Bad match", () => {
 
     cy.title().should("include", "Certification impossible -");
     cy.contains("Identité non trouvée ⚠️");
+    cy.task(
+      "psql",
+      `
+SELECT action
+FROM activity_logs
+WHERE action LIKE 'certification_dirigeant.%'
+ORDER BY id DESC
+LIMIT 1
+`,
+    ).should("deep.equal", [{ action: "certification_dirigeant.not_matched" }]);
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
