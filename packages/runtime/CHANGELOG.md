@@ -1,5 +1,21 @@
 # @proconnect-gouv/proconnect.identite.runtime
 
+## 0.6.0
+
+### Minor Changes
+
+- [#2445](https://github.com/proconnect-gouv/proconnect-identite/pull/2445) [`efdd64d`](https://github.com/proconnect-gouv/proconnect-identite/commit/efdd64d8c342b586c76ac4e6717323d4486bf16d) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Le runtime ajoute `certificationDirigeantActivities` (schémas zod des actions `certification_dirigeant.certified`, `.close_matched`, `.not_matched` et `.not_covered`) et `getCertificationDirigeantActivity`, qui transforme le résultat de `processCertificationDirigeant` en l'une de ces actions. `outcome` porte le registre consulté, la raison d'un échec et, pour une correspondance partielle seulement, `diff` : pour chaque critère discordant, la valeur FranceConnect et celle du registre, telles que reçues (`raw`) et telles que comparées (`compared`). Ces schémas ne font pas encore partie de `activityContextSchemas` : l'application qui les écrit les passe à `createIdentiteRuntime` comme ses propres actions, et un lecteur du journal les ajoute à ses schémas. identite exporte `compareCriteria`, d'où `certificationScore` tire désormais ses critères concordants.
+
+- [#2453](https://github.com/proconnect-gouv/proconnect-identite/pull/2453) [`918ab32`](https://github.com/proconnect-gouv/proconnect-identite/commit/918ab32555b01df0363e8d531b6c6a4331ef0970) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Remplace la commande `markDomainAsVerified` par `changeEmailDomainVerification({ domain, organization_id, verification_type })`, qui accepte aussi les types refusés (`refused`, `blacklisted`). Une validation garde le comportement précédent (`domain.verified` et `member.promoted`). Un refus remplace les états du domaine sans `verified_at`, journalise `domain.refused` sous l’acteur reçu, retire de l’organisation chaque membre dont l’email est sur ce domaine et journalise une ligne `member.removed` par membre sous l’acteur `{ type: "app", job: "domain.remove_members" }`, avec `cause_activity_id`. L’issue unique `domain_verification_changed` porte `promoted_members` et `removed_members`. `activityContextSchemas` décrit désormais `domain.refused` : hyyypertool doit retirer sa propre définition et sa transaction de refus en passant à cette version.
+
+- [#2451](https://github.com/proconnect-gouv/proconnect-identite/pull/2451) [`0b133b6`](https://github.com/proconnect-gouv/proconnect-identite/commit/0b133b61cbe46af2347fc1eb1eaee8302ebfb94c) Thanks [@douglasduteil](https://github.com/douglasduteil)! - `activityContextSchemas` décrit l’action `domain.removed`, écrite jusqu’ici par hyyypertool seul : `inputs.domain`, `outcome.email_domain_id` et `outcome.previous_verification_type`. hyyypertool doit retirer sa propre définition de `domain.removed` en passant à cette version.
+
+### Patch Changes
+
+- Updated dependencies [[`efdd64d`](https://github.com/proconnect-gouv/proconnect-identite/commit/efdd64d8c342b586c76ac4e6717323d4486bf16d), [`918ab32`](https://github.com/proconnect-gouv/proconnect-identite/commit/918ab32555b01df0363e8d531b6c6a4331ef0970), [`304e89d`](https://github.com/proconnect-gouv/proconnect-identite/commit/304e89d2169c5a112af5d1465799151ebf9a871a)]:
+  - @proconnect-gouv/proconnect.identite@16.0.0
+  - @proconnect-gouv/proconnect.identite.database@2.1.0
+
 ## 0.5.0
 
 ### Minor Changes

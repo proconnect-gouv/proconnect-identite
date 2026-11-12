@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.3.1
+
+### Patch Changes
+
+- [#2437](https://github.com/proconnect-gouv/proconnect-identite/pull/2437) [`6a6cbaa`](https://github.com/proconnect-gouv/proconnect-identite/commit/6a6cbaa79559059c39171c54d826fc3ac7d2537d) Thanks [@douglasduteil](https://github.com/douglasduteil)! - 🐛 L'email « Vous avez quitté une organisation » affiche un vrai retour à la ligne au lieu d'un `<br />` littéral ; seul le nom de l'organisation reste échappé.
+
 ## 1.3.0
 
 ### Minor Changes

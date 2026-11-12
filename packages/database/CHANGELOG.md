@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.database
 
+## 2.1.0
+
+### Minor Changes
+
+- [#2429](https://github.com/proconnect-gouv/proconnect-identite/pull/2429) [`304e89d`](https://github.com/proconnect-gouv/proconnect-identite/commit/304e89d2169c5a112af5d1465799151ebf9a871a) Thanks [@douglasduteil](https://github.com/douglasduteil)! - AuthorizationRequestOutcomeEnum gagne la valeur signed_out : une ligne de users_oidc_clients avec outcome = 'signed_out' enregistre une déconnexion demandée par un service ; un match exhaustif sur l'enum doit traiter ce cas. Ajout de la colonne sid à users_oidc_clients (identifiant de session oidc-provider propre au service) : BaseAuthorizationRequest gagne sid obligatoire, et upsertAuthorizationRequest le conserve quand une écriture suivante de la même interaction n'en a pas
+
 ## 2.0.0
 
 ### Major Changes

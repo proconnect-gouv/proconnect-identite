@@ -1,5 +1,17 @@
 # @proconnect-gouv/proconnect.identite
 
+## 16.0.0
+
+### Major Changes
+
+- [#2453](https://github.com/proconnect-gouv/proconnect-identite/pull/2453) [`918ab32`](https://github.com/proconnect-gouv/proconnect-identite/commit/918ab32555b01df0363e8d531b6c6a4331ef0970) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Remplace `getMemberIdsPromotedByDomain` (`services/organization`) par `getMembershipChangesByDomainVerification({ domain, members, verification_type })`, la règle unique de ce qu'un domaine validé ou refusé fait aux membres de l'organisation dont l'email est sur ce domaine. Pour un type validé, elle renvoie `{ kind: "domain_approved", promoted_members, verification_type }` avec les membres non vérifiés ou `domain_not_verified_yet` ; pour un type refusé, `{ kind: "domain_refused", removed_members, verification_type }` avec tous les membres du domaine, quel que soit leur rattachement.
+
+- [#2429](https://github.com/proconnect-gouv/proconnect-identite/pull/2429) [`304e89d`](https://github.com/proconnect-gouv/proconnect-identite/commit/304e89d2169c5a112af5d1465799151ebf9a871a) Thanks [@douglasduteil](https://github.com/douglasduteil)! - AuthorizationRequestOutcomeEnum gagne la valeur signed_out : une ligne de users_oidc_clients avec outcome = 'signed_out' enregistre une déconnexion demandée par un service ; un match exhaustif sur l'enum doit traiter ce cas. Ajout de la colonne sid à users_oidc_clients (identifiant de session oidc-provider propre au service) : BaseAuthorizationRequest gagne sid obligatoire, et upsertAuthorizationRequest le conserve quand une écriture suivante de la même interaction n'en a pas
+
+### Minor Changes
+
+- [#2445](https://github.com/proconnect-gouv/proconnect-identite/pull/2445) [`efdd64d`](https://github.com/proconnect-gouv/proconnect-identite/commit/efdd64d8c342b586c76ac4e6717323d4486bf16d) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Le runtime ajoute `certificationDirigeantActivities` (schémas zod des actions `certification_dirigeant.certified`, `.close_matched`, `.not_matched` et `.not_covered`) et `getCertificationDirigeantActivity`, qui transforme le résultat de `processCertificationDirigeant` en l'une de ces actions. `outcome` porte le registre consulté, la raison d'un échec et, pour une correspondance partielle seulement, `diff` : pour chaque critère discordant, la valeur FranceConnect et celle du registre, telles que reçues (`raw`) et telles que comparées (`compared`). Ces schémas ne font pas encore partie de `activityContextSchemas` : l'application qui les écrit les passe à `createIdentiteRuntime` comme ses propres actions, et un lecteur du journal les ajoute à ses schémas. identite exporte `compareCriteria`, d'où `certificationScore` tire désormais ses critères concordants.
+
 ## 15.0.0
 
 ### Major Changes
