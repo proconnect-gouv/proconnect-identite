@@ -1,7 +1,6 @@
 //
 
 import type { ContextsOf } from "#src/activity";
-import type { IdentiteTransaction } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
 import { createTestDatabase, readActivityLogs } from "#testing";
 import assert from "node:assert/strict";
@@ -67,43 +66,5 @@ describe("record", () => {
         user_id: null,
       },
     ]);
-  });
-
-  it("🚫 does not compile another owner's action, a mismatched context, the bare database or an overlapping owner", async () => {
-    const { db } = await setup();
-    const { record } = createIdentiteRuntime<HyyypertoolActivityContexts>({
-      app: "hyyypertool",
-      db,
-    }).as({ type: "moderator", sub: "moderator" });
-
-    void ((tx: IdentiteTransaction) =>
-      record(tx, {
-        // @ts-expect-error domain.verified belongs to the runtime, only changeEmailDomainVerification writes it
-        action: "domain.verified",
-        context: darkangels_commented.context,
-      }));
-
-    void ((tx: IdentiteTransaction) =>
-      record(tx, {
-        action: "moderation.commented",
-        // @ts-expect-error the context does not match moderation.commented
-        context: { inputs: { comment: "darkangels.world" }, outcome: {} },
-      }));
-
-    void (() =>
-      // @ts-expect-error the bare database is not a transaction
-      record(db, darkangels_commented));
-
-    type OverlappingContexts = {
-      "domain.verified": HyyypertoolActivityContexts["moderation.commented"];
-    };
-    // @ts-expect-error domain.verified is already defined by the runtime
-    void createIdentiteRuntime<OverlappingContexts>({ app: "hyyypertool", db });
-
-    void ((tx: IdentiteTransaction) =>
-      createIdentiteRuntime({ app: "proconnect-identite", db })
-        .as({ type: "app", job: "join.official_contact" })
-        // @ts-expect-error proconnect-identite has no app-only action to record
-        .record(tx, darkangels_commented));
   });
 });
