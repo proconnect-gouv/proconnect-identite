@@ -22,7 +22,7 @@ import {
   processOfficialContactEmailVerificationGuard,
   processPendingCertificationDirigeantGuard,
   processPendingModerationGuard,
-} from "./processPendingCertificationDirigeantGuard";
+} from "./process";
 
 export const userCanAccessAppGuard = async (prev: Pass<RequestContext>) => {
   let context;
