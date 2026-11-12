@@ -18,7 +18,7 @@ export const getSelectOrganizationController = async (
 ) => {
   try {
     const userOrganizations = await organizations.findByUserId(
-      getUserFromAuthenticatedSession(req).id,
+      (await getUserFromAuthenticatedSession(req)).id,
     );
 
     return res.render("user/select-organization", {
@@ -50,7 +50,7 @@ export const postSelectOrganizationMiddleware = async (
     if (error instanceof NotFoundError) {
       track("organization.select.not_linked", {
         organization_id: req.body.organization_id,
-        user_id: getUserFromAuthenticatedSession(req).id,
+        user_id: (await getUserFromAuthenticatedSession(req)).id,
       });
       return res.redirect(
         `/users/select-organization?notification=organization_not_linked`,

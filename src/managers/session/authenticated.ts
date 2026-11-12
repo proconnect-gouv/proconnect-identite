@@ -85,7 +85,10 @@ export const createAuthenticatedSession = async (
           sign_in_count: user.sign_in_count + 1,
           last_sign_in_at: new Date(),
         });
-        req.session.user = updatedUser;
+        req.session.user = {
+          id: updatedUser.id,
+          last_sign_in_at: updatedUser.last_sign_in_at,
+        };
         // we restore previous session navigation values
         req.session.interactionCid = interactionCid;
         req.session.interactionId = interactionId;
@@ -136,8 +139,6 @@ export const addAuthenticationMethodReferenceInSession = (
     throw new UserNotLoggedInError();
   }
 
-  updateUserInAuthenticatedSession(req, updatedUser);
-
   req.session.amr = addAuthenticationMethodReference(req.session.amr, amr);
 
   if (TRUSTED_AMR_VALUES.includes(amr)) {
@@ -145,35 +146,24 @@ export const addAuthenticationMethodReferenceInSession = (
   }
 };
 
-export const getUserFromAuthenticatedSession = (req: Request) => {
+export const getUserFromAuthenticatedSession = async (req: Request) => {
   if (!isWithinAuthenticatedSession(req.session)) {
     throw new UserNotLoggedInError();
   }
 
-  Sentry.setUser({
-    email: req.session.user.email,
-    id: req.session.user.id,
-    ip_address: req.ip,
-    username: `${req.session.user.given_name} ${req.session.user.family_name}`,
-  });
-  return req.session.user;
-};
-
-export const updateUserInAuthenticatedSession = (req: Request, user: User) => {
-  if (
-    !isWithinAuthenticatedSession(req.session) ||
-    getUserFromAuthenticatedSession(req).id !== user.id
-  ) {
+  const user = await users.findById(req.session.user.id);
+  if (user === undefined) {
+    await regenerateAsUnauthenticatedSession(req);
     throw new UserNotLoggedInError();
   }
 
   Sentry.setUser({
-    email: req.session.user.email,
-    id: req.session.user.id,
+    email: user.email,
+    id: user.id,
     ip_address: req.ip,
-    username: `${req.session.user.given_name} ${req.session.user.family_name}`,
+    username: `${user.given_name} ${user.family_name}`,
   });
-  req.session.user = user;
+  return user;
 };
 
 export const isWithinTwoFactorAuthenticatedSession = (req: Request) => {
@@ -292,7 +282,7 @@ export const regenerateAsUnauthenticatedSession = async (
 export async function getCurrentIAL(
   req: Request,
 ): Promise<AssuranceLevels["ial"]> {
-  const user = getUserFromAuthenticatedSession(req);
+  const user = await getUserFromAuthenticatedSession(req);
 
   const hasValidFCIdentity = await hasValidFranceConnectIdentity(user.id);
 
@@ -311,7 +301,7 @@ export async function getCurrentOAL(
   req: Request,
   organizationId: number,
 ): Promise<AssuranceLevels["oal"]> {
-  const user = getUserFromAuthenticatedSession(req);
+  const user = await getUserFromAuthenticatedSession(req);
 
   const link = await users_organizations.find({
     organization_id: organizationId,

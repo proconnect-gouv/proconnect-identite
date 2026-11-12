@@ -55,7 +55,7 @@ export const SessionDataSchema = z.object({
   pendingOfficialContactEmailVerificationOrganizationId: z.number().optional(),
   selectedOrganizationId: z.number().optional(),
   temporaryEncryptedTotpKey: z.string().optional(),
-  user: UserSchema.optional(),
+  user: UserSchema.pick({ id: true, last_sign_in_at: true }).optional(),
 });
 
 export const StoredSessionSchema = SessionDataSchema.extend({

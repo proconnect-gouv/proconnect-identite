@@ -78,7 +78,7 @@ export const getJoinOrganizationController = async (
     const { notification, siret_hint, do_not_propose_suggestions } =
       await schema.parseAsync(req.query);
 
-    const { id: user_id, email } = getUserFromAuthenticatedSession(req);
+    const { id: user_id, email } = await getUserFromAuthenticatedSession(req);
 
     if (
       !siret_hint &&
@@ -108,7 +108,7 @@ export const getOrganizationSuggestionsController = async (
   res: Response,
   _next: NextFunction,
 ) => {
-  const { id: user_id, email } = getUserFromAuthenticatedSession(req);
+  const { id: user_id, email } = await getUserFromAuthenticatedSession(req);
 
   const organizationSuggestions = await getOrganizationSuggestions({
     user_id,
@@ -134,7 +134,7 @@ export const postJoinOrganizationMiddleware = async (
     });
 
     const { confirmed, siret } = await schema.parseAsync(req.body);
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
     req.session.pendingModerationOrganizationId = undefined;
     req.session.pendingCertificationDirigeantOrganizationId = undefined;
@@ -361,7 +361,7 @@ export const getJoinOrganizationConfirmController = async (
     pageTitle: "Confirmer le rattachement",
     csrfToken: csrfToken(req),
     organization_label: organization.cached_libelle,
-    email: getUserFromAuthenticatedSession(req).email,
+    email: (await getUserFromAuthenticatedSession(req)).email,
     siret: organization.siret,
   });
 };
@@ -383,7 +383,7 @@ export const getUnableToAutoJoinOrganizationController = async (
   }
   const { moderation_id } = result.data;
   try {
-    const user = getUserFromAuthenticatedSession(req);
+    const user = await getUserFromAuthenticatedSession(req);
 
     const { cached_libelle, siret, cached_adresse, cached_siege_social } =
       await getOrganizationFromModeration({
@@ -409,7 +409,7 @@ export const getUnableToAutoJoinOrganizationController = async (
     } else if (e instanceof ForbiddenError) {
       track("moderation.access.forbidden", {
         moderation_id,
-        user_id: getUserFromAuthenticatedSession(req).id,
+        user_id: (await getUserFromAuthenticatedSession(req)).id,
       });
       next(new HttpErrors.Forbidden());
     } else {
@@ -435,7 +435,7 @@ export const getModerationRejectedController = async (
   }
   const { moderation_id } = result.data;
   try {
-    const user = getUserFromAuthenticatedSession(req);
+    const user = await getUserFromAuthenticatedSession(req);
 
     const { cached_libelle, siret, cached_adresse, cached_siege_social } =
       await getOrganizationFromModeration({
@@ -466,7 +466,7 @@ export const getModerationRejectedController = async (
     } else if (e instanceof ForbiddenError) {
       track("moderation.access.forbidden", {
         moderation_id,
-        user_id: getUserFromAuthenticatedSession(req).id,
+        user_id: (await getUserFromAuthenticatedSession(req)).id,
       });
       return next(new HttpErrors.Forbidden());
     }
@@ -522,7 +522,7 @@ export async function getCertificationDirigeantCloseMatchError(
   }
   const query = result.data;
 
-  const user = getUserFromAuthenticatedSession(req);
+  const user = await getUserFromAuthenticatedSession(req);
   const user_info = await franceconnect_userinfo.find(user.id);
 
   if (isEmpty(user_info)) {
@@ -610,7 +610,7 @@ export const postQuitUserOrganizationController = async (
     const { id: organization_id } = await schema.parseAsync(req.params);
 
     await quitOrganization({
-      user_id: getUserFromAuthenticatedSession(req).id,
+      user_id: (await getUserFromAuthenticatedSession(req)).id,
       organization_id,
     });
 
@@ -621,7 +621,7 @@ export const postQuitUserOrganizationController = async (
     if (error instanceof NotFoundError) {
       track("organization.quit.not_linked", {
         organization_id: req.params["id"],
-        user_id: getUserFromAuthenticatedSession(req).id,
+        user_id: (await getUserFromAuthenticatedSession(req)).id,
       });
       return res.redirect(
         `/manage-organizations?notification=organization_not_linked`,

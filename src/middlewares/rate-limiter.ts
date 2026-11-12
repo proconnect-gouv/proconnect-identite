@@ -66,7 +66,7 @@ const emailRateLimiterMiddlewareFactory =
     try {
       if (!FEATURE_RATE_LIMIT_BY_EMAIL) {
       } else if (isWithinAuthenticatedSession(req.session)) {
-        const { email } = getUserFromAuthenticatedSession(req);
+        const { email } = await getUserFromAuthenticatedSession(req);
         await rateLimiter.consume(email);
       } else if (getEmailFromUnauthenticatedSession(req)) {
         await rateLimiter.consume(getEmailFromUnauthenticatedSession(req)!);

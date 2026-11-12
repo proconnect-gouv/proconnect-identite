@@ -29,7 +29,6 @@ import {
   hasUserAuthenticatedRecently,
   isWithinAuthenticatedSession,
   isWithinTwoFactorAuthenticatedSession,
-  updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import {
   getEmailFromUnauthenticatedSession,
@@ -140,7 +139,7 @@ export const userIsMfaAuthenticatedIfCapableGuard = async (
     haltTo,
   } = prev;
 
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
   if (
     (await is2FACapable(user_id)) &&
@@ -173,7 +172,7 @@ export const userIsVerifiedGuard = async (prev: Pass<RequestContext>) => {
     pass,
     haltTo,
   } = prev;
-  const { email, email_verified } = getUserFromAuthenticatedSession(req);
+  const { email, email_verified } = await getUserFromAuthenticatedSession(req);
   const needs_email_verification_renewal =
     await needsEmailVerificationRenewal(email);
 
@@ -198,7 +197,7 @@ export const userIsMfaAuthenticatedIfRequiredGuard = async (
     pass,
     haltTo,
   } = prev;
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = await getUserFromAuthenticatedSession(req);
   // Note:
   // - ial is low since the user can elevate it with FranceConnect when necessary
   // - oal is moderated to maintain a consistent value set that doesn't impact the AAL.
@@ -276,12 +275,11 @@ export const userHasSeenInclusionconnectOnboardingHelpGuard = async (
     haltTo,
   } = prev;
   const { id: user_id, needs_inclusionconnect_onboarding_help } =
-    getUserFromAuthenticatedSession(req);
+    await getUserFromAuthenticatedSession(req);
   if (needs_inclusionconnect_onboarding_help) {
-    const user = await users.update(user_id, {
+    await users.update(user_id, {
       needs_inclusionconnect_onboarding_help: false,
     });
-    updateUserInAuthenticatedSession(req, user);
 
     return haltTo("/users/welcome?show_inclusion_connect_onboarding_help=true");
   }
@@ -298,7 +296,7 @@ export const userHasAtLeastOneOrganizationGuard = async (
   } = prev;
 
   const userOrganizations = await organizations.findByUserId(
-    getUserFromAuthenticatedSession(req).id,
+    (await getUserFromAuthenticatedSession(req)).id,
   );
   if (isEmpty(userOrganizations)) {
     if (req.session.siretHint) {
@@ -399,7 +397,7 @@ export const userIsMfaAuthenticatedIfOrganizationRequiresIt = async <
     pass,
     haltTo,
   } = context;
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
   if (
     (await doesOrganizationRequireForced2fa(selectedOrganizationId)) &&
@@ -428,7 +426,7 @@ export const userHasValidFranceConnectIdentityGuard = async <
     haltTo,
   } = context;
 
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
   if (
     (await lastFranceConnectIdentityUpdate(user_id)) &&
@@ -478,7 +476,8 @@ export const userHasPersonalInformationsGuard = async <
     haltTo,
   } = context;
 
-  const { given_name, family_name } = getUserFromAuthenticatedSession(req);
+  const { given_name, family_name } =
+    await getUserFromAuthenticatedSession(req);
   if (isEmpty(given_name) || isEmpty(family_name)) {
     return haltTo("/users/personal-information");
   }
@@ -496,7 +495,7 @@ export const userIsCertifiedAsDirigeantGuard = async <
     pass,
   } = context;
 
-  const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = await getUserFromAuthenticatedSession(req);
   const { verification_type: linkType, verified_at: linkVerifiedAt } =
     (await users_organizations.find({
       organization_id: organizationId,

@@ -81,7 +81,7 @@ export const interactionStartControllerFactory =
         if (
           login_hint &&
           isWithinAuthenticatedSession(req.session) &&
-          getUserFromAuthenticatedSession(req).email !== login_hint
+          (await getUserFromAuthenticatedSession(req)).email !== login_hint
         ) {
           return res.redirect(`/users/start-sign-in`);
         }
@@ -113,12 +113,11 @@ export const interactionEndControllerFactory =
   (oidcProvider: Provider) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = getUserFromAuthenticatedSession(req);
+      const user = await getUserFromAuthenticatedSession(req);
+      const signedInAt = req.session.user?.last_sign_in_at;
 
       const amr = getSessionStandardizedAuthenticationMethodsReferences(req);
-      const ts = user.last_sign_in_at
-        ? epochTime(user.last_sign_in_at)
-        : undefined;
+      const ts = signedInAt ? epochTime(signedInAt) : undefined;
 
       const { prompt, params } = await oidcProvider.interactionDetails(
         req,

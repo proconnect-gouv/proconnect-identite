@@ -18,10 +18,7 @@ import {
   getFranceConnectLogoutRedirectUrl,
   getFranceConnectUser,
 } from "../../connectors/franceconnect";
-import {
-  getUserFromAuthenticatedSession,
-  updateUserInAuthenticatedSession,
-} from "../../managers/session/authenticated";
+import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { FranceConnectOidcSessionSchema } from "../../managers/session/franceconnect";
 import { updateFranceConnectUserInfo } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
@@ -124,10 +121,9 @@ export function getFranceConnectLoginCallbackMiddlewareFactory(
     req.session.nonce = undefined;
     req.session.state = undefined;
 
-    const { id: userId } = getUserFromAuthenticatedSession(req);
+    const { id: userId } = await getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await updateFranceConnectUserInfo(userId, user_info);
-    updateUserInAuthenticatedSession(req, updatedUser);
+    await updateFranceConnectUserInfo(userId, user_info);
 
     next();
   };

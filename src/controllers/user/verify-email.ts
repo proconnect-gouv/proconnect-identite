@@ -10,7 +10,6 @@ import { isBrowserTrustedForUser } from "../../managers/browser-authentication";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
-  updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
 import {
   sendEmailAddressVerificationEmail,
@@ -36,14 +35,12 @@ export const getVerifyEmailController = async (
     const { new_code_sent } = await schema.parseAsync(req.query);
 
     const { email, needs_inclusionconnect_onboarding_help } =
-      getUserFromAuthenticatedSession(req);
+      await getUserFromAuthenticatedSession(req);
 
     const { codeSent, updatedUser } = await sendEmailAddressVerificationEmail({
       email,
       isBrowserTrusted: isBrowserTrustedForUser(req),
     });
-
-    updateUserInAuthenticatedSession(req, updatedUser);
 
     return res.render("user/verify-email", {
       pageTitle: "Vérifier votre email",
@@ -88,7 +85,7 @@ export const postVerifyEmailController = async (
 
     const { verify_email_token } = await schema.parseAsync(req.body);
 
-    const { email } = getUserFromAuthenticatedSession(req);
+    const { email } = await getUserFromAuthenticatedSession(req);
 
     const updatedUser = await verifyEmail(email, verify_email_token);
 
@@ -117,15 +114,13 @@ export const postSendEmailVerificationController = async (
   next: NextFunction,
 ) => {
   try {
-    const { email } = getUserFromAuthenticatedSession(req);
+    const { email } = await getUserFromAuthenticatedSession(req);
 
-    const { updatedUser } = await sendEmailAddressVerificationEmail({
+    await sendEmailAddressVerificationEmail({
       email,
       isBrowserTrusted: isBrowserTrustedForUser(req),
       force: true,
     });
-
-    updateUserInAuthenticatedSession(req, updatedUser);
 
     return res.redirect(`/users/verify-email?new_code_sent=true`);
   } catch (error) {

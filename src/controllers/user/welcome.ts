@@ -28,7 +28,7 @@ export const getWelcomeController = async (
       req.query,
     );
 
-    let user = getUserFromAuthenticatedSession(req);
+    let user = await getUserFromAuthenticatedSession(req);
 
     let selectedOrganizationId =
       getSelectedOrganizationIdFromAuthenticatedSession(req);

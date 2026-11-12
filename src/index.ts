@@ -22,7 +22,7 @@ import {
   SESSION_COOKIE_SECRET,
   SESSION_MAX_AGE_IN_SECONDS,
 } from "./config/env";
-import { OidcError } from "./config/errors";
+import { OidcError, UserNotLoggedInError } from "./config/errors";
 import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
@@ -298,6 +298,10 @@ app.use(function errorHandler(
     }
 
     return res.status(500).json({ message: err.message });
+  }
+
+  if (err instanceof UserNotLoggedInError) {
+    return res.redirect("/users/start-sign-in");
   }
 
   if (err instanceof HttpErrors.HttpError) {

@@ -13,7 +13,7 @@ export const postDeleteUserController = async (
   next: NextFunction,
 ) => {
   try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = await getUserFromAuthenticatedSession(req);
 
     const deletion = await runtime
       .as({ type: "user", user_id })

@@ -20,7 +20,6 @@ import {
   addAuthenticationMethodReferenceInSession,
   createAuthenticatedSession,
   getUserFromAuthenticatedSession,
-  updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { getEmailFromUnauthenticatedSession } from "../managers/session/unauthenticated";
 import {
@@ -47,7 +46,7 @@ export const deletePasskeyController = async (
     });
     const { credential_id } = schema.parse(req.params);
 
-    const { email, id: user_id } = getUserFromAuthenticatedSession(req);
+    const { email, id: user_id } = await getUserFromAuthenticatedSession(req);
 
     const key_name = await deleteUserAuthenticator(email, credential_id);
 
@@ -70,11 +69,9 @@ export const getGenerateRegistrationOptionsController = async (
   next: NextFunction,
 ) => {
   try {
-    const { email } = getUserFromAuthenticatedSession(req);
+    const { email } = await getUserFromAuthenticatedSession(req);
 
-    const { updatedUser, registrationOptions } =
-      await getRegistrationOptions(email);
-    updateUserInAuthenticatedSession(req, updatedUser);
+    const { registrationOptions } = await getRegistrationOptions(email);
 
     return res.json(registrationOptions);
   } catch (e) {
@@ -108,7 +105,7 @@ export const postVerifyRegistrationMiddlewareFactory =
           z.custom<RegistrationResponseJSON>(),
         )
         .parseAsync(webauthn_registration_response_string);
-      const { email, id: user_id } = getUserFromAuthenticatedSession(req);
+      const { email, id: user_id } = await getUserFromAuthenticatedSession(req);
 
       const { userVerified, updatedUser, key_name } = await verifyRegistration({
         email: email,
@@ -174,7 +171,7 @@ export const getGenerateAuthenticationOptionsControllerFactory =
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const email = isSecondFactorAuthentication
-        ? getUserFromAuthenticatedSession(req).email
+        ? (await getUserFromAuthenticatedSession(req)).email
         : getEmailFromUnauthenticatedSession(req);
 
       if (!email) {
@@ -220,7 +217,7 @@ export const postVerifyAuthenticationController =
       );
 
       const email = isSecondFactorVerification
-        ? getUserFromAuthenticatedSession(req).email
+        ? (await getUserFromAuthenticatedSession(req)).email
         : getEmailFromUnauthenticatedSession(req);
 
       let { user, userVerified } = await verifyAuthentication({
