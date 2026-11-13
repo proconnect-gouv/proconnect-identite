@@ -6,16 +6,11 @@ import type {
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { z, ZodError } from "zod/v4";
-import { FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION } from "../config/env";
 import {
   UserNotLoggedInError,
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
-import {
-  hasRecoveryWordsConfiguredForUser,
-  markRecoveryWordsIncentiveAsSeen,
-} from "../managers/recovery-words";
 import {
   addAuthenticationMethodReferenceInSession,
   createAuthenticatedSession,
@@ -87,11 +82,11 @@ export const getGenerateRegistrationOptionsController = async (
 
 export const postVerifyRegistrationMiddlewareFactory =
   ({
+    successRedirectUrl,
     errorRedirectUrl,
-    greetForConfiguredMfa,
   }: {
+    successRedirectUrl?: string;
     errorRedirectUrl: string;
-    greetForConfiguredMfa: boolean;
   }) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -123,8 +118,10 @@ export const postVerifyRegistrationMiddlewareFactory =
         key_name: key_name ?? undefined,
       });
 
-      if (greetForConfiguredMfa) {
-        req.session.pendingGreetingsForConfiguredMfa = true;
+      req.session.pendingGreetingsForConfiguredMfa = true;
+
+      if (successRedirectUrl) {
+        return res.redirect(successRedirectUrl);
       }
 
       return next();
@@ -144,30 +141,6 @@ export const postVerifyRegistrationMiddlewareFactory =
       next(e);
     }
   };
-
-export const postPasskeyRegisteredController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
-
-    if (
-      FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION &&
-      !(await hasRecoveryWordsConfiguredForUser(user_id))
-    ) {
-      markRecoveryWordsIncentiveAsSeen(req);
-      return res.redirect("/recovery-words-incentive");
-    }
-
-    return res.redirect(
-      "/connection-and-account?notification=passkey_successfully_created",
-    );
-  } catch (error) {
-    next(error);
-  }
-};
 
 export const getGenerateAuthenticationOptionsControllerFactory =
   (isSecondFactorAuthentication: boolean) =>

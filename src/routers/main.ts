@@ -30,13 +30,12 @@ import {
   postPersonalInformationsController,
 } from "../controllers/main";
 import {
-  getTotpConfigurationController,
+  getTotpConfigurationControllerFactory,
   postDeleteTotpConfigurationController,
-  postTotpConfigurationController,
+  postTotpConfigurationMiddlewareFactory,
 } from "../controllers/totp";
 import {
   deletePasskeyController,
-  postPasskeyRegisteredController,
   postVerifyRegistrationMiddlewareFactory,
 } from "../controllers/webauthn";
 import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
@@ -212,7 +211,7 @@ export const mainRouter = (app: Express) => {
     ejsLayoutMiddlewareFactory(app, true),
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
-    getTotpConfigurationController,
+    getTotpConfigurationControllerFactory({ template: "totp-configuration" }),
   );
 
   mainRouter.post(
@@ -223,7 +222,10 @@ export const mainRouter = (app: Express) => {
     userCanAccessAdminGuardMiddleware,
     authenticatorRateLimiterMiddleware,
     csrfProtectionMiddleware,
-    postTotpConfigurationController,
+    postTotpConfigurationMiddlewareFactory({
+      successRedirectUrl: "/connection-and-account",
+      errorRedirectUrl: "/totp-configuration?notification=invalid_totp_token",
+    }),
   );
 
   mainRouter.post(
@@ -244,10 +246,9 @@ export const mainRouter = (app: Express) => {
     userCanAccessAdminGuardMiddleware,
     csrfProtectionMiddleware,
     postVerifyRegistrationMiddlewareFactory({
+      successRedirectUrl: "/connection-and-account",
       errorRedirectUrl: "/connection-and-account?notification=invalid_passkey",
-      greetForConfiguredMfa: false,
     }),
-    postPasskeyRegisteredController,
   );
 
   mainRouter.post(

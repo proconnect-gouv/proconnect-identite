@@ -17,7 +17,11 @@ import {
   postJoinOrganizationMiddleware,
   postQuitUserOrganizationController,
 } from "../controllers/organization";
-import { postSignInWithTotpController } from "../controllers/totp";
+import {
+  getTotpConfigurationControllerFactory,
+  postSignInWithTotpController,
+  postTotpConfigurationMiddlewareFactory,
+} from "../controllers/totp";
 import { postDeleteUserController } from "../controllers/user/delete";
 
 import {
@@ -74,11 +78,9 @@ import {
   getMfaDecisionHelperController,
   getMfaDecisionHelperPasskeyController,
   getRecoveryWordsIncentiveController,
-  getTotpConfigurationController,
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
   postRecoveryWordsSetupController,
-  postTotpConfigurationMiddleware,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
   getChangePasswordController,
@@ -204,7 +206,9 @@ export const userRouter = () => {
     "/totp-configuration",
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
-    getTotpConfigurationController,
+    getTotpConfigurationControllerFactory({
+      template: "user/totp-configuration",
+    }),
   );
 
   userRouter.post(
@@ -212,7 +216,10 @@ export const userRouter = () => {
     userCanSetupMfaGuardMiddleware,
     csrfProtectionMiddleware,
     authenticatorRateLimiterMiddleware,
-    postTotpConfigurationMiddleware,
+    postTotpConfigurationMiddlewareFactory({
+      errorRedirectUrl:
+        "/users/totp-configuration?notification=invalid_totp_token",
+    }),
     userComplyWithAllRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );
@@ -376,7 +383,6 @@ export const userRouter = () => {
     postVerifyRegistrationMiddlewareFactory({
       errorRedirectUrl:
         "/users/double-authentication-choice?notification=invalid_passkey",
-      greetForConfiguredMfa: true,
     }),
     userComplyWithAllRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
