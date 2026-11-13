@@ -1,6 +1,5 @@
 //
 
-import type { IdentiteDatabase } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
 import { createTestDatabase, readActivityLogs } from "#testing";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
@@ -9,7 +8,7 @@ import { describe, it } from "node:test";
 
 //
 
-async function setup() {
+async function given() {
   const db = await createTestDatabase();
   await db.insert(schema.organizations).values({ id: 1, siret: "🦁" });
   await db.insert(schema.users).values([
@@ -33,7 +32,20 @@ async function setup() {
   });
 
   return {
-    db,
+    journal: () => readActivityLogs(db),
+    memberships: () =>
+      db.query.users_organizations.findMany({
+        columns: {
+          is_external: true,
+          organization_id: true,
+          user_id: true,
+          verification_type: true,
+        },
+        orderBy: (table, { asc }) => [
+          asc(table.organization_id),
+          asc(table.user_id),
+        ],
+      }),
     runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
       type: "user",
       user_id: 1,
@@ -41,11 +53,11 @@ async function setup() {
   };
 }
 
-describe("addMembership", () => {
+describe("member.joined", () => {
   it("✅ adds the membership and journals it under the user", async () => {
-    const { db, runtime } = await setup();
+    const { journal, memberships, runtime } = await given();
 
-    const outcome = await runtime.addMembership({
+    const outcome = await runtime.member.joined.mutate({
       is_external: true,
       organization_id: 1,
       user_id: 1,
@@ -53,11 +65,11 @@ describe("addMembership", () => {
     });
 
     assert.deepEqual(outcome, {
-      kind: "member_joined",
       activity_id: 1,
+      kind: "member_joined",
       membership: { organization_id: 1, user_id: 1 },
     });
-    assert.deepEqual(await memberships(db), [
+    assert.deepEqual(await memberships(), [
       {
         is_external: true,
         organization_id: 1,
@@ -71,7 +83,7 @@ describe("addMembership", () => {
         verification_type: "domain",
       },
     ]);
-    assert.deepEqual(await readActivityLogs(db), [
+    assert.deepEqual(await journal(), [
       {
         action: "member.joined",
         actor_ref: "1",
@@ -94,10 +106,11 @@ describe("addMembership", () => {
   });
 
   it("❎ returns member_already_exists and writes nothing for an existing link", async () => {
-    const { db, runtime } = await setup();
-    const before = await memberships(db);
+    const { journal, memberships, runtime } = await given();
+    const before = await memberships();
 
-    const outcome = await runtime.addMembership({
+    const outcome = await runtime.member.joined.mutate({
+      is_external: false,
       organization_id: 1,
       user_id: 2,
       verification_type: "official_contact_email",
@@ -108,22 +121,7 @@ describe("addMembership", () => {
       organization_id: 1,
       user_id: 2,
     });
-    assert.deepEqual(await memberships(db), before);
-    assert.deepEqual(await readActivityLogs(db), []);
+    assert.deepEqual(await memberships(), before);
+    assert.deepEqual(await journal(), []);
   });
 });
-
-function memberships(db: IdentiteDatabase) {
-  return db.query.users_organizations.findMany({
-    columns: {
-      is_external: true,
-      organization_id: true,
-      user_id: true,
-      verification_type: true,
-    },
-    orderBy: (table, { asc }) => [
-      asc(table.organization_id),
-      asc(table.user_id),
-    ],
-  });
-}

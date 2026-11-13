@@ -12,7 +12,6 @@ import {
 import type { IdentiteTransaction } from "#src/database";
 import { changeEmailDomainVerificationFactory } from "#src/domains";
 import { insertActivity } from "#src/journal";
-import { addMembershipFactory } from "#src/memberships";
 import {
   assertPublishedSchemas,
   bindProcedures,
@@ -48,7 +47,6 @@ export function createIdentiteRuntime<
     as(actor: Actor) {
       return {
         ...bindProcedures(merged, { actor, app, db }),
-        addMembership: addMembershipFactory({ actor, app, db }),
         changeEmailDomainVerification: changeEmailDomainVerificationFactory({
           actor,
           app,
