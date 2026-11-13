@@ -23,10 +23,10 @@ async function setup() {
       "luther+kept-dirigeant@darkangels.world",
       "leman.russ+kept-other-domain@spacewolves.world",
     ].map((email, index) => ({
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email,
       id: index + 1,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     })),
   );
   await db.insert(schema.users_organizations).values(

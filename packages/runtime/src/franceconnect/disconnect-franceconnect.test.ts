@@ -14,16 +14,16 @@ async function setup() {
 
   await db.insert(schema.users).values([
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "jean.valjean@republic.fr",
       id: 1,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     },
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "cosette@republic.fr",
       id: 2,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     },
   ]);
   await db.insert(schema.franceconnect_userinfo).values({
