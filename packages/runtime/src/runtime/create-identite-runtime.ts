@@ -1,12 +1,13 @@
 //
 
-import type {
-  ActivityContexts,
-  ActivityOf,
-  ActivityTargets,
-  Actor,
-  ContextMap,
-  RuntimeContext,
+import {
+  activityContextSchemas,
+  type ActivityContexts,
+  type ActivityOf,
+  type ActivityTargets,
+  type Actor,
+  type ContextMap,
+  type RuntimeContext,
 } from "#src/activity";
 import type { IdentiteTransaction } from "#src/database";
 import { changeEmailDomainVerificationFactory } from "#src/domains";
@@ -22,11 +23,15 @@ import {
 } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
 import {
-  changePasswordFactory,
-  deleteUserFactory,
-  resetMfaFactory,
-  updatePersonalInformationsFactory,
-} from "#src/users";
+  assertPublishedSchemas,
+  bindProcedures,
+  mergeProcedures,
+  type ContextSchemasOf,
+  type Disjoint,
+  type Procedures,
+} from "#src/procedure";
+import { runtimeProcedures } from "#src/procedures";
+import { resetMfaFactory, updatePersonalInformationsFactory } from "#src/users";
 
 //
 
@@ -34,19 +39,31 @@ export function createIdentiteRuntime<
   OwnContexts extends ContextMap & {
     [Action in keyof ActivityContexts]?: never;
   } = {},
->({ app, db }: Omit<RuntimeContext, "actor">) {
+  AppProcedures extends Procedures = {},
+>({
+  app,
+  db,
+  procedures,
+}: Omit<RuntimeContext, "actor"> & {
+  procedures?: AppProcedures &
+    Disjoint<
+      ContextSchemasOf<typeof runtimeProcedures>,
+      ContextSchemasOf<AppProcedures>
+    >;
+}) {
+  assertPublishedSchemas(procedures, activityContextSchemas);
+  const merged = mergeProcedures(runtimeProcedures, procedures);
   return {
     as(actor: Actor) {
       return {
+        ...bindProcedures(merged, { actor, app, db }),
         addMembership: addMembershipFactory({ actor, app, db }),
         changeEmailDomainVerification: changeEmailDomainVerificationFactory({
           actor,
           app,
           db,
         }),
-        changePassword: changePasswordFactory({ actor, app, db }),
         connectFranceConnect: connectFranceConnectFactory({ actor, app, db }),
-        deleteUser: deleteUserFactory({ actor, app, db }),
         disconnectFranceConnect: disconnectFranceConnectFactory({
           actor,
           app,

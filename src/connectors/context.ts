@@ -8,6 +8,7 @@ import {
 } from "@proconnect-gouv/proconnect.identite.runtime";
 import { createContext } from "@proconnect-gouv/proconnect.identite/connectors";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { userPasswordChanged } from "../managers/user-password-changed";
 import { instrument } from "../services/log";
 import { ApiEntrepriseClient } from "./api-entreprise";
 import { ApiInseeClient } from "./api-insee";
@@ -76,11 +77,17 @@ export const context: typeof contextUntraced = {
   },
 };
 
+const identiteProcedures = {
+  user: { password_changed: userPasswordChanged },
+};
+
 const runtimeUntraced = createIdentiteRuntime<
-  ContextsOf<typeof certificationDirigeantActivities>
+  ContextsOf<typeof certificationDirigeantActivities>,
+  typeof identiteProcedures
 >({
   app: "proconnect-identite",
   db,
+  procedures: identiteProcedures,
 });
 
 export const runtime: typeof runtimeUntraced = {

@@ -1,15 +1,18 @@
-//
-
-import { createIdentiteRuntime } from "#src/runtime";
-import { createTestDatabase, readActivityLogs } from "#testing";
+import { PGlite } from "@electric-sql/pglite";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
+import { migrate } from "@proconnect-gouv/proconnect.identite.database/pglite/migrator";
+import { createIdentiteRuntime } from "@proconnect-gouv/proconnect.identite.runtime";
+import { sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/pglite";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { userPasswordChanged } from "./user-password-changed";
 
-//
-
-async function setup() {
-  const db = await createTestDatabase();
+async function given() {
+  const pg = new PGlite();
+  await migrate(pg);
+  const db = drizzle(pg, { schema });
+  await db.execute(sql`SET search_path TO public`);
   await db.insert(schema.users).values({
     created_at: "4444-04-04",
     email: "jean.valjean@republic.fr",
@@ -19,36 +22,42 @@ async function setup() {
   });
 
   return {
-    db,
-    runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
-      type: "user",
-      user_id: 1,
-    }),
+    journal: () =>
+      db.query.activity_logs.findMany({
+        columns: { created_at: false, id: false },
+        orderBy: (table, { asc }) => asc(table.id),
+      }),
+    runtime: createIdentiteRuntime({
+      app: "proconnect-identite",
+      db,
+      procedures: { user: { password_changed: userPasswordChanged } },
+    }).as({ type: "user", user_id: 1 }),
+    users: () => db.query.users.findMany(),
   };
 }
 
-describe("changePassword", () => {
+describe("user.password_changed", () => {
   it("✅ resets the password, verifies the email and clears the token", async () => {
-    const { db, runtime } = await setup();
+    const { journal, runtime, users } = await given();
 
-    const outcome = await runtime.changePassword({
+    const outcome = await runtime.user.password_changed.mutate({
       encrypted_password: "hashed",
       source: "reset_password",
       user_id: 1,
     });
 
     assert.deepEqual(outcome, {
-      kind: "password_changed",
       activity_id: 1,
+      kind: "password_changed",
       previous: { email_verified: false },
     });
 
-    const [user] = await db.query.users.findMany();
+    const [user] = await users();
     assert.equal(user.encrypted_password, "hashed");
     assert.equal(user.email_verified, true);
     assert.equal(user.reset_password_token, null);
 
-    assert.deepEqual(await readActivityLogs(db), [
+    assert.deepEqual(await journal(), [
       {
         action: "user.password_changed",
         actor_ref: "1",
@@ -70,21 +79,21 @@ describe("changePassword", () => {
   });
 
   it("✅ keeps the email unverified when setting a first password at signup", async () => {
-    const { db, runtime } = await setup();
+    const { runtime, users } = await given();
 
-    const outcome = await runtime.changePassword({
+    const outcome = await runtime.user.password_changed.mutate({
       encrypted_password: "hashed",
       source: "signup",
       user_id: 1,
     });
 
     assert.deepEqual(outcome, {
-      kind: "password_changed",
       activity_id: 1,
+      kind: "password_changed",
       previous: { email_verified: false },
     });
 
-    const [user] = await db.query.users.findMany();
+    const [user] = await users();
     assert.equal(user.email_verified, false);
     assert.equal(user.email_verified_at, null);
   });
