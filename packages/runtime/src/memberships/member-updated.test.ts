@@ -1,6 +1,5 @@
 //
 
-import type { IdentiteDatabase } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
 import { createTestDatabase, readActivityLogs } from "#testing";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
@@ -9,8 +8,9 @@ import { describe, it } from "node:test";
 
 //
 
-async function setup() {
+async function given() {
   const db = await createTestDatabase();
+
   await db.insert(schema.organizations).values([{ id: 1, siret: "🦁" }]);
   await db.insert(schema.users).values([
     {
@@ -54,7 +54,17 @@ async function setup() {
   ]);
 
   return {
-    db,
+    journal: () => readActivityLogs(db),
+    memberships: () =>
+      db.query.users_organizations.findMany({
+        columns: {
+          is_external: true,
+          user_id: true,
+          verification_type: true,
+          verified_at: true,
+        },
+        orderBy: (table, { asc }) => [asc(table.user_id)],
+      }),
     runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
       type: "user",
       user_id: 1,
@@ -62,29 +72,29 @@ async function setup() {
   };
 }
 
-describe("updateMembership", () => {
+describe("member.updated", () => {
   it("✅ updates the membership, verifies it and journals it under the user", async () => {
-    const { db, runtime } = await setup();
+    const { journal, memberships, runtime } = await given();
 
-    const outcome = await runtime.updateMembership({
+    const outcome = await runtime.member.updated.mutate({
       organization_id: 1,
       user_id: 1,
       verification_type: "organization_dirigeant",
     });
 
     assert.deepEqual(outcome, {
-      kind: "member_updated",
       activity_id: 1,
+      kind: "member_updated",
       previous: {
         is_external: true,
         verification_type: "domain_not_verified_yet",
       },
     });
-    const [membership] = await memberships(db);
+    const [membership] = await memberships();
     assert.equal(membership?.is_external, true);
     assert.equal(membership?.verification_type, "organization_dirigeant");
     assert.notEqual(membership?.verified_at, null);
-    assert.deepEqual(await readActivityLogs(db), [
+    assert.deepEqual(await journal(), [
       {
         action: "member.updated",
         actor_ref: "1",
@@ -109,9 +119,9 @@ describe("updateMembership", () => {
   });
 
   it("✅ renews verified_at when the verification type stays the same", async () => {
-    const { db, runtime } = await setup();
+    const { journal, memberships, runtime } = await given();
 
-    const outcome = await runtime.updateMembership({
+    const outcome = await runtime.member.updated.mutate({
       organization_id: 1,
       renew_verification: true,
       user_id: 3,
@@ -119,10 +129,10 @@ describe("updateMembership", () => {
     });
 
     assert.equal(outcome.kind, "member_updated");
-    const [, , membership] = await memberships(db);
+    const [, , membership] = await memberships();
     assert.equal(membership?.verification_type, "organization_dirigeant");
     assert.notEqual(membership?.verified_at, "4444-04-04 00:00:00+00");
-    const [activity] = await readActivityLogs(db);
+    const [activity] = await journal();
     assert.deepEqual(activity?.context, {
       inputs: {
         renew_verification: true,
@@ -138,24 +148,24 @@ describe("updateMembership", () => {
   });
 
   it("✅ clears verified_at when the membership goes back to domain_not_verified_yet", async () => {
-    const { db, runtime } = await setup();
+    const { memberships, runtime } = await given();
 
-    await runtime.updateMembership({
+    await runtime.member.updated.mutate({
       organization_id: 1,
       user_id: 2,
       verification_type: "domain_not_verified_yet",
     });
 
-    const [, membership] = await memberships(db);
+    const [, membership] = await memberships();
     assert.equal(membership?.verification_type, "domain_not_verified_yet");
     assert.equal(membership?.verified_at, null);
   });
 
   it("❎ returns membership_unchanged and journals nothing when nothing changes", async () => {
-    const { db, runtime } = await setup();
-    const before = await memberships(db);
+    const { journal, memberships, runtime } = await given();
+    const before = await memberships();
 
-    const outcome = await runtime.updateMembership({
+    const outcome = await runtime.member.updated.mutate({
       is_external: true,
       organization_id: 1,
       user_id: 1,
@@ -167,14 +177,14 @@ describe("updateMembership", () => {
       organization_id: 1,
       user_id: 1,
     });
-    assert.deepEqual(await memberships(db), before);
-    assert.deepEqual(await readActivityLogs(db), []);
+    assert.deepEqual(await memberships(), before);
+    assert.deepEqual(await journal(), []);
   });
 
   it("❎ returns membership_not_found and journals nothing for a missing link", async () => {
-    const { db, runtime } = await setup();
+    const { journal, runtime } = await given();
 
-    const outcome = await runtime.updateMembership({
+    const outcome = await runtime.member.updated.mutate({
       is_external: false,
       organization_id: 1,
       user_id: 999,
@@ -185,18 +195,6 @@ describe("updateMembership", () => {
       organization_id: 1,
       user_id: 999,
     });
-    assert.deepEqual(await readActivityLogs(db), []);
+    assert.deepEqual(await journal(), []);
   });
 });
-
-function memberships(db: IdentiteDatabase) {
-  return db.query.users_organizations.findMany({
-    columns: {
-      is_external: true,
-      user_id: true,
-      verification_type: true,
-      verified_at: true,
-    },
-    orderBy: (table, { asc }) => [asc(table.user_id)],
-  });
-}
