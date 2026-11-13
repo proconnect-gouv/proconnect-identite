@@ -92,6 +92,8 @@ export function toPartialOrganization(organization_info: OrganizationInfo) {
     categorieJuridique: cached_categorie_juridique,
     codeOfficielGeographique: cached_code_officiel_geographique,
     codePostal: cached_code_postal,
+    denominationUsuelleEtablissementPrincipal:
+      cached_denomination_usuelle_etablissement_principal,
     enseigne: cached_enseigne,
     estActive: cached_est_active,
     estDiffusible: cached_est_diffusible,
@@ -113,6 +115,7 @@ export function toPartialOrganization(organization_info: OrganizationInfo) {
     cached_categorie_juridique,
     cached_code_officiel_geographique,
     cached_code_postal,
+    cached_denomination_usuelle_etablissement_principal,
     cached_enseigne,
     cached_est_active,
     cached_est_diffusible,
@@ -129,10 +132,6 @@ export function toPartialOrganization(organization_info: OrganizationInfo) {
     siret,
   } satisfies Omit<
     Organization,
-    | "created_at"
-    | "id"
-    | "updated_at"
-    | "organization_info_fetched_at"
-    | "cached_denomination_usuelle_etablissement_principal"
+    "created_at" | "id" | "updated_at" | "organization_info_fetched_at"
   >;
 }
