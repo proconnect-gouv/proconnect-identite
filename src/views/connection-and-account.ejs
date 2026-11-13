@@ -162,7 +162,7 @@
             </form>
         <% } %>
 
-        <% if (is2faCapable) { %>
+        <% if (is2faCapable || hasRecoveryWordsConfigured) { %>
             <section class="fr-mb-6w">
                 <h2 class="fr-h3">Récupération du compte 
                     <span class="fr-badge fr-badge--info">bêta</span>
