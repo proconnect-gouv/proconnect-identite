@@ -656,7 +656,7 @@ export async function updateFranceConnectUserInfo(
 ) {
   const outcome = await runtime
     .as({ type: "user", user_id: userId })
-    .connectFranceConnect({ user_id: userId, user_info: userInfo });
+    .franceconnect.connected.mutate({ user_id: userId, user_info: userInfo });
 
   if (outcome.kind === "user_not_found") {
     throw new NotFoundError();
