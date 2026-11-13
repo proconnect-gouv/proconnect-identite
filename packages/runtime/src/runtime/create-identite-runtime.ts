@@ -13,10 +13,7 @@ import type { IdentiteTransaction } from "#src/database";
 import { changeEmailDomainVerificationFactory } from "#src/domains";
 import { disconnectFranceConnectFactory } from "#src/franceconnect";
 import { insertActivity } from "#src/journal";
-import {
-  addMembershipFactory,
-  updateMembershipFactory,
-} from "#src/memberships";
+import { addMembershipFactory } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
 import {
   assertPublishedSchemas,
@@ -70,7 +67,6 @@ export function createIdentiteRuntime<
           activity: ActivityOf<OwnContexts> & ActivityTargets,
         ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
         resetMfa: resetMfaFactory({ actor, app, db }),
-        updateMembership: updateMembershipFactory({ actor, app, db }),
         updatePersonalInformations: updatePersonalInformationsFactory({
           actor,
           app,
