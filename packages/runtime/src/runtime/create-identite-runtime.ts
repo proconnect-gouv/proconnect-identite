@@ -11,10 +11,7 @@ import {
 } from "#src/activity";
 import type { IdentiteTransaction } from "#src/database";
 import { changeEmailDomainVerificationFactory } from "#src/domains";
-import {
-  connectFranceConnectFactory,
-  disconnectFranceConnectFactory,
-} from "#src/franceconnect";
+import { disconnectFranceConnectFactory } from "#src/franceconnect";
 import { insertActivity } from "#src/journal";
 import {
   addMembershipFactory,
@@ -63,7 +60,6 @@ export function createIdentiteRuntime<
           app,
           db,
         }),
-        connectFranceConnect: connectFranceConnectFactory({ actor, app, db }),
         disconnectFranceConnect: disconnectFranceConnectFactory({
           actor,
           app,

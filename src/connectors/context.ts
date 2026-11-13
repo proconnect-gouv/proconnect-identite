@@ -8,6 +8,7 @@ import {
 } from "@proconnect-gouv/proconnect.identite.runtime";
 import { createContext } from "@proconnect-gouv/proconnect.identite/connectors";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { franceconnectConnected } from "../managers/franceconnect-connected";
 import { userPasswordChanged } from "../managers/user-password-changed";
 import { instrument } from "../services/log";
 import { ApiEntrepriseClient } from "./api-entreprise";
@@ -78,6 +79,7 @@ export const context: typeof contextUntraced = {
 };
 
 const identiteProcedures = {
+  franceconnect: { connected: franceconnectConnected },
   user: { password_changed: userPasswordChanged },
 };
 
