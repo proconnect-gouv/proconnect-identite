@@ -114,9 +114,12 @@ Cypress.Commands.add("getByLabel", getByLabelCommand);
 Cypress.Commands.add("fillAndSubmitTotpForm", fillAndSubmitTotpForm);
 
 function verifyEmailCommand() {
+  // The verification page sends the email before rendering
+  cy.get('[name="verify_email_token"]');
   return cy
     .maildevGetMessageBySubject("Vérification de votre adresse email")
     .then((email) => {
+      if (!email) throw new Error("Could not find verification email");
       cy.maildevVisitMessageById(email.id);
       cy.origin("http://localhost:1080", () => {
         cy.contains(
