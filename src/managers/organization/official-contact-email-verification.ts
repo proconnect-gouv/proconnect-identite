@@ -215,9 +215,10 @@ export const verifyOfficialContactEmailToken = async ({
   }
 
   return match(
-    await runtime.as({ type: "user", user_id }).addMembership({
-      user_id,
+    await runtime.as({ type: "user", user_id }).member.joined.mutate({
+      is_external: false,
       organization_id,
+      user_id,
       verification_type: LinkEnum.enum.code_sent_to_official_contact_email,
     }),
   )

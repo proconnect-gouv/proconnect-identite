@@ -98,9 +98,10 @@ export const processPendingCertificationDirigeantGuard = async (
 
     const membership = await runtime
       .as({ type: "user", user_id })
-      .addMembership({
-        user_id,
+      .member.joined.mutate({
+        is_external: false,
         organization_id: organization.id,
+        user_id,
         verification_type: LinkEnum.enum.organization_dirigeant,
       });
 

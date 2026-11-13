@@ -70,6 +70,7 @@ import { getOrganizationSuggestions as getOrganizationSuggestionsWith } from "./
 const { email_domains, moderations, organizations, users } = context.repository;
 
 async function addMembership({
+  is_external = false,
   user_id,
   ...input
 }: InsertUserOrganizationLink): Promise<{
@@ -78,7 +79,7 @@ async function addMembership({
 }> {
   const outcome = await runtime
     .as({ type: "user", user_id })
-    .addMembership({ user_id, ...input });
+    .member.joined.mutate({ is_external, user_id, ...input });
 
   return match(outcome)
     .with({ kind: "member_joined" }, ({ membership }) => membership)
