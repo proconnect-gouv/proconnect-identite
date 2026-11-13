@@ -44,7 +44,10 @@ const processCertificationDirigeant =
 describe("processCertificationDirigeantFactory", () => {
   it("should recognize a user as executive of a auto-entrepreneur", async () => {
     api_insee_mock_client.findBySiren.mock.mockImplementationOnce(() =>
-      Promise.resolve(LiElJonsonEstablishment),
+      Promise.resolve({
+        ...LiElJonsonEstablishment,
+        dateDernierTraitementUniteLegale: "2026-03-01T10:00:00",
+      }),
     );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
@@ -66,6 +69,7 @@ describe("processCertificationDirigeantFactory", () => {
         identity: IdentityVectorSchema.parse(LiElJonsonFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
         source_selection: { kind: "preferred" },
+        source_updated_at: "2026-03-01T10:00:00",
       },
       ok: true,
     });
@@ -94,6 +98,7 @@ describe("processCertificationDirigeantFactory", () => {
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
         source_selection: { kind: "preferred" },
+        source_updated_at: null,
       },
       ok: true,
     });
@@ -117,6 +122,7 @@ describe("processCertificationDirigeantFactory", () => {
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "api.insee.fr/api-sirene/private",
         source_selection: { kind: "preferred" },
+        source_updated_at: null,
       },
       ok: false,
     });
@@ -124,7 +130,11 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should match Rogal Dorn among the executive of Papillon in RNE", async () => {
     api_registre_national_entreprises_mock_client.findPouvoirsBySiren.mock.mockImplementationOnce(
-      () => Promise.resolve([UlysseTosiPouvoir, RogalDornPouvoir]),
+      () =>
+        Promise.resolve({
+          pouvoirs: [UlysseTosiPouvoir, RogalDornPouvoir],
+          updated_at: "2026-09-26T23:06:11+02:00",
+        }),
     );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
@@ -146,6 +156,7 @@ describe("processCertificationDirigeantFactory", () => {
         identity: IdentityVectorSchema.parse(RogalDornFranceConnectUserInfo),
         source: "registre-national-entreprises.inpi.fr/api",
         source_selection: { kind: "preferred" },
+        source_updated_at: "2026-09-26T23:06:11+02:00",
       },
       ok: true,
     });
@@ -153,7 +164,11 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("should match Amberley Vail among the executive of Papillon in RNE", async () => {
     api_registre_national_entreprises_mock_client.findPouvoirsBySiren.mock.mockImplementationOnce(
-      () => Promise.resolve([UlysseTosiPouvoir, AmberleyVailPouvoir]),
+      () =>
+        Promise.resolve({
+          pouvoirs: [UlysseTosiPouvoir, AmberleyVailPouvoir],
+          updated_at: null,
+        }),
     );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
@@ -175,6 +190,7 @@ describe("processCertificationDirigeantFactory", () => {
         identity: IdentityVectorSchema.parse(AmberleyVailFranceConnectUserInfo),
         source: "registre-national-entreprises.inpi.fr/api",
         source_selection: { kind: "preferred" },
+        source_updated_at: null,
       },
       ok: true,
     });
@@ -209,6 +225,7 @@ describe("processCertificationDirigeantFactory", () => {
         source:
           "entreprise.api.gouv.fr/v3/infogreffe/rcs/unites_legales/{siren}/mandataires_sociaux",
         source_selection: { exception, kind: "fallback" },
+        source_updated_at: null,
       },
       ok: true,
     });
@@ -216,7 +233,7 @@ describe("processCertificationDirigeantFactory", () => {
 
   it("❎ fail with no mandataires", async () => {
     api_registre_national_entreprises_mock_client.findPouvoirsBySiren.mock.mockImplementationOnce(
-      () => Promise.resolve([]),
+      () => Promise.resolve({ pouvoirs: [], updated_at: null }),
     );
 
     const certificationDirigeantResult = await processCertificationDirigeant(
@@ -232,6 +249,7 @@ describe("processCertificationDirigeantFactory", () => {
         matches: new Set(),
         source: "registre-national-entreprises.inpi.fr/api",
         source_selection: { kind: "preferred" },
+        source_updated_at: null,
       },
       ok: false,
     });

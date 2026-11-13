@@ -53,7 +53,7 @@ async function getMandatairesSociaux(
   siren: string,
 ) {
   try {
-    const pouvoirs = await rne.findPouvoirsBySiren(siren);
+    const { pouvoirs, updated_at } = await rne.findPouvoirsBySiren(siren);
     const dirigeants = pouvoirs.map(RNE.toIdentityVector);
 
     return {
@@ -63,6 +63,7 @@ async function getMandatairesSociaux(
           "registre-national-entreprises.inpi.fr/api"
         ],
       source_selection: { kind: "preferred" } satisfies SourceSelection,
+      source_updated_at: updated_at,
     };
   } catch (exception) {
     const mandataires =
@@ -79,6 +80,7 @@ async function getMandatairesSociaux(
         exception,
         kind: "fallback",
       } satisfies SourceSelection,
+      source_updated_at: null,
     };
   }
 }
@@ -100,6 +102,7 @@ export function processCertificationDirigeantFactory(context: Context) {
           identity: NullIdentityVector,
           source: null,
           source_selection: { kind: "preferred" } satisfies SourceSelection,
+          source_updated_at: null,
         },
         cause: "organisation_not_covered" as const,
         ok: false,
@@ -119,24 +122,25 @@ export function processCertificationDirigeantFactory(context: Context) {
             "registre-national-entreprises.inpi.fr/api"
           ];
 
-    const { dirigeants, source, source_selection } = await match(
-      preferredDataSource,
-    )
-      .with("api.insee.fr/api-sirene/private", async () => ({
-        dirigeants: await insee
-          .findBySiren(siren)
-          .then(INSEE.toIdentityVector)
-          .then((vector) => [vector]),
-        source:
-          CertificationDirigeantDataSource.enum[
-            "api.insee.fr/api-sirene/private"
-          ],
-        source_selection: { kind: "preferred" } satisfies SourceSelection,
-      }))
-      .with("registre-national-entreprises.inpi.fr/api", () =>
-        getMandatairesSociaux(context, siren),
-      )
-      .exhaustive();
+    const { dirigeants, source, source_selection, source_updated_at } =
+      await match(preferredDataSource)
+        .with("api.insee.fr/api-sirene/private", async () => {
+          const unite_legale = await insee.findBySiren(siren);
+          return {
+            dirigeants: [INSEE.toIdentityVector(unite_legale)],
+            source:
+              CertificationDirigeantDataSource.enum[
+                "api.insee.fr/api-sirene/private"
+              ],
+            source_selection: { kind: "preferred" } satisfies SourceSelection,
+            source_updated_at:
+              unite_legale.dateDernierTraitementUniteLegale ?? null,
+          };
+        })
+        .with("registre-national-entreprises.inpi.fr/api", () =>
+          getMandatairesSociaux(context, siren),
+        )
+        .exhaustive();
 
     const result = match_identity_to_dirigeant(identity, dirigeants);
 
@@ -148,6 +152,7 @@ export function processCertificationDirigeantFactory(context: Context) {
           matches: new Set(),
           source,
           source_selection,
+          source_updated_at,
         },
         cause: result.kind,
         ok: false,
@@ -161,6 +166,7 @@ export function processCertificationDirigeantFactory(context: Context) {
         identity,
         source,
         source_selection,
+        source_updated_at,
       },
       cause: result.kind,
       ok: result.kind === "exact_match",

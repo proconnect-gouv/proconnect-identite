@@ -100,28 +100,66 @@ export class CertificationDirigeantOrganizationNotCoveredError extends Error {
 }
 
 export class CertificationDirigeantNoMatchError extends Error {
+  public organization_label: string;
+  public siren: string;
+  public source: CertificationDirigeantDataSource;
+  public source_updated_at: string | null;
+
   constructor(
-    public siren: string,
-    public organization_label: string,
+    {
+      organization_label,
+      siren,
+      source,
+      source_updated_at,
+    }: {
+      organization_label: string;
+      siren: string;
+      source: CertificationDirigeantDataSource;
+      source_updated_at: string | null;
+    },
     message?: string,
     options?: ErrorOptions,
   ) {
     super(message, options);
     this.name = "CertificationDirigeantNoMatchError";
+    this.organization_label = organization_label;
+    this.siren = siren;
+    this.source = source;
+    this.source_updated_at = source_updated_at;
   }
 }
 
 export class CertificationDirigeantCloseMatchError extends Error {
+  public matches: Set<MatchCriteria>;
+  public organization_label: string;
+  public siren: string;
+  public source: CertificationDirigeantDataSource;
+  public source_updated_at: string | null;
+
   constructor(
-    public source: CertificationDirigeantDataSource,
-    public siren: string,
-    public organization_label: string,
-    public matches?: Set<MatchCriteria>,
+    {
+      matches,
+      organization_label,
+      siren,
+      source,
+      source_updated_at,
+    }: {
+      matches: Set<MatchCriteria>;
+      organization_label: string;
+      siren: string;
+      source: CertificationDirigeantDataSource;
+      source_updated_at: string | null;
+    },
     message?: string,
     options?: ErrorOptions,
   ) {
     super(message, options);
     this.name = "CertificationDirigeantCloseMatchError";
+    this.matches = matches;
+    this.organization_label = organization_label;
+    this.siren = siren;
+    this.source = source;
+    this.source_updated_at = source_updated_at;
   }
 }
 

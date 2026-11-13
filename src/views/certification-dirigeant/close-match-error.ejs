@@ -3,6 +3,7 @@
 
 <div>
   <p>Des discordances ont été détectées entre votre identité <b>FranceConnect</b> (affichée ici) et celle connue du <b><%= dataSourceLabel; %></b> pour <b><%= organization_label; %></b>.
+  <%- include('../partials/certification-dirigeant-source-updated-at.ejs') %>
 
 
   <div class="fr-pl-1w <%= locals.matches.has('first_name') ? '' : 'info-mismatch' %>">
