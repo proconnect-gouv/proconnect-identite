@@ -113,6 +113,7 @@ import {
   userCanSeeInclusionConnectWelcomePageGuardMiddleware,
   userCanSelectAnOrganizationGuardMiddleware,
   userCanSetupMfaGuardMiddleware,
+  userCanSetupRecoveryWordsGuardMiddleware,
   userComplyWithAllRequirementsGuardMiddleware,
   userIsAuthenticatedGuardMiddleware,
 } from "../middlewares/navigation-guards";
@@ -241,7 +242,7 @@ export const userRouter = () => {
 
   userRouter.post(
     "/recovery-words-setup",
-    userCanAccessAppGuardMiddleware,
+    userCanSetupRecoveryWordsGuardMiddleware,
     csrfProtectionMiddleware,
     postRecoveryWordsSetupController,
   );

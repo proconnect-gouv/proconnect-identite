@@ -79,6 +79,22 @@ VALUES
     null,
     null,
     false
+  ),
+  (
+    5,
+    'without-second-factor+direct-access@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Ferrus',
+    'Manus',
+    'X',
+    'Primarque',
+    null,
+    null,
+    false
   );
 
 INSERT INTO
@@ -102,7 +118,8 @@ VALUES
   (1, 1, false, 'domain'),
   (2, 1, false, 'domain'),
   (3, 1, false, 'domain'),
-  (4, 1, false, 'domain');
+  (4, 1, false, 'domain'),
+  (5, 1, false, 'domain');
 
 INSERT INTO
   oidc_clients (
