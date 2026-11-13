@@ -443,9 +443,9 @@ export const joinOrganization = async ({
       verification_type: EmailDomainVerificationEnum.enum.not_verified_yet,
     })
   ) {
-    await runtime.as({ type: "user", user_id }).openModeration({
+    await runtime.as({ type: "user", user_id }).moderation.opened.mutate({
       organization_id,
-      sp_name,
+      sp_name: sp_name ?? null,
       ticket_id: null,
       type: ModerationTypeSchema.enum.non_verified_domain,
       user_id,
@@ -519,9 +519,9 @@ export const createPendingModeration = async ({
 
   const { moderation } = await runtime
     .as({ type: "user", user_id })
-    .openModeration({
+    .moderation.opened.mutate({
       organization_id,
-      sp_name,
+      sp_name: sp_name ?? null,
       ticket_id,
       type: ModerationTypeSchema.enum.organization_join_block,
       user_id,
