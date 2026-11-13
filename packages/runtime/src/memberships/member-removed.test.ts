@@ -1,6 +1,5 @@
 //
 
-import type { IdentiteDatabase } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
 import { createTestDatabase, readActivityLogs } from "#testing";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
@@ -9,7 +8,7 @@ import { describe, it } from "node:test";
 
 //
 
-async function setup() {
+async function given() {
   const db = await createTestDatabase();
   await db.insert(schema.organizations).values([
     { id: 1, siret: "🦁" },
@@ -41,7 +40,15 @@ async function setup() {
   ]);
 
   return {
-    db,
+    journal: () => readActivityLogs(db),
+    memberships: () =>
+      db.query.users_organizations.findMany({
+        columns: { organization_id: true, user_id: true },
+        orderBy: (table, { asc }) => [
+          asc(table.organization_id),
+          asc(table.user_id),
+        ],
+      }),
     runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
       type: "user",
       user_id: 1,
@@ -49,28 +56,28 @@ async function setup() {
   };
 }
 
-describe("removeMembership", () => {
+describe("member.removed", () => {
   it("✅ removes the membership and journals it under the user", async () => {
-    const { db, runtime } = await setup();
+    const { journal, memberships, runtime } = await given();
 
-    const outcome = await runtime.removeMembership({
+    const outcome = await runtime.member.removed.mutate({
       organization_id: 1,
       user_id: 1,
     });
 
     assert.deepEqual(outcome, {
-      kind: "member_removed",
       activity_id: 1,
+      kind: "member_removed",
       previous: {
         is_external: true,
         verification_type: "domain_not_verified_yet",
       },
     });
-    assert.deepEqual(await memberships(db), [
+    assert.deepEqual(await memberships(), [
       { organization_id: 1, user_id: 2 },
       { organization_id: 2, user_id: 1 },
     ]);
-    assert.deepEqual(await readActivityLogs(db), [
+    assert.deepEqual(await journal(), [
       {
         action: "member.removed",
         actor_ref: "1",
@@ -93,10 +100,10 @@ describe("removeMembership", () => {
   });
 
   it("❎ returns membership_not_found and journals nothing for a missing link", async () => {
-    const { db, runtime } = await setup();
-    const before = await memberships(db);
+    const { journal, memberships, runtime } = await given();
+    const before = await memberships();
 
-    const outcome = await runtime.removeMembership({
+    const outcome = await runtime.member.removed.mutate({
       organization_id: 1,
       user_id: 999,
     });
@@ -106,17 +113,7 @@ describe("removeMembership", () => {
       organization_id: 1,
       user_id: 999,
     });
-    assert.deepEqual(await memberships(db), before);
-    assert.deepEqual(await readActivityLogs(db), []);
+    assert.deepEqual(await memberships(), before);
+    assert.deepEqual(await journal(), []);
   });
 });
-
-function memberships(db: IdentiteDatabase) {
-  return db.query.users_organizations.findMany({
-    columns: { organization_id: true, user_id: true },
-    orderBy: (table, { asc }) => [
-      asc(table.organization_id),
-      asc(table.user_id),
-    ],
-  });
-}

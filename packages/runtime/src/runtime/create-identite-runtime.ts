@@ -18,7 +18,6 @@ import {
 import { insertActivity } from "#src/journal";
 import {
   addMembershipFactory,
-  removeMembershipFactory,
   updateMembershipFactory,
 } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
@@ -70,7 +69,6 @@ export function createIdentiteRuntime<
           db,
         }),
         openModeration: openModerationFactory({ actor, app, db }),
-        removeMembership: removeMembershipFactory({ actor, app, db }),
         record: (
           tx: IdentiteTransaction,
           activity: ActivityOf<OwnContexts> & ActivityTargets,

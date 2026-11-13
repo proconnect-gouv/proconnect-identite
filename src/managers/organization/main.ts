@@ -51,7 +51,7 @@ export const quitOrganization = async ({
 
   const { kind } = await runtime
     .as({ type: "user", user_id })
-    .removeMembership({ organization_id, user_id });
+    .member.removed.mutate({ organization_id, user_id });
 
   if (kind === "membership_not_found") {
     throw new NotFoundError();
