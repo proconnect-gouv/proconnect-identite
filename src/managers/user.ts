@@ -643,7 +643,7 @@ export async function lastFranceConnectIdentityUpdate(userId: number) {
 export async function disconnectFranceConnectIdentity(userId: number) {
   return await runtime
     .as({ type: "user", user_id: userId })
-    .disconnectFranceConnect({ user_id: userId });
+    .franceconnect.disconnected.mutate({ user_id: userId });
 }
 
 export async function needsFranceConnectIdentityRenewal(userId: number) {
