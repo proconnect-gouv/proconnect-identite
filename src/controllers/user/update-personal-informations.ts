@@ -72,10 +72,7 @@ export const postPersonalInformationsController = async (
 
   const outcome = await runtime
     .as({ type: "user", user_id: userId })
-    .updatePersonalInformations({
-      information: parsed.data,
-      user_id: userId,
-    });
+    .user.info_changed.mutate({ ...parsed.data, user_id: userId });
 
   if (outcome.kind === "user_not_found") {
     throw new UserNotFoundError("User not found");

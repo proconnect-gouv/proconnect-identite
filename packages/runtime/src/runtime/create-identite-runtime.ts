@@ -24,7 +24,7 @@ import {
   type Procedures,
 } from "#src/procedure";
 import { runtimeProcedures } from "#src/procedures";
-import { resetMfaFactory, updatePersonalInformationsFactory } from "#src/users";
+import { resetMfaFactory } from "#src/users";
 
 //
 
@@ -67,11 +67,6 @@ export function createIdentiteRuntime<
           activity: ActivityOf<OwnContexts> & ActivityTargets,
         ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
         resetMfa: resetMfaFactory({ actor, app, db }),
-        updatePersonalInformations: updatePersonalInformationsFactory({
-          actor,
-          app,
-          db,
-        }),
       };
     },
   };
