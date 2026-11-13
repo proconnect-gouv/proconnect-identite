@@ -14,6 +14,7 @@ import { userForce2faDisabled } from "../managers/user-force-2fa-disabled";
 import { userForce2faEnabled } from "../managers/user-force-2fa-enabled";
 import { userInfoChanged } from "../managers/user-info-changed";
 import { userPasswordChanged } from "../managers/user-password-changed";
+import { userRecoveryWordsRegenerated } from "../managers/user-recovery-words-regenerated";
 import { instrument } from "../services/log";
 import { ApiEntrepriseClient } from "./api-entreprise";
 import { ApiInseeClient } from "./api-insee";
@@ -90,6 +91,7 @@ const identiteProcedures = {
     force_2fa_enabled: userForce2faEnabled,
     info_changed: userInfoChanged,
     password_changed: userPasswordChanged,
+    recovery_words_regenerated: userRecoveryWordsRegenerated,
   },
 };
 
