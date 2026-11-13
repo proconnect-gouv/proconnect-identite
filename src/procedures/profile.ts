@@ -3,15 +3,14 @@ import {
   activityContextSchemas,
   procedure,
 } from "@proconnect-gouv/proconnect.identite.runtime";
+import { UserNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
-const { inputs, outcome } = activityContextSchemas["user.info_changed"].shape;
-
 export const userInfoChanged = procedure
-  .inputs(inputs)
+  .inputs(activityContextSchemas["user.info_changed"].shape.inputs)
   .private(z.object({ user_id: z.number() }))
-  .outcome(outcome)
+  .outcome(activityContextSchemas["user.info_changed"].shape.outcome)
   .mutation(async ({ inputs: information, private: { user_id }, tx }) => {
     const [previous] = await tx
       .select({
@@ -65,3 +64,44 @@ export const userInfoChanged = procedure
       previous,
     } as const;
   });
+
+export const userPasswordChanged = procedure
+  .inputs(activityContextSchemas["user.password_changed"].shape.inputs)
+  .private(z.object({ encrypted_password: z.string(), user_id: z.number() }))
+  .outcome(activityContextSchemas["user.password_changed"].shape.outcome)
+  .mutation(
+    async ({
+      inputs: { source },
+      private: { encrypted_password, user_id },
+      tx,
+    }) => {
+      const [previous] = await tx
+        .select({ email_verified: users.email_verified })
+        .from(users)
+        .where(eq(users.id, user_id))
+        .for("update");
+
+      if (!previous) {
+        throw new UserNotFoundError(`user ${user_id} not found`);
+      }
+
+      await tx
+        .update(users)
+        .set({
+          email_verified: source === "reset_password",
+          email_verified_at: source === "reset_password" ? sql`now()` : null,
+          encrypted_password,
+          reset_password_sent_at:
+            source === "reset_password" ? null : undefined,
+          reset_password_token: source === "reset_password" ? null : undefined,
+          updated_at: sql`now()`,
+        })
+        .where(eq(users.id, user_id));
+
+      return {
+        journal: { outcome: { previous }, targets: { user_id } },
+        kind: "password_changed",
+        previous,
+      } as const;
+    },
+  );

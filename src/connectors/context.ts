@@ -8,10 +8,7 @@ import {
 } from "@proconnect-gouv/proconnect.identite.runtime";
 import { createContext } from "@proconnect-gouv/proconnect.identite/connectors";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { franceconnectConnected } from "../managers/franceconnect-connected";
-import { moderationOpened } from "../managers/moderation-opened";
-import { userInfoChanged } from "../managers/user-info-changed";
-import { userPasswordChanged } from "../managers/user-password-changed";
+import { identiteProcedures } from "../procedures";
 import { instrument } from "../services/log";
 import { ApiEntrepriseClient } from "./api-entreprise";
 import { ApiInseeClient } from "./api-insee";
@@ -77,15 +74,6 @@ export const context: typeof contextUntraced = {
       "identite.repository.users_organizations",
       contextUntraced.repository.users_organizations,
     ),
-  },
-};
-
-const identiteProcedures = {
-  franceconnect: { connected: franceconnectConnected },
-  moderation: { opened: moderationOpened },
-  user: {
-    info_changed: userInfoChanged,
-    password_changed: userPasswordChanged,
   },
 };
 
