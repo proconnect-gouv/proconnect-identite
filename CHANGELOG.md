@@ -1,5 +1,60 @@
 # Changelog
 
+## [2026.11.0](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.17...2026.11.0) (2026-11-13)
+
+### Changements
+
+- ✨ Chaque déconnexion demandée par un service est enregistrée avec ses connexions, pour que la modération voie quand un utilisateur s'est déconnecté d'un service.
+- 🐛 l'email confirmant que vous avez quitté une organisation affiche de nouveau un retour à la ligne au lieu du texte « <br/> »
+
+### Ajouté
+
+- ✨ Notify users by email when their recovery words are created or regenerated ([323d9ab](https://github.com/proconnect-gouv/proconnect-identite/commit/323d9ab460fcc7d0d55244fa4c39625e969c8bd4))
+- ✨ Add recovery words to the anonymized database copy ([ccbcceb](https://github.com/proconnect-gouv/proconnect-identite/commit/ccbcceb2726715766391be6a8d820d7e8863f251))
+- ✨ remove the members of a domain when it is refused ([#2453](https://github.com/proconnect-gouv/proconnect-identite/issues/2453)) ([918ab32](https://github.com/proconnect-gouv/proconnect-identite/commit/918ab32555b01df0363e8d531b6c6a4331ef0970))
+- ✨ describe domain.removed in the runtime activity schemas ([#2451](https://github.com/proconnect-gouv/proconnect-identite/issues/2451)) ([0b133b6](https://github.com/proconnect-gouv/proconnect-identite/commit/0b133b61cbe46af2347fc1eb1eaee8302ebfb94c))
+- ✨ journal every certification dirigeant attempt ([#2445](https://github.com/proconnect-gouv/proconnect-identite/issues/2445)) ([efdd64d](https://github.com/proconnect-gouv/proconnect-identite/commit/efdd64d8c342b586c76ac4e6717323d4486bf16d))
+- ✨ Suggest generating recovery words after MFA setup and at each sign-in ([712aaa4](https://github.com/proconnect-gouv/proconnect-identite/commit/712aaa4e35642e05aaf81dfe84914ca66a861de1))
+- ✨ record the sign-out a service asks for ([#2429](https://github.com/proconnect-gouv/proconnect-identite/issues/2429)) ([304e89d](https://github.com/proconnect-gouv/proconnect-identite/commit/304e89d2169c5a112af5d1465799151ebf9a871a))
+- ✨ Send an email when an account is recovered with recovery words ([b479cc0](https://github.com/proconnect-gouv/proconnect-identite/commit/b479cc0826e4300dda66e2549e5acf24991d863d))
+- ✨ Sign in with recovery words ([2bafaaf](https://github.com/proconnect-gouv/proconnect-identite/commit/2bafaafd3daa55f3508e63285896ffaeffc88d05))
+- ✨ journal password changes through the runtime ([#2408](https://github.com/proconnect-gouv/proconnect-identite/issues/2408)) ([478e680](https://github.com/proconnect-gouv/proconnect-identite/commit/478e680e7f83f4c24f37e84f9134856dbaa753a2))
+- ✨ journal profile changes through the runtime ([#2407](https://github.com/proconnect-gouv/proconnect-identite/issues/2407)) ([c801a10](https://github.com/proconnect-gouv/proconnect-identite/commit/c801a108fd71b38f179dd2e21f62fc440e56fee6))
+
+### Modifié
+
+- ♻️ type user timestamps as dates in the Drizzle schema ([#2474](https://github.com/proconnect-gouv/proconnect-identite/issues/2474)) ([b214548](https://github.com/proconnect-gouv/proconnect-identite/commit/b214548ebe9fbcf93cff73053502fcb3e2643ab5))
+- 🚚 Rename the navigation guards file to `process.ts` ([35e3812](https://github.com/proconnect-gouv/proconnect-identite/commit/35e38120b78faca4dc54c1386f35af94f8351f32))
+- ♻️ Merge duplicated TOTP configuration controllers ([a89c73d](https://github.com/proconnect-gouv/proconnect-identite/commit/a89c73d1b7ec0f9883762a14bde794867b46fb76))
+- 🔧 Add a toggle for the recovery words incentive ([1cccf98](https://github.com/proconnect-gouv/proconnect-identite/commit/1cccf988c806049b651d22a7b3c8f8e1b081633e))
+
+### Corrigé
+
+- 🐛 Keep recovery words section visible after MFA removal ([3d41c72](https://github.com/proconnect-gouv/proconnect-identite/commit/3d41c72fbeb4fc7e24cd855a2f7389cd53fc574a))
+- 🐛 Require MFA before generating recovery words ([5e6bbf4](https://github.com/proconnect-gouv/proconnect-identite/commit/5e6bbf424644e95878f0489e1b60ddfb9aa691f1))
+- 🐛 show a real line break in the quit organization email ([#2437](https://github.com/proconnect-gouv/proconnect-identite/issues/2437)) ([6a6cbaa](https://github.com/proconnect-gouv/proconnect-identite/commit/6a6cbaa79559059c39171c54d826fc3ac7d2537d))
+- 🔒 Reset the session after sign-in with recovery words ([34910ec](https://github.com/proconnect-gouv/proconnect-identite/commit/34910ec86f373c64f6c529d6cc9b737571df52ad))
+- 🔒 Harden sign-in with recovery words ([73e13d1](https://github.com/proconnect-gouv/proconnect-identite/commit/73e13d1157a517eb947dc7867454b27ffe51ebe9))
+
+### Supprimé
+
+- 🔥 drop the unused has_been_greeted column ([c1167a1](https://github.com/proconnect-gouv/proconnect-identite/commit/c1167a150b16060ca704059e98040414bbf7a009))
+
+### Dépendances
+
+- :arrow_up: Bump hono from 4.13.13 to 4.13.16 ([#2462](https://github.com/proconnect-gouv/proconnect-identite/issues/2462)) ([0b826fb](https://github.com/proconnect-gouv/proconnect-identite/commit/0b826fb50f2457703c661cb2e7f36abfc59fc4ce))
+- :arrow_up: Bump @hono/node-server from 2.1.3 to 2.1.6 ([#2461](https://github.com/proconnect-gouv/proconnect-identite/issues/2461)) ([06272a2](https://github.com/proconnect-gouv/proconnect-identite/commit/06272a2b9a2fb1d78b116b534a704f3823daee8a))
+- ⬆️ Synchronisation du Grist contenant la liste des administrations ([#2430](https://github.com/proconnect-gouv/proconnect-identite/issues/2430)) ([90c09db](https://github.com/proconnect-gouv/proconnect-identite/commit/90c09db080498402ed8a6827d7d6f01bcfff942d))
+- :arrow_up: Bump cypress-io/github-action from 7.4.8 to 7.4.9 ([#2431](https://github.com/proconnect-gouv/proconnect-identite/issues/2431)) ([8c4159f](https://github.com/proconnect-gouv/proconnect-identite/commit/8c4159f51dbae8373bf91afa7f1cabd8fde566f2))
+- :arrow_up: Bump rate-limiter-flexible from 9.1.1 to 11.2.3 ([#2433](https://github.com/proconnect-gouv/proconnect-identite/issues/2433)) ([57b26f2](https://github.com/proconnect-gouv/proconnect-identite/commit/57b26f2cb0a3138f7f9cc6d26a417b3d3dbf3288))
+- ⬆️ Synchronisation du Grist contenant la liste des administrations ([#2427](https://github.com/proconnect-gouv/proconnect-identite/issues/2427)) ([df695a6](https://github.com/proconnect-gouv/proconnect-identite/commit/df695a6a705481e4a4c63076376a17474ce2662b))
+- ⬆️ bump cypress-maildev to 3.0.0 and the maildev image to v3 ([#2425](https://github.com/proconnect-gouv/proconnect-identite/issues/2425)) ([52ca51b](https://github.com/proconnect-gouv/proconnect-identite/commit/52ca51b8b82f6212b6b35c58e4fe0417313ee244))
+
+### Divers
+
+- ✅ drop the compile-error checks from the runtime tests ([#2460](https://github.com/proconnect-gouv/proconnect-identite/issues/2460)) ([2ded44c](https://github.com/proconnect-gouv/proconnect-identite/commit/2ded44c101c495a6cd5655ea66ee0fff4983cb68))
+- ✅ Add sign-in with passkey enrollment e2e test ([321e8de](https://github.com/proconnect-gouv/proconnect-identite/commit/321e8de29a2a508cf05e6a9994da4ad6e75ab20f))
+
 ## [2026.10.17](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.16...2026.10.17) (2026-10-30)
 
 ### Ajouté
