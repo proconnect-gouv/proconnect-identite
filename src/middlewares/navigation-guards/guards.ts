@@ -1,15 +1,17 @@
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import {
   type BaseUserOrganizationLink,
   LinkEnum,
   type Organization,
 } from "@proconnect-gouv/proconnect.identite/types";
+import { eq, sql } from "drizzle-orm";
 import HttpErrors from "http-errors";
 import isEmpty from "lodash-es/isEmpty";
 import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION,
 } from "../../config/env";
-import { context } from "../../connectors/context";
+import { context, db } from "../../connectors/context";
 import {
   doesOrganizationRequireForced2fa,
   is2FACapable,
@@ -50,7 +52,7 @@ import { usesAuthHeaders } from "../../services/uses-auth-headers";
 import { Pass, type RequestContext } from "./internals";
 import { processPendingCertificationDirigeantGuard } from "./process";
 
-const { franceconnect_userinfo, organizations, users, users_organizations } =
+const { franceconnect_userinfo, organizations, users_organizations } =
   context.repository;
 
 export const isUserGuard = ({ data: { req }, pass }: Pass<RequestContext>) => {
@@ -278,9 +280,14 @@ export const userHasSeenInclusionconnectOnboardingHelpGuard = async (
   const { id: user_id, needs_inclusionconnect_onboarding_help } =
     getUserFromAuthenticatedSession(req);
   if (needs_inclusionconnect_onboarding_help) {
-    const user = await users.update(user_id, {
-      needs_inclusionconnect_onboarding_help: false,
-    });
+    const [user] = await db
+      .update(schema.users)
+      .set({
+        needs_inclusionconnect_onboarding_help: false,
+        updated_at: sql`now()`,
+      })
+      .where(eq(schema.users.id, user_id))
+      .returning();
     updateUserInAuthenticatedSession(req, user);
 
     return haltTo("/users/welcome?show_inclusion_connect_onboarding_help=true");

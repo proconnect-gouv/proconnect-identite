@@ -14,21 +14,21 @@ async function setup() {
 
   await db.insert(schema.users).values([
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "jean.valjean@republic.fr",
       email_verified: true,
       encrypted_password: "🔑",
       encrypted_totp_key: "🔐",
       force_2fa: true,
       id: 1,
-      totp_key_verified_at: "4444-04-04",
-      updated_at: "4444-04-04",
+      totp_key_verified_at: new Date("4444-04-04"),
+      updated_at: new Date("4444-04-04"),
     },
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "cosette@republic.fr",
       id: 2,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     },
   ]);
   await db.insert(schema.authenticators).values([

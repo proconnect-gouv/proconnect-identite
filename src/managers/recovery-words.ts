@@ -69,7 +69,10 @@ export const recoverUserAccount = async (user_id: number, input: string) => {
 
   await deleteAllUserAuthenticators(user_id);
 
-  const updatedUser = await deleteTotpConfiguration(user_id);
+  const updatedUser = await deleteTotpConfiguration(
+    user_id,
+    "account_recovery",
+  );
 
   await context.repository.recovery_words.deleteByUserId(user_id);
 

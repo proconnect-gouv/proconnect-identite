@@ -12,6 +12,21 @@ const userInformation = z.object({
 });
 
 export const userActivities = {
+  "user.force_2fa_disabled": z.object({
+    inputs: z.object({
+      reason: z.enum([
+        "account_recovery",
+        "passkey_removed",
+        "totp_removed",
+        "user_choice",
+      ]),
+    }),
+    outcome: z.object({}),
+  }),
+  "user.force_2fa_enabled": z.object({
+    inputs: z.object({}),
+    outcome: z.object({}),
+  }),
   "user.info_changed": z.object({
     inputs: userInformation.partial(),
     outcome: z.object({

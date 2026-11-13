@@ -64,6 +64,16 @@ await $`drizzle-kit pull`;
     'unknown("credential_public_key")',
     'bytea("credential_public_key")',
   );
+
+  // The identite `User` type reads `users` timestamps as `Date`
+  file_content = file_content.replace(
+    /export const users = pgTable\([\s\S]*?\n\);\n/,
+    (table) =>
+      table.replaceAll(
+        'timestamp({ withTimezone: true, mode: "string" })',
+        'timestamp({ withTimezone: true, mode: "date" })',
+      ),
+  );
   await writeFile(
     resolve(database_workspace, "src/drizzle/schema.ts"),
     file_content,
