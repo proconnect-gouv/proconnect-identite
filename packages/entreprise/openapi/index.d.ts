@@ -2059,12 +2059,7 @@ export interface paths {
                      * @enum {string}
                      */
                     code:
-                      | "RN"
-                      | "RS"
-                      | "RSI"
-                      | "RNMEMBRE"
-                      | "RNGROUPE"
-                      | "DECC";
+                      "RN" | "RS" | "RSI" | "RNMEMBRE" | "RNGROUPE" | "DECC";
                     /**
                      * Libellé du régime d’imposition applicable au résultat fiscal de l'unité légale.
                      * @description La liste exhaustive se trouve dans la description du code
@@ -6805,11 +6800,7 @@ export interface paths {
                  * @enum {string|null}
                  */
                 indice_repetition_voie:
-                  | "bis"
-                  | "ter"
-                  | "quarter"
-                  | "quinquies"
-                  | null;
+                  "bis" | "ter" | "quarter" | "quinquies" | null;
                 /**
                  * Type de la voie de localisation
                  * @description Le type de la voie de localisation est indiquée en abrégé et en majuscules. L'information n'est pas toujours renseignée. Pour certaines petites communes, l'information n'existe pas.
@@ -6937,9 +6928,7 @@ export interface paths {
                  * @enum {string}
                  */
                 status_diffusion:
-                  | "diffusible"
-                  | "partiellement_diffusible"
-                  | "non_diffusible";
+                  "diffusible" | "partiellement_diffusible" | "non_diffusible";
                 /**
                  * Éléments constitutifs de l'adresse postale pour son acheminement.
                  * @description Il ne s'agit pas d'un traitement RNVP mais simplement d'une réorganisation des éléments renvoyé par l'Insee pour faciliter l'affichage des adresses postales
@@ -7150,11 +7139,7 @@ export interface paths {
                  * @enum {string|null}
                  */
                 indice_repetition_voie:
-                  | "bis"
-                  | "ter"
-                  | "quarter"
-                  | "quinquies"
-                  | null;
+                  "bis" | "ter" | "quarter" | "quinquies" | null;
                 /**
                  * Type de la voie de localisation
                  * @description Le type de la voie de localisation est indiquée en abrégé et en majuscules. L'information n'est pas toujours renseignée. Pour certaines petites communes, l'information n'existe pas.
@@ -7289,9 +7274,7 @@ export interface paths {
                  * @enum {string}
                  */
                 status_diffusion:
-                  | "diffusible"
-                  | "partiellement_diffusible"
-                  | "non_diffusible";
+                  "diffusible" | "partiellement_diffusible" | "non_diffusible";
                 /**
                  * Éléments constitutifs de l'adresse postale pour son acheminement.
                  * @description Il ne s'agit pas d'un traitement RNVP mais simplement d'une réorganisation des éléments renvoyé par l'Insee pour faciliter l'affichage des adresses postales
@@ -7651,9 +7634,7 @@ export interface paths {
                  * @enum {string}
                  */
                 status_diffusion:
-                  | "diffusible"
-                  | "partiellement_diffusible"
-                  | "non_diffusible";
+                  "diffusible" | "partiellement_diffusible" | "non_diffusible";
                 /**
                  * Indique si les données renvoyées sont entièrement publiques et donc diffusables
                  * @description Ce champ permet de savoir s'il est possible de diffuser les données sans restriction ou bien si des données protégées sont présentes dans la payload (ce qui est le cas lorsque l'unité légale est en statut de diffusion partielle). Pour une unité légale :
@@ -8003,11 +7984,7 @@ export interface paths {
                    * @enum {string|null}
                    */
                   indice_repetition_voie:
-                    | "bis"
-                    | "ter"
-                    | "quarter"
-                    | "quinquies"
-                    | null;
+                    "bis" | "ter" | "quarter" | "quinquies" | null;
                   /**
                    * Type de la voie de localisation
                    * @description Le type de la voie de localisation est indiquée en abrégé et en majuscules. L'information n'est pas toujours renseignée. Pour certaines petites communes, l'information n'existe pas.
@@ -8516,9 +8493,7 @@ export interface paths {
                  * @enum {string}
                  */
                 status_diffusion:
-                  | "diffusible"
-                  | "partiellement_diffusible"
-                  | "non_diffusible";
+                  "diffusible" | "partiellement_diffusible" | "non_diffusible";
                 /**
                  * Indique si les données renvoyées sont entièrement publiques et donc diffusables
                  * @description Ce champ permet de savoir s'il est possible de diffuser les données sans restriction ou bien si des données protégées sont présentes dans la payload (ce qui est le cas lorsque l'unité légale est en statut de diffusion partielle). Pour une unité légale :
@@ -8880,11 +8855,7 @@ export interface paths {
                    * @enum {string|null}
                    */
                   indice_repetition_voie:
-                    | "bis"
-                    | "ter"
-                    | "quarter"
-                    | "quinquies"
-                    | null;
+                    "bis" | "ter" | "quarter" | "quinquies" | null;
                   /**
                    * Type de la voie de localisation
                    * @description Le type de la voie de localisation est indiquée en abrégé et en majuscules. L'information n'est pas toujours renseignée. Pour certaines petites communes, l'information n'existe pas.
@@ -9397,9 +9368,7 @@ export interface paths {
                  * @enum {string}
                  */
                 status_diffusion:
-                  | "diffusible"
-                  | "partiellement_diffusible"
-                  | "non_diffusible";
+                  "diffusible" | "partiellement_diffusible" | "non_diffusible";
                 /**
                  * Indique si les données renvoyées sont entièrement publiques et donc diffusables
                  * @description Ce champ permet de savoir s'il est possible de diffuser les données sans restriction ou bien si des données protégées sont présentes dans la payload (ce qui est le cas lorsque l'unité légale est en statut de diffusion partielle). Pour une unité légale :
@@ -9761,11 +9730,7 @@ export interface paths {
                    * @enum {string|null}
                    */
                   indice_repetition_voie:
-                    | "bis"
-                    | "ter"
-                    | "quarter"
-                    | "quinquies"
-                    | null;
+                    "bis" | "ter" | "quarter" | "quinquies" | null;
                   /**
                    * Type de la voie de localisation
                    * @description Le type de la voie de localisation est indiquée en abrégé et en majuscules. L'information n'est pas toujours renseignée. Pour certaines petites communes, l'information n'existe pas.
@@ -10278,9 +10243,7 @@ export interface paths {
                  * @enum {string}
                  */
                 status_diffusion:
-                  | "diffusible"
-                  | "partiellement_diffusible"
-                  | "non_diffusible";
+                  "diffusible" | "partiellement_diffusible" | "non_diffusible";
                 /**
                  * Indique si les données renvoyées sont entièrement publiques et donc diffusables
                  * @description Ce champ permet de savoir s'il est possible de diffuser les données sans restriction ou bien si des données protégées sont présentes dans la payload (ce qui est le cas lorsque l'unité légale est en statut de diffusion partielle). Pour une unité légale :
@@ -10630,11 +10593,7 @@ export interface paths {
                    * @enum {string|null}
                    */
                   indice_repetition_voie:
-                    | "bis"
-                    | "ter"
-                    | "quarter"
-                    | "quinquies"
-                    | null;
+                    "bis" | "ter" | "quarter" | "quinquies" | null;
                   /**
                    * Type de la voie de localisation
                    * @description Le type de la voie de localisation est indiquée en abrégé et en majuscules. L'information n'est pas toujours renseignée. Pour certaines petites communes, l'information n'existe pas.
@@ -11321,9 +11280,7 @@ export interface paths {
                  * @enum {string}
                  */
                 status_diffusion:
-                  | "diffusible"
-                  | "partiellement_diffusible"
-                  | "non_diffusible";
+                  "diffusible" | "partiellement_diffusible" | "non_diffusible";
                 /**
                  * Indique si les données renvoyées sont entièrement publiques et donc diffusables
                  * @description Ce champ permet de savoir s'il est possible de diffuser les données sans restriction ou bien si des données protégées sont présentes dans la payload (ce qui est le cas lorsque l'unité légale est en statut de diffusion partielle). Pour une unité légale :
@@ -11831,9 +11788,7 @@ export interface paths {
                  * @enum {string}
                  */
                 status_diffusion:
-                  | "diffusible"
-                  | "partiellement_diffusible"
-                  | "non_diffusible";
+                  "diffusible" | "partiellement_diffusible" | "non_diffusible";
                 /**
                  * Indique si les données renvoyées sont entièrement publiques et donc diffusables
                  * @description Ce champ est a priori toujours à 'true' car cette API ne renvoie que de l'open data. Pour une unité légale :

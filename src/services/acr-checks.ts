@@ -56,8 +56,7 @@ const areAcrsRequestedInPrompt = ({
 }) => {
   const requestedAcr = get(prompt.details, "acr.value") as string | undefined;
   const requestedAcrs = get(prompt.details, "acr.values") as
-    | string[]
-    | undefined;
+    string[] | undefined;
   const essential = get(prompt.details, "acr.essential") as boolean | undefined;
 
   if (

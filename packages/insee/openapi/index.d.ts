@@ -348,10 +348,7 @@ export interface components {
        * @enum {string}
        */
       nomenclatureActivitePrincipaleEtablissement?:
-        | "NAP"
-        | "NAFRev1"
-        | "NAFRev2"
-        | "NAF1993";
+        "NAP" | "NAFRev1" | "NAFRev2" | "NAF1993";
       /** @description Indicatrice de changement de l'activité principale de l'établissement par rapport Ã  la période précédente */
       changementActivitePrincipaleEtablissement?: boolean;
       /** @description Caractère employeur de l'établissement (O=oui, N=non, null=sans objet) */
@@ -452,10 +449,7 @@ export interface components {
        * @enum {string}
        */
       nomenclatureActivitePrincipaleUniteLegale?:
-        | "NAP"
-        | "NAFRev1"
-        | "NAFRev2"
-        | "NAF1993";
+        "NAP" | "NAFRev1" | "NAFRev2" | "NAF1993";
       /** @description Nom dâ€™usage pour les personnes physiques sinon null */
       nomUsageUniteLegale?: string;
       /** @description Appartenance de lâ€™unité légale au champ de lâ€™économie sociale et solidaire (ESS) */
@@ -565,10 +559,7 @@ export interface components {
        * @enum {string}
        */
       nomenclatureActivitePrincipaleUniteLegale?:
-        | "NAP"
-        | "NAFRev1"
-        | "NAFRev2"
-        | "NAF1993";
+        "NAP" | "NAFRev1" | "NAFRev2" | "NAF1993";
       /** @description Indicatrice de changement de l'activité principale par rapport Ã  la période précédente */
       changementActivitePrincipaleUniteLegale?: boolean;
       /** @description Identifiant du siège pour la période (le Siret du siège est obtenu en concaténant le numéro Siren et le Nic) */

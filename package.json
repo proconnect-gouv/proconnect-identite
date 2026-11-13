@@ -178,7 +178,7 @@
     "node-pg-migrate": "^8.0.3",
     "npm-run-all2": "^8.0.4",
     "pino-pretty": "^13.2.0",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.10",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-sql": "^0.19.2",
     "tld-extract": "^2.1.0",
