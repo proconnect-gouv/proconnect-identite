@@ -12,6 +12,14 @@ const userInformation = z.object({
 });
 
 export const userActivities = {
+  "user.email_verified": z.object({
+    inputs: z.object({
+      source: z.enum(["magic_link", "verify_email"]),
+    }),
+    outcome: z.object({
+      previous: z.object({ email_verified: z.boolean() }),
+    }),
+  }),
   "user.info_changed": z.object({
     inputs: userInformation.partial(),
     outcome: z.object({

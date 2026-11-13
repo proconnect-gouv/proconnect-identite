@@ -1,27 +1,30 @@
+import { UserNotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
+import { isEmpty } from "lodash-es";
 import moment from "moment";
+import { match } from "ts-pattern";
 import { z, ZodError } from "zod";
 import { MIN_DURATION_BETWEEN_TWO_VERIFICATION_CODE_SENDING_IN_SECONDS } from "../../config/env";
 import {
   InvalidTokenError,
   NoNeedVerifyEmailAddressError,
 } from "../../config/errors";
+import { context, runtime } from "../../connectors/context";
 import { isBrowserTrustedForUser } from "../../managers/browser-authentication";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
   updateUserInAuthenticatedSession,
 } from "../../managers/session/authenticated";
-import {
-  sendEmailAddressVerificationEmail,
-  verifyEmail,
-} from "../../managers/user";
+import { sendEmailAddressVerificationEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import {
   codeSchema,
   optionalBooleanSchema,
 } from "../../services/custom-zod-schemas";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
+
+const { users } = context.repository;
 
 export const getVerifyEmailController = async (
   req: Request,
@@ -90,14 +93,31 @@ export const postVerifyEmailController = async (
 
     const { email } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await verifyEmail(email, verify_email_token);
+    const found = await users.findByEmail(email);
 
-    addAuthenticationMethodReferenceInSession(
-      req,
-      res,
-      updatedUser,
-      "email-otp",
-    );
+    if (isEmpty(found)) {
+      throw new UserNotFoundError();
+    }
+
+    const outcome = await runtime
+      .as({ type: "user", user_id: found.id })
+      .user.email_verified.mutate({
+        source: "verify_email",
+        token: verify_email_token,
+        user_id: found.id,
+      });
+
+    match(outcome)
+      .with({ kind: "invalid_token" }, () => {
+        throw new InvalidTokenError();
+      })
+      .with({ kind: "token_expired" }, () => {
+        throw new InvalidTokenError();
+      })
+      .with({ kind: "email_verified" }, ({ user }) => {
+        addAuthenticationMethodReferenceInSession(req, res, user, "email-otp");
+      })
+      .exhaustive();
 
     next();
   } catch (error) {

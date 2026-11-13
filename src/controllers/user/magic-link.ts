@@ -1,14 +1,17 @@
 import type { NextFunction, Request, Response } from "express";
+import { isEmpty } from "lodash-es";
+import { match } from "ts-pattern";
 import { z, ZodError } from "zod";
 import { HOST } from "../../config/env";
 import { InvalidEmailError, InvalidMagicLinkError } from "../../config/errors";
+import { context, runtime } from "../../connectors/context";
 import { createAuthenticatedSession } from "../../managers/session/authenticated";
 import { getEmailFromUnauthenticatedSession } from "../../managers/session/unauthenticated";
-import {
-  loginWithMagicLink,
-  sendSendMagicLinkEmail,
-} from "../../managers/user";
+import { sendSendMagicLinkEmail } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
+import { track } from "../../services/log";
+
+const { users } = context.repository;
 
 export const postSendMagicLinkController = async (
   req: Request,
@@ -107,7 +110,31 @@ export const postSignInWithMagicLinkController = async (
 
     const { magic_link_token } = await schema.parseAsync(req.body);
 
-    const user = await loginWithMagicLink(magic_link_token);
+    const found = await users.findByMagicLinkToken(magic_link_token);
+
+    if (isEmpty(found)) {
+      track("magic_link.token.not_found", {});
+      throw new InvalidMagicLinkError();
+    }
+
+    const outcome = await runtime
+      .as({ type: "user", user_id: found.id })
+      .user.email_verified.mutate({
+        source: "magic_link",
+        token: magic_link_token,
+        user_id: found.id,
+      });
+
+    const user = match(outcome)
+      .with({ kind: "invalid_token" }, () => {
+        throw new InvalidMagicLinkError();
+      })
+      .with({ kind: "token_expired" }, () => {
+        track("magic_link.token.expired", { user_id: found.id });
+        throw new InvalidMagicLinkError();
+      })
+      .with({ kind: "email_verified" }, ({ user }) => user)
+      .exhaustive();
 
     await createAuthenticatedSession(req, res, user, "email-link");
 
