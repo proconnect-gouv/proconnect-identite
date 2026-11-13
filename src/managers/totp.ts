@@ -3,7 +3,7 @@ import { Secret, TOTP } from "otpauth";
 import qrcode from "qrcode";
 import { APPLICATION_NAME, SYMMETRIC_ENCRYPTION_KEY } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, runtime } from "../connectors/context";
 import {
   decryptSymmetric,
   encryptSymmetric,
@@ -54,7 +54,8 @@ export const confirmTotpRegistration = async (
   totpToken: string,
 ) => {
   // ASSERTION: user exists
-  await users.getById(user_id);
+  const user = await users.getById(user_id);
+  const totp_configured = !isEmpty(user.encrypted_totp_key);
 
   if (!temporaryTotpKey) {
     throw new InvalidTotpTokenError();
@@ -77,22 +78,29 @@ export const confirmTotpRegistration = async (
     temporaryTotpKey,
   );
 
-  return await users.update(user_id, {
-    encrypted_totp_key,
-    totp_key_verified_at: new Date(),
-  });
+  const { user: updated } = await runtime
+    .as({ type: "user", user_id })
+    .user.totp_added.mutate({
+      encrypted_totp_key,
+      totp_configured,
+      user_id,
+    });
+
+  return updated;
 };
 
 export const deleteTotpConfiguration = async (
   user_id: number,
   source: "account_recovery" | "self",
 ) => {
+  // ASSERTION: user exists
   let user = await users.getById(user_id);
 
-  user = await users.update(user_id, {
-    encrypted_totp_key: null,
-    totp_key_verified_at: null,
-  });
+  if (!isEmpty(user.encrypted_totp_key)) {
+    ({ user } = await runtime
+      .as({ type: "user", user_id })
+      .user.totp_removed.mutate({ source, user_id }));
+  }
 
   if (!(await is2FACapable(user_id))) {
     user = await disableForce2fa(

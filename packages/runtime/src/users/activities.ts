@@ -55,4 +55,14 @@ export const userActivities = {
       previous: z.object({ email_verified: z.boolean() }),
     }),
   }),
+  "user.totp_added": z.object({
+    inputs: z.object({}),
+    outcome: z.object({
+      previous: z.object({ totp_configured: z.boolean() }),
+    }),
+  }),
+  "user.totp_removed": z.object({
+    inputs: z.object({ source: z.enum(["account_recovery", "self"]) }),
+    outcome: z.object({}),
+  }),
 };
