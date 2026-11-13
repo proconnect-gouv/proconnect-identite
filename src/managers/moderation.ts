@@ -1,12 +1,17 @@
 import { CancelModeration } from "@proconnect-gouv/proconnect.email";
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import {
   ModerationNotFoundError,
   NotFoundError,
 } from "@proconnect-gouv/proconnect.identite/errors";
-import type { User } from "@proconnect-gouv/proconnect.identite/types";
+import {
+  ModerationStatusSchema,
+  type User,
+} from "@proconnect-gouv/proconnect.identite/types";
+import { eq, sql } from "drizzle-orm";
 import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, db } from "../connectors/context";
 import { sendMail } from "../connectors/mail";
 
 const { moderations, organizations } = context.repository;
@@ -54,7 +59,11 @@ export const cancelModeration = async ({
     throw new NotFoundError();
   }
 
-  const result = await moderations.delete(moderation_id);
+  const rows = await db
+    .delete(schema.moderations)
+    .where(eq(schema.moderations.id, moderation_id))
+    .returning({ id: schema.moderations.id });
+  const result = rows.length > 0;
   if (!result) {
     throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
   }
@@ -86,11 +95,17 @@ export const reopenModerationWithUserEdit = async ({
     throw new ForbiddenError();
   }
 
-  const reopened = await moderations.reopen({
-    id: moderation_id,
-    userEmail: user.email,
-    cause: "Edition des informations personnelles",
-  });
+  const rows = await db
+    .update(schema.moderations)
+    .set({
+      moderated_at: null,
+      moderated_by: null,
+      status: ModerationStatusSchema.enum.reopened,
+      comment: sql`COALESCE(${schema.moderations.comment}, '') || ' | Réouvert le ' || NOW()::date || ' par ' || ${user.email} || ' - ' || ${"Edition des informations personnelles"}`,
+    })
+    .where(eq(schema.moderations.id, moderation_id))
+    .returning();
+  const reopened = rows.shift();
   if (!reopened) {
     throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
   }

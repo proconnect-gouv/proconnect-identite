@@ -1,15 +1,17 @@
 import { generateDicewarePhrase } from "@proconnect-gouv/proconnect.core/security";
 import { OfficialContactEmailVerification } from "@proconnect-gouv/proconnect.email";
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
+import { and, eq, sql } from "drizzle-orm";
 import { isEmpty } from "lodash-es";
 import { match } from "ts-pattern";
 import { OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES } from "../../config/env";
 import { ApiAnnuaireError, InvalidTokenError } from "../../config/errors";
 import { getAnnuaireEducationNationaleContactEmail } from "../../connectors/api-annuaire-education-nationale";
 import { getAnnuaireServicePublicContactEmails } from "../../connectors/api-annuaire-service-public";
-import { context, runtime } from "../../connectors/context";
+import { context, db, runtime } from "../../connectors/context";
 import { sendMail } from "../../connectors/mail";
 import { isExpired } from "../../services/is-expired";
 import {
@@ -139,12 +141,25 @@ export const sendOfficialContactEmailVerificationEmail = async ({
 
   const token = generateDicewarePhrase(2);
 
-  await official_contact_email_verifications.upsert({
-    organization_id,
-    user_id,
-    token,
-    sent_at: new Date(),
-  });
+  await db
+    .insert(schema.official_contact_email_verifications)
+    .values({
+      organization_id,
+      user_id,
+      token,
+      sent_at: sql`now()`,
+    })
+    .onConflictDoUpdate({
+      target: [
+        schema.official_contact_email_verifications.organization_id,
+        schema.official_contact_email_verifications.user_id,
+      ],
+      set: {
+        token,
+        sent_at: sql`now()`,
+        updated_at: sql`CURRENT_TIMESTAMP`,
+      },
+    });
 
   const { given_name, family_name, email } = user;
 
@@ -206,11 +221,24 @@ export const verifyOfficialContactEmailToken = async ({
     throw new InvalidTokenError();
   }
 
-  const deleted = await official_contact_email_verifications.delete({
-    organization_id,
-    user_id,
-  });
-  if (!deleted) {
+  const deleted = (
+    await db
+      .delete(schema.official_contact_email_verifications)
+      .where(
+        and(
+          eq(schema.official_contact_email_verifications.user_id, user_id),
+          eq(
+            schema.official_contact_email_verifications.organization_id,
+            organization_id,
+          ),
+        ),
+      )
+      .returning({
+        user_id: schema.official_contact_email_verifications.user_id,
+      })
+  ).length;
+
+  if (deleted === 0) {
     throw new InvalidTokenError();
   }
 
