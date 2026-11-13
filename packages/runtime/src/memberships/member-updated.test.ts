@@ -14,22 +14,22 @@ async function given() {
   await db.insert(schema.organizations).values([{ id: 1, siret: "🦁" }]);
   await db.insert(schema.users).values([
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "lion.eljonson@darkangels.world",
       id: 1,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     },
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "azrael@darkangels.world",
       id: 2,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     },
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "sanguinius@darkangels.world",
       id: 3,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     },
   ]);
   await db.insert(schema.users_organizations).values([

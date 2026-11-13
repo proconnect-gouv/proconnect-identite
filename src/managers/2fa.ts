@@ -1,6 +1,6 @@
 import { FORCE_2FA_FOR_SIRETS } from "../config/env";
 import { UserIsNot2faCapableError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, runtime } from "../connectors/context";
 import { isTotpConfiguredForUser } from "./totp";
 import { isWebauthnConfiguredForUser } from "./webauthn";
 
@@ -32,20 +32,37 @@ export const is2FACapable = async (user_id: number) => {
   return false;
 };
 
-export const disableForce2fa = async (user_id: number) => {
+export const disableForce2fa = async (
+  user_id: number,
+  reason:
+    | "account_recovery"
+    | "passkey_removed"
+    | "totp_removed"
+    | "user_choice",
+) => {
   // ASSERTION: user exists
-  await users.getById(user_id);
+  const user = await users.getById(user_id);
+  if (!user.force_2fa) return user;
 
-  return await users.update(user_id, { force_2fa: false });
+  const { user: updated } = await runtime
+    .as({ type: "user", user_id })
+    .user.force_2fa_disabled.mutate({ reason, user_id });
+
+  return updated;
 };
 
 export const enableForce2fa = async (user_id: number) => {
   // ASSERTION: user exists
-  await users.getById(user_id);
+  const user = await users.getById(user_id);
 
   if (!(await is2FACapable(user_id))) {
     throw new UserIsNot2faCapableError();
   }
+  if (user.force_2fa) return user;
 
-  return await users.update(user_id, { force_2fa: true });
+  const { user: updated } = await runtime
+    .as({ type: "user", user_id })
+    .user.force_2fa_enabled.mutate({ user_id });
+
+  return updated;
 };

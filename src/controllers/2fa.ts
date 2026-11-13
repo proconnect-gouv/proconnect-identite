@@ -224,7 +224,7 @@ export const postSetForce2faController = async (
         `/connection-and-account?notification=2fa_successfully_enabled`,
       );
     } else {
-      updatedUser = await disableForce2fa(user_id);
+      updatedUser = await disableForce2fa(user_id, "user_choice");
       updateUserInAuthenticatedSession(req, updatedUser);
       await sendDisable2faMail({ user_id });
       return res.redirect(

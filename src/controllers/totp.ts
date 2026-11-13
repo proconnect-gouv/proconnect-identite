@@ -128,7 +128,7 @@ export const postDeleteTotpConfigurationController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await deleteTotpConfiguration(user_id);
+    const updatedUser = await deleteTotpConfiguration(user_id, "self");
 
     updateUserInAuthenticatedSession(req, updatedUser);
 

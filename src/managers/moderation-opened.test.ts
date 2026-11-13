@@ -14,10 +14,10 @@ async function given() {
   const db = drizzle(pg, { schema });
   await db.execute(sql`SET search_path TO public`);
   await db.insert(schema.users).values({
-    created_at: "4444-04-04",
+    created_at: new Date("4444-04-04"),
     email: "jean.valjean@republic.fr",
     id: 1,
-    updated_at: "4444-04-04",
+    updated_at: new Date("4444-04-04"),
   });
   await db.insert(schema.organizations).values({
     created_at: "4444-04-04",

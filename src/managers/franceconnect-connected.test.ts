@@ -28,20 +28,20 @@ async function given() {
   await db.execute(sql`SET search_path TO public`);
   await db.insert(schema.users).values([
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "jean.valjean@republic.fr",
       family_name: "Fauchelevent",
       given_name: "Jeannot",
       id: 1,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     },
     {
-      created_at: "4444-04-04",
+      created_at: new Date("4444-04-04"),
       email: "cosette@republic.fr",
       family_name: "Fauchelevent",
       given_name: "Cosette",
       id: 2,
-      updated_at: "4444-04-04",
+      updated_at: new Date("4444-04-04"),
     },
   ]);
 
