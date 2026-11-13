@@ -47,7 +47,7 @@ import {
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
-import { context, runtime } from "../connectors/context";
+import { context, db, runtime } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
@@ -554,7 +554,16 @@ export const changePassword = async (token: string, password: string) => {
     throw new InvalidTokenError();
   }
 
-  const user = await users.findByResetPasswordToken(token);
+  const user = await db.query.users.findFirst({
+    columns: {
+      email: true,
+      family_name: true,
+      given_name: true,
+      id: true,
+      reset_password_sent_at: true,
+    },
+    where: (table, { eq }) => eq(table.reset_password_token, token),
+  });
 
   if (isEmpty(user)) {
     track("change_password.reset_token.not_found", {});
@@ -562,7 +571,7 @@ export const changePassword = async (token: string, password: string) => {
   }
 
   const isTokenExpired = isExpired(
-    user.reset_password_sent_at,
+    user.reset_password_sent_at ? new Date(user.reset_password_sent_at) : null,
     RESET_PASSWORD_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
   );
 
