@@ -11,7 +11,6 @@ import {
 } from "#src/activity";
 import type { IdentiteTransaction } from "#src/database";
 import { changeEmailDomainVerificationFactory } from "#src/domains";
-import { disconnectFranceConnectFactory } from "#src/franceconnect";
 import { insertActivity } from "#src/journal";
 import { addMembershipFactory } from "#src/memberships";
 import { openModerationFactory } from "#src/moderations";
@@ -52,11 +51,6 @@ export function createIdentiteRuntime<
         ...bindProcedures(merged, { actor, app, db }),
         addMembership: addMembershipFactory({ actor, app, db }),
         changeEmailDomainVerification: changeEmailDomainVerificationFactory({
-          actor,
-          app,
-          db,
-        }),
-        disconnectFranceConnect: disconnectFranceConnectFactory({
           actor,
           app,
           db,
