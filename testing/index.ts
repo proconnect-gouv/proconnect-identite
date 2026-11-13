@@ -71,9 +71,9 @@ export async function insertUser({ email }: { email: string }) {
   const [{ id }] = await db
     .insert(schema.users)
     .values({
-      created_at: new Date().toISOString(),
+      created_at: new Date(),
       email,
-      updated_at: new Date().toISOString(),
+      updated_at: new Date(),
     })
     .returning({ id: schema.users.id });
 
