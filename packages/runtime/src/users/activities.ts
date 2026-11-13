@@ -55,4 +55,10 @@ export const userActivities = {
       previous: z.object({ email_verified: z.boolean() }),
     }),
   }),
+  "user.recovery_words_regenerated": z.object({
+    inputs: z.object({}),
+    outcome: z.object({
+      previous: z.object({ recovery_words_configured: z.boolean() }),
+    }),
+  }),
 };
