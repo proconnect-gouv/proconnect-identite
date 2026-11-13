@@ -1,3 +1,4 @@
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import {
@@ -7,13 +8,14 @@ import {
   WeakLinkValues,
 } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
+import { eq } from "drizzle-orm";
 import type { Request, Response } from "express";
 import { Session, type SessionData } from "express-session";
 import { isEmpty } from "lodash-es";
 import { match } from "ts-pattern";
 import { RECENT_LOGIN_INTERVAL_IN_SECONDS } from "../../config/env";
 import { UserNotLoggedInError } from "../../config/errors";
-import { context } from "../../connectors/context";
+import { context, db } from "../../connectors/context";
 import type { AssuranceLevels } from "../../services/acr-checks";
 import { isExpiredInSeconds } from "../../services/is-expired";
 import {
@@ -32,7 +34,7 @@ import {
 import { recordAuthorizationRequestAtSignIn } from "../oidc-client";
 import { hasValidFranceConnectIdentity } from "../user";
 
-const { users_organizations, users } = context.repository;
+const { users_organizations } = context.repository;
 
 export const isWithinAuthenticatedSession = (
   session: Session & Partial<SessionData>,
@@ -81,10 +83,15 @@ export const createAuthenticatedSession = async (
       if (err) {
         reject(err);
       } else {
-        const updatedUser = await users.update(user.id, {
-          sign_in_count: user.sign_in_count + 1,
-          last_sign_in_at: new Date(),
-        });
+        const [updatedUser] = await db
+          .update(schema.users)
+          .set({
+            sign_in_count: user.sign_in_count + 1,
+            last_sign_in_at: new Date(),
+            updated_at: new Date(),
+          })
+          .where(eq(schema.users.id, user.id))
+          .returning();
         req.session.user = updatedUser;
         // we restore previous session navigation values
         req.session.interactionCid = interactionCid;

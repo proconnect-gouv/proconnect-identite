@@ -1,9 +1,12 @@
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import {
   AuthorizationRequestOutcomeEnum,
   type AuthorizationRequest,
+  type BaseAuthorizationRequest,
 } from "@proconnect-gouv/proconnect.identite/types";
 import * as Sentry from "@sentry/node";
+import { sql } from "drizzle-orm";
 import type { Request } from "express";
 import { isEmpty, isString } from "lodash-es";
 import type { IncomingHttpHeaders } from "node:http";
@@ -14,6 +17,28 @@ import { logger } from "../services/log";
 import { oidcProviderAdapterFactory } from "../services/oidc-provider-adapter";
 
 const { oidc_clients } = context.repository;
+
+const upsertAuthorizationRequest = (
+  authorizationRequest: BaseAuthorizationRequest,
+) =>
+  db
+    .insert(schema.users_oidc_clients)
+    .values({
+      ...authorizationRequest,
+      created_at: sql`now()`,
+      updated_at: sql`now()`,
+    })
+    .onConflictDoUpdate({
+      target: schema.users_oidc_clients.interaction_cid,
+      targetWhere: sql`interaction_cid IS NOT NULL`,
+      set: {
+        organization_id: sql`excluded.organization_id`,
+        outcome: sql`excluded.outcome`,
+        sid: sql`COALESCE(excluded.sid, ${schema.users_oidc_clients.sid})`,
+        updated_at: sql`excluded.updated_at`,
+        user_id: sql`excluded.user_id`,
+      },
+    });
 
 const StoredInteractionSchema = z.object({
   cid: z.string(),
@@ -42,7 +67,7 @@ export const recordAuthorizationRequest = async ({
   params: OIDCContextParams;
   requestHeaders: IncomingHttpHeaders;
   sid: string | null;
-}): Promise<AuthorizationRequest> => {
+}): Promise<void> => {
   const user_id = parseInt(accountId, 10);
 
   const client_id = client.clientId;
@@ -59,7 +84,7 @@ export const recordAuthorizationRequest = async ({
 
   const user_ip_address = requestHeaders["x-forwarded-for"]?.toString() || null;
 
-  return await oidc_clients.upsertAuthorizationRequest({
+  await upsertAuthorizationRequest({
     user_id,
     oidc_client_id,
     organization_id: organizationId,
@@ -100,7 +125,7 @@ export const recordAuthorizationRequestAtSignIn = async ({
       throw new NotFoundError();
     }
 
-    await oidc_clients.upsertAuthorizationRequest({
+    await upsertAuthorizationRequest({
       interaction_cid: cid,
       oidc_client_id: oidc_client.id,
       organization_id: null,
@@ -144,7 +169,7 @@ export const recordSignOut = async ({
         ),
     });
 
-    await oidc_clients.upsertAuthorizationRequest({
+    await upsertAuthorizationRequest({
       interaction_cid: null,
       oidc_client_id: oidc_client.id,
       organization_id: null,
