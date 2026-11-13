@@ -4,6 +4,7 @@ import { domainActivities } from "#src/domains";
 import { franceconnectActivities } from "#src/franceconnect";
 import { membershipActivities } from "#src/memberships";
 import { moderationActivities } from "#src/moderations";
+import { organizationActivities } from "#src/organizations";
 import { contextSchemasOf, mergeContextSchemas } from "#src/procedure";
 import { runtimeProcedures } from "#src/procedures";
 import { userActivities } from "#src/users";
@@ -17,6 +18,7 @@ export const activityContextSchemas = mergeContextSchemas(
     ...franceconnectActivities,
     ...membershipActivities,
     ...moderationActivities,
+    ...organizationActivities,
     ...userActivities,
   },
   contextSchemasOf(runtimeProcedures),
