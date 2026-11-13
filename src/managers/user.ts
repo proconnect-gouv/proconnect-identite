@@ -20,6 +20,7 @@ import {
   UpdatePersonalDataMail,
   VerifyEmail,
 } from "@proconnect-gouv/proconnect.email";
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import {
   NotFoundError,
   UserNotFoundError,
@@ -28,11 +29,11 @@ import {
   type FranceConnectUserInfoResponse,
   type User,
 } from "@proconnect-gouv/proconnect.identite/types";
+import { eq, sql } from "drizzle-orm";
 import { chain, isEmpty, uniq } from "lodash-es";
 import { AssertionError } from "node:assert";
 import {
   FRANCECONNECT_VERIFICATION_MAX_AGE_IN_MINUTES,
-  MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
   MAX_DURATION_BETWEEN_TWO_EMAIL_ADDRESS_VERIFICATION_IN_MINUTES,
   RESET_PASSWORD_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
   VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
@@ -41,13 +42,12 @@ import {
   EmailUnavailableError,
   InvalidCredentialsError,
   InvalidEmailError,
-  InvalidMagicLinkError,
   InvalidTokenError,
   LeakedPasswordError,
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
-import { context, runtime } from "../connectors/context";
+import { context, db, runtime } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
@@ -165,10 +165,17 @@ export const signupWithPassword = async (
     return { ...user, email_verified: false };
   }
 
-  return await users.create({
-    email,
-    encrypted_password: hashedPassword,
-  });
+  const [created] = await db
+    .insert(schema.users)
+    .values({
+      created_at: new Date(),
+      email,
+      encrypted_password: hashedPassword,
+      updated_at: new Date(),
+    })
+    .returning();
+
+  return created;
 };
 
 export const sendEmailAddressVerificationEmail = async ({
@@ -206,10 +213,15 @@ export const sendEmailAddressVerificationEmail = async ({
 
   const verify_email_token = generatePinToken();
 
-  const updatedUser = await users.update(user.id, {
-    verify_email_token,
-    verify_email_sent_at: new Date(),
-  });
+  const [updatedUser] = await db
+    .update(schema.users)
+    .set({
+      updated_at: sql`now()`,
+      verify_email_sent_at: new Date(),
+      verify_email_token,
+    })
+    .where(eq(schema.users.id, user.id))
+    .returning();
 
   await sendMail({
     to: [user.email],
@@ -412,37 +424,6 @@ export const sendUpdatePersonalInformationEmail = async ({
   }
 };
 
-export const verifyEmail = async (
-  email: string,
-  token: string,
-): Promise<User> => {
-  const user = await users.findByEmail(email);
-
-  if (isEmpty(user)) {
-    throw new UserNotFoundError();
-  }
-
-  if (user.verify_email_token !== token) {
-    throw new InvalidTokenError();
-  }
-
-  const isTokenExpired = isExpired(
-    user.verify_email_sent_at,
-    VERIFY_EMAIL_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
-  );
-
-  if (isTokenExpired) {
-    throw new InvalidTokenError();
-  }
-
-  return await users.update(user.id, {
-    email_verified: true,
-    email_verified_at: new Date(),
-    verify_email_token: null,
-    verify_email_sent_at: null,
-  });
-};
-
 export const needsEmailVerificationRenewal = async (
   email: string,
 ): Promise<boolean> => {
@@ -465,17 +446,27 @@ export const sendSendMagicLinkEmail = async (
   let user = await users.findByEmail(email);
 
   if (isEmpty(user)) {
-    user = await users.create({
-      email,
-    });
+    const [created] = await db
+      .insert(schema.users)
+      .values({
+        created_at: new Date(),
+        email,
+        updated_at: new Date(),
+      })
+      .returning();
+    user = created;
   }
 
   const magicLinkToken = generateToken();
 
-  await users.update(user.id, {
-    magic_link_token: magicLinkToken,
-    magic_link_sent_at: new Date(),
-  });
+  await db
+    .update(schema.users)
+    .set({
+      magic_link_sent_at: new Date(),
+      magic_link_token: magicLinkToken,
+      updated_at: sql`now()`,
+    })
+    .where(eq(schema.users.id, user.id));
 
   await sendMail({
     to: [user.email],
@@ -487,37 +478,6 @@ export const sendSendMagicLinkEmail = async (
   });
 
   return true;
-};
-
-export const loginWithMagicLink = async (token: string): Promise<User> => {
-  // check that token as not the default empty value as it will match all users
-  if (!token) {
-    throw new InvalidMagicLinkError();
-  }
-
-  const user = await users.findByMagicLinkToken(token);
-
-  if (isEmpty(user)) {
-    track("magic_link.token.not_found", {});
-    throw new InvalidMagicLinkError();
-  }
-
-  const isTokenExpired = isExpired(
-    user.magic_link_sent_at,
-    MAGIC_LINK_TOKEN_EXPIRATION_DURATION_IN_MINUTES,
-  );
-
-  if (isTokenExpired) {
-    track("magic_link.token.expired", { user_id: user.id });
-    throw new InvalidMagicLinkError();
-  }
-
-  return await users.update(user.id, {
-    email_verified: true,
-    email_verified_at: new Date(),
-    magic_link_token: null,
-    magic_link_sent_at: null,
-  });
 };
 
 export const sendResetPasswordEmail = async (
@@ -533,10 +493,14 @@ export const sendResetPasswordEmail = async (
 
   const resetPasswordToken = await generateToken();
 
-  await users.update(user.id, {
-    reset_password_token: resetPasswordToken,
-    reset_password_sent_at: new Date(),
-  });
+  await db
+    .update(schema.users)
+    .set({
+      reset_password_sent_at: new Date(),
+      reset_password_token: resetPasswordToken,
+      updated_at: sql`now()`,
+    })
+    .where(eq(schema.users.id, user.id));
 
   await sendMail({
     to: [user.email],
@@ -615,10 +579,17 @@ export const updatePersonalInformationsForRegistration = async (
   const isUserVerified = await franceconnect_userinfo.find(userId);
   const names = isUserVerified ? {} : { given_name, family_name };
 
-  return users.update(userId, {
-    ...names,
-    job,
-  });
+  const [user] = await db
+    .update(schema.users)
+    .set({
+      ...names,
+      job,
+      updated_at: sql`now()`,
+    })
+    .where(eq(schema.users.id, userId))
+    .returning();
+
+  return user;
 };
 
 export async function hasValidFranceConnectIdentity(userId: number) {
