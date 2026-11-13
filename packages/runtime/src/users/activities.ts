@@ -12,6 +12,14 @@ const userInformation = z.object({
 });
 
 export const userActivities = {
+  "user.email_verified": z.object({
+    inputs: z.object({
+      source: z.enum(["magic_link", "verify_email"]),
+    }),
+    outcome: z.object({
+      previous: z.object({ email_verified: z.boolean() }),
+    }),
+  }),
   "user.force_2fa_disabled": z.object({
     inputs: z.object({
       reason: z.enum([
