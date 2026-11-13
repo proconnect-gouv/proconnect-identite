@@ -1,3 +1,4 @@
+import { acrFromAssuranceLevels } from "@proconnect-gouv/proconnect.identite/services/assurance-levels";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { AssertionError } from "node:assert";
@@ -19,7 +20,6 @@ import {
   setSiretHintInUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
 import {
-  acrFromAssuranceLevels,
   certificationDirigeantRequested,
   isAcrSatisfied,
   isThereAnyRequestedAcr,
