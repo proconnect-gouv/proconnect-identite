@@ -10,6 +10,7 @@ import { createContext } from "@proconnect-gouv/proconnect.identite/connectors";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { franceconnectConnected } from "../managers/franceconnect-connected";
 import { moderationOpened } from "../managers/moderation-opened";
+import { userEmailVerified } from "../managers/user-email-verified";
 import { userForce2faDisabled } from "../managers/user-force-2fa-disabled";
 import { userForce2faEnabled } from "../managers/user-force-2fa-enabled";
 import { userInfoChanged } from "../managers/user-info-changed";
@@ -86,6 +87,7 @@ const identiteProcedures = {
   franceconnect: { connected: franceconnectConnected },
   moderation: { opened: moderationOpened },
   user: {
+    email_verified: userEmailVerified,
     force_2fa_disabled: userForce2faDisabled,
     force_2fa_enabled: userForce2faEnabled,
     info_changed: userInfoChanged,
