@@ -1,15 +1,18 @@
-//
-
-import { createIdentiteRuntime } from "#src/runtime";
-import { createTestDatabase, readActivityLogs } from "#testing";
+import { PGlite } from "@electric-sql/pglite";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
+import { migrate } from "@proconnect-gouv/proconnect.identite.database/pglite/migrator";
+import { createIdentiteRuntime } from "@proconnect-gouv/proconnect.identite.runtime";
+import { sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/pglite";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { userInfoChanged } from "./user-info-changed";
 
-//
-
-async function setup() {
-  const db = await createTestDatabase();
+async function given() {
+  const pg = new PGlite();
+  await migrate(pg);
+  const db = drizzle(pg, { schema });
+  await db.execute(sql`SET search_path TO public`);
   await db.insert(schema.users).values({
     created_at: "4444-04-04",
     email: "jean.valjean@republic.fr",
@@ -18,31 +21,34 @@ async function setup() {
   });
 
   return {
-    db,
-    runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
-      type: "user",
-      user_id: 1,
-    }),
+    journal: () =>
+      db.query.activity_logs.findMany({
+        columns: { created_at: false, id: false },
+        orderBy: (table, { asc }) => asc(table.id),
+      }),
+    runtime: createIdentiteRuntime({
+      app: "proconnect-identite",
+      db,
+      procedures: { user: { info_changed: userInfoChanged } },
+    }).as({ type: "user", user_id: 1 }),
   };
 }
 
-describe("updatePersonalInformations", () => {
+describe("user.info_changed", () => {
   it("✅ changes the profile and journals the previous values", async () => {
-    const { db, runtime } = await setup();
+    const { journal, runtime } = await given();
 
-    const outcome = await runtime.updatePersonalInformations({
-      information: {
-        family_name: "Valjean",
-        given_name: "Jean",
-        job: "Maire",
-        phone_number: null,
-      },
+    const outcome = await runtime.user.info_changed.mutate({
+      family_name: "Valjean",
+      given_name: "Jean",
+      job: "Maire",
+      phone_number: null,
       user_id: 1,
     });
 
     assert.deepEqual(outcome, {
-      kind: "info_changed",
       activity_id: 1,
+      kind: "info_changed",
       next: {
         family_name: "Valjean",
         given_name: "Jean",
@@ -56,7 +62,7 @@ describe("updatePersonalInformations", () => {
         phone_number: null,
       },
     });
-    assert.deepEqual(await readActivityLogs(db), [
+    assert.deepEqual(await journal(), [
       {
         action: "user.info_changed",
         actor_ref: "1",
@@ -88,26 +94,26 @@ describe("updatePersonalInformations", () => {
   });
 
   it("❎ writes nothing when the profile does not change", async () => {
-    const { db, runtime } = await setup();
+    const { journal, runtime } = await given();
 
-    const outcome = await runtime.updatePersonalInformations({
-      information: { given_name: null },
+    const outcome = await runtime.user.info_changed.mutate({
+      given_name: null,
       user_id: 1,
     });
 
     assert.deepEqual(outcome, { kind: "info_unchanged", user_id: 1 });
-    assert.deepEqual(await readActivityLogs(db), []);
+    assert.deepEqual(await journal(), []);
   });
 
   it("❎ returns user_not_found and journals nothing", async () => {
-    const { db, runtime } = await setup();
+    const { journal, runtime } = await given();
 
-    const outcome = await runtime.updatePersonalInformations({
-      information: { given_name: "Jean" },
+    const outcome = await runtime.user.info_changed.mutate({
+      given_name: "Jean",
       user_id: 42,
     });
 
     assert.deepEqual(outcome, { kind: "user_not_found", user_id: 42 });
-    assert.deepEqual(await readActivityLogs(db), []);
+    assert.deepEqual(await journal(), []);
   });
 });

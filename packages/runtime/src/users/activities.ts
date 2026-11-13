@@ -13,7 +13,7 @@ const userInformation = z.object({
 
 export const userActivities = {
   "user.info_changed": z.object({
-    inputs: userInformation,
+    inputs: userInformation.partial(),
     outcome: z.object({
       previous: userInformation,
     }),
