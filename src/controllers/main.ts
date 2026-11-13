@@ -118,8 +118,11 @@ export const postPersonalInformationsController = async (
 
     const outcome = await runtime
       .as({ type: "user", user_id: userId })
-      .updatePersonalInformations({
-        information: { family_name, given_name, job, phone_number },
+      .user.info_changed.mutate({
+        family_name,
+        given_name,
+        job,
+        phone_number,
         user_id: userId,
       });
 

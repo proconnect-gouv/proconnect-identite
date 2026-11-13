@@ -1,6 +1,5 @@
 //
 
-import type { IdentiteDatabase } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
 import { createTestDatabase, readActivityLogs } from "#testing";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
@@ -9,7 +8,7 @@ import { describe, it } from "node:test";
 
 //
 
-async function setup() {
+async function given() {
   const db = await createTestDatabase();
 
   await db.insert(schema.users).values([
@@ -70,7 +69,15 @@ async function setup() {
   ]);
 
   return {
-    db,
+    journal: () => readActivityLogs(db),
+    remainingUsers: () =>
+      db.query.users.findMany({
+        columns: { id: true },
+        orderBy: (table, { asc }) => asc(table.id),
+        with: {
+          users_organizations: { columns: { organization_id: true } },
+        },
+      }),
     runtime: createIdentiteRuntime({ app: "proconnect-identite", db }).as({
       type: "user",
       user_id: 1,
@@ -78,11 +85,11 @@ async function setup() {
   };
 }
 
-describe("deleteUser", () => {
+describe("user.deleted", () => {
   it("✅ deletes the account and journals who it was and which organizations it left", async () => {
-    const { db, runtime } = await setup();
+    const { journal, remainingUsers, runtime } = await given();
 
-    const outcome = await runtime.deleteUser({ user_id: 1 });
+    const outcome = await runtime.user.deleted.mutate({ user_id: 1 });
 
     const previous = {
       email: "jean.valjean@republic.fr",
@@ -97,13 +104,15 @@ describe("deleteUser", () => {
         { is_external: true, organization_id: 2, verification_type: "domain" },
       ],
     };
-    assert.equal(outcome.kind, "user_deleted");
-    if (outcome.kind !== "user_deleted") return;
-    assert.deepEqual(outcome.previous, previous);
-    assert.deepEqual(await remainingUsers(db), [
+    assert.deepEqual(outcome, {
+      activity_id: 1,
+      kind: "user_deleted",
+      previous,
+    });
+    assert.deepEqual(await remainingUsers(), [
       { id: 2, users_organizations: [{ organization_id: 1 }] },
     ]);
-    assert.deepEqual(await readActivityLogs(db), [
+    assert.deepEqual(await journal(), [
       {
         action: "user.deleted",
         actor_ref: "1",
@@ -120,23 +129,13 @@ describe("deleteUser", () => {
   });
 
   it("❎ returns user_not_found and journals nothing for a missing account", async () => {
-    const { db, runtime } = await setup();
-    const before = await remainingUsers(db);
+    const { journal, remainingUsers, runtime } = await given();
+    const before = await remainingUsers();
 
-    const outcome = await runtime.deleteUser({ user_id: 3 });
+    const outcome = await runtime.user.deleted.mutate({ user_id: 3 });
 
     assert.deepEqual(outcome, { kind: "user_not_found", user_id: 3 });
-    assert.deepEqual(await remainingUsers(db), before);
-    assert.deepEqual(await readActivityLogs(db), []);
+    assert.deepEqual(await remainingUsers(), before);
+    assert.deepEqual(await journal(), []);
   });
 });
-
-function remainingUsers(db: IdentiteDatabase) {
-  return db.query.users.findMany({
-    columns: { id: true },
-    orderBy: (table, { asc }) => asc(table.id),
-    with: {
-      users_organizations: { columns: { organization_id: true } },
-    },
-  });
-}

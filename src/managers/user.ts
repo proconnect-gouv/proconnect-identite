@@ -154,11 +154,13 @@ export const signupWithPassword = async (
 
   if (!isEmpty(user)) {
     // force email verification after setting a password for the first time for an existing user
-    await runtime.as({ type: "user", user_id: user.id }).changePassword({
-      encrypted_password: hashedPassword,
-      source: "signup",
-      user_id: user.id,
-    });
+    await runtime
+      .as({ type: "user", user_id: user.id })
+      .user.password_changed.mutate({
+        encrypted_password: hashedPassword,
+        source: "signup",
+        user_id: user.id,
+      });
 
     return { ...user, email_verified: false };
   }
@@ -581,11 +583,13 @@ export const changePassword = async (token: string, password: string) => {
 
   const hashedPassword = await hashPassword(password);
 
-  await runtime.as({ type: "user", user_id: user.id }).changePassword({
-    encrypted_password: hashedPassword,
-    source: "reset_password",
-    user_id: user.id,
-  });
+  await runtime
+    .as({ type: "user", user_id: user.id })
+    .user.password_changed.mutate({
+      encrypted_password: hashedPassword,
+      source: "reset_password",
+      user_id: user.id,
+    });
 
   await sendMail({
     to: [user.email],
@@ -639,7 +643,7 @@ export async function lastFranceConnectIdentityUpdate(userId: number) {
 export async function disconnectFranceConnectIdentity(userId: number) {
   return await runtime
     .as({ type: "user", user_id: userId })
-    .disconnectFranceConnect({ user_id: userId });
+    .franceconnect.disconnected.mutate({ user_id: userId });
 }
 
 export async function needsFranceConnectIdentityRenewal(userId: number) {
@@ -652,7 +656,7 @@ export async function updateFranceConnectUserInfo(
 ) {
   const outcome = await runtime
     .as({ type: "user", user_id: userId })
-    .connectFranceConnect({ user_id: userId, user_info: userInfo });
+    .franceconnect.connected.mutate({ user_id: userId, user_info: userInfo });
 
   if (outcome.kind === "user_not_found") {
     throw new NotFoundError();

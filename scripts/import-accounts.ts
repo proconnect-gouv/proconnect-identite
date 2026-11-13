@@ -199,7 +199,8 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             if (!some(usersOrganizations, ["id", organization.id])) {
               await runtime
                 .as({ type: "app", job: "script.import_accounts" })
-                .addMembership({
+                .member.joined.mutate({
+                  is_external: false,
                   organization_id: organization.id,
                   user_id: user.id,
                   verification_type:

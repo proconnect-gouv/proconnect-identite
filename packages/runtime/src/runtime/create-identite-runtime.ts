@@ -1,32 +1,27 @@
 //
 
-import type {
-  ActivityContexts,
-  ActivityOf,
-  ActivityTargets,
-  Actor,
-  ContextMap,
-  RuntimeContext,
+import {
+  activityContextSchemas,
+  type ActivityContexts,
+  type ActivityOf,
+  type ActivityTargets,
+  type Actor,
+  type ContextMap,
+  type RuntimeContext,
 } from "#src/activity";
 import type { IdentiteTransaction } from "#src/database";
 import { changeEmailDomainVerificationFactory } from "#src/domains";
-import {
-  connectFranceConnectFactory,
-  disconnectFranceConnectFactory,
-} from "#src/franceconnect";
 import { insertActivity } from "#src/journal";
 import {
-  addMembershipFactory,
-  removeMembershipFactory,
-  updateMembershipFactory,
-} from "#src/memberships";
-import { openModerationFactory } from "#src/moderations";
-import {
-  changePasswordFactory,
-  deleteUserFactory,
-  resetMfaFactory,
-  updatePersonalInformationsFactory,
-} from "#src/users";
+  assertPublishedSchemas,
+  bindProcedures,
+  mergeProcedures,
+  type ContextSchemasOf,
+  type Disjoint,
+  type Procedures,
+} from "#src/procedure";
+import { runtimeProcedures } from "#src/procedures";
+import { resetMfaFactory } from "#src/users";
 
 //
 
@@ -34,37 +29,34 @@ export function createIdentiteRuntime<
   OwnContexts extends ContextMap & {
     [Action in keyof ActivityContexts]?: never;
   } = {},
->({ app, db }: Omit<RuntimeContext, "actor">) {
+  AppProcedures extends Procedures = {},
+>({
+  app,
+  db,
+  procedures,
+}: Omit<RuntimeContext, "actor"> & {
+  procedures?: AppProcedures &
+    Disjoint<
+      ContextSchemasOf<typeof runtimeProcedures>,
+      ContextSchemasOf<AppProcedures>
+    >;
+}) {
+  assertPublishedSchemas(procedures, activityContextSchemas);
+  const merged = mergeProcedures(runtimeProcedures, procedures);
   return {
     as(actor: Actor) {
       return {
-        addMembership: addMembershipFactory({ actor, app, db }),
+        ...bindProcedures(merged, { actor, app, db }),
         changeEmailDomainVerification: changeEmailDomainVerificationFactory({
           actor,
           app,
           db,
         }),
-        changePassword: changePasswordFactory({ actor, app, db }),
-        connectFranceConnect: connectFranceConnectFactory({ actor, app, db }),
-        deleteUser: deleteUserFactory({ actor, app, db }),
-        disconnectFranceConnect: disconnectFranceConnectFactory({
-          actor,
-          app,
-          db,
-        }),
-        openModeration: openModerationFactory({ actor, app, db }),
-        removeMembership: removeMembershipFactory({ actor, app, db }),
         record: (
           tx: IdentiteTransaction,
           activity: ActivityOf<OwnContexts> & ActivityTargets,
         ) => insertActivity<OwnContexts>(tx, { ...activity, actor, app }),
         resetMfa: resetMfaFactory({ actor, app, db }),
-        updateMembership: updateMembershipFactory({ actor, app, db }),
-        updatePersonalInformations: updatePersonalInformationsFactory({
-          actor,
-          app,
-          db,
-        }),
       };
     },
   };

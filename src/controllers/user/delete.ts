@@ -17,7 +17,7 @@ export const postDeleteUserController = async (
 
     const deletion = await runtime
       .as({ type: "user", user_id })
-      .deleteUser({ user_id });
+      .user.deleted.mutate({ user_id });
 
     await destroyAuthenticatedSession(req);
 

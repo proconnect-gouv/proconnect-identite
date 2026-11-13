@@ -70,6 +70,7 @@ import { getOrganizationSuggestions as getOrganizationSuggestionsWith } from "./
 const { email_domains, moderations, organizations, users } = context.repository;
 
 async function addMembership({
+  is_external = false,
   user_id,
   ...input
 }: InsertUserOrganizationLink): Promise<{
@@ -78,7 +79,7 @@ async function addMembership({
 }> {
   const outcome = await runtime
     .as({ type: "user", user_id })
-    .addMembership({ user_id, ...input });
+    .member.joined.mutate({ is_external, user_id, ...input });
 
   return match(outcome)
     .with({ kind: "member_joined" }, ({ membership }) => membership)
@@ -443,9 +444,9 @@ export const joinOrganization = async ({
       verification_type: EmailDomainVerificationEnum.enum.not_verified_yet,
     })
   ) {
-    await runtime.as({ type: "user", user_id }).openModeration({
+    await runtime.as({ type: "user", user_id }).moderation.opened.mutate({
       organization_id,
-      sp_name,
+      sp_name: sp_name ?? null,
       ticket_id: null,
       type: ModerationTypeSchema.enum.non_verified_domain,
       user_id,
@@ -519,9 +520,9 @@ export const createPendingModeration = async ({
 
   const { moderation } = await runtime
     .as({ type: "user", user_id })
-    .openModeration({
+    .moderation.opened.mutate({
       organization_id,
-      sp_name,
+      sp_name: sp_name ?? null,
       ticket_id,
       type: ModerationTypeSchema.enum.organization_join_block,
       user_id,
