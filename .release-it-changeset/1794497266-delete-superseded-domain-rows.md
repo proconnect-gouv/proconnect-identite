@@ -1,0 +1,1 @@
+ℹ️ Un domaine d’organisation ne garde plus une ligne périmée à côté de son statut actuel : « en attente » disparaît devant « vérifié », « externe » devant « courrier Trackdéchets », et entre « contact officiel » et « vérifié » seul le plus récent reste.
