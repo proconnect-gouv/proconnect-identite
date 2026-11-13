@@ -13,7 +13,6 @@ import type { IdentiteTransaction } from "#src/database";
 import { changeEmailDomainVerificationFactory } from "#src/domains";
 import { insertActivity } from "#src/journal";
 import { addMembershipFactory } from "#src/memberships";
-import { openModerationFactory } from "#src/moderations";
 import {
   assertPublishedSchemas,
   bindProcedures,
@@ -55,7 +54,6 @@ export function createIdentiteRuntime<
           app,
           db,
         }),
-        openModeration: openModerationFactory({ actor, app, db }),
         record: (
           tx: IdentiteTransaction,
           activity: ActivityOf<OwnContexts> & ActivityTargets,
