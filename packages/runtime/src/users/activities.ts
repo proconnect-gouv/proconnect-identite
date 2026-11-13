@@ -47,6 +47,20 @@ export const userActivities = {
       }),
     }),
   }),
+  "user.passkey_added": z.object({
+    inputs: z.object({
+      credential_id: z.string(),
+      display_name: z.string(),
+    }),
+    outcome: z.object({}),
+  }),
+  "user.passkey_removed": z.object({
+    inputs: z.object({
+      credential_id: z.string().nullable(),
+      source: z.enum(["account_recovery", "self"]),
+    }),
+    outcome: z.object({ removed: z.number() }),
+  }),
   "user.password_changed": z.object({
     inputs: z.object({
       source: z.enum(["reset_password", "signup"]),

@@ -1,3 +1,4 @@
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import {
   NotFoundError,
   UserNotFoundError,
@@ -15,6 +16,7 @@ import {
   verifyRegistrationResponse,
   type WebAuthnCredential,
 } from "@simplewebauthn/server";
+import { eq, sql } from "drizzle-orm";
 import { isEmpty } from "lodash-es";
 import { AssertionError } from "node:assert";
 import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
@@ -22,7 +24,7 @@ import {
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, db, runtime } from "../connectors/context";
 import { getAuthenticatorFriendlyName } from "../connectors/github-passkey-authenticator-aaguids";
 import { formatDate } from "../services/date-format";
 import { logger, track } from "../services/log";
@@ -102,9 +104,15 @@ export const deleteUserAuthenticator = async (
     throw new NotFoundError();
   }
 
-  const hasBeenDeleted = await authenticators.delete(user.id, credential_id);
+  const { kind } = await runtime
+    .as({ type: "user", user_id: user.id })
+    .user.passkey_removed.mutate({
+      credential_id,
+      source: "self",
+      user_id: user.id,
+    });
 
-  if (!hasBeenDeleted) {
+  if (kind === "passkey_not_found") {
     throw new NotFoundError();
   }
 
@@ -116,7 +124,11 @@ export const deleteUserAuthenticator = async (
 };
 
 export const deleteAllUserAuthenticators = async (user_id: number) => {
-  await authenticators.deleteAllByUserId(user_id);
+  await runtime.as({ type: "user", user_id }).user.passkey_removed.mutate({
+    credential_id: null,
+    source: "account_recovery",
+    user_id,
+  });
 
   if (!(await is2FACapable(user_id))) {
     await disableForce2fa(user_id, "account_recovery");
@@ -160,9 +172,14 @@ export const getRegistrationOptions = async (email: string) => {
   });
 
   // Remember the challenge for this user
-  const updatedUser = await users.update(user.id, {
-    current_challenge: registrationOptions.challenge,
-  });
+  const [updatedUser] = await db
+    .update(schema.users)
+    .set({
+      current_challenge: registrationOptions.challenge,
+      updated_at: sql`now()`,
+    })
+    .where(eq(schema.users.id, user.id))
+    .returning();
 
   return { updatedUser, registrationOptions };
 };
@@ -182,7 +199,11 @@ export const verifyRegistration = async ({
 
   const current_challenge = user.current_challenge;
   // challenge must only be used once
-  const updatedUser = await users.update(user.id, { current_challenge: null });
+  const [updatedUser] = await db
+    .update(schema.users)
+    .set({ current_challenge: null, updated_at: sql`now()` })
+    .where(eq(schema.users.id, user.id))
+    .returning();
 
   let verification: VerifiedRegistrationResponse;
   try {
@@ -223,21 +244,25 @@ export const verifyRegistration = async ({
   const display_name = friendlyName || `Clé ${credential_id.substring(0, 10)}`;
 
   // Save the authenticator info so that we can get it by user ID later
-  await authenticators.create({
-    user_id: user.id,
-    authenticator: {
+  await runtime
+    .as({ type: "user", user_id: user.id })
+    .user.passkey_added.mutate({
       credential_id,
-      credential_public_key,
-      counter,
-      credential_device_type,
-      credential_backed_up,
-      transports,
       display_name,
-      last_used_at: null,
-      usage_count: 0,
-      user_verified,
-    },
-  });
+      user_id: user.id,
+      authenticator: {
+        credential_id,
+        credential_public_key,
+        counter,
+        credential_device_type,
+        credential_backed_up,
+        transports: transports ?? null,
+        display_name,
+        last_used_at: null,
+        usage_count: 0,
+        user_verified,
+      },
+    });
 
   return { userVerified: user_verified, updatedUser, key_name: display_name };
 };
@@ -271,9 +296,14 @@ export const getAuthenticationOptions = async (
   });
 
   // Remember the challenge for this user
-  const updatedUser = await users.update(user.id, {
-    current_challenge: authenticationOptions.challenge,
-  });
+  const [updatedUser] = await db
+    .update(schema.users)
+    .set({
+      current_challenge: authenticationOptions.challenge,
+      updated_at: sql`now()`,
+    })
+    .where(eq(schema.users.id, user.id))
+    .returning();
 
   return { updatedUser, authenticationOptions };
 };
@@ -304,7 +334,10 @@ export const verifyAuthentication = async ({
 
   const current_challenge = user.current_challenge;
   // challenge must only be used once
-  await users.update(user.id, { current_challenge: null });
+  await db
+    .update(schema.users)
+    .set({ current_challenge: null, updated_at: sql`now()` })
+    .where(eq(schema.users.id, user.id));
 
   // Retrieve an authenticator from the DB that should match the `id` in the returned credential
   const authenticator = await authenticators.find(user.id, response.id);
@@ -384,12 +417,15 @@ export const verifyAuthentication = async ({
     userVerified,
   } = authenticationInfo;
 
-  await authenticators.update(newCredentialID, {
-    // for some reason, newCounter is not incremented in authenticationInfo
-    counter: newCounter,
-    last_used_at: new Date(),
-    usage_count: authenticator.usage_count + 1,
-  });
+  // for some reason, newCounter is not incremented in authenticationInfo
+  await db
+    .update(schema.authenticators)
+    .set({
+      counter: newCounter,
+      last_used_at: sql`now()`,
+      usage_count: authenticator.usage_count + 1,
+    })
+    .where(eq(schema.authenticators.credential_id, newCredentialID));
 
   return { userVerified, user };
 };

@@ -13,6 +13,8 @@ import { moderationOpened } from "../managers/moderation-opened";
 import { userForce2faDisabled } from "../managers/user-force-2fa-disabled";
 import { userForce2faEnabled } from "../managers/user-force-2fa-enabled";
 import { userInfoChanged } from "../managers/user-info-changed";
+import { userPasskeyAdded } from "../managers/user-passkey-added";
+import { userPasskeyRemoved } from "../managers/user-passkey-removed";
 import { userPasswordChanged } from "../managers/user-password-changed";
 import { instrument } from "../services/log";
 import { ApiEntrepriseClient } from "./api-entreprise";
@@ -89,6 +91,8 @@ const identiteProcedures = {
     force_2fa_disabled: userForce2faDisabled,
     force_2fa_enabled: userForce2faEnabled,
     info_changed: userInfoChanged,
+    passkey_added: userPasskeyAdded,
+    passkey_removed: userPasskeyRemoved,
     password_changed: userPasswordChanged,
   },
 };
