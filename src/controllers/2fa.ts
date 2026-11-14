@@ -1,16 +1,16 @@
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
+import { match } from "ts-pattern";
 import { z } from "zod";
 import {
   InvalidRecoveryWordsError,
   UserIsNot2faCapableError,
 } from "../config/errors";
-import { disableForce2fa, enableForce2fa } from "../managers/2fa";
+import { context, runtime } from "../connectors/context";
 import { isUserInAdministrationEtat } from "../managers/organization/main";
 import {
   createRecoveryWordsForUser,
   hasRecoveryWordsConfiguredForUser,
-  recoverUserAccount,
   verifyRecoveryWordsForUser,
 } from "../managers/recovery-words";
 import {
@@ -213,24 +213,45 @@ export const postSetForce2faController = async (
     const schema = z.object({ force2fa: z.enum(["enable", "disable"]) });
     const { force2fa } = await schema.parseAsync(req.body);
 
-    let updatedUser;
-
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     if (force2fa === "enable") {
-      updatedUser = await enableForce2fa(user_id);
+      const outcome = await runtime
+        .as({ type: "user", user_id })
+        .user.force_2fa_enabled.mutate({ user_id });
+
+      const updatedUser = await match(outcome)
+        .with({ kind: "force_2fa_enabled" }, ({ user }) => user)
+        .with({ kind: "force_2fa_unchanged" }, () =>
+          context.repository.users.getById(user_id),
+        )
+        .with({ kind: "not_2fa_capable" }, () => {
+          throw new UserIsNot2faCapableError();
+        })
+        .exhaustive();
+
       updateUserInAuthenticatedSession(req, updatedUser);
       return res.redirect(
         `/connection-and-account?notification=2fa_successfully_enabled`,
       );
-    } else {
-      updatedUser = await disableForce2fa(user_id);
-      updateUserInAuthenticatedSession(req, updatedUser);
-      await sendDisable2faMail({ user_id });
-      return res.redirect(
-        `/connection-and-account?notification=2fa_successfully_disabled`,
-      );
     }
+
+    const outcome = await runtime
+      .as({ type: "user", user_id })
+      .user.force_2fa_disabled.mutate({ reason: "user_choice", user_id });
+
+    const updatedUser = await match(outcome)
+      .with({ kind: "force_2fa_disabled" }, ({ user }) => user)
+      .with({ kind: "force_2fa_unchanged" }, () =>
+        context.repository.users.getById(user_id),
+      )
+      .exhaustive();
+
+    updateUserInAuthenticatedSession(req, updatedUser);
+    await sendDisable2faMail({ user_id });
+    return res.redirect(
+      `/connection-and-account?notification=2fa_successfully_disabled`,
+    );
   } catch (error) {
     if (error instanceof UserIsNot2faCapableError) {
       return next(new HttpErrors.UnprocessableEntity());
@@ -377,7 +398,16 @@ export const postSignInWithRecoveryWordsController = async (
 
     const { id: user_id, email } = getUserFromAuthenticatedSession(req);
 
-    await recoverUserAccount(user_id, recovery_words);
+    const outcome = await runtime
+      .as({ type: "user", user_id })
+      .user.account_recovered.mutate({ recovery_words, user_id });
+
+    match(outcome)
+      .with({ kind: "account_recovered" }, () => undefined)
+      .with({ kind: "invalid_recovery_words" }, () => {
+        throw new InvalidRecoveryWordsError();
+      })
+      .exhaustive();
 
     // The recovered account has no second factor anymore: invalidate the
     // previous session id and start a fresh unauthenticated session.

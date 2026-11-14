@@ -4,11 +4,7 @@ import qrcode from "qrcode";
 import { APPLICATION_NAME, SYMMETRIC_ENCRYPTION_KEY } from "../config/env";
 import { InvalidTotpTokenError } from "../config/errors";
 import { context } from "../connectors/context";
-import {
-  decryptSymmetric,
-  encryptSymmetric,
-} from "../services/symmetric-encryption";
-import { disableForce2fa, is2FACapable } from "./2fa";
+import { decryptSymmetric } from "../services/symmetric-encryption";
 
 const { users } = context.repository;
 
@@ -46,56 +42,6 @@ export const generateTotpRegistrationOptions = async (
   });
 
   return { totpKey, humanReadableTotpKey, qrCodeDataUrl };
-};
-
-export const confirmTotpRegistration = async (
-  user_id: number,
-  temporaryTotpKey: string | undefined,
-  totpToken: string,
-) => {
-  // ASSERTION: user exists
-  await users.getById(user_id);
-
-  if (!temporaryTotpKey) {
-    throw new InvalidTotpTokenError();
-  }
-
-  const totp = new TOTP({
-    algorithm: "SHA1",
-    digits: 6,
-    period: 30,
-    secret: temporaryTotpKey,
-  });
-
-  const delta = totp.validate({ token: totpToken, window: 2 });
-  if (delta === null) {
-    throw new InvalidTotpTokenError();
-  }
-
-  const encrypted_totp_key = encryptSymmetric(
-    SYMMETRIC_ENCRYPTION_KEY,
-    temporaryTotpKey,
-  );
-
-  return await users.update(user_id, {
-    encrypted_totp_key,
-    totp_key_verified_at: new Date(),
-  });
-};
-
-export const deleteTotpConfiguration = async (user_id: number) => {
-  let user = await users.getById(user_id);
-
-  user = await users.update(user_id, {
-    encrypted_totp_key: null,
-    totp_key_verified_at: null,
-  });
-
-  if (!(await is2FACapable(user_id))) {
-    user = await disableForce2fa(user_id);
-  }
-
-  return user;
 };
 
 export const isTotpConfiguredForUser = async (user_id: number) => {

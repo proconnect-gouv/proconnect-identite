@@ -5,14 +5,9 @@ import {
   validatePassword,
 } from "@proconnect-gouv/proconnect.core/security";
 import type { Request } from "express";
-import {
-  InvalidRecoveryWordsError,
-  UserIsNot2faCapableError,
-} from "../config/errors";
-import { context } from "../connectors/context";
-import { is2FACapable } from "./2fa";
-import { deleteTotpConfiguration } from "./totp";
-import { deleteAllUserAuthenticators } from "./webauthn";
+import { match } from "ts-pattern";
+import { UserIsNot2faCapableError } from "../config/errors";
+import { context, runtime } from "../connectors/context";
 
 export const hasRecoveryWordsConfiguredForUser = async (user_id: number) => {
   const recoveryWords =
@@ -33,22 +28,24 @@ export const getRecoveryWordsCreatedAt = async (user_id: number) => {
 };
 
 export const createRecoveryWordsForUser = async (user_id: number) => {
-  if (!(await is2FACapable(user_id))) {
-    throw new UserIsNot2faCapableError();
-  }
-
   const recoveryWords = generateDicewarePhrase(6);
   const hashedRecoveryWords = await hashPassword(
     normalizeDicewareWords(recoveryWords),
   );
 
-  await context.repository.recovery_words.deleteByUserId(user_id);
-  await context.repository.recovery_words.create({
-    user_id,
-    hashed_words: hashedRecoveryWords,
-  });
+  const outcome = await runtime
+    .as({ type: "user", user_id })
+    .user.recovery_words_regenerated.mutate({
+      hashed_words: hashedRecoveryWords,
+      user_id,
+    });
 
-  return recoveryWords;
+  return match(outcome)
+    .with({ kind: "not_2fa_capable" }, () => {
+      throw new UserIsNot2faCapableError();
+    })
+    .with({ kind: "recovery_words_regenerated" }, () => recoveryWords)
+    .exhaustive();
 };
 
 export const verifyRecoveryWordsForUser = async (
@@ -59,19 +56,4 @@ export const verifyRecoveryWordsForUser = async (
     await context.repository.recovery_words.findByUserId(user_id);
 
   return validatePassword(input, recoveryWords?.hashed_words ?? null);
-};
-
-export const recoverUserAccount = async (user_id: number, input: string) => {
-  const isValid = await verifyRecoveryWordsForUser(user_id, input);
-  if (!isValid) {
-    throw new InvalidRecoveryWordsError();
-  }
-
-  await deleteAllUserAuthenticators(user_id);
-
-  const updatedUser = await deleteTotpConfiguration(user_id);
-
-  await context.repository.recovery_words.deleteByUserId(user_id);
-
-  return updatedUser;
 };

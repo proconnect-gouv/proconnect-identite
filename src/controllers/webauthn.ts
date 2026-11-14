@@ -5,12 +5,14 @@ import type {
 } from "@simplewebauthn/server";
 import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
+import { match } from "ts-pattern";
 import { z, ZodError } from "zod/v4";
 import {
   UserNotLoggedInError,
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
+import { runtime } from "../connectors/context";
 import {
   addAuthenticationMethodReferenceInSession,
   createAuthenticatedSession,
@@ -23,8 +25,8 @@ import {
   sendDeleteAccessKeyMail,
 } from "../managers/user";
 import {
-  deleteUserAuthenticator,
   getAuthenticationOptions,
+  getAuthenticatorDisplayName,
   getRegistrationOptions,
   verifyAuthentication,
   verifyRegistration,
@@ -42,9 +44,24 @@ export const deletePasskeyController = async (
     });
     const { credential_id } = schema.parse(req.params);
 
-    const { email, id: user_id } = getUserFromAuthenticatedSession(req);
+    const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const key_name = await deleteUserAuthenticator(email, credential_id);
+    const outcome = await runtime
+      .as({ type: "user", user_id })
+      .user.passkey_removed.mutate({
+        credential_id,
+        source: "self",
+        user_id,
+      });
+
+    const key_name = match(outcome)
+      .with({ kind: "passkey_not_found" }, () => {
+        throw new NotFoundError();
+      })
+      .with({ kind: "passkey_removed" }, ({ deleted }) =>
+        getAuthenticatorDisplayName(deleted[0]),
+      )
+      .exhaustive();
 
     await sendDeleteAccessKeyMail({
       user_id,

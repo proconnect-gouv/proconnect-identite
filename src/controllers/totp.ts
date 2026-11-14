@@ -1,7 +1,9 @@
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { NextFunction, Request, Response } from "express";
+import { match } from "ts-pattern";
 import { z } from "zod";
 import { InvalidTotpTokenError } from "../config/errors";
+import { runtime } from "../connectors/context";
 import {
   addAuthenticationMethodReferenceInSession,
   getUserFromAuthenticatedSession,
@@ -14,8 +16,6 @@ import {
 } from "../managers/session/temporary-totp-key";
 import {
   authenticateWithTotp,
-  confirmTotpRegistration,
-  deleteTotpConfiguration,
   generateTotpRegistrationOptions,
   isTotpConfiguredForUser,
 } from "../managers/totp";
@@ -89,11 +89,20 @@ export const postTotpConfigurationMiddlewareFactory =
         throw new NotFoundError();
       }
 
-      const updatedUser = await confirmTotpRegistration(
-        user_id,
-        temporaryTotpKey,
-        totpToken,
-      );
+      const outcome = await runtime
+        .as({ type: "user", user_id })
+        .user.totp_added.mutate({
+          temporary_totp_key: temporaryTotpKey,
+          totp_token: totpToken,
+          user_id,
+        });
+
+      const updatedUser = match(outcome)
+        .with({ kind: "invalid_totp_token" }, () => {
+          throw new InvalidTotpTokenError();
+        })
+        .with({ kind: "totp_added" }, ({ user }) => user)
+        .exhaustive();
 
       deleteTemporaryTotpKey(req);
       addAuthenticationMethodReferenceInSession(req, res, updatedUser, "totp");
@@ -128,7 +137,14 @@ export const postDeleteTotpConfigurationController = async (
   try {
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await deleteTotpConfiguration(user_id);
+    const outcome = await runtime
+      .as({ type: "user", user_id })
+      .user.totp_removed.mutate({ source: "self", user_id });
+
+    const updatedUser = match(outcome)
+      .with({ kind: "totp_not_configured" }, ({ user }) => user)
+      .with({ kind: "totp_removed" }, ({ user }) => user)
+      .exhaustive();
 
     updateUserInAuthenticatedSession(req, updatedUser);
 

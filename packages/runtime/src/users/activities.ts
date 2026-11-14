@@ -11,7 +11,28 @@ const userInformation = z.object({
   phone_number: z.string().nullable(),
 });
 
+const secondFactorSource = z.enum(["account_recovery", "self"]);
+
 export const userActivities = {
+  "user.account_recovered": z.object({
+    inputs: z.object({}),
+    outcome: z.object({}),
+  }),
+  "user.force_2fa_disabled": z.object({
+    inputs: z.object({
+      reason: z.enum([
+        "account_recovery",
+        "passkey_removed",
+        "totp_removed",
+        "user_choice",
+      ]),
+    }),
+    outcome: z.object({}),
+  }),
+  "user.force_2fa_enabled": z.object({
+    inputs: z.object({}),
+    outcome: z.object({}),
+  }),
   "user.info_changed": z.object({
     inputs: userInformation.partial(),
     outcome: z.object({
@@ -32,6 +53,20 @@ export const userActivities = {
       }),
     }),
   }),
+  "user.passkey_added": z.object({
+    inputs: z.object({
+      credential_id: z.string(),
+      display_name: z.string(),
+    }),
+    outcome: z.object({}),
+  }),
+  "user.passkey_removed": z.object({
+    inputs: z.object({
+      credential_id: z.string().nullable(),
+      source: secondFactorSource,
+    }),
+    outcome: z.object({ removed: z.number() }),
+  }),
   "user.password_changed": z.object({
     inputs: z.object({
       source: z.enum(["reset_password", "signup"]),
@@ -39,5 +74,21 @@ export const userActivities = {
     outcome: z.object({
       previous: z.object({ email_verified: z.boolean() }),
     }),
+  }),
+  "user.recovery_words_regenerated": z.object({
+    inputs: z.object({}),
+    outcome: z.object({
+      previous: z.object({ recovery_words_configured: z.boolean() }),
+    }),
+  }),
+  "user.totp_added": z.object({
+    inputs: z.object({}),
+    outcome: z.object({
+      previous: z.object({ totp_configured: z.boolean() }),
+    }),
+  }),
+  "user.totp_removed": z.object({
+    inputs: z.object({ source: secondFactorSource }),
+    outcome: z.object({}),
   }),
 };
