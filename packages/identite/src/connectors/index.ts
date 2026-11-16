@@ -19,10 +19,7 @@ import {
   reopenModerationFactory,
 } from "#src/repositories/moderation";
 import { findOfficialContactEmailVerificationFactory } from "#src/repositories/official-contact-email-verification";
-import {
-  findByClientIdFactory,
-  upsertAuthorizationRequestFactory,
-} from "#src/repositories/oidc-client";
+import { findByClientIdFactory } from "#src/repositories/oidc-client";
 import {
   findBySiretFactory,
   findByUserIdFactory,
@@ -101,7 +98,6 @@ export function createContext({
       },
       oidc_clients: {
         findByClientId: findByClientIdFactory({ pg }),
-        upsertAuthorizationRequest: upsertAuthorizationRequestFactory({ pg }),
       },
       organizations: {
         findById: findOrganizationByIdFactory({ pg }),

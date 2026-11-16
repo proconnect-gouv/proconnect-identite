@@ -10,6 +10,7 @@ import type { IncomingHttpHeaders } from "node:http";
 import type { KoaContextWithOIDC } from "oidc-provider";
 import { z } from "zod";
 import { context, db } from "../connectors/context";
+import { upsertAuthorizationRequest } from "../repositories/oidc-client";
 import { logger } from "../services/log";
 import { oidcProviderAdapterFactory } from "../services/oidc-provider-adapter";
 
@@ -42,7 +43,7 @@ export const recordAuthorizationRequest = async ({
   params: OIDCContextParams;
   requestHeaders: IncomingHttpHeaders;
   sid: string | null;
-}): Promise<AuthorizationRequest> => {
+}): Promise<void> => {
   const user_id = parseInt(accountId, 10);
 
   const client_id = client.clientId;
@@ -59,7 +60,7 @@ export const recordAuthorizationRequest = async ({
 
   const user_ip_address = requestHeaders["x-forwarded-for"]?.toString() || null;
 
-  return await oidc_clients.upsertAuthorizationRequest({
+  await upsertAuthorizationRequest(db, {
     user_id,
     oidc_client_id,
     organization_id: organizationId,
@@ -100,7 +101,7 @@ export const recordAuthorizationRequestAtSignIn = async ({
       throw new NotFoundError();
     }
 
-    await oidc_clients.upsertAuthorizationRequest({
+    await upsertAuthorizationRequest(db, {
       interaction_cid: cid,
       oidc_client_id: oidc_client.id,
       organization_id: null,
@@ -144,7 +145,7 @@ export const recordSignOut = async ({
         ),
     });
 
-    await oidc_clients.upsertAuthorizationRequest({
+    await upsertAuthorizationRequest(db, {
       interaction_cid: null,
       oidc_client_id: oidc_client.id,
       organization_id: null,
