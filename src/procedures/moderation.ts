@@ -4,7 +4,39 @@ import {
   procedure,
 } from "@proconnect-gouv/proconnect.identite.runtime";
 import { ModerationStatusSchema } from "@proconnect-gouv/proconnect.identite/types";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
+
+const cancelled = activityContextSchemas["moderation.cancelled"].shape;
+
+export const moderationCancelled = procedure
+  .inputs(cancelled.inputs)
+  .private(z.object({ moderation_id: z.number() }))
+  .outcome(cancelled.outcome)
+  .mutation(async ({ private: { moderation_id }, tx }) => {
+    const [moderation] = await tx
+      .delete(moderations)
+      .where(eq(moderations.id, moderation_id))
+      .returning({
+        organization_id: moderations.organization_id,
+        status: moderations.status,
+        type: moderations.type,
+        user_id: moderations.user_id,
+      });
+
+    if (!moderation) {
+      return { kind: "moderation_not_found" } as const;
+    }
+
+    const { organization_id, status, type, user_id } = moderation;
+    return {
+      journal: {
+        outcome: { previous: { status, type } },
+        targets: { moderation_id, organization_id, user_id },
+      },
+      kind: "moderation_cancelled",
+    } as const;
+  });
 
 const { inputs, outcome } = activityContextSchemas["moderation.opened"].shape;
 
