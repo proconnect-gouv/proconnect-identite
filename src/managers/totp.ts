@@ -92,7 +92,7 @@ export const deleteTotpConfiguration = async (user_id: number) => {
   });
 
   if (!(await is2FACapable(user_id))) {
-    user = await disableForce2fa(user_id);
+    user = await disableForce2fa(user_id, "totp_removed");
   }
 
   return user;
