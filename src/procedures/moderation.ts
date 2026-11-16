@@ -4,7 +4,7 @@ import {
   procedure,
 } from "@proconnect-gouv/proconnect.identite.runtime";
 import { ModerationStatusSchema } from "@proconnect-gouv/proconnect.identite/types";
-import { eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const cancelled = activityContextSchemas["moderation.cancelled"].shape;
@@ -75,6 +75,68 @@ export const moderationOpened = procedure
         },
         kind: "moderation_opened",
         moderation,
+      } as const;
+    },
+  );
+
+const reopened = activityContextSchemas["moderation.reopened"].shape;
+
+export const moderationReopened = procedure
+  .inputs(reopened.inputs)
+  .private(
+    z.object({
+      cause_activity_id: z.number(),
+      moderation_id: z.number(),
+      user_email: z.string(),
+      user_id: z.number(),
+    }),
+  )
+  .outcome(reopened.outcome)
+  .mutation(
+    async ({
+      inputs: { cause },
+      private: { cause_activity_id, moderation_id, user_email, user_id },
+      tx,
+    }) => {
+      const [moderation] = await tx
+        .select({
+          organization_id: moderations.organization_id,
+          status: moderations.status,
+        })
+        .from(moderations)
+        .where(
+          and(
+            eq(moderations.id, moderation_id),
+            eq(moderations.user_id, user_id),
+          ),
+        )
+        .for("update");
+
+      if (moderation?.status !== ModerationStatusSchema.enum.rejected) {
+        return { kind: "moderation_not_rejected" } as const;
+      }
+
+      await tx
+        .update(moderations)
+        .set({
+          comment: sql`COALESCE(${moderations.comment}, '') || ' | Réouvert le ' || NOW()::date || ' par ' || ${user_email} || ' - ' || ${cause}`,
+          moderated_at: null,
+          moderated_by: null,
+          status: ModerationStatusSchema.enum.reopened,
+        })
+        .where(eq(moderations.id, moderation_id));
+
+      return {
+        journal: {
+          cause_activity_id,
+          outcome: { previous: { status: moderation.status } },
+          targets: {
+            moderation_id,
+            organization_id: moderation.organization_id,
+            user_id,
+          },
+        },
+        kind: "moderation_reopened",
       } as const;
     },
   );

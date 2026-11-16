@@ -70,9 +70,12 @@ export const postPersonalInformationsController = async (
     );
   }
 
-  const outcome = await runtime
-    .as({ type: "user", user_id: userId })
-    .user.info_changed.mutate({ ...parsed.data, user_id: userId });
+  const user = getUserFromAuthenticatedSession(req);
+  const procedures = runtime.as({ type: "user", user_id: userId });
+  const outcome = await procedures.user.info_changed.mutate({
+    ...parsed.data,
+    user_id: userId,
+  });
 
   if (outcome.kind === "user_not_found") {
     throw new UserNotFoundError("User not found");
@@ -82,10 +85,19 @@ export const postPersonalInformationsController = async (
     return next();
   }
 
-  updateUserInAuthenticatedSession(req, {
-    ...getUserFromAuthenticatedSession(req),
-    ...outcome.next,
-  });
+  const { pendingReopenModerationId } = req.session;
+  if (pendingReopenModerationId !== undefined) {
+    await procedures.moderation.reopened.mutate({
+      cause: "Edition des informations personnelles",
+      cause_activity_id: outcome.activity_id,
+      moderation_id: pendingReopenModerationId,
+      user_email: user.email,
+      user_id: userId,
+    });
+    delete req.session.pendingReopenModerationId;
+  }
+
+  updateUserInAuthenticatedSession(req, { ...user, ...outcome.next });
 
   next();
 };
