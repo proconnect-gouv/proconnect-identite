@@ -26,8 +26,8 @@ import { postDeleteUserController } from "../controllers/user/delete";
 
 import {
   getAccountRecoveredController,
-  getSignInWithRecoveryWordsController,
-  postSignInWithRecoveryWordsController,
+  getRecoverUserAccountController,
+  postRecoverUserAccountController,
 } from "../controllers/2fa";
 import { get2faSignInController } from "../controllers/user/2fa-sign-in";
 import {
@@ -298,18 +298,18 @@ export const userRouter = () => {
   );
 
   userRouter.get(
-    "/2fa-sign-in-with-recovery-words",
+    "/recover-user-account",
     userCanBePromptedForMfaGuardMiddleware,
     csrfProtectionMiddleware,
-    getSignInWithRecoveryWordsController,
+    getRecoverUserAccountController,
   );
 
   userRouter.post(
-    "/2fa-sign-in-with-recovery-words",
+    "/recover-user-account",
     userCanBePromptedForMfaGuardMiddleware,
     csrfProtectionMiddleware,
     recoveryWordsRateLimiterMiddleware,
-    postSignInWithRecoveryWordsController,
+    postRecoverUserAccountController,
   );
 
   userRouter.get(

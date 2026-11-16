@@ -353,18 +353,18 @@ export const postVerifyRecoveryWordsController = async (
   }
 };
 
-export const getSignInWithRecoveryWordsController = async (
+export const getRecoverUserAccountController = async (
   req: Request,
   res: Response,
 ) => {
-  return res.render("user/2fa-sign-in-with-recovery-words", {
+  return res.render("user/recover-user-account", {
     pageTitle: "Utiliser vos mots de secours",
     notifications: await getNotificationsFromRequest(req),
     csrfToken: csrfToken(req),
   });
 };
 
-export const postSignInWithRecoveryWordsController = async (
+export const postRecoverUserAccountController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -391,7 +391,7 @@ export const postSignInWithRecoveryWordsController = async (
   } catch (error) {
     if (error instanceof InvalidRecoveryWordsError) {
       return res.redirect(
-        "/users/2fa-sign-in-with-recovery-words?notification=invalid_recovery_words",
+        "/users/recover-user-account?notification=invalid_recovery_words",
       );
     }
     next(error);
