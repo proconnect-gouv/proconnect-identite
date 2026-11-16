@@ -1,11 +1,9 @@
 //
 
-import type { ActivityOf, ContextsOf } from "#src/activity";
 import {
   CertificationDirigeantDataSource,
   compareCriteria,
   MatchCriteria,
-  type processCertificationDirigeantFactory,
 } from "@proconnect-gouv/proconnect.identite/managers/certification";
 import * as z from "zod";
 
@@ -48,56 +46,20 @@ export const certificationDirigeantActivities = {
 
 //
 
-type CertificationDirigeantResult = Awaited<
-  ReturnType<ReturnType<typeof processCertificationDirigeantFactory>>
->;
+type CloseMatchDiff = z.infer<
+  (typeof certificationDirigeantActivities)["certification_dirigeant.close_matched"]
+>["outcome"]["diff"];
 
-export function getCertificationDirigeantActivity(
-  result: CertificationDirigeantResult,
-): ActivityOf<ContextsOf<typeof certificationDirigeantActivities>> {
-  switch (result.cause) {
-    case "organisation_not_covered":
-      return {
-        action: "certification_dirigeant.not_covered",
-        context: { inputs: {}, outcome: {} },
-      };
-    case "exact_match":
-      return {
-        action: "certification_dirigeant.certified",
-        context: { inputs: {}, outcome: { source: result.details.source } },
-      };
-    case "close_match":
-      return {
-        action: "certification_dirigeant.close_matched",
-        context: {
-          inputs: {},
-          outcome: {
-            diff: Object.fromEntries(
-              compareCriteria(result.details.identity, result.details.dirigeant)
-                .filter(({ matched }) => !matched)
-                .map(({ criterion, franceconnect, source }) => [
-                  criterion,
-                  { franceconnect, source },
-                ]),
-            ),
-            source: result.details.source,
-          },
-        },
-      };
-    case "below_threshold":
-    case "no_candidates":
-      return {
-        action: "certification_dirigeant.not_matched",
-        context: {
-          inputs: {},
-          outcome: { reason: result.cause, source: result.details.source },
-        },
-      };
-    default:
-      return assert_never(result);
-  }
-}
-
-function assert_never(value: never): never {
-  throw new Error(`Unhandled certification result: ${JSON.stringify(value)}`);
+export function closeMatchDiff(
+  identity: Parameters<typeof compareCriteria>[0],
+  dirigeant: Parameters<typeof compareCriteria>[1],
+): CloseMatchDiff {
+  return Object.fromEntries(
+    compareCriteria(identity, dirigeant)
+      .filter(({ matched }) => !matched)
+      .map(({ criterion, franceconnect, source }) => [
+        criterion,
+        { franceconnect, source },
+      ]),
+  );
 }
