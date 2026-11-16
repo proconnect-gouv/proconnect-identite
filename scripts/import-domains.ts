@@ -199,10 +199,11 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               continue;
             }
 
-            await email_domains.addDomain({
-              organization_id: organization.id,
+            await db.insert(schema.email_domains).values({
               domain,
+              organization_id: organization.id,
               verification_type: "not_verified_yet",
+              verified_at: sql`now()`,
             });
             i++;
             success_count++;

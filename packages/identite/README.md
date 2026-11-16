@@ -34,7 +34,6 @@ import {
   findByUserId,
   linkUserToOrganization,
 } from "@proconnect-gouv/proconnect.identite/repositories/organization";
-import { addDomain } from "@proconnect-gouv/proconnect.identite/repositories/email-domain";
 ```
 
 ### Services

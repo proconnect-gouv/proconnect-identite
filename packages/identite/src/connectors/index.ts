@@ -9,10 +9,7 @@ import {
   updateAuthenticatorFactory,
 } from "#src/repositories/authenticator";
 import { findEmailInDeliverabilityWhiteListFactory } from "#src/repositories/email-deliverability-whitelist";
-import {
-  addDomainFactory,
-  findEmailDomainsByOrganizationIdFactory,
-} from "#src/repositories/email-domain";
+import { findEmailDomainsByOrganizationIdFactory } from "#src/repositories/email-domain";
 import { findFranceconnectUserinfoFactory } from "#src/repositories/franceconnect_userinfo";
 import {
   deleteModerationFactory,
@@ -94,7 +91,6 @@ export function createContext({
           findEmailInDeliverabilityWhiteListFactory({ pg }),
       },
       email_domains: {
-        addDomain: addDomainFactory({ pg }),
         findEmailDomainsByOrganizationId:
           findEmailDomainsByOrganizationIdFactory({ pg }),
       },
