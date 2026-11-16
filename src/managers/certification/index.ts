@@ -8,12 +8,13 @@ import type {
 } from "@proconnect-gouv/proconnect.identite/types";
 import { captureException } from "@sentry/node";
 import { AssertionError } from "node:assert";
+import { match } from "ts-pattern";
 import {
   CertificationDirigeantCloseMatchError,
   CertificationDirigeantNoMatchError,
   CertificationDirigeantOrganizationNotCoveredError,
 } from "../../config/errors";
-import { context, db, runtime } from "../../connectors/context";
+import { context, runtime } from "../../connectors/context";
 import { logger, track } from "../../services/log";
 
 //
@@ -45,15 +46,36 @@ export const processCertificationDirigeantOrThrow = async (
   }
 
   const activity = getCertificationDirigeantActivity(result);
-  const { activity_id } = await db.transaction((tx) =>
-    runtime
-      .as({ type: "user", user_id: franceconnect_userinfo.user_id })
-      .record(tx, {
-        ...activity,
-        organization_id: organization.id,
-        user_id: franceconnect_userinfo.user_id,
-      }),
-  );
+  const certification_dirigeant = runtime.as({
+    type: "user",
+    user_id: franceconnect_userinfo.user_id,
+  }).certification_dirigeant;
+  const targets = {
+    organization_id: organization.id,
+    user_id: franceconnect_userinfo.user_id,
+  };
+  const { activity_id } = await match(activity)
+    .with(
+      { action: "certification_dirigeant.certified" },
+      ({ context: { outcome } }) =>
+        certification_dirigeant.certified.mutate({ ...targets, outcome }),
+    )
+    .with(
+      { action: "certification_dirigeant.close_matched" },
+      ({ context: { outcome } }) =>
+        certification_dirigeant.close_matched.mutate({ ...targets, outcome }),
+    )
+    .with(
+      { action: "certification_dirigeant.not_covered" },
+      ({ context: { outcome } }) =>
+        certification_dirigeant.not_covered.mutate({ ...targets, outcome }),
+    )
+    .with(
+      { action: "certification_dirigeant.not_matched" },
+      ({ context: { outcome } }) =>
+        certification_dirigeant.not_matched.mutate({ ...targets, outcome }),
+    )
+    .exhaustive();
   track(activity.action, { activity_id, organization_id: organization.id });
 
   if (!ok && cause === "organisation_not_covered") {
