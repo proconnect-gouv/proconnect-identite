@@ -7,10 +7,9 @@ import { Link, Text } from "./components/index.js";
 
 export default function DeleteAccount(props: Props) {
   const { given_name, family_name, support_email } = props;
-  const mailtoParams = new URLSearchParams({
-    subject: "Erreur - Delete account",
-  });
-  const mailtoHref = `mailto:${support_email}?${mailtoParams.toString()}`;
+  const subject = encodeURIComponent("Erreur - Suppression de compte");
+
+  const mailtoHref = `mailto:${support_email}?subject=${subject}`;
   return (
     <Layout>
       <Text safe>

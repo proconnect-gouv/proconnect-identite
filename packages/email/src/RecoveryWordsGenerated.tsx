@@ -7,12 +7,12 @@ import { Link, Text } from "./components/index.js";
 
 export default function RecoveryWordsGenerated(props: Props) {
   const { family_name, given_name, support_email, regenerated } = props;
-  const mailtoParams = new URLSearchParams({
-    subject: regenerated
-      ? "Erreur - Regenerate Recovery Words"
-      : "Erreur - Create Recovery Words",
-  });
-  const mailtoHref = `mailto:${support_email}?${mailtoParams.toString()}`;
+  const subject = encodeURIComponent(
+    regenerated
+      ? "Erreur - Régénration des mots de secours"
+      : "Erreur - Création des mots de secours",
+  );
+  const mailtoHref = `mailto:${support_email}?subject=${subject}`;
 
   return (
     <Layout>

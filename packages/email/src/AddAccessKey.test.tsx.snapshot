@@ -149,7 +149,7 @@ exports[`AddAccessKey > should render 1`] = `
                                   >
                                     La clé d'accès « Chrome on Mac » a été
                                     ajoutée à votre compte.<br /><br /><a
-                                      href="mailto:undefined?subject=Erreur+-+Add+Access+Key"
+                                      href="mailto:undefined?subject=Erreur%20-%20Ajout%20d'une%20cl%C3%A9%20d'acc%C3%A8s"
                                       style="
                                         color: rgb(0, 0, 145);
                                         font-family:
