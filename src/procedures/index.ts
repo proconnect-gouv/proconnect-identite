@@ -4,6 +4,7 @@ import {
   moderationOpened,
   moderationReopened,
 } from "./moderation";
+import { officialContactCodeSent } from "./official-contact";
 import { userInfoChanged, userPasswordChanged } from "./profile";
 
 export const identiteProcedures = {
@@ -13,6 +14,7 @@ export const identiteProcedures = {
     opened: moderationOpened,
     reopened: moderationReopened,
   },
+  official_contact: { code_sent: officialContactCodeSent },
   user: {
     info_changed: userInfoChanged,
     password_changed: userPasswordChanged,
