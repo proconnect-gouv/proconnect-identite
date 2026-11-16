@@ -1,7 +1,9 @@
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
+import { eq, sql } from "drizzle-orm";
 import type { Request } from "express";
 import { isEmpty } from "lodash-es";
 import { NoEmailFoundInUnauthenticatedSessionError } from "../../config/errors";
-import { context } from "../../connectors/context";
+import { context, db } from "../../connectors/context";
 
 const { users } = context.repository;
 
@@ -86,7 +88,10 @@ export const updatePartialUserFromUnauthenticatedSession = async (
     return null;
   }
 
-  await users.update(user!.id, { needs_inclusionconnect_welcome_page });
+  await db
+    .update(schema.users)
+    .set({ needs_inclusionconnect_welcome_page, updated_at: sql`now()` })
+    .where(eq(schema.users.id, user!.id));
 
   return { email: req.session.email, needs_inclusionconnect_welcome_page };
 };
