@@ -43,7 +43,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: 📝 Version
-        uses: proconnect-gouv/release-action/version@aabbb2ed4d87456c578f17118a0621a4145cdfee # v1.3.0
+        uses: proconnect-gouv/release-action/version@d8f993ea33a215c507b884c06168b7b6eaabea2a # v1.3.1
 
   publish:
     name: 🚀 Publish
