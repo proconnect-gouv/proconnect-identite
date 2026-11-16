@@ -1,3 +1,4 @@
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { given, userActivity } from "../../testing";
@@ -11,25 +12,25 @@ const procedures = {
 };
 
 describe("user.info_changed", () => {
-  it("✅ journals the sent fields and the previous values", async () => {
-    const { journal, runtime } = await given({ procedures });
+  it("✅ journals the previous and next value of each changed field only", async () => {
+    const { db, journal, runtime } = await given({ procedures });
+    await db
+      .update(schema.users)
+      .set({ family_name: "Valjean", given_name: "Jean" });
 
     await runtime.user.info_changed.mutate({
-      given_name: "Jean",
+      family_name: "Valjean",
+      given_name: "Jehan",
       job: "Maire",
       user_id: 1,
     });
 
     assert.deepEqual(await journal(), [
       userActivity("user.info_changed", {
-        inputs: { given_name: "Jean", job: "Maire" },
+        inputs: {},
         outcome: {
-          previous: {
-            family_name: null,
-            given_name: null,
-            job: null,
-            phone_number: null,
-          },
+          next: { given_name: "Jehan", job: "Maire" },
+          previous: { given_name: "Jean", job: null },
         },
       }),
     ]);
