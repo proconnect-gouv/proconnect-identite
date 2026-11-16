@@ -4,7 +4,7 @@ import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
 import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { isEmpty } from "lodash-es";
 import { match } from "ts-pattern";
 import { OFFICIAL_CONTACT_EMAIL_VERIFICATION_TOKEN_EXPIRATION_DURATION_IN_MINUTES } from "../../config/env";
@@ -141,15 +141,13 @@ export const sendOfficialContactEmailVerificationEmail = async ({
 
   const token = generateDicewarePhrase(2);
 
-  await db
-    .insert(schema.official_contact_email_verifications)
-    .values({ organization_id, sent_at: sql`now()`, token, user_id })
-    .onConflictDoUpdate({
-      set: { sent_at: sql`now()`, token, updated_at: sql`now()` },
-      target: [
-        schema.official_contact_email_verifications.organization_id,
-        schema.official_contact_email_verifications.user_id,
-      ],
+  await runtime
+    .as({ type: "user", user_id })
+    .official_contact.code_sent.mutate({
+      contact_email: contactEmail,
+      organization_id,
+      token,
+      user_id,
     });
 
   const { given_name, family_name, email } = user;
