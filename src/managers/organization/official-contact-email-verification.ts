@@ -206,15 +206,7 @@ export const verifyOfficialContactEmailToken = async ({
     throw new InvalidTokenError();
   }
 
-  const deleted = await official_contact_email_verifications.delete({
-    organization_id,
-    user_id,
-  });
-  if (!deleted) {
-    throw new InvalidTokenError();
-  }
-
-  return match(
+  const membership = match(
     await runtime.as({ type: "user", user_id }).addMembership({
       user_id,
       organization_id,
@@ -226,4 +218,11 @@ export const verifyOfficialContactEmailToken = async ({
       throw new InvalidTokenError();
     })
     .exhaustive();
+
+  await official_contact_email_verifications.delete({
+    organization_id,
+    user_id,
+  });
+
+  return membership;
 };
