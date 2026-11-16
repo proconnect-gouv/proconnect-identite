@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.email
 
+## 1.4.0
+
+### Minor Changes
+
+- [#2492](https://github.com/proconnect-gouv/proconnect-identite/pull/2492) [`eaf50e3`](https://github.com/proconnect-gouv/proconnect-identite/commit/eaf50e34c413782e1a64ef8bb518d66b82669174) Thanks [@BenoitSerrano](https://github.com/BenoitSerrano)! - ✨ Ajout d'un template d'email pour se connecter via un appareil vérifié
+
 ## 1.3.1
 
 ### Patch Changes
