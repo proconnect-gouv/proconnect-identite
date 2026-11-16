@@ -19,11 +19,7 @@ import {
   getModerationByIdFactory,
   reopenModerationFactory,
 } from "#src/repositories/moderation";
-import {
-  deleteOfficialContactEmailVerificationFactory,
-  findOfficialContactEmailVerificationFactory,
-  upsertOfficialContactEmailVerificationFactory,
-} from "#src/repositories/official-contact-email-verification";
+import { findOfficialContactEmailVerificationFactory } from "#src/repositories/official-contact-email-verification";
 import {
   findByClientIdFactory,
   upsertAuthorizationRequestFactory,
@@ -103,9 +99,7 @@ export function createContext({
         reopen: reopenModerationFactory({ pg }),
       },
       official_contact_email_verifications: {
-        delete: deleteOfficialContactEmailVerificationFactory({ pg }),
         find: findOfficialContactEmailVerificationFactory({ pg }),
-        upsert: upsertOfficialContactEmailVerificationFactory({ pg }),
       },
       oidc_clients: {
         findByClientId: findByClientIdFactory({ pg }),
