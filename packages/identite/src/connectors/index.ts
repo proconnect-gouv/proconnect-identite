@@ -12,7 +12,6 @@ import { findEmailInDeliverabilityWhiteListFactory } from "#src/repositories/ema
 import { findEmailDomainsByOrganizationIdFactory } from "#src/repositories/email-domain";
 import { findFranceconnectUserinfoFactory } from "#src/repositories/franceconnect_userinfo";
 import {
-  deleteModerationFactory,
   findModerationByIdFactory,
   findPendingModerationFactory,
   findRejectedModerationFactory,
@@ -91,7 +90,6 @@ export function createContext({
           findEmailDomainsByOrganizationIdFactory({ pg }),
       },
       moderations: {
-        delete: deleteModerationFactory({ pg }),
         findById: findModerationByIdFactory({ pg }),
         findPending: findPendingModerationFactory({ pg }),
         findRejected: findRejectedModerationFactory({ pg }),
