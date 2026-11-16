@@ -131,6 +131,28 @@ export const userHasAuthenticatedRecentlyGuard = async (
   return pass("user_has_authenticated_recently");
 };
 
+export const userIsMfaAuthenticatedGuard = async (
+  prev: Pass<RequestContext>,
+) => {
+  const {
+    data: { req },
+    pass,
+    haltTo,
+  } = prev;
+
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+  if (!isWithinTwoFactorAuthenticatedSession(req)) {
+    if (await is2FACapable(user_id)) {
+      return haltTo("/users/2fa-sign-in");
+    } else {
+      return haltTo("/users/double-authentication-choice");
+    }
+  }
+
+  return pass("user_is_mfa_authenticated");
+};
+
 export const userIsMfaAuthenticatedIfCapableGuard = async (
   prev: Pass<RequestContext>,
 ) => {

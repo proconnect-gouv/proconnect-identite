@@ -13,7 +13,9 @@ export { default as OfficialContactEmailVerification } from "./OfficialContactEm
 export { default as OtpEmail } from "./OtpEmail.js";
 export { default as PasswordChanged } from "./PasswordChanged.js";
 export { default as QuitOrganization } from "./QuitOrganization.js";
+export { default as RecoveryWordsGenerated } from "./RecoveryWordsGenerated.js";
 export { default as ResetPassword } from "./ResetPassword.js";
 export { default as UpdatePersonalDataMail } from "./UpdatePersonalDataMail.js";
+export { default as VerifiedDeviceLink } from "./VerifiedDeviceLink.js";
 export { default as VerifyEmail } from "./VerifyEmail.js";
 export { default as Welcome } from "./Welcome.js";

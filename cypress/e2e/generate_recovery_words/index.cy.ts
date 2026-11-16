@@ -32,6 +32,14 @@ describe("generate recovery words", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
+
+    cy.maildevGetMessageBySubject("Mots de secours créés").then((email) => {
+      cy.maildevVisitMessageById(email.id);
+      cy.contains("Des mots de secours ont été créés pour votre compte.");
+      cy.maildevDeleteMessageById(email.id);
+    });
+    cy.visit("/connection-and-account");
+
     cy.contains("Création :");
 
     // verify with wrong words
@@ -66,6 +74,12 @@ describe("generate recovery words", () => {
         .invoke("text")
         .then((text) => text.trim())
         .should("not.equal", firstRecoveryWords);
+    });
+
+    cy.maildevGetMessageBySubject("Mots de secours modifiés").then((email) => {
+      cy.maildevVisitMessageById(email.id);
+      cy.contains("Vos mots de secours ont été modifiés.");
+      cy.maildevDeleteMessageById(email.id);
     });
   });
 

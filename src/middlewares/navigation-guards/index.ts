@@ -6,6 +6,7 @@ import {
   userHasProvidedAnEmailGuard,
   userHasSeenInclusionconnectWelcomePageGuard,
   userIsAuthenticatedGuard,
+  userIsMfaAuthenticatedGuard,
   userIsMfaAuthenticatedIfCapableGuard,
   userIsVerifiedGuard,
 } from "./guards";
@@ -68,6 +69,29 @@ export const userCanSetupMfaGuardMiddleware = createGuardMiddleware(
     if (!Pass.is_passing(context)) return context;
 
     context = await userIsMfaAuthenticatedIfCapableGuard(context);
+    if (!Pass.is_passing(context)) return context;
+
+    return await browserIsTrustedGuard(context);
+  },
+);
+
+export const userCanSetupRecoveryWordsGuardMiddleware = createGuardMiddleware(
+  async (prev: Pass<RequestContext>) => {
+    let context;
+
+    context = isUserGuard(prev);
+    if (!Pass.is_passing(context)) return context;
+
+    context = userIsAuthenticatedGuard(context);
+    if (!Pass.is_passing(context)) return context;
+
+    context = await userIsVerifiedGuard(context);
+    if (!Pass.is_passing(context)) return context;
+
+    context = await userHasAuthenticatedRecentlyGuard(context);
+    if (!Pass.is_passing(context)) return context;
+
+    context = await userIsMfaAuthenticatedGuard(context);
     if (!Pass.is_passing(context)) return context;
 
     return await browserIsTrustedGuard(context);

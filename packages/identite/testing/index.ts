@@ -9,7 +9,7 @@ import type {
 import type { FindPouvoirsBySirenHandler } from "@proconnect-gouv/proconnect.registre_national_entreprises/api";
 import { noop } from "lodash-es";
 import { runner } from "node-pg-migrate";
-import { mock } from "node:test";
+import { after, mock } from "node:test";
 import { join } from "path";
 import type { Pool } from "pg";
 import type { FindUniteLegaleBySirenHandler } from "../../insee/src/api/find-by-siren.js";
@@ -19,6 +19,7 @@ import { createContext } from "../src/connectors/index.js";
 //
 
 export const pg = new PGlite();
+after(() => pg.close());
 
 export async function migrate() {
   await runner({

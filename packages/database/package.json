@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.identite.database",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/master/packages/database#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -38,7 +38,7 @@
     "test:unit": "tsx --test --test-reporter=spec"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.12",
+    "@electric-sql/pglite": "^0.5.16",
     "@proconnect-gouv/proconnect.devtools.typescript": "1.0.0",
     "@types/pg": "^8.23.1",
     "drizzle-kit": "^0.31.11",

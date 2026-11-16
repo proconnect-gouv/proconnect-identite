@@ -80,4 +80,31 @@ describe("recovery words incentive", () => {
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
   });
+
+  it("should let a user without 2FA who opens the incentive directly generate recovery words after enrolling a second factor", function () {
+    cy.visit("/recovery-words-incentive");
+    cy.login("without-second-factor+direct-access@yopmail.com");
+    cy.verifyEmail();
+
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Générer les mots de secours").click();
+
+    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Continuer").click();
+    cy.contains("J'ai une application sur mon smartphone").click();
+    cy.contains("Confirmer").click();
+    cy.fillAndSubmitTotpForm("/users/totp-configuration");
+
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Générer les mots de secours").click();
+
+    cy.title().should("include", "Sauvegarder vos mots de secours");
+    cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
+    cy.contains("Continuer").click();
+
+    cy.title().should(
+      "include",
+      "Votre double authentification est bien configurée",
+    );
+  });
 });

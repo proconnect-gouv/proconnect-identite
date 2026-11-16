@@ -42,6 +42,7 @@ import { csrfProtectionMiddleware } from "../middlewares/csrf-protection";
 import {
   userCanAccessAdminGuardMiddleware,
   userCanAccessAppGuardMiddleware,
+  userCanSetupRecoveryWordsGuardMiddleware,
 } from "../middlewares/navigation-guards";
 import { authenticatorRateLimiterMiddleware } from "../middlewares/rate-limiter";
 import { ejsLayoutMiddlewareFactory } from "../services/renderer";
@@ -101,7 +102,7 @@ export const mainRouter = (app: Express) => {
     nocache(),
     urlencoded({ extended: false }),
     ejsLayoutMiddlewareFactory(app, true),
-    userCanAccessAdminGuardMiddleware,
+    userCanSetupRecoveryWordsGuardMiddleware,
     csrfProtectionMiddleware,
     postRecoveryWordsSetupController,
   );

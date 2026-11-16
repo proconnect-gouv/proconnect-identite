@@ -24,6 +24,7 @@ psql $DEST_DB_URL --command="DROP TABLE IF EXISTS moderations"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS email_domains"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS franceconnect_userinfo"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS authenticators"
+psql $DEST_DB_URL --command="DROP TABLE IF EXISTS recovery_words"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS organizations"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS users"
 psql $DEST_DB_URL --command="DROP TABLE IF EXISTS oidc_clients"
@@ -32,6 +33,7 @@ echo "$(logPrefix) Cleaning tmp tables from any previously failed copy attempts.
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_email_domains"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_franceconnect_userinfo"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_authenticators"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_recovery_words"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_moderations"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_oidc_clients"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_organizations"
@@ -155,6 +157,19 @@ psql $SRC_DB_URL --command="CREATE INDEX ON tmp_authenticators (user_id)"
 pg_dump --no-owner --table=tmp_authenticators $SRC_DB_URL | psql $DEST_DB_URL
 psql $DEST_DB_URL --command="ALTER TABLE tmp_authenticators RENAME TO authenticators"
 psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_authenticators"
+
+echo "$(logPrefix) Creating anonymized copy of table recovery_words..."
+psql $SRC_DB_URL -c "
+CREATE TABLE tmp_recovery_words AS
+SELECT
+  id,
+  user_id,
+  created_at
+FROM recovery_words"
+psql $SRC_DB_URL --command="ALTER TABLE tmp_recovery_words ADD PRIMARY KEY (id)"
+pg_dump --no-owner --table=tmp_recovery_words $SRC_DB_URL | psql $DEST_DB_URL
+psql $DEST_DB_URL --command="ALTER TABLE tmp_recovery_words RENAME TO recovery_words"
+psql $SRC_DB_URL --command="DROP TABLE IF EXISTS tmp_recovery_words"
 
 echo "$(logPrefix) Creating anonymized copy of table moderations..."
 psql $SRC_DB_URL -c "
