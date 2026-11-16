@@ -11,7 +11,7 @@
         imprimer ou noter, pour récupérer l’accès à votre compte.
     </p>
 
-    <form action="/users/2fa-sign-in-with-recovery-words" method="post">
+    <form action="/users/recover-user-account" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
         <div class="fr-input-group">
             <label class="fr-label" for="recovery-words">
