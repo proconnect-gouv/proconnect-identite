@@ -627,23 +627,6 @@ export const changePassword = async (token: string, password: string) => {
   return { id: user.id };
 };
 
-export const updatePersonalInformationsForRegistration = async (
-  userId: number,
-  {
-    given_name,
-    family_name,
-    job,
-  }: Pick<User, "given_name" | "family_name" | "job">,
-): Promise<User> => {
-  const isUserVerified = await franceconnect_userinfo.find(userId);
-  const names = isUserVerified ? {} : { given_name, family_name };
-
-  return users.update(userId, {
-    ...names,
-    job,
-  });
-};
-
 export async function hasValidFranceConnectIdentity(userId: number) {
   const userFranceConnect = await franceconnect_userinfo.find(userId);
 
