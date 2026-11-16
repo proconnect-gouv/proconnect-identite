@@ -16,7 +16,11 @@ type ActivityContext = ContextMap[string];
 
 type SchemaMap = Record<string, z.ZodType<ActivityContext>>;
 
-type Journal<Outcome> = { outcome: Outcome; targets: ActivityTargets };
+type Journal<Outcome> = {
+  cause_activity_id?: number;
+  outcome: Outcome;
+  targets: ActivityTargets;
+};
 
 type Result<Outcome> = { kind: string; journal?: Journal<Outcome> };
 
@@ -37,7 +41,11 @@ type Leaf = {
     raw: unknown,
     actor: Actor,
   ) => (tx: IdentiteTransaction) => Promise<{
-    journal?: { context: ActivityContext; targets: ActivityTargets };
+    journal?: {
+      cause_activity_id: number | undefined;
+      context: ActivityContext;
+      targets: ActivityTargets;
+    };
     returned: object;
   }>;
 };
@@ -145,6 +153,7 @@ function withOutcome<Inputs, Private, Outcome>(
           if (!journal) return { returned };
           return {
             journal: {
+              cause_activity_id: journal.cause_activity_id,
               context: context.parse({
                 inputs: parsed,
                 outcome: journal.outcome,
@@ -251,6 +260,7 @@ export function bindProcedures<P extends Procedures>(
           action,
           actor,
           app,
+          cause_activity_id: journal.cause_activity_id,
           context: journal.context,
           ...journal.targets,
         });

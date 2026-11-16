@@ -21,4 +21,14 @@ export const moderationActivities = {
     }),
     outcome: z.object({}),
   }),
+  "moderation.reopened": z.object({
+    inputs: z.object({
+      cause: z.string(),
+    }),
+    outcome: z.object({
+      previous: z.object({
+        status: z.string(),
+      }),
+    }),
+  }),
 };

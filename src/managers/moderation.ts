@@ -72,28 +72,3 @@ export const cancelModeration = async ({
     tag: "cancel-moderation",
   });
 };
-
-export const reopenModerationWithUserEdit = async ({
-  user,
-  moderation_id,
-}: {
-  user: User;
-  moderation_id: number;
-}) => {
-  const moderation = await moderations.getById(moderation_id);
-
-  if (user.id !== moderation.user_id) {
-    throw new ForbiddenError();
-  }
-
-  const reopened = await moderations.reopen({
-    id: moderation_id,
-    userEmail: user.email,
-    cause: "Edition des informations personnelles",
-  });
-  if (!reopened) {
-    throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
-  }
-
-  return reopened;
-};

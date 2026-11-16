@@ -16,7 +16,6 @@ import {
   findPendingModerationFactory,
   findRejectedModerationFactory,
   getModerationByIdFactory,
-  reopenModerationFactory,
 } from "#src/repositories/moderation";
 import { findOfficialContactEmailVerificationFactory } from "#src/repositories/official-contact-email-verification";
 import { findByClientIdFactory } from "#src/repositories/oidc-client";
@@ -91,7 +90,6 @@ export function createContext({
         findPending: findPendingModerationFactory({ pg }),
         findRejected: findRejectedModerationFactory({ pg }),
         getById: getModerationByIdFactory({ pg }),
-        reopen: reopenModerationFactory({ pg }),
       },
       official_contact_email_verifications: {
         find: findOfficialContactEmailVerificationFactory({ pg }),

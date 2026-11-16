@@ -9,7 +9,7 @@ import { HOST } from "../../config/env";
 import { ForbiddenError } from "../../config/errors";
 import {
   cancelModeration,
-  reopenModerationWithUserEdit,
+  getOrganizationFromModeration,
 } from "../../managers/moderation";
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { idSchema } from "../../services/custom-zod-schemas";
@@ -60,7 +60,8 @@ export const postReopenModerationAndRedirectControllerFactory =
       const { moderation_id } = await schema.parseAsync(req.params);
       const user = getUserFromAuthenticatedSession(req);
 
-      await reopenModerationWithUserEdit({ user, moderation_id });
+      await getOrganizationFromModeration({ user, moderation_id });
+      req.session.pendingReopenModerationId = moderation_id;
 
       return res.redirect(redirectUrl);
     } catch (e) {
