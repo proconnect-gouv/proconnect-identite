@@ -1,21 +1,18 @@
 //
 
+import { UserInformationSchema } from "@proconnect-gouv/proconnect.identite/types";
 import * as z from "zod";
 
 //
 
-const userInformation = z.object({
-  family_name: z.string().nullable(),
-  given_name: z.string().nullable(),
-  job: z.string().nullable(),
-  phone_number: z.string().nullable(),
-});
+const ChangedUserInformationSchema = UserInformationSchema.partial();
 
 export const userActivities = {
   "user.info_changed": z.object({
-    inputs: userInformation.partial(),
+    inputs: z.object({}),
     outcome: z.object({
-      previous: userInformation,
+      next: ChangedUserInformationSchema,
+      previous: ChangedUserInformationSchema,
     }),
   }),
   "user.mfa_reset": z.object({
