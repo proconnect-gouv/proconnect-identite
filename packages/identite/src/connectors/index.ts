@@ -37,7 +37,6 @@ import {
   findOrganizationByIdFactory,
   findPendingByUserIdFactory,
   getOrganizationByIdFactory,
-  upsertFactory,
 } from "#src/repositories/organization";
 import {
   createRecoveryWordsFactory,
@@ -122,7 +121,6 @@ export function createContext({
         findByUserId: findByUserIdFactory({ pg }),
         findPendingByUserId: findPendingByUserIdFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),
-        upsert: upsertFactory({ pg }),
       },
       recovery_words: {
         create: createRecoveryWordsFactory({ pg }),
