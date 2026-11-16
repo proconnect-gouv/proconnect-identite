@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026.11.1](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.0...2026.11.1) (2026-11-16)
+
+### Ajouté
+
+- ✨ Add an email template to verify a device through the RIE ([eaf50e3](https://github.com/proconnect-gouv/proconnect-identite/commit/eaf50e34c413782e1a64ef8bb518d66b82669174))
+
+### Dépendances
+
+- :arrow_up: Bump @electric-sql/pglite to 0.5.16 ([#2494](https://github.com/proconnect-gouv/proconnect-identite/issues/2494)) ([1fa84a8](https://github.com/proconnect-gouv/proconnect-identite/commit/1fa84a8793bda98b248308f0c17eb31a4b05dce4))
+- :arrow_up: Bump proconnect-gouv/release-action/version ([#2489](https://github.com/proconnect-gouv/proconnect-identite/issues/2489)) ([49b9b93](https://github.com/proconnect-gouv/proconnect-identite/commit/49b9b93344c84814409adad79295b5ecb867d6c5))
+- :arrow_up: Bump proconnect-gouv/release-action/publish ([#2488](https://github.com/proconnect-gouv/proconnect-identite/issues/2488)) ([bee5224](https://github.com/proconnect-gouv/proconnect-identite/commit/bee52240452ea0d5fa584c856a45401b822a57da))
+
 ## [2026.11.0](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.10.17...2026.11.0) (2026-11-16)
 
 ### Changements
