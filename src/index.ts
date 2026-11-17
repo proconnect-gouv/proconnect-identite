@@ -1,9 +1,7 @@
 import { createTestingHandler } from "@proconnect-gouv/proconnect.testing/api";
 import * as Sentry from "@sentry/node";
-import { RedisStore } from "connect-redis";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
-import session, { type SessionData } from "express-session";
 import fs from "fs";
 import helmet from "helmet";
 import { Server } from "http";
@@ -14,28 +12,24 @@ import { ZodError } from "zod";
 import {
   ACCESS_LOG_PATH,
   FEATURE_MOUNT_MOCKED_EXTERNAL_APIS,
-  FEATURE_USE_SECURE_COOKIES,
   FEATURE_USE_SECURITY_RESPONSE_HEADERS,
   FRANCECONNECT_ISSUER,
   NODE_ENV,
   PORT,
-  SESSION_COOKIE_SECRET,
-  SESSION_MAX_AGE_IN_SECONDS,
 } from "./config/env";
 import { OidcError } from "./config/errors";
 import { createOidcProvider } from "./config/oidc-provider";
 import { getNewRedisClient } from "./connectors/redis";
 import { trustedBrowserMiddleware } from "./managers/browser-authentication";
-import { StoredSessionSchema } from "./managers/session/session-data";
 import {
   defaultRateLimiterMiddleware,
   machineToMachineRateLimiterMiddleware,
 } from "./middlewares/rate-limiter";
+import { createSessionMiddleware } from "./middlewares/session";
 import { apiRouter } from "./routers/api";
 import { interactionRouter } from "./routers/interaction";
 import { mainRouter } from "./routers/main";
 import { userRouter } from "./routers/user";
-import { jsonParseWithDate } from "./services/json-parse-with-date";
 import { current_trace_id, logger, track } from "./services/log";
 import {
   ejsLayoutMiddlewareFactory,
@@ -110,35 +104,7 @@ app.use(httpLogger);
 
 app.set("trust proxy", 1);
 
-const sessionMiddleware = session({
-  store: new RedisStore({
-    client: getNewRedisClient(),
-    prefix: "mcp:session:",
-    serializer: {
-      parse: (serializedSession: string) => {
-        const result = StoredSessionSchema.safeParse(
-          jsonParseWithDate(serializedSession),
-        );
-        if (result.success) return result.data;
-        logger.error(result.error);
-        Sentry.captureException(result.error);
-        return null as unknown as SessionData;
-      },
-      stringify: JSON.stringify,
-    },
-  }),
-  name: "session",
-  cookie: {
-    maxAge: SESSION_MAX_AGE_IN_SECONDS * 1000,
-    secure: FEATURE_USE_SECURE_COOKIES,
-    sameSite: "lax",
-  },
-  secret: SESSION_COOKIE_SECRET,
-  // future default
-  resave: false,
-  // future default
-  saveUninitialized: false,
-});
+const sessionMiddleware = createSessionMiddleware(getNewRedisClient());
 
 // Prevent creation of sessions for API calls on /oauth or /api routes
 app.use(function preventSessionCreationMiddleware(req, res, next) {

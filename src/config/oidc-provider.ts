@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/node";
 import type { Request } from "express";
 import Provider, {
   errors,
+  type AdapterFactory,
   type Configuration,
   type KoaContextWithOIDC,
 } from "oidc-provider";
@@ -27,9 +28,11 @@ import {
 
 //
 
-export async function createOidcProvider() {
+export async function createOidcProvider({
+  adapter = oidcProviderAdapterFactory,
+}: { adapter?: AdapterFactory } = {}) {
   const oidcProvider = new Provider(`${HOST}`, {
-    adapter: oidcProviderAdapterFactory,
+    adapter,
     jwks: JWKS,
     async renderError(ctx, { error, error_description }, err) {
       logger.error(err);
