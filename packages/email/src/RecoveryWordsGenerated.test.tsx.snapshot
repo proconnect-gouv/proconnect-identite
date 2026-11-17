@@ -151,7 +151,7 @@ exports[`RecoveryWordsGenerated > should render 1`] = `
                                     compte. Ils vous permettront de le récupérer
                                     si vous perdez l'accès à votre double
                                     authentification.<br /><br /><a
-                                      href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur+-+Create+Recovery+Words"
+                                      href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur%20-%20Cr%C3%A9ation%20des%20mots%20de%20secours"
                                       style="
                                         color: rgb(0, 0, 145);
                                         font-family:

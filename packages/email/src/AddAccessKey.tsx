@@ -7,10 +7,8 @@ import { Link, Text } from "./components/index.js";
 
 export default function AddAccessKey(props: Props) {
   const { family_name, given_name, support_email, key_name } = props;
-  const mailtoParams = new URLSearchParams({
-    subject: "Erreur - Add Access Key",
-  });
-  const mailtoHref = `mailto:${support_email}?${mailtoParams.toString()}`;
+  const subject = encodeURIComponent("Erreur - Ajout d'une clé d'accès");
+  const mailtoHref = `mailto:${support_email}?subject=${subject}`;
 
   return (
     <Layout>

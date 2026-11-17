@@ -7,10 +7,9 @@ import { Link, Text } from "./components/index.js";
 
 export default function DeleteFreeTotpMail(props: Props) {
   const { given_name, family_name, support_email } = props;
-  const mailtoParams = new URLSearchParams({
-    subject: "Erreur - Mon organisation",
-  });
-  const mailtoHref = `mailto:${support_email}?${mailtoParams.toString()}`;
+  const subject = encodeURIComponent("Erreur - Mon organisation");
+
+  const mailtoHref = `mailto:${support_email}?subject=${subject}`;
   return (
     <Layout>
       <Text safe>

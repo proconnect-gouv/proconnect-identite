@@ -152,7 +152,7 @@ exports[`DeleteAccount > should render 1`] = `
                                     compte. Toutes vos données personnelles
                                     associées à ce compte ont été supprimées de
                                     notre système.<br /><br /><a
-                                      href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur+-+Delete+account"
+                                      href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur%20-%20Suppression%20de%20compte"
                                       style="
                                         color: rgb(0, 0, 145);
                                         font-family:
