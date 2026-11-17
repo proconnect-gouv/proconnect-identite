@@ -3,7 +3,7 @@
     <div class="fr-alert fr-alert--error fr-mb-2w" id="webauthn-alert-error" hidden></div>
     <div class="fr-alert fr-alert--success fr-mb-2w" id="webauthn-alert-success" hidden></div>
     <h1 class="fr-h3">
-        Valider avec la double authentification
+        Étape de connexion renforcée
     </h1>
     <div class="fr-notice fr-notice--info notice--change-email fr-mb-2w">
         <div class="fr-container">
@@ -21,16 +21,19 @@
             </p>
         </div>
     </div>
-    <p>
-        Afin de protéger votre compte,
-        ProConnect veut s’assurer que c’est bien vous qui essayez de vous connecter
-    </p>
     <% if (showsTotpSection) { %>
-        <form action="/users/2fa-sign-in-with-totp" method="post" class="fr-mb-5w">
+        <p class="text--medium">
+            Lors de la création de votre compte, vous avez configuré une application pour générer vos codes de sécurité (TOTP).
+        </p>
+        <p class="text--medium">Ouvrez votre application, puis saisissez le code affiché pour ProConnect.</p>
+        <div class="fr-alert fr-alert--info fr-mb-2w">
+            <p>Ce code n'est pas généré par ProConnect et il ne vous est pas envoyé par SMS ni par email.</p>
+        </div>
+        <form action="/users/2fa-sign-in-with-totp" method="post" class="fr-mb-2w">
             <input type="hidden" name="_csrf" value="<%= csrfToken; %>" />
-            <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
+            <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %> fr-mb-2w">
                 <label class="fr-label" for="totpToken">
-                    Obtenir un code à usage unique depuis votre application mobile.
+                    Saisissez le code à usage unique à 6 chiffres de votre application d'authentification
                 </label>
                 <input
                     id="totpToken"
@@ -58,12 +61,17 @@
                     </p>
                 <% } %>
             </div>
-            <%- include('../partials/submit-button.ejs', {label: 'Valider'}) %>
+            <%- include('../partials/submit-button.ejs', {label: 'Continuer'}) %>
         </form>
+        <div class="fr-background-alt--blue-france fr-p-1w fr-grid-row fr-grid-row--center fr-grid-row--middle">
+            <span class="fr-icon-lightbulb-fill fr-mr-1w fr-text-action-high--blue-france" aria-hidden="true"></span>
+            <a class="fr-link fr-link--sm" href="https://proconnect.crisp.help/fr/article/ou-trouver-mon-code-a-6-chiffres-pour-me-connecter-a-proconnect-1ikt15d/" target="_blank" rel="noopener noreferrer">
+                Trouver mon code à 6 chiffres
+            </a>
+        </div>
     <% } %>
-
     <% if (showsTotpSection && showsPasskeySection) { %>
-        <p class="fr-hr-or">ou</p>
+        <p class="fr-hr-or fr-mt-3w">ou</p>
     <% } %>
 
     <% if (showsPasskeySection) { %>
@@ -92,7 +100,11 @@
                 class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-question-line"
                 href="/users/recover-user-account"
             >
-                Vous n’avez pas accès à cette méthode ?
+                <% if (showsTotpSection && showsPasskeySection) { %>
+                    Vous n’avez pas accès à ces méthodes ?
+                <% } else { %>
+                    Vous n’avez pas accès à cette méthode ?
+                <% } %>
             </a>
         </div>
     <% } %>

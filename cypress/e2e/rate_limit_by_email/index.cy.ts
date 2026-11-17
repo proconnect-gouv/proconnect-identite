@@ -8,7 +8,7 @@ describe("trigger rate limit by email", () => {
 
     for (let i = 0; i <= 5; i++) {
       cy.contains(
-        "Obtenir un code à usage unique depuis votre application mobile.",
+        "Saisissez le code à usage unique à 6 chiffres de votre application d'authentification",
       ).click();
       cy.focused().type("123456");
       cy.get('[action="/users/2fa-sign-in-with-totp"] [type="submit"]').click();
