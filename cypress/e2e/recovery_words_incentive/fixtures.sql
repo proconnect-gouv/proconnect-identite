@@ -95,6 +95,22 @@ VALUES
     null,
     null,
     false
+  ),
+  (
+    6,
+    'without-recovery-words+optional-mfa@yopmail.com',
+    true,
+    CURRENT_TIMESTAMP,
+    '$2a$10$kzY3LINL6..50Fy9shWCcuNlRfYq0ft5lS.KCcJ5PzrhlWfKK4NIO',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'Fulgrim',
+    'Chemos',
+    'III',
+    'Primarque',
+    'kuOSXGk68H2B3pYnph0uyXAHrmpbWaWyX/iX49xVaUc=.VMPBZSO+eAng7mjS.cI2kRY9rwhXchcKiiaMZIg==',
+    CURRENT_TIMESTAMP,
+    false
   );
 
 INSERT INTO
@@ -119,7 +135,8 @@ VALUES
   (2, 1, false, 'domain'),
   (3, 1, false, 'domain'),
   (4, 1, false, 'domain'),
-  (5, 1, false, 'domain');
+  (5, 1, false, 'domain'),
+  (6, 1, false, 'domain');
 
 INSERT INTO
   oidc_clients (
