@@ -64,7 +64,7 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
 
 ### Prerequisites
 
-- Node.js (v22) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm))
+- Node.js (v22) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm)), or run `nix develop` to get a shell with the correct Node.js version (see `flake.nix`)
 - Docker (>= v25) and Docker Compose (>= v2.24) installed ([doc](https://docs.docker.com/engine/install/))
 - Clone the ProConnect Identité repository
 
