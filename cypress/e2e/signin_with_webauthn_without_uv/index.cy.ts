@@ -97,7 +97,7 @@ describe("use the passkey without uv", () => {
       "include",
       "Se connecter avec la double authentification - ProConnect",
     );
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
     cy.contains("Se connecter avec une clé d’accès");
 
     cy.origin("http://localhost:4000", () => {
@@ -112,7 +112,7 @@ describe("use the passkey without uv", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
     cy.contains("Se connecter avec une clé d’accès").click();
 
     cy.title().should("include", "Compte et connexion");
@@ -139,7 +139,7 @@ describe("use the passkey without uv", () => {
       "include",
       "Se connecter avec la double authentification - ProConnect",
     );
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
     cy.contains("Se connecter avec une clé d’accès");
 
     cy.origin("http://localhost:4000", () => {

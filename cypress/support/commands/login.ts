@@ -29,7 +29,7 @@ export function fillLoginFields({
 
   if (totpSecret) {
     // redirect to the TOTP login page
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
 
     cy.fillTotpFields(totpSecret);
   }
