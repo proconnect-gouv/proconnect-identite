@@ -66,6 +66,31 @@ describe("recovery words incentive", () => {
     cy.contains('"acr": "eidas0-mfa"');
   });
 
+  it("should bring the user back to the incentive after the 2FA required to generate recovery words", function () {
+    cy.visit("http://localhost:4000");
+    cy.get("button.proconnect-button").click();
+
+    cy.login("without-recovery-words+optional-mfa@yopmail.com");
+    cy.verifyEmail();
+
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Générer les mots de secours").click();
+
+    cy.contains(
+      "Information : vous devez vous connecter avec la double authentification pour continuer.",
+    );
+    cy.fillTotpFields();
+
+    cy.title().should("include", "Sauvegardez vos mots de secours");
+    cy.contains("Générer les mots de secours").click();
+
+    cy.title().should("include", "Sauvegarder vos mots de secours");
+    cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
+    cy.contains("Continuer").click();
+
+    cy.contains("standard-client");
+  });
+
   it("should show the incentive right after a 2FA enrollment", function () {
     cy.visit("/connection-and-account");
     cy.login("without-second-factor@yopmail.com");

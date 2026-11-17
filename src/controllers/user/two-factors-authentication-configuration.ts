@@ -2,7 +2,10 @@ import type { NextFunction, Request, Response } from "express";
 import HttpErrors from "http-errors";
 import { UserIsNot2faCapableError } from "../../config/errors";
 import { isUserInAdministrationEtat } from "../../managers/organization/main";
-import { createRecoveryWordsForUser } from "../../managers/recovery-words";
+import {
+  createRecoveryWordsForUser,
+  markRecoveryWordsIncentiveAsSeen,
+} from "../../managers/recovery-words";
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { csrfToken } from "../../middlewares/csrf-protection";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
@@ -94,6 +97,19 @@ export const postRecoveryWordsSetupController = async (
     if (error instanceof UserIsNot2faCapableError) {
       return next(new HttpErrors.UnprocessableEntity());
     }
+    next(error);
+  }
+};
+
+export const postRecoveryWordsSkipMiddleware = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  try {
+    markRecoveryWordsIncentiveAsSeen(req);
+    return next();
+  } catch (error) {
     next(error);
   }
 };
