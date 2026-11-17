@@ -1,10 +1,20 @@
 import type { KoaContextWithOIDC, Session } from "oidc-provider";
+import {
+  getGrantOrganization,
+  type GrantOrganization,
+} from "../repositories/redis/grant-organization";
 
 //
 
 type AuthorizationsHolder = Pick<Session, "authorizations">;
 
-export const getAuthorizedOrganization = (
+type GetGrantOrganization = (
+  grantId: string,
+) => Promise<GrantOrganization | undefined>;
+
+// TODO(PR 2): remove the session.authorizations fallback once sessions created
+// before the grant-per-interaction deploy have expired (SESSION_MAX_AGE_IN_SECONDS).
+const getLegacyAuthorizedOrganization = (
   session: AuthorizationsHolder | undefined,
   clientId: string | undefined,
 ) => {
@@ -17,26 +27,46 @@ export const getAuthorizedOrganization = (
   };
 };
 
-// Reassign the top-level property: the oidc-provider session Proxy
-// (lib/shared/session.js) only marks the session as modified on top-level writes.
-export const setAuthorizedOrganization = (
-  session: AuthorizationsHolder,
-  clientId: string,
-  { organizationId, acr }: { organizationId: number; acr?: string },
-) => {
-  session.authorizations = {
-    ...session.authorizations,
-    [clientId]: { ...session.authorizations?.[clientId], organizationId, acr },
+// /authorize and resume: the grant is ctx.oidc.entities.Grant (ctx.oidc.grant, which
+// is untyped), loaded by oidc-provider's default loadExistingGrant.
+export const getAuthorizedOrganizationFactory =
+  ({ getGrantOrganization }: { getGrantOrganization: GetGrantOrganization }) =>
+  async (ctx: KoaContextWithOIDC) => {
+    // it may be an unsaved grant built by oidc-provider, without jti
+    const grantId = ctx.oidc.entities.Grant?.jti;
+    const grantOrganization = grantId
+      ? await getGrantOrganization(grantId)
+      : undefined;
+    return (
+      grantOrganization ??
+      getLegacyAuthorizedOrganization(
+        ctx.oidc.session,
+        ctx.oidc.client?.clientId,
+      )
+    );
   };
-};
 
-// /token and /userinfo are called by the SP: there is no browser cookie, so
-// ctx.oidc.session is not the user's session. Load it through the token instead.
-export const findAuthorizedOrganization = async (
-  ctx: KoaContextWithOIDC,
-  token: { sessionUid?: string; clientId?: string } | undefined,
-) => {
-  if (!token?.sessionUid) return undefined;
-  const session = await ctx.oidc.provider.Session.findByUid(token.sessionUid);
-  return getAuthorizedOrganization(session, token.clientId);
-};
+export const getAuthorizedOrganization = getAuthorizedOrganizationFactory({
+  getGrantOrganization,
+});
+
+// /token and /userinfo are called by the SP: there is no browser session, go through the token.
+export const findAuthorizedOrganizationFactory =
+  ({ getGrantOrganization }: { getGrantOrganization: GetGrantOrganization }) =>
+  async (
+    ctx: KoaContextWithOIDC,
+    token:
+      | { grantId?: string; sessionUid?: string; clientId?: string }
+      | undefined,
+  ) => {
+    if (!token?.grantId) return undefined;
+    const grantOrganization = await getGrantOrganization(token.grantId);
+    if (grantOrganization) return grantOrganization;
+    if (!token.sessionUid) return undefined;
+    const session = await ctx.oidc.provider.Session.findByUid(token.sessionUid);
+    return getLegacyAuthorizedOrganization(session, token.clientId);
+  };
+
+export const findAuthorizedOrganization = findAuthorizedOrganizationFactory({
+  getGrantOrganization,
+});

@@ -31,6 +31,14 @@ const connectToFederationClient = () => {
   cy.get("button#custom-connection").click({ force: true });
 };
 
+// The test client displays the token endpoint response under "OAuth2 Token".
+const getStandardClientAccessToken = () =>
+  cy
+    .contains("h2", "OAuth2 Token")
+    .next("pre")
+    .invoke("text")
+    .then((text) => JSON.parse(text).access_token as string);
+
 const selectOrganizationOutsideOfAnySp = (label: string) => {
   cy.visit("/users/select-organization");
   cy.title().should("include", "Choisir une organisation -");
@@ -60,6 +68,7 @@ describe("sign-in with one organization per SP", () => {
 
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains(`"siret": "${CLAMART_SIRET}"`);
+    getStandardClientAccessToken().as("clamartAccessToken");
 
     cy.contains("button", "Changer d’organisation").click();
     cy.title().should("include", "Choisir une organisation -");
@@ -67,6 +76,21 @@ describe("sign-in with one organization per SP", () => {
 
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains(`"siret": "${DANONE_SIRET}"`);
+
+    // The organization change created a new grant: the access token issued
+    // for Clamart references the previous grant and is rejected.
+    cy.get<string>("@clamartAccessToken").then((accessToken) =>
+      cy
+        .request({
+          url: "/oauth/userinfo",
+          headers: { Authorization: `Bearer ${accessToken}` },
+          failOnStatusCode: false,
+        })
+        .then(({ status, body }) => {
+          expect(status).to.equal(401);
+          expect(body.error).to.equal("invalid_token");
+        }),
+    );
 
     // The federation client still gets its own organization, without prompt.
     connectToFederationClient();
