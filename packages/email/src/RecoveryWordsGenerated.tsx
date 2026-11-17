@@ -21,15 +21,77 @@ export default function RecoveryWordsGenerated(props: Props) {
       </Text>
       <br />
       <Text>
-        {regenerated
-          ? "Vos mots de secours ont été modifiés. Les anciens mots ne fonctionnent plus."
-          : "Des mots de secours ont été créés pour votre compte. Ils vous permettront de le récupérer si vous perdez l'accès à votre double authentification."}
-        <br />
-        <br />
+        Vos mots de secours ont été {regenerated ? "modifiés" : "créés"} sur
+        votre compte ProConnect Identité.
+      </Text>
+      <br />
+      <Text>
+        <b>À quoi servent vos mots de secours ?</b>
+      </Text>
+      <br />
+      <Text>
+        Ils vous permettent de récupérer l'accès à votre compte si vous perdez
+        votre moyen de double authentification.
+      </Text>
+      <br />
+      <Text>
+        Conservez-les dans un endroit sécurisé et ne les communiquez à personne,
+        y compris au support ProConnect.
+      </Text>
+      <br />
+      <Text>
+        <b>Que pouvez-vous faire depuis votre compte ProConnect Identité ?</b>
+      </Text>
+      <br />
+      <Text>
+        Depuis{" "}
+        <Link href="https://identite.proconnect.gouv.fr/connection-and-account">
+          la gestion de votre compte
+        </Link>
+        , vous pouvez notamment :
+      </Text>
+      <ul>
+        <li>
+          <Text>
+            Consulter et gérer vos méthodes de double authentification.
+          </Text>
+        </li>
+        <li>
+          <Text>
+            Ajouter une méthode de validation supplémentaire, sans supprimer
+            celle déjà configurée.
+          </Text>
+        </li>
+        <li>
+          <Text>Gérer vos mots de secours.</Text>
+        </li>
+      </ul>
+      <Text>
+        <b>Besoin d'aide ?</b>
+      </Text>
+      <br />
+      <Text>
+        Consultez notre{" "}
+        <Link href="https://proconnect.crisp.help/fr/article/comment-utiliser-et-conserver-mes-mots-de-secours-proconnect-fxz10e/">
+          FAQ ProConnect
+        </Link>{" "}
+        pour retrouver les conseils d'utilisation et de sécurisation de votre
+        compte.
+      </Text>
+      <br />
+      <Text>
+        <b>Vous n'êtes pas à l'origine de cette action ?</b>
+      </Text>
+      <br />
+      <Text>
+        Si vous n'avez pas créé ou modifié vos mots de secours, une autre
+        personne pourrait avoir accédé à votre compte.
+      </Text>
+      <br />
+      <Text>
         <Link href={mailtoHref}>
-          Si vous n'êtes pas à l'origine de cette action, quelqu'un utilise
-          peut-être votre compte. Faites-le nous savoir en répondant à cet
-          email.
+          Contactez immédiatement le support ProConnect en répondant à cette
+          adresse email : {support_email}.
         </Link>
       </Text>
     </Layout>
