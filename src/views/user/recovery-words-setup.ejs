@@ -1,5 +1,52 @@
 <div>
-  <%- include('../mfa-settings/recovery-words-setup-layout.ejs', {
-    recoveryWordsSetupCompletionUrl: '/users/recovery-words-setup-completion',
-  }); %>
+  <h1 class="fr-h3">Sauvegarder vos mots de secours</h1>
+  <p class="recovery-words fr-p-2w" aria-label="Vos mots de secours">
+    <%= recoveryWords.join(" ") %>
+  </p>
+  <p>
+    Ces <%= recoveryWords.length %> mots de secours sont
+    <strong>le seul moyen de récupérer votre compte</strong> si vous perdez votre
+    smartphone ou désinstallez par erreur votre application de TOTP ou votre
+    passkey.
+  </p>
+  <p>
+    <b>Comment les conserver ?</b>
+  </p>
+  <ul>
+    <li>
+      <b>En numérique</b> : enregistrez-les dans un gestionnaire de mots de passe
+      ou sur un serveur sécurisé.
+    </li>
+    <% if (!isAdministrationEtat) { %>
+    <li>
+      <b>En papier</b> (notés ou imprimés) : rangez-les avec vos documents
+      confidentiels, dans un tiroir fermé à clé par exemple.
+    </li>
+    <% } %>
+  </ul>
+  <form action="/users/recovery-words-setup-completion" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <div class="fr-checkbox-group fr-my-3w">
+      <input
+        type="checkbox"
+        id="recovery-words-saved"
+        name="recovery-words-saved"
+        required
+      />
+      <label class="fr-label" for="recovery-words-saved">
+        J’ai sauvegardé mes mots de secours
+        <span class="fr-hint-text"
+          >Vous ne pourrez plus les afficher une seconde fois</span
+        >
+      </label>
+    </div>
+
+    <button
+      class="fr-btn btn--fullwidth"
+      type="submit"
+      id="recovery-words-continue"
+    >
+      Continuer
+    </button>
+  </form>
 </div>
