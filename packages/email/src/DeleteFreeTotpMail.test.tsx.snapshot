@@ -163,7 +163,8 @@ exports[`DeleteFreeTotpMail > should render 1`] = `
                                       >Si vous n'avez pas supprimé cette
                                       application, quelqu'un utilise peut-être
                                       votre compte. Faites-le nous savoir en
-                                      répondant à cet email.</a
+                                      nous contactant à cette adresse :
+                                      support+identite@proconnect.gouv.fr.</a
                                     >
                                   </p>
                                   <p

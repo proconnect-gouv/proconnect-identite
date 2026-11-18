@@ -22,8 +22,8 @@ export default function DeleteFreeTotpMail(props: Props) {
         <br />
         <Link href={mailtoHref}>
           Si vous n'avez pas supprimé cette application, quelqu'un utilise
-          peut-être votre compte. Faites-le nous savoir en répondant à cet
-          email.
+          peut-être votre compte. Faites-le nous savoir en nous contactant à
+          cette adresse : {support_email}.
         </Link>
       </Text>
     </Layout>

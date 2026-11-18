@@ -21,20 +21,49 @@ export default function AccountRecovered(props: Props) {
       </Text>
       <br />
       <Text>
-        Vos mots de secours viennent d'être utilisés pour vous connecter à votre
-        compte.
+        <b>
+          Vos mots de secours ont été utilisés pour récupérer l'accès à votre
+          compte ProConnect.
+        </b>
+      </Text>
+      <br />
+      <Text>
+        Pour protéger votre compte, votre double authentification a été
+        réinitialisée et vos anciens mots de secours ne sont plus utilisables.
+      </Text>
+      <br />
+      <Text>
+        <b>Que devez-vous faire maintenant ?</b>
+      </Text>
+      <br />
+      <Text>
+        Lors de votre prochaine connexion à ProConnect, vous devrez configurer à
+        nouveau votre double authentification et générer de nouveaux mots de
+        secours.
         <br />
         <br />
-        Par sécurité, votre connexion renforcée a été réinitialisée et vos mots
-        de secours ont été invalidés. Pensez à reconfigurer votre connexion
-        renforcée et à générer de nouveaux mots de secours.
-        <br />
-        <br />
-        <Link href={mailtoHref}>
-          Si vous n'avez pas utilisé vos mots de secours, quelqu'un utilise
-          peut-être votre compte. Changez votre mot de passe dès maintenant et
-          faites-le nous savoir en répondant à cet email.
+        Pour en savoir plus, consultez notre guide :{" "}
+        <Link href="https://proconnect.crisp.help/fr/article/comment-utiliser-et-conserver-mes-mots-de-secours-proconnect-fxz10e/">
+          Comment utiliser et conserver mes mots de secours ProConnect ?
         </Link>
+      </Text>
+      <br />
+      <Text>
+        <b>Vous n'êtes pas à l'origine de cette opération ?</b>
+      </Text>
+      <br />
+      <Text>
+        Si vous n'avez pas utilisé vos mots de secours, une autre personne a
+        peut-être accédé à votre compte.
+      </Text>
+      <br />
+      <Text>
+        Nous vous recommandons de{" "}
+        <b>modifier immédiatement votre mot de passe</b> et de{" "}
+        <Link href={mailtoHref}>
+          contacter l'assistance ProConnect à cette adresse : {support_email}
+        </Link>
+        .
       </Text>
     </Layout>
   );

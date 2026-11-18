@@ -1,0 +1,372 @@
+exports[`AccountRecovered > should render 1`] = `
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body style="background-color: #fafafa; padding-top: 32px">
+    <table
+      width="100%"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      bgcolor="#FAFAFA"
+    >
+      <tr>
+        <td align="center" valign="top">
+          <table
+            align="center"
+            width="800"
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            role="presentation"
+            style="max-width: 800px; width: 100%"
+          >
+            <tbody>
+              <tr>
+                <td>
+                  <table
+                    align="center"
+                    width="100%"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    role="presentation"
+                    style="font-size: 64px; line-height: 64px"
+                  >
+                    <tbody>
+                      <tr>
+                        <td> </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table
+                    align="center"
+                    width="100%"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    role="presentation"
+                    style=""
+                  >
+                    <tbody>
+                      <tr>
+                        <td align="center">
+                          <img
+                            src="https://identite.proconnect.gouv.fr/dist/mail-proconnect.png"
+                            alt="ProConnect"
+                            height="73"
+                            width="193"
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table
+                    align="center"
+                    width="100%"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    role="presentation"
+                    style="font-size: 64px; line-height: 64px"
+                  >
+                    <tbody>
+                      <tr>
+                        <td> </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table
+                    align="center"
+                    width="100%"
+                    bgcolor="#FFFFFF"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    role="presentation"
+                    style="box-shadow: 0px 2px 6px 0px rgba(0, 0, 18, 0.16)"
+                  >
+                    <tbody>
+                      <tr>
+                        <td>
+                          <table
+                            align="center"
+                            width="100%"
+                            border="0"
+                            cellpadding="0"
+                            cellspacing="0"
+                            role="presentation"
+                            style="font-size: 64px; line-height: 64px"
+                          >
+                            <tbody>
+                              <tr>
+                                <td> </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <table
+                            align="center"
+                            width="600"
+                            border="0"
+                            cellpadding="0"
+                            cellspacing="0"
+                            role="presentation"
+                            style="max-width: 600px; width: 100%; padding: 24px"
+                          >
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Bonjour Marie Dupont,
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    <b
+                                      >Vos mots de secours ont été utilisés pour
+                                      récupérer l'accès à votre compte
+                                      ProConnect.</b
+                                    >
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Pour protéger votre compte, votre double
+                                    authentification a été réinitialisée et vos
+                                    anciens mots de secours ne sont plus
+                                    utilisables.
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    <b>Que devez-vous faire maintenant ?</b>
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Lors de votre prochaine connexion à
+                                    ProConnect, vous devrez configurer à nouveau
+                                    votre double authentification et générer de
+                                    nouveaux mots de secours.<br /><br />Pour en
+                                    savoir plus, consultez notre guide :
+                                    <a
+                                      href="https://proconnect.crisp.help/fr/article/comment-utiliser-et-conserver-mes-mots-de-secours-proconnect-fxz10e/"
+                                      style="
+                                        color: rgb(0, 0, 145);
+                                        font-family:
+                                          &quot;Source Sans Pro&quot;, Verdana,
+                                          Geneva, Arial, sans-serif;
+                                        font-size: 16px;
+                                        line-height: 24px;
+                                        margin: 16px 0;
+                                        text-decoration: underline;
+                                      "
+                                      >Comment utiliser et conserver mes mots de
+                                      secours ProConnect ?</a
+                                    >
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    <b
+                                      >Vous n'êtes pas à l'origine de cette
+                                      opération ?</b
+                                    >
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Si vous n'avez pas utilisé vos mots de
+                                    secours, une autre personne a peut-être
+                                    accédé à votre compte.
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Nous vous recommandons de
+                                    <b
+                                      >modifier immédiatement votre mot de
+                                      passe</b
+                                    >
+                                    et de
+                                    <a
+                                      href="mailto:support+identite@proconnect.gouv.fr?subject=R%C3%A9cup%C3%A9ration%20non%20reconnue%20de%20mon%20compte%20ProConnect&body=Bonjour%2C%0A%0AJ'ai%20re%C3%A7u%20une%20notification%20m'informant%20que%20mon%20compte%20ProConnect%20a%20%C3%A9t%C3%A9%20r%C3%A9cup%C3%A9r%C3%A9%20avec%20mes%20mots%20de%20secours.%0A%0AJe%20ne%20suis%20pas%20%C3%A0%20l'origine%20de%20cette%20r%C3%A9cup%C3%A9ration.%20Je%20souhaite%20signaler%20une%20activit%C3%A9%20suspecte%20sur%20mon%20compte%20et%20v%C3%A9rifier%20qu'aucun%20acc%C3%A8s%20non%20autoris%C3%A9%20n'a%20eu%20lieu.%0A%0ACordialement%2C%0A%0AMarie%20Dupont"
+                                      style="
+                                        color: rgb(0, 0, 145);
+                                        font-family:
+                                          &quot;Source Sans Pro&quot;, Verdana,
+                                          Geneva, Arial, sans-serif;
+                                        font-size: 16px;
+                                        line-height: 24px;
+                                        margin: 16px 0;
+                                        text-decoration: underline;
+                                      "
+                                      >contacter l'assistance ProConnect à cette
+                                      adresse :
+                                      support+identite@proconnect.gouv.fr</a
+                                    >.
+                                  </p>
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                      margin-top: 16px;
+                                    "
+                                  >
+                                    Cordialement,<br />L'équipe ProConnect
+                                  </p>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <table
+                            align="center"
+                            width="100%"
+                            border="0"
+                            cellpadding="0"
+                            cellspacing="0"
+                            role="presentation"
+                            style="font-size: 64px; line-height: 64px"
+                          >
+                            <tbody>
+                              <tr>
+                                <td> </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table
+                    align="center"
+                    width="100%"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    role="presentation"
+                    style="font-size: 64px; line-height: 64px"
+                  >
+                    <tbody>
+                      <tr>
+                        <td> </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table
+            align="center"
+            width="100%"
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            role="presentation"
+            style="font-size: 64px; line-height: 64px"
+          >
+            <tbody>
+              <tr>
+                <td> </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+`;

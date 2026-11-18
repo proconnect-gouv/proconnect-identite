@@ -12,5 +12,6 @@ export default {
     given_name: "Marie",
     family_name: "Dupont",
     key_name: "Chrome on Mac",
+    support_email: "support+identite@proconnect.gouv.fr",
   } as Props,
 } as ComponentAnnotations<Renderer, Props>;
