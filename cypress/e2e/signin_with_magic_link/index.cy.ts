@@ -83,6 +83,27 @@ describe("sign-in with magic link", () => {
     cy.contains("Votre compte ProConnect");
   });
 
+  it("should not send a magic link to an email the sign-in form refused", function () {
+    cy.visit("/");
+
+    cy.contains("Email professionnel").click();
+    cy.focused().type("lion.eljonson@darkangels.world");
+    cy.contains("Continuer").click();
+    cy.title().should("include", "Accéder au compte - ProConnect");
+
+    cy.visit("/users/start-sign-in");
+    cy.contains("Email professionnel").click();
+    cy.focused().clear().type("lion.eljonson@darkangels.notatld");
+    cy.contains("Continuer").click();
+    cy.contains("Adresse email invalide.");
+
+    cy.visit("/users/sign-in");
+    cy.contains("button", "Recevoir un lien de connexion").click();
+
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.contains("Adresse email invalide.");
+  });
+
   it("should use default sender email", function () {
     cy.visit("/");
 

@@ -1,0 +1,1 @@
+🐛 Une adresse email invalide saisie à la connexion renvoie désormais vers la page de connexion avec un message d'erreur, au lieu de créer un compte avec cette adresse lors de l'envoi d'un lien magique ou de l'inscription.
