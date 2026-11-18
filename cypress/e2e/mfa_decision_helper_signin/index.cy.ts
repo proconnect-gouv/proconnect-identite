@@ -117,6 +117,7 @@ describe("mfa decision helper (signin)", () => {
 
     cy.contains("Revenir au début").click();
 
+    cy.location("pathname").should("eq", "/users/double-authentication-choice");
     cy.contains("Choisir votre méthode de connexion renforcée");
   });
 
