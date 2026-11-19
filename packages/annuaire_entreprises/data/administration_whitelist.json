@@ -2513,5 +2513,20 @@
     "siren": "130023435",
     "denomination": "GROUPEMENT D INTERET PUBLIC PIX",
     "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "190308585",
+    "denomination": "CENTRE DE RESSOURCES D'EXPERTISE ET DE PERFORMANCE SPORTIVE (CREPS) - VICHY",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "326094471",
+    "denomination": "SOCIETE NATIONALE DE RADIODIFFUSION RADIO FRANCE",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "130026172",
+    "denomination": "GROUPEMENT D'INTERET PUBLIC NUMERIQUE BRETAGNE",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   }
 ]
