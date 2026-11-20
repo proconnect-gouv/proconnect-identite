@@ -1,5 +1,39 @@
 # Changelog
 
+## [2026.11.3](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.2...2026.11.3) (2026-11-20)
+
+### Changements
+
+- 🐛 Chaque connexion est désormais comptée, même lorsque deux connexions au même compte ont lieu au même moment.
+
+### Modifié
+
+- ♻️ update the passkey counter inline and drop the authenticator update factory ([#2535](https://github.com/proconnect-gouv/proconnect-identite/issues/2535)) ([83f822e](https://github.com/proconnect-gouv/proconnect-identite/commit/83f822e5ff3f5b82071491b4baf16e36aab2cf81))
+- ♻️ drop the pending organizations lookup factory ([#2420](https://github.com/proconnect-gouv/proconnect-identite/issues/2420)) ([3e728cb](https://github.com/proconnect-gouv/proconnect-identite/commit/3e728cb5acd3254e3fef5665f32ac57dd45e2291))
+- ♻️ drop the organization SIRET lookup factory ([#2419](https://github.com/proconnect-gouv/proconnect-identite/issues/2419)) ([d60638e](https://github.com/proconnect-gouv/proconnect-identite/commit/d60638e523dfd4018aa7b33367001c9181bad961))
+- ♻️ drop the pending moderation lookup factory ([#2417](https://github.com/proconnect-gouv/proconnect-identite/issues/2417)) ([678828a](https://github.com/proconnect-gouv/proconnect-identite/commit/678828a72299c2b41f421aa048981c9fd6b73ad3))
+- ♻️ drop the reset-password token lookup factory ([#2416](https://github.com/proconnect-gouv/proconnect-identite/issues/2416)) ([34cded0](https://github.com/proconnect-gouv/proconnect-identite/commit/34cded02cb672ca85f29718379f2a7dd54175fc3))
+- ♻️ drop the rejected moderation lookup factory ([#2418](https://github.com/proconnect-gouv/proconnect-identite/issues/2418)) ([8577ae3](https://github.com/proconnect-gouv/proconnect-identite/commit/8577ae3f1fe900d0a242e04d97755a7b4c96fc7d))
+- ♻️ drop the email deliverability whitelist factory ([#2414](https://github.com/proconnect-gouv/proconnect-identite/issues/2414)) ([1b8f27b](https://github.com/proconnect-gouv/proconnect-identite/commit/1b8f27b1ebba511ae4fda064460e7f9d38d5fa88))
+
+### Corrigé
+
+- 🐛 count every sign-in, even when two happen at once ([#2532](https://github.com/proconnect-gouv/proconnect-identite/issues/2532)) ([5f6ccba](https://github.com/proconnect-gouv/proconnect-identite/commit/5f6ccba98bcaadaa622abf66c9945379f836d8f4))
+- 🐛 include the crisp error reason in failed request errors ([#2442](https://github.com/proconnect-gouv/proconnect-identite/issues/2442)) ([2ac857c](https://github.com/proconnect-gouv/proconnect-identite/commit/2ac857cc546755575b2472c5082725fc3dc5abb2))
+
+### Dépendances
+
+- ⬆️ Synchronisation du Grist contenant la liste des administrations ([#2525](https://github.com/proconnect-gouv/proconnect-identite/issues/2525)) ([f0d7e30](https://github.com/proconnect-gouv/proconnect-identite/commit/f0d7e308dbd94fa6d729371d9806fd5915eb0c40))
+
+### CI/CD
+
+- 👷 Add the consent skip and grant expiry e2e tests ([fb7bdce](https://github.com/proconnect-gouv/proconnect-identite/commit/fb7bdce27d9656e29ca594f0c72c72a24dcf57e1))
+
+### Divers
+
+- 💬 Reword support links and recovery words emails ([#2515](https://github.com/proconnect-gouv/proconnect-identite/issues/2515)) ([11dda6d](https://github.com/proconnect-gouv/proconnect-identite/commit/11dda6d8144059c84dc152f044c0ecfbb39fee77))
+- 🚸 Warn that recovering the account does not sign the user in ([d05e71d](https://github.com/proconnect-gouv/proconnect-identite/commit/d05e71deb55e397010c4f9976d81cccb7d80dcc8))
+
 ## [2026.11.2](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.1...2026.11.2) (2026-11-17)
 
 ### Changements
