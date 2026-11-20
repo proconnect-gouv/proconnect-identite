@@ -1,5 +1,12 @@
 # @proconnect-gouv/proconnect.identite.runtime
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`1b8f27b`](https://github.com/proconnect-gouv/proconnect-identite/commit/1b8f27b1ebba511ae4fda064460e7f9d38d5fa88), [`34cded0`](https://github.com/proconnect-gouv/proconnect-identite/commit/34cded02cb672ca85f29718379f2a7dd54175fc3), [`d60638e`](https://github.com/proconnect-gouv/proconnect-identite/commit/d60638e523dfd4018aa7b33367001c9181bad961), [`3e728cb`](https://github.com/proconnect-gouv/proconnect-identite/commit/3e728cb5acd3254e3fef5665f32ac57dd45e2291), [`678828a`](https://github.com/proconnect-gouv/proconnect-identite/commit/678828a72299c2b41f421aa048981c9fd6b73ad3), [`8577ae3`](https://github.com/proconnect-gouv/proconnect-identite/commit/8577ae3f1fe900d0a242e04d97755a7b4c96fc7d), [`83f822e`](https://github.com/proconnect-gouv/proconnect-identite/commit/83f822e5ff3f5b82071491b4baf16e36aab2cf81)]:
+  - @proconnect-gouv/proconnect.identite@17.0.0
+
 ## 0.6.1
 
 ### Patch Changes

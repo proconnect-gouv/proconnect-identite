@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.crisp
 
+## 1.0.2
+
+### Patch Changes
+
+- [#2442](https://github.com/proconnect-gouv/proconnect-identite/pull/2442) [`2ac857c`](https://github.com/proconnect-gouv/proconnect-identite/commit/2ac857cc546755575b2472c5082725fc3dc5abb2) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Ajoute la raison renvoyée par Crisp (par exemple `invalid_data`) au message d'erreur quand le statut HTTP n'est pas OK. Un corps qui n'est pas du JSON, comme une page HTML, n'est pas recopié.
+
 ## 1.0.1
 
 ### Patch Changes
