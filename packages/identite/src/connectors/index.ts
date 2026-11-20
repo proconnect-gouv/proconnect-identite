@@ -8,7 +8,6 @@ import {
   findAuthenticatorsByUserIdFactory,
   updateAuthenticatorFactory,
 } from "#src/repositories/authenticator";
-import { findEmailInDeliverabilityWhiteListFactory } from "#src/repositories/email-deliverability-whitelist";
 import {
   addDomainFactory,
   findEmailDomainsByOrganizationIdFactory,
@@ -89,10 +88,6 @@ export function createContext({
         find: findAuthenticatorFactory({ pg }),
         findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
         update: updateAuthenticatorFactory({ pg }),
-      },
-      email_deliverability_whitelist: {
-        findEmailInDeliverabilityWhiteList:
-          findEmailInDeliverabilityWhiteListFactory({ pg }),
       },
       email_domains: {
         addDomain: addDomainFactory({ pg }),
