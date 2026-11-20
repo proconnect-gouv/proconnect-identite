@@ -15,6 +15,7 @@ declare global {
    * Should be used instead of KoaContextWithOIDC["oidc"]["params"]
    */
   interface OIDCContextParams extends UnknownObject {
+    claims?: string;
     client_id: string;
     login_hint: string;
     siret_hint: string;
@@ -27,7 +28,6 @@ declare global {
    * Extends the {@link OIDCContext.result} type.
    */
   interface OidcInteractionResults extends InteractionResults {
-    organizationId?: number;
     select_organization?: boolean;
     update_userinfo?: boolean;
   }
