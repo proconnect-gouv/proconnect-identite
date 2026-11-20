@@ -68,7 +68,7 @@ import {
 import { unableToAutoJoinOrganizationMd } from "../../views/mails/unable-to-auto-join-organization";
 import { getOrganizationSuggestions as getOrganizationSuggestionsWith } from "./organization-suggestions";
 
-const { email_domains, moderations, organizations, users } = context.repository;
+const { email_domains, organizations, users } = context.repository;
 
 async function addMembership({
   user_id,
@@ -172,10 +172,15 @@ export const joinOrganization = async ({
     throw new UserInOrganizationAlreadyError();
   }
 
-  const pendingModeration = await moderations.findPending({
-    user_id,
-    organization_id: organization.id,
-    type: ModerationTypeSchema.enum.organization_join_block,
+  const pendingModeration = await db.query.moderations.findFirst({
+    columns: { id: true },
+    where: (table, { and, eq, isNull }) =>
+      and(
+        eq(table.user_id, user_id),
+        eq(table.organization_id, organization.id),
+        eq(table.type, ModerationTypeSchema.enum.organization_join_block),
+        isNull(table.moderated_at),
+      ),
   });
   if (!isEmpty(pendingModeration)) {
     const { id: moderation_id } = pendingModeration;
