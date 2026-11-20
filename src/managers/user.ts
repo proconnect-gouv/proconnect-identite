@@ -1,4 +1,5 @@
 import {
+  Email,
   generatePinToken,
   generateToken,
   hashPassword,
@@ -134,7 +135,7 @@ export const loginWithPassword = async (
 };
 
 export const signupWithPassword = async (
-  email: string,
+  email: Email,
   password: string,
 ): Promise<User> => {
   const user = await users.findByEmail(email);
@@ -480,7 +481,7 @@ export const needsEmailVerificationRenewal = async (
 };
 
 export const sendSendMagicLinkEmail = async (
-  email: string,
+  email: Email,
   host: string,
 ): Promise<boolean> => {
   let user = await users.findByEmail(email);

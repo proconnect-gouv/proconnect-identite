@@ -1,4 +1,4 @@
-import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
+import { Email } from "@proconnect-gouv/proconnect.core/security";
 import { isEmpty, isString, uniq } from "lodash-es";
 import {
   ANNUAIRE_SERVICE_PUBLIC_API_URL,
@@ -104,15 +104,15 @@ function extractFormattedEmailFromFeature(
 
   if (!isString(adresse_courriel)) return;
 
-  const [formattedEmail] = adresse_courriel.toLowerCase().trim().split(";");
+  const email = Email.safeParse(adresse_courriel.split(";")[0]);
 
-  if (!isEmailValid(formattedEmail)) return;
+  if (!email.success) return;
 
   if (!FEATURE_USE_ANNUAIRE_EMAILS) {
     logger.info(
-      `Test email address ${TEST_CONTACT_EMAIL} was used instead of the real one ${formattedEmail}.`,
+      `Test email address ${TEST_CONTACT_EMAIL} was used instead of the real one ${email.data}.`,
     );
     return TEST_CONTACT_EMAIL;
   }
-  return formattedEmail;
+  return email.data;
 }
