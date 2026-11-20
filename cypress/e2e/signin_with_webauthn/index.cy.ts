@@ -79,6 +79,54 @@ describe("use the passkey", () => {
     cy.title().should("include", "Accueil - ProConnect");
   });
 
+  it("should sign-in with passkey even when someone else types the same email meanwhile", function () {
+    // Hold Lion's challenge on its way back to his browser, once the server
+    // has issued it, so someone else can act before Lion signs it.
+    const challengeIssued = Promise.withResolvers<void>();
+    const someoneElseDone = Promise.withResolvers<void>();
+    cy.intercept(
+      "GET",
+      "/api/webauthn/generate-authentication-options-for-first-factor",
+      (req) => {
+        req.on("response", () => {
+          challengeIssued.resolve();
+          return someoneElseDone.promise;
+        });
+      },
+    );
+
+    // Lion starts a passkey sign-in
+    cy.visit("/");
+    cy.title().should("include", "S'inscrire ou se connecter - ProConnect");
+    cy.contains("Email professionnel").click();
+    cy.focused().type("lion.eljonson@darkangels.world");
+    cy.contains("Continuer").click();
+    cy.wrap(challengeIssued.promise);
+
+    cy.getCookie("session").then((lionSession) => {
+      // Someone else, in a new session, types Lion's email
+      cy.clearCookies();
+      cy.request("/users/start-sign-in").then(({ body }) => {
+        const [, _csrf] = /name="_csrf" value="([^"]+)"/.exec(body) ?? [];
+        cy.request({
+          body: { _csrf, login: "lion.eljonson@darkangels.world" },
+          form: true,
+          method: "POST",
+          url: "/users/start-sign-in",
+        });
+      });
+      cy.request(
+        "/api/webauthn/generate-authentication-options-for-first-factor",
+      );
+
+      // Back in Lion's browser, the challenge arrives and gets signed
+      cy.setCookie("session", lionSession!.value, { httpOnly: true });
+      cy.then(() => someoneElseDone.resolve());
+    });
+
+    cy.title().should("include", "Accueil - ProConnect");
+  });
+
   it("should sign-in with passkey from service provider", function () {
     cy.origin("http://localhost:4000", () => {
       cy.visit("/");
