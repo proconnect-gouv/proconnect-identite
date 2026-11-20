@@ -2,7 +2,6 @@
 
 import { procedure } from "#src/procedure";
 import { createIdentiteRuntime } from "#src/runtime";
-import { userActivities } from "#src/users";
 import { createTestDatabase, readActivityLogs } from "#testing";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import { eq } from "drizzle-orm";
@@ -159,26 +158,5 @@ describe("procedure", () => {
 
     assert.equal((await users()).length, 1);
     assert.deepEqual(await journal(), []);
-  });
-
-  it("❎ refuses a local procedure that writes a published action with its own schema", async () => {
-    const { db } = await given();
-    const { inputs } = userActivities["user.password_changed"].shape;
-    const drifted = procedure
-      .inputs(inputs)
-      .outcome(
-        z.object({ previous: z.object({ email_verified: z.boolean() }) }),
-      )
-      .mutation(async () => ({ kind: "noop" }) as const);
-
-    assert.throws(
-      () =>
-        createIdentiteRuntime({
-          app: "proconnect-identite",
-          db,
-          procedures: { user: { password_changed: drifted } },
-        }),
-      /user.password_changed: build the procedure from the published schema/,
-    );
   });
 });

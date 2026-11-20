@@ -13,11 +13,11 @@ import type { IdentiteTransaction } from "#src/database";
 import { changeEmailDomainVerificationFactory } from "#src/domains";
 import { insertActivity } from "#src/journal";
 import {
-  assertPublishedSchemas,
   bindProcedures,
   mergeProcedures,
   type ContextSchemasOf,
   type Disjoint,
+  type FromPublished,
   type Procedures,
 } from "#src/procedure";
 import { runtimeProcedures } from "#src/procedures";
@@ -39,9 +39,9 @@ export function createIdentiteRuntime<
     Disjoint<
       ContextSchemasOf<typeof runtimeProcedures>,
       ContextSchemasOf<AppProcedures>
-    >;
+    > &
+    FromPublished<AppProcedures, typeof activityContextSchemas>;
 }) {
-  assertPublishedSchemas(procedures, activityContextSchemas);
   const merged = mergeProcedures(runtimeProcedures, procedures);
   return {
     as(actor: Actor) {

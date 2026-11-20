@@ -55,7 +55,11 @@ export type Procedure<
   Private,
   Outcome,
   Returned extends Result<Outcome>,
-> = Leaf & { mutation: Mutation<Inputs, Private, Returned> };
+> = Omit<Leaf, "inputs" | "outcome"> & {
+  inputs: z.ZodType<Inputs>;
+  mutation: Mutation<Inputs, Private, Returned>;
+  outcome: z.ZodType<Outcome>;
+};
 
 export type Procedures = { [key: string]: Procedures | Leaf };
 
@@ -99,6 +103,32 @@ type UnionToIntersection<Union> = (
 export type Disjoint<A, B> = [Extract<keyof A, keyof B>] extends [never]
   ? unknown
   : { duplicate_action: Extract<keyof A, keyof B> };
+
+// A local procedure writing a published action builds its `inputs` and
+// `outcome` from that action's schema; other types fail to compile.
+export type FromPublished<R, Published extends SchemaMap> = [
+  Drifted<R, Published>,
+] extends [never]
+  ? unknown
+  : { not_built_from_published_schema: Drifted<R, Published> };
+
+type Drifted<R, Published extends SchemaMap, Prefix extends string = ""> = {
+  [Key in keyof R & string]: R[Key] extends {
+    inputs: z.ZodType<infer Inputs>;
+    outcome: z.ZodType<infer Outcome>;
+  }
+    ? `${Prefix}${Key}` extends keyof Published
+      ? Same<
+          { inputs: Inputs; outcome: Outcome },
+          z.output<Published[`${Prefix}${Key}`]>
+        > extends true
+        ? never
+        : `${Prefix}${Key}`
+      : never
+    : Drifted<R[Key], Published, `${Prefix}${Key}.`>;
+}[keyof R & string];
+
+type Same<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
 
 // One flat call, split by schema: `inputs` is journaled as `context.inputs`,
 // `private` (secrets, target ids) reaches the mutation and is never stored.
@@ -209,24 +239,6 @@ function deepMerge(a: Procedures, b: Procedures, path: string[]): Procedures {
     merged[key] = deepMerge(existing, node, [...path, key]);
   }
   return merged;
-}
-
-// An app-local procedure that writes a published action must be built from
-// that action's `inputs` and `outcome` schemas, so the two cannot drift.
-export function assertPublishedSchemas(
-  app: Procedures | undefined,
-  schemas: Record<string, z.ZodType>,
-) {
-  for (const [action, { inputs, outcome }] of leaves(app ?? {}, [])) {
-    const published = schemas[action];
-    if (!published) continue;
-    const shape = published instanceof z.ZodObject ? published.shape : {};
-    if (shape["inputs"] !== inputs || shape["outcome"] !== outcome) {
-      throw new Error(
-        `${action}: build the procedure from the published schema`,
-      );
-    }
-  }
 }
 
 function isLeaf(node: Procedures | Leaf): node is Leaf {
