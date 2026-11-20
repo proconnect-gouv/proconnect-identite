@@ -6,6 +6,7 @@ import {
   deleteAuthenticatorFactory,
   findAuthenticatorFactory,
   findAuthenticatorsByUserIdFactory,
+  renameAuthenticatorFactory,
   updateAuthenticatorFactory,
 } from "#src/repositories/authenticator";
 import { findEmailInDeliverabilityWhiteListFactory } from "#src/repositories/email-deliverability-whitelist";
@@ -88,6 +89,7 @@ export function createContext({
         deleteAllByUserId: deleteAllAuthenticatorsByUserIdFactory({ pg }),
         find: findAuthenticatorFactory({ pg }),
         findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
+        rename: renameAuthenticatorFactory({ pg }),
         update: updateAuthenticatorFactory({ pg }),
       },
       email_deliverability_whitelist: {

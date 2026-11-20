@@ -34,6 +34,10 @@ describe("add 2fa authentication", () => {
     cy.contains("Code invalide.");
 
     // Extract the code from the front to generate the TOTP key
+    cy.contains("Nom de l’application (facultatif)").click();
+    cy.focused().type("Mon tel pro");
+
+    // Extract the code from the front to generate the TOTP key
     cy.fillAndSubmitTotpForm("/totp-configuration");
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
@@ -50,6 +54,7 @@ describe("add 2fa authentication", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
+    cy.contains("Mon tel pro");
 
     cy.maildevGetMessageBySubject("Double authentification activée").then(
       (email) => {

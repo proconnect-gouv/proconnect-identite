@@ -122,7 +122,29 @@ export const deleteAllUserAuthenticators = async (user_id: number) => {
     await disableForce2fa(user_id);
   }
 };
+export const renameUserAuthenticator = async (
+  email: string,
+  credential_id: string,
+  display_name: string | null,
+) => {
+  const user = await users.findByEmail(email);
 
+  if (isEmpty(user)) {
+    throw new NotFoundError();
+  }
+
+  const authenticator = await authenticators.rename(
+    user.id,
+    credential_id,
+    display_name,
+  );
+
+  if (isEmpty(authenticator)) {
+    throw new NotFoundError();
+  }
+
+  return authenticator;
+};
 export const getRegistrationOptions = async (email: string) => {
   const user = await users.findByEmail(email);
 
@@ -170,9 +192,11 @@ export const getRegistrationOptions = async (email: string) => {
 export const verifyRegistration = async ({
   email,
   response,
+  display_name: customDisplayName = null,
 }: {
   email: string;
   response: RegistrationResponseJSON;
+  display_name?: string | null;
 }) => {
   const user = await users.findByEmail(email);
 
@@ -220,7 +244,10 @@ export const verifyRegistration = async ({
   } = registrationInfo;
 
   const friendlyName = await getAuthenticatorFriendlyName(aaguid);
-  const display_name = friendlyName || `Clé ${credential_id.substring(0, 10)}`;
+  const display_name =
+    customDisplayName ||
+    friendlyName ||
+    `Clé ${credential_id.substring(0, 10)}`;
 
   // Save the authenticator info so that we can get it by user ID later
   await authenticators.create({
