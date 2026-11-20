@@ -81,6 +81,7 @@ import {
   getTwoFactorsAuthenticationChoiceController,
   post2faSuccessfullyConfiguredMiddleware,
   postRecoveryWordsSetupController,
+  postRecoveryWordsSkipMiddleware,
 } from "../controllers/user/two-factors-authentication-configuration";
 import {
   getChangePasswordController,
@@ -227,15 +228,16 @@ export const userRouter = () => {
 
   userRouter.get(
     "/recovery-words-incentive",
-    userCanAccessAppGuardMiddleware,
+    userCanBePromptedForMfaGuardMiddleware,
     csrfProtectionMiddleware,
     getRecoveryWordsIncentiveController,
   );
 
   userRouter.post(
     "/recovery-words-skip",
-    userCanAccessAppGuardMiddleware,
+    userCanBePromptedForMfaGuardMiddleware,
     csrfProtectionMiddleware,
+    postRecoveryWordsSkipMiddleware,
     userComplyWithAllRequirementsGuardMiddleware,
     issueSessionOrRedirectController,
   );

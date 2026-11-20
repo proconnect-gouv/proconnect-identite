@@ -1,5 +1,30 @@
 # Changelog
 
+## [2026.11.2](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.1...2026.11.2) (2026-11-17)
+
+### Changements
+
+- 🐛 Le script d'import des domaines ajoute désormais les domaines encore inconnus d'une organisation au lieu de réinsérer ceux qu'elle connaît déjà.
+
+### Modifié
+
+- 🚚 Rename recovery words sign-in to recover account ([#2495](https://github.com/proconnect-gouv/proconnect-identite/issues/2495)) ([e2c9179](https://github.com/proconnect-gouv/proconnect-identite/commit/e2c917957b68dc986606b0f04b02220e93e1a638))
+
+### Corrigé
+
+- 🐛 Bring the user back to the recovery words incentive after 2FA ([b9dc332](https://github.com/proconnect-gouv/proconnect-identite/commit/b9dc3321a1e6126161fa34b6016231b607ebeaa4))
+- 🐛 Fix mailto subjects encoding and translate them to French ([#2507](https://github.com/proconnect-gouv/proconnect-identite/issues/2507)) ([53f9248](https://github.com/proconnect-gouv/proconnect-identite/commit/53f9248489248a2c8a3862f50568fe3f7e792f87))
+- 🐛 import a domain only when its organization does not know it yet ([#2503](https://github.com/proconnect-gouv/proconnect-identite/issues/2503)) ([36eb139](https://github.com/proconnect-gouv/proconnect-identite/commit/36eb1395bc53036880808fe1000e8d77f08764a4))
+
+### Supprimé
+
+- 🔥 Remove beta badge from recovery words ([#2516](https://github.com/proconnect-gouv/proconnect-identite/issues/2516)) ([d2df2ff](https://github.com/proconnect-gouv/proconnect-identite/commit/d2df2ff1503c9a1eb0993cbd66c1d5b0e72950fa))
+- 🔥 Remove the dashboard recovery words setup routes ([f23944a](https://github.com/proconnect-gouv/proconnect-identite/commit/f23944adbe35e7efdd77370bfccd18deca24e8b9))
+
+### Dépendances
+
+- :arrow_up: Bump maildev/maildev ([#2270](https://github.com/proconnect-gouv/proconnect-identite/issues/2270)) ([c90ed58](https://github.com/proconnect-gouv/proconnect-identite/commit/c90ed58094d766956a0c9133eeb761a475febbd3))
+
 ## [2026.11.1](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.0...2026.11.1) (2026-11-16)
 
 ### Ajouté

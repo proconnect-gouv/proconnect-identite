@@ -31,11 +31,16 @@ describe("generate recovery words", () => {
     cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
     cy.contains("Continuer").click();
 
+    cy.title().should("include", "Accueil - ProConnect");
+
+    cy.visit("/connection-and-account");
     cy.title().should("include", "Compte et connexion");
 
     cy.maildevGetMessageBySubject("Mots de secours créés").then((email) => {
       cy.maildevVisitMessageById(email.id);
-      cy.contains("Des mots de secours ont été créés pour votre compte.");
+      cy.contains(
+        "Vos mots de secours ont été créés sur votre compte ProConnect Identité.",
+      );
       cy.maildevDeleteMessageById(email.id);
     });
     cy.visit("/connection-and-account");
@@ -78,7 +83,9 @@ describe("generate recovery words", () => {
 
     cy.maildevGetMessageBySubject("Mots de secours modifiés").then((email) => {
       cy.maildevVisitMessageById(email.id);
-      cy.contains("Vos mots de secours ont été modifiés.");
+      cy.contains(
+        "Vos mots de secours ont été modifiés sur votre compte ProConnect Identité.",
+      );
       cy.maildevDeleteMessageById(email.id);
     });
   });

@@ -5,6 +5,7 @@ import {
   isPasswordSecure,
   validatePassword,
 } from "@proconnect-gouv/proconnect.core/security";
+import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { getDidYouMeanSuggestion } from "@proconnect-gouv/proconnect.core/services/suggestion";
 import {
   AccountRecovered,
@@ -48,7 +49,7 @@ import {
   NoNeedVerifyEmailAddressError,
   WeakPasswordError,
 } from "../config/errors";
-import { context, runtime } from "../connectors/context";
+import { context, db, runtime } from "../connectors/context";
 import { isEmailSafeToSendTransactional } from "../connectors/debounce";
 import { sendMail } from "../connectors/mail";
 import { hasPasswordBeenPwned } from "../connectors/pwnedpasswords";
@@ -57,8 +58,6 @@ import { track } from "../services/log";
 import { isWebauthnConfiguredForUser } from "./webauthn";
 
 const { franceconnect_userinfo, users } = context.repository;
-
-const { email_deliverability_whitelist } = context.repository;
 
 export const startLogin = async (
   email: string,
@@ -83,10 +82,11 @@ export const startLogin = async (
     };
   }
 
-  const isInWhiteList =
-    await email_deliverability_whitelist.findEmailInDeliverabilityWhiteList(
-      email,
-    );
+  const isInWhiteList = await db.query.email_deliverability_whitelist.findFirst(
+    {
+      where: (table, { eq }) => eq(table.email_domain, getEmailDomain(email)),
+    },
+  );
 
   if (!isInWhiteList) {
     let { isEmailSafeToSend, didYouMean } =
@@ -579,7 +579,16 @@ export const changePassword = async (token: string, password: string) => {
     throw new InvalidTokenError();
   }
 
-  const user = await users.findByResetPasswordToken(token);
+  const user = await db.query.users.findFirst({
+    columns: {
+      email: true,
+      family_name: true,
+      given_name: true,
+      id: true,
+      reset_password_sent_at: true,
+    },
+    where: (table, { eq }) => eq(table.reset_password_token, token),
+  });
 
   if (isEmpty(user)) {
     track("change_password.reset_token.not_found", {});

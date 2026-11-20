@@ -7,10 +7,9 @@ import { Link, Text } from "./components/index.js";
 
 export default function DeleteFreeTotpMail(props: Props) {
   const { given_name, family_name, support_email } = props;
-  const mailtoParams = new URLSearchParams({
-    subject: "Erreur - Mon organisation",
-  });
-  const mailtoHref = `mailto:${support_email}?${mailtoParams.toString()}`;
+  const subject = encodeURIComponent("Erreur - Mon organisation");
+
+  const mailtoHref = `mailto:${support_email}?subject=${subject}`;
   return (
     <Layout>
       <Text safe>
@@ -23,8 +22,8 @@ export default function DeleteFreeTotpMail(props: Props) {
         <br />
         <Link href={mailtoHref}>
           Si vous n'avez pas supprimé cette application, quelqu'un utilise
-          peut-être votre compte. Faites-le nous savoir en répondant à cet
-          email.
+          peut-être votre compte. Faites-le nous savoir en nous contactant à
+          cette adresse : {support_email}.
         </Link>
       </Text>
     </Layout>

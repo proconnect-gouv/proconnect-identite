@@ -9,7 +9,7 @@ import {
   CERTIFICATION_DIRIGEANT_MAX_AGE_IN_MINUTES,
   FEATURE_SUGGEST_RECOVERY_WORDS_CONFIGURATION,
 } from "../../config/env";
-import { context } from "../../connectors/context";
+import { context, db } from "../../connectors/context";
 import {
   doesOrganizationRequireForced2fa,
   is2FACapable,
@@ -17,10 +17,7 @@ import {
 } from "../../managers/2fa";
 import { isBrowserTrustedForUser } from "../../managers/browser-authentication";
 import { selectOrganization } from "../../managers/organization/main";
-import {
-  hasRecoveryWordsConfiguredForUser,
-  markRecoveryWordsIncentiveAsSeen,
-} from "../../managers/recovery-words";
+import { hasRecoveryWordsConfiguredForUser } from "../../managers/recovery-words";
 import {
   getCurrentAAL,
   getCurrentAssuranceLevels,
@@ -144,7 +141,7 @@ export const userIsMfaAuthenticatedGuard = async (
 
   if (!isWithinTwoFactorAuthenticatedSession(req)) {
     if (await is2FACapable(user_id)) {
-      return haltTo("/users/2fa-sign-in");
+      return haltTo("/users/2fa-sign-in?notification=2fa_required_to_continue");
     } else {
       return haltTo("/users/double-authentication-choice");
     }
@@ -276,15 +273,9 @@ export const userHasSeenRecoveryWordsIncentiveGuard = async (
     (await is2FACapable(user_id)) &&
     !(await hasRecoveryWordsConfiguredForUser(user_id));
 
-  // Do not mark the incentive as seen here: a user who sets up 2FA later in
-  // this session must still be shown the incentive.
   if (!shouldConfigureRecoveryWords) {
     return pass("user_has_seen_recovery_words_incentive");
   }
-
-  // Marked before the redirect, as this guard also protects the incentive
-  // pages: otherwise it would redirect the user to the incentive forever.
-  markRecoveryWordsIncentiveAsSeen(req);
 
   return haltTo("/users/recovery-words-incentive");
 };
@@ -349,19 +340,17 @@ export const userBelongsToHintedOrganizationGuard = async <
     pass,
     haltTo,
   } = context;
-  if (req.session.siretHint) {
-    const hintedOrganization = await organizations.findBySiret(
-      req.session.siretHint,
-    );
+  const { siretHint } = req.session;
+  if (siretHint) {
+    const hintedOrganization = await db.query.organizations.findFirst({
+      columns: { id: true },
+      where: (table, { eq }) => eq(table.siret, siretHint),
+    });
     if (isEmpty(hintedOrganization))
-      return haltTo(
-        `/users/join-organization?siret_hint=${req.session.siretHint}`,
-      );
+      return haltTo(`/users/join-organization?siret_hint=${siretHint}`);
 
     if (!userOrganizations.some((org) => org.id === hintedOrganization.id)) {
-      return haltTo(
-        `/users/join-organization?siret_hint=${req.session.siretHint}`,
-      );
+      return haltTo(`/users/join-organization?siret_hint=${siretHint}`);
     }
 
     await selectOrganization({ req, organization_id: hintedOrganization.id });

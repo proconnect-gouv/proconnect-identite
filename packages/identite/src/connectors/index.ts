@@ -8,22 +8,17 @@ import {
   findAuthenticatorsByUserIdFactory,
   updateAuthenticatorFactory,
 } from "#src/repositories/authenticator";
-import { findEmailInDeliverabilityWhiteListFactory } from "#src/repositories/email-deliverability-whitelist";
 import { findEmailDomainsByOrganizationIdFactory } from "#src/repositories/email-domain";
 import { findFranceconnectUserinfoFactory } from "#src/repositories/franceconnect_userinfo";
 import {
   findModerationByIdFactory,
-  findPendingModerationFactory,
-  findRejectedModerationFactory,
   getModerationByIdFactory,
 } from "#src/repositories/moderation";
 import { findOfficialContactEmailVerificationFactory } from "#src/repositories/official-contact-email-verification";
 import { findByClientIdFactory } from "#src/repositories/oidc-client";
 import {
-  findBySiretFactory,
   findByUserIdFactory,
   findOrganizationByIdFactory,
-  findPendingByUserIdFactory,
   getOrganizationByIdFactory,
 } from "#src/repositories/organization";
 import {
@@ -35,7 +30,6 @@ import {
   createUserFactory,
   findByEmailFactory,
   findByMagicLinkTokenFactory,
-  findByResetPasswordTokenFactory,
   findByIdFactory as findUserByIdFactory,
   getByIdFactory,
   updateUserFactory,
@@ -77,18 +71,12 @@ export function createContext({
         findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
         update: updateAuthenticatorFactory({ pg }),
       },
-      email_deliverability_whitelist: {
-        findEmailInDeliverabilityWhiteList:
-          findEmailInDeliverabilityWhiteListFactory({ pg }),
-      },
       email_domains: {
         findEmailDomainsByOrganizationId:
           findEmailDomainsByOrganizationIdFactory({ pg }),
       },
       moderations: {
         findById: findModerationByIdFactory({ pg }),
-        findPending: findPendingModerationFactory({ pg }),
-        findRejected: findRejectedModerationFactory({ pg }),
         getById: getModerationByIdFactory({ pg }),
       },
       official_contact_email_verifications: {
@@ -99,9 +87,7 @@ export function createContext({
       },
       organizations: {
         findById: findOrganizationByIdFactory({ pg }),
-        findBySiret: findBySiretFactory({ pg }),
         findByUserId: findByUserIdFactory({ pg }),
-        findPendingByUserId: findPendingByUserIdFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),
       },
       recovery_words: {
@@ -118,7 +104,6 @@ export function createContext({
         findByEmail: findByEmailFactory({ pg }),
         findById: findUserByIdFactory({ pg }),
         findByMagicLinkToken: findByMagicLinkTokenFactory({ pg }),
-        findByResetPasswordToken: findByResetPasswordTokenFactory({ pg }),
         getById: getByIdFactory({ pg }),
         update: updateUserFactory({ pg }),
       },

@@ -147,11 +147,92 @@ exports[`RecoveryWordsGenerated > should render 1`] = `
                                       margin: 0;
                                     "
                                   >
-                                    Des mots de secours ont été créés pour votre
-                                    compte. Ils vous permettront de le récupérer
-                                    si vous perdez l'accès à votre double
-                                    authentification.<br /><br /><a
-                                      href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur+-+Create+Recovery+Words"
+                                    Vos mots de secours ont été créés sur votre
+                                    compte ProConnect Identité.
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    <b>À quoi servent vos mots de secours ?</b>
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Ils vous permettent de récupérer l'accès à
+                                    votre compte si vous perdez votre moyen de
+                                    double authentification.
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Conservez-les dans un endroit sécurisé et ne
+                                    les communiquez à personne, y compris au
+                                    support ProConnect.
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    <b
+                                      >Que pouvez-vous faire depuis votre compte
+                                      ProConnect Identité ?</b
+                                    >
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Depuis
+                                    <a
+                                      href="https://identite.proconnect.gouv.fr/connection-and-account"
                                       style="
                                         color: rgb(0, 0, 145);
                                         font-family:
@@ -162,10 +243,171 @@ exports[`RecoveryWordsGenerated > should render 1`] = `
                                         margin: 16px 0;
                                         text-decoration: underline;
                                       "
-                                      >Si vous n'êtes pas à l'origine de cette
-                                      action, quelqu'un utilise peut-être votre
-                                      compte. Faites-le nous savoir en répondant
-                                      à cet email.</a
+                                      >la gestion de votre compte</a
+                                    >, vous pouvez notamment :
+                                  </p>
+                                  <ul>
+                                    <li>
+                                      <p
+                                        style="
+                                          color: #000;
+                                          font-family:
+                                            &quot;Source Sans Pro&quot;,
+                                            Verdana, Geneva, Arial, sans-serif;
+                                          font-size: 16px;
+                                          font-weight: 400;
+                                          line-height: 24px;
+                                          margin: 0;
+                                        "
+                                      >
+                                        Consulter et gérer vos méthodes de
+                                        double authentification.
+                                      </p>
+                                    </li>
+                                    <li>
+                                      <p
+                                        style="
+                                          color: #000;
+                                          font-family:
+                                            &quot;Source Sans Pro&quot;,
+                                            Verdana, Geneva, Arial, sans-serif;
+                                          font-size: 16px;
+                                          font-weight: 400;
+                                          line-height: 24px;
+                                          margin: 0;
+                                        "
+                                      >
+                                        Ajouter une méthode de validation
+                                        supplémentaire, sans supprimer celle
+                                        déjà configurée.
+                                      </p>
+                                    </li>
+                                    <li>
+                                      <p
+                                        style="
+                                          color: #000;
+                                          font-family:
+                                            &quot;Source Sans Pro&quot;,
+                                            Verdana, Geneva, Arial, sans-serif;
+                                          font-size: 16px;
+                                          font-weight: 400;
+                                          line-height: 24px;
+                                          margin: 0;
+                                        "
+                                      >
+                                        Gérer vos mots de secours.
+                                      </p>
+                                    </li>
+                                  </ul>
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    <b>Besoin d'aide ?</b>
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Consultez notre
+                                    <a
+                                      href="https://proconnect.crisp.help/fr/article/comment-utiliser-et-conserver-mes-mots-de-secours-proconnect-fxz10e/"
+                                      style="
+                                        color: rgb(0, 0, 145);
+                                        font-family:
+                                          &quot;Source Sans Pro&quot;, Verdana,
+                                          Geneva, Arial, sans-serif;
+                                        font-size: 16px;
+                                        line-height: 24px;
+                                        margin: 16px 0;
+                                        text-decoration: underline;
+                                      "
+                                      >FAQ ProConnect</a
+                                    >
+                                    pour retrouver les conseils d'utilisation et
+                                    de sécurisation de votre compte.
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    <b
+                                      >Vous n'êtes pas à l'origine de cette
+                                      action ?</b
+                                    >
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    Si vous n'avez pas créé ou modifié vos mots
+                                    de secours, une autre personne pourrait
+                                    avoir accédé à votre compte.
+                                  </p>
+                                  <br />
+                                  <p
+                                    style="
+                                      color: #000;
+                                      font-family:
+                                        &quot;Source Sans Pro&quot;, Verdana,
+                                        Geneva, Arial, sans-serif;
+                                      font-size: 16px;
+                                      font-weight: 400;
+                                      line-height: 24px;
+                                      margin: 0;
+                                    "
+                                  >
+                                    <a
+                                      href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur%20-%20Cr%C3%A9ation%20des%20mots%20de%20secours"
+                                      style="
+                                        color: rgb(0, 0, 145);
+                                        font-family:
+                                          &quot;Source Sans Pro&quot;, Verdana,
+                                          Geneva, Arial, sans-serif;
+                                        font-size: 16px;
+                                        line-height: 24px;
+                                        margin: 16px 0;
+                                        text-decoration: underline;
+                                      "
+                                      >Contactez immédiatement le support
+                                      ProConnect en répondant à cette adresse
+                                      email :
+                                      support+identite@proconnect.gouv.fr.</a
                                     >
                                   </p>
                                   <p

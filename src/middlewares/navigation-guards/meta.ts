@@ -47,6 +47,7 @@ export const userCanAccessAppGuard = async (prev: Pass<RequestContext>) => {
 
   return userHasSeenInclusionconnectOnboardingHelpGuard(context);
 };
+
 export const userCanConnectToSpGuard = async (
   prev: Pass<RequestContext>,
 ): Promise<GuardResult<string, RequestContext>> => {

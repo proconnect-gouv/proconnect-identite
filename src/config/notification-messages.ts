@@ -104,6 +104,11 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     description:
       "Information : pour garantir la sécurité de votre compte, merci de valider votre deuxième étape de connexion.",
   },
+  "2fa_required_to_continue": {
+    type: "info",
+    description:
+      "Information : vous devez vous connecter avec la double authentification pour continuer.",
+  },
   browser_not_trusted: {
     type: "info",
     description:

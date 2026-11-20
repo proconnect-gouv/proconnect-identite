@@ -149,7 +149,7 @@ exports[`DeleteFreeTotpMail > should render 1`] = `
                                   >
                                     L'application a été supprimée comme étape de
                                     connexion à deux facteurs.<br /><br /><a
-                                      href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur+-+Mon+organisation"
+                                      href="mailto:support+identite@proconnect.gouv.fr?subject=Erreur%20-%20Mon%20organisation"
                                       style="
                                         color: rgb(0, 0, 145);
                                         font-family:
@@ -163,7 +163,8 @@ exports[`DeleteFreeTotpMail > should render 1`] = `
                                       >Si vous n'avez pas supprimé cette
                                       application, quelqu'un utilise peut-être
                                       votre compte. Faites-le nous savoir en
-                                      répondant à cet email.</a
+                                      nous contactant à cette adresse :
+                                      support+identite@proconnect.gouv.fr.</a
                                     >
                                   </p>
                                   <p
