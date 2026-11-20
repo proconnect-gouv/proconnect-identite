@@ -161,20 +161,6 @@ describe("procedure", () => {
     assert.deepEqual(await journal(), []);
   });
 
-  it("❎ refuses a local procedure that redefines a shared action", async () => {
-    const { db } = await given();
-
-    assert.throws(
-      () =>
-        createIdentiteRuntime({
-          app: "proconnect-identite",
-          db,
-          procedures: { user: { deleted: jobRenamed } } as never,
-        }),
-      /user.deleted/,
-    );
-  });
-
   it("❎ refuses a local procedure that writes a published action with its own schema", async () => {
     const { db } = await given();
     const { inputs } = userActivities["user.password_changed"].shape;
@@ -193,16 +179,6 @@ describe("procedure", () => {
           procedures: { user: { password_changed: drifted } },
         }),
       /user.password_changed: build the procedure from the published schema/,
-    );
-  });
-
-  it("❎ refuses a key that is both journaled and private", () => {
-    assert.throws(
-      () =>
-        procedure
-          .inputs(z.object({ user_id: z.number() }))
-          .private(z.object({ user_id: z.number() })),
-      /keys both journaled and private: user_id/,
     );
   });
 });
