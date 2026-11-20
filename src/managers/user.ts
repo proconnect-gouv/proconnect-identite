@@ -577,7 +577,16 @@ export const changePassword = async (token: string, password: string) => {
     throw new InvalidTokenError();
   }
 
-  const user = await users.findByResetPasswordToken(token);
+  const user = await db.query.users.findFirst({
+    columns: {
+      email: true,
+      family_name: true,
+      given_name: true,
+      id: true,
+      reset_password_sent_at: true,
+    },
+    where: (table, { eq }) => eq(table.reset_password_token, token),
+  });
 
   if (isEmpty(user)) {
     track("change_password.reset_token.not_found", {});
