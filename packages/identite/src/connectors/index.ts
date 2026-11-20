@@ -6,7 +6,6 @@ import {
   deleteAuthenticatorFactory,
   findAuthenticatorFactory,
   findAuthenticatorsByUserIdFactory,
-  updateAuthenticatorFactory,
 } from "#src/repositories/authenticator";
 import {
   addDomainFactory,
@@ -82,7 +81,6 @@ export function createContext({
         deleteAllByUserId: deleteAllAuthenticatorsByUserIdFactory({ pg }),
         find: findAuthenticatorFactory({ pg }),
         findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
-        update: updateAuthenticatorFactory({ pg }),
       },
       email_domains: {
         addDomain: addDomainFactory({ pg }),

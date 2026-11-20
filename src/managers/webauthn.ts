@@ -1,3 +1,4 @@
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import {
   NotFoundError,
   UserNotFoundError,
@@ -15,6 +16,7 @@ import {
   verifyRegistrationResponse,
   type WebAuthnCredential,
 } from "@simplewebauthn/server";
+import { eq, sql } from "drizzle-orm";
 import { isEmpty } from "lodash-es";
 import { AssertionError } from "node:assert";
 import { APPLICATION_NAME, HOST, WEBSITE_IDENTIFIER } from "../config/env";
@@ -22,7 +24,7 @@ import {
   WebauthnAuthenticationFailedError,
   WebauthnRegistrationFailedError,
 } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, db } from "../connectors/context";
 import { getAuthenticatorFriendlyName } from "../connectors/github-passkey-authenticator-aaguids";
 import { formatDate } from "../services/date-format";
 import { logger, track } from "../services/log";
@@ -384,12 +386,15 @@ export const verifyAuthentication = async ({
     userVerified,
   } = authenticationInfo;
 
-  await authenticators.update(newCredentialID, {
-    // for some reason, newCounter is not incremented in authenticationInfo
-    counter: newCounter,
-    last_used_at: new Date(),
-    usage_count: authenticator.usage_count + 1,
-  });
+  await db
+    .update(schema.authenticators)
+    .set({
+      // for some reason, newCounter is not incremented in authenticationInfo
+      counter: newCounter,
+      last_used_at: sql`now()`,
+      usage_count: sql`${schema.authenticators.usage_count} + 1`,
+    })
+    .where(eq(schema.authenticators.credential_id, newCredentialID));
 
   return { userVerified, user };
 };
