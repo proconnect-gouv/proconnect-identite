@@ -1,5 +1,6 @@
 <div>
   <%- include('../../mfa-settings/passkey-layout.ejs', {
+    restartPath: '/users/double-authentication-choice',
     notifications: notifications,
     csrfToken: csrfToken,
     verifyRegistrationAction: '/users/passkeys/verify-registration',

@@ -151,6 +151,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.contains("Revenir au début").click();
 
-    cy.contains("Choisir votre méthode de connexion renforcée");
+    cy.location("pathname").should("eq", "/connection-and-account");
+    cy.title().should("include", "Compte et connexion");
   });
 });
