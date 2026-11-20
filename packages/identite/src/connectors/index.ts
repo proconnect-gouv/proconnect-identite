@@ -16,7 +16,6 @@ import { findFranceconnectUserinfoFactory } from "#src/repositories/franceconnec
 import {
   deleteModerationFactory,
   findModerationByIdFactory,
-  findPendingModerationFactory,
   getModerationByIdFactory,
   reopenModerationFactory,
 } from "#src/repositories/moderation";
@@ -96,7 +95,6 @@ export function createContext({
       moderations: {
         delete: deleteModerationFactory({ pg }),
         findById: findModerationByIdFactory({ pg }),
-        findPending: findPendingModerationFactory({ pg }),
         getById: getModerationByIdFactory({ pg }),
         reopen: reopenModerationFactory({ pg }),
       },
