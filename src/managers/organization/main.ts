@@ -1,10 +1,10 @@
 import { QuitOrganization } from "@proconnect-gouv/proconnect.email";
 import { NotFoundError } from "@proconnect-gouv/proconnect.identite/errors";
 import { computeServicePublicInfo } from "@proconnect-gouv/proconnect.identite/services/organization";
-import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
+import { ModerationTypeSchema } from "@proconnect-gouv/proconnect.identite/types";
 import type { Request } from "express";
 import { isEmpty } from "lodash-es";
-import { context, runtime } from "../../connectors/context";
+import { context, db, runtime } from "../../connectors/context";
 import { sendMail } from "../../connectors/mail";
 import {
   getUserFromAuthenticatedSession,
@@ -13,15 +13,25 @@ import {
 
 const { organizations, users } = context.repository;
 
-export const getUserOrganizations = async (
-  userId: number,
-): Promise<{
-  userOrganizations: Organization[];
-  pendingUserOrganizations: Organization[];
-}> => {
+export const getUserOrganizations = async (userId: number) => {
   const userOrganizations = await organizations.findByUserId(userId);
-  const pendingUserOrganizations =
-    await organizations.findPendingByUserId(userId);
+  const pendingModerations = await db.query.moderations.findMany({
+    columns: { id: true },
+    where: (table, { and, eq, isNull }) =>
+      and(
+        eq(table.user_id, userId),
+        eq(table.type, ModerationTypeSchema.enum.organization_join_block),
+        isNull(table.moderated_at),
+      ),
+    orderBy: (table, { asc }) => asc(table.created_at),
+    with: { organization: true },
+  });
+  const pendingUserOrganizations = pendingModerations.map(
+    ({ id: moderation_id, organization }) => ({
+      ...organization,
+      moderation_id,
+    }),
+  );
 
   return { userOrganizations, pendingUserOrganizations };
 };
