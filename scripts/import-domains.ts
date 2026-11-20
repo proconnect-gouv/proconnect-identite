@@ -1,6 +1,6 @@
 // src https://stackoverflow.com/questions/40994095/pipe-streams-to-edit-csv-file-in-node-js
 import {
-  isDomainValid,
+  Domain,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
 import { InvalidSiretError } from "@proconnect-gouv/proconnect.identite/errors";
@@ -101,13 +101,14 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
 
         for (let siret of sirets) {
           // 0. checks email provider
-          const domain = rawDomain.toString().trim().toLowerCase();
-          if (!isDomainValid(rawDomain)) {
+          const parsedDomain = Domain.safeParse(rawDomain.toString());
+          if (!parsedDomain.success) {
             i++;
             rejected_invalid_domain_count++;
             rowResults.push("rejected_invalid_domain");
             continue;
           }
+          const domain = parsedDomain.data;
           if (usesAFreeEmailProvider(domain)) {
             i++;
             rejected_free_email_domain_count++;

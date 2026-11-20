@@ -1,4 +1,4 @@
-import { isDomainValid } from "@proconnect-gouv/proconnect.core/security";
+import { Domain } from "@proconnect-gouv/proconnect.core/security";
 import {
   computeServicePublicInfo,
   isEntrepriseUnipersonnelle,
@@ -135,7 +135,7 @@ export const isEtablissementScolaireDuPremierEtSecondDegre = ({
 };
 
 export const isEducationNationaleDomain = (domain: string) => {
-  if (!isDomainValid(domain)) {
+  if (!Domain.isValid(domain)) {
     return false;
   }
 
@@ -143,7 +143,7 @@ export const isEducationNationaleDomain = (domain: string) => {
 };
 
 export const isArmeeDomain = (domain: string) => {
-  if (!isDomainValid(domain)) {
+  if (!Domain.isValid(domain)) {
     return false;
   }
   const ARMEE_DOMAINS = ["intradef.gouv.fr", "def.gouv.fr"];

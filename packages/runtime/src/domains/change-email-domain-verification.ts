@@ -3,6 +3,7 @@
 import type { ActivityContexts, RuntimeContext } from "#src/activity";
 import type { IdentiteTransaction } from "#src/database";
 import { insertActivity } from "#src/journal";
+import type { Domain } from "@proconnect-gouv/proconnect.core/security";
 import {
   email_domains,
   users_organizations,
@@ -51,7 +52,7 @@ export function changeEmailDomainVerificationFactory({
     organization_id,
     verification_type,
   }: {
-    domain: string;
+    domain: Domain;
     organization_id: number;
     verification_type: EmailDomainNoPendingVerificationType;
   }): Promise<ChangeEmailDomainVerificationOutcome> {
@@ -184,7 +185,7 @@ async function replaceEmailDomain(
     verification_type,
     verified_at,
   }: {
-    domain: string;
+    domain: Domain;
     organization_id: number;
     verification_type: EmailDomainNoPendingVerificationType;
     verified_at: SQL | null;

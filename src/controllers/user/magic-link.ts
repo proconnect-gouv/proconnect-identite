@@ -1,3 +1,4 @@
+import { Email } from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
 import { HOST } from "../../config/env";
@@ -9,15 +10,12 @@ import {
   sendSendMagicLinkEmail,
 } from "../../managers/user";
 import { csrfToken } from "../../middlewares/csrf-protection";
-import { emailSchema } from "../../services/custom-zod-schemas";
 
 export const postSendMagicLinkController = async (
   req: Request,
   res: Response,
 ) => {
-  const email = emailSchema().safeParse(
-    getEmailFromUnauthenticatedSession(req),
-  );
+  const email = Email.safeParse(getEmailFromUnauthenticatedSession(req));
 
   if (!email.success) {
     return res.redirect(`/users/start-sign-in?notification=invalid_email`);

@@ -1,5 +1,5 @@
 import { ApiEntrepriseConnectionError } from "@proconnect-gouv/proconnect.api_entreprise/types";
-import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
+import { Domain, Email } from "@proconnect-gouv/proconnect.core/security";
 import { getEmailDomain } from "@proconnect-gouv/proconnect.core/services/email";
 import { Welcome } from "@proconnect-gouv/proconnect.email";
 import {
@@ -307,11 +307,18 @@ export const joinOrganization = async ({
     }
 
     for (const contactEmail of contactEmails) {
-      if (!isEmailValid(contactEmail)) {
+      if (!Email.isValid(contactEmail)) {
         continue;
       }
 
-      const contactDomain = getEmailDomain(contactEmail);
+      const parsedContactDomain = Domain.safeParse(
+        getEmailDomain(contactEmail),
+      );
+      if (!parsedContactDomain.success) {
+        continue;
+      }
+
+      const contactDomain = parsedContactDomain.data;
 
       if (!usesAFreeEmailProvider(contactEmail)) {
         const outcome = await runtime
@@ -365,7 +372,7 @@ export const joinOrganization = async ({
       }
     }
 
-    if (some(contactEmails, isEmailValid) && usesAFreeEmailProvider(email)) {
+    if (some(contactEmails, Email.isValid) && usesAFreeEmailProvider(email)) {
       throw new PendingOfficialContactEmailVerificationError(organization_id);
     }
   }
@@ -407,7 +414,7 @@ export const joinOrganization = async ({
       });
     }
 
-    if (isEmailValid(contactEmail)) {
+    if (Email.isValid(contactEmail)) {
       throw new PendingOfficialContactEmailVerificationError(organization_id);
     }
   }

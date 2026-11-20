@@ -2,6 +2,7 @@
 
 import { hashToPostgresParams } from "#src/services/postgres";
 import type { DatabaseContext, User } from "#src/types";
+import type { Email } from "@proconnect-gouv/proconnect.core/security";
 import type { QueryResult } from "pg";
 
 //
@@ -11,7 +12,7 @@ export function createUserFactory({ pg }: DatabaseContext) {
     email,
     encrypted_password = null,
   }: {
-    email: string;
+    email: Email;
     encrypted_password?: string | null;
   }) {
     const userWithTimestamps = {

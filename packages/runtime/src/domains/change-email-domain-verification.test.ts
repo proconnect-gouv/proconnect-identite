@@ -3,6 +3,7 @@
 import type { IdentiteDatabase } from "#src/database";
 import { createIdentiteRuntime } from "#src/runtime";
 import { createTestDatabase, readActivityLogs } from "#testing";
+import { Domain } from "@proconnect-gouv/proconnect.core/security";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import { sql } from "drizzle-orm";
 import assert from "node:assert/strict";
@@ -112,7 +113,7 @@ describe("changeEmailDomainVerification", () => {
     const before = await snapshot(db);
 
     const outcome = await runtime.changeEmailDomainVerification({
-      domain: "notfound.world",
+      domain: Domain.parse("notfound.world"),
       organization_id: 404,
       verification_type: "verified",
     });
@@ -129,7 +130,7 @@ describe("changeEmailDomainVerification", () => {
     const { db, runtime } = await setup();
 
     const outcome = await runtime.changeEmailDomainVerification({
-      domain: "darkangels.world",
+      domain: Domain.parse("darkangels.world"),
       organization_id: 1,
       verification_type: "verified",
     });
@@ -308,7 +309,7 @@ describe("changeEmailDomainVerification", () => {
     const { db, runtime } = await setup();
 
     const outcome = await runtime.changeEmailDomainVerification({
-      domain: "darkangels.world",
+      domain: Domain.parse("darkangels.world"),
       organization_id: 1,
       verification_type: "refused",
     });
@@ -404,7 +405,7 @@ describe("changeEmailDomainVerification", () => {
 
     await assert.rejects(
       runtime.changeEmailDomainVerification({
-        domain: "darkangels.world",
+        domain: Domain.parse("darkangels.world"),
         organization_id: 1,
         verification_type: "verified",
       }),
