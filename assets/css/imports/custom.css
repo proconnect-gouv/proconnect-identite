@@ -18,25 +18,8 @@
   white-space: break-spaces;
 }
 
-.border-shadow {
-  border-radius: 4px;
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1);
-}
-
 .border {
   border: 1px solid var(--border-default-grey);
-}
-
-.blue-france {
-  color: #00008f !important;
-}
-
-.grey-background {
-  background-color: #f6f6f6 !important;
-}
-
-.justify-center {
-  justify-content: center !important;
 }
 
 .centered-content {
@@ -64,31 +47,6 @@ input[readonly] {
 .limited-width {
   max-width: 80px;
   height: auto;
-}
-
-/* For links accessibility */
-/* https://www.ffoodd.fr/masquage-accessible-de-pointe/index.html */
-
-.visually-hidden,
-.visually-hidden-focusable:not(:focus, :focus-within) {
-  border: 0 !important;
-  clip-path: inset(50%) !important;
-  height: 1px !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-  width: 1px !important;
-  white-space: nowrap !important;
-}
-
-.visually-hidden:not(caption),
-.visually-hidden-focusable:not(caption):not(:focus, :focus-within) {
-  position: absolute !important;
-}
-
-.visually-hidden *,
-.visually-hidden-focusable:not(:focus, :focus-within) * {
-  overflow: hidden !important;
 }
 
 .go-back-link {
