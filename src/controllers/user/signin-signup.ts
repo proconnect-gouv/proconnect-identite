@@ -245,6 +245,14 @@ export const postSignUpController = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const email = emailSchema().safeParse(
+    getEmailFromUnauthenticatedSession(req),
+  );
+
+  if (!email.success) {
+    return res.redirect(`/users/start-sign-in?notification=invalid_email`);
+  }
+
   try {
     const schema = z.object({
       body: z.object({
@@ -258,10 +266,7 @@ export const postSignUpController = async (
       body: req.body,
     });
 
-    const user = await signupWithPassword(
-      getEmailFromUnauthenticatedSession(req)!,
-      password,
-    );
+    const user = await signupWithPassword(email.data, password);
 
     await createAuthenticatedSession(req, res, user, "pwd");
 
