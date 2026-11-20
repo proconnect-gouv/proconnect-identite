@@ -37,7 +37,12 @@ export async function fetch_crisp<
     );
 
   if (!response.ok) {
-    throw new Error(`${url} ${response.status} ${response.statusText}`);
+    const { reason } = (await response
+      .json()
+      .catch(() => ({}))) as Partial<CrispErrorResponse>;
+    throw new Error(
+      `${url} ${response.status} ${response.statusText}${reason ? ` - ${reason}` : ""}`,
+    );
   }
   const crisp_response = (await response.json()) as CrispResponse<TData>;
   if (crisp_response.error) {
