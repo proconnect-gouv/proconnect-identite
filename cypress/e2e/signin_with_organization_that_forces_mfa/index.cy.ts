@@ -30,7 +30,7 @@ describe("sign-in with 2FA forced by organization", () => {
       "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
     ).click();
 
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
 
     cy.fillTotpFields();
 

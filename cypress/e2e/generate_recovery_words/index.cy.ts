@@ -94,7 +94,7 @@ describe("generate recovery words", () => {
     cy.visit("/connection-and-account");
     cy.login("with-recovery-words@yopmail.com");
 
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
     cy.contains("Vous n’avez pas accès à cette méthode ?").click();
 
     cy.title().should("include", "Utiliser vos mots de secours");

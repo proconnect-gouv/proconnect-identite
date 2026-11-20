@@ -67,7 +67,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.get("button#force-2fa").click();
 
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
 
     cy.fillTotpFields();
 
@@ -98,7 +98,7 @@ describe("sign-in with TOTP on untrusted browser", () => {
 
     cy.verifyEmail();
 
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
 
     cy.fillTotpFields();
 
