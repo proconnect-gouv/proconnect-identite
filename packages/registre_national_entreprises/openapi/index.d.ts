@@ -190,6 +190,11 @@ export interface components {
       };
       /** @description Numéro Siren de l'entreprise */
       siren?: string;
+      /**
+       * Format: date-time
+       * @description Date de la dernière mise à jour de la fiche de l'entreprise
+       */
+      updatedAt?: string;
     };
     /** @description Objet renvoyé en cas de succès sur une requête de type token */
     ResponseToken: {

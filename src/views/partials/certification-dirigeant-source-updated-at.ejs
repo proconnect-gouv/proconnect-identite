@@ -1,0 +1,7 @@
+<p class="fr-text--sm">
+  <% if (locals.sourceUpdatedAt) { %>
+    Dernière mise à jour de ces données dans le <%= dataSourceLabel; %> : <%= sourceUpdatedAt; %>.
+  <% } else { %>
+    Le <%= dataSourceLabel; %> ne communique pas la date de dernière mise à jour de ces données.
+  <% } %>
+</p>
