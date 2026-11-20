@@ -1,0 +1,1 @@
+ℹ️ Les membres d’une petite association ou d’une petite structure rattachés avec une adresse email non gratuite, sans domaine vérifié, sont détachés de cette organisation : à leur prochaine connexion, ils la rejoignent de nouveau via le parcours habituel, avec modération si nécessaire.
