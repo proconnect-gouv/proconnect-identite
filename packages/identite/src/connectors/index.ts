@@ -17,7 +17,6 @@ import {
   deleteModerationFactory,
   findModerationByIdFactory,
   findPendingModerationFactory,
-  findRejectedModerationFactory,
   getModerationByIdFactory,
   reopenModerationFactory,
 } from "#src/repositories/moderation";
@@ -98,7 +97,6 @@ export function createContext({
         delete: deleteModerationFactory({ pg }),
         findById: findModerationByIdFactory({ pg }),
         findPending: findPendingModerationFactory({ pg }),
-        findRejected: findRejectedModerationFactory({ pg }),
         getById: getModerationByIdFactory({ pg }),
         reopen: reopenModerationFactory({ pg }),
       },
