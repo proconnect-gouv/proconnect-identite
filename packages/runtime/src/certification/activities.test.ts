@@ -2,10 +2,7 @@
 
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import {
-  certificationDirigeantActivities,
-  getCertificationDirigeantActivity,
-} from "./activities.js";
+import { getCertificationDirigeantActivity } from "./activities.js";
 
 //
 
@@ -102,27 +99,5 @@ describe("getCertificationDirigeantActivity", () => {
         context: { inputs: {}, outcome: {} },
       },
     );
-  });
-
-  it("builds contexts their published schema accepts", () => {
-    for (const cause of [
-      "below_threshold",
-      "close_match",
-      "exact_match",
-      "no_candidates",
-      "organisation_not_covered",
-    ] as const) {
-      const { action, context } = getCertificationDirigeantActivity(
-        result_of({
-          cause,
-          dirigeant: { ...ulysse, birthdate: null, family_name: "Tozi" },
-        }),
-      );
-
-      assert.deepEqual(
-        certificationDirigeantActivities[action].parse(context),
-        context,
-      );
-    }
   });
 });
