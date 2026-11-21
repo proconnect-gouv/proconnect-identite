@@ -109,6 +109,9 @@ export function instrument<T extends object>(
   return new Proxy(object, {
     get(target, property, receiver) {
       const value: unknown = Reflect.get(target, property, receiver);
+      if (value !== null && typeof value === "object") {
+        return instrument(`${name}.${String(property)}`, value, { op });
+      }
       if (typeof value !== "function") return value;
       const method = String(property);
       return (...args: unknown[]) =>

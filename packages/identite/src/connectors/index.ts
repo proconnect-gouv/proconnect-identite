@@ -7,31 +7,18 @@ import {
   findAuthenticatorFactory,
   findAuthenticatorsByUserIdFactory,
 } from "#src/repositories/authenticator";
-import {
-  addDomainFactory,
-  findEmailDomainsByOrganizationIdFactory,
-} from "#src/repositories/email-domain";
+import { findEmailDomainsByOrganizationIdFactory } from "#src/repositories/email-domain";
 import { findFranceconnectUserinfoFactory } from "#src/repositories/franceconnect_userinfo";
 import {
-  deleteModerationFactory,
   findModerationByIdFactory,
   getModerationByIdFactory,
-  reopenModerationFactory,
 } from "#src/repositories/moderation";
-import {
-  deleteOfficialContactEmailVerificationFactory,
-  findOfficialContactEmailVerificationFactory,
-  upsertOfficialContactEmailVerificationFactory,
-} from "#src/repositories/official-contact-email-verification";
-import {
-  findByClientIdFactory,
-  upsertAuthorizationRequestFactory,
-} from "#src/repositories/oidc-client";
+import { findOfficialContactEmailVerificationFactory } from "#src/repositories/official-contact-email-verification";
+import { findByClientIdFactory } from "#src/repositories/oidc-client";
 import {
   findByUserIdFactory,
   findOrganizationByIdFactory,
   getOrganizationByIdFactory,
-  upsertFactory,
 } from "#src/repositories/organization";
 import {
   createRecoveryWordsFactory,
@@ -83,30 +70,23 @@ export function createContext({
         findByUserId: findAuthenticatorsByUserIdFactory({ pg }),
       },
       email_domains: {
-        addDomain: addDomainFactory({ pg }),
         findEmailDomainsByOrganizationId:
           findEmailDomainsByOrganizationIdFactory({ pg }),
       },
       moderations: {
-        delete: deleteModerationFactory({ pg }),
         findById: findModerationByIdFactory({ pg }),
         getById: getModerationByIdFactory({ pg }),
-        reopen: reopenModerationFactory({ pg }),
       },
       official_contact_email_verifications: {
-        delete: deleteOfficialContactEmailVerificationFactory({ pg }),
         find: findOfficialContactEmailVerificationFactory({ pg }),
-        upsert: upsertOfficialContactEmailVerificationFactory({ pg }),
       },
       oidc_clients: {
         findByClientId: findByClientIdFactory({ pg }),
-        upsertAuthorizationRequest: upsertAuthorizationRequestFactory({ pg }),
       },
       organizations: {
         findById: findOrganizationByIdFactory({ pg }),
         findByUserId: findByUserIdFactory({ pg }),
         getById: getOrganizationByIdFactory({ pg }),
-        upsert: upsertFactory({ pg }),
       },
       recovery_words: {
         create: createRecoveryWordsFactory({ pg }),

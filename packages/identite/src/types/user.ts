@@ -33,3 +33,10 @@ export const UserSchema = z.object({
 });
 
 export type User = z.output<typeof UserSchema>;
+
+export const UserInformationSchema = UserSchema.pick({
+  family_name: true,
+  given_name: true,
+  job: true,
+  phone_number: true,
+});

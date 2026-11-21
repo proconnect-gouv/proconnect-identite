@@ -3,14 +3,16 @@ import {
   isDomainValid,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import { InvalidSiretError } from "@proconnect-gouv/proconnect.identite/errors";
-import type { Organization } from "@proconnect-gouv/proconnect.identite/types";
+import { toPartialOrganization } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { parse, stringify, transform } from "csv";
+import { sql } from "drizzle-orm";
 import fs from "fs";
 import { isEmpty, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
-import { context } from "../src/connectors/context";
+import { context, db } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
 import { usesAFreeEmailProvider } from "../src/services/email";
@@ -23,7 +25,7 @@ import {
   throttleApiCall,
 } from "../src/services/script-helpers";
 
-const { email_domains, organizations } = context.repository;
+const { email_domains } = context.repository;
 
 const { INPUT_FILE, OUTPUT_FILE } = z
   .object({
@@ -165,10 +167,23 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             }
 
             // 3. update organizationInfo
-            const organization: Organization = await organizations.upsert({
-              siret: organizationInfo.siret,
-              organizationInfo,
-            });
+            const [organization] = await db
+              .insert(schema.organizations)
+              .values({
+                ...toPartialOrganization(organizationInfo),
+                created_at: sql`now()`,
+                organization_info_fetched_at: sql`now()`,
+                updated_at: sql`now()`,
+              })
+              .onConflictDoUpdate({
+                set: {
+                  ...toPartialOrganization(organizationInfo),
+                  organization_info_fetched_at: sql`now()`,
+                  updated_at: sql`now()`,
+                },
+                target: schema.organizations.siret,
+              })
+              .returning({ id: schema.organizations.id });
 
             // 4. add domain
             const emailDomains =
@@ -184,10 +199,11 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
               continue;
             }
 
-            await email_domains.addDomain({
-              organization_id: organization.id,
+            await db.insert(schema.email_domains).values({
               domain,
+              organization_id: organization.id,
               verification_type: "not_verified_yet",
+              verified_at: sql`now()`,
             });
             i++;
             success_count++;

@@ -1,13 +1,18 @@
 //
 
 import { createApiEntrepriseClient } from "@proconnect-gouv/proconnect.api_entreprise/api";
-import { getOrganizationInfoFactory } from "@proconnect-gouv/proconnect.identite/managers/organization";
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
+import {
+  getOrganizationInfoFactory,
+  toPartialOrganization,
+} from "@proconnect-gouv/proconnect.identite/managers/organization";
+import { sql } from "drizzle-orm";
 import { isDate, isEmpty, toInteger } from "lodash-es";
 import type { Pool } from "pg";
 import { match } from "ts-pattern";
 import { apiEntrepriseOpenApiTestClient } from "../src/connectors/api-entreprise";
 import { RegistreNationalEntreprisesTestClient } from "../src/connectors/api-rne";
-import { context } from "../src/connectors/context";
+import { db } from "../src/connectors/context";
 import { getDatabaseConnection } from "../src/connectors/postgres";
 import { FetchError } from "../src/connectors/request";
 import { logger } from "../src/services/log";
@@ -16,8 +21,6 @@ import {
   humanReadableDuration,
   isOrganizationInfo,
 } from "../src/services/script-helpers";
-
-const { organizations } = context.repository;
 
 //
 const DINUM_SIRET = "13002526500013";
@@ -133,7 +136,22 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 250;
       // 3. update the organization
       if (isOrganizationInfo(organizationInfo)) {
         logger.info(`libelle: ${organizationInfo.libelle}`);
-        await organizations.upsert({ siret, organizationInfo });
+        await db
+          .insert(schema.organizations)
+          .values({
+            ...toPartialOrganization(organizationInfo),
+            created_at: sql`now()`,
+            organization_info_fetched_at: sql`now()`,
+            updated_at: sql`now()`,
+          })
+          .onConflictDoUpdate({
+            set: {
+              ...toPartialOrganization(organizationInfo),
+              organization_info_fetched_at: sql`now()`,
+              updated_at: sql`now()`,
+            },
+            target: schema.organizations.siret,
+          });
       }
 
       // 4. throttle the update

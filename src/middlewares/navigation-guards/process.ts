@@ -98,15 +98,16 @@ export const processPendingCertificationDirigeantGuard = async (
 
     const membership = await runtime
       .as({ type: "user", user_id })
-      .addMembership({
-        user_id,
+      .member.joined.mutate({
+        is_external: false,
         organization_id: organization.id,
+        user_id,
         verification_type: LinkEnum.enum.organization_dirigeant,
       });
 
     const outcome =
       membership.kind === "member_already_exists"
-        ? await runtime.as({ type: "user", user_id }).updateMembership({
+        ? await runtime.as({ type: "user", user_id }).member.updated.mutate({
             organization_id,
             renew_verification: true,
             user_id,

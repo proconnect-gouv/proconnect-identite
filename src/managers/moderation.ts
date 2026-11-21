@@ -6,7 +6,7 @@ import {
 import type { User } from "@proconnect-gouv/proconnect.identite/types";
 import { isEmpty } from "lodash-es";
 import { ForbiddenError } from "../config/errors";
-import { context } from "../connectors/context";
+import { context, runtime } from "../connectors/context";
 import { sendMail } from "../connectors/mail";
 
 const { moderations, organizations } = context.repository;
@@ -54,8 +54,10 @@ export const cancelModeration = async ({
     throw new NotFoundError();
   }
 
-  const result = await moderations.delete(moderation_id);
-  if (!result) {
+  const outcome = await runtime
+    .as({ type: "user", user_id: user.id })
+    .moderation.cancelled.mutate({ moderation_id });
+  if (outcome.kind === "moderation_not_found") {
     throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
   }
 
@@ -69,31 +71,4 @@ export const cancelModeration = async ({
     }).toString(),
     tag: "cancel-moderation",
   });
-
-  return result;
-};
-
-export const reopenModerationWithUserEdit = async ({
-  user,
-  moderation_id,
-}: {
-  user: User;
-  moderation_id: number;
-}) => {
-  const moderation = await moderations.getById(moderation_id);
-
-  if (user.id !== moderation.user_id) {
-    throw new ForbiddenError();
-  }
-
-  const reopened = await moderations.reopen({
-    id: moderation_id,
-    userEmail: user.email,
-    cause: "Edition des informations personnelles",
-  });
-  if (!reopened) {
-    throw new ModerationNotFoundError(`Moderation ${moderation_id} not found`);
-  }
-
-  return reopened;
 };

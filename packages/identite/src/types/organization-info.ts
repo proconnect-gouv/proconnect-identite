@@ -34,11 +34,15 @@ const ApiRneOrganizationInfoSchema = z.object({
   denominationUsuelleEtablissementPrincipal: z.string().nullable(),
 });
 
+export const OrganizationInfoSchema =
+  ApiEntrepriseOrganizationInfoSchema.extend(
+    ApiRneOrganizationInfoSchema.shape,
+  );
+
 export type ApiEntrepriseOrganizationInfo = z.output<
   typeof ApiEntrepriseOrganizationInfoSchema
 >;
 export type ApiRneOrganizationInfo = z.output<
   typeof ApiRneOrganizationInfoSchema
 >;
-export type OrganizationInfo = ApiEntrepriseOrganizationInfo &
-  ApiRneOrganizationInfo;
+export type OrganizationInfo = z.output<typeof OrganizationInfoSchema>;
