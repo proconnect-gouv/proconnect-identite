@@ -15,7 +15,6 @@ import {
   addAuthenticationMethodReferenceInSession,
   createAuthenticatedSession,
   getUserFromAuthenticatedSession,
-  updateUserInAuthenticatedSession,
 } from "../managers/session/authenticated";
 import { getEmailFromUnauthenticatedSession } from "../managers/session/unauthenticated";
 import {
@@ -67,9 +66,8 @@ export const getGenerateRegistrationOptionsController = async (
   try {
     const { email } = getUserFromAuthenticatedSession(req);
 
-    const { updatedUser, registrationOptions } =
-      await getRegistrationOptions(email);
-    updateUserInAuthenticatedSession(req, updatedUser);
+    const { registrationOptions } = await getRegistrationOptions(email);
+    req.session.webauthnChallenge = registrationOptions.challenge;
 
     return res.json(registrationOptions);
   } catch (e) {
@@ -105,13 +103,18 @@ export const postVerifyRegistrationMiddlewareFactory =
         .parseAsync(webauthn_registration_response_string);
       const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
-      const { userVerified, updatedUser, key_name } = await verifyRegistration({
+      const expectedChallenge = req.session.webauthnChallenge;
+      // a challenge is used once, whatever the verification outcome
+      delete req.session.webauthnChallenge;
+
+      const { userVerified, user, key_name } = await verifyRegistration({
         email: email,
+        expectedChallenge,
         response,
       });
-      addAuthenticationMethodReferenceInSession(req, res, updatedUser, "pop");
+      addAuthenticationMethodReferenceInSession(req, res, user, "pop");
       if (userVerified) {
-        addAuthenticationMethodReferenceInSession(req, res, updatedUser, "uv");
+        addAuthenticationMethodReferenceInSession(req, res, user, "uv");
       }
       await sendActivateAccessKeyMail({
         user_id,
@@ -160,6 +163,8 @@ export const getGenerateAuthenticationOptionsControllerFactory =
         isSecondFactorAuthentication,
       );
 
+      req.session.webauthnChallenge = authenticationOptions.challenge;
+
       return res.json(authenticationOptions);
     } catch (e) {
       next(e);
@@ -196,8 +201,13 @@ export const postVerifyAuthenticationController =
         ? getUserFromAuthenticatedSession(req).email
         : getEmailFromUnauthenticatedSession(req);
 
+      const expectedChallenge = req.session.webauthnChallenge;
+      // a challenge is used once, whatever the verification outcome
+      delete req.session.webauthnChallenge;
+
       let { user, userVerified } = await verifyAuthentication({
         email,
+        expectedChallenge,
         response,
         isSecondFactorVerification,
       });
