@@ -4,13 +4,15 @@ import {
   isNameValid,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { parse, stringify, transform } from "csv";
+import { sql } from "drizzle-orm";
 import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
-import { context, runtime } from "../src/connectors/context";
+import { context, db, runtime } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
 import { logger } from "../src/services/log";
@@ -135,13 +137,18 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         // 1. add user if it does not exist
         let user = await users.findByEmail(email);
         if (isEmpty(user)) {
-          user = await users.create({ email });
-          await users.update(user.id, {
-            given_name: first_name,
-            family_name: last_name,
-            needs_inclusionconnect_welcome_page: true,
-            needs_inclusionconnect_onboarding_help: true,
-          });
+          [user] = await db
+            .insert(schema.users)
+            .values({
+              created_at: sql`now()`,
+              email,
+              family_name: last_name,
+              given_name: first_name,
+              needs_inclusionconnect_onboarding_help: true,
+              needs_inclusionconnect_welcome_page: true,
+              updated_at: sql`now()`,
+            })
+            .returning();
         }
 
         const sirets: string[] = rawSirets
