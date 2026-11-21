@@ -6,7 +6,8 @@
   "type": "module",
   "imports": {
     "#cypress/*": "./cypress/*.ts",
-    "#testing": "./testing/index.ts"
+    "#testing": "./testing/index.ts",
+    "#testing/app": "./testing/app.ts"
   },
   "main": "src/index.js",
   "workspaces": [
@@ -145,6 +146,7 @@
     "@changesets/cli": "^3.0.2",
     "@dotenvx/dotenvx": "^1.61.0",
     "@electric-sql/pglite": "^0.5.16",
+    "@electric-sql/pglite-socket": "^0.2.19",
     "@fullhuman/postcss-purgecss": "^8.0.0",
     "@gouvfr/dsfr": "^1.14.2",
     "@kitajs/html": "^4.2.9",
@@ -165,6 +167,7 @@
     "@types/oidc-provider": "^9.5.0",
     "@types/pg": "^8.23.1",
     "@types/qrcode": "^1.5.5",
+    "@types/supertest": "^7.2.1",
     "axe-core": "^4.12.1",
     "concurrently": "^10.0.6",
     "copy-and-watch": "^0.1.8",
@@ -181,6 +184,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-sql": "^0.19.2",
+    "supertest": "^7.3.2",
     "tld-extract": "^2.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.3.7",

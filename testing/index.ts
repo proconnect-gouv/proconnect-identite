@@ -67,17 +67,50 @@ export async function insertEmailDomain({
     .values({ domain, organization_id, verification_type });
 }
 
-export async function insertUser({ email }: { email: string }) {
+export async function insertUser({
+  email,
+  email_verified = false,
+  family_name,
+  given_name,
+}: {
+  email: string;
+  email_verified?: boolean;
+  family_name?: string;
+  given_name?: string;
+}) {
   const [{ id }] = await db
     .insert(schema.users)
     .values({
       created_at: new Date(),
       email,
+      email_verified,
+      email_verified_at: email_verified ? new Date() : null,
+      family_name,
+      given_name,
       updated_at: new Date(),
     })
     .returning({ id: schema.users.id });
 
   return id;
+}
+
+export async function insertOidcClient({
+  client_id,
+  redirect_uri,
+  scope,
+}: {
+  client_id: string;
+  redirect_uri: string;
+  scope: string;
+}) {
+  await db.insert(schema.oidc_clients).values({
+    client_id,
+    client_name: client_id,
+    client_secret: "secret",
+    post_logout_redirect_uris: [],
+    redirect_uris: [redirect_uri],
+    scope,
+  });
 }
 
 export async function insertMembership({
