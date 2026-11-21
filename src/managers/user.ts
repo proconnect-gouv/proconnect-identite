@@ -22,6 +22,7 @@ import {
   UpdatePersonalDataMail,
   VerifyEmail,
 } from "@proconnect-gouv/proconnect.email";
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import {
   NotFoundError,
   UserNotFoundError,
@@ -30,6 +31,7 @@ import {
   type FranceConnectUserInfoResponse,
   type User,
 } from "@proconnect-gouv/proconnect.identite/types";
+import { eq, sql } from "drizzle-orm";
 import { chain, isEmpty, uniq } from "lodash-es";
 import { AssertionError } from "node:assert";
 import {
@@ -205,10 +207,16 @@ export const sendEmailAddressVerificationEmail = async ({
 
   const verify_email_token = generatePinToken();
 
-  const updatedUser = await users.update(user.id, {
-    verify_email_token,
-    verify_email_sent_at: new Date(),
-  });
+  const [updatedUser] = await db
+    .update(schema.users)
+    .set({
+      updated_at: sql`now()`,
+      verify_email_sent_at: sql`now()`,
+      verify_email_token,
+    })
+    .where(eq(schema.users.id, user.id))
+    .returning();
+  track("verify_email.token.sent", { user_id: user.id });
 
   await sendMail({
     to: [user.email],
@@ -493,10 +501,15 @@ export const sendSendMagicLinkEmail = async (
 
   const magicLinkToken = generateToken();
 
-  await users.update(user.id, {
-    magic_link_token: magicLinkToken,
-    magic_link_sent_at: new Date(),
-  });
+  await db
+    .update(schema.users)
+    .set({
+      magic_link_sent_at: sql`now()`,
+      magic_link_token: magicLinkToken,
+      updated_at: sql`now()`,
+    })
+    .where(eq(schema.users.id, user.id));
+  track("magic_link.token.sent", { user_id: user.id });
 
   await sendMail({
     to: [user.email],
@@ -554,10 +567,15 @@ export const sendResetPasswordEmail = async (
 
   const resetPasswordToken = await generateToken();
 
-  await users.update(user.id, {
-    reset_password_token: resetPasswordToken,
-    reset_password_sent_at: new Date(),
-  });
+  await db
+    .update(schema.users)
+    .set({
+      reset_password_sent_at: sql`now()`,
+      reset_password_token: resetPasswordToken,
+      updated_at: sql`now()`,
+    })
+    .where(eq(schema.users.id, user.id));
+  track("change_password.reset_token.sent", { user_id: user.id });
 
   await sendMail({
     to: [user.email],
