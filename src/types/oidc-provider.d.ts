@@ -32,11 +32,3 @@ declare global {
     update_userinfo?: boolean;
   }
 }
-
-declare module "oidc-provider" {
-  interface ClientAuthorizationState {
-    organizationId?: number;
-    // acr computed at interaction end for organizationId
-    acr?: string;
-  }
-}

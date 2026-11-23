@@ -11,12 +11,12 @@ import { isEmpty, omitBy } from "lodash-es";
 import type { FindAccount } from "oidc-provider";
 import { context } from "../connectors/context";
 import { logger } from "./log";
-import { findAuthorizedOrganization } from "./oidc-authorized-organization";
+import { getAuthorizedOrganizationFromToken } from "./oidc-authorized-organization";
 import { isCommune } from "./organization";
 
 const { organizations, users } = context.repository;
 
-export const findAccount: FindAccount = async (ctx, sub, token) => {
+export const findAccount: FindAccount = async (_ctx, sub, token) => {
   const user = await users.findById(parseInt(sub, 10));
 
   if (isEmpty(user)) {
@@ -63,7 +63,7 @@ export const findAccount: FindAccount = async (ctx, sub, token) => {
       const userOrganizations = await organizations.findByUserId(id);
 
       const [authorizedOrganizationErr, authorized] = await to(
-        findAuthorizedOrganization(ctx, token),
+        getAuthorizedOrganizationFromToken(token),
       );
 
       if (authorizedOrganizationErr) {

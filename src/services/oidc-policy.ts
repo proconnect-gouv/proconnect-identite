@@ -1,6 +1,6 @@
 import { interactionPolicy } from "oidc-provider";
 import { context } from "../connectors/context";
-import { getAuthorizedOrganization } from "./oidc-authorized-organization";
+import { getAuthorizedOrganizationFromLoadedGrant } from "./oidc-authorized-organization";
 
 const { organizations } = context.repository;
 
@@ -17,7 +17,7 @@ policy.add(
       "organization_missing",
       "End-User must select one organization",
       async (ctx) => {
-        const authorized = await getAuthorizedOrganization(ctx);
+        const authorized = await getAuthorizedOrganizationFromLoadedGrant(ctx);
 
         if (!authorized) {
           return Check.REQUEST_PROMPT;
