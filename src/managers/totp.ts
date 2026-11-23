@@ -83,7 +83,13 @@ export const confirmTotpRegistration = async (
   });
 };
 
-export const deleteTotpConfiguration = async (user_id: number) => {
+export const deleteTotpConfiguration = async (
+  user_id: number,
+  reason: Extract<
+    Parameters<typeof disableForce2fa>[1],
+    "account_recovery" | "totp_removed"
+  >,
+) => {
   let user = await users.getById(user_id);
 
   user = await users.update(user_id, {
@@ -92,7 +98,7 @@ export const deleteTotpConfiguration = async (user_id: number) => {
   });
 
   if (!(await is2FACapable(user_id))) {
-    user = await disableForce2fa(user_id);
+    user = await disableForce2fa(user_id, reason);
   }
 
   return user;
