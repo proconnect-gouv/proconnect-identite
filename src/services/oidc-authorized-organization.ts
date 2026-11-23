@@ -56,8 +56,7 @@ export const findAuthorizedOrganizationFactory =
   async (
     ctx: KoaContextWithOIDC,
     token:
-      | { grantId?: string; sessionUid?: string; clientId?: string }
-      | undefined,
+      { grantId?: string; sessionUid?: string; clientId?: string } | undefined,
   ) => {
     if (!token?.grantId) return undefined;
     const grantOrganization = await getGrantOrganization(token.grantId);
