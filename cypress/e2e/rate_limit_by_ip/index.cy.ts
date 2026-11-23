@@ -4,9 +4,7 @@ describe("trigger rate limiting by ip", () => {
   before(cy.seed);
   beforeEach(() => {
     // Clear rate-limiter credits
-    cy.exec(
-      "docker compose exec redis redis-cli --scan --pattern 'ip-rate-limiter-*' | xargs -r docker compose exec redis redis-cli DEL",
-    );
+    cy.task("redis_delete", "ip-rate-limiter-*");
   });
 
   it("should trigger ip rate limiting when hitting 1 pages after a successful login", function () {

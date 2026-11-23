@@ -3,7 +3,7 @@ import "cypress-maildev";
 
 import "./commands";
 
-const RECORD_FOR_HUMANS = Cypress.env("RECORD_FOR_HUMANS") === true;
+const RECORD_FOR_HUMANS = Cypress.expose("RECORD_FOR_HUMANS") === true;
 
 if (RECORD_FOR_HUMANS) {
   ["visit", "click", "trigger", "type", "clear", "reload", "select"].forEach(

@@ -5,36 +5,7 @@ import { dirname } from "path";
 //
 
 export function seed() {
-  {
-    const command = "docker compose exec redis redis-cli FLUSHALL";
-    cy.task("log", `$ ${command}`);
-    cy.exec(command).then((result) => cy.task("log", result.stdout));
-  }
-  {
-    const command = "npm run delete-database";
-    cy.task("log", `$ ${command}`);
-    cy.exec(command, { env: { ENABLE_DATABASE_DELETION: "True" } }).then(
-      (result) => cy.task("log", result.stdout),
-    );
-  }
-  {
-    const command = "npm run migrate up";
-    cy.task("log", `$ ${command}`);
-    cy.exec(command).then((result) => cy.task("log", result.stdout));
-  }
-  {
-    const scope = dirname(Cypress.spec.relative);
-    const command = `npm run fixtures:load-ci -- ${scope}/fixtures.sql`;
-    cy.task("log", `$ ${command}`);
-    cy.exec(command).then((result) => cy.task("log", result.stdout));
-  }
-  {
-    const command = "npm run update-organization-info -- 0";
-    cy.task("log", `$ ${command}`);
-    cy.exec(command, { timeout: 10_000 }).then((result) =>
-      cy.task("log", result.stdout),
-    );
-  }
-
-  return cy.wrap(undefined);
+  return cy.task("seed", dirname(Cypress.spec.relative), {
+    timeout: 4 * 60_000,
+  });
 }
