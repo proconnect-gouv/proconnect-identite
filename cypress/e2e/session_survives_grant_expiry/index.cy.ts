@@ -1,6 +1,9 @@
 //
 
 describe("session survives grant expiry", () => {
+  const CLAMART_SIRET = "45334017600024";
+  const DANONE_SIRET = "55203253400646";
+
   before(cy.seed);
 
   it("should not require re-login after the Grant record is gone, as long as the Session is still valid", () => {
@@ -10,21 +13,37 @@ describe("session survives grant expiry", () => {
     cy.title().should("include", "S'inscrire ou se connecter - ");
     cy.login("unused1@yopmail.com");
 
-    cy.title().should("equal", "standard-client - ProConnect");
-    cy.contains("standard-client");
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Clamart (choisir cette organisation)").click();
 
-    // Remove every Grant record directly from Redis, leaving the Session untouched.
-    // Safe because cy.seed() FLUSHALLs redis before this spec runs, so this test's
-    // Grant is the only one present (see panva/node-oidc-provider#1202: Grant
-    // expiration must not tear down the Session).
-    cy.exec(
-      "docker compose exec redis redis-cli --scan --pattern 'oidc:Grant:*' | xargs -r docker compose exec redis redis-cli DEL",
-    ).then(({ stdout }) => {
-      expect(
-        Number(stdout.trim()),
-        "number of deleted Grant records",
-      ).to.be.greaterThan(0);
-    });
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains(`"siret": "${CLAMART_SIRET}"`);
+    cy.getTestClientAccessToken().as("clamartAccessToken");
+
+    // Select another organization in the ProConnect session, outside of any SP.
+    // The standard client keeps Clamart as long as its grant lives.
+    cy.visit("/users/select-organization");
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Danone (choisir cette organisation)").click();
+
+    cy.title().should("include", "Accueil - ProConnect");
+    cy.contains("Votre compte ProConnect");
+
+    cy.expireGrants();
+
+    // A token issued under the expired grant is rejected with a clean 401.
+    cy.get<string>("@clamartAccessToken").then((accessToken) =>
+      cy
+        .request({
+          url: "/oauth/userinfo",
+          headers: { Authorization: `Bearer ${accessToken}` },
+          failOnStatusCode: false,
+        })
+        .then(({ status, body }) => {
+          expect(status).to.equal(401);
+          expect(body.error).to.equal("invalid_token");
+        }),
+    );
 
     cy.visit("http://localhost:4000");
     cy.contains("S’identifier avec ProConnect").click();
@@ -33,5 +52,8 @@ describe("session survives grant expiry", () => {
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains("standard-client");
     cy.contains('"email": "unused1@yopmail.com"');
+    // The new grant takes the organization selected in the ProConnect session,
+    // not the one the standard client had before its grant expired.
+    cy.contains(`"siret": "${DANONE_SIRET}"`);
   });
 });
