@@ -14,4 +14,8 @@ export const membershipActivities = {
       verification_type: LinkEnum,
     }),
   }),
+  "official_contact.code_sent": z.object({
+    inputs: z.object({}),
+    outcome: z.object({ contact_email: z.string() }),
+  }),
 };
