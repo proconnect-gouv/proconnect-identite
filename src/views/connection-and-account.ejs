@@ -22,7 +22,7 @@
         </section>
         <hr>
         <section aria-describedby="two-factor-authentication" class="fr-mb-4w">
-            <h2 class="fr-h3" id="two-factor-authentication">Double authentification</h2>
+            <h2 class="fr-h3" id="two-factor-authentication">Connexion renforcée</h2>
             <% if (isAuthenticatorConfigured){ %>
                 <div class="fr-card fr-card--horizontal fr-mb-3w fr-col-8">
                     <div class="fr-card__body">
@@ -55,7 +55,6 @@
             <% }; %>
 
             <% if (passkeys.length > 0){ %>
-                <p><b>Clés d'accès</b></p>
                 <% passkeys.forEach(({
                     credential_id,
                     usage_count,
@@ -99,7 +98,7 @@
                                     </form>
                                 </div>
                                 <div class="fr-card__start">
-                                    <p class="fr-tag fr-mb-2w">Clé d’authentification</p>
+                                    <p class="fr-tag fr-mb-2w">Passkey</p>
                                 </div>
                             </div>
                         </div>
@@ -118,10 +117,10 @@
 
             <% if (!isAuthenticatorConfigured && passkeys.length === 0) { %>
                 <p>
-                    Vous n'avez pas encore configuré la double authentification (2FA).
+                    Vous n'avez pas encore configuré la connexion renforcée.
                 </p>
                 <a class="fr-btn fr-btn--secondary" href="/double-authentication-choice">
-                    Configurer la double authentification
+                    Configurer la connexion renforcée
                 </a>
             <% } %>
         </section>
@@ -132,7 +131,7 @@
 
                 <fieldset class="fr-fieldset fr-mb-0" id="radio" aria-labelledby="radio-legend radio-messages">
                     <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-legend">
-                        Où voulez-vous activer la double authentification ?
+                        Où voulez-vous activer la connexion renforcée ?
                     </legend>
 
                     <div class="fr-fieldset__element">

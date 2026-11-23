@@ -38,7 +38,7 @@ describe("delete TOTP connexion", () => {
 
     cy.mfaLogin("konrad.curze@nightlords.world");
 
-    cy.contains("Double authentification");
+    cy.contains("Connexion renforcée");
 
     cy.get("form[action='/delete-totp-configuration']").submit();
 

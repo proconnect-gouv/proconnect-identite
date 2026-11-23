@@ -31,7 +31,7 @@ export default function RecoveryWordsGenerated(props: Props) {
       <br />
       <Text>
         Ils vous permettent de récupérer l'accès à votre compte si vous perdez
-        votre moyen de double authentification.
+        votre moyen de connexion renforcée.
       </Text>
       <br />
       <Text>
@@ -52,9 +52,7 @@ export default function RecoveryWordsGenerated(props: Props) {
       </Text>
       <ul>
         <li>
-          <Text>
-            Consulter et gérer vos méthodes de double authentification.
-          </Text>
+          <Text>Consulter et gérer vos méthodes de connexion renforcée.</Text>
         </li>
         <li>
           <Text>

@@ -166,10 +166,9 @@ exports[`AccountRecovered > should render 1`] = `
                                       margin: 0;
                                     "
                                   >
-                                    Pour protéger votre compte, votre double
-                                    authentification a été réinitialisée et vos
-                                    anciens mots de secours ne sont plus
-                                    utilisables.
+                                    Pour protéger votre compte, votre connexion
+                                    renforcée a été réinitialisée et vos anciens
+                                    mots de secours ne sont plus utilisables.
                                   </p>
                                   <br />
                                   <p
@@ -201,7 +200,7 @@ exports[`AccountRecovered > should render 1`] = `
                                   >
                                     Lors de votre prochaine connexion à
                                     ProConnect, vous devrez configurer à nouveau
-                                    votre double authentification et générer de
+                                    votre connexion renforcée et générer de
                                     nouveaux mots de secours.<br /><br />Pour en
                                     savoir plus, consultez notre guide :
                                     <a

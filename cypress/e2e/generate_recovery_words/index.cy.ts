@@ -129,7 +129,7 @@ describe("generate recovery words", () => {
     cy.login("with-recovery-words@yopmail.com");
 
     cy.title().should("include", "Compte et connexion");
-    cy.contains("Configurer la double authentification");
+    cy.contains("Configurer la connexion renforcée");
   });
 
   it("should only show digital storage advice to State administration agents", function () {

@@ -13,7 +13,7 @@ describe("sign-in with totp enrollment", () => {
       "En plus du mot de passe, une étape de sécurité supplémentaire sera demandée à chaque nouvelle session sur ce service.",
     );
 
-    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Code à usage unique").click();
 
     cy.contains("Continuer").click();
 
@@ -38,7 +38,7 @@ describe("sign-in with totp enrollment", () => {
 
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
-    cy.contains("Votre double authentification est bien configurée");
+    cy.contains("Votre connexion renforcée est bien configurée");
     cy.contains("Continuer").click();
 
     cy.contains('"acr": "eidas0-mfa"');
@@ -62,7 +62,7 @@ describe("sign-in with totp enrollment", () => {
 
     cy.login("ial0-aal1-oal1@yopmail.com");
 
-    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Code à usage unique").click();
 
     // Wait for connexion to last
     cy.wait(5 * 1000);
@@ -75,7 +75,7 @@ describe("sign-in with totp enrollment", () => {
 
     cy.login("ial0-aal1-oal1@yopmail.com");
 
-    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Code à usage unique").click();
 
     cy.contains("Continuer").click();
 
@@ -91,7 +91,7 @@ describe("sign-in with totp enrollment", () => {
 
     cy.fillAndSubmitTotpForm("/users/totp-configuration");
 
-    cy.contains("Votre double authentification est bien configurée");
+    cy.contains("Votre connexion renforcée est bien configurée");
     cy.contains("Continuer").click();
 
     cy.contains('"acr": "eidas0-mfa"');
@@ -105,7 +105,7 @@ describe("sign-in with totp enrollment", () => {
 
     cy.login("ial0-aal1-oal1@yopmail.com");
 
-    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Code à usage unique").click();
     cy.contains("Continuer").click();
 
     cy.contains("Configurer votre outil TOTP");
