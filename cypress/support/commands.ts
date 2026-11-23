@@ -1,6 +1,5 @@
 //
 
-import { checkA11y } from "./a11y/checkA11y";
 import {
   fillAndSubmitTotpForm,
   fillLoginFields,
@@ -36,7 +35,6 @@ declare global {
 
 //
 
-Cypress.Commands.overwrite("checkA11y", checkA11y);
 Cypress.Commands.add("fillTotpFields", fillTotpFields);
 Cypress.Commands.add("fillLoginFields", fillLoginFields);
 

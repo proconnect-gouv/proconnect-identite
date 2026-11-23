@@ -1,4 +1,3 @@
-import "cypress-axe";
 import "cypress-maildev";
 
 import "./commands";
