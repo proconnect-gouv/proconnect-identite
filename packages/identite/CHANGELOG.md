@@ -1,5 +1,23 @@
 # @proconnect-gouv/proconnect.identite
 
+## 17.0.0
+
+### Major Changes
+
+- [#2414](https://github.com/proconnect-gouv/proconnect-identite/pull/2414) [`1b8f27b`](https://github.com/proconnect-gouv/proconnect-identite/commit/1b8f27b1ebba511ae4fda064460e7f9d38d5fa88) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `findEmailInDeliverabilityWhiteListFactory` (`repositories/email-deliverability-whitelist`) et l'entrée `email_deliverability_whitelist` de `connectors` : la vérification de délivrabilité lit maintenant la base en Drizzle depuis l'application.
+
+- [#2416](https://github.com/proconnect-gouv/proconnect-identite/pull/2416) [`34cded0`](https://github.com/proconnect-gouv/proconnect-identite/commit/34cded02cb672ca85f29718379f2a7dd54175fc3) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `findByResetPasswordTokenFactory` (`repositories/user`) et l'entrée `users.findByResetPasswordToken` de `connectors` : la réinitialisation de mot de passe lit maintenant la base en Drizzle depuis l'application.
+
+- [#2419](https://github.com/proconnect-gouv/proconnect-identite/pull/2419) [`d60638e`](https://github.com/proconnect-gouv/proconnect-identite/commit/d60638e523dfd4018aa7b33367001c9181bad961) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `findBySiretFactory` (`repositories/organization`) et l'entrée `organizations.findBySiret` de `connectors` : la garde de navigation lit maintenant la base en Drizzle depuis l'application.
+
+- [#2420](https://github.com/proconnect-gouv/proconnect-identite/pull/2420) [`3e728cb`](https://github.com/proconnect-gouv/proconnect-identite/commit/3e728cb5acd3254e3fef5665f32ac57dd45e2291) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `findPendingByUserIdFactory` (`repositories/organization`) et l'entrée `organizations.findPendingByUserId` de `connectors` : la page des organisations lit maintenant la base en Drizzle depuis l'application.
+
+- [#2417](https://github.com/proconnect-gouv/proconnect-identite/pull/2417) [`678828a`](https://github.com/proconnect-gouv/proconnect-identite/commit/678828a72299c2b41f421aa048981c9fd6b73ad3) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `findPendingModerationFactory` (`repositories/moderation`) et l'entrée `moderations.findPending` de `connectors` : la décision d'adhésion lit maintenant la base en Drizzle depuis l'application.
+
+- [#2418](https://github.com/proconnect-gouv/proconnect-identite/pull/2418) [`8577ae3`](https://github.com/proconnect-gouv/proconnect-identite/commit/8577ae3f1fe900d0a242e04d97755a7b4c96fc7d) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `findRejectedModerationFactory` (`repositories/moderation`) et l'entrée `moderations.findRejected` de `connectors` : la décision d'adhésion lit maintenant la base en Drizzle depuis l'application.
+
+- [#2535](https://github.com/proconnect-gouv/proconnect-identite/pull/2535) [`83f822e`](https://github.com/proconnect-gouv/proconnect-identite/commit/83f822e5ff3f5b82071491b4baf16e36aab2cf81) Thanks [@douglasduteil](https://github.com/douglasduteil)! - Retire `updateAuthenticatorFactory` (`repositories/authenticator`), exposé aussi par `connectors` (`authenticators.update`). L'application identite met à jour le compteur d'une clé d'accès avec Drizzle.
+
 ## 16.0.0
 
 ### Major Changes
