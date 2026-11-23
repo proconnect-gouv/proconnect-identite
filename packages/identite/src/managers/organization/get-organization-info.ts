@@ -14,8 +14,7 @@ import * as ApiRne from "./adapters/rne.js";
 //
 
 export type RneEnrichment =
-  | { kind: "enriched" }
-  | { kind: "failed"; exception: unknown };
+  { kind: "enriched" } | { kind: "failed"; exception: unknown };
 
 export type OrganizationInfoLookup =
   | { kind: "api_entreprise_failed"; exception: unknown }
