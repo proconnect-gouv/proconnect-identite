@@ -8,6 +8,7 @@ import {
 } from "../../managers/recovery-words";
 import { getUserFromAuthenticatedSession } from "../../managers/session/authenticated";
 import { csrfToken } from "../../middlewares/csrf-protection";
+import { detectOs } from "../../services/detect-platform";
 import getNotificationsFromRequest from "../../services/get-notifications-from-request";
 
 export const getTwoFactorsAuthenticationChoiceController = async (
@@ -145,6 +146,7 @@ export const getMfaDecisionHelperController = async (
     return res.render("user/mfa-decision-helper/index", {
       pageTitle: "Trouver la meilleure méthode de 2FA",
       csrfToken: csrfToken(req),
+      operatingSystem: detectOs(req.headers["user-agent"]),
     });
   } catch (error) {
     next(error);
