@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.identite.runtime",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/runtime#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
