@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite.runtime
 
+## 0.7.0
+
+### Minor Changes
+
+- [#2459](https://github.com/proconnect-gouv/proconnect-identite/pull/2459) [`67f0314`](https://github.com/proconnect-gouv/proconnect-identite/commit/67f0314b11fbea53509e453f1d7fd500ff276827) Thanks [@douglasduteil](https://github.com/douglasduteil)! - `activityContextSchemas` ne décrit plus l’action `domain.removed` : aucune commande du runtime ne l’écrit. Une application qui journalise `domain.removed` la déclare dans ses propres `OwnContexts`, et `record()` l’accepte à nouveau. Changement cassant pour le typage : `ActivityContexts["domain.removed"]` n’existe plus.
+
 ## 0.6.2
 
 ### Patch Changes
