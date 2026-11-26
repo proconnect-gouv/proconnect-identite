@@ -141,7 +141,7 @@ export const userIsMfaAuthenticatedGuard = async (
 
   if (!isWithinTwoFactorAuthenticatedSession(req)) {
     if (await is2FACapable(user_id)) {
-      return haltTo("/users/2fa-sign-in");
+      return haltTo("/users/2fa-sign-in?notification=2fa_required_to_continue");
     } else {
       return haltTo("/users/double-authentication-choice");
     }
@@ -165,7 +165,7 @@ export const userIsMfaAuthenticatedIfCapableGuard = async (
     (await is2FACapable(user_id)) &&
     !isWithinTwoFactorAuthenticatedSession(req)
   ) {
-    return haltTo("/users/2fa-sign-in");
+    return haltTo("/users/2fa-sign-in?notification=2fa_required");
   }
 
   return pass("user_is_mfa_authenticated_if_capable");
