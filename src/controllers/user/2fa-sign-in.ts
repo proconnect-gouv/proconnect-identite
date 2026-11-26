@@ -41,7 +41,7 @@ export const get2faSignInController = async (
       await hasRecoveryWordsConfiguredForUser(id);
 
     return res.render("user/2fa-sign-in", {
-      pageTitle: "Se connecter avec la double authentification",
+      pageTitle: "Se connecter avec la connexion renforcée",
       notifications,
       hasCodeError,
       csrfToken: csrfToken(req),

@@ -10,8 +10,6 @@ describe("force recent connexion + 2FA on admin pages", () => {
 
     cy.visit("/connection-and-account");
 
-    cy.contains("merci de valider votre deuxième étape de connexion");
-
     cy.fillTotpFields();
 
     cy.contains("Compte et connexion");

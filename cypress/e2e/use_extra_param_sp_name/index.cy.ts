@@ -10,7 +10,7 @@ describe("display sp name", () => {
     cy.focused().type("password123");
     cy.contains("S’identifier").click();
 
-    cy.title().should("include", "Choisir un mode de double authentification");
+    cy.title().should("include", "Choisir un mode de connexion renforcée");
 
     cy.contains(
       "En plus du mot de passe, une étape de sécurité supplémentaire sera demandée à chaque nouvelle session sur ProConnect Test.",

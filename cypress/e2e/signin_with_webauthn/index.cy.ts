@@ -14,9 +14,9 @@ describe("setup the passkey", () => {
     cy.login("lion.eljonson@darkangels.world");
 
     cy.title().should("include", "Compte et connexion");
-    cy.contains("Configurer la double authentification").click();
+    cy.contains("Configurer la connexion renforcée").click();
 
-    cy.title().should("include", "Double authentification - ProConnect");
+    cy.title().should("include", "Connexion renforcée - ProConnect");
     cy.contains("Choisir votre méthode de connexion renforcée");
     cy.contains("Clé d'accès (passkey)").click();
     cy.contains("Continuer").click();
@@ -29,9 +29,9 @@ describe("setup the passkey", () => {
 
     cy.title().should(
       "include",
-      "Votre double authentification est bien configurée",
+      "Votre connexion renforcée est bien configurée",
     );
-    cy.contains("Votre double authentification est bien configurée");
+    cy.contains("Votre connexion renforcée est bien configurée");
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
@@ -138,7 +138,7 @@ describe("use the passkey", () => {
     cy.contains("Sur tous les sites").click();
     cy.contains("Valider").click();
 
-    cy.contains("La double authentification a été activée sur tous les sites.");
+    cy.contains("La connexion renforcée a été activée sur tous les sites.");
 
     // Logout
     cy.contains("Lion El'Jonson").click();

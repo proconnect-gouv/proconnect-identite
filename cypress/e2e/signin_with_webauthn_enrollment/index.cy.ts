@@ -34,7 +34,7 @@ describe("sign-in with webauthn enrollment", () => {
     cy.contains("label", "J’ai sauvegardé mes mots de secours").click();
     cy.contains("Continuer").click();
 
-    cy.contains("Votre double authentification est bien configurée");
+    cy.contains("Votre connexion renforcée est bien configurée");
     cy.contains("Continuer").click();
 
     cy.contains('"acr": "eidas0-mfa"');
@@ -55,7 +55,7 @@ describe("sign-in with webauthn enrollment", () => {
     cy.title().should("include", "Sauvegardez vos mots de secours");
     cy.contains("Ignorer pour le moment").click();
 
-    cy.contains("Votre double authentification est bien configurée");
+    cy.contains("Votre connexion renforcée est bien configurée");
     cy.contains("Continuer").click();
 
     cy.contains('"acr": "eidas0-mfa"');
@@ -73,7 +73,7 @@ describe("sign-in with webauthn enrollment", () => {
     cy.title().should("include", "Sauvegardez vos mots de secours");
     cy.contains("Ignorer pour le moment").click();
 
-    cy.contains("Votre double authentification est bien configurée");
+    cy.contains("Votre connexion renforcée est bien configurée");
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Accueil");

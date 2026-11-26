@@ -6,15 +6,15 @@ describe("add 2fa authentication", () => {
 
     cy.login("lion.eljonson@darkangels.world");
 
-    cy.contains("Double authentification");
+    cy.contains("Connexion renforcée");
 
     cy.get('[href="/double-authentication-choice"]')
-      .contains("Configurer la double authentification")
+      .contains("Configurer la connexion renforcée")
       .click();
 
     cy.contains("Choisir votre méthode de connexion renforcée");
 
-    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Code à usage unique").click();
 
     cy.get("#webauthn-registration-button").contains("Continuer").click();
 
@@ -44,18 +44,18 @@ describe("add 2fa authentication", () => {
 
     cy.title().should(
       "include",
-      "Votre double authentification est bien configurée",
+      "Votre connexion renforcée est bien configurée",
     );
-    cy.contains("Votre double authentification est bien configurée");
+    cy.contains("Votre connexion renforcée est bien configurée");
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
 
-    cy.maildevGetMessageBySubject("Double authentification activée").then(
+    cy.maildevGetMessageBySubject("Connexion renforcée activée").then(
       (email) => {
         cy.maildevVisitMessageById(email.id);
         cy.contains(
-          "Votre compte ProConnect lion.eljonson@darkangels.world est à présent protégé par la double authentification.",
+          "Votre compte ProConnect lion.eljonson@darkangels.world est à présent protégé par la connexion renforcée.",
         );
         cy.maildevDeleteMessageById(email.id);
       },

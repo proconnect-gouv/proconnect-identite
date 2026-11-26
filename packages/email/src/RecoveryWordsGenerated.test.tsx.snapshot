@@ -180,7 +180,7 @@ exports[`RecoveryWordsGenerated > should render 1`] = `
                                   >
                                     Ils vous permettent de récupérer l'accès à
                                     votre compte si vous perdez votre moyen de
-                                    double authentification.
+                                    connexion renforcée.
                                   </p>
                                   <br />
                                   <p
@@ -261,7 +261,7 @@ exports[`RecoveryWordsGenerated > should render 1`] = `
                                         "
                                       >
                                         Consulter et gérer vos méthodes de
-                                        double authentification.
+                                        connexion renforcée.
                                       </p>
                                     </li>
                                     <li>

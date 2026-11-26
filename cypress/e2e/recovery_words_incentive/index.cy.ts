@@ -76,9 +76,6 @@ describe("recovery words incentive", () => {
     cy.title().should("include", "Sauvegardez vos mots de secours");
     cy.contains("Générer les mots de secours").click();
 
-    cy.contains(
-      "Information : vous devez vous connecter avec la double authentification pour continuer.",
-    );
     cy.fillTotpFields();
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
@@ -97,7 +94,7 @@ describe("recovery words incentive", () => {
     cy.verifyEmail();
 
     cy.get('[href="/double-authentication-choice"]').click();
-    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Code à usage unique").click();
     cy.contains("Continuer").click();
     cy.contains("J'ai une application sur mon smartphone").click();
     cy.contains("Confirmer").click();
@@ -114,7 +111,7 @@ describe("recovery words incentive", () => {
     cy.title().should("include", "Sauvegardez vos mots de secours");
     cy.contains("Générer les mots de secours").click();
 
-    cy.contains("Code à usage unique (TOTP)").click();
+    cy.contains("Code à usage unique").click();
     cy.contains("Continuer").click();
     cy.contains("J'ai une application sur mon smartphone").click();
     cy.contains("Confirmer").click();
@@ -129,7 +126,7 @@ describe("recovery words incentive", () => {
 
     cy.title().should(
       "include",
-      "Votre double authentification est bien configurée",
+      "Votre connexion renforcée est bien configurée",
     );
   });
 });

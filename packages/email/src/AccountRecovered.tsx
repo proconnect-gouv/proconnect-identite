@@ -28,7 +28,7 @@ export default function AccountRecovered(props: Props) {
       </Text>
       <br />
       <Text>
-        Pour protéger votre compte, votre double authentification a été
+        Pour protéger votre compte, votre connexion renforcée a été
         réinitialisée et vos anciens mots de secours ne sont plus utilisables.
       </Text>
       <br />
@@ -38,7 +38,7 @@ export default function AccountRecovered(props: Props) {
       <br />
       <Text>
         Lors de votre prochaine connexion à ProConnect, vous devrez configurer à
-        nouveau votre double authentification et générer de nouveaux mots de
+        nouveau votre connexion renforcée et générer de nouveaux mots de
         secours.
         <br />
         <br />
