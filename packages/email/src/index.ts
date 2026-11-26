@@ -9,6 +9,7 @@ export { default as DeleteAccessKey } from "./DeleteAccessKey.js";
 export { default as DeleteAccount } from "./DeleteAccount.js";
 export { default as DeleteFreeTotpMail } from "./DeleteFreeTotpMail.js";
 export { default as MagicLink } from "./MagicLink.js";
+export { default as NewXdaDeviceSignIn } from "./NewXdaDeviceSignIn.js";
 export { default as OfficialContactEmailVerification } from "./OfficialContactEmailVerification.js";
 export { default as OtpEmail } from "./OtpEmail.js";
 export { default as PasswordChanged } from "./PasswordChanged.js";
