@@ -47,6 +47,7 @@ jobs:
           - logout
           - mfa_decision_helper_account
           - mfa_decision_helper_signin
+          - mfa_user_journeys
           - quit-organization
           - rate_limit_by_email
           - rate_limit_by_ip
