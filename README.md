@@ -160,6 +160,26 @@ CYPRESS_INSTALL_BINARY=0 npm ci
 
 This command ensures that the Cypress binary is not downloaded, saving time and disk space during the installation process.
 
+### 🚀 Release
+
+Releases run through [`proconnect-gouv/release-action`](https://github.com/proconnect-gouv/release-action) on every push to `main` (`.github/workflows/release-app.yml`). Versions follow CalVer (`yyyy.m.minor`). The npm packages are versioned separately with changesets (`.changeset/`, `.github/workflows/release-packages.yml`): see [Packages](#packages) below.
+
+#### 1. Describe user-facing changes
+
+For each change a user can see, add one plain Markdown file, without frontmatter, to `.release-it-changeset/` in your pull request:
+
+```bash
+echo "🐛 Chaque connexion est désormais comptée, même lorsque deux connexions au même compte ont lieu au même moment" > .release-it-changeset/$(date +%s)-count-every-sign-in.md
+```
+
+Write one French sentence starting with a gitmoji. The action lists these files under "Changements" in the next `CHANGELOG.md` section. See the [action documentation](https://github.com/proconnect-gouv/release-action#changesets) for details.
+
+#### 2. Merge the release pull request
+
+After each merge to `main`, the action opens or updates the pull request `🔖 release <version>` from branch `release-it/next`. It bumps `package.json`, prepends the version section to `CHANGELOG.md` (changesets under "Changements", then commits grouped by gitmoji) and deletes the consumed changeset files.
+
+Review and merge it when you want to ship. The action then creates the tag, the GitHub release and the `release/<version>` branch. Deploy that branch to your environments.
+
 ### Packages
 
 | Package                                                                    | Version                                                                                                                                                                  | Downloads                                                                                      | Changelog                                       |
@@ -174,6 +194,8 @@ This command ensures that the Cypress binary is not downloaded, saving time and 
 #### Document your change in packages
 
 We use changeset to manage our package changelog. You can read more about it [here](https://github.com/changesets/changesets).
+
+This covers npm packages only. App-level, user-facing changes use `.release-it-changeset/` instead: see [🚀 Release](#-release) above.
 
 To create a new changeset, run the following command:
 
