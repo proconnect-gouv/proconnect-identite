@@ -104,6 +104,16 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     description:
       "Information : pour garantir la sécurité de votre compte, nous avons besoin d’authentifier votre navigateur.",
   },
+  "2fa_required": {
+    type: "info",
+    description:
+      "Information : pour garantir la sécurité de votre compte, merci de valider votre deuxième étape de connexion.",
+  },
+  "2fa_required_to_continue": {
+    type: "info",
+    description:
+      "Information : vous devez vous connecter avec la connexion renforcée pour continuer.",
+  },
   weak_password: {
     type: "error",
     description:
