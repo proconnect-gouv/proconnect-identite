@@ -18,7 +18,7 @@ describe("setup the passkey", () => {
 
     cy.title().should("include", "Connexion renforcée - ProConnect");
     cy.contains("Choisir votre méthode de connexion renforcée");
-    cy.contains("Clé d'accès (passkey)").click();
+    cy.contains("Clé d'accès").click();
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
