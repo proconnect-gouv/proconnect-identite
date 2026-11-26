@@ -1,5 +1,11 @@
 # Changelog
 
+## [2026.11.4](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.3...2026.11.4) (2026-11-26)
+
+### Supprimé
+
+- 🔥 re-add notification to fix ci ([9ed1626](https://github.com/proconnect-gouv/proconnect-identite/commit/9ed1626ad4a3cd6a73cc861556ce290487828da8))
+
 ## [2026.11.3](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.2...2026.11.3) (2026-11-26)
 
 ### Changements
