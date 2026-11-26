@@ -135,7 +135,9 @@ exports[`VerifiedDeviceLink > should render 1`] = `
                                     Bonjour,<br /><br />Vous souhaitez vous
                                     connecter à ProConnect sur un nouvel
                                     appareil qui n’est pas connecté au RIE
-                                    (Réseau Interministériel d’Etat).<br /><br />Pour
+                                    (Réseau Interministériel d’Etat).<br /><br />Si
+                                    vous n'êtes pas à l'origine de cette
+                                    demande, ignorez ce message.<br /><br />Pour
                                     vérifier le nouvel appareil, cliquez sur ce
                                     bouton sur votre ordinateur RIE :<br /><br />
                                   </p>

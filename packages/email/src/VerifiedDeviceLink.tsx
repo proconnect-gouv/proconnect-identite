@@ -17,6 +17,9 @@ export default function VerifiedDeviceLink(props: Props) {
         n’est pas connecté au RIE (Réseau Interministériel d’Etat).
         <br />
         <br />
+        Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.
+        <br />
+        <br />
         Pour vérifier le nouvel appareil, cliquez sur ce bouton sur votre
         ordinateur RIE :
         <br />
