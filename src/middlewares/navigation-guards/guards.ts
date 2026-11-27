@@ -1,3 +1,4 @@
+import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
 import {
   type BaseUserOrganizationLink,
@@ -69,6 +70,9 @@ export const userHasProvidedAnEmailGuard = (prev: Pass<RequestContext>) => {
   } = prev;
   if (isEmpty(getEmailFromUnauthenticatedSession(req))) {
     return haltTo("/users/start-sign-in");
+  }
+  if (!isEmailValid(getEmailFromUnauthenticatedSession(req))) {
+    return haltTo("/users/start-sign-in?notification=invalid_email");
   }
   return pass("user_has_provided_an_email");
 };
