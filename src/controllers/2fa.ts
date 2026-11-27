@@ -21,6 +21,7 @@ import { isTotpConfiguredForUser } from "../managers/totp";
 import { sendAccountRecoveredMail, sendDisable2faMail } from "../managers/user";
 import { csrfToken } from "../middlewares/csrf-protection";
 import { dicewareWordsSchema } from "../services/custom-zod-schemas";
+import { detectOs } from "../services/detect-platform";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 
 export const getDoubleAuthenticationController = async (
@@ -80,6 +81,7 @@ export const getMfaDecisionHelperController = async (
     return res.render("mfa-decision-helper/index", {
       pageTitle: "Trouver la meilleure méthode de 2FA",
       csrfToken: csrfToken(req),
+      operatingSystem: detectOs(req.headers["user-agent"]),
     });
   } catch (error) {
     next(error);

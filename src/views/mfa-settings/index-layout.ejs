@@ -12,38 +12,42 @@
       Travaillez-vous avec :
     </legend>
 
-    <div class="fr-fieldset__element">
-      <div class="fr-radio-group">
-        <input
-          type="radio"
-          id="device-type-mac"
-          name="device-type"
-          value="mac"
-          required
-        />
-        <label class="fr-label" for="device-type-mac">
-          Un ordinateur Mac
-        </label>
+    <% if (operatingSystem !== "Windows") { %>
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input
+            type="radio"
+            id="device-type-mac"
+            name="device-type"
+            value="mac"
+            required
+          />
+          <label class="fr-label" for="device-type-mac">
+            Un ordinateur Mac
+          </label>
+        </div>
       </div>
-    </div>
+    <% } %>
 
-    <div class="fr-fieldset__element">
-      <div class="fr-radio-group">
-        <input
-          type="radio"
-          id="device-type-windows-hello"
-          name="device-type"
-          value="windows-hello"
-          required
-        />
-        <label class="fr-label" for="device-type-windows-hello">
-          Windows Hello<span class="fr-hint-text"
-            >Vous ouvrez votre session avec un code PIN ou de la
-            biométrie</span
-          >
-        </label>
+    <% if (operatingSystem !== "macOS") { %>
+      <div class="fr-fieldset__element">
+        <div class="fr-radio-group">
+          <input
+            type="radio"
+            id="device-type-windows-hello"
+            name="device-type"
+            value="windows-hello"
+            required
+          />
+          <label class="fr-label" for="device-type-windows-hello">
+            Windows Hello<span class="fr-hint-text"
+              >Vous ouvrez votre session avec un code PIN ou de la
+              biométrie</span
+            >
+          </label>
+        </div>
       </div>
-    </div>
+    <% } %>
 
     <div class="fr-fieldset__element">
       <div class="fr-radio-group">
@@ -57,6 +61,7 @@
         <label class="fr-label" for="device-type-other">Autre</label>
       </div>
     </div>
+    
   </fieldset>
 
   <button class="fr-btn btn--fullwidth" type="submit">Continuer</button>
