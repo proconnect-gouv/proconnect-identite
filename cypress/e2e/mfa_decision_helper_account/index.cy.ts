@@ -22,7 +22,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.contains("Continuer").click();
 
-    cy.contains("Passkey de votre ordinateur");
+    cy.contains("Clé d'accès de votre ordinateur");
     cy.contains("Recommandé pour vous");
   });
 
@@ -43,7 +43,7 @@ describe("mfa decision helper (account)", () => {
 
     cy.contains("Continuer").click();
 
-    cy.contains("Passkey de votre ordinateur");
+    cy.contains("Clé d'accès de votre ordinateur");
   });
 
   it("should redirect to software TOTP recommendation", function () {

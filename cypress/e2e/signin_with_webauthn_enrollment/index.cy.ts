@@ -20,7 +20,7 @@ describe("sign-in with webauthn enrollment", () => {
     cy.login("ial0-aal1-oal1@yopmail.com");
 
     cy.contains("Choisir votre méthode de connexion renforcée");
-    cy.contains("Clé d'accès (passkey)").click();
+    cy.contains("Clé d'accès").click();
     cy.contains("button", "Continuer").click();
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
@@ -49,7 +49,7 @@ describe("sign-in with webauthn enrollment", () => {
     cy.login("ial0-aal1-oal1@yopmail.com");
 
     cy.contains("Choisir votre méthode de connexion renforcée");
-    cy.contains("Clé d'accès (passkey)").click();
+    cy.contains("Clé d'accès").click();
     cy.contains("button", "Continuer").click();
 
     cy.title().should("include", "Sauvegardez vos mots de secours");
@@ -67,7 +67,7 @@ describe("sign-in with webauthn enrollment", () => {
     cy.login("force-2fa-without-second-factor@yopmail.com");
 
     cy.contains("Choisir votre méthode de connexion renforcée");
-    cy.contains("Clé d'accès (passkey)").click();
+    cy.contains("Clé d'accès").click();
     cy.contains("button", "Continuer").click();
 
     cy.title().should("include", "Sauvegardez vos mots de secours");

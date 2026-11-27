@@ -158,7 +158,7 @@ export const getMfaDecisionHelperPasskeyController = async (
 ) => {
   try {
     return res.render("user/mfa-decision-helper/passkey", {
-      pageTitle: "Passkey de votre ordinateur",
+      pageTitle: "Clé d'accès de votre ordinateur",
       csrfToken: csrfToken(req),
       notifications: await getNotificationsFromRequest(req),
     });

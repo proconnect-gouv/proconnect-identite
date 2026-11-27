@@ -18,7 +18,7 @@ describe("mfa decision helper (signin)", () => {
 
     cy.contains("Continuer").click();
 
-    cy.contains("Passkey de votre ordinateur");
+    cy.contains("Clé d'accès de votre ordinateur");
     cy.contains("Recommandé pour vous");
   });
 
@@ -135,7 +135,7 @@ describe("mfa decision helper (signin)", () => {
 
     cy.login("ial0-aal1-oal1@yopmail.com");
 
-    cy.contains("Clé d'accès (passkey)").click();
+    cy.contains("Clé d'accès").click();
     cy.contains("button", "Continuer").click();
 
     cy.title().should(
