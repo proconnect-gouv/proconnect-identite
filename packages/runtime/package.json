@@ -1,6 +1,6 @@
 {
   "name": "@proconnect-gouv/proconnect.identite.runtime",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "homepage": "https://github.com/proconnect-gouv/proconnect-identite/tree/main/packages/runtime#readme",
   "bugs": "https://github.com/proconnect-gouv/proconnect-identite/issues",
   "repository": {
@@ -32,7 +32,7 @@
     "test": "tsc --noEmit && tsx --test --test-reporter=spec"
   },
   "dependencies": {
-    "@proconnect-gouv/proconnect.identite": "^16.0.0",
+    "@proconnect-gouv/proconnect.identite": "^17.0.0",
     "@proconnect-gouv/proconnect.identite.database": "^3.0.0",
     "zod": "^4.6.7"
   },

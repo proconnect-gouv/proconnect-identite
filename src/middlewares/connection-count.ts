@@ -45,10 +45,7 @@ export const connectionCountMiddleware = async (
           client: ctx.oidc.client,
           interactionCid: ctx.oidc.entities.Interaction?.cid ?? null,
           organizationId:
-            getAuthorizedOrganization(
-              ctx.oidc.session,
-              ctx.oidc.client.clientId,
-            )?.organizationId ?? null,
+            (await getAuthorizedOrganization(ctx))?.organizationId ?? null,
           outcome: ctx.oidc.entities.AuthorizationCode
             ? AuthorizationRequestOutcomeEnum.enum.succeeded
             : null,

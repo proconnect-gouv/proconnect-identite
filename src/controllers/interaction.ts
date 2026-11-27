@@ -3,6 +3,7 @@ import HttpErrors from "http-errors";
 import { AssertionError } from "node:assert";
 import Provider, { errors } from "oidc-provider";
 import { z } from "zod";
+import { SESSION_MAX_AGE_IN_SECONDS } from "../config/env";
 import { OidcError } from "../config/errors";
 import { context } from "../connectors/context";
 import {
@@ -18,6 +19,7 @@ import {
   setLoginHintInUnauthenticatedSession,
   setSiretHintInUnauthenticatedSession,
 } from "../managers/session/unauthenticated";
+import { setGrantOrganization } from "../repositories/redis/grant-organization";
 import {
   acrFromAssuranceLevels,
   certificationDirigeantRequested,
@@ -164,11 +166,8 @@ export const interactionEndControllerFactory =
           amr,
           ts,
         },
-        organizationId,
         select_organization: false,
         update_userinfo: false,
-        // skip the consent
-        consent: {},
       };
       if (prompt.name === "select_organization") {
         result.select_organization = true;
@@ -193,6 +192,32 @@ export const interactionEndControllerFactory =
           ),
         );
       }
+
+      // A new grant per interaction: tokens issued for a previous organization
+      // reference the previous grant and are rejected once the session moves on.
+      // oidc-provider's default loadExistingGrant loads it through result.consent,
+      // then through session.grantIdFor until it expires.
+      const { client_id, scope, claims } = params as OIDCContextParams;
+      const grant = new oidcProvider.Grant({
+        accountId: user.id.toString(),
+        clientId: client_id,
+      });
+      grant.addOIDCScope(scope);
+      if (claims) {
+        // already validated by oidc-provider at /authorize
+        const { id_token, userinfo } = JSON.parse(claims);
+        grant.addOIDCClaims([
+          ...Object.keys(id_token ?? {}),
+          ...Object.keys(userinfo ?? {}),
+        ]);
+      }
+      const grantId = await grant.save();
+      await setGrantOrganization(
+        grantId,
+        { organizationId, acr: currentAcr || undefined },
+        SESSION_MAX_AGE_IN_SECONDS,
+      );
+      result.consent = { grantId };
 
       clearInteractionSession(req);
 

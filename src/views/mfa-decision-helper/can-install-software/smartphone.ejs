@@ -2,6 +2,7 @@
   <%- include('../../partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
   <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
     <%- include('../../mfa-settings/smartphone-layout.ejs', {
+      restartPath: '/connection-and-account',
       formAction: '/mfa-decision-helper/can-install-software/smartphone',
     }); %>
   </div>

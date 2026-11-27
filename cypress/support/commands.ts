@@ -1,6 +1,6 @@
 //
 
-import { checkA11y } from "./a11y/checkA11y";
+import { expireGrants } from "./commands/expire-grants";
 import {
   fillAndSubmitTotpForm,
   fillLoginFields,
@@ -17,11 +17,13 @@ import "./webauthn";
 declare global {
   namespace Cypress {
     interface Chainable {
+      expireGrants: typeof expireGrants;
       fillAndSubmitTotpForm: typeof fillAndSubmitTotpForm;
       fillLoginFields: typeof fillLoginFields;
       fillTotpFields: typeof fillTotpFields;
       getByLabel: typeof getByLabelCommand;
       getDescribed: typeof getDescribedCommand;
+      getTestClientAccessToken: typeof getTestClientAccessTokenCommand;
       login: typeof login;
       magicLinkLogin: typeof magicLinkLogin;
       mfaLogin: typeof mfaLogin;
@@ -36,7 +38,6 @@ declare global {
 
 //
 
-Cypress.Commands.overwrite("checkA11y", checkA11y);
 Cypress.Commands.add("fillTotpFields", fillTotpFields);
 Cypress.Commands.add("fillLoginFields", fillLoginFields);
 
@@ -103,6 +104,7 @@ function getDescribedCommand(text: string) {
       return cy.get(`[aria-describedby="${id}"]`).as(`${text}`);
     });
 }
+Cypress.Commands.add("expireGrants", expireGrants);
 Cypress.Commands.add("getDescribed", getDescribedCommand);
 Cypress.Commands.add("seed", seed);
 
@@ -110,6 +112,19 @@ function getByLabelCommand(text: string) {
   return cy.get(`[aria-label="${text}"]`);
 }
 Cypress.Commands.add("getByLabel", getByLabelCommand);
+
+// The test client displays the token endpoint response under "OAuth2 Token".
+function getTestClientAccessTokenCommand() {
+  return cy
+    .contains("h2", "OAuth2 Token")
+    .next("pre")
+    .invoke("text")
+    .then((text) => JSON.parse(text).access_token as string);
+}
+Cypress.Commands.add(
+  "getTestClientAccessToken",
+  getTestClientAccessTokenCommand,
+);
 
 Cypress.Commands.add("fillAndSubmitTotpForm", fillAndSubmitTotpForm);
 

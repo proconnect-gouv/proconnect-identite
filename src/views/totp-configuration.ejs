@@ -2,7 +2,7 @@
     <%- include('partials/sidemenu.ejs', {activeLink: 'connection-and-account'}) %>
     <div class="dashboard-content fr-col-12 fr-col-lg-10 fr-col-xl-9 fr-col-offset-lg-1">
         <%- include('mfa-settings/totp-configuration-layout.ejs', {
-            nextStepTitle: "Votre double authentification est bien configurée",
+            nextStepTitle: "Votre connexion renforcée est bien configurée",
             totpConfigurationUrl: '/totp-configuration',
             cancelUrl: '/connection-and-account',
         }); %>

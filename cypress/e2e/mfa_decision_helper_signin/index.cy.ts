@@ -42,7 +42,7 @@ describe("mfa decision helper (signin)", () => {
     cy.contains("Oui").click();
     cy.contains("Continuer").click();
 
-    cy.contains("Codes à usage unique (TOTP)");
+    cy.contains("Codes à usage unique");
     cy.contains("Proton Authenticator");
 
     cy.contains("Continuer").click();
@@ -72,7 +72,7 @@ describe("mfa decision helper (signin)", () => {
     cy.contains("Oui").click();
     cy.contains("Continuer").click();
 
-    cy.contains("Codes à usage unique (TOTP)");
+    cy.contains("Codes à usage unique");
     cy.contains("2FAS");
 
     cy.contains("Continuer").click();
@@ -140,7 +140,7 @@ describe("mfa decision helper (signin)", () => {
 
     cy.title().should(
       "include",
-      "Choisir un mode de double authentification - ProConnect",
+      "Choisir un mode de connexion renforcée - ProConnect",
     );
     cy.contains("h1", "Choisir votre méthode de connexion renforcée");
     cy.contains("Erreur : votre clé d’accès est invalide.");

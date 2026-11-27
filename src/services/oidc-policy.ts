@@ -17,10 +17,7 @@ policy.add(
       "organization_missing",
       "End-User must select one organization",
       async (ctx) => {
-        const authorized = getAuthorizedOrganization(
-          ctx.oidc.session,
-          ctx.oidc.client?.clientId,
-        );
+        const authorized = await getAuthorizedOrganization(ctx);
 
         if (!authorized) {
           return Check.REQUEST_PROMPT;

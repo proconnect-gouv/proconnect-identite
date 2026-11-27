@@ -9,10 +9,8 @@ import Provider, {
 } from "oidc-provider";
 import { recordSignOut } from "../managers/oidc-client";
 import { destroyAuthenticatedSession } from "../managers/session/authenticated";
-import epochTime from "../services/epoch-time";
 import { logger, track } from "../services/log";
 import { findAccount } from "../services/oidc-account-adapter";
-import { setAuthorizedOrganization } from "../services/oidc-authorized-organization";
 import policy from "../services/oidc-policy";
 import { oidcProviderAdapterFactory } from "../services/oidc-provider-adapter";
 import { renderWithEjsLayout } from "../services/renderer";
@@ -192,63 +190,6 @@ export const oidcProviderConfiguration = ({
   interactions: {
     policy,
   },
-  loadExistingGrant: async (ctx) => {
-    // We want to persist custom interaction outcomes like organizationId.
-    // `loadExistingGrant` serves as the sole execution point where `ctx.oidc.result` is available prior to
-    // policy evaluation and authorization code generation:
-    // Flow: `resume` → `loadAccount` → `loadGrant` (`loadExistingGrant`) → `interactions` (policy) → `respond` (code).
-    const result = ctx.oidc.result as OidcInteractionResults | undefined;
-    if (
-      ctx.oidc.session &&
-      ctx.oidc.client &&
-      result?.organizationId !== undefined
-    ) {
-      setAuthorizedOrganization(ctx.oidc.session, ctx.oidc.client.clientId, {
-        organizationId: result.organizationId,
-        acr: result.login?.acr,
-      });
-    }
-
-    // We want to skip the consent
-    // inspired from https://github.com/panva/node-oidc-provider/blob/main/recipes/skip_consent.md
-    // We updated the function to ensure it always return a grant.
-    // As a consequence, the consent prompt should never be requested afterward.
-    // The grant id never comes from consent results, so we simplified this line
-    if (!ctx.oidc.session || !ctx.oidc.client || !ctx.oidc.params) {
-      return undefined;
-    }
-    const oidcContextParams = ctx.oidc.params as OIDCContextParams;
-    const grantId = ctx.oidc.session.grantIdFor(ctx.oidc.client.clientId);
-
-    let grant;
-
-    if (grantId) {
-      grant = await ctx.oidc.provider.Grant.find(grantId);
-      // if the grant has expired, the grant can be undefined at this point.
-      if (grant) {
-        // Keep grant expiry aligned with session expiry to prevent consent
-        // prompt being requested when the grant is about to expire.
-        // The original code is overkill as session length is extended on every
-        // interaction.
-        grant.exp = epochTime() + sessionTtlInSeconds;
-        await grant.save();
-      }
-    }
-
-    if (!grant) {
-      grant = new ctx.oidc.provider.Grant({
-        clientId: ctx.oidc.client.clientId,
-        accountId: ctx.oidc.session.accountId,
-      });
-    }
-
-    // event existing grant should be updated, as requested scopes might
-    // be different
-    grant.addOIDCScope(oidcContextParams.scope);
-    grant.addOIDCClaims(Array.from(ctx.oidc.requestParamClaims || []));
-    await grant.save();
-    return grant;
-  },
   pkce: { required: () => false },
   responseTypes: ["code"],
   routes: {
@@ -281,8 +222,9 @@ export const oidcProviderConfiguration = ({
     AuthorizationCode: shortTokenTtlInSeconds,
     IdToken: tokenTtlInSeconds,
     Interaction: tokenTtlInSeconds,
-    // Grant and Session ttl should be the same
-    // see loadExistingGrant for more info
+    // A grant lives one session TTL after its interaction (it is never extended):
+    // once expired, the consent prompt leads to a new interaction, hence a new grant.
+    // see interactionEndControllerFactory
     Grant: sessionTtlInSeconds,
     RefreshToken: sessionTtlInSeconds,
     Session: sessionTtlInSeconds,

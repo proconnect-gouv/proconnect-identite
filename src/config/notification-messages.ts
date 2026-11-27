@@ -99,6 +99,11 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
     description:
       "Information : pour garantir la sécurité de votre compte, merci de vous identifier à nouveau.",
   },
+  browser_not_trusted: {
+    type: "info",
+    description:
+      "Information : pour garantir la sécurité de votre compte, nous avons besoin d’authentifier votre navigateur.",
+  },
   "2fa_required": {
     type: "info",
     description:
@@ -107,12 +112,7 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
   "2fa_required_to_continue": {
     type: "info",
     description:
-      "Information : vous devez vous connecter avec la double authentification pour continuer.",
-  },
-  browser_not_trusted: {
-    type: "info",
-    description:
-      "Information : pour garantir la sécurité de votre compte, nous avons besoin d’authentifier votre navigateur.",
+      "Information : vous devez vous connecter avec la connexion renforcée pour continuer.",
   },
   weak_password: {
     type: "error",
@@ -205,12 +205,12 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
   },
   "2fa_successfully_enabled": {
     type: "success",
-    description: "La double authentification a été activée sur tous les sites.",
+    description: "La connexion renforcée a été activée sur tous les sites.",
   },
   "2fa_successfully_disabled": {
     type: "success",
     description:
-      "La double authentification a été activée uniquement sur les sites qui l'exigent.",
+      "La connexion renforcée a été activée uniquement sur les sites qui l'exigent.",
   },
   "2fa_not_configured": {
     type: "warning",
@@ -225,7 +225,7 @@ Si vous avez oublié votre mot de passe cliquez sur « Mot de passe oublié ?�
   organization_requires_forced_2fa: {
     type: "info",
     description:
-      "Information : votre organisation requiert la double authentification, qui réduit les risques de piratage.",
+      "Information : votre organisation requiert la connexion renforcée, qui réduit les risques de piratage.",
   },
   recovery_words_valid: {
     type: "success",

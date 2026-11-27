@@ -2528,5 +2528,10 @@
     "siren": "130026172",
     "denomination": "GROUPEMENT D'INTERET PUBLIC NUMERIQUE BRETAGNE",
     "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
+  },
+  {
+    "siren": "199710476",
+    "denomination": "CENTRE DE RESSOURCES D EXPERTISE ET DE PERFORMANCE SPORTIVE (CREPS)",
+    "Administration_de_l_Etat_services_centraux_deconcentres_et_criteres_de_regie_ou_quasi_regie_": true
   }
 ]

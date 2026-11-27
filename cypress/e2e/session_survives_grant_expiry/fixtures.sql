@@ -28,11 +28,19 @@ VALUES
   );
 
 INSERT INTO
-  organizations (id, siret, created_at, updated_at)
+  organizations (cached_libelle, id, siret, created_at, updated_at)
 VALUES
   (
+    'CLAMART',
     1,
-    '21340126800130',
+    '45334017600024',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+  ),
+  (
+    'DANONE',
+    2,
+    '55203253400646',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
   );
@@ -45,7 +53,8 @@ INSERT INTO
     verification_type
   )
 VALUES
-  (1, 1, false, 'domain');
+  (1, 1, false, 'domain'),
+  (1, 2, false, 'domain');
 
 INSERT INTO
   oidc_clients (

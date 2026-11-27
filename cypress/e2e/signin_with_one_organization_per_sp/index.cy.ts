@@ -60,6 +60,7 @@ describe("sign-in with one organization per SP", () => {
 
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains(`"siret": "${CLAMART_SIRET}"`);
+    cy.getTestClientAccessToken().as("clamartAccessToken");
 
     cy.contains("button", "Changer d’organisation").click();
     cy.title().should("include", "Choisir une organisation -");
@@ -67,6 +68,21 @@ describe("sign-in with one organization per SP", () => {
 
     cy.title().should("equal", "standard-client - ProConnect");
     cy.contains(`"siret": "${DANONE_SIRET}"`);
+
+    // The organization change created a new grant: the access token issued
+    // for Clamart references the previous grant and is rejected.
+    cy.get<string>("@clamartAccessToken").then((accessToken) =>
+      cy
+        .request({
+          url: "/oauth/userinfo",
+          headers: { Authorization: `Bearer ${accessToken}` },
+          failOnStatusCode: false,
+        })
+        .then(({ status, body }) => {
+          expect(status).to.equal(401);
+          expect(body.error).to.equal("invalid_token");
+        }),
+    );
 
     // The federation client still gets its own organization, without prompt.
     connectToFederationClient();
@@ -136,5 +152,48 @@ describe("sign-in with one organization per SP", () => {
     cy.contains(`"siret": "${CLAMART_SIRET}"`);
     cy.contains('"acr": "eidas1"');
     cy.contains(CERTIFICATION_DIRIGEANT_ACR).should("not.exist");
+  });
+
+  it("should not certify the newly selected organization when the grant has expired", function () {
+    cy.visit("http://localhost:4000");
+    cy.contains("Forcer une connexion par certification dirigeant").click();
+    cy.login(EMAIL);
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Clamart (choisir cette organisation)").click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains(`"siret": "${CLAMART_SIRET}"`);
+    cy.contains(`"acr": "${CERTIFICATION_DIRIGEANT_ACR}"`);
+
+    selectOrganizationOutsideOfAnySp("Danone");
+
+    // Grants of the previous tests expire too: their browser sessions are gone.
+    cy.expireGrants();
+
+    // The new grant takes the organization selected in the session (Danone).
+    // The certification dirigeant is computed for Danone, where the user is
+    // not the dirigeant: the standard client must not get the Danone claims
+    // with the certification dirigeant acr obtained for Clamart.
+    cy.visit("http://localhost:4000");
+    cy.contains("Forcer une connexion par certification dirigeant").click();
+
+    cy.title().should("include", "Certification impossible -");
+
+    // The user recovers on their own: back to the SP, then a new
+    // certification request for the organization they are the dirigeant of.
+    cy.contains("Continuer sur le service").click();
+    cy.title().should("include", "Error");
+    cy.contains("login_required");
+    cy.contains("Retour à l’accueil").click();
+
+    cy.contains("Forcer une connexion par certification dirigeant").click();
+
+    cy.title().should("include", "Choisir une organisation -");
+    cy.getByLabel("Clamart (choisir cette organisation)").click();
+
+    cy.title().should("equal", "standard-client - ProConnect");
+    cy.contains(`"siret": "${CLAMART_SIRET}"`);
+    cy.contains(`"acr": "${CERTIFICATION_DIRIGEANT_ACR}"`);
   });
 });

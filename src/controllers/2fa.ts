@@ -32,7 +32,7 @@ export const getDoubleAuthenticationController = async (
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
     return res.render("double-authentication-choice", {
-      pageTitle: "Double authentification",
+      pageTitle: "Connexion renforcée",
       notifications: await getNotificationsFromRequest(req),
       isAuthenticatorConfigured: await isTotpConfiguredForUser(user_id),
       csrfToken: csrfToken(req),
@@ -138,7 +138,7 @@ export const getMfaDecisionHelperCanInstallSoftwareSoftwareController = async (
 ) => {
   try {
     return res.render("mfa-decision-helper/can-install-software/software", {
-      pageTitle: "Codes à usage unique (TOTP)",
+      pageTitle: "Codes à usage unique",
       csrfToken: csrfToken(req),
     });
   } catch (error) {
@@ -178,7 +178,7 @@ export const getMfaDecisionHelperCanInstallSoftwareSmartphoneAppController =
       return res.render(
         "mfa-decision-helper/can-install-software/smartphone-app",
         {
-          pageTitle: "Codes à usage unique (TOTP)",
+          pageTitle: "Codes à usage unique",
           csrfToken: csrfToken(req),
         },
       );

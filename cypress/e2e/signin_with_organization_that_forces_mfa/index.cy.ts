@@ -30,7 +30,7 @@ describe("sign-in with 2FA forced by organization", () => {
       "Commune de lamalou-les-bains - Mairie (choisir cette organisation)",
     ).click();
 
-    cy.contains("Valider avec la double authentification");
+    cy.contains("Étape de connexion renforcée");
 
     cy.fillTotpFields();
 
@@ -59,9 +59,9 @@ describe("sign-in with 2FA forced by organization", () => {
 
     cy.title().should(
       "include",
-      "Choisir un mode de double authentification - ProConnect",
+      "Choisir un mode de connexion renforcée - ProConnect",
     );
-    cy.contains("votre organisation requiert la double authentification");
+    cy.contains("votre organisation requiert la connexion renforcée");
     cy.contains("Choisir votre méthode de connexion renforcée");
   });
 });

@@ -7,7 +7,7 @@ describe("mfa decision helper (account)", () => {
     cy.login("lion.eljonson@darkangels.world");
 
     cy.get('[href="/double-authentication-choice"]')
-      .contains("Configurer la double authentification")
+      .contains("Configurer la connexion renforcée")
       .click();
 
     cy.contains("Choisir votre méthode de connexion renforcée");
@@ -32,7 +32,7 @@ describe("mfa decision helper (account)", () => {
     cy.login("lion.eljonson@darkangels.world");
 
     cy.get('[href="/double-authentication-choice"]')
-      .contains("Configurer la double authentification")
+      .contains("Configurer la connexion renforcée")
       .click();
 
     cy.contains("Je ne sais pas").click();
@@ -52,7 +52,7 @@ describe("mfa decision helper (account)", () => {
     cy.login("lion.eljonson@darkangels.world");
 
     cy.get('[href="/double-authentication-choice"]')
-      .contains("Configurer la double authentification")
+      .contains("Configurer la connexion renforcée")
       .click();
 
     cy.contains("Je ne sais pas").click();
@@ -72,7 +72,7 @@ describe("mfa decision helper (account)", () => {
     cy.contains("Continuer").click();
 
     cy.contains("Recommandé pour vous");
-    cy.contains("Codes à usage unique (TOTP)");
+    cy.contains("Codes à usage unique");
     cy.contains("Proton Authenticator");
     cy.contains("Bitwarden");
     cy.contains("KeePassXC");
@@ -84,7 +84,7 @@ describe("mfa decision helper (account)", () => {
     cy.login("lion.eljonson@darkangels.world");
 
     cy.get('[href="/double-authentication-choice"]')
-      .contains("Configurer la double authentification")
+      .contains("Configurer la connexion renforcée")
       .click();
 
     cy.contains("Je ne sais pas").click();
@@ -103,7 +103,7 @@ describe("mfa decision helper (account)", () => {
     cy.contains("Continuer").click();
 
     cy.contains("Recommandé pour vous");
-    cy.contains("Codes à usage unique (TOTP)");
+    cy.contains("Codes à usage unique");
     cy.contains("2FAS");
     cy.contains("FreeOTP");
   });
@@ -114,7 +114,7 @@ describe("mfa decision helper (account)", () => {
     cy.login("lion.eljonson@darkangels.world");
 
     cy.get('[href="/double-authentication-choice"]')
-      .contains("Configurer la double authentification")
+      .contains("Configurer la connexion renforcée")
       .click();
 
     cy.contains("Je ne sais pas").click();
@@ -140,7 +140,7 @@ describe("mfa decision helper (account)", () => {
     cy.login("lion.eljonson@darkangels.world");
 
     cy.get('[href="/double-authentication-choice"]')
-      .contains("Configurer la double authentification")
+      .contains("Configurer la connexion renforcée")
       .click();
 
     cy.contains("Je ne sais pas").click();
@@ -151,6 +151,6 @@ describe("mfa decision helper (account)", () => {
 
     cy.contains("Revenir au début").click();
 
-    cy.contains("Choisir votre méthode de connexion renforcée");
+    cy.title().should("include", "Compte et connexion");
   });
 });

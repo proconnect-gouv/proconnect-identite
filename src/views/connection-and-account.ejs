@@ -22,12 +22,12 @@
         </section>
         <hr>
         <section aria-describedby="two-factor-authentication" class="fr-mb-4w">
-            <h2 class="fr-h3" id="two-factor-authentication">Double authentification</h2>
+            <h2 class="fr-h3" id="two-factor-authentication">Connexion renforcée</h2>
             <% if (isAuthenticatorConfigured){ %>
                 <div class="fr-card fr-card--horizontal fr-mb-3w fr-col-8">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
-                            <h2 class="fr-card__title blue-france">FreeOTP Authenticator</h2>
+                            <h2 class="fr-card__title fr-text-title--blue-france">FreeOTP Authenticator</h2>
                             <div class="fr-card__desc">
                                 <p class="fr-mb-2w">Création : <%= totpKeyVerifiedAt; %>
                                 </p>
@@ -55,7 +55,6 @@
             <% }; %>
 
             <% if (passkeys.length > 0){ %>
-                <p><b>Clés d'accès</b></p>
                 <% passkeys.forEach(({
                     credential_id,
                     usage_count,
@@ -73,7 +72,7 @@
                                         </p>
                                     </div>
                                 <% } %>
-                                <h2 class="fr-card__title blue-france"><%= display_name; %></h2>
+                                <h2 class="fr-card__title fr-text-title--blue-france"><%= display_name; %></h2>
                                 <div class="fr-card__desc">
                                     <p class="fr-mb-1w">Création : <%= created_at; %>
                                     </p>
@@ -99,7 +98,7 @@
                                     </form>
                                 </div>
                                 <div class="fr-card__start">
-                                    <p class="fr-tag fr-mb-2w">Clé d’authentification</p>
+                                    <p class="fr-tag fr-mb-2w">Passkey</p>
                                 </div>
                             </div>
                         </div>
@@ -118,10 +117,10 @@
 
             <% if (!isAuthenticatorConfigured && passkeys.length === 0) { %>
                 <p>
-                    Vous n'avez pas encore configuré la double authentification (2FA).
+                    Vous n'avez pas encore configuré la connexion renforcée.
                 </p>
                 <a class="fr-btn fr-btn--secondary" href="/double-authentication-choice">
-                    Configurer la double authentification
+                    Configurer la connexion renforcée
                 </a>
             <% } %>
         </section>
@@ -132,7 +131,7 @@
 
                 <fieldset class="fr-fieldset fr-mb-0" id="radio" aria-labelledby="radio-legend radio-messages">
                     <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="radio-legend">
-                        Où voulez-vous activer la double authentification ?
+                        Où voulez-vous activer la connexion renforcée ?
                     </legend>
 
                     <div class="fr-fieldset__element">
@@ -169,7 +168,7 @@
                     <div class="recovery-words-card fr-p-3w border">
                         <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md">
-                                <h3 class="fr-h5 fr-mb-1w blue-france">Mots de secours</h3>
+                                <h3 class="fr-h5 fr-mb-1w fr-text-title--blue-france">Mots de secours</h3>
                                 <p class="fr-text--sm fr-text-mention--grey fr-mb-0">
                                     Création : <%= recoveryWordsCreatedAt %>
                                 </p>
