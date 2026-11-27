@@ -19,7 +19,7 @@ export function findPouvoirsBySirenFactory(
 
     if (error) throw new RegistreNationalEntreprisesApiError(error);
 
-    return (
+    const pouvoirs = (
       data.formality?.content?.personneMorale?.composition?.pouvoirs ?? []
     ).filter(
       (pouvoir) =>
@@ -27,6 +27,8 @@ export function findPouvoirsBySirenFactory(
         (pouvoir.actif === undefined || pouvoir.actif === true) &&
         pouvoir.individu !== undefined,
     );
+
+    return { pouvoirs, updated_at: data.updatedAt ?? null };
   };
 }
 

@@ -199,6 +199,10 @@ components:
         siren:
           type: string
           description: Numéro Siren de l'entreprise
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date de la dernière mise à jour de la fiche de l'entreprise
     ResponseToken:
       type: object
       description: Objet renvoyé en cas de succès sur une requête de type token

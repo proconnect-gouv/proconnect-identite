@@ -36,7 +36,7 @@ import {
   UserMustConfirmToJoinOrganizationError,
 } from "../config/errors";
 import { context } from "../connectors/context";
-import { getCertificationDirigeantCloseMatchErrorUrl } from "../managers/certification";
+import { getCertificationDirigeantErrorUrl } from "../managers/certification";
 import { getOrganizationFromModeration } from "../managers/moderation";
 import {
   doSuggestOrganizations,
@@ -56,6 +56,7 @@ import {
   optionalBooleanSchema,
   siretSchema,
 } from "../services/custom-zod-schemas";
+import { formatDate } from "../services/date-format";
 import getNotificationsFromRequest from "../services/get-notifications-from-request";
 import hasErrorFromField from "../services/has-error-from-field";
 import { track } from "../services/log";
@@ -166,14 +167,11 @@ export const postJoinOrganizationMiddleware = async (
       );
     }
 
-    if (error instanceof CertificationDirigeantCloseMatchError) {
-      return res.redirect(getCertificationDirigeantCloseMatchErrorUrl(error));
-    }
-
-    if (error instanceof CertificationDirigeantNoMatchError) {
-      return res.redirect(
-        `/users/certification-dirigeant/no-match-error?siren=${error.siren}&organization_label=${encodeURIComponent(error.organization_label)}`,
-      );
+    if (
+      error instanceof CertificationDirigeantCloseMatchError ||
+      error instanceof CertificationDirigeantNoMatchError
+    ) {
+      return res.redirect(getCertificationDirigeantErrorUrl(error));
     }
 
     if (error instanceof UnableToAutoJoinOrganizationError) {
@@ -496,6 +494,11 @@ export async function getCertificationDirigeantOrganizationNotCoveredError(
   }
 }
 
+const certificationSourceUpdatedAtSchema = z.iso
+  .datetime({ local: true, offset: true })
+  .pipe(z.coerce.date())
+  .optional();
+
 export async function getCertificationDirigeantCloseMatchError(
   req: Request,
   res: Response,
@@ -512,6 +515,7 @@ export async function getCertificationDirigeantCloseMatchError(
       organization_label: z.string(),
       siren: z.string().length(9),
       source: CertificationDirigeantDataSource,
+      source_updated_at: certificationSourceUpdatedAtSchema,
     })
     .safeParse(req.query);
   if (!result.success) {
@@ -529,11 +533,8 @@ export async function getCertificationDirigeantCloseMatchError(
     return next(new HttpErrors.NotFound());
   }
 
-  const dataSourceLabel = getCertificationDirigeantDataSourceLabels(
-    query.source,
-  );
-
   return res.render("certification-dirigeant/close-match-error", {
+    dataSourceLabel: getCertificationDirigeantDataSourceLabels(query.source),
     interactionId: req.session.interactionId,
     matches: query.matches,
     oidcError: oidcErrorSchema().enum.login_required,
@@ -541,7 +542,9 @@ export async function getCertificationDirigeantCloseMatchError(
     organization_label: query.organization_label,
     pageTitle: "Certification impossible",
     siren: query.siren,
-    dataSourceLabel,
+    sourceUpdatedAt: query.source_updated_at
+      ? formatDate(query.source_updated_at)
+      : null,
     use_dashboard_layout: false,
     user_info,
   });
@@ -553,8 +556,10 @@ export async function getCertificationDirigeantNoMatchError(
 ) {
   const result = z
     .object({
-      siren: z.string().length(9),
       organization_label: z.string().optional(),
+      siren: z.string().length(9),
+      source: CertificationDirigeantDataSource,
+      source_updated_at: certificationSourceUpdatedAtSchema,
     })
     .safeParse(req.query);
   if (!result.success) {
@@ -566,12 +571,16 @@ export async function getCertificationDirigeantNoMatchError(
   const query = result.data;
 
   return res.render("certification-dirigeant/no-match-error", {
+    dataSourceLabel: getCertificationDirigeantDataSourceLabels(query.source),
     interactionId: req.session.interactionId,
     oidcError: oidcErrorSchema().enum.login_required,
     oidcErrorDescription: "Certification dirigeant: no match error",
+    organization_label: query.organization_label,
     pageTitle: "Certification impossible",
     siren: query.siren,
-    organization_label: query.organization_label,
+    sourceUpdatedAt: query.source_updated_at
+      ? formatDate(query.source_updated_at)
+      : null,
     use_dashboard_layout: false,
   });
 }

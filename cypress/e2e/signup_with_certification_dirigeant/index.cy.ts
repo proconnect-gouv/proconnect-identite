@@ -259,6 +259,9 @@ ORDER BY id DESC
 LIMIT 1
 `,
     ).should("deep.equal", [{ action: "certification_dirigeant.not_matched" }]);
+    cy.contains(
+      "Le Registre National des Entreprises ne communique pas la date de dernière mise à jour de ces données.",
+    );
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Error");
@@ -287,6 +290,9 @@ LIMIT 1
     cy.contains("Impossible de vous certifier ⚠️");
     cy.contains(
       "Des discordances ont été détectées entre votre identité FranceConnect (affichée ici) et celle connue du Registre National des Entreprises pour Herisson.",
+    );
+    cy.contains(
+      "Dernière mise à jour de ces données dans le Registre National des Entreprises : 26/09/2026.",
     );
 
     cy.contains("Prénom").siblings().contains("Informations discordantes");

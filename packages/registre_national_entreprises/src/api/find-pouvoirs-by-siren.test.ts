@@ -9,7 +9,7 @@ import { findPouvoirsBySirenFactory } from "./find-pouvoirs-by-siren.js";
 //
 
 describe("findPouvoirsBySiren", () => {
-  it("should return pouvoirs for a valid SIREN", async () => {
+  it("should return pouvoirs and the company update date for a valid SIREN", async () => {
     const fetch = mock.fn(() => {
       return Promise.resolve(
         new Response(
@@ -32,6 +32,7 @@ describe("findPouvoirsBySiren", () => {
                 },
               },
             },
+            updatedAt: "2026-09-26T23:06:11+02:00",
           }),
         ),
       );
@@ -42,18 +43,21 @@ describe("findPouvoirsBySiren", () => {
     });
 
     const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
-    const pouvoirs = await findPouvoirsBySiren("552032534");
+    const result = await findPouvoirsBySiren("552032534");
 
-    assert.deepEqual(pouvoirs, [
-      {
-        typeDePersonne: "INDIVIDU",
-        actif: true,
-        individu: {
-          nom: "🦄",
-          prenom: "🐹",
+    assert.deepEqual(result, {
+      pouvoirs: [
+        {
+          typeDePersonne: "INDIVIDU",
+          actif: true,
+          individu: {
+            nom: "🦄",
+            prenom: "🐹",
+          },
         },
-      },
-    ]);
+      ],
+      updated_at: "2026-09-26T23:06:11+02:00",
+    });
   });
 
   it("should filter out inactive pouvoirs", async () => {
@@ -112,26 +116,28 @@ describe("findPouvoirsBySiren", () => {
     });
 
     const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
-    const pouvoirs = await findPouvoirsBySiren("807612296");
+    const result = await findPouvoirsBySiren("807612296");
 
-    // Should only return active pouvoirs
-    assert.deepEqual(pouvoirs, [
-      {
-        typeDePersonne: "INDIVIDU",
-        individu: {
-          nom: "Implicitly active",
-          prenom: "Person",
+    assert.deepEqual(result, {
+      pouvoirs: [
+        {
+          typeDePersonne: "INDIVIDU",
+          individu: {
+            nom: "Implicitly active",
+            prenom: "Person",
+          },
         },
-      },
-      {
-        typeDePersonne: "INDIVIDU",
-        actif: true,
-        individu: {
-          nom: "Active",
-          prenom: "Person",
+        {
+          typeDePersonne: "INDIVIDU",
+          actif: true,
+          individu: {
+            nom: "Active",
+            prenom: "Person",
+          },
         },
-      },
-    ]);
+      ],
+      updated_at: null,
+    });
   });
 
   it("should throw RegistreNationalEntreprisesApiError on API error", async () => {
@@ -153,7 +159,7 @@ describe("findPouvoirsBySiren", () => {
     );
   });
 
-  it("should return empty array when no composition data", async () => {
+  it("should return no pouvoirs and no update date when the company has neither", async () => {
     const client = createRegistreNationalEntreprisesOpenApiClient({
       fetch: () =>
         Promise.resolve(
@@ -165,8 +171,8 @@ describe("findPouvoirsBySiren", () => {
     });
 
     const findPouvoirsBySiren = findPouvoirsBySirenFactory(client);
-    const pouvoirs = await findPouvoirsBySiren("123456789");
+    const result = await findPouvoirsBySiren("123456789");
 
-    assert.deepEqual(pouvoirs, []);
+    assert.deepEqual(result, { pouvoirs: [], updated_at: null });
   });
 });
