@@ -6,6 +6,7 @@ import type {
   EmailDomain,
   EmailDomainVerificationType,
 } from "#src/types";
+import type { Domain } from "@proconnect-gouv/proconnect.core/security";
 import type { QueryResult } from "pg";
 
 //
@@ -17,7 +18,7 @@ export function addDomainFactory({ pg }: DatabaseContext) {
     verification_type,
   }: {
     organization_id: number;
-    domain: string;
+    domain: Domain;
     verification_type: EmailDomainVerificationType;
   }) {
     const connection = pg;

@@ -1,6 +1,7 @@
 //
 
 import { emptyDatabase, migrate, pg } from "#testing";
+import { Domain } from "@proconnect-gouv/proconnect.core/security";
 import assert from "node:assert/strict";
 import { before, beforeEach, mock, suite, test } from "node:test";
 import { addDomainFactory } from "./add-domain.js";
@@ -24,7 +25,7 @@ suite("addDomainFactory", () => {
     mock.timers.enable({ apis: ["Date"], now: new Date("4444-04-04") });
 
     const emailDomain = await addDomain({
-      domain: "darkangels.world",
+      domain: Domain.parse("darkangels.world"),
       organization_id: 1,
       verification_type: "verified",
     });

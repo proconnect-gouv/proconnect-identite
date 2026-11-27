@@ -1,6 +1,7 @@
 //
 
 import { emptyDatabase, migrate, pg } from "#testing";
+import { Email } from "@proconnect-gouv/proconnect.core/security";
 import assert from "node:assert/strict";
 import { before, beforeEach, mock, suite, test } from "node:test";
 import { createUserFactory } from "./create.js";
@@ -16,12 +17,14 @@ suite("createUserFactory", () => {
   test("should create the god-emperor of mankind", async () => {
     mock.timers.enable({ apis: ["Date"], now: new Date("4444-04-04") });
 
-    const user = await createUser({ email: "god-emperor@mankind" });
+    const user = await createUser({
+      email: Email.parse("god-emperor@mankind.world"),
+    });
 
     assert.deepEqual(user, {
       created_at: new Date("4444-04-04"),
       current_challenge: null,
-      email: "god-emperor@mankind",
+      email: "god-emperor@mankind.world",
       email_verified: false,
       email_verified_at: null,
       encrypted_password: null,

@@ -1,6 +1,6 @@
 // src https://stackoverflow.com/questions/40994095/pipe-streams-to-edit-csv-file-in-node-js
 import {
-  isEmailValid,
+  Email,
   isNameValid,
   isPhoneNumberValid,
   isSiretValid,
@@ -10,7 +10,7 @@ import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { parse, stringify, transform } from "csv";
 import { sql } from "drizzle-orm";
 import fs from "fs";
-import { isEmpty, isString, some, toInteger } from "lodash-es";
+import { isEmpty, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
 import { context, db, runtime } from "../src/connectors/context";
@@ -114,7 +114,8 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         } = data;
         logger.info(`${i}: processing ${professional_email}...`);
         // 0. params validation
-        if (!isString(professional_email)) {
+        const parsedEmail = Email.safeParse(professional_email);
+        if (!parsedEmail.success) {
           i++;
           rejected_invalid_email_address_count++;
           logger.error(`invalid email address ${professional_email}`);
@@ -123,16 +124,7 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
             error: "rejected_invalid_email_address",
           });
         }
-        const email = professional_email.toLowerCase();
-        if (!isEmailValid(email)) {
-          i++;
-          rejected_invalid_email_address_count++;
-          logger.error(`invalid email address ${email}`);
-          return done(null, {
-            ...data,
-            error: "rejected_invalid_email_address",
-          });
-        }
+        const email = parsedEmail.data;
         if (!isNameValid(given_name) || !isNameValid(family_name)) {
           i++;
           rejected_invalid_names_count++;

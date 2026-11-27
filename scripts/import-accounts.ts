@@ -1,6 +1,6 @@
 // src https://stackoverflow.com/questions/40994095/pipe-streams-to-edit-csv-file-in-node-js
 import {
-  isEmailValid,
+  Email,
   isNameValid,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
@@ -9,7 +9,7 @@ import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { parse, stringify, transform } from "csv";
 import { sql } from "drizzle-orm";
 import fs from "fs";
-import { isEmpty, isString, some, toInteger } from "lodash-es";
+import { isEmpty, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
 import { context, db, runtime } from "../src/connectors/context";
@@ -108,19 +108,14 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
         } = data;
         logger.info(`${i}: processing ${rawEmail}...`);
         // 0. params validation
-        if (!isString(rawEmail)) {
+        const parsedEmail = Email.safeParse(rawEmail);
+        if (!parsedEmail.success) {
           i++;
           rejected_invalid_email_address_count++;
           logger.error(`invalid email address ${rawEmail}`);
           return done(null);
         }
-        const email = rawEmail.toLowerCase();
-        if (!isEmailValid(email)) {
-          i++;
-          rejected_invalid_email_address_count++;
-          logger.error(`invalid email address ${email}`);
-          return done(null);
-        }
+        const email = parsedEmail.data;
         if (!isNameValid(first_name) || !isNameValid(last_name)) {
           i++;
           rejected_invalid_names_count++;
