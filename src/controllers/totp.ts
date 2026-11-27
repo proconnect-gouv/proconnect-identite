@@ -85,7 +85,7 @@ export const postTotpConfigurationMiddlewareFactory =
         totpToken: codeSchema(),
         totpDisplayName: mfaDisplayNameSchema(),
       });
-      const { totpToken, totpDisplayName } = await schema.parseAsync(req.body);
+      const { totpToken, totpDisplayName } = schema.parse(req.body);
 
       const { id: user_id } = getUserFromAuthenticatedSession(req);
       const temporaryTotpKey = getTemporaryTotpKey(req);
@@ -157,7 +157,7 @@ export const postRenameTotpConfigurationController = async (
     const schema = z.object({
       totpDisplayName: mfaDisplayNameSchema(),
     });
-    const { totpDisplayName } = await schema.parseAsync(req.body);
+    const { totpDisplayName } = schema.parse(req.body);
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -183,7 +183,7 @@ export const postSignInWithTotpController = async (
       totpToken: codeSchema(),
     });
 
-    const { totpToken } = await schema.parseAsync(req.body);
+    const { totpToken } = schema.parse(req.body);
 
     const { id: user_id } = getUserFromAuthenticatedSession(req);
 

@@ -64,9 +64,9 @@ export const renamePasskeyController = async (req: Request, res: Response) => {
   const { credential_id } = z
     .object({ credential_id: z.string() })
     .parse(req.params);
-  const { passkeyDisplayName } = await z
+  const { passkeyDisplayName } = z
     .object({ passkeyDisplayName: mfaDisplayNameSchema() })
-    .parseAsync(req.body);
+    .parse(req.body);
 
   const { id: user_id } = getUserFromAuthenticatedSession(req);
 
@@ -110,16 +110,14 @@ export const postVerifyRegistrationMiddlewareFactory =
       const schema = z.object({
         webauthn_registration_response_string: z.string(),
       });
-      const { webauthn_registration_response_string } = await schema.parseAsync(
-        req.body,
-      );
+      const { webauthn_registration_response_string } = schema.parse(req.body);
 
-      const response = await z
+      const response = z
         .preprocess(
           (val) => (typeof val === "string" ? JSON.parse(val) : val),
           z.custom<RegistrationResponseJSON>(),
         )
-        .parseAsync(webauthn_registration_response_string);
+        .parse(webauthn_registration_response_string);
       const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
       const { userVerified, updatedUser, key_name } = await verifyRegistration({
@@ -196,8 +194,9 @@ export const postVerifyAuthenticationController =
       const schema = z.object({
         webauthn_authentication_response_string: z.string(),
       });
-      const { webauthn_authentication_response_string } =
-        await schema.parseAsync(req.body);
+      const { webauthn_authentication_response_string } = schema.parse(
+        req.body,
+      );
 
       const authenticationResponseJson = JSON.parse(
         webauthn_authentication_response_string,
@@ -205,7 +204,7 @@ export const postVerifyAuthenticationController =
       const authenticationResponseSchema =
         z.custom<AuthenticationResponseJSON>();
 
-      const response = await authenticationResponseSchema.parseAsync(
+      const response = authenticationResponseSchema.parse(
         authenticationResponseJson,
       );
 
