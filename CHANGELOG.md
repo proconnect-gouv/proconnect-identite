@@ -1,5 +1,11 @@
 # Changelog
 
+## [2026.11.6](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.5...2026.11.6) (2026-11-27)
+
+### Documentation
+
+- 📝 Document the app release in the README ([3505f95](https://github.com/proconnect-gouv/proconnect-identite/commit/3505f95ccf420b6f731e17639383181668fe7339))
+
 ## [2026.11.5](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.4...2026.11.5) (2026-11-27)
 
 ### Changements
