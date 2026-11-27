@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import packageJson from "../package.json" with { type: "json" };
 import {
+  DEPLOY_ENV,
   HOST,
   LOG_LEVEL,
   NODE_ENV,
@@ -32,7 +33,7 @@ Sentry.init({
   dsn: SENTRY_DSN,
   environment: SENTRY_ENVIRONMENT,
   release: packageJson.version,
-  initialScope: { tags: { NODE_ENV, HOST } },
+  initialScope: { tags: { DEPLOY_ENV, NODE_ENV, HOST } },
   integrations: [
     nodeProfilingIntegration(),
     Sentry.expressIntegration(),
