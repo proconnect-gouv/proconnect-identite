@@ -59,4 +59,4 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: 🚀 Publish
-        uses: proconnect-gouv/release-action/publish@d8f993ea33a215c507b884c06168b7b6eaabea2a # v1.3.1
+        uses: proconnect-gouv/release-action/publish@ffe474135b937f37bae43a37dfba6c999b1f544a # v1.3.2
