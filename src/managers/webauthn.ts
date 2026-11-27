@@ -161,36 +161,29 @@ export const getRegistrationOptions = async (email: string) => {
     },
   });
 
-  // Remember the challenge for this user
-  const updatedUser = await users.update(user.id, {
-    current_challenge: registrationOptions.challenge,
-  });
-
-  return { updatedUser, registrationOptions };
+  return { registrationOptions };
 };
 
 export const verifyRegistration = async ({
   email,
+  expectedChallenge,
   response,
 }: {
   email: string;
+  expectedChallenge: string | undefined;
   response: RegistrationResponseJSON;
 }) => {
   const user = await users.findByEmail(email);
 
-  if (isEmpty(user) || !user.current_challenge) {
+  if (isEmpty(user) || !expectedChallenge) {
     throw new NotFoundError();
   }
-
-  const current_challenge = user.current_challenge;
-  // challenge must only be used once
-  const updatedUser = await users.update(user.id, { current_challenge: null });
 
   let verification: VerifiedRegistrationResponse;
   try {
     verification = await verifyRegistrationResponse({
       response,
-      expectedChallenge: current_challenge,
+      expectedChallenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
       // do not enforce user verification by the authenticator (via PIN, fingerprint, etc...)
@@ -241,7 +234,7 @@ export const verifyRegistration = async ({
     },
   });
 
-  return { userVerified: user_verified, updatedUser, key_name: display_name };
+  return { userVerified: user_verified, user, key_name: display_name };
 };
 
 export const getAuthenticationOptions = async (
@@ -272,20 +265,17 @@ export const getAuthenticationOptions = async (
     userVerification: isSecondFactorAuthentication ? "discouraged" : "required",
   });
 
-  // Remember the challenge for this user
-  const updatedUser = await users.update(user.id, {
-    current_challenge: authenticationOptions.challenge,
-  });
-
-  return { updatedUser, authenticationOptions };
+  return { authenticationOptions };
 };
 
 export const verifyAuthentication = async ({
   email,
+  expectedChallenge,
   response,
   isSecondFactorVerification,
 }: {
   email: string | undefined;
+  expectedChallenge: string | undefined;
   response: AuthenticationResponseJSON;
   isSecondFactorVerification: boolean;
 }) => {
@@ -299,14 +289,10 @@ export const verifyAuthentication = async ({
     throw new NotFoundError();
   }
 
-  if (!user.current_challenge) {
+  if (!expectedChallenge) {
     track("webauthn.authentication.challenge_missing", {});
     throw new NotFoundError();
   }
-
-  const current_challenge = user.current_challenge;
-  // challenge must only be used once
-  await users.update(user.id, { current_challenge: null });
 
   // Retrieve an authenticator from the DB that should match the `id` in the returned credential
   const authenticator = await authenticators.find(user.id, response.id);
@@ -338,7 +324,7 @@ export const verifyAuthentication = async ({
   try {
     verification = await verifyAuthenticationResponse({
       response,
-      expectedChallenge: current_challenge,
+      expectedChallenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
       credential,

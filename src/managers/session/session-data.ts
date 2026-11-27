@@ -56,6 +56,7 @@ export const SessionDataSchema = z.object({
   selectedOrganizationId: z.number().optional(),
   temporaryEncryptedTotpKey: z.string().optional(),
   user: UserSchema.optional(),
+  webauthnChallenge: z.string().optional(),
 });
 
 export const StoredSessionSchema = SessionDataSchema.extend({
