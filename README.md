@@ -64,7 +64,7 @@ This guide provides steps to run the ProConnect Identité Node.js application lo
 
 ### Prerequisites
 
-- Node.js (v22) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm))
+- Node.js (v24, see `engines` in `package.json`) installed locally (we suggest the usage of [nvm](https://github.com/nvm-sh/nvm)), or run `nix develop` to get a shell with that Node.js version (see `flake.nix`). On NixOS, run `cypress-patchelf` after `npm ci` so the Cypress binary downloaded by npm can run
 - Docker (>= v25) and Docker Compose (>= v2.24) installed ([doc](https://docs.docker.com/engine/install/))
 - Clone the ProConnect Identité repository
 
