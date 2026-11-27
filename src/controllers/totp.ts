@@ -39,36 +39,31 @@ export const getTotpConfigurationControllerFactory =
   }: {
     template: "user/totp-configuration" | "totp-configuration";
   }) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id: user_id, email } = getUserFromAuthenticatedSession(req);
+  async (req: Request, res: Response) => {
+    const { id: user_id, email } = getUserFromAuthenticatedSession(req);
 
-      const existingTemporaryTotpKey = getTemporaryTotpKey(req);
+    const existingTemporaryTotpKey = getTemporaryTotpKey(req);
 
-      const { totpKey, humanReadableTotpKey, qrCodeDataUrl } =
-        await generateTotpRegistrationOptions(email, existingTemporaryTotpKey);
+    const { totpKey, humanReadableTotpKey, qrCodeDataUrl } =
+      await generateTotpRegistrationOptions(email, existingTemporaryTotpKey);
 
-      setTemporaryTotpKey(req, totpKey);
+    setTemporaryTotpKey(req, totpKey);
 
-      const notificationLabel = await getNotificationLabelFromRequest(req);
-      const hasCodeError = notificationLabel === "invalid_totp_token";
+    const notificationLabel = await getNotificationLabelFromRequest(req);
+    const hasCodeError = notificationLabel === "invalid_totp_token";
 
-      const { "totp-tool-type": totpToolType } = req.query;
+    const { "totp-tool-type": totpToolType } = req.query;
 
-      return res.render(template, {
-        pageTitle: "Configurer un code à usage unique",
-        notifications: await getNotificationsFromRequest(req),
-        hasCodeError,
-        csrfToken: csrfToken(req),
-        isAuthenticatorAlreadyConfigured:
-          await isTotpConfiguredForUser(user_id),
-        humanReadableTotpKey,
-        qrCodeDataUrl,
-        totpToolType,
-      });
-    } catch (error) {
-      next(error);
-    }
+    return res.render(template, {
+      pageTitle: "Configurer un code à usage unique",
+      notifications: await getNotificationsFromRequest(req),
+      hasCodeError,
+      csrfToken: csrfToken(req),
+      isAuthenticatorAlreadyConfigured: await isTotpConfiguredForUser(user_id),
+      humanReadableTotpKey,
+      qrCodeDataUrl,
+      totpToolType,
+    });
   };
 
 export const postTotpConfigurationMiddlewareFactory =
@@ -129,48 +124,38 @@ export const postTotpConfigurationMiddlewareFactory =
 export const postDeleteTotpConfigurationController = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
-  try {
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await deleteTotpConfiguration(user_id);
+  const updatedUser = await deleteTotpConfiguration(user_id);
 
-    updateUserInAuthenticatedSession(req, updatedUser);
+  updateUserInAuthenticatedSession(req, updatedUser);
 
-    await sendDeleteFreeTOTPApplicationEmail({ user_id });
+  await sendDeleteFreeTOTPApplicationEmail({ user_id });
 
-    return res.redirect(
-      `/connection-and-account?notification=authenticator_successfully_deleted`,
-    );
-  } catch (error) {
-    next(error);
-  }
+  return res.redirect(
+    `/connection-and-account?notification=authenticator_successfully_deleted`,
+  );
 };
 
 export const postRenameTotpConfigurationController = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
-  try {
-    const schema = z.object({
-      totpDisplayName: mfaDisplayNameSchema(),
-    });
-    const { totpDisplayName } = schema.parse(req.body);
+  const schema = z.object({
+    totpDisplayName: mfaDisplayNameSchema(),
+  });
+  const { totpDisplayName } = schema.parse(req.body);
 
-    const { id: user_id } = getUserFromAuthenticatedSession(req);
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const updatedUser = await renameTotpConfiguration(user_id, totpDisplayName);
+  const updatedUser = await renameTotpConfiguration(user_id, totpDisplayName);
 
-    updateUserInAuthenticatedSession(req, updatedUser);
+  updateUserInAuthenticatedSession(req, updatedUser);
 
-    return res.redirect(
-      "/connection-and-account?notification=authenticator_successfully_renamed",
-    );
-  } catch (error) {
-    next(error);
-  }
+  return res.redirect(
+    "/connection-and-account?notification=authenticator_successfully_renamed",
+  );
 };
 
 export const postSignInWithTotpController = async (

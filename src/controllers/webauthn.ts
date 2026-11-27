@@ -33,32 +33,24 @@ import {
 import { mfaDisplayNameSchema } from "../services/custom-zod-schemas";
 import { logger, track } from "../services/log";
 
-export const deletePasskeyController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const schema = z.object({
-      credential_id: z.string(),
-    });
-    const { credential_id } = schema.parse(req.params);
+export const deletePasskeyController = async (req: Request, res: Response) => {
+  const schema = z.object({
+    credential_id: z.string(),
+  });
+  const { credential_id } = schema.parse(req.params);
 
-    const { email, id: user_id } = getUserFromAuthenticatedSession(req);
+  const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const key_name = await deleteUserAuthenticator(email, credential_id);
+  const key_name = await deleteUserAuthenticator(email, credential_id);
 
-    await sendDeleteAccessKeyMail({
-      user_id,
-      key_name,
-    });
+  await sendDeleteAccessKeyMail({
+    user_id,
+    key_name,
+  });
 
-    return res.redirect(
-      `/connection-and-account?notification=passkey_successfully_deleted`,
-    );
-  } catch (e) {
-    next(e);
-  }
+  return res.redirect(
+    `/connection-and-account?notification=passkey_successfully_deleted`,
+  );
 };
 export const renamePasskeyController = async (req: Request, res: Response) => {
   const { credential_id } = z
@@ -160,25 +152,21 @@ export const postVerifyRegistrationMiddlewareFactory =
 export const getGenerateAuthenticationOptionsControllerFactory =
   (isSecondFactorAuthentication: boolean) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const email = isSecondFactorAuthentication
-        ? getUserFromAuthenticatedSession(req).email
-        : getEmailFromUnauthenticatedSession(req);
+    const email = isSecondFactorAuthentication
+      ? getUserFromAuthenticatedSession(req).email
+      : getEmailFromUnauthenticatedSession(req);
 
-      if (!email) {
-        track("webauthn.authentication_options.email_missing", {});
-        return next(new HttpErrors.Unauthorized());
-      }
-
-      const { authenticationOptions } = await getAuthenticationOptions(
-        email,
-        isSecondFactorAuthentication,
-      );
-
-      return res.json(authenticationOptions);
-    } catch (e) {
-      next(e);
+    if (!email) {
+      track("webauthn.authentication_options.email_missing", {});
+      return next(new HttpErrors.Unauthorized());
     }
+
+    const { authenticationOptions } = await getAuthenticationOptions(
+      email,
+      isSecondFactorAuthentication,
+    );
+
+    return res.json(authenticationOptions);
   };
 
 export const getGenerateAuthenticationOptionsForFirstFactorController =
