@@ -4,7 +4,7 @@ import type { NextFunction } from "express";
 import type { KoaContextWithOIDC } from "oidc-provider";
 import { recordAuthorizationRequest } from "../managers/oidc-client";
 import { logger } from "../services/log";
-import { getAuthorizedOrganization } from "../services/oidc-authorized-organization";
+import { getAuthorizedOrganizationFromLoadedGrant } from "../services/oidc-authorized-organization";
 
 // this is not an express middleware but an oidc-provider middleware as described here:
 // https://github.com/panva/node-oidc-provider/blob/v7.x/docs/README.md#pre--and-post-middlewares
@@ -45,7 +45,8 @@ export const connectionCountMiddleware = async (
           client: ctx.oidc.client,
           interactionCid: ctx.oidc.entities.Interaction?.cid ?? null,
           organizationId:
-            (await getAuthorizedOrganization(ctx))?.organizationId ?? null,
+            (await getAuthorizedOrganizationFromLoadedGrant(ctx))
+              ?.organizationId ?? null,
           outcome: ctx.oidc.entities.AuthorizationCode
             ? AuthorizationRequestOutcomeEnum.enum.succeeded
             : null,
