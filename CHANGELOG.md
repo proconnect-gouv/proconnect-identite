@@ -1,5 +1,40 @@
 # Changelog
 
+## [2026.11.5](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.4...2026.11.5) (2026-11-27)
+
+### Changements
+
+- 🐛 Une adresse email au format invalide refusée à la connexion renvoie désormais vers la page de connexion avec un message d'erreur, au lieu de permettre de créer un compte avec cette adresse par lien magique ou à l'inscription.
+
+### Ajouté
+
+- ✨ Name and rename 2FA methods ([#2424](https://github.com/proconnect-gouv/proconnect-identite/issues/2424)) ([97bfc2c](https://github.com/proconnect-gouv/proconnect-identite/commit/97bfc2ca795440d853f8e295f26f2be7a5048b67))
+
+### Modifié
+
+- ♻️ create imported accounts with one inline Drizzle insert ([#2510](https://github.com/proconnect-gouv/proconnect-identite/issues/2510)) ([8c67002](https://github.com/proconnect-gouv/proconnect-identite/commit/8c670020a52173e8dbc94a9465d5ef783ace1307))
+- ♻️ write the Inclusion Connect welcome and onboarding flags inline with Drizzle ([#2509](https://github.com/proconnect-gouv/proconnect-identite/issues/2509)) ([5d461c9](https://github.com/proconnect-gouv/proconnect-identite/commit/5d461c96444a1f3b83de766234b1c910f7f3d932))
+
+### Corrigé
+
+- 🐛 check the session email before prompting for credentials ([44e4912](https://github.com/proconnect-gouv/proconnect-identite/commit/44e4912d7f5f869fed928b1477d9f62096c6cba8))
+
+### Dépendances
+
+- :arrow_up: Bump @changesets/cli from 3.0.2 to 3.0.3 ([#2568](https://github.com/proconnect-gouv/proconnect-identite/issues/2568)) ([710a732](https://github.com/proconnect-gouv/proconnect-identite/commit/710a7329fc6306d4417626febda1712bef234f48))
+- :arrow_up: Bump proconnect-gouv/release-action/version ([#2563](https://github.com/proconnect-gouv/proconnect-identite/issues/2563)) ([b51d82a](https://github.com/proconnect-gouv/proconnect-identite/commit/b51d82a6ab8bdff2cc820c38e956de703fd402d9))
+- :arrow_up: Bump proconnect-gouv/release-action/select-mode ([#2566](https://github.com/proconnect-gouv/proconnect-identite/issues/2566)) ([8b9791c](https://github.com/proconnect-gouv/proconnect-identite/commit/8b9791c408175dd4b565c8935fd6c5abbf4c5d11))
+- :arrow_up: Bump proconnect-gouv/release-action/publish ([#2564](https://github.com/proconnect-gouv/proconnect-identite/issues/2564)) ([e27a790](https://github.com/proconnect-gouv/proconnect-identite/commit/e27a790791966cc7603db78924dd7d145b6fd318))
+- :arrow_up: Bump proconnect-gouv/proconnect-test-client ([#2538](https://github.com/proconnect-gouv/proconnect-identite/issues/2538)) ([b368965](https://github.com/proconnect-gouv/proconnect-identite/commit/b3689653fa0749b71631a34c90b26c8d514f7c7a))
+- ⬆️ Bump cypress from 15.15.0 to 16.3.0 ([#2542](https://github.com/proconnect-gouv/proconnect-identite/issues/2542)) ([5e60e09](https://github.com/proconnect-gouv/proconnect-identite/commit/5e60e0942c32bc7fb7fc459316d2fb051ae32760))
+
+### Divers
+
+- Bump flake-utils from `11707dc` to `cd48955` ([#2561](https://github.com/proconnect-gouv/proconnect-identite/issues/2561)) ([3404da5](https://github.com/proconnect-gouv/proconnect-identite/commit/3404da5ccc33567740c0c13f23f307604fe1d2cd))
+- Bump nixpkgs from `34ab990` to `2786a2a` ([#2567](https://github.com/proconnect-gouv/proconnect-identite/issues/2567)) ([2c9795f](https://github.com/proconnect-gouv/proconnect-identite/commit/2c9795f58eb8cd6583361ceb7529edf550a4fba2))
+- 🐧 Add a flake for nix users ([#2117](https://github.com/proconnect-gouv/proconnect-identite/issues/2117)) ([a0670fc](https://github.com/proconnect-gouv/proconnect-identite/commit/a0670fcdc452ac190360e87472e2fbb0ed3e9eef))
+- 💬 Replace "passkey" with "clé d’accès" ([64ed912](https://github.com/proconnect-gouv/proconnect-identite/commit/64ed9124545db46f435bba70d3b29fc0cdc36287))
+
 ## [2026.11.4](https://github.com/proconnect-gouv/proconnect-identite/compare/2026.11.3...2026.11.4) (2026-11-26)
 
 ### Supprimé

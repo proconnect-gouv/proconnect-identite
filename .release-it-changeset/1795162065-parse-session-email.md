@@ -1,1 +1,0 @@
-🐛 Une adresse email au format invalide refusée à la connexion renvoie désormais vers la page de connexion avec un message d'erreur, au lieu de permettre de créer un compte avec cette adresse par lien magique ou à l'inscription.
