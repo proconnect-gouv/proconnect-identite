@@ -1,5 +1,14 @@
 # @proconnect-gouv/proconnect.identite.runtime
 
+## 0.7.1
+
+### Patch Changes
+
+- [#2424](https://github.com/proconnect-gouv/proconnect-identite/pull/2424) [`97bfc2c`](https://github.com/proconnect-gouv/proconnect-identite/commit/97bfc2ca795440d853f8e295f26f2be7a5048b67) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - La réinitialisation de la double authentification remet aussi `totp_display_name` à `null`.
+- Updated dependencies [[`97bfc2c`](https://github.com/proconnect-gouv/proconnect-identite/commit/97bfc2ca795440d853f8e295f26f2be7a5048b67)]:
+  - @proconnect-gouv/proconnect.identite.database@3.1.0
+  - @proconnect-gouv/proconnect.identite@17.1.0
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @proconnect-gouv/proconnect.identite
 
+## 17.1.0
+
+### Minor Changes
+
+- [#2424](https://github.com/proconnect-gouv/proconnect-identite/pull/2424) [`97bfc2c`](https://github.com/proconnect-gouv/proconnect-identite/commit/97bfc2ca795440d853f8e295f26f2be7a5048b67) Thanks [@rebeccadumazert](https://github.com/rebeccadumazert)! - Ajoute la colonne `users.totp_display_name`, le champ `totp_display_name` à `UserSchema` (`null` par défaut) et `authenticators.rename`, qui renomme une clé d'accès sans toucher à ses compteurs. La réinitialisation de la double authentification remet aussi ce nom à `null`.
+
 ## 17.0.0
 
 ### Major Changes
