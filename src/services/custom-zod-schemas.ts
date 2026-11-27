@@ -1,5 +1,5 @@
 import {
-  isEmailValid,
+  Email,
   isNameValid,
   isPhoneNumberValid,
   isSiretValid,
@@ -17,7 +17,7 @@ export const siretSchema = () =>
     .transform((val) => val.replace(/\s/g, ""));
 
 export const emailSchema = () =>
-  z.string().trim().toLowerCase().refine(isEmailValid);
+  z.string().trim().toLowerCase().refine(Email.isValid);
 
 export const nameSchema = () =>
   z.string().trim().min(1).refine(isVisibleString).refine(isNameValid);

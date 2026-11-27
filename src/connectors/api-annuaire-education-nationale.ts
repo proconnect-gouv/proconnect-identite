@@ -1,5 +1,5 @@
-import { isEmailValid } from "@proconnect-gouv/proconnect.core/security";
-import { isEmpty, isString } from "lodash-es";
+import { Email } from "@proconnect-gouv/proconnect.core/security";
+import { isEmpty } from "lodash-es";
 import { AssertionError } from "node:assert";
 import {
   FEATURE_USE_ANNUAIRE_EMAILS,
@@ -255,36 +255,20 @@ export const getAnnuaireEducationNationaleContactEmail = async (
     },
   } = record;
 
-  if (!isString(mail)) {
-    throw new ApiAnnuaireInvalidEmailError("Mail field is not a string", {
-      cause: new AssertionError({
-        actual: typeof mail,
-        expected: "string",
-        message: "Mail field must be a string",
-        operator: "isString",
-      }),
-    });
-  }
+  const email = Email.safeParse(mail);
 
-  const formattedEmail = mail.toLowerCase().trim();
-
-  if (!isEmailValid(formattedEmail)) {
+  if (!email.success) {
     throw new ApiAnnuaireInvalidEmailError("Email format is invalid", {
-      cause: new AssertionError({
-        actual: formattedEmail,
-        expected: "valid email format",
-        message: "Email must be in valid format",
-        operator: "isEmailValid",
-      }),
+      cause: email.error,
     });
   }
 
   if (!FEATURE_USE_ANNUAIRE_EMAILS) {
     logger.info(
-      `Test email address ${TEST_CONTACT_EMAIL} was used instead of the real one ${formattedEmail}.`,
+      `Test email address ${TEST_CONTACT_EMAIL} was used instead of the real one ${email.data}.`,
     );
     return TEST_CONTACT_EMAIL;
   }
 
-  return formattedEmail;
+  return email.data;
 };

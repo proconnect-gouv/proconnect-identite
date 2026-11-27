@@ -1,7 +1,8 @@
+import { Email } from "@proconnect-gouv/proconnect.core/security";
 import type { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
 import { HOST } from "../../config/env";
-import { InvalidEmailError, InvalidMagicLinkError } from "../../config/errors";
+import { InvalidMagicLinkError } from "../../config/errors";
 import { createAuthenticatedSession } from "../../managers/session/authenticated";
 import { getEmailFromUnauthenticatedSession } from "../../managers/session/unauthenticated";
 import {
@@ -13,22 +14,16 @@ import { csrfToken } from "../../middlewares/csrf-protection";
 export const postSendMagicLinkController = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
-  try {
-    await sendSendMagicLinkEmail(
-      getEmailFromUnauthenticatedSession(req)!,
-      HOST,
-    );
+  const email = Email.safeParse(getEmailFromUnauthenticatedSession(req));
 
-    return res.redirect(`/users/magic-link-sent`);
-  } catch (error) {
-    if (error instanceof InvalidEmailError) {
-      return res.redirect(`/users/start-sign-in?notification=invalid_email`);
-    }
-
-    next(error);
+  if (!email.success) {
+    return res.redirect(`/users/start-sign-in?notification=invalid_email`);
   }
+
+  await sendSendMagicLinkEmail(email.data, HOST);
+
+  return res.redirect(`/users/magic-link-sent`);
 };
 
 export const getMagicLinkSentController = async (
