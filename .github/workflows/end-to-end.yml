@@ -54,6 +54,7 @@ jobs:
           - recovery_words_incentive
           - recovery_words_incentive_disabled
           - redirect_after_session_expiration
+          - rename_mfa
           - reset_password
           - session_survives_grant_expiry
           - set_info_after_account_provisioning

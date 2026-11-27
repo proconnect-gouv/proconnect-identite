@@ -52,6 +52,7 @@ export function resetMfaFactory({ actor, app, db }: RuntimeContext) {
           encrypted_password: null,
           encrypted_totp_key: null,
           force_2fa: false,
+          totp_display_name: null,
           totp_key_verified_at: null,
           updated_at: sql`now()`,
         })

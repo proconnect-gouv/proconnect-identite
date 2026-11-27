@@ -124,7 +124,23 @@ export const deleteAllUserAuthenticators = async (user_id: number) => {
     await disableForce2fa(user_id);
   }
 };
+export const renameUserAuthenticator = async (
+  user_id: number,
+  credential_id: string,
+  display_name: string | null,
+) => {
+  const authenticator = await authenticators.rename(
+    user_id,
+    credential_id,
+    display_name,
+  );
 
+  if (isEmpty(authenticator)) {
+    throw new NotFoundError();
+  }
+
+  return authenticator;
+};
 export const getRegistrationOptions = async (email: string) => {
   const user = await users.findByEmail(email);
 

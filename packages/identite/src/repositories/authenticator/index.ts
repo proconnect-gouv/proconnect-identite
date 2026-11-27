@@ -5,3 +5,4 @@ export * from "./delete-all-authenticators-by-user-id.js";
 export * from "./delete-authenticator.js";
 export * from "./find-authenticator.js";
 export * from "./find-authenticators-by-user-id.js";
+export * from "./rename-authenticator.js";

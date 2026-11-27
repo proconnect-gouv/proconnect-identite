@@ -26,39 +26,48 @@ import {
   deleteUserAuthenticator,
   getAuthenticationOptions,
   getRegistrationOptions,
+  renameUserAuthenticator,
   verifyAuthentication,
   verifyRegistration,
 } from "../managers/webauthn";
+import { mfaDisplayNameSchema } from "../services/custom-zod-schemas";
 import { logger, track } from "../services/log";
 
-export const deletePasskeyController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const schema = z.object({
-      credential_id: z.string(),
-    });
-    const { credential_id } = schema.parse(req.params);
+export const deletePasskeyController = async (req: Request, res: Response) => {
+  const schema = z.object({
+    credential_id: z.string(),
+  });
+  const { credential_id } = schema.parse(req.params);
 
-    const { email, id: user_id } = getUserFromAuthenticatedSession(req);
+  const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
-    const key_name = await deleteUserAuthenticator(email, credential_id);
+  const key_name = await deleteUserAuthenticator(email, credential_id);
 
-    await sendDeleteAccessKeyMail({
-      user_id,
-      key_name,
-    });
+  await sendDeleteAccessKeyMail({
+    user_id,
+    key_name,
+  });
 
-    return res.redirect(
-      `/connection-and-account?notification=passkey_successfully_deleted`,
-    );
-  } catch (e) {
-    next(e);
-  }
+  return res.redirect(
+    `/connection-and-account?notification=passkey_successfully_deleted`,
+  );
 };
+export const renamePasskeyController = async (req: Request, res: Response) => {
+  const { credential_id } = z
+    .object({ credential_id: z.string() })
+    .parse(req.params);
+  const { passkeyDisplayName } = z
+    .object({ passkeyDisplayName: mfaDisplayNameSchema() })
+    .parse(req.body);
 
+  const { id: user_id } = getUserFromAuthenticatedSession(req);
+
+  await renameUserAuthenticator(user_id, credential_id, passkeyDisplayName);
+
+  return res.redirect(
+    "/connection-and-account?notification=passkey_successfully_renamed",
+  );
+};
 export const getGenerateRegistrationOptionsController = async (
   req: Request,
   res: Response,
@@ -93,16 +102,14 @@ export const postVerifyRegistrationMiddlewareFactory =
       const schema = z.object({
         webauthn_registration_response_string: z.string(),
       });
-      const { webauthn_registration_response_string } = await schema.parseAsync(
-        req.body,
-      );
+      const { webauthn_registration_response_string } = schema.parse(req.body);
 
-      const response = await z
+      const response = z
         .preprocess(
           (val) => (typeof val === "string" ? JSON.parse(val) : val),
           z.custom<RegistrationResponseJSON>(),
         )
-        .parseAsync(webauthn_registration_response_string);
+        .parse(webauthn_registration_response_string);
       const { email, id: user_id } = getUserFromAuthenticatedSession(req);
 
       const { userVerified, updatedUser, key_name } = await verifyRegistration({
@@ -145,25 +152,21 @@ export const postVerifyRegistrationMiddlewareFactory =
 export const getGenerateAuthenticationOptionsControllerFactory =
   (isSecondFactorAuthentication: boolean) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const email = isSecondFactorAuthentication
-        ? getUserFromAuthenticatedSession(req).email
-        : getEmailFromUnauthenticatedSession(req);
+    const email = isSecondFactorAuthentication
+      ? getUserFromAuthenticatedSession(req).email
+      : getEmailFromUnauthenticatedSession(req);
 
-      if (!email) {
-        track("webauthn.authentication_options.email_missing", {});
-        return next(new HttpErrors.Unauthorized());
-      }
-
-      const { authenticationOptions } = await getAuthenticationOptions(
-        email,
-        isSecondFactorAuthentication,
-      );
-
-      return res.json(authenticationOptions);
-    } catch (e) {
-      next(e);
+    if (!email) {
+      track("webauthn.authentication_options.email_missing", {});
+      return next(new HttpErrors.Unauthorized());
     }
+
+    const { authenticationOptions } = await getAuthenticationOptions(
+      email,
+      isSecondFactorAuthentication,
+    );
+
+    return res.json(authenticationOptions);
   };
 
 export const getGenerateAuthenticationOptionsForFirstFactorController =
@@ -179,8 +182,9 @@ export const postVerifyAuthenticationController =
       const schema = z.object({
         webauthn_authentication_response_string: z.string(),
       });
-      const { webauthn_authentication_response_string } =
-        await schema.parseAsync(req.body);
+      const { webauthn_authentication_response_string } = schema.parse(
+        req.body,
+      );
 
       const authenticationResponseJson = JSON.parse(
         webauthn_authentication_response_string,
@@ -188,7 +192,7 @@ export const postVerifyAuthenticationController =
       const authenticationResponseSchema =
         z.custom<AuthenticationResponseJSON>();
 
-      const response = await authenticationResponseSchema.parseAsync(
+      const response = authenticationResponseSchema.parse(
         authenticationResponseJson,
       );
 

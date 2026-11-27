@@ -33,6 +33,9 @@ describe("add 2fa authentication", () => {
 
     cy.contains("Code invalide.");
 
+    cy.contains("Nom de votre application d’authentification").click();
+    cy.focused().type("Mon tel pro");
+
     // Extract the code from the front to generate the TOTP key
     cy.fillAndSubmitTotpForm("/totp-configuration");
 
@@ -50,6 +53,7 @@ describe("add 2fa authentication", () => {
     cy.contains("Continuer").click();
 
     cy.title().should("include", "Compte et connexion");
+    cy.contains("Mon tel pro");
 
     cy.maildevGetMessageBySubject("Connexion renforcée activée").then(
       (email) => {

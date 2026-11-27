@@ -9,19 +9,39 @@
     </p>
 <% } %>
 
-<% if (totpToolType === "smartphone") { %>
-    <p class="fr-mb-0">Scannez le QR Code avec votre smartphone</p>
-<% } else { %>
-    <p class="fr-mb-0">Scannez le QR Code</p>
-<% } %>
-
-<img src="<%= locals.qrCodeDataUrl; %>" alt="Code QR à utiliser dans l’appli FreeOTP">
 <form action="<%= totpConfigurationUrl %>" method="post">
     <input type="hidden" name="_csrf" value="<%= csrfToken; %>">
     <input type="hidden" name="totp-tool-type" value="<%= locals.totpToolType; %>">
+    <div class="fr-input-group">
+        <label class="fr-label" for="totpDisplayName">
+            Nom de votre application d’authentification
+        </label>
+        <input
+            class="fr-input"
+            type="text"
+            id="totpDisplayName"
+            name="totpDisplayName"
+            maxlength="50"
+            autocomplete="off"
+            placeholder="ex : FreeOTP, Authenticator, etc."
+            data-1p-ignore
+            data-lpignore="true"
+            data-bwignore
+            data-form-type="other"
+        >
+        <div class="fr-messages-group" id="input-2-messages" aria-live="polite">
+            <p class="fr-message fr-message--info" id="input-2-message-info">Personnaliser le nom de votre outil pour le retrouver plus facilement</p>
+        </div>
+    </div>
+    <% if (totpToolType === "smartphone") { %>
+        <p class="fr-mb-0">Scannez le QR Code avec votre smartphone</p>
+    <% } else { %>
+        <p class="fr-mb-0">Scannez le QR Code</p>
+    <% } %>
+    <img src="<%= locals.qrCodeDataUrl; %>" alt="Code QR à utiliser dans l’appli FreeOTP">
     <div class="fr-input-group<% if (locals.hasCodeError) { %>  fr-input-group--error<% } %>">
         <label class="fr-label" for="totpToken">
-            Insérer ensuite le code généré par l’application
+            Insérer ensuite le code généré par l’application *
         </label>
         <input
                 class="fr-input"
