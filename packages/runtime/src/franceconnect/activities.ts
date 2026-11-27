@@ -11,10 +11,4 @@ export const franceconnectActivities = {
       connected_at: z.string(),
     }),
   }),
-  "franceconnect.disconnected": z.object({
-    inputs: z.object({}),
-    outcome: z.object({
-      connected_at: z.string(),
-    }),
-  }),
 };

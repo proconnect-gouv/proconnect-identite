@@ -5,13 +5,16 @@ import {
   isPhoneNumberValid,
   isSiretValid,
 } from "@proconnect-gouv/proconnect.core/security";
+import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
+import { toPartialOrganization } from "@proconnect-gouv/proconnect.identite/managers/organization";
 import { LinkEnum } from "@proconnect-gouv/proconnect.identite/types";
 import { parse, stringify, transform } from "csv";
+import { sql } from "drizzle-orm";
 import fs from "fs";
 import { isEmpty, isString, some, toInteger } from "lodash-es";
 import { match } from "ts-pattern";
 import { z } from "zod";
-import { context, runtime } from "../src/connectors/context";
+import { context, db, runtime } from "../src/connectors/context";
 import { getOrganizationInfo } from "../src/connectors/organization-info";
 import { FetchError } from "../src/connectors/request";
 import { logger } from "../src/services/log";
@@ -200,17 +203,31 @@ const maxInseeCallRateInMs = rateInMsFromArgs !== 0 ? rateInMsFromArgs : 125;
           }
 
           // 3. update organizationInfo
-          const organization = await organizations.upsert({
-            siret: organizationInfo.siret,
-            organizationInfo,
-          });
+          const [organization] = await db
+            .insert(schema.organizations)
+            .values({
+              ...toPartialOrganization(organizationInfo),
+              created_at: sql`now()`,
+              organization_info_fetched_at: sql`now()`,
+              updated_at: sql`now()`,
+            })
+            .onConflictDoUpdate({
+              set: {
+                ...toPartialOrganization(organizationInfo),
+                organization_info_fetched_at: sql`now()`,
+                updated_at: sql`now()`,
+              },
+              target: schema.organizations.siret,
+            })
+            .returning({ id: schema.organizations.id });
 
           // 4. create the user-organization link
           const usersOrganizations = await organizations.findByUserId(user.id);
           if (!some(usersOrganizations, ["id", organization.id])) {
             await runtime
               .as({ type: "app", job: "script.import_accounts_coop" })
-              .addMembership({
+              .member.joined.mutate({
+                is_external: false,
                 organization_id: organization.id,
                 user_id: user.id,
                 verification_type:

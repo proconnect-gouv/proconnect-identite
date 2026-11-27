@@ -1,13 +1,10 @@
 //
 
 import * as schema from "@proconnect-gouv/proconnect.identite.database/drizzle";
-import {
-  certificationDirigeantActivities,
-  createIdentiteRuntime,
-  type ContextsOf,
-} from "@proconnect-gouv/proconnect.identite.runtime";
+import { createIdentiteRuntime } from "@proconnect-gouv/proconnect.identite.runtime";
 import { createContext } from "@proconnect-gouv/proconnect.identite/connectors";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { identiteProcedures } from "../procedures";
 import { instrument } from "../services/log";
 import { ApiEntrepriseClient } from "./api-entreprise";
 import { ApiInseeClient } from "./api-insee";
@@ -72,11 +69,10 @@ export const context: typeof contextUntraced = {
   },
 };
 
-const runtimeUntraced = createIdentiteRuntime<
-  ContextsOf<typeof certificationDirigeantActivities>
->({
+const runtimeUntraced = createIdentiteRuntime({
   app: "proconnect-identite",
   db,
+  procedures: identiteProcedures,
 });
 
 export const runtime: typeof runtimeUntraced = {

@@ -71,6 +71,7 @@ import { getOrganizationSuggestions as getOrganizationSuggestionsWith } from "./
 const { email_domains, organizations, users } = context.repository;
 
 async function addMembership({
+  is_external = false,
   user_id,
   ...input
 }: InsertUserOrganizationLink): Promise<{
@@ -79,7 +80,7 @@ async function addMembership({
 }> {
   const outcome = await runtime
     .as({ type: "user", user_id })
-    .addMembership({ user_id, ...input });
+    .member.joined.mutate({ is_external, user_id, ...input });
 
   return match(outcome)
     .with({ kind: "member_joined" }, ({ membership }) => membership)
@@ -119,7 +120,7 @@ export const getOrganizationSuggestions = async ({
     },
   );
 
-export const upsertOrganization = async (siret: string) =>
+export const upsertOrganization = async (siret: string, user_id: number) =>
   match(await getOrganizationInfo(siret))
     .with({ kind: "api_entreprise_failed" }, ({ exception }) => {
       throw new ApiEntrepriseConnectionError(
@@ -127,14 +128,20 @@ export const upsertOrganization = async (siret: string) =>
         { cause: exception },
       );
     })
-    .with({ kind: "found" }, ({ organization_info, rne }) => {
+    .with({ kind: "found" }, async ({ organization_info, rne }) => {
       if (rne.kind === "failed") {
         logger.warn("api_rne.company_request.failed", { siret }, rne.exception);
       }
-      return organizations.upsert({
-        organizationInfo: organization_info,
+      const procedures = runtime.as({ type: "user", user_id }).organization;
+      const created = await procedures.created.mutate({
+        organization_info,
         siret,
       });
+      const { organization_id } =
+        created.kind === "organization_created"
+          ? created
+          : await procedures.info_changed.mutate({ organization_info, siret });
+      return organizations.getById(organization_id);
     })
     .with({ kind: "invalid_siret" }, ({ exception }) => {
       throw exception;
@@ -455,9 +462,9 @@ export const joinOrganization = async ({
       verification_type: EmailDomainVerificationEnum.enum.not_verified_yet,
     })
   ) {
-    await runtime.as({ type: "user", user_id }).openModeration({
+    await runtime.as({ type: "user", user_id }).moderation.opened.mutate({
       organization_id,
-      sp_name,
+      sp_name: sp_name ?? null,
       ticket_id: null,
       type: ModerationTypeSchema.enum.non_verified_domain,
       user_id,
@@ -531,9 +538,9 @@ export const createPendingModeration = async ({
 
   const { moderation } = await runtime
     .as({ type: "user", user_id })
-    .openModeration({
+    .moderation.opened.mutate({
       organization_id,
-      sp_name,
+      sp_name: sp_name ?? null,
       ticket_id,
       type: ModerationTypeSchema.enum.organization_join_block,
       user_id,

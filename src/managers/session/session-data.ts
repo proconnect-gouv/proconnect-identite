@@ -53,6 +53,7 @@ export const SessionDataSchema = z.object({
   pendingGreetingsForSelectedOrganization: z.boolean().optional(),
   pendingModerationOrganizationId: z.number().optional(),
   pendingOfficialContactEmailVerificationOrganizationId: z.number().optional(),
+  pendingReopenModerationId: z.number().optional(),
   selectedOrganizationId: z.number().optional(),
   temporaryEncryptedTotpKey: z.string().optional(),
   user: UserSchema.optional(),
