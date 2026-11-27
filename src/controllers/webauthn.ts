@@ -109,10 +109,10 @@ export const postVerifyRegistrationMiddlewareFactory =
     try {
       const schema = z.object({
         webauthn_registration_response_string: z.string(),
-        passkeyDisplayName: mfaDisplayNameSchema(),
       });
-      const { webauthn_registration_response_string, passkeyDisplayName } =
-        await schema.parseAsync(req.body);
+      const { webauthn_registration_response_string } = await schema.parseAsync(
+        req.body,
+      );
 
       const response = await z
         .preprocess(
@@ -125,7 +125,6 @@ export const postVerifyRegistrationMiddlewareFactory =
       const { userVerified, updatedUser, key_name } = await verifyRegistration({
         email: email,
         response,
-        display_name: passkeyDisplayName,
       });
       addAuthenticationMethodReferenceInSession(req, res, updatedUser, "pop");
       if (userVerified) {

@@ -191,7 +191,6 @@ export const verifyRegistration = async ({
 }: {
   email: string;
   response: RegistrationResponseJSON;
-  display_name?: string | null;
 }) => {
   const user = await users.findByEmail(email);
 
