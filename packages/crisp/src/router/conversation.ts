@@ -86,7 +86,7 @@ export type SendMessageInAConversationRoute = {
     endpoint: `/v1/website/${string}/conversation/${string}/message`;
     searchParams: {};
     body: {
-      type: "text";
+      type: "text" | "note";
       origin: `urn:${string}`;
       from: "operator";
       content: string;
